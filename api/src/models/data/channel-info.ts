@@ -1,10 +1,10 @@
 export interface ChannelInfoDto {
   channelAddress: string;
   author: any;
-  subscribers: any[];
+  subscribers?: any[];
   topics: Topic[];
-  created: string;
-  latestMessage: string;
+  created?: string;
+  latestMessage?: string;
 }
 
 export interface ChannelInfo {

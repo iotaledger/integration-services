@@ -7,12 +7,8 @@ import { StatusCodes } from 'http-status-codes';
 export const getChannelInfo = (req: Request, res: Response): void => {
   console.log('Get user');
 
-  try {
-    const info = service.getChannelInfo();
-    res.send(info);
-  } catch (e) {
-    throw e;
-  }
+  const info = service.getChannelInfo();
+  res.send(info);
 };
 
 export const addChannelInfo = (req: Request, res: Response): void => {
@@ -23,12 +19,8 @@ export const addChannelInfo = (req: Request, res: Response): void => {
     return;
   }
 
-  try {
-    service.addChannelInfo(channelInfo);
-    res.sendStatus(StatusCodes.CREATED);
-  } catch (e) {
-    throw e;
-  }
+  service.addChannelInfo(channelInfo);
+  res.sendStatus(StatusCodes.CREATED);
 };
 
 export const updateChannelInfo = (req: Request, res: Response): void => {
@@ -39,12 +31,8 @@ export const updateChannelInfo = (req: Request, res: Response): void => {
     return;
   }
 
-  try {
-    service.updateChannelInfo(channelInfo);
-    res.sendStatus(StatusCodes.OK);
-  } catch (e) {
-    throw e;
-  }
+  service.updateChannelInfo(channelInfo);
+  res.sendStatus(StatusCodes.OK);
 };
 
 export const deleteChannelInfo = (req: Request, res: Response): void => {
@@ -55,29 +43,19 @@ export const deleteChannelInfo = (req: Request, res: Response): void => {
     return;
   }
 
-  try {
-    service.deleteChannelInfo(channelAddress);
-    res.sendStatus(StatusCodes.OK);
-  } catch (e) {
-    throw e;
-  }
+  service.deleteChannelInfo(channelAddress);
+  res.sendStatus(StatusCodes.OK);
 };
 
-const getChannelInfoFromBody = (channelInfoDto: ChannelInfoDto): ChannelInfo | null => {
+export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
   const channelInfo: ChannelInfo = {
     created: new Date(),
-    author: channelInfoDto.author,
-    subscribers: channelInfoDto.subscribers,
-    topics: channelInfoDto.topics,
-    channelAddress: ''
+    author: dto.author,
+    subscribers: dto.subscribers || [],
+    topics: dto.topics,
+    channelAddress: dto.channelAddress
   };
-  if (
-    _.isEmpty(channelInfo.channelAddress) ||
-    _.isEmpty(channelInfo.created) ||
-    _.isEmpty(channelInfo.latestMessage) ||
-    _.isEmpty(channelInfo.topics) ||
-    _.isEmpty(channelInfo.author)
-  ) {
+  if (_.isEmpty(channelInfo.channelAddress) || _.isEmpty(channelInfo.topics) || _.isEmpty(channelInfo.author)) {
     return null;
   }
   return channelInfo;
