@@ -1,7 +1,7 @@
 import express from 'express';
 import { loggerMiddleware } from './middlewares/logger';
 import { errorMiddleware } from './middlewares/error';
-import channelInfoRouter from './routes/channel-info/router';
+import { channelInfoRouter } from './routes/router';
 
 const app = express();
 const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000;

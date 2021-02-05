@@ -2,7 +2,7 @@ import { ChannelInfoDto } from '../../models/data/channel-info';
 import { getChannelInfoFromBody } from './routes';
 
 describe('test getChannelInfoFromBody', () => {
-  it('should not return null for valid object', () => {
+  it('should not return null for valid dto', () => {
     const validChannelInfoDto: ChannelInfoDto = {
       author: 'test-author',
       topics: [{ source: 'test', type: 'test-type' }],
@@ -33,7 +33,7 @@ describe('test getChannelInfoFromBody', () => {
 
     expect(getChannelInfoFromBody(validChannelInfoDto)).toBeNull();
   });
-  it('should return null if no topics are set', () => {
+  it('should return null for empty topics', () => {
     const validChannelInfoDto: ChannelInfoDto = {
       author: 'test-author',
       topics: [],
