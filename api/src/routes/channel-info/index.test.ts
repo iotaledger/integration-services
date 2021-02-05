@@ -1,5 +1,5 @@
 import { ChannelInfoDto } from '../../models/data/channel-info';
-import { getChannelInfoFromBody } from './routes';
+import { getChannelInfoFromBody } from '.';
 
 describe('test getChannelInfoFromBody', () => {
   it('should not return null for valid dto', () => {
