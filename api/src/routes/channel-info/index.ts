@@ -15,8 +15,8 @@ export const getChannelInfo = async (req: Request, res: Response, next: NextFunc
     }
 
     const channelInfo = await service.getChannelInfo(channelAddress);
-    const dto = getChannelInfoDto(channelInfo);
-    res.send(dto);
+    const channelInfoDto = getChannelInfoDto(channelInfo);
+    res.send(channelInfoDto);
   } catch (error) {
     next(error);
   }
@@ -71,12 +71,14 @@ export const deleteChannelInfo = async (req: Request, res: Response, next: NextF
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
   const channelInfo: ChannelInfo = {
-    created: new Date(),
+    created: moment(dto.created).toDate() || new Date(),
     author: dto.author,
     subscribers: dto.subscribers || [],
     topics: dto.topics,
-    channelAddress: dto.channelAddress
+    channelAddress: dto.channelAddress,
+    latestMessage: dto.latestMessage && moment(dto.latestMessage).toDate()
   };
+
   if (_.isEmpty(channelInfo.channelAddress) || _.isEmpty(channelInfo.topics) || _.isEmpty(channelInfo.author)) {
     return null;
   }
