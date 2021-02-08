@@ -2,6 +2,7 @@ import express from 'express';
 import { loggerMiddleware } from './middlewares/logger';
 import { errorMiddleware } from './middlewares/error';
 import { channelInfoRouter } from './routes/router';
+import { MongoDbService } from './services/mongodb-service';
 
 const app = express();
 const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000;
@@ -19,6 +20,9 @@ useRouter(app, '/channel-info-service', channelInfoRouter);
 
 app.use(errorMiddleware);
 
-app.listen(port, () => {
+// Promise.resolve(client.connect()).then((x) => client.insertDocument((result: any) => console.log('result', result)));
+
+app.listen(port, async () => {
   console.log(`Started API Server on port  ${port}`);
+  await MongoDbService.connect();
 });

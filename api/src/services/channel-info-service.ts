@@ -1,20 +1,14 @@
-import { ChannelInfoDto, ChannelInfo } from '../models/data/channel-info';
+import { ChannelInfo } from '../models/data/channel-info';
+import * as ChannelInfoDb from '../database/channel-info-db';
 
-export const getChannelInfo = (): ChannelInfoDto => {
-  console.log('Get user');
+export const getChannelInfo = (channelAddress: string) => {
   // TODO get data from db
-  return {
-    created: new Date().toDateString(),
-    subscribers: [],
-    channelAddress: '',
-    topics: [{ source: 'device-kitchen', type: 'temperature' }],
-    latestMessage: new Date().toDateString(),
-    author: null
-  };
+  return ChannelInfoDb.getChannelInfo(channelAddress);
 };
 
 export const addChannelInfo = (channelInfo: ChannelInfo): void => {
-  console.log('Add user');
+  console.log('Add channelInfo');
+  ChannelInfoDb.addChannelInfo(channelInfo);
 };
 
 export const updateChannelInfo = (channelInfo: ChannelInfo): void => {

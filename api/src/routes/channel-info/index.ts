@@ -4,10 +4,16 @@ import * as service from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 
-export const getChannelInfo = (req: Request, res: Response): void => {
-  console.log('Get user');
+export const getChannelInfo = async (req: Request, res: Response) => {
+  const channelAddress = req.params['channelAddress'];
+  console.log('ch', channelAddress);
 
-  const info = service.getChannelInfo();
+  if (_.isElement(channelAddress)) {
+    res.sendStatus(StatusCodes.BAD_REQUEST);
+    return;
+  }
+
+  const info = await service.getChannelInfo(channelAddress);
   res.send(info);
 };
 
