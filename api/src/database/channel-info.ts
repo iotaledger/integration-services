@@ -14,8 +14,27 @@ export const addChannelInfo = async (channelInfo: ChannelInfo) => {
     ...channelInfo
   };
 
-  console.log('document', document);
-
   const collectionName = CollectionNames.channelInfo;
   return Promise.resolve(MongoDbService.insertDocument(collectionName, document));
+};
+
+export const updateChannelInfo = async (channelInfo: ChannelInfo) => {
+  const query = {
+    _id: channelInfo.channelAddress
+  };
+  const { topics } = channelInfo;
+  const update = {
+    $set: {
+      topics
+    }
+  };
+
+  const collectionName = CollectionNames.channelInfo;
+  return MongoDbService.upsertDocument(collectionName, query, update);
+};
+
+export const removeChannelInfo = async (channelAddress: string) => {
+  const query = { _id: channelAddress };
+  const collectionName = CollectionNames.channelInfo;
+  return Promise.resolve(MongoDbService.removeDocument(collectionName, query));
 };

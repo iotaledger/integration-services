@@ -20,8 +20,6 @@ useRouter(app, '/channel-info-service', channelInfoRouter);
 
 app.use(errorMiddleware);
 
-// Promise.resolve(client.connect()).then((x) => client.insertDocument((result: any) => console.log('result', result)));
-
 app.listen(port, async () => {
   console.log(`Started API Server on port  ${port}`);
   await MongoDbService.connect();
