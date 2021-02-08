@@ -8,7 +8,6 @@ import moment from 'moment';
 export const getChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const channelAddress = req.params['channelAddress'];
-    console.log('ch', channelAddress);
 
     if (_.isElement(channelAddress)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -88,7 +87,6 @@ export const getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
   if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.topics) || _.isEmpty(c.author) || c.created == null) {
     return null;
   }
-  console.log('c.latestMessage?.toDateString()', c.latestMessage?.toDateString());
 
   const channelInfo: ChannelInfoDto = {
     created: moment(c.created.toUTCString()).format('DD-MM-YYYY'),
