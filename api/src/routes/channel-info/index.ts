@@ -1,58 +1,73 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ChannelInfoDto, ChannelInfo } from '../../models/data/channel-info';
 import * as service from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import moment from 'moment';
 
-export const getChannelInfo = async (req: Request, res: Response) => {
+export const getChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const channelAddress = req.params['channelAddress'];
+    console.log('ch', channelAddress);
+
+    if (_.isElement(channelAddress)) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const channelInfo = await service.getChannelInfo(channelAddress);
+    const dto = getChannelInfoDto(channelInfo);
+    res.send(dto);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const channelInfo = getChannelInfoFromBody(req.body);
+
+    if (channelInfo == null) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+    await service.addChannelInfo(channelInfo);
+
+    res.sendStatus(StatusCodes.CREATED);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const channelInfo = getChannelInfoFromBody(req.body);
+
+    if (channelInfo == null) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    await service.updateChannelInfo(channelInfo);
+    res.sendStatus(StatusCodes.OK);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
   const channelAddress = req.params['channelAddress'];
-  console.log('ch', channelAddress);
+  try {
+    if (_.isElement(channelAddress)) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
 
-  if (_.isElement(channelAddress)) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
+    await service.deleteChannelInfo(channelAddress);
+    res.sendStatus(StatusCodes.OK);
+  } catch (error) {
+    next(error);
   }
-
-  const channelInfo = await service.getChannelInfo(channelAddress);
-  const dto = getChannelInfoDto(channelInfo[0]);
-  res.send(dto);
-};
-
-export const addChannelInfo = async (req: Request, res: Response) => {
-  const channelInfo = getChannelInfoFromBody(req.body);
-
-  if (channelInfo == null) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-  await service.addChannelInfo(channelInfo);
-
-  res.sendStatus(StatusCodes.CREATED);
-};
-
-export const updateChannelInfo = (req: Request, res: Response): void => {
-  const channelInfo = getChannelInfoFromBody(req.body);
-
-  if (channelInfo == null) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  service.updateChannelInfo(channelInfo);
-  res.sendStatus(StatusCodes.OK);
-};
-
-export const deleteChannelInfo = async (req: Request, res: Response) => {
-  const channelAddress = req.params['channelAddress'];
-
-  if (_.isElement(channelAddress)) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  service.deleteChannelInfo(channelAddress);
-  res.sendStatus(StatusCodes.OK);
 };
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {

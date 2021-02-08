@@ -5,7 +5,7 @@ import { ChannelInfo } from '../models/data/channel-info';
 export const getChannelInfo = async (channelAddress: string) => {
   const query = { _id: channelAddress };
   const collectionName = CollectionNames.channelInfo;
-  return await Promise.resolve(MongoDbService.getDocument<ChannelInfo[]>(collectionName, query));
+  return await MongoDbService.getDocument<ChannelInfo>(collectionName, query);
 };
 
 export const addChannelInfo = async (channelInfo: ChannelInfo) => {
@@ -15,7 +15,7 @@ export const addChannelInfo = async (channelInfo: ChannelInfo) => {
   };
 
   const collectionName = CollectionNames.channelInfo;
-  return Promise.resolve(MongoDbService.insertDocument(collectionName, document));
+  return MongoDbService.insertDocument(collectionName, document);
 };
 
 export const updateChannelInfo = async (channelInfo: ChannelInfo) => {
@@ -36,5 +36,5 @@ export const updateChannelInfo = async (channelInfo: ChannelInfo) => {
 export const removeChannelInfo = async (channelAddress: string) => {
   const query = { _id: channelAddress };
   const collectionName = CollectionNames.channelInfo;
-  return Promise.resolve(MongoDbService.removeDocument(collectionName, query));
+  return MongoDbService.removeDocument(collectionName, query);
 };
