@@ -9,7 +9,7 @@ export const getChannelInfo = async (req: Request, res: Response, next: NextFunc
   try {
     const channelAddress = req.params['channelAddress'];
 
-    if (_.isElement(channelAddress)) {
+    if (_.isEmpty(channelAddress)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
@@ -57,7 +57,7 @@ export const updateChannelInfo = async (req: Request, res: Response, next: NextF
 export const deleteChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const channelAddress = req.params['channelAddress'];
   try {
-    if (_.isElement(channelAddress)) {
+    if (_.isEmpty(channelAddress)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
@@ -70,8 +70,11 @@ export const deleteChannelInfo = async (req: Request, res: Response, next: NextF
 };
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
+  if (dto == null) {
+    return null;
+  }
   const channelInfo: ChannelInfo = {
-    created: moment(dto.created).toDate() || new Date(),
+    created: moment(dto.created, 'DD-MM-YYYY').toDate() || new Date(),
     author: dto.author,
     subscribers: dto.subscribers || [],
     topics: dto.topics,

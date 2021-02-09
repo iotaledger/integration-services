@@ -8,6 +8,7 @@
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build": "npm-run-all build-tsc build-lint",
     "test": "jest",
+    "test-watch": "npm run test -- --watchAll",
     "start": "node dist/index.js",
     "build-watch": "tsc --watch",
     "serve-nodemon": "nodemon ./dist/index",

@@ -15,5 +15,5 @@ export const updateChannelInfo = async (channelInfo: ChannelInfo): Promise<Updat
 };
 
 export const deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
-  return ChannelInfoDb.removeChannelInfo(channelAddress);
+  return ChannelInfoDb.deleteChannelInfo(channelAddress);
 };
