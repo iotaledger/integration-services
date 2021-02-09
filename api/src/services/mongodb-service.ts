@@ -9,10 +9,6 @@ import {
   DeleteWriteOpResultObject
 } from 'mongodb';
 
-// TODO env vars
-const url = 'mongodb://root:rootpassword@0.0.0.0:27017';
-const dbName = 'e-commerce-audit-log';
-
 export class MongoDbService {
   public static client: MongoClient;
   public static db: Db;
@@ -56,7 +52,7 @@ export class MongoDbService {
     return collection.deleteOne(query);
   }
 
-  static async connect(): Promise<MongoClient> {
+  static async connect(url: string, dbName: string): Promise<MongoClient> {
     return new Promise((resolve, reject) => {
       const options: MongoClientOptions = {
         useUnifiedTopology: true
