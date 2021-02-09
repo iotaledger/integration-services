@@ -10,16 +10,13 @@ export const CONFIG: Config = {
 };
 
 const assertConfig = (config: Config) => {
-  if (
-    Object.values(config).map((value, i) => {
-      if (_.isEmpty(value) && (isNaN(value) || value == null || value === '')) {
-        console.log('========================================================');
-        console.error('Env var is missing or invalid:', Object.keys(config)[i]);
-        console.log('========================================================');
-      }
-    })
-  ) {
-  }
+  Object.values(config).map((value, i) => {
+    if (_.isEmpty(value) && (isNaN(value) || value == null || value === '')) {
+      console.log('========================================================');
+      console.error('Env var is missing or invalid:', Object.keys(config)[i]);
+      console.log('========================================================');
+    }
+  });
 };
 
 assertConfig(CONFIG);

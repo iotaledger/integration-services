@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import moment from 'moment';
 
-export const getChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+export const getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const channelAddress = req.params['channelAddress'];
 
@@ -22,7 +22,7 @@ export const getChannelInfo = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const addChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+export const addChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const channelInfo = getChannelInfoFromBody(req.body);
 
@@ -38,7 +38,7 @@ export const addChannelInfo = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const updateChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+export const updateChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const channelInfo = getChannelInfoFromBody(req.body);
 
@@ -54,7 +54,7 @@ export const updateChannelInfo = async (req: Request, res: Response, next: NextF
   }
 };
 
-export const deleteChannelInfo = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const channelAddress = req.params['channelAddress'];
   try {
     if (_.isElement(channelAddress)) {

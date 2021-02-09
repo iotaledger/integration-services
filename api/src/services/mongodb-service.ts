@@ -6,7 +6,9 @@ import {
   UpdateWriteOpResult,
   InsertOneWriteOpResult,
   WithId,
-  DeleteWriteOpResultObject
+  DeleteWriteOpResultObject,
+  FilterQuery,
+  InsertWriteOpResult
 } from 'mongodb';
 
 export class MongoDbService {
@@ -21,12 +23,12 @@ export class MongoDbService {
     return MongoDbService.db.collection(collectionName);
   }
 
-  static async getDocument<T>(collectionName: string, query: any): Promise<T> {
+  static async getDocument<T>(collectionName: string, query: FilterQuery<T>): Promise<T> {
     const collection = MongoDbService.getCollection(collectionName);
     return collection.findOne(query);
   }
 
-  static async getDocuments<T>(collectionName: string, query: any): Promise<T[] | null> {
+  static async getDocuments<T>(collectionName: string, query: FilterQuery<T>): Promise<T[] | null> {
     const collection = MongoDbService.getCollection(collectionName);
     return collection.find(query).toArray();
   }
@@ -36,7 +38,7 @@ export class MongoDbService {
     return collection.insertOne(data);
   }
 
-  static async insertDocuments(collectionName: string, data: any[]) {
+  static async insertDocuments(collectionName: string, data: any): Promise<InsertWriteOpResult<any>> {
     const collection = MongoDbService.getCollection(collectionName);
     return collection.insertMany(data);
   }

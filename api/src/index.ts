@@ -1,11 +1,12 @@
 import express from 'express';
-require('dotenv').config();
+import * as dotenv from 'dotenv';
 import { loggerMiddleware } from './middlewares/logger';
 import { errorMiddleware } from './middlewares/error';
 import { channelInfoRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 
+dotenv.config();
 const app = express();
 const port = CONFIG.port;
 const dbUrl = CONFIG.databaseUrl;
