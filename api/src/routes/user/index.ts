@@ -3,7 +3,7 @@ import { UserDto, User } from '../../models/data/user';
 import * as service from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { getDateFromString } from '../../utils/date';
+import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -30,7 +30,13 @@ export const addUser = async (req: Request, res: Response, next: NextFunction): 
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
-    await service.addUser(channelInfo);
+    const result = await service.addUser(channelInfo);
+
+    if (result.result.n === 0) {
+      res.status(StatusCodes.NOT_FOUND);
+      res.send({ error: 'No channel info found to update!' });
+      return;
+    }
 
     res.sendStatus(StatusCodes.CREATED);
   } catch (error) {
@@ -47,7 +53,14 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       return;
     }
 
-    await service.updateUser(channelInfo);
+    const result = await service.updateUser(channelInfo);
+
+    if (result.result.n === 0) {
+      res.status(StatusCodes.NOT_FOUND);
+      res.send({ error: 'No channel info found to update!' });
+      return;
+    }
+
     res.sendStatus(StatusCodes.OK);
   } catch (error) {
     next(error);
@@ -69,22 +82,21 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-// TODO
 const getChannelInfoFromBody = (dto: UserDto): User | null => {
-  if (dto == null || _.isEmpty(dto.userId) || _.isEmpty(dto.username)) {
-    throw new Error('The following fields are required: userId, username');
+  if (dto == null || _.isEmpty(dto.userId)) {
+    throw new Error('The following fields are required: userId');
   }
   const { firstName, lastName, subscribedChannels, userId, username, verification, organization, registrationDate } = dto;
   const user: User = {
     firstName,
     lastName,
-    registrationDate: dto.registrationDate && getDateFromString(dto.registrationDate),
+    registrationDate: registrationDate && getDateFromString(registrationDate),
     organization,
     subscribedChannels,
     verification: {
-      verificationDate: dto.verification.verificationDate && getDateFromString(dto.verification.verificationDate),
-      verified: dto.verification.verified,
-      verificationIssuer: dto.verification.verificationIssuer
+      verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
+      verified: verification.verified,
+      verificationIssuer: verification.verificationIssuer
     },
     userId,
     username
@@ -97,14 +109,25 @@ const getChannelInfoFromBody = (dto: UserDto): User | null => {
 };
 
 const getChannelInfoDto = (user: User): UserDto | null => {
-  if (user == null) {
+  if (user == null || _.isEmpty(user.userId) || _.isEmpty(user.username)) {
     return null;
   }
 
-  // TODO
-  const userDto: any = {
-    // created: moment(c.created.toUTCString()).format('DD-MM-YYYY'),
-    // latestMessage: c.latestMessage && moment(c.latestMessage.toUTCString()).format('DD-MM-YYYY'),
+  const { firstName, username, userId, subscribedChannels, organization, lastName, registrationDate, verification } = user;
+
+  const userDto: UserDto = {
+    firstName,
+    lastName,
+    registrationDate: getDateStringFromDate(registrationDate),
+    subscribedChannels,
+    userId,
+    username,
+    verification: {
+      verified: verification.verified,
+      verificationDate: getDateStringFromDate(verification.verificationDate),
+      verificationIssuer: verification.verificationIssuer
+    },
+    organization
   };
   return userDto;
 };

@@ -2,6 +2,7 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { User } from '../models/data/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+import _ from 'lodash';
 
 const collectionName = CollectionNames.users;
 
@@ -13,7 +14,8 @@ export const getUser = async (userId: string): Promise<User> => {
 export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   const document = {
     _id: user.userId,
-    ...user
+    ...user,
+    registrationDate: new Date()
   };
 
   return MongoDbService.insertDocument(collectionName, document);
@@ -24,8 +26,46 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
     _id: user.userId
   };
 
+  const { firstName, lastName, username, organization, subscribedChannels } = user;
+  console.log('USER ', user);
+  console.log('USER ', organization);
+  console.log('USER ', _.isEmpty(organization));
+
+  let updateObject = {};
+  if (!_.isEmpty(firstName)) {
+    updateObject = {
+      ...updateObject,
+      firstName
+    };
+  }
+  if (!_.isEmpty(lastName)) {
+    updateObject = {
+      ...updateObject,
+      lastName
+    };
+  }
+  if (!_.isEmpty(username)) {
+    updateObject = {
+      ...updateObject,
+      username
+    };
+  }
+  if (!_.isEmpty(organization)) {
+    updateObject = {
+      ...updateObject,
+      organization
+    };
+  }
+  if (subscribedChannels != null) {
+    updateObject = {
+      ...updateObject,
+      subscribedChannels
+    };
+  }
+  console.log('updateObject ,', updateObject);
+
   const update = {
-    $set: {}
+    $set: { ...updateObject }
   };
 
   return MongoDbService.upsertDocument(collectionName, query, update);

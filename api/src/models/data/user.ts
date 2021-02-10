@@ -5,14 +5,14 @@ export interface UserDto {
   lastName: string;
   organization?: string;
   subscribedChannels: string[];
-  registrationDate: string; // DD-MM-YYYY
+  registrationDate: string;
   verification: VerificationDto;
 }
 
 export interface VerificationDto {
   verified: boolean;
   verificationIssuer?: string; // public-key
-  verificationDate?: string; // DD-MM-YYYY
+  verificationDate?: string;
 }
 
 export interface User {
