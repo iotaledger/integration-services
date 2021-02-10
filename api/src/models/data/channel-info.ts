@@ -12,7 +12,7 @@ export interface ChannelInfo {
   author: any;
   subscribers: any[];
   topics: Topic[];
-  created: Date;
+  created: Date | null;
   latestMessage?: Date;
 }
 
