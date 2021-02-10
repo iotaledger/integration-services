@@ -107,8 +107,29 @@ describe('test POST channelInfo', () => {
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
 
-  it('should return expected channel info', async () => {
-    const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo');
+  it('should return 404 since no channel added', async () => {
+    const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 0 } });
+
+    const req: any = {
+      params: {},
+      body: validBody
+    };
+
+    const resUpdate = {
+      ...res,
+      status: jest.fn(),
+      send: jest.fn()
+    };
+
+    await addChannelInfo(req, resUpdate, nextMock);
+
+    expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
+    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'Could not add channel info' });
+    expect(resUpdate.status).toHaveBeenCalledWith(404);
+  });
+
+  it('should add channel info', async () => {
+    const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
     const req: any = {
       params: {},
@@ -168,8 +189,29 @@ describe('test PUT channelInfo', () => {
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
 
+  it('should return 404 since no channel updated', async () => {
+    const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 0 } });
+
+    const req: any = {
+      params: {},
+      body: validBody
+    };
+
+    const resUpdate = {
+      ...res,
+      status: jest.fn(),
+      send: jest.fn()
+    };
+
+    await updateChannelInfo(req, resUpdate, nextMock);
+
+    expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
+    expect(resUpdate.status).toHaveBeenCalledWith(404);
+  });
+
   it('should return expected channel info', async () => {
-    const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo');
+    const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
 
     const req: any = {
       params: {},
