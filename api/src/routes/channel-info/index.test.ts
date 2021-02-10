@@ -28,7 +28,7 @@ describe('test GET channelInfo', () => {
 
   it('should return expected channel info', async () => {
     const channelInfo: ChannelInfo = {
-      created: moment('09-02-2021', 'DD-MM-YYYY').toDate(),
+      created: moment('2021-02-09T00:00:00.000+01:00').toDate(),
       author: 'test-author2',
       subscribers: [],
       topics: [
@@ -52,7 +52,7 @@ describe('test GET channelInfo', () => {
     expect(sendMock).toHaveBeenCalledWith({
       author: 'test-author2',
       channelAddress: 'test-address3',
-      created: '09-02-2021',
+      created: '2021-02-09T00:00:00.000+01:00',
       latestMessage: null,
       subscribers: [],
       topics: [{ source: 'test', type: 'test-type' }]
@@ -339,9 +339,9 @@ describe('test getChannelInfoFromBody', () => {
 describe('test getChannelInfoDto', () => {
   it('should transform database object to transfer object', () => {
     const validChannelInfo: ChannelInfo = {
-      created: new Date('Mon, 08 Feb 2021 16:22:53 GMT'),
+      created: new Date('2021-02-08T00:00:00.000+01:00'),
       subscribers: [],
-      latestMessage: new Date('Mon, 08 Feb 2021 16:22:53 GMT'),
+      latestMessage: new Date('2021-02-08T00:00:00.000+01:00'),
       author: 'test-author',
       topics: [{ source: 'test', type: 'test-type' }],
       channelAddress: 'test-address'
@@ -352,8 +352,8 @@ describe('test getChannelInfoDto', () => {
     expect(result.channelAddress).toEqual('test-address');
     expect(result.author).toEqual('test-author');
     expect(result.topics).toEqual([{ source: 'test', type: 'test-type' }]);
-    expect(result.created).toEqual('08-02-2021');
-    expect(result.latestMessage).toEqual('08-02-2021');
+    expect(result.created).toEqual('2021-02-08T00:00:00.000+01:00');
+    expect(result.latestMessage).toEqual('2021-02-08T00:00:00.000+01:00');
     expect(result.subscribers).toEqual([]);
   });
 });
