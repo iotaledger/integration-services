@@ -34,7 +34,8 @@ export const addChannelInfo = async (req: Request, res: Response, next: NextFunc
     const result = await service.addChannelInfo(channelInfo);
 
     if (result.result.n === 0) {
-      next(new Error('Could not add channel info'));
+      res.status(StatusCodes.NOT_FOUND);
+      res.send({ error: 'Could not add channel info' });
       return;
     }
 
