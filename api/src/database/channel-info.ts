@@ -12,7 +12,8 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 export const addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   const document = {
     _id: channelInfo.channelAddress,
-    ...channelInfo
+    ...channelInfo,
+    created: new Date()
   };
 
   const collectionName = CollectionNames.channelInfo;

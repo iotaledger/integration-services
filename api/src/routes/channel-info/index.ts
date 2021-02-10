@@ -3,7 +3,7 @@ import { ChannelInfoDto, ChannelInfo } from '../../models/data/channel-info';
 import * as service from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import moment from 'moment';
+import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 export const getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -74,12 +74,12 @@ export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null 
     return null;
   }
   const channelInfo: ChannelInfo = {
-    created: moment(dto.created, 'DD-MM-YYYY').toDate() || new Date(),
+    created: dto.created ? getDateFromString(dto.created) : null,
     author: dto.author,
     subscribers: dto.subscribers || [],
     topics: dto.topics,
     channelAddress: dto.channelAddress,
-    latestMessage: dto.latestMessage && moment(dto.latestMessage).toDate()
+    latestMessage: dto.latestMessage && getDateFromString(dto.created)
   };
 
   if (_.isEmpty(channelInfo.channelAddress) || _.isEmpty(channelInfo.topics) || _.isEmpty(channelInfo.author)) {
@@ -94,11 +94,11 @@ export const getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
   }
 
   const channelInfo: ChannelInfoDto = {
-    created: moment(c.created.toUTCString()).format('DD-MM-YYYY'),
+    created: getDateStringFromDate(c.created),
     author: c.author,
     subscribers: c.subscribers || [],
     topics: c.topics,
-    latestMessage: c.latestMessage && moment(c.latestMessage.toUTCString()).format('DD-MM-YYYY'),
+    latestMessage: c.latestMessage && getDateStringFromDate(c.latestMessage),
     channelAddress: c.channelAddress
   };
   return channelInfo;
