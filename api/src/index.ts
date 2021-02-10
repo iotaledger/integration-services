@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { loggerMiddleware } from './middlewares/logger';
 import { errorMiddleware } from './middlewares/error';
-import { channelInfoRouter } from './routes/router';
+import { channelInfoRouter, userRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 
@@ -24,6 +24,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(loggerMiddleware);
 
 useRouter(app, '/channel-info-service', channelInfoRouter);
+useRouter(app, '/user-service', userRouter);
 
 app.use(errorMiddleware);
 

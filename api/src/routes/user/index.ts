@@ -70,7 +70,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 };
 
 // TODO
-export const getChannelInfoFromBody = (dto: UserDto): User | null => {
+const getChannelInfoFromBody = (dto: UserDto): User | null => {
   if (dto == null || _.isEmpty(dto.userId) || _.isEmpty(dto.username)) {
     throw new Error('The following fields are required: userId, username');
   }
@@ -96,7 +96,7 @@ export const getChannelInfoFromBody = (dto: UserDto): User | null => {
   return user;
 };
 
-export const getChannelInfoDto = (user: User): UserDto | null => {
+const getChannelInfoDto = (user: User): UserDto | null => {
   if (user == null) {
     return null;
   }
