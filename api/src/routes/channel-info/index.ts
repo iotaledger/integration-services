@@ -84,9 +84,10 @@ export const deleteChannelInfo = async (req: Request, res: Response, next: NextF
 };
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
-  if (dto == null) {
+  if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.author)) {
     return null;
   }
+
   const channelInfo: ChannelInfo = {
     created: dto.created ? getDateFromString(dto.created) : null,
     author: dto.author,
@@ -96,14 +97,11 @@ export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null 
     latestMessage: dto.latestMessage && getDateFromString(dto.created)
   };
 
-  if (_.isEmpty(channelInfo.channelAddress) || _.isEmpty(channelInfo.topics) || _.isEmpty(channelInfo.author)) {
-    return null;
-  }
   return channelInfo;
 };
 
 export const getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
-  if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.topics) || _.isEmpty(c.author) || c.created == null) {
+  if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.author)) {
     return null;
   }
 
