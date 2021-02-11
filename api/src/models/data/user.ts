@@ -6,7 +6,7 @@ export interface UserDto {
   organization?: string;
   subscribedChannels: string[];
   registrationDate: string;
-  verification: VerificationDto;
+  verification?: VerificationDto;
 }
 
 export interface VerificationDto {

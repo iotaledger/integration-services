@@ -26,7 +26,7 @@ export const addUser = async (req: Request, res: Response, next: NextFunction): 
   try {
     const channelInfo = getChannelInfoFromBody(req.body);
 
-    if (channelInfo == null) {
+    if (channelInfo == null || !isValidAddBody(channelInfo)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
@@ -82,9 +82,13 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+const isValidAddBody = (user: User): boolean => {
+  return !_.isEmpty(user.firstName) && !_.isEmpty(user.lastName) && !_.isEmpty(user.userId) && !_.isEmpty(user.username);
+};
+
 const getChannelInfoFromBody = (dto: UserDto): User | null => {
   if (dto == null || _.isEmpty(dto.userId)) {
-    throw new Error('The following fields are required: userId');
+    return null;
   }
   const { firstName, lastName, subscribedChannels, userId, username, verification, organization, registrationDate } = dto;
   const user: User = {
@@ -93,7 +97,7 @@ const getChannelInfoFromBody = (dto: UserDto): User | null => {
     registrationDate: registrationDate && getDateFromString(registrationDate),
     organization,
     subscribedChannels,
-    verification: {
+    verification: verification && {
       verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
       verified: verification.verified,
       verificationIssuer: verification.verificationIssuer

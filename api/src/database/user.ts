@@ -12,6 +12,7 @@ export const getUser = async (userId: string): Promise<User> => {
 };
 
 export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+  delete user.verification;
   const document = {
     _id: user.userId,
     ...user,
@@ -27,11 +28,8 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
   };
 
   const { firstName, lastName, username, organization, subscribedChannels } = user;
-  console.log('USER ', user);
-  console.log('USER ', organization);
-  console.log('USER ', _.isEmpty(organization));
-
   let updateObject = {};
+
   if (!_.isEmpty(firstName)) {
     updateObject = {
       ...updateObject,
@@ -62,7 +60,6 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
       subscribedChannels
     };
   }
-  console.log('updateObject ,', updateObject);
 
   const update = {
     $set: { ...updateObject }
