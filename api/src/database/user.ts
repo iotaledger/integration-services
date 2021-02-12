@@ -43,7 +43,7 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
     $set: { ...updateObject }
   };
 
-  return MongoDbService.upsertDocument(collectionName, query, update);
+  return MongoDbService.updateDocument(collectionName, query, update);
 };
 
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {

@@ -32,7 +32,7 @@ export const updateChannelInfo = async (channelInfo: ChannelInfo): Promise<Updat
   };
 
   const collectionName = CollectionNames.channelInfo;
-  return MongoDbService.upsertDocument(collectionName, query, update);
+  return MongoDbService.updateDocument(collectionName, query, update);
 };
 
 export const deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
