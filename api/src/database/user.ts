@@ -22,24 +22,6 @@ export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId
   return MongoDbService.insertDocument(collectionName, document);
 };
 
-const getUpdateObject = (fields: { [key: string]: any }): { [key: string]: any } => {
-  const keys = Object.keys(fields);
-  const values = Object.values(fields);
-  const updateObject = values.reduce((acc, value, index) => {
-    if (value == null) {
-      return acc;
-    }
-    const key = keys[index];
-
-    return {
-      ...acc,
-      [key]: value
-    };
-  }, {});
-
-  return updateObject;
-};
-
 export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
   const query = {
     _id: user.userId
@@ -47,7 +29,7 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
 
   const { firstName, lastName, username, organization, subscribedChannels, description, classification } = user;
 
-  const updateObject = getUpdateObject({
+  const updateObject = MongoDbService.getUpdateObject({
     firstName,
     lastName,
     description,

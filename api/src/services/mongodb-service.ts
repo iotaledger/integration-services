@@ -8,9 +8,16 @@ import {
   WithId,
   DeleteWriteOpResultObject,
   FilterQuery,
-  InsertWriteOpResult
+  InsertWriteOpResult,
+  UpdateOneOptions
 } from 'mongodb';
 
+/**
+ * MongoDbService to establish a connection and create, read, update and delete (CRUD) documents in the database.
+ *
+ * @export
+ * @class MongoDbService
+ */
 export class MongoDbService {
   public static client: MongoClient;
   public static db: Db;
@@ -43,9 +50,8 @@ export class MongoDbService {
     return collection.insertMany(data);
   }
 
-  static async upsertDocument(collectionName: string, query: any, update: any): Promise<UpdateWriteOpResult | null> {
+  static async updateDocument(collectionName: string, query: any, update: any, options?: UpdateOneOptions): Promise<UpdateWriteOpResult | null> {
     const collection = MongoDbService.getCollection(collectionName);
-    const options = {};
     return collection.updateOne(query, update, options);
   }
 
@@ -54,6 +60,40 @@ export class MongoDbService {
     return collection.deleteOne(query);
   }
 
+  /**
+   * Get update object for fields having a value not null and not undefined.
+   *
+   * @static
+   * @param {{ [key: string]: any }} fields Map of fields. For instance: { "height": 10, "length": 20, "unit": "metres", "depth": undefined }
+   * @return {*}  {{ [key: string]: any }} Map of fields with no fields having null or undefined. For instance: { "height": 10, "length": 20, "unit": "metres" }
+   * @memberof MongoDbService
+   */
+  static getUpdateObject(fields: { [key: string]: any }): { [key: string]: any } {
+    const keys = Object.keys(fields);
+    const values = Object.values(fields);
+    const updateObject = values.reduce((acc, value, index) => {
+      if (value == null) {
+        return acc;
+      }
+      const key = keys[index];
+
+      return {
+        ...acc,
+        [key]: value
+      };
+    }, {});
+
+    return updateObject;
+  }
+  /**
+   * Connect to the mongodb.
+   *
+   * @static
+   * @param {string} url The url to the mongodb.
+   * @param {string} dbName The name of the database.
+   * @return {*}  {Promise<MongoClient>}
+   * @memberof MongoDbService
+   */
   static async connect(url: string, dbName: string): Promise<MongoClient> {
     return new Promise((resolve, reject) => {
       const options: MongoClientOptions = {
@@ -75,7 +115,14 @@ export class MongoDbService {
     });
   }
 
-  public static disconnect(): void {
-    MongoDbService.client.close();
+  /**
+   * Disconnect from the mongodb.
+   *
+   * @static
+   * @return {*}  {Promise<void>}
+   * @memberof MongoDbService
+   */
+  public static disconnect(): Promise<void> {
+    return MongoDbService.client.close();
   }
 }
