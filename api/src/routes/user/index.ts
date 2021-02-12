@@ -83,27 +83,41 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 };
 
 const isValidAddBody = (user: User): boolean => {
-  return !_.isEmpty(user.firstName) && !_.isEmpty(user.lastName) && !_.isEmpty(user.userId) && !_.isEmpty(user.username);
+  return !_.isEmpty(user.userId) && !_.isEmpty(user.username) && !_.isEmpty(user.classification);
 };
 
 const getChannelInfoFromBody = (dto: UserDto): User | null => {
   if (dto == null || _.isEmpty(dto.userId)) {
     return null;
   }
-  const { firstName, lastName, subscribedChannels, userId, username, verification, organization, registrationDate } = dto;
-  const user: User = {
+  const {
     firstName,
     lastName,
-    registrationDate: registrationDate && getDateFromString(registrationDate),
-    organization,
     subscribedChannels,
+    userId,
+    username,
+    verification,
+    organization,
+    registrationDate,
+    classification,
+    description
+  } = dto;
+
+  const user: User = {
+    userId,
+    username,
+    classification,
+    subscribedChannels,
+    firstName,
+    lastName,
+    description,
+    organization,
+    registrationDate: registrationDate && getDateFromString(registrationDate),
     verification: verification && {
       verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
       verified: verification.verified,
       verificationIssuer: verification.verificationIssuer
-    },
-    userId,
-    username
+    }
   };
 
   if (_.isEmpty(user.userId)) {
@@ -117,15 +131,28 @@ const getChannelInfoDto = (user: User): UserDto | null => {
     return null;
   }
 
-  const { firstName, username, userId, subscribedChannels, organization, lastName, registrationDate, verification } = user;
+  const {
+    firstName,
+    username,
+    userId,
+    subscribedChannels,
+    organization,
+    lastName,
+    registrationDate,
+    verification,
+    classification,
+    description
+  } = user;
 
   const userDto: UserDto = {
-    firstName,
-    lastName,
-    registrationDate: getDateStringFromDate(registrationDate),
-    subscribedChannels,
     userId,
     username,
+    classification,
+    subscribedChannels,
+    firstName,
+    lastName,
+    description,
+    registrationDate: getDateStringFromDate(registrationDate),
     verification: {
       verified: verification.verified,
       verificationDate: getDateStringFromDate(verification.verificationDate),

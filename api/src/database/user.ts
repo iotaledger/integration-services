@@ -22,44 +22,40 @@ export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId
   return MongoDbService.insertDocument(collectionName, document);
 };
 
+const getUpdateObject = (fields: { [key: string]: any }): { [key: string]: any } => {
+  const keys = Object.keys(fields);
+  const values = Object.values(fields);
+  const updateObject = values.reduce((acc, value, index) => {
+    if (value == null) {
+      return acc;
+    }
+    const key = keys[index];
+
+    return {
+      ...acc,
+      [key]: value
+    };
+  }, {});
+
+  return updateObject;
+};
+
 export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
   const query = {
     _id: user.userId
   };
 
-  const { firstName, lastName, username, organization, subscribedChannels } = user;
-  let updateObject = {};
+  const { firstName, lastName, username, organization, subscribedChannels, description, classification } = user;
 
-  if (!_.isEmpty(firstName)) {
-    updateObject = {
-      ...updateObject,
-      firstName
-    };
-  }
-  if (!_.isEmpty(lastName)) {
-    updateObject = {
-      ...updateObject,
-      lastName
-    };
-  }
-  if (!_.isEmpty(username)) {
-    updateObject = {
-      ...updateObject,
-      username
-    };
-  }
-  if (!_.isEmpty(organization)) {
-    updateObject = {
-      ...updateObject,
-      organization
-    };
-  }
-  if (subscribedChannels != null) {
-    updateObject = {
-      ...updateObject,
-      subscribedChannels
-    };
-  }
+  const updateObject = getUpdateObject({
+    firstName,
+    lastName,
+    description,
+    username: username || null, // username must not be ''
+    classification: classification || null, // username must not be ''
+    organization,
+    subscribedChannels
+  });
 
   const update = {
     $set: { ...updateObject }
