@@ -13,8 +13,8 @@ const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
 const version = CONFIG.apiVersion;
 
-function useRouter(app: express.Express, prefix: string, router: express.Router) {
-  const path = `/${version}${prefix}`;
+function useRouter(app: express.Express, prefix: string, router: express.Router, apiVersion?: string) {
+  const path = apiVersion ? `/${apiVersion}${prefix}` : prefix;
   console.log(router.stack.map((r) => Object.keys(r.route.methods)[0].toUpperCase() + '  ' + path + r.route.path));
   app.use(path, router);
 }
@@ -23,8 +23,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(loggerMiddleware);
 
-useRouter(app, '/channel-info', channelInfoRouter);
-useRouter(app, '/user-service', userRouter);
+useRouter(app, '/channel-info', channelInfoRouter, version);
+useRouter(app, '/users', userRouter, version);
 
 app.use(errorMiddleware);
 
