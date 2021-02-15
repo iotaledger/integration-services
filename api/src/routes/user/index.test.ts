@@ -1,7 +1,7 @@
 import { addUser, getUser, updateUser, deleteUser } from '.';
 import * as UserDb from '../../database/user';
 import { User, UserClassification, UserDto } from '../../models/data/user';
-import { getDateFromString } from '../../utils/date';
+import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 describe('test GET user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -26,6 +26,7 @@ describe('test GET user', () => {
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
   it('should return expected user', async () => {
+    const date = getDateFromString('2021-02-12T14:58:05+01:00');
     const user: User = {
       userId: 'my-public-key-1',
       username: 'first-user',
@@ -34,7 +35,7 @@ describe('test GET user', () => {
       firstName: 'Tom',
       lastName: 'Tomson',
       description: null,
-      registrationDate: getDateFromString('2021-02-12T14:58:05+01:00'),
+      registrationDate: date,
       organization: 'IOTA'
     };
     const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
@@ -54,7 +55,7 @@ describe('test GET user', () => {
       firstName: 'Tom',
       lastName: 'Tomson',
       description: null,
-      registrationDate: '2021-02-12T14:58:05+01:00',
+      registrationDate: getDateStringFromDate(date),
       organization: 'IOTA'
     });
   });

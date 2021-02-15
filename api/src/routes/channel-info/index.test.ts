@@ -1,7 +1,7 @@
 import { ChannelInfo, ChannelInfoDto } from '../../models/data/channel-info';
 import { getChannelInfo, getChannelInfoDto, getChannelInfoFromBody, addChannelInfo, updateChannelInfo, deleteChannelInfo } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
-import { getDateFromString } from '../../utils/date';
+import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 describe('test GET channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -27,8 +27,9 @@ describe('test GET channelInfo', () => {
   });
 
   it('should return expected channel info', async () => {
+    const date = getDateFromString('2021-02-09T00:00:00+01:00');
     const channelInfo: ChannelInfo = {
-      created: getDateFromString('2021-02-09T00:00:00+01:00'),
+      created: date,
       author: 'test-author2',
       subscribers: [],
       topics: [
@@ -52,7 +53,7 @@ describe('test GET channelInfo', () => {
     expect(sendMock).toHaveBeenCalledWith({
       author: 'test-author2',
       channelAddress: 'test-address3',
-      created: '2021-02-09T00:00:00+01:00',
+      created: getDateStringFromDate(date),
       latestMessage: null,
       subscribers: [],
       topics: [{ source: 'test', type: 'test-type' }]
@@ -338,10 +339,11 @@ describe('test getChannelInfoFromBody', () => {
 
 describe('test getChannelInfoDto', () => {
   it('should transform database object to transfer object', () => {
+    const date = new Date('2021-02-08T00:00:00+01:00');
     const validChannelInfo: ChannelInfo = {
-      created: new Date('2021-02-08T00:00:00+01:00'),
+      created: date,
       subscribers: [],
-      latestMessage: new Date('2021-02-08T00:00:00+01:00'),
+      latestMessage: date,
       author: 'test-author',
       topics: [{ source: 'test', type: 'test-type' }],
       channelAddress: 'test-address'
@@ -352,8 +354,8 @@ describe('test getChannelInfoDto', () => {
     expect(result.channelAddress).toEqual('test-address');
     expect(result.author).toEqual('test-author');
     expect(result.topics).toEqual([{ source: 'test', type: 'test-type' }]);
-    expect(result.created).toEqual('2021-02-08T00:00:00+01:00');
-    expect(result.latestMessage).toEqual('2021-02-08T00:00:00+01:00');
+    expect(result.created).toEqual(getDateStringFromDate(date));
+    expect(result.latestMessage).toEqual(getDateStringFromDate(date));
     expect(result.subscribers).toEqual([]);
   });
 });
