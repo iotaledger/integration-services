@@ -17,7 +17,7 @@ const loggerMiddleware = morgan('combined');
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
   const path = `/${version}${prefix}`;
 
-  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${path}${r.route.path}`));
+  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${path}${r?.route?.path}`));
   app.use(path, router);
 }
 
