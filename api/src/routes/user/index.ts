@@ -14,9 +14,9 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
       return;
     }
 
-    const channelInfo = await service.getUser(userId);
-    const channelInfoDto = getChannelInfoDto(channelInfo);
-    res.send(channelInfoDto);
+    const user = await service.getUser(userId);
+    const userDto = getUserDto(user);
+    res.send(userDto);
   } catch (error) {
     next(error);
   }
@@ -24,17 +24,17 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
 
 export const addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const channelInfo = getChannelInfoFromBody(req.body);
+    const user = getUserFromBody(req.body);
 
-    if (channelInfo == null || !isValidAddBody(channelInfo)) {
+    if (user == null || !isValidAddBody(user)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
-    const result = await service.addUser(channelInfo);
+    const result = await service.addUser(user);
 
     if (result.result.n === 0) {
       res.status(StatusCodes.NOT_FOUND);
-      res.send({ error: 'No channel info found to update!' });
+      res.send({ error: 'Could not add user!' });
       return;
     }
 
@@ -46,18 +46,18 @@ export const addUser = async (req: Request, res: Response, next: NextFunction): 
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const channelInfo = getChannelInfoFromBody(req.body);
+    const user = getUserFromBody(req.body);
 
-    if (channelInfo == null) {
+    if (user == null) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
 
-    const result = await service.updateUser(channelInfo);
+    const result = await service.updateUser(user);
 
     if (result.result.n === 0) {
       res.status(StatusCodes.NOT_FOUND);
-      res.send({ error: 'No channel info found to update!' });
+      res.send({ error: 'No user found to update!' });
       return;
     }
 
@@ -86,9 +86,9 @@ const isValidAddBody = (user: User): boolean => {
   return !_.isEmpty(user.userId) && !_.isEmpty(user.username) && !_.isEmpty(user.classification);
 };
 
-const getChannelInfoFromBody = (dto: UserDto): User | null => {
+const getUserFromBody = (dto: UserDto): User | null => {
   if (dto == null || _.isEmpty(dto.userId)) {
-    return null;
+    throw new Error('Error when parsing the body: userId must be provided!');
   }
   const {
     firstName,
@@ -126,7 +126,7 @@ const getChannelInfoFromBody = (dto: UserDto): User | null => {
   return user;
 };
 
-const getChannelInfoDto = (user: User): UserDto | null => {
+const getUserDto = (user: User): UserDto | null => {
   if (user == null || _.isEmpty(user.userId) || _.isEmpty(user.username)) {
     return null;
   }
@@ -153,7 +153,7 @@ const getChannelInfoDto = (user: User): UserDto | null => {
     lastName,
     description,
     registrationDate: getDateStringFromDate(registrationDate),
-    verification: {
+    verification: verification && {
       verified: verification.verified,
       verificationDate: getDateStringFromDate(verification.verificationDate),
       verificationIssuer: verification.verificationIssuer

@@ -6,12 +6,12 @@ export const getUser = async (userId: string): Promise<User> => {
   return userDb.getUser(userId);
 };
 
-export const addUser = async (channelInfo: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
-  return userDb.addUser(channelInfo);
+export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+  return userDb.addUser(user);
 };
 
-export const updateUser = async (channelInfo: User): Promise<UpdateWriteOpResult> => {
-  return userDb.updateUser(channelInfo);
+export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
+  return userDb.updateUser(user);
 };
 
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {

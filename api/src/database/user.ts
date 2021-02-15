@@ -2,7 +2,6 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { User } from '../models/data/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
-import _ from 'lodash';
 
 const collectionName = CollectionNames.users;
 
