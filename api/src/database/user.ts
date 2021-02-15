@@ -32,8 +32,8 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
     firstName,
     lastName,
     description,
-    username: username || null, // username must not be ''
-    classification: classification || null, // username must not be ''
+    username: username || undefined, // username must not be ''
+    classification: classification || undefined, // username must not be ''
     organization,
     subscribedChannels
   });
