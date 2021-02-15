@@ -7,7 +7,7 @@ import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const userId = req.params['userId'];
+    const userId = _.get(req, 'params.userId');
 
     if (_.isEmpty(userId)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -68,8 +68,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 };
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const userId = req.params['userId'];
   try {
+    const userId = _.get(req, 'params.userId');
     if (_.isEmpty(userId)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
