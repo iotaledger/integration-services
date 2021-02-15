@@ -127,8 +127,8 @@ const getUserFromBody = (dto: UserDto): User | null => {
 };
 
 const getUserDto = (user: User): UserDto | null => {
-  if (user == null || _.isEmpty(user.userId) || _.isEmpty(user.username)) {
-    return null;
+  if (user == null || _.isEmpty(user.userId)) {
+    throw new Error('Error when parsing the body: userId must be provided!');
   }
 
   const {
