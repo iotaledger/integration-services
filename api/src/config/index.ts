@@ -1,5 +1,5 @@
 import { Config } from '../models/config';
-import * as _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 export const CONFIG: Config = {
   port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
@@ -11,7 +11,7 @@ export const CONFIG: Config = {
 
 const assertConfig = (config: Config) => {
   Object.values(config).map((value, i) => {
-    if (_.isEmpty(value) && (isNaN(value) || value == null || value === '')) {
+    if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
       console.log('========================================================');
       console.error('Env var is missing or invalid:', Object.keys(config)[i]);
       console.log('========================================================');
