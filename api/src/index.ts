@@ -15,8 +15,10 @@ const version = CONFIG.apiVersion;
 const loggerMiddleware = morgan('combined');
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
-  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r.route.path}`));
-  app.use(prefix, router);
+  const path = `/${version}${prefix}`;
+
+  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${path}${r?.route?.path}`));
+  app.use(path, router);
 }
 
 app.use(express.json({ limit: '10mb' }));
