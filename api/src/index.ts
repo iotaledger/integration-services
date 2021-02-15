@@ -1,21 +1,23 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { loggerMiddleware } from './middlewares/logger';
 import { errorMiddleware } from './middlewares/error';
 import { channelInfoRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
+import morgan from 'morgan';
 
 const app = express();
 const port = CONFIG.port;
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
 const version = CONFIG.apiVersion;
+const loggerMiddleware = morgan('combined');
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
   const path = `/${version}${prefix}`;
-  console.log(router.stack.map((r) => Object.keys(r.route.methods)[0].toUpperCase() + '  ' + path + r.route.path));
+
+  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${path}${r.route.path}`));
   app.use(path, router);
 }
 

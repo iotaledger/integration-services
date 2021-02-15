@@ -7,7 +7,7 @@ import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 export const getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const channelAddress = req.params['channelAddress'];
+    const channelAddress = _.get(req, 'params.channelAddress');
 
     if (_.isEmpty(channelAddress)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -69,8 +69,8 @@ export const updateChannelInfo = async (req: Request, res: Response, next: NextF
 };
 
 export const deleteChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const channelAddress = req.params['channelAddress'];
   try {
+    const channelAddress = _.get(req, 'params.channelAddress');
     if (_.isEmpty(channelAddress)) {
       res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
@@ -85,7 +85,7 @@ export const deleteChannelInfo = async (req: Request, res: Response, next: NextF
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
   if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.author)) {
-    return null;
+    throw new Error('Error when parsing the body: channelAddress and author must be provided!');
   }
 
   const channelInfo: ChannelInfo = {
@@ -102,7 +102,7 @@ export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null 
 
 export const getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
   if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.author)) {
-    return null;
+    throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
   }
 
   const channelInfo: ChannelInfoDto = {
