@@ -1,62 +1,117 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ChannelInfoDto, ChannelInfo } from '../../models/data/channel-info';
 import * as service from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
+import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
-export const getChannelInfo = (req: Request, res: Response): void => {
-  console.log('Get user');
+export const getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const channelAddress = _.get(req, 'params.channelAddress');
 
-  const info = service.getChannelInfo();
-  res.send(info);
+    if (_.isEmpty(channelAddress)) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const channelInfo = await service.getChannelInfo(channelAddress);
+    const channelInfoDto = getChannelInfoDto(channelInfo);
+    res.send(channelInfoDto);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const addChannelInfo = (req: Request, res: Response): void => {
-  const channelInfo = getChannelInfoFromBody(req.body);
+export const addChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const channelInfo = getChannelInfoFromBody(req.body);
 
-  if (channelInfo == null) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
+    if (channelInfo == null) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const result = await service.addChannelInfo(channelInfo);
+
+    if (result.result.n === 0) {
+      res.status(StatusCodes.NOT_FOUND);
+      res.send({ error: 'Could not add channel info' });
+      return;
+    }
+
+    res.sendStatus(StatusCodes.CREATED);
+  } catch (error) {
+    next(error);
   }
-
-  service.addChannelInfo(channelInfo);
-  res.sendStatus(StatusCodes.CREATED);
 };
 
-export const updateChannelInfo = (req: Request, res: Response): void => {
-  const channelInfo = getChannelInfoFromBody(req.body);
+export const updateChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const channelInfo = getChannelInfoFromBody(req.body);
 
-  if (channelInfo == null) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
+    if (channelInfo == null) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const result = await service.updateChannelInfo(channelInfo);
+
+    if (result.result.n === 0) {
+      res.status(StatusCodes.NOT_FOUND);
+      res.send({ error: 'No channel info found to update!' });
+      return;
+    }
+
+    res.sendStatus(StatusCodes.OK);
+  } catch (error) {
+    next(error);
   }
-
-  service.updateChannelInfo(channelInfo);
-  res.sendStatus(StatusCodes.OK);
 };
 
-export const deleteChannelInfo = (req: Request, res: Response): void => {
-  const channelAddress = req.params['channelAddress'];
+export const deleteChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const channelAddress = _.get(req, 'params.channelAddress');
+    if (_.isEmpty(channelAddress)) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
 
-  if (_.isElement(channelAddress)) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
+    await service.deleteChannelInfo(channelAddress);
+    res.sendStatus(StatusCodes.OK);
+  } catch (error) {
+    next(error);
   }
-
-  service.deleteChannelInfo(channelAddress);
-  res.sendStatus(StatusCodes.OK);
 };
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
+  if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.author)) {
+    throw new Error('Error when parsing the body: channelAddress and author must be provided!');
+  }
+
   const channelInfo: ChannelInfo = {
-    created: new Date(),
+    created: dto.created ? getDateFromString(dto.created) : null,
     author: dto.author,
     subscribers: dto.subscribers || [],
     topics: dto.topics,
-    channelAddress: dto.channelAddress
+    channelAddress: dto.channelAddress,
+    latestMessage: dto.latestMessage && getDateFromString(dto.created)
   };
-  if (_.isEmpty(channelInfo.channelAddress) || _.isEmpty(channelInfo.topics) || _.isEmpty(channelInfo.author)) {
-    return null;
+
+  return channelInfo;
+};
+
+export const getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
+  if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.author)) {
+    throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
   }
+
+  const channelInfo: ChannelInfoDto = {
+    created: getDateStringFromDate(c.created),
+    author: c.author,
+    subscribers: c.subscribers || [],
+    topics: c.topics,
+    latestMessage: c.latestMessage && getDateStringFromDate(c.latestMessage),
+    channelAddress: c.channelAddress
+  };
   return channelInfo;
 };

@@ -1,9 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-export function errorMiddleware(err: Error, req: Request, res: Response, next: NextFunction): void {
-  console.error('Error:', err);
-
-  res.status(StatusCodes.CONFLICT);
+export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction): void => {
+  res.status(StatusCodes.PARTIAL_CONTENT);
   res.send({ error: err.message });
-}
+};

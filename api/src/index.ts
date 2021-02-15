@@ -1,13 +1,23 @@
 import express from 'express';
-import { loggerMiddleware } from './middlewares/logger';
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { errorMiddleware } from './middlewares/error';
 import { channelInfoRouter } from './routes/router';
+import { MongoDbService } from './services/mongodb-service';
+import { CONFIG } from './config';
+import morgan from 'morgan';
 
 const app = express();
-const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000;
+const port = CONFIG.port;
+const dbUrl = CONFIG.databaseUrl;
+const dbName = CONFIG.databaseName;
+const version = CONFIG.apiVersion;
+const loggerMiddleware = morgan('combined');
 
-function useRouter(app: express.Express, path: string, router: express.Router) {
-  console.log(router.stack.map((r) => Object.keys(r.route.methods)[0].toUpperCase() + '  ' + path + r.route.path));
+function useRouter(app: express.Express, prefix: string, router: express.Router) {
+  const path = `/${version}${prefix}`;
+
+  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${path}${r?.route?.path}`));
   app.use(path, router);
 }
 
@@ -15,10 +25,11 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(loggerMiddleware);
 
-useRouter(app, '/channel-info-service', channelInfoRouter);
+useRouter(app, '/channel-info', channelInfoRouter);
 
 app.use(errorMiddleware);
 
-app.listen(port, () => {
-  console.log(`Started API Server on port  ${port}`);
+app.listen(port, async () => {
+  console.log(`Started API Server on port ${port}`);
+  await MongoDbService.connect(dbUrl, dbName);
 });

@@ -1,27 +1,19 @@
-import { ChannelInfoDto, ChannelInfo } from '../models/data/channel-info';
+import { ChannelInfo } from '../models/data/channel-info';
+import * as ChannelInfoDb from '../database/channel-info';
+import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
-export const getChannelInfo = (): ChannelInfoDto => {
-  console.log('Get user');
-  // TODO get data from db
-  return {
-    created: new Date().toDateString(),
-    subscribers: [],
-    channelAddress: '',
-    topics: [{ source: 'device-kitchen', type: 'temperature' }],
-    latestMessage: new Date().toDateString(),
-    author: null
-  };
+export const getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
+  return ChannelInfoDb.getChannelInfo(channelAddress);
 };
 
-export const addChannelInfo = (channelInfo: ChannelInfo): void => {
-  console.log('Add user');
+export const addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+  return ChannelInfoDb.addChannelInfo(channelInfo);
 };
 
-export const updateChannelInfo = (channelInfo: ChannelInfo): void => {
-  console.log('Delete user');
+export const updateChannelInfo = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
+  return ChannelInfoDb.updateChannelInfo(channelInfo);
 };
 
-export const deleteChannelInfo = (channelAddress: string): void => {
-  console.log('Delete user');
-  throw new Error('YO DIS VRONG');
+export const deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
+  return ChannelInfoDb.deleteChannelInfo(channelAddress);
 };
