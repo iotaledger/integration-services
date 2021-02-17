@@ -17,8 +17,8 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
     authorId: regex(authorId),
     created: created && { $gte: created },
     latestMessage: latestMessage && { $gte: latestMessage },
-    topicSource,
-    topicType
+    'topics.source': topicSource,
+    'topics.type': topicType
   };
   const plainQuery = MongoDbService.getPlainObject(query);
   console.log('QQQ', plainQuery);
