@@ -61,14 +61,14 @@ export class MongoDbService {
   }
 
   /**
-   * Get update object for fields having a value not null and not undefined.
+   * Get plain object for fields having a value not null and not undefined.
    *
    * @static
    * @param {{ [key: string]: any }} fields Map of fields. For instance: { "height": 10, "length": 20, "unit": "metres", "depth": undefined }
    * @return {*}  {{ [key: string]: any }} Map of fields with no fields having null or undefined. For instance: { "height": 10, "length": 20, "unit": "metres" }
    * @memberof MongoDbService
    */
-  static getUpdateObject(fields: { [key: string]: any }): { [key: string]: any } {
+  static getPlainObject(fields: { [key: string]: any }): { [key: string]: any } {
     const keys = Object.keys(fields);
     const values = Object.values(fields);
     const updateObject = values.reduce((acc, value, index) => {

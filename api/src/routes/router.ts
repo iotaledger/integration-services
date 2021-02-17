@@ -1,9 +1,10 @@
-import { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo } from './channel-info';
+import { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } from './channel-info';
 import { getUser, addUser, updateUser, deleteUser } from './user';
 import { Router } from 'express';
 
 export const channelInfoRouter = Router();
 channelInfoRouter.get('/channel/:channelAddress', getChannelInfo);
+channelInfoRouter.get('/search', searchChannelInfo);
 channelInfoRouter.post('/channel', addChannelInfo);
 channelInfoRouter.put('/channel', updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);

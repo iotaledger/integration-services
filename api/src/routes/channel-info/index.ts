@@ -1,9 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfoDto, ChannelInfo } from '../../models/data/channel-info';
+import { ChannelInfoDto, ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
 import * as service from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+
+export const searchChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const channelInfoSearch = getChannelInfoSearch(req);
+    const channelInfos = await service.searchChannelInfo(channelInfoSearch);
+    const channelInfosDto = channelInfos.map((c) => getChannelInfoDto(c));
+    res.send(channelInfosDto);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -84,14 +95,14 @@ export const deleteChannelInfo = async (req: Request, res: Response, next: NextF
 };
 
 export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
-  if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.author)) {
+  if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.authorId)) {
     throw new Error('Error when parsing the body: channelAddress and author must be provided!');
   }
 
   const channelInfo: ChannelInfo = {
     created: dto.created ? getDateFromString(dto.created) : null,
-    author: dto.author,
-    subscribers: dto.subscribers || [],
+    authorId: dto.authorId,
+    subscriberIds: dto.subscriberIds || [],
     topics: dto.topics,
     channelAddress: dto.channelAddress,
     latestMessage: dto.latestMessage && getDateFromString(dto.created)
@@ -101,17 +112,41 @@ export const getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null 
 };
 
 export const getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
-  if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.author)) {
+  if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.authorId)) {
     throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
   }
 
   const channelInfo: ChannelInfoDto = {
     created: getDateStringFromDate(c.created),
-    author: c.author,
-    subscribers: c.subscribers || [],
+    authorId: c.authorId,
+    subscriberIds: c.subscriberIds || [],
     topics: c.topics,
     latestMessage: c.latestMessage && getDateStringFromDate(c.latestMessage),
     channelAddress: c.channelAddress
   };
   return channelInfo;
+};
+
+const getChannelInfoSearch = (req: Request): ChannelInfoSearch => {
+  const authorId = <string>req.query['author-id'] || undefined;
+  const author = <string>req.query.author || undefined;
+  const topicType = <string>req.query['topic-type'] || undefined;
+  const topicSource = <string>req.query['topic-source'] || undefined;
+  const created = <string>req.query.created || undefined;
+  const latestMessage = <string>req.query['latest-message'] || undefined;
+  const limitParam = parseInt(<string>req.query.limit, 10);
+  const indexParam = parseInt(<string>req.query.index, 10);
+  const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
+  const index = isNaN(indexParam) ? undefined : indexParam;
+
+  return {
+    author,
+    authorId,
+    topicType,
+    topicSource,
+    limit,
+    index,
+    created: getDateFromString(created),
+    latestMessage: getDateFromString(latestMessage)
+  };
 };

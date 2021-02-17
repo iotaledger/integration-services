@@ -1,7 +1,7 @@
 export interface ChannelInfoDto {
   channelAddress: string;
-  author: any;
-  subscribers?: any[];
+  authorId: string;
+  subscriberIds?: string[];
   topics: Topic[];
   created?: string;
   latestMessage?: string;
@@ -9,11 +9,22 @@ export interface ChannelInfoDto {
 
 export interface ChannelInfo {
   channelAddress: string;
-  author: any;
-  subscribers: any[];
+  authorId: string;
+  subscriberIds: string[];
   topics: Topic[];
   created: Date | null;
   latestMessage?: Date;
+}
+
+export interface ChannelInfoSearch {
+  authorId?: string;
+  author?: string;
+  topicType?: string;
+  topicSource?: string;
+  created?: Date;
+  latestMessage?: Date;
+  limit?: number;
+  index?: number;
 }
 
 export interface Topic {

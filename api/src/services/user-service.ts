@@ -6,6 +6,10 @@ export const getUser = async (userId: string): Promise<User> => {
   return userDb.getUser(userId);
 };
 
+export const getUserByUsername = async (username: string): Promise<User> => {
+  return userDb.getUserByUsername(username);
+};
+
 export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   return userDb.addUser(user);
 };

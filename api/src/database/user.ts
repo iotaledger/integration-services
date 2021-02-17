@@ -10,6 +10,11 @@ export const getUser = async (userId: string): Promise<User> => {
   return await MongoDbService.getDocument<User>(collectionName, query);
 };
 
+export const getUserByUsername = async (username: string): Promise<User> => {
+  const query = { username };
+  return await MongoDbService.getDocument<User>(collectionName, query);
+};
+
 export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   delete user.verification;
   const document = {
@@ -28,7 +33,7 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
 
   const { firstName, lastName, username, organization, subscribedChannels, description, classification } = user;
 
-  const updateObject = MongoDbService.getUpdateObject({
+  const updateObject = MongoDbService.getPlainObject({
     firstName,
     lastName,
     description,
