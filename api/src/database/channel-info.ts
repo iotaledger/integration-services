@@ -12,18 +12,19 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
   const regex = (text: string) => text && new RegExp(text, 'i');
-  const { authorId, created, latestMessage, topicType, topicSource } = channelInfoSearch;
+  const { authorId, created, latestMessage, topicType, topicSource, limit, index } = channelInfoSearch;
   const query = {
     authorId: regex(authorId),
     created: created && { $gte: created },
     latestMessage: latestMessage && { $gte: latestMessage },
-    'topics.source': topicSource,
-    'topics.type': topicType
+    'topics.source': regex(topicSource),
+    'topics.type': regex(topicType)
   };
+  const skip = index > 0 ? (index - 1) * limit : 0;
   const plainQuery = MongoDbService.getPlainObject(query);
-  console.log('QQQ', plainQuery);
+  const options = limit != null ? { limit, skip } : undefined;
 
-  return await MongoDbService.getDocuments<ChannelInfo>(collectionName, plainQuery);
+  return await MongoDbService.getDocuments<ChannelInfo>(collectionName, plainQuery, options);
 };
 
 export const addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
