@@ -1,9 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserDto, User } from '../../models/data/user';
+import { UserDto, User, UserSearch, UserClassification } from '../../models/data/user';
 import * as service from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+
+export const searchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userSearch = getUserSearch(req);
+    const users = await service.searchUser(userSearch);
+    const usersDto = users.map((user) => getUserDto(user));
+    res.send(usersDto);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -161,4 +172,29 @@ const getUserDto = (user: User): UserDto | null => {
     organization
   };
   return userDto;
+};
+
+const getUserSearch = (req: Request): UserSearch => {
+  const classification = <string>req.query.classification || undefined;
+  const organization = <string>req.query.organization || undefined;
+  const username = <string>req.query.username || undefined;
+  const verifiedParam = <string>req.query.verified || undefined;
+  const registrationDate = <string>req.query['registration-date'] || undefined;
+  const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
+  const limitParam = parseInt(<string>req.query.limit, 10);
+  const indexParam = parseInt(<string>req.query.index, 10);
+  const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
+  const index = isNaN(indexParam) ? undefined : indexParam;
+
+  return {
+    classification: <UserClassification>classification,
+    index,
+    limit,
+    organization,
+    verified,
+    username,
+    registrationDate: getDateFromString(registrationDate)
+    // TODO!!
+    // subscribedChannels
+  };
 };

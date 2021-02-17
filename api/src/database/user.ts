@@ -1,9 +1,27 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { User } from '../models/data/user';
+import { User, UserSearch } from '../models/data/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.users;
+
+export const searchUser = async (userSearch: UserSearch): Promise<User[]> => {
+  const regex = (text: string) => text && new RegExp(text, 'i');
+  const { classification, organization, subscribedChannels, username, verified, limit, index, registrationDate } = userSearch;
+  const query = {
+    registrationDate: registrationDate && { $gte: registrationDate },
+    classification: regex(classification),
+    organization: regex(organization),
+    subscribedChannels,
+    username: regex(username),
+    'verification.verified': verified
+  };
+  const plainQuery = MongoDbService.getPlainObject(query);
+  const skip = index > 0 ? (index - 1) * limit : 0;
+  const options = limit != null ? { limit, skip } : undefined;
+
+  return await MongoDbService.getDocuments<User>(collectionName, plainQuery, options);
+};
 
 export const getUser = async (userId: string): Promise<User> => {
   const query = { _id: userId };

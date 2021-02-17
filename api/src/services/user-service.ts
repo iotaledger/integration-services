@@ -1,6 +1,10 @@
-import { User } from '../models/data/user';
+import { User, UserSearch } from '../models/data/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+
+export const searchUser = async (userSearch: UserSearch): Promise<User[]> => {
+  return userDb.searchUser(userSearch);
+};
 
 export const getUser = async (userId: string): Promise<User> => {
   return userDb.getUser(userId);

@@ -20,8 +20,8 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
     'topics.source': regex(topicSource),
     'topics.type': regex(topicType)
   };
-  const skip = index > 0 ? (index - 1) * limit : 0;
   const plainQuery = MongoDbService.getPlainObject(query);
+  const skip = index > 0 ? (index - 1) * limit : 0;
   const options = limit != null ? { limit, skip } : undefined;
 
   return await MongoDbService.getDocuments<ChannelInfo>(collectionName, plainQuery, options);

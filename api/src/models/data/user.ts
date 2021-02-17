@@ -36,6 +36,17 @@ export interface User {
   description?: string;
 }
 
+export interface UserSearch {
+  username?: string;
+  organization?: string;
+  subscribedChannels?: string[];
+  verified?: boolean;
+  registrationDate?: Date;
+  classification?: UserClassification;
+  limit?: number;
+  index?: number;
+}
+
 export interface Verification {
   verified: boolean;
   verificationIssuer?: string; // public-key
