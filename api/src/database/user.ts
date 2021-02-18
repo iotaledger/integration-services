@@ -5,20 +5,21 @@ import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult,
 
 const collectionName = CollectionNames.users;
 
-export const searchUser = async (userSearch: UserSearch): Promise<User[]> => {
+export const searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
   const regex = (text: string) => text && new RegExp(text, 'i');
-  const { classification, organization, subscribedChannels, username, verified, limit, index, registrationDate } = userSearch;
+  const { classification, organization, subscribedChannelIds: subscribedChannels, username, verified, index, registrationDate } = userSearch;
+  const limit = userSearch.limit != null ? userSearch.limit : 100;
   const query = {
     registrationDate: registrationDate && { $gte: registrationDate },
     classification: regex(classification),
     organization: regex(organization),
-    subscribedChannels,
     username: regex(username),
-    'verification.verified': verified
+    'verification.verified': verified,
+    subscribedChannels: subscribedChannels && { $in: subscribedChannels }
   };
   const plainQuery = MongoDbService.getPlainObject(query);
   const skip = index > 0 ? (index - 1) * limit : 0;
-  const options = limit != null ? { limit, skip } : undefined;
+  const options = { limit, skip };
 
   return await MongoDbService.getDocuments<User>(collectionName, plainQuery, options);
 };
@@ -49,7 +50,7 @@ export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
     _id: user.userId
   };
 
-  const { firstName, lastName, username, organization, subscribedChannels, description, classification } = user;
+  const { firstName, lastName, username, organization, subscribedChannelIds: subscribedChannels, description, classification } = user;
 
   const updateObject = MongoDbService.getPlainObject({
     firstName,

@@ -29,7 +29,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   organization?: string;
-  subscribedChannels: string[];
+  subscribedChannelIds: string[];
   verification?: Verification;
   registrationDate?: Date;
   classification: UserClassification;
@@ -39,7 +39,7 @@ export interface User {
 export interface UserSearch {
   username?: string;
   organization?: string;
-  subscribedChannels?: string[];
+  subscribedChannelIds?: string[];
   verified?: boolean;
   registrationDate?: Date;
   classification?: UserClassification;

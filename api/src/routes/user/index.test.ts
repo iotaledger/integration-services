@@ -1,7 +1,53 @@
-import { addUser, getUser, updateUser, deleteUser } from '.';
+import { addUser, getUser, updateUser, deleteUser, searchUsers } from '.';
 import * as UserDb from '../../database/user';
-import { User, UserClassification, UserDto } from '../../models/data/user';
+import { User, UserClassification, UserDto, UserSearch } from '../../models/data/user';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+
+describe('test Search user', () => {
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  beforeEach(() => {
+    sendMock = jest.fn();
+    sendStatusMock = jest.fn();
+    nextMock = jest.fn();
+
+    res = {
+      send: sendMock,
+      sendStatus: sendStatusMock
+    };
+  });
+
+  it('should call searchUser with expected user search', async () => {
+    const expectedUserSearch: UserSearch = {
+      classification: UserClassification.human,
+      index: 1,
+      limit: 1,
+      username: 'charlie',
+      verified: true,
+      organization: 'IOTA',
+      registrationDate: getDateFromString('2021-02-12T14:58:05+01:00'),
+      subscribedChannelIds: ['test-address', 'test-address2']
+    };
+    const searchUserSpy = spyOn(UserDb, 'searchUsers').and.returnValue([]);
+    const req: any = {
+      params: {},
+      query: {
+        classification: 'human',
+        'registration-date': '2021-02-12T14:58:05+01:00',
+        verified: 'true',
+        limit: '1',
+        index: '1',
+        username: 'charlie',
+        organization: 'IOTA',
+        'subscribed-channel-ids': ['test-address', 'test-address2']
+      },
+      body: null
+    };
+
+    await searchUsers(req, res, nextMock);
+
+    expect(searchUserSpy).toHaveBeenCalledWith(expectedUserSearch);
+  });
+});
 
 describe('test GET user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -31,7 +77,7 @@ describe('test GET user', () => {
       userId: 'my-public-key-1',
       username: 'first-user',
       classification: UserClassification.human,
-      subscribedChannels: [],
+      subscribedChannelIds: [],
       firstName: 'Tom',
       lastName: 'Tomson',
       description: null,

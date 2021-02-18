@@ -1,7 +1,64 @@
-import { ChannelInfo, ChannelInfoDto } from '../../models/data/channel-info';
-import { getChannelInfo, getChannelInfoDto, getChannelInfoFromBody, addChannelInfo, updateChannelInfo, deleteChannelInfo } from '.';
+import { ChannelInfo, ChannelInfoDto, ChannelInfoSearch } from '../../models/data/channel-info';
+import {
+  getChannelInfo,
+  getChannelInfoDto,
+  getChannelInfoFromBody,
+  addChannelInfo,
+  updateChannelInfo,
+  deleteChannelInfo,
+  searchChannelInfo
+} from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
+import * as UserService from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+
+describe('test Search user', () => {
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  beforeEach(() => {
+    sendMock = jest.fn();
+    sendStatusMock = jest.fn();
+    nextMock = jest.fn();
+
+    res = {
+      send: sendMock,
+      sendStatus: sendStatusMock
+    };
+  });
+
+  it('should call searchChannelInfo with expected search', async () => {
+    const expectedChannelInfoSearch: ChannelInfoSearch = {
+      author: 'charliebrown',
+      authorId: '1234-5678-9',
+      topicType: 'test-topic',
+      topicSource: 'test-source',
+      limit: 1,
+      index: 1,
+      created: getDateFromString('2021-02-12T14:58:05+01:00'),
+      latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
+    };
+    const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
+    const getUserSpy = spyOn(UserService, 'getUser').and.returnValue({ userId: '1234-5678-9' });
+
+    const req: any = {
+      params: {},
+      query: {
+        author: 'charliebrown',
+        'topic-type': 'test-topic',
+        'topic-source': 'test-source',
+        limit: '1',
+        index: '1',
+        created: '2021-02-12T14:58:05+01:00',
+        'latest-message': '2021-02-12T14:58:05+01:00'
+      },
+      body: null
+    };
+
+    await searchChannelInfo(req, res, nextMock);
+
+    expect(getUserSpy).toHaveBeenCalledWith('charliebrown');
+    expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
+  });
+});
 
 describe('test GET channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;

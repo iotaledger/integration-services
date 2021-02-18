@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
-export const searchUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userSearch = getUserSearch(req);
-    const users = await service.searchUser(userSearch);
+    const users = await service.searchUsers(userSearch);
     const usersDto = users.map((user) => getUserDto(user));
     res.send(usersDto);
   } catch (error) {
@@ -118,7 +118,7 @@ const getUserFromBody = (dto: UserDto): User | null => {
     userId,
     username,
     classification,
-    subscribedChannels,
+    subscribedChannelIds: subscribedChannels,
     firstName,
     lastName,
     description,
@@ -146,7 +146,7 @@ const getUserDto = (user: User): UserDto | null => {
     firstName,
     username,
     userId,
-    subscribedChannels,
+    subscribedChannelIds: subscribedChannels,
     organization,
     lastName,
     registrationDate,
@@ -181,6 +181,11 @@ const getUserSearch = (req: Request): UserSearch => {
   const verifiedParam = <string>req.query.verified || undefined;
   const registrationDate = <string>req.query['registration-date'] || undefined;
   const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
+  let subscribedChannels: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
+  if (subscribedChannels != null && !Array.isArray(subscribedChannels)) {
+    // we have a string instead of string array!
+    subscribedChannels = [subscribedChannels];
+  }
   const limitParam = parseInt(<string>req.query.limit, 10);
   const indexParam = parseInt(<string>req.query.index, 10);
   const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
@@ -193,8 +198,7 @@ const getUserSearch = (req: Request): UserSearch => {
     organization,
     verified,
     username,
-    registrationDate: getDateFromString(registrationDate)
-    // TODO!!
-    // subscribedChannels
+    registrationDate: getDateFromString(registrationDate),
+    subscribedChannelIds: subscribedChannels
   };
 };
