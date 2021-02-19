@@ -127,7 +127,7 @@ const getUserFromBody = (dto: UserDto): User | null => {
     verification: verification && {
       verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
       verified: verification.verified,
-      verificationIssuer: verification.verificationIssuer
+      verificationIssuerId: verification.verificationIssuerId
     }
   };
 
@@ -167,7 +167,7 @@ const getUserDto = (user: User): UserDto | null => {
     verification: verification && {
       verified: verification.verified,
       verificationDate: getDateStringFromDate(verification.verificationDate),
-      verificationIssuer: verification.verificationIssuer
+      verificationIssuerId: verification.verificationIssuerId
     },
     organization
   };

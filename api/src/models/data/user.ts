@@ -19,7 +19,7 @@ export const enum UserClassification {
 
 export interface VerificationDto {
   verified: boolean;
-  verificationIssuer?: string; // public-key
+  verificationIssuerId?: string; // public-key
   verificationDate?: string;
 }
 
@@ -49,6 +49,6 @@ export interface UserSearch {
 
 export interface Verification {
   verified: boolean;
-  verificationIssuer?: string; // public-key
+  verificationIssuerId?: string; // public-key
   verificationDate?: Date;
 }
