@@ -105,6 +105,12 @@ const getUserFromBody = (dto: UserDto): User | null => {
     description
   } = dto;
 
+  if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
+    throw new Error(
+      `No valid classification provided, it must be ${UserClassification.human}, ${UserClassification.device} or ${UserClassification.api}!`
+    );
+  }
+
   const user: User = {
     userId,
     username,
@@ -122,9 +128,6 @@ const getUserFromBody = (dto: UserDto): User | null => {
     }
   };
 
-  if (_.isEmpty(user.userId)) {
-    return null;
-  }
   return user;
 };
 

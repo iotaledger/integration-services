@@ -8,7 +8,7 @@ const VerificationSchema = Type.Object({
 
 export const UserSchema = Type.Object({
   userId: Type.String(), // public-key
-  username: Type.String(),
+  username: Type.Optional(Type.String()),
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
   organization: Type.Optional(Type.String()),

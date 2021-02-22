@@ -12,12 +12,12 @@ export const channelInfoRouter = Router();
 channelInfoRouter.get('/channel/:channelAddress', getChannelInfo);
 channelInfoRouter.get('/search', searchChannelInfo);
 channelInfoRouter.post('/channel', validate({ body: ChannelInfoSchema }), addChannelInfo);
-channelInfoRouter.put('/channel', updateChannelInfo);
+channelInfoRouter.put('/channel', validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
 export const userRouter = Router();
 userRouter.get('/user/:userId', getUser);
 userRouter.get('/search', searchUsers);
 userRouter.post('/user', validate({ body: UserSchema }), addUser);
-userRouter.put('/user', updateUser);
+userRouter.put('/user', validate({ body: UserSchema }), updateUser);
 userRouter.delete('/user/:userId', deleteUser);
