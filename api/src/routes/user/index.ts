@@ -36,11 +36,6 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
 export const addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const user = getUserFromBody(req.body);
-
-    if (user == null || !isValidAddBody(user)) {
-      res.sendStatus(StatusCodes.BAD_REQUEST);
-      return;
-    }
     const result = await service.addUser(user);
 
     if (result.result.n === 0) {
@@ -93,10 +88,6 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-const isValidAddBody = (user: User): boolean => {
-  return !_.isEmpty(user.userId) && !_.isEmpty(user.username) && !_.isEmpty(user.classification);
-};
-
 const getUserFromBody = (dto: UserDto): User | null => {
   if (dto == null || _.isEmpty(dto.userId)) {
     throw new Error('Error when parsing the body: userId must be provided!');
@@ -104,7 +95,7 @@ const getUserFromBody = (dto: UserDto): User | null => {
   const {
     firstName,
     lastName,
-    subscribedChannels,
+    subscribedChannelIds,
     userId,
     username,
     verification,
@@ -117,8 +108,8 @@ const getUserFromBody = (dto: UserDto): User | null => {
   const user: User = {
     userId,
     username,
-    classification,
-    subscribedChannelIds: subscribedChannels,
+    classification: classification as UserClassification,
+    subscribedChannelIds,
     firstName,
     lastName,
     description,
@@ -146,7 +137,7 @@ const getUserDto = (user: User): UserDto | null => {
     firstName,
     username,
     userId,
-    subscribedChannelIds: subscribedChannels,
+    subscribedChannelIds,
     organization,
     lastName,
     registrationDate,
@@ -159,7 +150,7 @@ const getUserDto = (user: User): UserDto | null => {
     userId,
     username,
     classification,
-    subscribedChannels,
+    subscribedChannelIds,
     firstName,
     lastName,
     description,
