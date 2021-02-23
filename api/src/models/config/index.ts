@@ -4,4 +4,11 @@ export interface Config {
   nodeUrl: string;
   databaseUrl: string;
   databaseName: string;
+  identityConfig: IdentityConfig;
+}
+
+export interface IdentityConfig {
+  network: string;
+  node: string;
+  explorer: string;
 }

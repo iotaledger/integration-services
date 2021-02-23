@@ -1,4 +1,4 @@
-import { addUser, getUser, updateUser, deleteUser, searchUsers } from '.';
+import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
 import { User, UserClassification, UserDto, UserSearch } from '../../models/data/user';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
@@ -42,8 +42,8 @@ describe('test Search user', () => {
       },
       body: null
     };
-
-    await searchUsers(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.searchUsers(req, res, nextMock);
 
     expect(searchUserSpy).toHaveBeenCalledWith(expectedUserSearch);
   });
@@ -67,8 +67,9 @@ describe('test GET user', () => {
       params: {},
       body: null
     };
+    const userRoutes = new UserRoutes();
 
-    await getUser(req, res, nextMock);
+    await userRoutes.getUser(req, res, nextMock);
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
   it('should return expected user', async () => {
@@ -89,8 +90,9 @@ describe('test GET user', () => {
       params: { userId: 'my-public-key-1' },
       body: null
     };
+    const userRoutes = new UserRoutes();
 
-    await getUser(req, res, nextMock);
+    await userRoutes.getUser(req, res, nextMock);
 
     expect(getUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).toHaveBeenCalledWith({
@@ -114,8 +116,9 @@ describe('test GET user', () => {
       params: { userId: 'my-public-key-1' },
       body: null
     };
+    const userRoutes = new UserRoutes();
 
-    await getUser(req, res, nextMock);
+    await userRoutes.getUser(req, res, nextMock);
 
     expect(getUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -152,7 +155,9 @@ describe('test POST user', () => {
       params: {},
       body: null
     };
-    await addUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+
+    await userRoutes.addUser(req, res, nextMock);
     expect(nextMock).toHaveBeenCalled();
   });
 
@@ -169,8 +174,9 @@ describe('test POST user', () => {
       status: jest.fn(),
       send: jest.fn()
     };
+    const userRoutes = new UserRoutes();
 
-    await addUser(req, resUpdate, nextMock);
+    await userRoutes.addUser(req, resUpdate, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
     expect(resUpdate.send).toHaveBeenCalledWith({ error: 'Could not add user!' });
@@ -184,7 +190,9 @@ describe('test POST user', () => {
       body: validBody
     };
 
-    await addUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+
+    await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(201);
@@ -198,7 +206,9 @@ describe('test POST user', () => {
       params: {},
       body: validBody
     };
-    await addUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+
+    await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -235,7 +245,9 @@ describe('test PUT user', () => {
       params: {},
       body: null
     };
-    await updateUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+
+    await userRoutes.updateUser(req, res, nextMock);
     expect(nextMock).toHaveBeenCalled();
   });
 
@@ -253,7 +265,8 @@ describe('test PUT user', () => {
       send: jest.fn()
     };
 
-    await updateUser(req, resUpdate, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.updateUser(req, resUpdate, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
     expect(resUpdate.send).toHaveBeenCalledWith({ error: 'No user found to update!' });
@@ -268,7 +281,8 @@ describe('test PUT user', () => {
       body: validBody
     };
 
-    await updateUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.updateUser(req, res, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(200);
@@ -282,7 +296,8 @@ describe('test PUT user', () => {
       params: {},
       body: validBody
     };
-    await updateUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.updateUser(req, res, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -309,7 +324,8 @@ describe('test DELETE user', () => {
       params: {},
       body: null
     };
-    await deleteUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.deleteUser(req, res, nextMock);
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
 
@@ -321,7 +337,8 @@ describe('test DELETE user', () => {
       body: null
     };
 
-    await deleteUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.deleteUser(req, res, nextMock);
 
     expect(deleteUserSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(200);
@@ -335,7 +352,8 @@ describe('test DELETE user', () => {
       params: { userId: 'my-public-key-1' },
       body: null
     };
-    await deleteUser(req, res, nextMock);
+    const userRoutes = new UserRoutes();
+    await userRoutes.deleteUser(req, res, nextMock);
 
     expect(deleteUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
