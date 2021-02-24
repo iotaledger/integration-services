@@ -11,18 +11,20 @@ export class UserRoutes {
     this.userService = userService;
   }
 
-  async searchUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+  searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userSearch = this.getUserSearch(req);
       const users = await this.userService.searchUsers(userSearch);
+      console.log('USER ', users);
+
       const usersDto = users.map((user) => this.getUserDto(user));
       res.send(usersDto);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+  getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = _.get(req, 'params.userId');
 
@@ -37,9 +39,9 @@ export class UserRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async addUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+  addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = this.getUserFromBody(req.body);
       const result = await this.userService.addUser(user);
@@ -54,9 +56,9 @@ export class UserRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+  updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = this.getUserFromBody(req.body);
 
@@ -77,9 +79,9 @@ export class UserRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+  deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = _.get(req, 'params.userId');
       if (_.isEmpty(userId)) {
@@ -92,9 +94,9 @@ export class UserRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  getUserFromBody(dto: UserDto): User | null {
+  getUserFromBody = (dto: UserDto): User | null => {
     if (dto == null || _.isEmpty(dto.userId)) {
       throw new Error('Error when parsing the body: userId must be provided!');
     }
@@ -135,9 +137,9 @@ export class UserRoutes {
     };
 
     return user;
-  }
+  };
 
-  getUserDto(user: User): UserDto | null {
+  getUserDto = (user: User): UserDto | null => {
     if (user == null || _.isEmpty(user.userId)) {
       throw new Error('Error when parsing the body: userId must be provided!');
     }
@@ -172,9 +174,9 @@ export class UserRoutes {
       organization
     };
     return userDto;
-  }
+  };
 
-  getUserSearch(req: Request): UserSearch {
+  getUserSearch = (req: Request): UserSearch => {
     const classification = <string>req.query.classification || undefined;
     const organization = <string>req.query.organization || undefined;
     const username = <string>req.query.username || undefined;
@@ -201,5 +203,5 @@ export class UserRoutes {
       registrationDate: getDateFromString(registrationDate),
       subscribedChannelIds: subscribedChannels
     };
-  }
+  };
 }

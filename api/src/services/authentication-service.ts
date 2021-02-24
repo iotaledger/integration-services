@@ -30,7 +30,7 @@ export class AuthenticationService {
     return AuthenticationService.instance;
   }
 
-  async createIdentity(): Promise<IdentityResponse> {
+  createIdentity = async (): Promise<IdentityResponse> => {
     // TODO add user info
     const user = new Document(KeyType.Ed25519) as IdentityDocument;
     user.doc.sign(user.key);
@@ -42,5 +42,5 @@ export class AuthenticationService {
       explorerUrl: `${this.config.explorer}/${txHash}`,
       txHash
     };
-  }
+  };
 }

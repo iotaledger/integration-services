@@ -11,7 +11,7 @@ export class ChannelInfoRoutes {
     this.channelInfoService = channelInfoService;
   }
 
-  async searchChannelInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  searchChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelInfoSearch = this.getChannelInfoSearch(req);
       const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
@@ -20,9 +20,9 @@ export class ChannelInfoRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getChannelInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelAddress = _.get(req, 'params.channelAddress');
 
@@ -37,9 +37,9 @@ export class ChannelInfoRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async addChannelInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  addChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelInfo = this.getChannelInfoFromBody(req.body);
 
@@ -60,9 +60,9 @@ export class ChannelInfoRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async updateChannelInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  updateChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelInfo = this.getChannelInfoFromBody(req.body);
 
@@ -83,9 +83,9 @@ export class ChannelInfoRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteChannelInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  deleteChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelAddress = _.get(req, 'params.channelAddress');
       if (_.isEmpty(channelAddress)) {
@@ -98,9 +98,9 @@ export class ChannelInfoRoutes {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  getChannelInfoFromBody(dto: ChannelInfoDto): ChannelInfo | null {
+  getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
     if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.authorId)) {
       throw new Error('Error when parsing the body: channelAddress and author must be provided!');
     }
@@ -115,9 +115,9 @@ export class ChannelInfoRoutes {
     };
 
     return channelInfo;
-  }
+  };
 
-  getChannelInfoDto(c: ChannelInfo): ChannelInfoDto | null {
+  getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
     if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.authorId)) {
       throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
     }
@@ -131,9 +131,9 @@ export class ChannelInfoRoutes {
       channelAddress: c.channelAddress
     };
     return channelInfo;
-  }
+  };
 
-  getChannelInfoSearch(req: Request): ChannelInfoSearch {
+  getChannelInfoSearch = (req: Request): ChannelInfoSearch => {
     const authorId = <string>req.query['author-id'] || undefined;
     const author = <string>req.query.author || undefined;
     const topicType = <string>req.query['topic-type'] || undefined;
@@ -155,5 +155,5 @@ export class ChannelInfoRoutes {
       created: getDateFromString(created),
       latestMessage: getDateFromString(latestMessage)
     };
-  }
+  };
 }

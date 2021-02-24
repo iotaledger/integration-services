@@ -9,11 +9,11 @@ export class ChannelInfoService {
     this.userService = userService;
   }
 
-  async getChannelInfo(channelAddress: string): Promise<ChannelInfo> {
+  getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
     return ChannelInfoDb.getChannelInfo(channelAddress);
-  }
+  };
 
-  async searchChannelInfo(channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> {
+  searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
     if (channelInfoSearch.author && !channelInfoSearch.authorId) {
       const authorId = await (await this.userService.getUser(channelInfoSearch.author))?.userId;
       const c = {
@@ -23,17 +23,17 @@ export class ChannelInfoService {
       return ChannelInfoDb.searchChannelInfo(c);
     }
     return ChannelInfoDb.searchChannelInfo(channelInfoSearch);
-  }
+  };
 
-  async addChannelInfo(channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
+  addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
     return ChannelInfoDb.addChannelInfo(channelInfo);
-  }
+  };
 
-  async updateChannelInfo(channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> {
+  updateChannelInfo = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
     return ChannelInfoDb.updateChannelInfo(channelInfo);
-  }
+  };
 
-  async deleteChannelInfo(channelAddress: string): Promise<DeleteWriteOpResultObject> {
+  deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
     return ChannelInfoDb.deleteChannelInfo(channelAddress);
-  }
+  };
 }
