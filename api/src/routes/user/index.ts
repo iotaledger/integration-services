@@ -1,15 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserDto, User, UserSearch, UserClassification } from '../../models/data/user';
-import * as service from '../../services/user-service';
+import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 export class UserRoutes {
+  private readonly userService: UserService;
+  constructor(userService: UserService) {
+    this.userService = userService;
+  }
+
   async searchUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userSearch = this.getUserSearch(req);
-      const users = await service.searchUsers(userSearch);
+      const users = await this.userService.searchUsers(userSearch);
       const usersDto = users.map((user) => this.getUserDto(user));
       res.send(usersDto);
     } catch (error) {
@@ -26,7 +31,7 @@ export class UserRoutes {
         return;
       }
 
-      const user = await service.getUser(userId);
+      const user = await this.userService.getUser(userId);
       const userDto = this.getUserDto(user);
       res.send(userDto);
     } catch (error) {
@@ -37,7 +42,7 @@ export class UserRoutes {
   async addUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = this.getUserFromBody(req.body);
-      const result = await service.addUser(user);
+      const result = await this.userService.addUser(user);
 
       if (result.result.n === 0) {
         res.status(StatusCodes.NOT_FOUND);
@@ -60,7 +65,7 @@ export class UserRoutes {
         return;
       }
 
-      const result = await service.updateUser(user);
+      const result = await this.userService.updateUser(user);
 
       if (result.result.n === 0) {
         res.status(StatusCodes.NOT_FOUND);
@@ -82,7 +87,7 @@ export class UserRoutes {
         return;
       }
 
-      await service.deleteUser(userId);
+      await this.userService.deleteUser(userId);
       res.sendStatus(StatusCodes.OK);
     } catch (error) {
       next(error);

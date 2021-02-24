@@ -1,15 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import { ChannelInfoDto, ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
-import * as service from '../../services/channel-info-service';
+import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 export class ChannelInfoRoutes {
+  private readonly channelInfoService: ChannelInfoService;
+  constructor(channelInfoService: ChannelInfoService) {
+    this.channelInfoService = channelInfoService;
+  }
+
   async searchChannelInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const channelInfoSearch = this.getChannelInfoSearch(req);
-      const channelInfos = await service.searchChannelInfo(channelInfoSearch);
+      const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
       const channelInfosDto = channelInfos.map((c) => this.getChannelInfoDto(c));
       res.send(channelInfosDto);
     } catch (error) {
@@ -26,7 +31,7 @@ export class ChannelInfoRoutes {
         return;
       }
 
-      const channelInfo = await service.getChannelInfo(channelAddress);
+      const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
       const channelInfoDto = this.getChannelInfoDto(channelInfo);
       res.send(channelInfoDto);
     } catch (error) {
@@ -43,7 +48,7 @@ export class ChannelInfoRoutes {
         return;
       }
 
-      const result = await service.addChannelInfo(channelInfo);
+      const result = await this.channelInfoService.addChannelInfo(channelInfo);
 
       if (result.result.n === 0) {
         res.status(StatusCodes.NOT_FOUND);
@@ -66,7 +71,7 @@ export class ChannelInfoRoutes {
         return;
       }
 
-      const result = await service.updateChannelInfo(channelInfo);
+      const result = await this.channelInfoService.updateChannelInfo(channelInfo);
 
       if (result.result.n === 0) {
         res.status(StatusCodes.NOT_FOUND);
@@ -88,7 +93,7 @@ export class ChannelInfoRoutes {
         return;
       }
 
-      await service.deleteChannelInfo(channelAddress);
+      await this.channelInfoService.deleteChannelInfo(channelAddress);
       res.sendStatus(StatusCodes.OK);
     } catch (error) {
       next(error);
