@@ -1,17 +1,21 @@
 import { ChannelInfo, ChannelInfoDto, ChannelInfoSearch } from '../../models/data/channel-info';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
-import * as UserService from '../../services/user-service';
+import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { ChannelInfoService } from '../../services/channel-info-service';
 
 describe('test Search user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-  let channelInfoRoutes: ChannelInfoRoutes;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-    channelInfoRoutes = new ChannelInfoRoutes();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+
     res = {
       send: sendMock,
       sendStatus: sendStatusMock
@@ -30,7 +34,7 @@ describe('test Search user', () => {
       latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
     };
     const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-    const getUserSpy = spyOn(UserService, 'getUser').and.returnValue({ userId: '1234-5678-9' });
+    const getUserSpy = spyOn(userService, 'getUser').and.returnValue({ userId: '1234-5678-9' });
 
     const req: any = {
       params: {},
@@ -55,13 +59,15 @@ describe('test Search user', () => {
 
 describe('test GET channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-  let channelInfoRoutes: ChannelInfoRoutes;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-    channelInfoRoutes = new ChannelInfoRoutes();
-
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
     res = {
       send: sendMock,
       sendStatus: sendStatusMock
@@ -130,7 +136,9 @@ describe('test GET channelInfo', () => {
 });
 
 describe('test POST channelInfo', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, channelInfoRoutes: ChannelInfoRoutes;
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
   const validBody: ChannelInfoDto = {
     authorId: 'test-author2',
     channelAddress: 'test-address3',
@@ -144,7 +152,10 @@ describe('test POST channelInfo', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-    channelInfoRoutes = new ChannelInfoRoutes();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+
     res = {
       send: sendMock,
       sendStatus: sendStatusMock
@@ -212,7 +223,9 @@ describe('test POST channelInfo', () => {
 });
 
 describe('test PUT channelInfo', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, channelInfoRoutes: ChannelInfoRoutes;
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
   const validBody: ChannelInfoDto = {
     authorId: 'test-author2',
     channelAddress: 'test-address3',
@@ -226,7 +239,9 @@ describe('test PUT channelInfo', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-    channelInfoRoutes = new ChannelInfoRoutes();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
 
     res = {
       send: sendMock,
@@ -295,13 +310,16 @@ describe('test PUT channelInfo', () => {
 });
 
 describe('test DELETE channelInfo', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, channelInfoRoutes: ChannelInfoRoutes;
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-    channelInfoRoutes = new ChannelInfoRoutes();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
 
     res = {
       send: sendMock,
@@ -349,9 +367,12 @@ describe('test DELETE channelInfo', () => {
 });
 
 describe('test channelInfoRoutes.getChannelInfoFromBody', () => {
-  let channelInfoRoutes: ChannelInfoRoutes;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
   beforeEach(() => {
-    channelInfoRoutes = new ChannelInfoRoutes();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
   });
 
   it('should not return null for valid dto', () => {
@@ -403,9 +424,12 @@ describe('test channelInfoRoutes.getChannelInfoFromBody', () => {
 });
 
 describe('test channelInfoRoutes.getChannelInfoDto', () => {
-  let channelInfoRoutes: ChannelInfoRoutes;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
   beforeEach(() => {
-    channelInfoRoutes = new ChannelInfoRoutes();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
   });
 
   it('should transform database object to transfer object', () => {
