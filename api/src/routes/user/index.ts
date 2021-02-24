@@ -46,7 +46,7 @@ export class UserRoutes {
       const user = this.getUserFromBody(req.body);
       const result = await this.userService.addUser(user);
 
-      if (result.result.n === 0) {
+      if (!result?.result?.n) {
         res.status(StatusCodes.NOT_FOUND);
         res.send({ error: 'Could not add user!' });
         return;
@@ -69,7 +69,7 @@ export class UserRoutes {
 
       const result = await this.userService.updateUser(user);
 
-      if (result.result.n === 0) {
+      if (!result?.result?.n) {
         res.status(StatusCodes.NOT_FOUND);
         res.send({ error: 'No user found to update!' });
         return;
