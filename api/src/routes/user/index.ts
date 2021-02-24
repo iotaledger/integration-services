@@ -38,7 +38,7 @@ export const addUser = async (req: Request, res: Response, next: NextFunction): 
     const user = getUserFromBody(req.body);
     const result = await service.addUser(user);
 
-    if (result.result.n === 0) {
+    if (!result?.result?.n) {
       res.status(StatusCodes.NOT_FOUND);
       res.send({ error: 'Could not add user!' });
       return;
@@ -61,7 +61,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
     const result = await service.updateUser(user);
 
-    if (result.result.n === 0) {
+    if (!result?.result?.n) {
       res.status(StatusCodes.NOT_FOUND);
       res.send({ error: 'No user found to update!' });
       return;
