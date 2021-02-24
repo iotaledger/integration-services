@@ -9,7 +9,10 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
   if (channelInfoSearch.author && !channelInfoSearch.authorId) {
-    const authorId = await (await getUser(channelInfoSearch.author))?.userId;
+    const authorId = (await getUser(channelInfoSearch.author))?.userId;
+    if (!authorId) {
+      throw new Error(`No user id found for: ${channelInfoSearch.author}`);
+    }
     const c = {
       ...channelInfoSearch,
       authorId
