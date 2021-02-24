@@ -12,6 +12,7 @@ export interface IdentityResponse {
   key: any;
   txHash: string;
   explorerUrl: string;
+  message: string;
 }
 
 export class AuthenticationService {
@@ -32,15 +33,30 @@ export class AuthenticationService {
 
   createIdentity = async (): Promise<IdentityResponse> => {
     // TODO add user info
-    const user = new Document(KeyType.Ed25519) as IdentityDocument;
+    const user = this.generateUser(); //
+
     user.doc.sign(user.key);
-    console.log('Verified (user): ', user.doc.verify());
+
     const txHash = await Identity.publish(user.doc.toJSON(), this.config);
+
+    console.log('Verified (user): ', user.doc.verify());
+
     return {
       doc: user.doc,
       key: user.key,
       explorerUrl: `${this.config.explorer}/${txHash}`,
-      txHash
+      txHash,
+      message: ''
+    };
+  };
+
+  generateUser = () => {
+    const { doc, key } = new Document(KeyType.Ed25519) as IdentityDocument;
+
+    return {
+      doc,
+      key,
+      message: ''
     };
   };
 }
