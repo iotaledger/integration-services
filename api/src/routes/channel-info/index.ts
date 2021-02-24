@@ -33,7 +33,7 @@ export const addChannelInfo = async (req: Request, res: Response, next: NextFunc
 
     const result = await service.addChannelInfo(channelInfo);
 
-    if (!result?.result || result.result.n === 0) {
+    if (!result?.result?.n) {
       res.status(StatusCodes.NOT_FOUND);
       res.send({ error: 'Could not add channel info' });
       return;
@@ -56,7 +56,7 @@ export const updateChannelInfo = async (req: Request, res: Response, next: NextF
 
     const result = await service.updateChannelInfo(channelInfo);
 
-    if (!result?.result || result.result.n === 0) {
+    if (!result?.result?.n) {
       res.status(StatusCodes.NOT_FOUND);
       res.send({ error: 'No channel info found to update!' });
       return;
