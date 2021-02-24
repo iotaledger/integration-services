@@ -15,7 +15,6 @@ export class UserRoutes {
     try {
       const userSearch = this.getUserSearch(req);
       const users = await this.userService.searchUsers(userSearch);
-      console.log('USER ', users);
 
       const usersDto = users.map((user) => this.getUserDto(user));
       res.send(usersDto);
