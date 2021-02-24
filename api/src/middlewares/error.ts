@@ -1,7 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
+/**
+ * Error middleware to log and return the error to the client.
+ *
+ * @param {Error} err Received error from endpoint
+ * @param {Request} req Client request
+ * @param {Response} res Client response
+ * @param {NextFunction} next Next function
+ */
 export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction): void => {
-  res.status(StatusCodes.PARTIAL_CONTENT);
+  console.error(err);
+
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   res.send({ error: err.message });
 };

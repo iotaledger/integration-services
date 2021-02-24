@@ -1,3 +1,4 @@
 export const enum CollectionNames {
-  channelInfo = 'channel-info'
+  channelInfo = 'channel-info',
+  users = 'users'
 }

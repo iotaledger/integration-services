@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { errorMiddleware } from './middlewares/error';
-import { channelInfoRouter } from './routes/router';
+import { channelInfoRouter, userRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
@@ -15,17 +15,18 @@ const version = CONFIG.apiVersion;
 const loggerMiddleware = morgan('combined');
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
-  const path = `/${version}${prefix}`;
-
-  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${path}${r?.route?.path}`));
-  app.use(path, router);
+  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`));
+  app.use(prefix, router);
 }
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(loggerMiddleware);
 
-useRouter(app, '/channel-info', channelInfoRouter);
+const prefix = `/api/${version}`;
+
+useRouter(app, prefix + '/channel-info', channelInfoRouter);
+useRouter(app, prefix + '/users', userRouter);
 
 app.use(errorMiddleware);
 

@@ -1,9 +1,9 @@
-import moment from 'moment';
+import { parseISO, formatISO } from 'date-fns';
 
 export const getDateFromString = (dateString: string): Date | null => {
-  return dateString && moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').toDate();
+  return dateString && parseISO(dateString);
 };
 
 export const getDateStringFromDate = (date: Date): string => {
-  return moment(date.toUTCString()).format('YYYY-MM-DDTHH:mm:ss.sssZ');
+  return formatISO(date);
 };

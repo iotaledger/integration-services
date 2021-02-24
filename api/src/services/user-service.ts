@@ -1,16 +1,19 @@
-import { Request, Response } from 'express';
+import { User } from '../models/data/user';
+import * as userDb from '../database/user';
+import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
-export const getUser = (req: Request, res: Response): void => {
-  console.log('Get user');
-  res.send('getUser!');
+export const getUser = async (userId: string): Promise<User> => {
+  return userDb.getUser(userId);
 };
 
-export const addUser = (req: Request, res: Response): void => {
-  console.log('Add user');
-  res.send('addUser!');
+export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+  return userDb.addUser(user);
 };
 
-export const deleteUser = (req: Request, res: Response): void => {
-  console.log('Delete user');
-  res.send('deleteUser!');
+export const updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
+  return userDb.updateUser(user);
+};
+
+export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
+  return userDb.deleteUser(userId);
 };
