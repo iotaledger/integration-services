@@ -1,11 +1,10 @@
 import { Config } from '../models/config';
 import isEmpty from 'lodash/isEmpty';
 
-// TODO from env vars
 const IdentityConfig = {
-  network: 'main',
-  node: 'https://nodes.thetangle.org:443',
-  explorer: 'https://explorer.iota.org/mainnet/transaction'
+  network: process.env.NETWORK,
+  node: process.env.PERMA_NODE,
+  explorer: process.env.EXPLORER
 };
 
 export const CONFIG: Config = {

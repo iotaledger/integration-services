@@ -2,7 +2,7 @@ import { User, UserClassification, UserPersistence, UserSearch } from '../models
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
-import * as _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 export class UserService {
   searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
@@ -21,6 +21,9 @@ export class UserService {
   };
 
   addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+    if (!this.hasValidFields(user)) {
+      throw new Error('No valid body provided!');
+    }
     const userPersistence = this.getUserPersistence(user);
     return userDb.addUser(userPersistence);
   };
@@ -34,8 +37,12 @@ export class UserService {
     return userDb.deleteUser(userId);
   };
 
+  hasValidFields = (user: User): boolean => {
+    return !(!user.username || !user.userId);
+  };
+
   getUserPersistence = (user: User): UserPersistence | null => {
-    if (user == null || _.isEmpty(user.userId)) {
+    if (user == null || isEmpty(user.userId)) {
       throw new Error('Error when parsing the body: userId must be provided!');
     }
     const {
@@ -78,7 +85,7 @@ export class UserService {
   };
 
   getUserObject = (userPersistence: UserPersistence): User | null => {
-    if (userPersistence == null || _.isEmpty(userPersistence.userId)) {
+    if (userPersistence == null || isEmpty(userPersistence.userId)) {
       console.error(`Error when parsing the body, no user id found on persistence model with username ${userPersistence?.username}`);
       return null;
     }

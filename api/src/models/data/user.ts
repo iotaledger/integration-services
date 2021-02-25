@@ -7,7 +7,7 @@ const VerificationSchema = Type.Object({
 });
 
 export const UserWithoutIdSchema = Type.Object({
-  username: Type.Optional(Type.String()),
+  username: Type.String(),
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
   organization: Type.Optional(Type.String()),
@@ -42,9 +42,9 @@ export interface UserSearch {
   index?: number;
 }
 
-type OmitedUser = Omit<User, 'registrationDate' | 'classification' | 'verification'>;
+type OmittedUser = Omit<User, 'registrationDate' | 'classification' | 'verification'>;
 
-export interface UserPersistence extends OmitedUser {
+export interface UserPersistence extends OmittedUser {
   verification?: VerificationPersistence;
   registrationDate?: Date;
   classification: UserClassification;

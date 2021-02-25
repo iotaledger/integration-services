@@ -13,6 +13,9 @@ export class AuthenticationRoutes {
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user: UserWithoutId = req.body;
+      if (!user.username) {
+        throw new Error('No valid body provided!');
+      }
       const identity = await this.authenticationService.createIdentity(user);
 
       res.status(StatusCodes.CREATED).send(identity);

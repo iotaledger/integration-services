@@ -3,7 +3,7 @@ import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
-import * as _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {
   private readonly userService: UserService;
@@ -51,7 +51,7 @@ export class ChannelInfoService {
   };
 
   getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
-    if (ci == null || _.isEmpty(ci.channelAddress) || _.isEmpty(ci.topics) || _.isEmpty(ci.authorId)) {
+    if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || isEmpty(ci.authorId)) {
       throw new Error('Error when parsing the body: channelAddress and author must be provided!');
     }
 
@@ -68,7 +68,7 @@ export class ChannelInfoService {
   };
 
   getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
-    if (cip == null || _.isEmpty(cip.channelAddress) || _.isEmpty(cip.authorId)) {
+    if (cip == null || isEmpty(cip.channelAddress) || isEmpty(cip.authorId)) {
       throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
     }
 
