@@ -3,12 +3,14 @@ import { UserRoutes } from './user';
 import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../models/data/channel-info';
+import { IdentitySchema } from '../models/data/identity';
 import { UserSchema } from '../models/data/user';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
+import { IdentityService } from '../services/identity-service';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -35,9 +37,10 @@ channelInfoRouter.post('/channel', validate({ body: ChannelInfoSchema }), addCha
 channelInfoRouter.put('/channel', validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
-const authenticationService = AuthenticationService.getInstance(CONFIG.identityConfig);
+const identityService = IdentityService.getInstance(CONFIG.identityConfig);
+const authenticationService = new AuthenticationService(identityService, userService);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService);
 const { createIdentity } = authenticationRoutes;
 export const authenticationRouter = Router();
 
-authenticationRouter.post('/create-identity', createIdentity);
+authenticationRouter.post('/create-identity', validate({ body: IdentitySchema }), createIdentity);

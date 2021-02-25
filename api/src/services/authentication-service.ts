@@ -1,62 +1,25 @@
-import * as Identity from '@iota/identity-wasm/node';
-import { IdentityConfig } from '../models/config';
-const { KeyType, Document } = Identity;
-
-export interface IdentityDocument extends Identity.Document {
-  doc: any;
-  key: any;
-}
-
-export interface IdentityResponse {
-  doc: any;
-  key: any;
-  txHash: string;
-  explorerUrl: string;
-  message: string;
-}
+import { IdentityResponse } from '../models/data/identity';
+import { User } from '../models/data/user';
+import { IdentityService } from './identity-service';
+import { UserService } from './user-service';
 
 export class AuthenticationService {
-  private static instance: AuthenticationService;
-
-  config: IdentityConfig;
-
-  private constructor(config: any) {
-    this.config = config;
+  identityService: IdentityService;
+  userService: UserService;
+  constructor(identityService: IdentityService, userService: UserService) {
+    this.identityService = identityService;
+    this.userService = userService;
   }
 
-  public static getInstance(config: any): AuthenticationService {
-    if (!AuthenticationService.instance) {
-      AuthenticationService.instance = new AuthenticationService(config);
+  createIdentity = async (user: User): Promise<IdentityResponse> => {
+    const identity = await this.identityService.createIdentity();
+    const result = await this.userService.addUser(user);
+
+    if (!result?.result?.n) {
+      throw new Error('Could not create user identity!');
     }
-    return AuthenticationService.instance;
-  }
-
-  createIdentity = async (): Promise<IdentityResponse> => {
-    // TODO add user info
-    const user = this.generateUser(); //
-
-    user.doc.sign(user.key);
-
-    const txHash = await Identity.publish(user.doc.toJSON(), this.config);
-
-    console.log('Verified (user): ', user.doc.verify());
-
     return {
-      doc: user.doc,
-      key: user.key,
-      explorerUrl: `${this.config.explorer}/${txHash}`,
-      txHash,
-      message: ''
-    };
-  };
-
-  generateUser = () => {
-    const { doc, key } = new Document(KeyType.Ed25519) as IdentityDocument;
-
-    return {
-      doc,
-      key,
-      message: ''
+      ...identity
     };
   };
 }
