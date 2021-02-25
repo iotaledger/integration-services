@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { UserWithoutId } from '../../models/data/user';
 import { AuthenticationService } from '../../services/authentication-service';
 
@@ -18,7 +17,7 @@ export class AuthenticationRoutes {
       }
       const identity = await this.authenticationService.createIdentity(user);
 
-      res.status(StatusCodes.CREATED).send(identity);
+      res.send(identity);
     } catch (error) {
       next(error);
     }

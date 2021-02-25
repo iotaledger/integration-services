@@ -154,7 +154,7 @@ describe('test POST user', () => {
     };
   });
 
-  fit('should return bad request if no valid body is given', async () => {
+  it('should return bad request if no valid body is given', async () => {
     const req: any = {
       params: {},
       body: null
@@ -241,7 +241,7 @@ describe('test PUT user', () => {
     };
   });
 
-  fit('should return bad request if no valid body is given', async () => {
+  it('should return bad request if no valid body is given', async () => {
     const req: any = {
       params: {},
       body: null
