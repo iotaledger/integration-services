@@ -12,8 +12,7 @@ export class AuthenticationRoutes {
 
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // TODO
-      const user: UserWithoutId = undefined;
+      const user: UserWithoutId = req.body;
       const identity = await this.authenticationService.createIdentity(user);
 
       res.status(StatusCodes.CREATED).send(identity);

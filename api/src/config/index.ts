@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 const IdentityConfig = {
   network: 'main',
   node: 'https://nodes.thetangle.org:443',
-  explorer: 'https://explorer.iota.org/mainnet/transaction/'
+  explorer: 'https://explorer.iota.org/mainnet/transaction'
 };
 
 export const CONFIG: Config = {

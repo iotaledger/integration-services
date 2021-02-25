@@ -20,20 +20,20 @@ export class IdentityService {
   }
 
   createIdentity = async (): Promise<IdentityResponse> => {
-    const user = this.generateUser();
-    user.doc.sign(user.key);
-    const txHash = await Identity.publish(user.doc.toJSON(), this.config);
-    console.log(`Pub key: ${user.key.public} is verfied: ${user.doc.verify()}`);
+    const identity = this.generateIdentity();
+    identity.doc.sign(identity.key);
+    const txHash = await Identity.publish(identity.doc.toJSON(), this.config);
+    console.log(`Pub key: ${identity.key.public} is verfied: ${identity.doc.verify()}`);
 
     return {
-      doc: user.doc,
-      key: user.key,
+      doc: identity.doc,
+      key: identity.key,
       explorerUrl: `${this.config.explorer}/${txHash}`,
       txHash
     };
   };
 
-  generateUser = () => {
+  generateIdentity = () => {
     const { doc, key } = new Document(KeyType.Ed25519) as any;
 
     return {

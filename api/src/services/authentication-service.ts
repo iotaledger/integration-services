@@ -11,12 +11,13 @@ export class AuthenticationService {
     this.userService = userService;
   }
 
-  createIdentity = async (u: UserWithoutId): Promise<IdentityResponse> => {
+  createIdentity = async (userWithoutId: UserWithoutId): Promise<IdentityResponse> => {
     const identity = await this.identityService.createIdentity();
     const user: User = {
-      ...u,
+      ...userWithoutId,
       userId: identity.key.public
     };
+
     const result = await this.userService.addUser(user);
 
     if (!result?.result?.n) {
