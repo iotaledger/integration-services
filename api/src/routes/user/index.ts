@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserDto, User, UserSearch, UserClassification } from '../../models/data/user';
+import { User, UserPersistence, UserSearch, UserClassification } from '../../models/data/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
@@ -14,10 +14,10 @@ export class UserRoutes {
   searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userSearch = this.getUserSearch(req);
-      const users = await this.userService.searchUsers(userSearch);
+      const usersPersistence = await this.userService.searchUsers(userSearch);
 
-      const usersDto = users.map((user) => this.getUserDto(user));
-      res.send(usersDto);
+      const users = usersPersistence.map((user) => this.getUserObject(user));
+      res.send(users);
     } catch (error) {
       next(error);
     }
@@ -32,9 +32,9 @@ export class UserRoutes {
         return;
       }
 
-      const user = await this.userService.getUser(userId);
-      const userDto = this.getUserDto(user);
-      res.send(userDto);
+      const userPersistence = await this.userService.getUser(userId);
+      const user = this.getUserObject(userPersistence);
+      res.send(user);
     } catch (error) {
       next(error);
     }
@@ -42,7 +42,7 @@ export class UserRoutes {
 
   addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const user = this.getUserFromBody(req.body);
+      const user = this.getUserPersistenceFromBody(req.body);
       const result = await this.userService.addUser(user);
 
       if (!result?.result?.n) {
@@ -59,7 +59,7 @@ export class UserRoutes {
 
   updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const user = this.getUserFromBody(req.body);
+      const user = this.getUserPersistenceFromBody(req.body);
 
       if (user == null) {
         res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -95,8 +95,8 @@ export class UserRoutes {
     }
   };
 
-  getUserFromBody = (dto: UserDto): User | null => {
-    if (dto == null || _.isEmpty(dto.userId)) {
+  getUserPersistenceFromBody = (user: User): UserPersistence | null => {
+    if (user == null || _.isEmpty(user.userId)) {
       throw new Error('Error when parsing the body: userId must be provided!');
     }
     const {
@@ -110,7 +110,7 @@ export class UserRoutes {
       registrationDate,
       classification,
       description
-    } = dto;
+    } = user;
 
     if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
       throw new Error(
@@ -118,7 +118,7 @@ export class UserRoutes {
       );
     }
 
-    const user: User = {
+    const userPersistence: UserPersistence = {
       userId,
       username,
       classification: classification as UserClassification,
@@ -135,11 +135,11 @@ export class UserRoutes {
       }
     };
 
-    return user;
+    return userPersistence;
   };
 
-  getUserDto = (user: User): UserDto | null => {
-    if (user == null || _.isEmpty(user.userId)) {
+  getUserObject = (userPersistence: UserPersistence): User | null => {
+    if (userPersistence == null || _.isEmpty(userPersistence.userId)) {
       throw new Error('Error when parsing the body: userId must be provided!');
     }
 
@@ -154,9 +154,9 @@ export class UserRoutes {
       verification,
       classification,
       description
-    } = user;
+    } = userPersistence;
 
-    const userDto: UserDto = {
+    const user: User = {
       userId,
       username,
       classification,
@@ -172,7 +172,7 @@ export class UserRoutes {
       },
       organization
     };
-    return userDto;
+    return user;
   };
 
   getUserSearch = (req: Request): UserSearch => {

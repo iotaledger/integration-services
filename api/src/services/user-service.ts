@@ -1,25 +1,25 @@
-import { User, UserSearch } from '../models/data/user';
+import { UserPersistence, UserSearch } from '../models/data/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 export class UserService {
-  searchUsers = (userSearch: UserSearch): Promise<User[]> => {
+  searchUsers = (userSearch: UserSearch): Promise<UserPersistence[]> => {
     return userDb.searchUsers(userSearch);
   };
 
-  getUser = (userId: string): Promise<User> => {
+  getUser = (userId: string): Promise<UserPersistence> => {
     return userDb.getUser(userId);
   };
 
-  getUserByUsername = (username: string): Promise<User> => {
+  getUserByUsername = (username: string): Promise<UserPersistence> => {
     return userDb.getUserByUsername(username);
   };
 
-  addUser = (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+  addUser = (user: UserPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
     return userDb.addUser(user);
   };
 
-  updateUser = (user: User): Promise<UpdateWriteOpResult> => {
+  updateUser = (user: UserPersistence): Promise<UpdateWriteOpResult> => {
     return userDb.updateUser(user);
   };
 

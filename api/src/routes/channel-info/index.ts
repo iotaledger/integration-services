@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfoDto, ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '../../models/data/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
@@ -14,9 +14,9 @@ export class ChannelInfoRoutes {
   searchChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelInfoSearch = this.getChannelInfoSearch(req);
-      const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
-      const channelInfosDto = channelInfos.map((c) => this.getChannelInfoDto(c));
-      res.send(channelInfosDto);
+      const channelInfoPersistence = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
+      const channelInfos = channelInfoPersistence.map((c) => this.getChannelInfoObject(c));
+      res.send(channelInfos);
     } catch (error) {
       next(error);
     }
@@ -31,9 +31,9 @@ export class ChannelInfoRoutes {
         return;
       }
 
-      const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-      const channelInfoDto = this.getChannelInfoDto(channelInfo);
-      res.send(channelInfoDto);
+      const channelInfoPersistence = await this.channelInfoService.getChannelInfo(channelAddress);
+      const channelInfo = this.getChannelInfoObject(channelInfoPersistence);
+      res.send(channelInfo);
     } catch (error) {
       next(error);
     }
@@ -41,7 +41,7 @@ export class ChannelInfoRoutes {
 
   addChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const channelInfo = this.getChannelInfoFromBody(req.body);
+      const channelInfo = this.getChannelInfoPersistence(req.body);
 
       if (channelInfo == null) {
         res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -64,7 +64,7 @@ export class ChannelInfoRoutes {
 
   updateChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const channelInfo = this.getChannelInfoFromBody(req.body);
+      const channelInfo = this.getChannelInfoPersistence(req.body);
 
       if (channelInfo == null) {
         res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -100,35 +100,35 @@ export class ChannelInfoRoutes {
     }
   };
 
-  getChannelInfoFromBody = (dto: ChannelInfoDto): ChannelInfo | null => {
-    if (dto == null || _.isEmpty(dto.channelAddress) || _.isEmpty(dto.topics) || _.isEmpty(dto.authorId)) {
+  getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
+    if (ci == null || _.isEmpty(ci.channelAddress) || _.isEmpty(ci.topics) || _.isEmpty(ci.authorId)) {
       throw new Error('Error when parsing the body: channelAddress and author must be provided!');
     }
 
-    const channelInfo: ChannelInfo = {
-      created: dto.created ? getDateFromString(dto.created) : null,
-      authorId: dto.authorId,
-      subscriberIds: dto.subscriberIds || [],
-      topics: dto.topics,
-      channelAddress: dto.channelAddress,
-      latestMessage: dto.latestMessage && getDateFromString(dto.created)
+    const channelInfoPersistence: ChannelInfoPersistence = {
+      created: ci.created ? getDateFromString(ci.created) : null,
+      authorId: ci.authorId,
+      subscriberIds: ci.subscriberIds || [],
+      topics: ci.topics,
+      channelAddress: ci.channelAddress,
+      latestMessage: ci.latestMessage && getDateFromString(ci.created)
     };
 
-    return channelInfo;
+    return channelInfoPersistence;
   };
 
-  getChannelInfoDto = (c: ChannelInfo): ChannelInfoDto | null => {
-    if (c == null || _.isEmpty(c.channelAddress) || _.isEmpty(c.authorId)) {
+  getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
+    if (cip == null || _.isEmpty(cip.channelAddress) || _.isEmpty(cip.authorId)) {
       throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
     }
 
-    const channelInfo: ChannelInfoDto = {
-      created: getDateStringFromDate(c.created),
-      authorId: c.authorId,
-      subscriberIds: c.subscriberIds || [],
-      topics: c.topics,
-      latestMessage: c.latestMessage && getDateStringFromDate(c.latestMessage),
-      channelAddress: c.channelAddress
+    const channelInfo: ChannelInfo = {
+      created: getDateStringFromDate(cip.created),
+      authorId: cip.authorId,
+      subscriberIds: cip.subscriberIds || [],
+      topics: cip.topics,
+      latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
+      channelAddress: cip.channelAddress
     };
     return channelInfo;
   };

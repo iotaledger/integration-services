@@ -1,6 +1,6 @@
 import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
-import { User, UserClassification, UserDto, UserSearch } from '../../models/data/user';
+import { UserPersistence, UserClassification, User, UserSearch } from '../../models/data/user';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
@@ -78,7 +78,7 @@ describe('test GET user', () => {
   });
   it('should return expected user', async () => {
     const date = getDateFromString('2021-02-12T14:58:05+01:00');
-    const user: User = {
+    const user: UserPersistence = {
       userId: 'my-public-key-1',
       username: 'first-user',
       classification: UserClassification.human,
@@ -129,7 +129,7 @@ describe('test GET user', () => {
 });
 describe('test POST user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
-  const validBody: UserDto = {
+  const validBody: User = {
     userId: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
@@ -216,7 +216,7 @@ describe('test POST user', () => {
 });
 describe('test PUT user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: UserRoutes, userService: UserService;
-  const validBody: UserDto = {
+  const validBody: User = {
     userId: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,

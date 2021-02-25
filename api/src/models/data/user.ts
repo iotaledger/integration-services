@@ -19,20 +19,12 @@ export const UserSchema = Type.Object({
   description: Type.Optional(Type.String())
 });
 
-export type UserDto = Static<typeof UserSchema>;
+export type User = Static<typeof UserSchema>;
 
 export const enum UserClassification {
   'human' = 'human',
   'device' = 'device',
   'api' = 'api'
-}
-
-type OmitedUserDto = Omit<UserDto, 'registrationDate' | 'classification' | 'verification'>;
-
-export interface User extends OmitedUserDto {
-  verification?: Verification;
-  registrationDate?: Date;
-  classification: UserClassification;
 }
 
 export interface UserSearch {
@@ -46,7 +38,15 @@ export interface UserSearch {
   index?: number;
 }
 
-export interface Verification {
+type OmitedUser = Omit<User, 'registrationDate' | 'classification' | 'verification'>;
+
+export interface UserPersistence extends OmitedUser {
+  verification?: VerificationPersistence;
+  registrationDate?: Date;
+  classification: UserClassification;
+}
+
+export interface VerificationPersistence {
   verified: boolean;
   verificationIssuerId?: string; // public-key
   verificationDate?: Date;

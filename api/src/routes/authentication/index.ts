@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { User } from '../../models/data/user';
+import { UserPersistence } from '../../models/data/user';
 import { AuthenticationService } from '../../services/authentication-service';
 
 export class AuthenticationRoutes {
@@ -13,7 +13,7 @@ export class AuthenticationRoutes {
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // TODO
-      const user: User = undefined;
+      const user: UserPersistence = undefined;
       const identity = await this.authenticationService.createIdentity(user);
 
       res.status(StatusCodes.CREATED).send(identity);

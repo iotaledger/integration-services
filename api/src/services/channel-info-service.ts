@@ -1,4 +1,4 @@
-import { ChannelInfo, ChannelInfoSearch } from '../models/data/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '../models/data/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
@@ -9,11 +9,11 @@ export class ChannelInfoService {
     this.userService = userService;
   }
 
-  getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
+  getChannelInfo = async (channelAddress: string): Promise<ChannelInfoPersistence> => {
     return ChannelInfoDb.getChannelInfo(channelAddress);
   };
 
-  searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
+  searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
     if (channelInfoSearch.author && !channelInfoSearch.authorId) {
       const authorId = (await this.userService.getUser(channelInfoSearch.author))?.userId;
 
@@ -29,11 +29,11 @@ export class ChannelInfoService {
     return ChannelInfoDb.searchChannelInfo(channelInfoSearch);
   };
 
-  addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+  addChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
     return ChannelInfoDb.addChannelInfo(channelInfo);
   };
 
-  updateChannelInfo = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
+  updateChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
     return ChannelInfoDb.updateChannelInfo(channelInfo);
   };
 

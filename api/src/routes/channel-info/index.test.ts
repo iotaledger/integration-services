@@ -1,4 +1,4 @@
-import { ChannelInfo, ChannelInfoDto, ChannelInfoSearch } from '../../models/data/channel-info';
+import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
 import { UserService } from '../../services/user-service';
@@ -86,7 +86,7 @@ describe('test GET channelInfo', () => {
 
   it('should return expected channel info', async () => {
     const date = getDateFromString('2021-02-09T00:00:00+01:00');
-    const channelInfo: ChannelInfo = {
+    const channelInfo: ChannelInfoPersistence = {
       created: date,
       authorId: 'test-author2',
       subscriberIds: [],
@@ -139,7 +139,7 @@ describe('test POST channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
   let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
-  const validBody: ChannelInfoDto = {
+  const validBody: ChannelInfo = {
     authorId: 'test-author2',
     channelAddress: 'test-address3',
     created: '02-09-2021',
@@ -226,7 +226,7 @@ describe('test PUT channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
   let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
-  const validBody: ChannelInfoDto = {
+  const validBody: ChannelInfo = {
     authorId: 'test-author2',
     channelAddress: 'test-address3',
     created: '02-09-2021',
@@ -376,12 +376,12 @@ describe('test channelInfoRoutes.getChannelInfoFromBody', () => {
   });
 
   it('should not return null for valid dto', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
+    const validChannelInfo: ChannelInfo = {
       authorId: 'test-author',
       topics: [{ source: 'test', type: 'test-type' }],
       channelAddress: 'test-address'
     };
-    const result = channelInfoRoutes.getChannelInfoFromBody(validChannelInfoDto);
+    const result = channelInfoRoutes.getChannelInfoPersistence(validChannelInfo);
 
     expect(result).not.toBeNull();
     expect(result.channelAddress).toEqual('test-address');
@@ -389,41 +389,41 @@ describe('test channelInfoRoutes.getChannelInfoFromBody', () => {
     expect(result.topics).toEqual([{ source: 'test', type: 'test-type' }]);
   });
   it('should throw an error for empty address', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
+    const validChannelInfo: ChannelInfo = {
       authorId: 'test-author',
       topics: [{ source: 'test', type: 'test-type' }],
       channelAddress: ''
     };
 
-    expect(() => channelInfoRoutes.getChannelInfoFromBody(validChannelInfoDto)).toThrow(
+    expect(() => channelInfoRoutes.getChannelInfoPersistence(validChannelInfo)).toThrow(
       'Error when parsing the body: channelAddress and author must be provided!'
     );
   });
   it('should throw an error for author=null', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
+    const validChannelInfo: ChannelInfo = {
       authorId: null,
       topics: [{ source: 'test', type: 'test-type' }],
       channelAddress: 'test-address'
     };
 
-    expect(() => channelInfoRoutes.getChannelInfoFromBody(validChannelInfoDto)).toThrow(
+    expect(() => channelInfoRoutes.getChannelInfoPersistence(validChannelInfo)).toThrow(
       'Error when parsing the body: channelAddress and author must be provided!'
     );
   });
   it('should throw an error for empty topics', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
+    const validChannelInfo: ChannelInfo = {
       authorId: 'test-author',
       topics: [],
       channelAddress: 'test-address'
     };
 
-    expect(() => channelInfoRoutes.getChannelInfoFromBody(validChannelInfoDto)).toThrow(
+    expect(() => channelInfoRoutes.getChannelInfoPersistence(validChannelInfo)).toThrow(
       'Error when parsing the body: channelAddress and author must be provided!'
     );
   });
 });
 
-describe('test channelInfoRoutes.getChannelInfoDto', () => {
+describe('test channelInfoRoutes.getChannelInfoObject', () => {
   let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
   beforeEach(() => {
@@ -434,7 +434,7 @@ describe('test channelInfoRoutes.getChannelInfoDto', () => {
 
   it('should transform database object to transfer object', () => {
     const date = new Date('2021-02-08T00:00:00+01:00');
-    const validChannelInfo: ChannelInfo = {
+    const validChannelInfo: ChannelInfoPersistence = {
       created: date,
       subscriberIds: [],
       latestMessage: date,
@@ -442,7 +442,7 @@ describe('test channelInfoRoutes.getChannelInfoDto', () => {
       topics: [{ source: 'test', type: 'test-type' }],
       channelAddress: 'test-address'
     };
-    const result = channelInfoRoutes.getChannelInfoDto(validChannelInfo);
+    const result = channelInfoRoutes.getChannelInfoObject(validChannelInfo);
 
     expect(result).not.toBeNull();
     expect(result.channelAddress).toEqual('test-address');
