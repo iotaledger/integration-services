@@ -1,9 +1,17 @@
-import { User } from '../models/data/user';
+import { User, UserSearch } from '../models/data/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
+export const searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
+  return userDb.searchUsers(userSearch);
+};
+
 export const getUser = async (userId: string): Promise<User> => {
   return userDb.getUser(userId);
+};
+
+export const getUserByUsername = async (username: string): Promise<User> => {
+  return userDb.getUserByUsername(username);
 };
 
 export const addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {

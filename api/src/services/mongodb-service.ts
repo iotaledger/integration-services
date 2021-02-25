@@ -9,8 +9,15 @@ import {
   DeleteWriteOpResultObject,
   FilterQuery,
   InsertWriteOpResult,
-  UpdateOneOptions
+  UpdateOneOptions,
+  CollectionInsertManyOptions,
+  CollectionInsertOneOptions,
+  FindOneOptions,
+  CommonOptions
 } from 'mongodb';
+
+type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
+// type WithProjection<T extends { projection?: any }> = T & { projection: NonNullable<T['projection']> };
 
 /**
  * MongoDbService to establish a connection and create, read, update and delete (CRUD) documents in the database.
@@ -30,24 +37,28 @@ export class MongoDbService {
     return MongoDbService.db.collection(collectionName);
   }
 
-  static async getDocument<T>(collectionName: string, query: FilterQuery<T>): Promise<T> {
+  static async getDocument<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T> {
     const collection = MongoDbService.getCollection(collectionName);
-    return collection.findOne(query);
+    return collection.findOne(query, options);
   }
 
-  static async getDocuments<T>(collectionName: string, query: FilterQuery<T>): Promise<T[] | null> {
+  static async getDocuments<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T[] | null> {
     const collection = MongoDbService.getCollection(collectionName);
-    return collection.find(query).toArray();
+    return collection.find(query, options).toArray();
   }
 
-  static async insertDocument<T>(collectionName: string, data: any): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
+  static async insertDocument<T>(
+    collectionName: string,
+    data: any,
+    options?: CollectionInsertOneOptions
+  ): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
     const collection = MongoDbService.getCollection(collectionName);
-    return collection.insertOne(data);
+    return collection.insertOne(data, options);
   }
 
-  static async insertDocuments(collectionName: string, data: any): Promise<InsertWriteOpResult<any>> {
+  static async insertDocuments(collectionName: string, data: any, options?: CollectionInsertManyOptions): Promise<InsertWriteOpResult<any>> {
     const collection = MongoDbService.getCollection(collectionName);
-    return collection.insertMany(data);
+    return collection.insertMany(data, options);
   }
 
   static async updateDocument(collectionName: string, query: any, update: any, options?: UpdateOneOptions): Promise<UpdateWriteOpResult | null> {
@@ -55,20 +66,20 @@ export class MongoDbService {
     return collection.updateOne(query, update, options);
   }
 
-  static async removeDocument(collectionName: string, query: any): Promise<DeleteWriteOpResultObject> {
+  static async removeDocument(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
     const collection = MongoDbService.getCollection(collectionName);
-    return collection.deleteOne(query);
+    return collection.deleteOne(query, options);
   }
 
   /**
-   * Get update object for fields having a value not null and not undefined.
+   * Get plain object for fields having a value not null and not undefined.
    *
    * @static
    * @param {{ [key: string]: any }} fields Map of fields. For instance: { "height": 10, "length": 20, "unit": "metres", "depth": undefined }
    * @return {*}  {{ [key: string]: any }} Map of fields with no fields having null or undefined. For instance: { "height": 10, "length": 20, "unit": "metres" }
    * @memberof MongoDbService
    */
-  static getUpdateObject(fields: { [key: string]: any }): { [key: string]: any } {
+  static getPlainObject(fields: { [key: string]: any }): { [key: string]: any } {
     const keys = Object.keys(fields);
     const values = Object.values(fields);
     const updateObject = values.reduce((acc, value, index) => {

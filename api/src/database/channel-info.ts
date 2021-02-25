@@ -1,12 +1,30 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { ChannelInfo } from '../models/data/channel-info';
+import { ChannelInfo, ChannelInfoSearch } from '../models/data/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+
+const collectionName = CollectionNames.channelInfo;
 
 export const getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
   const query = { _id: channelAddress };
-  const collectionName = CollectionNames.channelInfo;
   return await MongoDbService.getDocument<ChannelInfo>(collectionName, query);
+};
+
+export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
+  const regex = (text: string) => text && new RegExp(text, 'i');
+  const { authorId, created, latestMessage, topicType, topicSource, limit, index } = channelInfoSearch;
+  const query = {
+    authorId: regex(authorId),
+    created: created && { $gte: created },
+    latestMessage: latestMessage && { $gte: latestMessage },
+    'topics.source': regex(topicSource),
+    'topics.type': regex(topicType)
+  };
+  const plainQuery = MongoDbService.getPlainObject(query);
+  const skip = index > 0 ? (index - 1) * limit : 0;
+  const options = limit != null ? { limit, skip } : undefined;
+
+  return await MongoDbService.getDocuments<ChannelInfo>(collectionName, plainQuery, options);
 };
 
 export const addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
@@ -31,12 +49,10 @@ export const updateChannelInfo = async (channelInfo: ChannelInfo): Promise<Updat
     }
   };
 
-  const collectionName = CollectionNames.channelInfo;
   return MongoDbService.updateDocument(collectionName, query, update);
 };
 
 export const deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
   const query = { _id: channelAddress };
-  const collectionName = CollectionNames.channelInfo;
   return MongoDbService.removeDocument(collectionName, query);
 };

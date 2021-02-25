@@ -1,9 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserDto, User } from '../../models/data/user';
+import { UserDto, User, UserSearch, UserClassification } from '../../models/data/user';
 import * as service from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+
+export const searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userSearch = getUserSearch(req);
+    const users = await service.searchUsers(userSearch);
+    const usersDto = users.map((user) => getUserDto(user));
+    res.send(usersDto);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -25,11 +36,6 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
 export const addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const user = getUserFromBody(req.body);
-
-    if (user == null || !isValidAddBody(user)) {
-      res.sendStatus(StatusCodes.BAD_REQUEST);
-      return;
-    }
     const result = await service.addUser(user);
 
     if (!result?.result?.n) {
@@ -82,10 +88,6 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-const isValidAddBody = (user: User): boolean => {
-  return !_.isEmpty(user.userId) && !_.isEmpty(user.username) && !_.isEmpty(user.classification);
-};
-
 const getUserFromBody = (dto: UserDto): User | null => {
   if (dto == null || _.isEmpty(dto.userId)) {
     throw new Error('Error when parsing the body: userId must be provided!');
@@ -93,7 +95,7 @@ const getUserFromBody = (dto: UserDto): User | null => {
   const {
     firstName,
     lastName,
-    subscribedChannels,
+    subscribedChannelIds,
     userId,
     username,
     verification,
@@ -103,11 +105,17 @@ const getUserFromBody = (dto: UserDto): User | null => {
     description
   } = dto;
 
+  if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
+    throw new Error(
+      `No valid classification provided, it must be ${UserClassification.human}, ${UserClassification.device} or ${UserClassification.api}!`
+    );
+  }
+
   const user: User = {
     userId,
     username,
-    classification,
-    subscribedChannels,
+    classification: classification as UserClassification,
+    subscribedChannelIds,
     firstName,
     lastName,
     description,
@@ -116,13 +124,10 @@ const getUserFromBody = (dto: UserDto): User | null => {
     verification: verification && {
       verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
       verified: verification.verified,
-      verificationIssuer: verification.verificationIssuer
+      verificationIssuerId: verification.verificationIssuerId
     }
   };
 
-  if (_.isEmpty(user.userId)) {
-    return null;
-  }
   return user;
 };
 
@@ -135,7 +140,7 @@ const getUserDto = (user: User): UserDto | null => {
     firstName,
     username,
     userId,
-    subscribedChannels,
+    subscribedChannelIds,
     organization,
     lastName,
     registrationDate,
@@ -148,7 +153,7 @@ const getUserDto = (user: User): UserDto | null => {
     userId,
     username,
     classification,
-    subscribedChannels,
+    subscribedChannelIds,
     firstName,
     lastName,
     description,
@@ -156,9 +161,38 @@ const getUserDto = (user: User): UserDto | null => {
     verification: verification && {
       verified: verification.verified,
       verificationDate: getDateStringFromDate(verification.verificationDate),
-      verificationIssuer: verification.verificationIssuer
+      verificationIssuerId: verification.verificationIssuerId
     },
     organization
   };
   return userDto;
+};
+
+const getUserSearch = (req: Request): UserSearch => {
+  const classification = <string>req.query.classification || undefined;
+  const organization = <string>req.query.organization || undefined;
+  const username = <string>req.query.username || undefined;
+  const verifiedParam = <string>req.query.verified || undefined;
+  const registrationDate = <string>req.query['registration-date'] || undefined;
+  const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
+  let subscribedChannels: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
+  if (subscribedChannels != null && !Array.isArray(subscribedChannels)) {
+    // we have a string instead of string array!
+    subscribedChannels = [subscribedChannels];
+  }
+  const limitParam = parseInt(<string>req.query.limit, 10);
+  const indexParam = parseInt(<string>req.query.index, 10);
+  const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
+  const index = isNaN(indexParam) ? undefined : indexParam;
+
+  return {
+    classification: <UserClassification>classification,
+    index,
+    limit,
+    organization,
+    verified,
+    username,
+    registrationDate: getDateFromString(registrationDate),
+    subscribedChannelIds: subscribedChannels
+  };
 };
