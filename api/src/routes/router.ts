@@ -3,8 +3,7 @@ import { UserRoutes } from './user';
 import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../models/data/channel-info';
-import { IdentitySchema } from '../models/data/identity';
-import { UserSchema } from '../models/data/user';
+import { UserSchema, UserWithoutIdSchema } from '../models/data/user';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
 import { CONFIG } from '../config';
@@ -43,4 +42,4 @@ const authenticationRoutes = new AuthenticationRoutes(authenticationService);
 const { createIdentity } = authenticationRoutes;
 export const authenticationRouter = Router();
 
-authenticationRouter.post('/create-identity', validate({ body: IdentitySchema }), createIdentity);
+authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);

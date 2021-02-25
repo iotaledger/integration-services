@@ -1,5 +1,5 @@
 import { IdentityResponse } from '../models/data/identity';
-import { UserPersistence } from '../models/data/user';
+import { User, UserWithoutId } from '../models/data/user';
 import { IdentityService } from './identity-service';
 import { UserService } from './user-service';
 
@@ -11,8 +11,12 @@ export class AuthenticationService {
     this.userService = userService;
   }
 
-  createIdentity = async (user: UserPersistence): Promise<IdentityResponse> => {
+  createIdentity = async (u: UserWithoutId): Promise<IdentityResponse> => {
     const identity = await this.identityService.createIdentity();
+    const user: User = {
+      ...u,
+      userId: identity.key.public
+    };
     const result = await this.userService.addUser(user);
 
     if (!result?.result?.n) {

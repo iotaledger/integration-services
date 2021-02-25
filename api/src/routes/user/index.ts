@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, UserPersistence, UserSearch, UserClassification } from '../../models/data/user';
+import { User, UserSearch, UserClassification } from '../../models/data/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { getDateFromString } from '../../utils/date';
 
 export class UserRoutes {
   private readonly userService: UserService;
@@ -14,9 +14,7 @@ export class UserRoutes {
   searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userSearch = this.getUserSearch(req);
-      const usersPersistence = await this.userService.searchUsers(userSearch);
-
-      const users = usersPersistence.map((user) => this.getUserObject(user));
+      const users = await this.userService.searchUsers(userSearch);
       res.send(users);
     } catch (error) {
       next(error);
@@ -32,8 +30,7 @@ export class UserRoutes {
         return;
       }
 
-      const userPersistence = await this.userService.getUser(userId);
-      const user = this.getUserObject(userPersistence);
+      const user = await this.userService.getUser(userId);
       res.send(user);
     } catch (error) {
       next(error);
@@ -42,7 +39,7 @@ export class UserRoutes {
 
   addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const user = this.getUserPersistenceFromBody(req.body);
+      const user: User = req.body;
       const result = await this.userService.addUser(user);
 
       if (!result?.result?.n) {
@@ -59,13 +56,7 @@ export class UserRoutes {
 
   updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const user = this.getUserPersistenceFromBody(req.body);
-
-      if (user == null) {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-        return;
-      }
-
+      const user: User = req.body;
       const result = await this.userService.updateUser(user);
 
       if (!result?.result?.n) {
@@ -93,86 +84,6 @@ export class UserRoutes {
     } catch (error) {
       next(error);
     }
-  };
-
-  getUserPersistenceFromBody = (user: User): UserPersistence | null => {
-    if (user == null || _.isEmpty(user.userId)) {
-      throw new Error('Error when parsing the body: userId must be provided!');
-    }
-    const {
-      firstName,
-      lastName,
-      subscribedChannelIds,
-      userId,
-      username,
-      verification,
-      organization,
-      registrationDate,
-      classification,
-      description
-    } = user;
-
-    if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
-      throw new Error(
-        `No valid classification provided, it must be ${UserClassification.human}, ${UserClassification.device} or ${UserClassification.api}!`
-      );
-    }
-
-    const userPersistence: UserPersistence = {
-      userId,
-      username,
-      classification: classification as UserClassification,
-      subscribedChannelIds,
-      firstName,
-      lastName,
-      description,
-      organization,
-      registrationDate: registrationDate && getDateFromString(registrationDate),
-      verification: verification && {
-        verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
-        verified: verification.verified,
-        verificationIssuerId: verification.verificationIssuerId
-      }
-    };
-
-    return userPersistence;
-  };
-
-  getUserObject = (userPersistence: UserPersistence): User | null => {
-    if (userPersistence == null || _.isEmpty(userPersistence.userId)) {
-      throw new Error('Error when parsing the body: userId must be provided!');
-    }
-
-    const {
-      firstName,
-      username,
-      userId,
-      subscribedChannelIds,
-      organization,
-      lastName,
-      registrationDate,
-      verification,
-      classification,
-      description
-    } = userPersistence;
-
-    const user: User = {
-      userId,
-      username,
-      classification,
-      subscribedChannelIds,
-      firstName,
-      lastName,
-      description,
-      registrationDate: getDateStringFromDate(registrationDate),
-      verification: verification && {
-        verified: verification.verified,
-        verificationDate: getDateStringFromDate(verification.verificationDate),
-        verificationIssuerId: verification.verificationIssuerId
-      },
-      organization
-    };
-    return user;
   };
 
   getUserSearch = (req: Request): UserSearch => {

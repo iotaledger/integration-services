@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '../../models/data/channel-info';
+import { ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { getDateFromString } from '../../utils/date';
 
 export class ChannelInfoRoutes {
   private readonly channelInfoService: ChannelInfoService;
@@ -14,8 +14,7 @@ export class ChannelInfoRoutes {
   searchChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const channelInfoSearch = this.getChannelInfoSearch(req);
-      const channelInfoPersistence = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
-      const channelInfos = channelInfoPersistence.map((c) => this.getChannelInfoObject(c));
+      const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
       res.send(channelInfos);
     } catch (error) {
       next(error);
@@ -31,8 +30,7 @@ export class ChannelInfoRoutes {
         return;
       }
 
-      const channelInfoPersistence = await this.channelInfoService.getChannelInfo(channelAddress);
-      const channelInfo = this.getChannelInfoObject(channelInfoPersistence);
+      const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
       res.send(channelInfo);
     } catch (error) {
       next(error);
@@ -41,13 +39,7 @@ export class ChannelInfoRoutes {
 
   addChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const channelInfo = this.getChannelInfoPersistence(req.body);
-
-      if (channelInfo == null) {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-        return;
-      }
-
+      const channelInfo: ChannelInfo = req.body;
       const result = await this.channelInfoService.addChannelInfo(channelInfo);
 
       if (!result?.result?.n) {
@@ -64,13 +56,7 @@ export class ChannelInfoRoutes {
 
   updateChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const channelInfo = this.getChannelInfoPersistence(req.body);
-
-      if (channelInfo == null) {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-        return;
-      }
-
+      const channelInfo: ChannelInfo = req.body;
       const result = await this.channelInfoService.updateChannelInfo(channelInfo);
 
       if (!result?.result?.n) {
@@ -98,39 +84,6 @@ export class ChannelInfoRoutes {
     } catch (error) {
       next(error);
     }
-  };
-
-  getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
-    if (ci == null || _.isEmpty(ci.channelAddress) || _.isEmpty(ci.topics) || _.isEmpty(ci.authorId)) {
-      throw new Error('Error when parsing the body: channelAddress and author must be provided!');
-    }
-
-    const channelInfoPersistence: ChannelInfoPersistence = {
-      created: ci.created ? getDateFromString(ci.created) : null,
-      authorId: ci.authorId,
-      subscriberIds: ci.subscriberIds || [],
-      topics: ci.topics,
-      channelAddress: ci.channelAddress,
-      latestMessage: ci.latestMessage && getDateFromString(ci.created)
-    };
-
-    return channelInfoPersistence;
-  };
-
-  getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
-    if (cip == null || _.isEmpty(cip.channelAddress) || _.isEmpty(cip.authorId)) {
-      throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
-    }
-
-    const channelInfo: ChannelInfo = {
-      created: getDateStringFromDate(cip.created),
-      authorId: cip.authorId,
-      subscriberIds: cip.subscriberIds || [],
-      topics: cip.topics,
-      latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
-      channelAddress: cip.channelAddress
-    };
-    return channelInfo;
   };
 
   getChannelInfoSearch = (req: Request): ChannelInfoSearch => {

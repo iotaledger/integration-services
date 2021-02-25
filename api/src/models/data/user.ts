@@ -6,8 +6,7 @@ const VerificationSchema = Type.Object({
   verificationDate: Type.Optional(Type.String())
 });
 
-export const UserSchema = Type.Object({
-  userId: Type.String(), // public-key
+export const UserWithoutIdSchema = Type.Object({
   username: Type.Optional(Type.String()),
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
@@ -19,7 +18,12 @@ export const UserSchema = Type.Object({
   description: Type.Optional(Type.String())
 });
 
-export type User = Static<typeof UserSchema>;
+export const UserSchema = Type.Object({
+  userId: Type.String() // public-key
+});
+
+export type UserWithoutId = Static<typeof UserWithoutIdSchema>; //Omit<User, 'userId'>;
+export type User = Static<typeof UserSchema> & UserWithoutId;
 
 export const enum UserClassification {
   'human' = 'human',

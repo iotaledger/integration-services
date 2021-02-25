@@ -24,7 +24,7 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
   return await MongoDbService.getDocuments<UserPersistence>(collectionName, plainQuery, options);
 };
 
-export const getUser = async (userId: string): Promise<UserPersistence> => {
+export const getUser = async (userId: string): Promise<UserPersistence | null> => {
   const query = { _id: userId };
   return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
 };
