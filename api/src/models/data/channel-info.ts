@@ -15,10 +15,11 @@ export const ChannelInfoSchema = Type.Object({
 });
 
 export type Topic = Static<typeof TopicSchema>;
-export type ChannelInfoDto = Static<typeof ChannelInfoSchema>;
-type OmitedChannelInfoDto = Omit<ChannelInfoDto, 'created' | 'latestMessage'>;
 
-export interface ChannelInfo extends OmitedChannelInfoDto {
+export type ChannelInfo = Static<typeof ChannelInfoSchema>;
+type OmitedChannelInfo = Omit<ChannelInfo, 'created' | 'latestMessage'>;
+
+export interface ChannelInfoPersistence extends OmitedChannelInfo {
   created: Date | null;
   latestMessage?: Date;
 }
