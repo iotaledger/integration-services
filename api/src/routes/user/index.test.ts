@@ -150,7 +150,8 @@ describe('test POST user', () => {
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -172,17 +173,11 @@ describe('test POST user', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await userRoutes.addUser(req, resUpdate, nextMock);
+    await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'Could not add user!' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'Could not add user!' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
   it('should add user', async () => {
     const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 1 } });
@@ -237,7 +232,8 @@ describe('test PUT user', () => {
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -259,17 +255,11 @@ describe('test PUT user', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await userRoutes.updateUser(req, resUpdate, nextMock);
+    await userRoutes.updateUser(req, res, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'No user found to update!' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'No user found to update!' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 
   it('should return expected user', async () => {

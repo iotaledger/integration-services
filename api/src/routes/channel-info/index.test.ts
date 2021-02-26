@@ -158,7 +158,8 @@ describe('test POST channelInfo', () => {
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -179,17 +180,11 @@ describe('test POST channelInfo', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await channelInfoRoutes.addChannelInfo(req, resUpdate, nextMock);
+    await channelInfoRoutes.addChannelInfo(req, res, nextMock);
 
     expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'Could not add channel info' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'Could not add channel info' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 
   it('should add channel info', async () => {
@@ -245,7 +240,8 @@ describe('test PUT channelInfo', () => {
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -266,17 +262,11 @@ describe('test PUT channelInfo', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await channelInfoRoutes.updateChannelInfo(req, resUpdate, nextMock);
+    await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
     expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 
   it('should return expected channel info', async () => {

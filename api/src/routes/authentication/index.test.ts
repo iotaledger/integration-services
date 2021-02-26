@@ -3,6 +3,7 @@ import { IdentityService } from '../../services/identity-service';
 import { AuthenticationRoutes } from './index';
 import { AuthenticationService } from '../../services/authentication-service';
 import { UserService } from '../../services/user-service';
+import { StatusCodes } from 'http-status-codes';
 
 const identityDocumentMock = {
   doc: {
@@ -53,7 +54,8 @@ describe('test authentication routes', () => {
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -95,6 +97,7 @@ describe('test authentication routes', () => {
       await authenticationRoutes.createIdentity(req, res, nextMock);
       expect(identitySpy).toHaveBeenCalledWith();
       expect(userSpy).toHaveBeenCalledWith(exptectedUser);
+      expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
       expect(res.send).toHaveBeenCalledWith(identityDocumentMock);
     });
   });

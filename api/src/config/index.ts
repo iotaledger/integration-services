@@ -3,13 +3,12 @@ import isEmpty from 'lodash/isEmpty';
 
 const IdentityConfig = {
   network: process.env.NETWORK,
-  node: process.env.PERMA_NODE,
+  node: process.env.IOTA_PERMA_NODE,
   explorer: process.env.EXPLORER
 };
 
 export const CONFIG: Config = {
   port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-  nodeUrl: process.env.IOTA_NODE_URL,
   apiVersion: process.env.API_VERSION,
   databaseUrl: process.env.DATABASE_URL,
   databaseName: process.env.DATABASE_NAME,
