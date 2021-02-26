@@ -85,12 +85,13 @@ export class ChannelInfoRoutes {
   };
 
   getChannelInfoSearch = (req: Request): ChannelInfoSearch => {
-    const authorId = <string>req.query['author-id'] || undefined;
-    const author = <string>req.query.author || undefined;
-    const topicType = <string>req.query['topic-type'] || undefined;
-    const topicSource = <string>req.query['topic-source'] || undefined;
-    const created = <string>req.query.created || undefined;
-    const latestMessage = <string>req.query['latest-message'] || undefined;
+    const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+    const authorId = decodeParam(<string>req.query['author-id']);
+    const author = decodeParam(<string>req.query.author);
+    const topicType = decodeParam(<string>req.query['topic-type']);
+    const topicSource = decodeParam(<string>req.query['topic-source']);
+    const created = decodeParam(<string>req.query.created);
+    const latestMessage = decodeParam(<string>req.query['latest-message']);
     const limitParam = parseInt(<string>req.query.limit, 10);
     const indexParam = parseInt(<string>req.query.index, 10);
     const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;

@@ -1,7 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { IdentityResponse } from '../models/data/identity';
-const { KeyType, Document } = Identity;
+import { IdentityDocument, IdentityResponse } from '../models/data/identity';
+const { Document } = Identity;
 
 export class IdentityService {
   private static instance: IdentityService;
@@ -34,7 +34,7 @@ export class IdentityService {
   };
 
   generateIdentity = () => {
-    const { doc, key } = new Document(KeyType.Ed25519) as any;
+    const { doc, key } = new Document(this.config.keyType) as IdentityDocument;
 
     return {
       doc,

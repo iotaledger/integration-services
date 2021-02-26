@@ -1,3 +1,5 @@
+import * as Identity from '@iota/identity-wasm/node';
+
 export interface Config {
   port: number;
   apiVersion: string;
@@ -10,4 +12,5 @@ export interface IdentityConfig {
   network: string;
   node: string;
   explorer: string;
+  keyType: Identity.KeyType;
 }

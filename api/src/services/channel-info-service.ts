@@ -23,7 +23,7 @@ export class ChannelInfoService {
       const authorId = (await this.userService.getUser(channelInfoSearch.author))?.userId;
 
       if (!authorId) {
-        console.error(`No user id found for: ${channelInfoSearch.author}`);
+        throw Error(`No user id found for: ${channelInfoSearch.author}`);
       }
       const search = {
         ...channelInfoSearch,

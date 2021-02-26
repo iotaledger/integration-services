@@ -1,10 +1,12 @@
-import { Config } from '../models/config';
+import { Config, IdentityConfig } from '../models/config';
 import isEmpty from 'lodash/isEmpty';
+import * as Identity from '@iota/identity-wasm/node';
 
-const IdentityConfig = {
+const IdentityConfig: IdentityConfig = {
   network: process.env.NETWORK,
   node: process.env.IOTA_PERMA_NODE,
-  explorer: process.env.EXPLORER
+  explorer: process.env.EXPLORER,
+  keyType: Identity.KeyType.Ed25519
 };
 
 export const CONFIG: Config = {

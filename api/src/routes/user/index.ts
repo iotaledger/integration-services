@@ -85,16 +85,19 @@ export class UserRoutes {
   };
 
   getUserSearch = (req: Request): UserSearch => {
-    const classification = <string>req.query.classification || undefined;
-    const organization = <string>req.query.organization || undefined;
-    const username = <string>req.query.username || undefined;
-    const verifiedParam = <string>req.query.verified || undefined;
-    const registrationDate = <string>req.query['registration-date'] || undefined;
+    const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+    const classification = decodeParam(<string>req.query.classification);
+    const organization = decodeParam(<string>req.query.organization);
+    const username = decodeParam(<string>req.query.username);
+    const verifiedParam = decodeParam(<string>req.query.verified);
+    const registrationDate = decodeParam(<string>req.query['registration-date']);
     const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
     let subscribedChannels: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
     if (subscribedChannels != null && !Array.isArray(subscribedChannels)) {
       // we have a string instead of string array!
-      subscribedChannels = [subscribedChannels];
+      subscribedChannels = [decodeParam(subscribedChannels)];
+    } else if (Array.isArray(subscribedChannels)) {
+      subscribedChannels = subscribedChannels.map((s) => decodeParam(s));
     }
     const limitParam = parseInt(<string>req.query.limit, 10);
     const indexParam = parseInt(<string>req.query.index, 10);
