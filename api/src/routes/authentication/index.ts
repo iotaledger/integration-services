@@ -23,4 +23,34 @@ export class AuthenticationRoutes {
       next(error);
     }
   };
+
+  createVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // TODO body must include information about who to verify (subject) and the issuer itself!
+      const user: UserWithoutId = req.body;
+      if (!user.username) {
+        throw new Error('No valid body provided!');
+      }
+      const vc: any = await this.authenticationService.createVerifiableCredential();
+
+      res.status(StatusCodes.CREATED).send(vc);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // TODO body must include information about who to verify (subject) and the issuer itself!
+      const vcBody: any = req.body;
+      // if (!user.username) {
+      //   throw new Error('No valid body provided!');
+      // }
+      const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody);
+
+      res.status(StatusCodes.CREATED).send(vc);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
