@@ -7,7 +7,7 @@ const collectionName = CollectionNames.users;
 
 export const searchUsers = async (userSearch: UserSearch): Promise<UserPersistence[]> => {
   const regex = (text: string) => text && new RegExp(text, 'i');
-  const { classification, organization, subscribedChannelIds: subscribedChannels, username, verified, index, registrationDate } = userSearch;
+  const { classification, organization, subscribedChannelIds, username, verified, index, registrationDate } = userSearch;
   const limit = userSearch.limit != null ? userSearch.limit : 100;
   const query = {
     registrationDate: registrationDate && { $gte: registrationDate },
@@ -15,8 +15,10 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
     organization: regex(organization),
     username: regex(username),
     'verification.verified': verified,
-    subscribedChannels: subscribedChannels && { $in: subscribedChannels }
+    subscribedChannelIds: subscribedChannelIds && { $in: subscribedChannelIds }
   };
+  console.log('QUERY', query);
+
   const plainQuery = MongoDbService.getPlainObject(query);
   const skip = index > 0 ? (index - 1) * limit : 0;
   const options = { limit, skip };
@@ -50,7 +52,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
     _id: user.userId
   };
 
-  const { firstName, lastName, username, organization, subscribedChannelIds: subscribedChannels, description, classification } = user;
+  const { firstName, lastName, username, organization, subscribedChannelIds, description, classification } = user;
 
   const updateObject = MongoDbService.getPlainObject({
     firstName,
@@ -59,7 +61,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
     username: username || undefined, // username must not be ''
     classification: classification || undefined, // username must not be ''
     organization,
-    subscribedChannels
+    subscribedChannelIds
   });
 
   const update = {
