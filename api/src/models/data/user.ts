@@ -19,10 +19,11 @@ export const UserWithoutIdSchema = Type.Object({
 });
 
 export const UserSchema = Type.Object({
-  userId: Type.String() // public-key
+  userId: Type.String(), // did
+  publicKey: Type.String()
 });
 
-export type UserWithoutId = Static<typeof UserWithoutIdSchema>; //Omit<User, 'userId'>;
+export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
 export type User = Static<typeof UserSchema> & UserWithoutId;
 
 export const enum UserClassification {
@@ -52,6 +53,6 @@ export interface UserPersistence extends OmittedUser {
 
 export interface VerificationPersistence {
   verified: boolean;
-  verificationIssuerId?: string; // public-key
+  verificationIssuerId?: string;
   verificationDate?: Date;
 }

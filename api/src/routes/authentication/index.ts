@@ -48,7 +48,22 @@ export class AuthenticationRoutes {
       // }
       const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody);
 
-      res.status(StatusCodes.CREATED).send(vc);
+      res.status(StatusCodes.OK).send(vc);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  revokeVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // TODO body must include information about who to verify (subject) and the issuer itself!
+      const vcBody: any = req.body;
+      // if (!user.username) {
+      //   throw new Error('No valid body provided!');
+      // }
+      await this.authenticationService.revokeVerifiableCredential(vcBody);
+
+      res.sendStatus(StatusCodes.OK);
     } catch (error) {
       next(error);
     }

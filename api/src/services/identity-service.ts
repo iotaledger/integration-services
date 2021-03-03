@@ -3,7 +3,9 @@ import { IdentityConfig } from '../models/config';
 import { IdentityDocument, IdentityResponse } from '../models/data/identity';
 const { Document, VerifiableCredential, Digest, Method } = Identity;
 import { SERVER_IDENTITY, SERVER_KEY_COLLECTION } from '../config/identity';
+import { User } from '../models/data/user';
 export interface Credential<T> {
+  id: string;
   type: string;
   subject: T;
 }
@@ -50,8 +52,9 @@ export class IdentityService {
     const issuerKeyCollection = ServerKeyCollection;
     const { doc } = this.restoreIdentity(issuerIdentity);
     const issuerKeys = Identity.KeyCollection.fromJSON(issuerKeyCollection);
-    const subjectKeyIndex = 0;
+    const subjectKeyIndex = 5;
     const method = Method.createMerkleKey(Digest.Sha256, doc.id, issuerKeys, 'key-collection');
+    console.log('METHOOOODMAN', method.id.toString());
 
     const credentialSubject = {
       ...credential.subject
@@ -59,7 +62,7 @@ export class IdentityService {
 
     // Issue an unsigned `UniversityDegree` credential for Alice
     const unsignedVc = VerifiableCredential.extend({
-      id: 'http://example.edu/credentials/3732', // TODO
+      id: credential?.id,
       type: credential.type,
       issuer: doc.id.toString(),
       credentialSubject
@@ -91,9 +94,23 @@ export class IdentityService {
     // Check the validation status of the Verifiable Credential
     console.log('VCCCCC', signedVc);
     const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
-    console.log('Credential Validation', validatedCredential);
+    console.log('Credential Validation', JSON.stringify(validatedCredential));
+
+    if (!validatedCredential.verified) {
+      console.error(`Verifiable credential cannot be verified for ${'TODO'}!`);
+    }
 
     return validatedCredential;
+  };
+
+  revokeVerifiableCredential = async (user: User): Promise<any> => {
+    // Check the validation status of the Verifiable Credential
+    const issuerIdentity = ServerIdentity;
+    const { doc } = this.restoreIdentity(issuerIdentity);
+    const res = doc.revokeMerkleKey('key-collection', 5);
+    console.log('REVOKKE', res);
+
+    return {};
   };
 
   restoreIdentity = (issuerIdentity: any) => {

@@ -17,7 +17,6 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
     'verification.verified': verified,
     subscribedChannelIds: subscribedChannelIds && { $in: subscribedChannelIds }
   };
-  console.log('QUERY', query);
 
   const plainQuery = MongoDbService.getPlainObject(query);
   const skip = index > 0 ? (index - 1) * limit : 0;

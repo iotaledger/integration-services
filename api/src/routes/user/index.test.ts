@@ -79,7 +79,8 @@ describe('test GET user', () => {
   it('should return expected user', async () => {
     const date = getDateFromString('2021-02-12T14:58:05+01:00');
     const user: UserPersistence = {
-      userId: 'my-public-key-1',
+      userId: 'did:iota:123',
+      publicKey: 'my-public-key-1',
       username: 'first-user',
       classification: UserClassification.human,
       subscribedChannelIds: [],
@@ -130,7 +131,8 @@ describe('test GET user', () => {
 describe('test POST user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
   const validBody: User = {
-    userId: 'my-public-key-1',
+    userId: 'did:iota:123',
+    publicKey: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
     subscribedChannelIds: [],
@@ -212,7 +214,8 @@ describe('test POST user', () => {
 describe('test PUT user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: UserRoutes, userService: UserService;
   const validBody: User = {
-    userId: 'my-public-key-1',
+    userId: 'did:iota:123',
+    publicKey: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
     subscribedChannelIds: [],

@@ -48,6 +48,7 @@ export class UserService {
     const {
       firstName,
       lastName,
+      publicKey,
       subscribedChannelIds,
       userId,
       username,
@@ -66,6 +67,7 @@ export class UserService {
 
     const userPersistence: UserPersistence = {
       userId,
+      publicKey,
       username,
       classification: classification as UserClassification,
       subscribedChannelIds,
@@ -93,6 +95,7 @@ export class UserService {
     const {
       firstName,
       username,
+      publicKey,
       userId,
       subscribedChannelIds,
       organization,
@@ -105,6 +108,7 @@ export class UserService {
 
     const user: User = {
       userId,
+      publicKey,
       username,
       classification,
       subscribedChannelIds,

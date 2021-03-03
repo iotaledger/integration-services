@@ -15,7 +15,8 @@ export class AuthenticationService {
     const identity = await this.identityService.createIdentity();
     const user: User = {
       ...userWithoutId,
-      userId: identity.key.public
+      userId: identity.doc.id.toString(),
+      publicKey: identity.key.public
     };
 
     const result = await this.userService.addUser(user);
@@ -33,9 +34,10 @@ export class AuthenticationService {
     const organization = 'IOTA';
     const registrationDate = '2021-02-12T14:58:05+01:00';
     const classification = UserClassification.human;
-    const id = 'did:iota:9e7mbNZr1zh1hAVS4a8MZHdsJUjyP1pud66vRn8m8PnJ';
+    const id = 'did:iota:5q8wJYFTFuX9Jfjjvw3G9reou13N3FwAq7updsBVs5L7';
     const userCredential: Credential<UserCredential> = {
       type: 'UserCredential',
+      id,
       subject: {
         id,
         username,
@@ -52,6 +54,11 @@ export class AuthenticationService {
   checkVerifiableCredential = async (vc: any) => {
     const res = this.identityService.checkVerifiableCredential(vc);
     // TODO update user to be verified!
+    return res;
+  };
+  revokeVerifiableCredential = async (vc: any) => {
+    const res = this.identityService.revokeVerifiableCredential(vc);
+    // TODO update user to be no more verified!
     return res;
   };
 }
