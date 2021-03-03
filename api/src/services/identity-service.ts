@@ -1,9 +1,9 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { IdentityDocument, IdentityResponse } from '../models/data/identity';
-const { Document, VerifiableCredential, Digest, Method } = Identity;
-import { SERVER_IDENTITY, SERVER_KEY_COLLECTION } from '../config/identity';
-import { User } from '../models/data/user';
+import { IdentityDocument, IdentityResponse, KeyCollectionJson, KeyCollectionPersistence } from '../models/data/identity';
+const { Document, VerifiableCredential, Digest, Method, KeyCollection } = Identity;
+import { SERVER_IDENTITY } from '../config/identity';
+
 export interface Credential<T> {
   id: string;
   type: string;
@@ -11,7 +11,7 @@ export interface Credential<T> {
 }
 
 const ServerIdentity = SERVER_IDENTITY;
-const ServerKeyCollection = SERVER_KEY_COLLECTION;
+
 export class IdentityService {
   private static instance: IdentityService;
   private readonly config: IdentityConfig;
@@ -26,6 +26,21 @@ export class IdentityService {
     }
     return IdentityService.instance;
   }
+
+  generateKeyCollection = (index: number, count = 10): KeyCollectionPersistence => {
+    if (count > 20) {
+      throw new Error('Key collection count is too big!');
+    }
+    const { keys, type } = new KeyCollection(this.config.keyType, count)?.toJSON();
+    console.log('COUNT', count);
+
+    return {
+      count,
+      index,
+      type,
+      keys
+    };
+  };
 
   createIdentity = async (): Promise<IdentityResponse> => {
     const identity = this.generateIdentity();
@@ -45,35 +60,31 @@ export class IdentityService {
     };
   };
 
-  createVerifiableCredential = async <T>(credential: Credential<T>): Promise<any> => {
-    console.log('SERVER_IDENTITY', SERVER_IDENTITY);
-
+  createVerifiableCredential = async <T>(credential: Credential<T>, keyCollectionJson: KeyCollectionJson, subjectKeyIndex: number): Promise<any> => {
     const issuerIdentity = ServerIdentity;
-    const issuerKeyCollection = ServerKeyCollection;
     const { doc } = this.restoreIdentity(issuerIdentity);
-    const issuerKeys = Identity.KeyCollection.fromJSON(issuerKeyCollection);
-    const subjectKeyIndex = 5;
-    const method = Method.createMerkleKey(Digest.Sha256, doc.id, issuerKeys, 'key-collection');
-    console.log('METHOOOODMAN', method.id.toString());
+    const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
+    const digest = Digest.Sha256;
+    const method = Method.createMerkleKey(digest, doc.id, issuerKeys, this.config.keyCollectionTag);
 
-    const credentialSubject = {
-      ...credential.subject
-    };
-
-    // Issue an unsigned `UniversityDegree` credential for Alice
     const unsignedVc = VerifiableCredential.extend({
       id: credential?.id,
       type: credential.type,
       issuer: doc.id.toString(),
-      credentialSubject
+      credentialSubject: credential.subject
     });
+    console.log('index ', credential.subject);
+    console.log('index ', subjectKeyIndex);
+
+    console.log('unsigned vc', issuerKeys.secret(subjectKeyIndex));
+    console.log('issuerKeys', issuerKeys.public(subjectKeyIndex));
 
     // Sign the credential with Bob's Merkle Key Collection method
     const signedVc = doc.signCredential(unsignedVc, {
       method: method.id.toString(),
       public: issuerKeys.public(subjectKeyIndex),
       secret: issuerKeys.secret(subjectKeyIndex),
-      proof: issuerKeys.merkleProof(Digest.Sha256, subjectKeyIndex)
+      proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
     });
 
     // Ensure the credential signature is valid
@@ -103,14 +114,13 @@ export class IdentityService {
     return validatedCredential;
   };
 
-  revokeVerifiableCredential = async (user: User): Promise<any> => {
+  revokeVerifiableCredential = async (index: number): Promise<any> => {
     // Check the validation status of the Verifiable Credential
     const issuerIdentity = ServerIdentity;
     const { doc } = this.restoreIdentity(issuerIdentity);
-    const res = doc.revokeMerkleKey('key-collection', 5);
-    console.log('REVOKKE', res);
+    const result: boolean = doc.revokeMerkleKey(this.config.keyCollectionTag, index);
 
-    return {};
+    return result;
   };
 
   restoreIdentity = (issuerIdentity: any) => {

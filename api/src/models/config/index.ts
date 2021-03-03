@@ -13,4 +13,5 @@ export interface IdentityConfig {
   node: string;
   explorer: string;
   keyType: Identity.KeyType;
+  keyCollectionTag: string;
 }

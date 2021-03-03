@@ -43,6 +43,7 @@ describe('test authentication routes', () => {
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
     const config: IdentityConfig = {
+      keyCollectionTag: 'key-collection',
       explorer: '',
       network: 'test',
       node: '',

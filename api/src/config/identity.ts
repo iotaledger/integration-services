@@ -12,44 +12,6 @@ export const SERVER_ROOT_KEYS = {
   secret: 'GCv7Cvc4sx1oxVA9LPTfuZMzwNDscY52Lap9rLoWfFDU'
 };
 
-export const SERVER_KEY_COLLECTION = {
-  type: 'ed25519',
-  keys: [
-    {
-      public: '3MNG9dK7RZ25ksYzLRB34Rb4Cao7t4F5J2wxJ2rkjhdS',
-      secret: 'GKng7K6EdycQQZmeySztwGY5Q63xisKV8HHYoKCVpXTu'
-    },
-    {
-      public: 'HsLtLbK5iNYokSnoB7Ddt5Q1DES1CQcbdq1rzsDg1tEg',
-      secret: 'D12qvQUTiiVRQT9frShNy5sMWy8ycjYqD5yXaYSJixLW'
-    },
-    {
-      public: '8zvjfhcp4pYxKEacK8o7ctpsozjxKkDePUk5VZ52Mgo4',
-      secret: '91hBX6k6Ax1pTTgaJtBWp9p1AzQTMAVRfDY4N98nFqZh'
-    },
-    {
-      public: 'G97GrNS2TEGCDF3gfjEe9i1AJ35Fo3GhqA8xotopFKY1',
-      secret: '8cPrFfSev5RRu9fVPrSnbMVXAE91b9F2iGCgdsHgHKHx'
-    },
-    {
-      public: 'BBJbyESSwTZwk46dFtXzTzm3USEMwXAYTVyT7pGbyVT7',
-      secret: '42gQh8WmmBu7EmuToXESKmbQqUysKQTkj7x1zRrR5or6'
-    },
-    {
-      public: 'E1CKBWhju3yF4cg2rEzWhUqSg5xhCd3txyuMSTHydoeh',
-      secret: '2DGNEt9E9jbLmfzAQt1df1YAyFyFvjcNwNQZhJyB78VN'
-    },
-    {
-      public: '278n2jjJktcVQZM4nu9z95exTHc56Q3ScgSQv16NHFpx',
-      secret: '4okbHrzvE6g1TkBDU1a7Jhvkn4j3QNtL6chZWywxBHiL'
-    },
-    {
-      public: 'AduDU76bgeDVWC58MMHZwTsqPgFVJW2DqtiuWKhpSaTC',
-      secret: 'DErDhF9eMUGZXt3o9Puv1UDyTCP1LDUbVYjAgURN36Jb'
-    }
-  ]
-};
-
 export const SERVER_IDENTITY = {
   doc: {
     id: 'did:iota:Fs6E3azeJDZyHA2xAWBtiybSVucPJPsmbB2ZCsiMMj9j',
