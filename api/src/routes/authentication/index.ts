@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { UserCredential } from '../../models/data/identity';
 import { UserWithoutId } from '../../models/data/user';
 import { AuthenticationService } from '../../services/authentication-service';
 
@@ -26,12 +27,11 @@ export class AuthenticationRoutes {
 
   createVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // TODO body must include information about who to verify (subject) and the issuer itself!
-      const user: UserWithoutId = req.body;
-      if (!user.username) {
+      const userCredential: UserCredential = req.body;
+      if (!userCredential.id) {
         throw new Error('No valid body provided!');
       }
-      const vc: any = await this.authenticationService.createVerifiableCredential();
+      const vc: any = await this.authenticationService.createVerifiableCredential(userCredential);
 
       res.status(StatusCodes.CREATED).send(vc);
     } catch (error) {

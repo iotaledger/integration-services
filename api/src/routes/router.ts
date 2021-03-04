@@ -10,6 +10,7 @@ import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { IdentityService } from '../services/identity-service';
+import { UserCredentialSchema } from '../models/data/identity';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -43,7 +44,8 @@ const { createIdentity, createVerifiableCredential, checkVerifiableCredential, r
 export const authenticationRouter = Router();
 
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
+authenticationRouter.post('/verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
 // TODO add schema
-authenticationRouter.post('/verification', createVerifiableCredential);
 authenticationRouter.post('/check-verification', checkVerifiableCredential);
+// TODO add schema
 authenticationRouter.post('/revoke-verification', revokeVerifiableCredential);

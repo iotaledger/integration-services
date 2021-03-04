@@ -1,5 +1,15 @@
 import * as Identity from '@iota/identity-wasm/node';
-import { UserClassification } from './user';
+import { Type, Static } from '@sinclair/typebox';
+
+export const UserCredentialSchema = Type.Object({
+  id: Type.String(), // did
+  username: Type.String(),
+  organization: Type.String(),
+  registrationDate: Type.String(),
+  classification: Type.String()
+});
+
+export type UserCredential = Static<typeof UserCredentialSchema>;
 
 export interface IdentityDocument extends Identity.Document {
   doc: Identity.Document;
@@ -11,14 +21,6 @@ export interface IdentityResponse {
   key: Identity.KeyPair;
   txHash: string;
   explorerUrl: string;
-}
-
-export interface UserCredential {
-  id: string;
-  username: string;
-  organization: string;
-  registrationDate: string;
-  classification: UserClassification;
 }
 
 export interface KeyCollectionPersistence {

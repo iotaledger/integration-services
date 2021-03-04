@@ -5,8 +5,8 @@ import { KeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../m
 
 const collectionName = CollectionNames.keyCollectionLinks;
 
-export const getLinkedIdentitesSize = async (_keyCollectionIndex: number = 0): Promise<number> => {
-  const query = {};
+export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promise<number> => {
+  const query = { index: keyCollectionIndex };
   return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 

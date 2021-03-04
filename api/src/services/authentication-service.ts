@@ -1,3 +1,4 @@
+import { KEY_COLLECTION_INDEX } from '../config/identity';
 import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
 import {
   addKeyCollectionIdentity,
@@ -6,7 +7,7 @@ import {
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
 import { IdentityResponse, KeyCollectionJson, KeyCollectionPersistence, UserCredential } from '../models/data/identity';
-import { User, UserClassification, UserWithoutId } from '../models/data/user';
+import { User, UserWithoutId } from '../models/data/user';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
 
@@ -23,11 +24,7 @@ export class AuthenticationService {
   }
 
   generateKeyCollection = async (): Promise<KeyCollectionPersistence> => {
-    try {
-      return this.identityService.generateKeyCollection(0, 8);
-    } catch (error) {
-      console.log('ERRRORRRRR', error);
-    }
+    return this.identityService.generateKeyCollection(0, 8);
   };
 
   createIdentity = async (userWithoutId: UserWithoutId): Promise<IdentityResponse> => {
@@ -48,39 +45,30 @@ export class AuthenticationService {
     };
   };
 
-  createVerifiableCredential = async () => {
-    const username = 'first-user';
-    const organization = 'IOTA';
-    const registrationDate = '2021-02-12T14:58:05+01:00';
-    const classification = UserClassification.human;
-    const id = 'did:iota:27TxfmHDD5aQYAcHmNohc21yMdcmDSE77ZT3mHj9Hms3';
-    const userCredential: Credential<UserCredential> = {
+  createVerifiableCredential = async (userCredential: UserCredential) => {
+    const credential: Credential<UserCredential> = {
       type: 'UserCredential',
-      id,
+      id: userCredential.id,
       subject: {
-        id,
-        username,
-        organization,
-        registrationDate,
-        classification
+        ...userCredential
       }
     };
-    const keyCollection = await getKeyCollection(0);
-    const index = await getLinkedIdentitesSize();
-    console.log('INDEX ', index);
-
+    const keyCollection = await getKeyCollection(KEY_COLLECTION_INDEX);
+    const index = await getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
     const keyCollectionJson: KeyCollectionJson = {
       type: keyCollection.type,
       keys: keyCollection.keys
     };
-    const cv = await this.identityService.createVerifiableCredential<UserCredential>(userCredential, keyCollectionJson, index);
-    const size = await getLinkedIdentitesSize();
-    addKeyCollectionIdentity({
-      index: size,
+    const cv = await this.identityService.createVerifiableCredential<UserCredential>(credential, keyCollectionJson, index);
+    const res = await addKeyCollectionIdentity({
+      index,
       isRevoked: false,
-      linkedIdentity: id,
-      keyCollectionIndex: 0 // TODO dynamic keycollection index
+      linkedIdentity: userCredential.id,
+      keyCollectionIndex: KEY_COLLECTION_INDEX
     });
+    if (!res?.result.n) {
+      throw new Error('Could not verify identity!');
+    }
     // TODO update user to be verified!
     return cv;
   };
