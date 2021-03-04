@@ -27,12 +27,26 @@ export class IdentityService {
     return IdentityService.instance;
   }
 
-  generateKeyCollection = (index: number, count = 10): KeyCollectionPersistence => {
+  generateKeyCollection = async (index: number, count = 8): Promise<KeyCollectionPersistence> => {
     if (count > 20) {
       throw new Error('Key collection count is too big!');
     }
-    const { keys, type } = new KeyCollection(this.config.keyType, count)?.toJSON();
+    const issuerIdentity = ServerIdentity;
+    const { doc, key } = this.restoreIdentity(issuerIdentity);
+    const keyCollection = new KeyCollection(this.config.keyType, count);
+    const method = Method.createMerkleKey(Digest.Sha256, doc.id, keyCollection, this.config.keyCollectionTag);
+
+    doc.insertMethod(method, `VerificationMethod`);
+    doc.sign(key);
+
+    console.log('Verified (doc): ', doc.verify());
+
+    const txHash = await Identity.publish(doc.toJSON(), this.config);
+    console.log('NEW DOC ', doc);
+    console.log('txHash ', txHash);
+
     console.log('COUNT', count);
+    const { keys, type } = keyCollection?.toJSON();
 
     return {
       count,
@@ -73,11 +87,6 @@ export class IdentityService {
       issuer: doc.id.toString(),
       credentialSubject: credential.subject
     });
-    console.log('index ', credential.subject);
-    console.log('index ', subjectKeyIndex);
-
-    console.log('unsigned vc', issuerKeys.secret(subjectKeyIndex));
-    console.log('issuerKeys', issuerKeys.public(subjectKeyIndex));
 
     // Sign the credential with Bob's Merkle Key Collection method
     const signedVc = doc.signCredential(unsignedVc, {
@@ -124,7 +133,7 @@ export class IdentityService {
   };
 
   restoreIdentity = (issuerIdentity: any) => {
-    const keyPair: Identity.KeyPair = issuerIdentity.key;
+    const keyPair: Identity.KeyPair = Identity.KeyPair.fromJSON(issuerIdentity.key);
     const doc = Document.fromJSON(issuerIdentity.doc) as any;
 
     return {

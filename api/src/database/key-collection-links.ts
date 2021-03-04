@@ -7,7 +7,7 @@ const collectionName = CollectionNames.keyCollectionLinks;
 
 export const getLinkedIdentitesSize = async (_keyCollectionIndex: number = 0): Promise<number> => {
   const query = {};
-  return MongoDbService.db.collection(collectionName).count(query);
+  return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
 export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {

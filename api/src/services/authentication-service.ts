@@ -22,9 +22,13 @@ export class AuthenticationService {
     return saveKeyCollection(keyCollection);
   }
 
-  generateKeyCollection(): KeyCollectionPersistence {
-    return this.identityService.generateKeyCollection(0, 14);
-  }
+  generateKeyCollection = async (): Promise<KeyCollectionPersistence> => {
+    try {
+      return this.identityService.generateKeyCollection(0, 8);
+    } catch (error) {
+      console.log('ERRRORRRRR', error);
+    }
+  };
 
   createIdentity = async (userWithoutId: UserWithoutId): Promise<IdentityResponse> => {
     const identity = await this.identityService.createIdentity();
@@ -66,8 +70,8 @@ export class AuthenticationService {
     console.log('INDEX ', index);
 
     const keyCollectionJson: KeyCollectionJson = {
-      keys: keyCollection.keys,
-      type: keyCollection.type
+      type: keyCollection.type,
+      keys: keyCollection.keys
     };
     const cv = await this.identityService.createVerifiableCredential<UserCredential>(userCredential, keyCollectionJson, index);
     const size = await getLinkedIdentitesSize();
