@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence, UserSearch } from '../models/data/user';
+import { UserPersistence, UserSearch, VerificationPersistence, VerificationUpdatePersistence } from '../models/data/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.users;
@@ -70,6 +70,28 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
   return MongoDbService.updateDocument(collectionName, query, update);
 };
 
+export const updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<UpdateWriteOpResult> => {
+  const query = {
+    _id: vup.userId
+  };
+  const verification: VerificationPersistence = {
+    verified: vup.verified,
+    verificationDate: vup.verificationDate,
+    lastTimeChecked: vup.lastTimeChecked,
+    verificationIssuerId: vup.verificationIssuerId
+  };
+
+  const updateObject = MongoDbService.getPlainObject({
+    verification: MongoDbService.getPlainObject(verification)
+  });
+  console.log('updateObjectupdateObjectupdateObject ', updateObject);
+
+  const update = {
+    $set: { ...updateObject }
+  };
+
+  return MongoDbService.updateDocument(collectionName, query, update);
+};
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
   const query = { _id: userId };
   return MongoDbService.removeDocument(collectionName, query);

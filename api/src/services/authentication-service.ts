@@ -7,7 +7,7 @@ import {
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
 import { IdentityResponse, KeyCollectionJson, KeyCollectionPersistence, UserCredential } from '../models/data/identity';
-import { User, UserWithoutId } from '../models/data/user';
+import { User, UserWithoutId, VerificationUpdatePersistence } from '../models/data/user';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
 
@@ -46,6 +46,11 @@ export class AuthenticationService {
   };
 
   createVerifiableCredential = async (userCredential: UserCredential) => {
+    const user = await this.userService.getUser(userCredential.id);
+    if (!user) {
+      throw new Error("User does not exist, so he can't be verified!");
+    }
+
     const credential: Credential<UserCredential> = {
       type: 'UserCredential',
       id: userCredential.id,
@@ -66,10 +71,10 @@ export class AuthenticationService {
       linkedIdentity: userCredential.id,
       keyCollectionIndex: KEY_COLLECTION_INDEX
     });
-    if (!res?.result.n) {
+    if (!res?.result?.n) {
       throw new Error('Could not verify identity!');
     }
-    // TODO update user to be verified!
+    this.setUserVerified(credential.id, cv?.issuer?.did?.toString());
     return cv;
   };
 
@@ -84,14 +89,51 @@ export class AuthenticationService {
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
+    console.log('KCIII ', kci);
 
     const res = await this.identityService.revokeVerifiableCredential(kci.index);
+
+    // TODO clarify in which situation this is true or false!
     if (res === true) {
-      revokeKeyCollectionIdentity(kci);
+      console.log('Successfully revoked!');
     } else {
-      console.log('Could not revoke identity for ', did);
+      console.log(`Could not revoke identity for ${did} on the ledger!`);
     }
-    // TODO update user to be no more verified!
+
+    const updateRes = await revokeKeyCollectionIdentity(kci);
+    if (!updateRes?.result.n) {
+      throw new Error('could not revoke identity');
+    }
+
+    const vup: VerificationUpdatePersistence = {
+      userId: did,
+      verified: false,
+      lastTimeChecked: new Date(),
+      verificationDate: undefined,
+      verificationIssuerId: undefined
+    };
+    const uvUpdate = await this.userService.updateUserVerification(vup);
+    if (!uvUpdate?.result.n) {
+      throw new Error('could not revoke identity');
+    }
     return res;
+  };
+
+  private setUserVerified = async (userId: string, issuerId: string) => {
+    if (!issuerId) {
+      throw new Error('No valid issuer id!');
+    }
+    const date = new Date();
+    const vup: VerificationUpdatePersistence = {
+      userId,
+      verified: true,
+      lastTimeChecked: date,
+      verificationDate: date,
+      verificationIssuerId: issuerId
+    };
+    const res = await this.userService.updateUserVerification(vup);
+    if (!res?.result?.n) {
+      throw new Error('Could not udpate user verification!');
+    }
   };
 }

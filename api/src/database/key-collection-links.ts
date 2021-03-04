@@ -6,7 +6,7 @@ import { KeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../m
 const collectionName = CollectionNames.keyCollectionLinks;
 
 export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promise<number> => {
-  const query = { index: keyCollectionIndex };
+  const query = { keyCollectionIndex };
   return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
@@ -33,7 +33,9 @@ export const revokeKeyCollectionIdentity = async (kci: KeyCollectionIdentityPers
 
   const update = {
     $set: {
-      isRevoked: true
+      isRevoked: true,
+      revokedIdentity: kci.linkedIdentity,
+      linkedIdentity: ''
     }
   };
 

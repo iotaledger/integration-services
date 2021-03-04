@@ -2,8 +2,9 @@ import { Type, Static } from '@sinclair/typebox';
 
 const VerificationSchema = Type.Object({
   verified: Type.Boolean(),
-  verificationIssuerId: Type.Optional(Type.String()), // public-key
-  verificationDate: Type.Optional(Type.String())
+  verificationIssuerId: Type.Optional(Type.String()), // did
+  verificationDate: Type.Optional(Type.String()),
+  lastTimeChecked: Type.Optional(Type.String())
 });
 
 export const UserWithoutIdSchema = Type.Object({
@@ -25,6 +26,7 @@ export const UserSchema = Type.Object({
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
 export type User = Static<typeof UserSchema> & UserWithoutId;
+export type Verification = Static<typeof VerificationSchema>;
 
 export const enum UserClassification {
   'human' = 'human',
@@ -55,4 +57,13 @@ export interface VerificationPersistence {
   verified: boolean;
   verificationIssuerId?: string;
   verificationDate?: Date;
+  lastTimeChecked?: Date;
+}
+
+export interface VerificationUpdate extends Verification {
+  userId: string;
+}
+
+export interface VerificationUpdatePersistence extends VerificationPersistence {
+  userId: string;
 }

@@ -44,7 +44,7 @@ const { createIdentity, createVerifiableCredential, checkVerifiableCredential, r
 export const authenticationRouter = Router();
 
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
+authenticationRouter.post('/add-verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
 // TODO add schema
 authenticationRouter.post('/check-verification', checkVerifiableCredential);
 // TODO add schema

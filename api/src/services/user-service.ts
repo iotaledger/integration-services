@@ -1,4 +1,12 @@
-import { User, UserClassification, UserPersistence, UserSearch } from '../models/data/user';
+import {
+  User,
+  UserClassification,
+  UserPersistence,
+  UserSearch,
+  Verification,
+  VerificationPersistence,
+  VerificationUpdatePersistence
+} from '../models/data/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
@@ -33,15 +41,41 @@ export class UserService {
     return userDb.updateUser(userPersistence);
   };
 
+  updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<UpdateWriteOpResult> => {
+    return userDb.updateUserVerification(vup);
+  };
+
   deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
     return userDb.deleteUser(userId);
   };
 
-  hasValidFields = (user: User): boolean => {
-    return !(!user.username || !user.userId);
+  private hasValidFields = (user: User): boolean => {
+    return !(!user.publicKey && !user.userId);
   };
 
-  getUserPersistence = (user: User): UserPersistence | null => {
+  private getVerificationPersistence = (verification: Verification): VerificationPersistence | null => {
+    return (
+      verification && {
+        verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
+        lastTimeChecked: verification.lastTimeChecked && getDateFromString(verification.lastTimeChecked),
+        verified: verification.verified,
+        verificationIssuerId: verification.verificationIssuerId
+      }
+    );
+  };
+
+  private getVerificationObject = (verificationPersistence: VerificationPersistence): Verification | null => {
+    return (
+      verificationPersistence && {
+        verified: verificationPersistence.verified,
+        verificationDate: getDateStringFromDate(verificationPersistence.verificationDate),
+        lastTimeChecked: getDateStringFromDate(verificationPersistence.lastTimeChecked),
+        verificationIssuerId: verificationPersistence.verificationIssuerId
+      }
+    );
+  };
+
+  private getUserPersistence = (user: User): UserPersistence | null => {
     if (user == null || isEmpty(user.userId)) {
       throw new Error('Error when parsing the body: userId must be provided!');
     }
@@ -76,17 +110,13 @@ export class UserService {
       description,
       organization,
       registrationDate: registrationDate && getDateFromString(registrationDate),
-      verification: verification && {
-        verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
-        verified: verification.verified,
-        verificationIssuerId: verification.verificationIssuerId
-      }
+      verification: this.getVerificationPersistence(verification)
     };
 
     return userPersistence;
   };
 
-  getUserObject = (userPersistence: UserPersistence): User | null => {
+  private getUserObject = (userPersistence: UserPersistence): User | null => {
     if (userPersistence == null || isEmpty(userPersistence.userId)) {
       console.error(`Error when parsing the body, no user id found on persistence model with username ${userPersistence?.username}`);
       return null;
@@ -116,11 +146,7 @@ export class UserService {
       lastName,
       description,
       registrationDate: getDateStringFromDate(registrationDate),
-      verification: verification && {
-        verified: verification.verified,
-        verificationDate: getDateStringFromDate(verification.verificationDate),
-        verificationIssuerId: verification.verificationIssuerId
-      },
+      verification: this.getVerificationObject(verification),
       organization
     };
     return user;

@@ -38,8 +38,9 @@ export interface SimpleKeyPair {
 export interface KeyCollectionIdentityPersistence {
   keyCollectionIndex: number;
   index: number;
-  linkedIdentity: string;
+  linkedIdentity?: string;
   isRevoked: boolean;
+  revokedIdentity?: string;
 }
 
 export interface KeyCollectionJson {
