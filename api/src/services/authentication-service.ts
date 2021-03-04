@@ -79,17 +79,17 @@ export class AuthenticationService {
     return res;
   };
 
-  revokeVerifiableCredential = async (vc: any) => {
-    const kci = await getKeyCollectionIdentity(vc?.id);
+  revokeVerifiableCredential = async (did: string) => {
+    const kci = await getKeyCollectionIdentity(did);
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
 
-    const res = await this.identityService.revokeVerifiableCredential(vc);
+    const res = await this.identityService.revokeVerifiableCredential(kci.index);
     if (res === true) {
       revokeKeyCollectionIdentity(kci);
     } else {
-      console.log('Could not revoke identity for ', vc?.id);
+      console.log('Could not revoke identity for ', did);
     }
     // TODO update user to be no more verified!
     return res;

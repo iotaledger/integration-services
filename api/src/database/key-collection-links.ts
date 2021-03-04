@@ -20,13 +20,15 @@ export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersist
 };
 
 export const getKeyCollectionIdentity = async (did: string): Promise<KeyCollectionIdentityPersistence> => {
-  const query = { linkedIdentity: did };
+  const regex = (text: string) => text && new RegExp(text, 'i');
+
+  const query = { linkedIdentity: regex(did) };
   return await MongoDbService.getDocument<KeyCollectionIdentityPersistence>(collectionName, query);
 };
 
 export const revokeKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence) => {
   const query = {
-    _id: `${kci.keyCollectionIndex}-${kci.index}`
+    _id: `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`
   };
 
   const update = {
