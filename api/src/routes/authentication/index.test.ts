@@ -93,7 +93,8 @@ describe('test authentication routes', () => {
         lastName: 'Subscriber',
         organization: 'IOTA',
         subscribedChannelIds: ['test-address-c2', 'test-address'],
-        userId: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
+        userId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
+        publicKey: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
         username: 'test-username'
       };
       await authenticationRoutes.createIdentity(req, res, nextMock);

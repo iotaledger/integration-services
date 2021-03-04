@@ -92,7 +92,7 @@ describe('test GET user', () => {
     };
     const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
     const req: any = {
-      params: { userId: 'my-public-key-1' },
+      params: { userId: 'did:iota:123' },
       body: null
     };
 
@@ -100,7 +100,8 @@ describe('test GET user', () => {
 
     expect(getUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).toHaveBeenCalledWith({
-      userId: 'my-public-key-1',
+      userId: 'did:iota:123',
+      publicKey: 'my-public-key-1',
       username: 'first-user',
       classification: 'human',
       subscribedChannelIds: [],
