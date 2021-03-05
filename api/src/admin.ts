@@ -12,14 +12,18 @@ const dbName = CONFIG.databaseName;
 async function setupApi() {
   console.log(`Setting api please wait...`);
   await MongoDbService.connect(dbUrl, dbName);
-  const userService = new UserService();
+  // TODO create database, documents and indexes in mongodb at the first time!
+  // key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
 
+  const userService = new UserService();
   const identityService = IdentityService.getInstance(CONFIG.identityConfig);
   const authenticationService = new AuthenticationService(identityService, userService);
   const keyCollection = await authenticationService.generateKeyCollection();
   const res = await authenticationService.saveKeyCollection(keyCollection);
 
-  console.log('RES>', res);
+  if (!res?.result.n) {
+    console.log('could not save keycollection!');
+  }
 
   console.log('done :)');
   process.exit(0);

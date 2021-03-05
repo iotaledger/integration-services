@@ -45,7 +45,6 @@ export class IdentityService {
     console.log('NEW DOC ', doc);
     console.log('txHash ', txHash);
 
-    console.log('COUNT', count);
     const { keys, type } = keyCollection?.toJSON();
 
     return {
@@ -88,7 +87,6 @@ export class IdentityService {
       credentialSubject: credential.subject
     });
 
-    // Sign the credential with Bob's Merkle Key Collection method
     const signedVc = doc.signCredential(unsignedVc, {
       method: method.id.toString(),
       public: issuerKeys.public(subjectKeyIndex),
@@ -103,7 +101,6 @@ export class IdentityService {
       throw new Error('could not verify signed identity. Please try it again.');
     }
 
-    // Check the validation status of the Verifiable Credential
     const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
     console.log('Credential Validation', validatedCredential);
 
@@ -111,24 +108,37 @@ export class IdentityService {
   };
 
   checkVerifiableCredential = async (signedVc: any): Promise<any> => {
-    // Check the validation status of the Verifiable Credential
-    console.log('VCCCCC', signedVc);
+    const issuerIdentity = ServerIdentity;
+    const { doc } = this.restoreIdentity(issuerIdentity);
+
+    console.log('Verified (credential)', doc.verify(signedVc));
+
     const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
-    console.log('Credential Validation', JSON.stringify(validatedCredential));
 
     if (!validatedCredential.verified) {
-      console.error(`Verifiable credential cannot be verified for ${'TODO'}!`);
+      console.log(`Verifiable credential is not verified for: ${signedVc?.id}!`);
     }
 
     return validatedCredential;
   };
 
   revokeVerifiableCredential = async (index: number): Promise<any> => {
-    // Check the validation status of the Verifiable Credential
     const issuerIdentity = ServerIdentity;
-    const { doc } = this.restoreIdentity(issuerIdentity);
+    const { doc, key } = this.restoreIdentity(issuerIdentity);
+    // what is this result saying?
     const result: boolean = doc.revokeMerkleKey(this.config.keyCollectionTag, index);
+    const newDoc = Identity.Document.fromJSON({
+      previous_message_id: issuerIdentity.txHash,
+      ...doc.toJSON()
+    });
 
+    // The "authentication" key was not compromised so it's safe to publish an update
+    newDoc.sign(key);
+    const txHash = await Identity.publish(newDoc.toJSON(), this.config);
+
+    // TODO update server doc!
+    console.log('New Server Identity:,', JSON.stringify(newDoc));
+    console.log('Publish Server Identity: https://explorer.iota.org/mainnet/transaction/' + txHash);
     return result;
   };
 

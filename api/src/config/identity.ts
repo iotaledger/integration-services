@@ -18,35 +18,39 @@ export const KEY_COLLECTION_INDEX = 0;
 
 export const SERVER_IDENTITY = {
   doc: {
-    id: 'did:iota:Fs6E3azeJDZyHA2xAWBtiybSVucPJPsmbB2ZCsiMMj9j',
+    id: 'did:iota:58ZbAVJWSNWPyNgcJmUGxsXAKRjvq2rAfefNxRyTUZji',
     verificationMethod: [
       {
-        id: 'did:iota:Fs6E3azeJDZyHA2xAWBtiybSVucPJPsmbB2ZCsiMMj9j#key-collection',
-        controller: 'did:iota:Fs6E3azeJDZyHA2xAWBtiybSVucPJPsmbB2ZCsiMMj9j',
+        id: 'did:iota:58ZbAVJWSNWPyNgcJmUGxsXAKRjvq2rAfefNxRyTUZji#key-collection',
+        controller: 'did:iota:58ZbAVJWSNWPyNgcJmUGxsXAKRjvq2rAfefNxRyTUZji',
         type: 'MerkleKeyCollection2021',
-        publicKeyBase58: '11Aicsgq1C7rTH8hWK4eLPnN65NTCi7nRuPA7bkPz8g9tg',
+        publicKeyBase58: '113pzRK1d3HCDxDH11PKftjszMCjoaznEQDjDqEKiQ2Zse',
         revocation: 'OjAAAAEAAAAAAAAAEAAAAAAA'
       }
     ],
     authentication: [
       {
-        id: 'did:iota:Fs6E3azeJDZyHA2xAWBtiybSVucPJPsmbB2ZCsiMMj9j#key',
-        controller: 'did:iota:Fs6E3azeJDZyHA2xAWBtiybSVucPJPsmbB2ZCsiMMj9j',
+        id: 'did:iota:58ZbAVJWSNWPyNgcJmUGxsXAKRjvq2rAfefNxRyTUZji#key',
+        controller: 'did:iota:58ZbAVJWSNWPyNgcJmUGxsXAKRjvq2rAfefNxRyTUZji',
         type: 'Ed25519VerificationKey2018',
-        publicKeyBase58: '4XTBhU4NkPUvbQtVyEcSChdsZFJj8Bi1ZzDKxiR8U2Jz'
+        publicKeyBase58: 'EcHcUYWXEU52USiV2dyS4wWxsRDuHrawgJav3oCPzCj9'
       }
     ],
-    created: '2021-03-01T17:59:00Z',
-    updated: '2021-03-01T17:59:00Z',
+    created: '2021-03-05T08:36:54Z',
+    updated: '2021-03-05T08:36:54Z',
     immutable: false,
-    previous_message_id: 'BDJDNMZRMFBROZHVKMWGOEWLOTPMSYXKKSARCTLGFPMGULCUEV9ETBPXTJXIMGESPX9ZOGWCWWBFZ9999',
+    previous_message_id: 'WMCBCYJAARK9IODLPFAOASVZWLIJICBQXIOSVPGS9XPCUGVTRZGLIZSMJKYQMCBKHHEEWEUPOFUQA9999',
     proof: {
       type: 'JcsEd25519Signature2020',
       verificationMethod: '#key',
-      signatureValue: '5HJfDhtA6NnLcHxp8d94otDapQjnfSC9jrV8r6Q3EpCQfgnsxb7XNdrQ15H2K6Lk96YApvgVBmbFNz32wu4EFCeu'
+      signatureValue: '4dq3PDtmMuUmZY2D6sEe9mRr4SfdqPimgkf8nfETQb6rvWBaKNYhGhwrggg3XxQFj9q6wYJv98eUgJJHPK6tHesu'
     }
   },
-  key: { type: 'ed25519', public: '4XTBhU4NkPUvbQtVyEcSChdsZFJj8Bi1ZzDKxiR8U2Jz', secret: '276ECDqffWxCG7LBkMQUvVxw4cYY7Y8pMjPFK7t4YMqh' },
-  name: 'Bob',
-  message: 'IQ9XMNVDCJKFKAHHLNQMJRLRZODLGRQIULLMYLYCHRBYRJYCCKOCVLQUCOBTCBDYGMWHYLRCNAWGZ9999'
+  key: {
+    type: 'ed25519',
+    public: 'EcHcUYWXEU52USiV2dyS4wWxsRDuHrawgJav3oCPzCj9',
+    secret: '71rm3HeVpWa1oGhqMLUmzJVsbMrDqGQfyATFPu8aMnUQ'
+  },
+  explorerUrl: 'https://explorer.iota.org/mainnet/transaction/WMCBCYJAARK9IODLPFAOASVZWLIJICBQXIOSVPGS9XPCUGVTRZGLIZSMJKYQMCBKHHEEWEUPOFUQA9999',
+  txHash: 'WMCBCYJAARK9IODLPFAOASVZWLIJICBQXIOSVPGS9XPCUGVTRZGLIZSMJKYQMCBKHHEEWEUPOFUQA9999'
 };

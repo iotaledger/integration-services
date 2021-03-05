@@ -8,6 +8,7 @@ import {
 } from '../database/key-collection-links';
 import { IdentityResponse, KeyCollectionJson, KeyCollectionPersistence, UserCredential } from '../models/data/identity';
 import { User, UserWithoutId, VerificationUpdatePersistence } from '../models/data/user';
+import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
 
@@ -80,7 +81,18 @@ export class AuthenticationService {
 
   checkVerifiableCredential = async (vc: any) => {
     const res = await this.identityService.checkVerifiableCredential(vc);
-    // TODO update user to be verified!
+    const user = await this.userService.getUser(vc?.id);
+    const vup: VerificationUpdatePersistence = {
+      userId: vc?.id,
+      verified: res?.verified, // TODO!!!
+      lastTimeChecked: new Date(),
+      verificationDate: getDateFromString(user?.verification?.verificationDate),
+      verificationIssuerId: user?.verification?.verificationIssuerId
+    };
+    const uvUpdate = await this.userService.updateUserVerification(vup);
+    if (!uvUpdate?.result.n) {
+      throw new Error('Could not update identity verification');
+    }
     return res;
   };
 
@@ -89,8 +101,6 @@ export class AuthenticationService {
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
-    console.log('KCIII ', kci);
-
     const res = await this.identityService.revokeVerifiableCredential(kci.index);
 
     // TODO clarify in which situation this is true or false!

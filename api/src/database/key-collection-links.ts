@@ -31,12 +31,12 @@ export const revokeKeyCollectionIdentity = async (kci: KeyCollectionIdentityPers
     _id: `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`
   };
 
-  const update = {
+  const update: any = {
     $set: {
       isRevoked: true,
-      revokedIdentity: kci.linkedIdentity,
-      linkedIdentity: ''
-    }
+      revokedIdentity: kci.linkedIdentity
+    },
+    $unset: { linkedIdentity: '' }
   };
 
   return MongoDbService.updateDocument(collectionName, query, update);
