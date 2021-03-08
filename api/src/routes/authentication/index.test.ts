@@ -47,7 +47,8 @@ describe('test authentication routes', () => {
       explorer: '',
       network: 'test',
       node: '',
-      keyType: 0
+      keyType: 0,
+      hashFunction: 0
     };
     identityService = IdentityService.getInstance(config);
     userService = new UserService();

@@ -13,5 +13,6 @@ export interface IdentityConfig {
   node: string;
   explorer: string;
   keyType: Identity.KeyType;
+  hashFunction: Identity.Digest;
   keyCollectionTag: string;
 }

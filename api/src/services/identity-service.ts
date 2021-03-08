@@ -1,7 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
 import { IdentityDocument, IdentityResponse, KeyCollectionJson, KeyCollectionPersistence } from '../models/data/identity';
-const { Document, VerifiableCredential, Digest, Method, KeyCollection } = Identity;
+const { Document, VerifiableCredential, Method, KeyCollection } = Identity;
 import { SERVER_IDENTITY } from '../config/identity';
 
 export interface Credential<T> {
@@ -34,7 +34,7 @@ export class IdentityService {
     const issuerIdentity = ServerIdentity;
     const { doc, key } = this.restoreIdentity(issuerIdentity);
     const keyCollection = new KeyCollection(this.config.keyType, count);
-    const method = Method.createMerkleKey(Digest.Sha256, doc.id, keyCollection, this.config.keyCollectionTag);
+    const method = Method.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
 
     doc.insertMethod(method, `VerificationMethod`);
     doc.sign(key);
@@ -42,6 +42,7 @@ export class IdentityService {
     console.log('Verified (doc): ', doc.verify());
 
     const txHash = await Identity.publish(doc.toJSON(), this.config);
+    // TODO update server doc
     console.log('NEW DOC ', doc);
     console.log('txHash ', txHash);
 
@@ -77,7 +78,7 @@ export class IdentityService {
     const issuerIdentity = ServerIdentity;
     const { doc } = this.restoreIdentity(issuerIdentity);
     const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
-    const digest = Digest.Sha256;
+    const digest = this.config.hashFunction;
     const method = Method.createMerkleKey(digest, doc.id, issuerKeys, this.config.keyCollectionTag);
 
     const unsignedVc = VerifiableCredential.extend({
@@ -110,9 +111,7 @@ export class IdentityService {
   checkVerifiableCredential = async (signedVc: any): Promise<any> => {
     const issuerIdentity = ServerIdentity;
     const { doc } = this.restoreIdentity(issuerIdentity);
-
     console.log('Verified (credential)', doc.verify(signedVc));
-
     const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
 
     if (!validatedCredential.verified) {
@@ -132,7 +131,6 @@ export class IdentityService {
       ...doc.toJSON()
     });
 
-    // The "authentication" key was not compromised so it's safe to publish an update
     newDoc.sign(key);
     const txHash = await Identity.publish(newDoc.toJSON(), this.config);
 
@@ -143,12 +141,12 @@ export class IdentityService {
   };
 
   restoreIdentity = (issuerIdentity: any) => {
-    const keyPair: Identity.KeyPair = Identity.KeyPair.fromJSON(issuerIdentity.key);
+    const key: Identity.KeyPair = Identity.KeyPair.fromJSON(issuerIdentity.key);
     const doc = Document.fromJSON(issuerIdentity.doc) as any;
 
     return {
-      doc: doc,
-      key: keyPair
+      doc,
+      key
     };
   };
 
