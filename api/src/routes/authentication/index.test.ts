@@ -42,7 +42,10 @@ describe('test authentication routes', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-    const config: IdentityConfig = {
+    const config: any = {
+      serverIdentityId: ''
+    };
+    const identityConfig: IdentityConfig = {
       keyCollectionTag: 'key-collection',
       explorer: '',
       network: 'test',
@@ -50,9 +53,9 @@ describe('test authentication routes', () => {
       keyType: 0,
       hashFunction: 0
     };
-    identityService = IdentityService.getInstance(config);
+    identityService = IdentityService.getInstance(identityConfig);
     userService = new UserService();
-    authenticationService = new AuthenticationService(identityService, userService);
+    authenticationService = new AuthenticationService(identityService, userService, config);
     authenticationRoutes = new AuthenticationRoutes(authenticationService);
 
     res = {

@@ -5,6 +5,7 @@ export interface Config {
   apiVersion: string;
   databaseUrl: string;
   databaseName: string;
+  serverIdentityId: string;
   identityConfig: IdentityConfig;
 }
 

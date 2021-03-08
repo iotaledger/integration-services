@@ -38,11 +38,12 @@ channelInfoRouter.put('/channel', validate({ body: ChannelInfoSchema }), updateC
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService);
+const authenticationService = new AuthenticationService(identityService, userService, CONFIG);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService);
-const { createIdentity, createVerifiableCredential, checkVerifiableCredential, revokeVerifiableCredential } = authenticationRoutes;
+const { createIdentity, createVerifiableCredential, checkVerifiableCredential, revokeVerifiableCredential, getLatestDocument } = authenticationRoutes;
 export const authenticationRouter = Router();
 
+authenticationRouter.get('/get-latest-document', getLatestDocument);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/add-verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
 // TODO add schema

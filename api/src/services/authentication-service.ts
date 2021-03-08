@@ -1,5 +1,5 @@
 import { KEY_COLLECTION_INDEX } from '../config/identity';
-import { saveIdentity } from '../database/identities';
+import { getIdentity, saveIdentity, updateIdentityDoc } from '../database/identities';
 import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
 import {
   addKeyCollectionIdentity,
@@ -8,26 +8,36 @@ import {
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
-import { CreateIdentityBody, IdentityResponse, UserCredential } from '../models/data/identity';
+import { CreateIdentityBody, IdentityDocumentJson, IdentityResponse, UserCredential } from '../models/data/identity';
 import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
+import { Config } from '../models/config';
 
 export class AuthenticationService {
   identityService: IdentityService;
   userService: UserService;
-  constructor(identityService: IdentityService, userService: UserService) {
+  config: Config;
+  constructor(identityService: IdentityService, userService: UserService, config: Config) {
     this.identityService = identityService;
     this.userService = userService;
+    this.config = config;
   }
 
   saveKeyCollection(keyCollection: KeyCollectionPersistence) {
     return saveKeyCollection(keyCollection);
   }
 
+  getKeyCollection(index: number = 0) {
+    return getKeyCollection(index);
+  }
+
   generateKeyCollection = async (): Promise<KeyCollectionPersistence> => {
-    return this.identityService.generateKeyCollection(0, 8);
+    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+    const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, 0, 8);
+    await this.updateDatabaseIdentityDoc(doc.toJSON());
+    return kcp;
   };
 
   createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityResponse> => {
@@ -68,13 +78,19 @@ export class AuthenticationService {
         ...userCredential
       }
     };
-    const keyCollection = await getKeyCollection(KEY_COLLECTION_INDEX);
+    const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
     const index = await getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
     const keyCollectionJson: KeyCollectionJson = {
       type: keyCollection.type,
       keys: keyCollection.keys
     };
-    const cv = await this.identityService.createVerifiableCredential<UserCredential>(credential, keyCollectionJson, index);
+
+    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+    console.log('issuerIdentity', issuerIdentity);
+
+    const rs = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
+    await this.updateDatabaseIdentityDoc(rs.newIdentityDoc?.toJSON());
+
     const res = await addKeyCollectionIdentity({
       index,
       isRevoked: false,
@@ -84,12 +100,13 @@ export class AuthenticationService {
     if (!res?.result?.n) {
       throw new Error('Could not verify identity!');
     }
-    this.setUserVerified(credential.id, cv?.issuer?.did?.toString());
-    return cv;
+    await this.setUserVerified(credential.id, rs?.validatedCredential?.issuer?.did?.toString());
+    return rs?.validatedCredential;
   };
 
   checkVerifiableCredential = async (vc: any) => {
-    const res = await this.identityService.checkVerifiableCredential(vc);
+    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+    const res = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
     const user = await this.userService.getUser(vc?.id);
     const vup: VerificationUpdatePersistence = {
       userId: vc?.id,
@@ -110,10 +127,13 @@ export class AuthenticationService {
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
-    const res = await this.identityService.revokeVerifiableCredential(kci.index);
+    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+    const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
+    const newDoc = res.newIdentityDoc;
+    await this.updateDatabaseIdentityDoc(newDoc.toJSON());
 
     // TODO clarify in which situation this is true or false!
-    if (res === true) {
+    if (res.revoked === true) {
       console.log('Successfully revoked!');
     } else {
       console.log(`Could not revoke identity for ${did} on the ledger!`);
@@ -136,6 +156,17 @@ export class AuthenticationService {
       throw new Error('could not revoke identity');
     }
     return res;
+  };
+
+  updateDatabaseIdentityDoc = async (idenitityDoc: IdentityDocumentJson) => {
+    const res = await updateIdentityDoc(idenitityDoc);
+    if (!res.result.n) {
+      throw new Error('could not update identity!');
+    }
+  };
+
+  getLatestDocument = async (did: string) => {
+    return await this.identityService.getLatestIdentity(did);
   };
 
   private setUserVerified = async (userId: string, issuerId: string) => {

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { CreateIdentityBody, UserCredential } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
+import * as _ from 'lodash';
 
 export class AuthenticationRoutes {
   private readonly authenticationService: AuthenticationService;
@@ -57,6 +58,24 @@ export class AuthenticationRoutes {
       await this.authenticationService.revokeVerifiableCredential(revokeBody.id);
 
       res.sendStatus(StatusCodes.OK);
+    } catch (error) {
+      next(error);
+    }
+  };
+  getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+      const did = decodeParam(<string>req.query?.id);
+      console.log('id ', did);
+
+      if (!did) {
+        res.sendStatus(StatusCodes.BAD_REQUEST);
+        return;
+      }
+
+      const doc = await this.authenticationService.getLatestDocument(did);
+
+      res.status(StatusCodes.OK).send(doc);
     } catch (error) {
       next(error);
     }

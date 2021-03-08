@@ -16,6 +16,7 @@ export const CONFIG: Config = {
   apiVersion: process.env.API_VERSION,
   databaseUrl: process.env.DATABASE_URL,
   databaseName: process.env.DATABASE_NAME,
+  serverIdentityId: process.env.SERVER_IDENTITY,
   identityConfig: IdentityConfig
 };
 

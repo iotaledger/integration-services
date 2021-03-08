@@ -3,15 +3,12 @@ import { IdentityConfig } from '../models/config';
 import { IdentityDocument, IdentityResponse } from '../models/data/identity';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
 const { Document, VerifiableCredential, Method, KeyCollection } = Identity;
-import { SERVER_IDENTITY } from '../config/identity';
 
 export interface Credential<T> {
   id: string;
   type: string;
   subject: T;
 }
-
-const ServerIdentity = SERVER_IDENTITY;
 
 export class IdentityService {
   private static instance: IdentityService;
@@ -28,11 +25,14 @@ export class IdentityService {
     return IdentityService.instance;
   }
 
-  generateKeyCollection = async (index: number, count = 8): Promise<KeyCollectionPersistence> => {
+  generateKeyCollection = async (
+    issuerIdentity: IdentityResponse,
+    index: number,
+    count = 8
+  ): Promise<{ doc: Identity.Document; kcp: KeyCollectionPersistence }> => {
     if (count > 20) {
       throw new Error('Key collection count is too big!');
     }
-    const issuerIdentity = ServerIdentity;
     const { doc, key } = this.restoreIdentity(issuerIdentity);
     const keyCollection = new KeyCollection(this.config.keyType, count);
     const method = Method.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
@@ -48,13 +48,13 @@ export class IdentityService {
     console.log('txHash ', txHash);
 
     const { keys, type } = keyCollection?.toJSON();
-
-    return {
+    const kcp = {
       count,
       index,
       type,
       keys
     };
+    return { doc, kcp };
   };
 
   createIdentity = async (): Promise<IdentityResponse> => {
@@ -75,8 +75,12 @@ export class IdentityService {
     };
   };
 
-  createVerifiableCredential = async <T>(credential: Credential<T>, keyCollectionJson: KeyCollectionJson, subjectKeyIndex: number): Promise<any> => {
-    const issuerIdentity = ServerIdentity;
+  createVerifiableCredential = async <T>(
+    issuerIdentity: IdentityResponse,
+    credential: Credential<T>,
+    keyCollectionJson: KeyCollectionJson,
+    subjectKeyIndex: number
+  ): Promise<{ newIdentityDoc: IdentityDocument; validatedCredential: any }> => {
     const { doc } = this.restoreIdentity(issuerIdentity);
     const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
     const digest = this.config.hashFunction;
@@ -106,11 +110,10 @@ export class IdentityService {
     const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
     console.log('Credential Validation', validatedCredential);
 
-    return validatedCredential;
+    return { newIdentityDoc: doc, validatedCredential };
   };
 
-  checkVerifiableCredential = async (signedVc: any): Promise<any> => {
-    const issuerIdentity = ServerIdentity;
+  checkVerifiableCredential = async (issuerIdentity: IdentityResponse, signedVc: any): Promise<any> => {
     const { doc } = this.restoreIdentity(issuerIdentity);
     console.log('Verified (credential)', doc.verify(signedVc));
     const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
@@ -122,8 +125,10 @@ export class IdentityService {
     return validatedCredential;
   };
 
-  revokeVerifiableCredential = async (index: number): Promise<any> => {
-    const issuerIdentity = ServerIdentity;
+  revokeVerifiableCredential = async (
+    issuerIdentity: IdentityResponse,
+    index: number
+  ): Promise<{ newIdentityDoc: Identity.Document; revoked: boolean }> => {
     const { doc, key } = this.restoreIdentity(issuerIdentity);
     // what is this result saying?
     const result: boolean = doc.revokeMerkleKey(this.config.keyCollectionTag, index);
@@ -137,8 +142,12 @@ export class IdentityService {
 
     // TODO update server doc!
     console.log('New Server Identity:,', JSON.stringify(newDoc));
-    console.log('Publish Server Identity: https://explorer.iota.org/mainnet/transaction/' + txHash);
-    return result;
+    console.log('Publish Server Identity: at hash:' + txHash);
+    return { newIdentityDoc: newDoc, revoked: result };
+  };
+
+  getLatestIdentity = async (did: string) => {
+    return Identity.resolve(did, this.config);
   };
 
   restoreIdentity = (issuerIdentity: any) => {

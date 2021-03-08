@@ -21,6 +21,29 @@ export interface IdentityDocument extends Identity.Document {
   key: Identity.KeyPair;
 }
 
+export interface IdentityDocumentJson {
+  id: string;
+  verificationMethod?: {
+    id: string;
+    controller: string;
+    type: string;
+    publicKeyBase58: string;
+  }[];
+  authentication: {
+    id: string;
+    controller: string;
+    type: string;
+    publicKeyBase58: string;
+  }[];
+  created: string;
+  updated: string;
+  immutable: boolean;
+  proof: {
+    type: string;
+    verificationMethod: string;
+    signatureValue: string;
+  };
+}
 export interface IdentityResponse {
   doc: Identity.Document;
   key: Identity.KeyPair;
