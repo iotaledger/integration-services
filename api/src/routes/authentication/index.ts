@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserCredential } from '../../models/data/identity';
-import { UserWithoutId } from '../../models/data/user';
+import { CreateIdentityBody, UserCredential } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 
 export class AuthenticationRoutes {
@@ -13,11 +12,11 @@ export class AuthenticationRoutes {
 
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const user: UserWithoutId = req.body;
-      if (!user.username) {
+      const createIdentityBody: CreateIdentityBody = req.body;
+      if (!createIdentityBody.username) {
         throw new Error('No valid body provided!');
       }
-      const identity = await this.authenticationService.createIdentity(user);
+      const identity = await this.authenticationService.createIdentity(createIdentityBody);
 
       res.status(StatusCodes.CREATED).send(identity);
     } catch (error) {

@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
-import { KeyCollectionPersistence } from '../models/data/identity';
+import { KeyCollectionPersistence } from '../models/data/key-collection';
 
 const collectionName = CollectionNames.keyCollection;
 

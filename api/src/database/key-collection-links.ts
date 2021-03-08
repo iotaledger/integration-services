@@ -1,9 +1,10 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
-import { KeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/data/identity';
+import { KeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/data/key-collection';
 
 const collectionName = CollectionNames.keyCollectionLinks;
+const getIndex = (kci: KeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;
 
 export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promise<number> => {
   const query = { keyCollectionIndex };
@@ -12,7 +13,7 @@ export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promis
 
 export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   const document = {
-    _id: `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`,
+    _id: getIndex(kci),
     ...kci
   };
 
@@ -28,7 +29,7 @@ export const getKeyCollectionIdentity = async (did: string): Promise<KeyCollecti
 
 export const revokeKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence) => {
   const query = {
-    _id: `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`
+    _id: getIndex(kci)
   };
 
   const update: any = {

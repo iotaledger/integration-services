@@ -1,5 +1,10 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { Type, Static } from '@sinclair/typebox';
+import { UserWithoutId } from './user';
+
+export interface CreateIdentityBody extends UserWithoutId {
+  storeIdentity?: boolean;
+}
 
 export const UserCredentialSchema = Type.Object({
   id: Type.String(), // did
@@ -21,29 +26,4 @@ export interface IdentityResponse {
   key: Identity.KeyPair;
   txHash: string;
   explorerUrl: string;
-}
-
-export interface KeyCollectionPersistence {
-  index: number;
-  count: number;
-  type: string;
-  keys: SimpleKeyPair[];
-}
-
-export interface SimpleKeyPair {
-  public: string;
-  secret: string;
-}
-
-export interface KeyCollectionIdentityPersistence {
-  keyCollectionIndex: number;
-  index: number;
-  linkedIdentity?: string;
-  isRevoked: boolean;
-  revokedIdentity?: string;
-}
-
-export interface KeyCollectionJson {
-  type: string;
-  keys: SimpleKeyPair[];
 }

@@ -1,4 +1,5 @@
 import { KEY_COLLECTION_INDEX } from '../config/identity';
+import { saveIdentity } from '../database/identities';
 import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
 import {
   addKeyCollectionIdentity,
@@ -6,8 +7,9 @@ import {
   getLinkedIdentitesSize,
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
-import { IdentityResponse, KeyCollectionJson, KeyCollectionPersistence, UserCredential } from '../models/data/identity';
-import { User, UserWithoutId, VerificationUpdatePersistence } from '../models/data/user';
+import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
+import { CreateIdentityBody, IdentityResponse, UserCredential } from '../models/data/identity';
+import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
@@ -28,15 +30,22 @@ export class AuthenticationService {
     return this.identityService.generateKeyCollection(0, 8);
   };
 
-  createIdentity = async (userWithoutId: UserWithoutId): Promise<IdentityResponse> => {
+  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityResponse> => {
     const identity = await this.identityService.createIdentity();
     const user: User = {
-      ...userWithoutId,
+      ...createIdentityBody,
       userId: identity.doc.id.toString(),
       publicKey: identity.key.public
     };
 
     const result = await this.userService.addUser(user);
+
+    if (createIdentityBody.storeIdentity) {
+      const res = await saveIdentity(identity);
+      if (!res.result.n) {
+        console.log('Could not save identity!');
+      }
+    }
 
     if (!result?.result?.n) {
       throw new Error('Could not create user identity!');

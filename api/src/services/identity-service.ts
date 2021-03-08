@@ -1,6 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { IdentityDocument, IdentityResponse, KeyCollectionJson, KeyCollectionPersistence } from '../models/data/identity';
+import { IdentityDocument, IdentityResponse } from '../models/data/identity';
+import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
 const { Document, VerifiableCredential, Method, KeyCollection } = Identity;
 import { SERVER_IDENTITY } from '../config/identity';
 
@@ -67,8 +68,8 @@ export class IdentityService {
     }
 
     return {
-      doc: identity.doc,
-      key: identity.key,
+      doc: identity.doc.toJSON(),
+      key: identity.key.toJSON(),
       explorerUrl: `${this.config.explorer}/${txHash}`,
       txHash
     };

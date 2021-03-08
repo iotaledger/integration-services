@@ -84,7 +84,6 @@ export const updateUserVerification = async (vup: VerificationUpdatePersistence)
   const updateObject = MongoDbService.getPlainObject({
     verification: MongoDbService.getPlainObject(verification)
   });
-  console.log('updateObjectupdateObjectupdateObject ', updateObject);
 
   const update = {
     $set: { ...updateObject }
