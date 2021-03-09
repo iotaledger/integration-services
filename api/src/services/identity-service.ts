@@ -45,7 +45,7 @@ export class IdentityService {
     const txHash = await Identity.publish(doc.toJSON(), this.config);
     // TODO update server doc
     console.log('NEW DOC ', doc);
-    console.log('txHash ', txHash);
+    console.log(`tx at: ${this.config.explorer}/${txHash}`);
 
     const { keys, type } = keyCollection?.toJSON();
     const kcp = {

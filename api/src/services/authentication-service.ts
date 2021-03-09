@@ -36,6 +36,7 @@ export class AuthenticationService {
   generateKeyCollection = async (): Promise<KeyCollectionPersistence> => {
     const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
     const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, 0, 8);
+    console.log('key collection doc:', doc.toJSON());
     await this.updateDatabaseIdentityDoc(doc.toJSON());
     return kcp;
   };

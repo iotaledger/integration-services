@@ -6,8 +6,8 @@ const TopicSchema = Type.Object({
 });
 
 export const ChannelInfoSchema = Type.Object({
-  channelAddress: Type.String(),
-  authorId: Type.String(),
+  channelAddress: Type.String({ minLength: 10 }),
+  authorId: Type.String({ minLength: 53, maxLength: 53 }),
   subscriberIds: Type.Optional(Type.Array(Type.String())),
   topics: Type.Array(TopicSchema),
   created: Type.Optional(Type.String()),

@@ -20,8 +20,6 @@ export const saveIdentity = async (identity: IdentityResponse): Promise<InsertOn
 };
 
 export const updateIdentityDoc = async (doc: IdentityDocumentJson) => {
-  console.log('DidentityDocidentityDoc', doc);
-
   if (!doc?.id) {
     throw new Error('No valid id provided for the identity!');
   }

@@ -8,20 +8,20 @@ const VerificationSchema = Type.Object({
 });
 
 export const UserWithoutIdSchema = Type.Object({
-  username: Type.String(),
+  username: Type.String({ minLength: 3 }),
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
-  organization: Type.Optional(Type.String()),
+  organization: Type.Optional(Type.String({ minLength: 2 })),
   subscribedChannelIds: Type.Array(Type.String()),
   registrationDate: Type.Optional(Type.String()),
   verification: Type.Optional(VerificationSchema),
-  classification: Type.String(),
+  classification: Type.String({ minLength: 3 }),
   description: Type.Optional(Type.String())
 });
 
 export const UserSchema = Type.Object({
-  userId: Type.String(), // did
-  publicKey: Type.String()
+  userId: Type.String({ minLength: 53, maxLength: 53 }), // did
+  publicKey: Type.String({ minLength: 10 })
 });
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;

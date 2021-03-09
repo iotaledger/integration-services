@@ -7,11 +7,11 @@ export interface CreateIdentityBody extends UserWithoutId {
 }
 
 export const UserCredentialSchema = Type.Object({
-  id: Type.String(), // did
-  username: Type.String(),
-  organization: Type.String(),
+  id: Type.String({ minLength: 53, maxLength: 53 }), // did
+  username: Type.String({ minLength: 3 }),
+  organization: Type.String({ minLength: 2 }),
   registrationDate: Type.String(),
-  classification: Type.String()
+  classification: Type.String({ minLength: 3 })
 });
 
 export type UserCredential = Static<typeof UserCredentialSchema>;
