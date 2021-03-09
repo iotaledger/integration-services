@@ -42,11 +42,6 @@ async function setupApi() {
     if (!res?.result.n) {
       console.log('could not save keycollection!');
     }
-  } else {
-    // update latest identity!
-    const identity = await identityService.getLatestIdentity(process.env.SERVER_IDENTITY);
-    await authenticationService.updateDatabaseIdentityDoc(identity);
-    console.log('DOOOOOOC', identity);
   }
 
   console.log('done :)');

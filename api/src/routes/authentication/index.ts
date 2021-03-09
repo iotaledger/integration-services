@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { CreateIdentityBody, UserCredential } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
-import * as _ from 'lodash';
 import { Config } from '../../models/config';
 
 export class AuthenticationRoutes {

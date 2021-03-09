@@ -1,4 +1,4 @@
-import { KEY_COLLECTION_INDEX } from '../config/identity';
+import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
 import { getIdentity, saveIdentity, updateIdentityDoc } from '../database/identities';
 import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
 import {
@@ -26,13 +26,13 @@ export class AuthenticationService {
     return saveKeyCollection(keyCollection);
   }
 
-  getKeyCollection(index: number = 0) {
+  getKeyCollection(index: number) {
     return getKeyCollection(index);
   }
 
   generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
     const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
-    const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, 0, 8);
+    const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE);
     console.log('key collection doc:', doc.toJSON());
     await this.updateDatabaseIdentityDoc(doc.toJSON());
     return kcp;
