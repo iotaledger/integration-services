@@ -183,8 +183,7 @@ export class IdentityService {
     try {
       const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
       const doc = Document.fromJSON(identity.doc) as any;
-      if (!key || !doc) {
-      }
+
       return {
         doc,
         key
