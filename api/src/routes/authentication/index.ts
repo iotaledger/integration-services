@@ -3,12 +3,14 @@ import { StatusCodes } from 'http-status-codes';
 import { CreateIdentityBody, UserCredential } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import * as _ from 'lodash';
+import { Config } from '../../models/config';
 
 export class AuthenticationRoutes {
   private readonly authenticationService: AuthenticationService;
-
-  constructor(authenticationService: AuthenticationService) {
+  private readonly config: Config;
+  constructor(authenticationService: AuthenticationService, config: Config) {
     this.authenticationService = authenticationService;
+    this.config = config;
   }
 
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -31,7 +33,7 @@ export class AuthenticationRoutes {
       if (!userCredential.id) {
         throw new Error('No valid body provided!');
       }
-      const vc: any = await this.authenticationService.createVerifiableCredential(userCredential);
+      const vc: any = await this.authenticationService.createVerifiableCredential(userCredential, this.config.serverIdentityId);
 
       res.status(StatusCodes.CREATED).send(vc);
     } catch (error) {
@@ -42,7 +44,7 @@ export class AuthenticationRoutes {
   checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const vcBody: any = req.body;
-      const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody);
+      const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
       res.status(StatusCodes.OK).send(vc);
     } catch (error) {
       next(error);
@@ -55,7 +57,7 @@ export class AuthenticationRoutes {
       if (!revokeBody.id) {
         throw new Error('No valid body provided!');
       }
-      await this.authenticationService.revokeVerifiableCredential(revokeBody.id);
+      await this.authenticationService.revokeVerifiableCredential(revokeBody.id, this.config.serverIdentityId);
 
       res.sendStatus(StatusCodes.OK);
     } catch (error) {

@@ -38,8 +38,8 @@ channelInfoRouter.put('/channel', validate({ body: ChannelInfoSchema }), updateC
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, CONFIG);
-const authenticationRoutes = new AuthenticationRoutes(authenticationService);
+const authenticationService = new AuthenticationService(identityService, userService);
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
 const { createIdentity, createVerifiableCredential, checkVerifiableCredential, revokeVerifiableCredential, getLatestDocument } = authenticationRoutes;
 export const authenticationRouter = Router();
 

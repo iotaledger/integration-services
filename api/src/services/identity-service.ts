@@ -43,9 +43,7 @@ export class IdentityService {
     console.log('Verified (doc): ', doc.verify());
 
     const txHash = await Identity.publish(doc.toJSON(), this.config);
-    // TODO update server doc
-    console.log('NEW DOC ', doc);
-    console.log(`tx at: ${this.config.explorer}/${txHash}`);
+    console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
 
     const { keys, type } = keyCollection?.toJSON();
     const kcp = {
@@ -62,6 +60,7 @@ export class IdentityService {
     identity.doc.sign(identity.key);
     const txHash = await Identity.publish(identity.doc.toJSON(), this.config);
     const identityIsVerified = identity.doc.verify();
+    console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
 
     if (!identityIsVerified) {
       throw new Error('Could not create the identity. Please try it again.');
@@ -142,7 +141,7 @@ export class IdentityService {
 
     // TODO update server doc!
     console.log('New Server Identity:,', JSON.stringify(newDoc));
-    console.log('Publish Server Identity: at hash:' + txHash);
+    console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
     return { newIdentityDoc: newDoc, revoked: result };
   };
 

@@ -17,15 +17,26 @@ async function setupApi() {
 
   const userService = new UserService();
   const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-  const authenticationService = new AuthenticationService(identityService, userService, CONFIG);
+  const authenticationService = new AuthenticationService(identityService, userService);
 
   const keyCollection = await authenticationService.getKeyCollection(0);
   console.log('keyCollection', keyCollection);
 
   if (!keyCollection) {
     console.log('add key collections');
+    const identity = await authenticationService.createIdentity({
+      storeIdentity: true,
+      username: 'api-identity',
+      classification: 'api',
+      organization: 'IOTA',
+      subscribedChannelIds: [],
+      description: 'Root identity of the api!'
+    });
+    console.log('==================================================================================================');
+    console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
+    console.log('==================================================================================================');
 
-    const kc = await authenticationService.generateKeyCollection();
+    const kc = await authenticationService.generateKeyCollection(identity.doc.id.toString());
     const res = await authenticationService.saveKeyCollection(kc);
 
     if (!res?.result.n) {

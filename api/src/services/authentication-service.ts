@@ -13,16 +13,13 @@ import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
-import { Config } from '../models/config';
 
 export class AuthenticationService {
   identityService: IdentityService;
   userService: UserService;
-  config: Config;
-  constructor(identityService: IdentityService, userService: UserService, config: Config) {
+  constructor(identityService: IdentityService, userService: UserService) {
     this.identityService = identityService;
     this.userService = userService;
-    this.config = config;
   }
 
   saveKeyCollection(keyCollection: KeyCollectionPersistence) {
@@ -33,8 +30,8 @@ export class AuthenticationService {
     return getKeyCollection(index);
   }
 
-  generateKeyCollection = async (): Promise<KeyCollectionPersistence> => {
-    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+  generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
+    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
     const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, 0, 8);
     console.log('key collection doc:', doc.toJSON());
     await this.updateDatabaseIdentityDoc(doc.toJSON());
@@ -66,7 +63,7 @@ export class AuthenticationService {
     };
   };
 
-  createVerifiableCredential = async (userCredential: UserCredential) => {
+  createVerifiableCredential = async (userCredential: UserCredential, issuerId: string) => {
     const user = await this.userService.getUser(userCredential.id);
     if (!user) {
       throw new Error("User does not exist, so he can't be verified!");
@@ -86,7 +83,7 @@ export class AuthenticationService {
       keys: keyCollection.keys
     };
 
-    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
     console.log('issuerIdentity', issuerIdentity);
 
     const rs = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
@@ -105,8 +102,8 @@ export class AuthenticationService {
     return rs?.validatedCredential;
   };
 
-  checkVerifiableCredential = async (vc: any) => {
-    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+  checkVerifiableCredential = async (vc: any, issuerId: string) => {
+    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
     const res = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
     const user = await this.userService.getUser(vc?.id);
     const vup: VerificationUpdatePersistence = {
@@ -123,12 +120,12 @@ export class AuthenticationService {
     return res;
   };
 
-  revokeVerifiableCredential = async (did: string) => {
+  revokeVerifiableCredential = async (did: string, issuerId: string) => {
     const kci = await getKeyCollectionIdentity(did);
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
-    const issuerIdentity: IdentityResponse = await getIdentity(this.config.serverIdentityId);
+    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
     const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
     const newDoc = res.newIdentityDoc;
     await this.updateDatabaseIdentityDoc(newDoc.toJSON());
