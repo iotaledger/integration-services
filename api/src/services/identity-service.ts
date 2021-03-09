@@ -55,7 +55,8 @@ export class IdentityService {
       };
       return { doc, kcp };
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could not generate the key collection');
     }
   };
 
@@ -78,7 +79,8 @@ export class IdentityService {
         txHash
       };
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could not create the identity');
     }
   };
 
@@ -120,7 +122,8 @@ export class IdentityService {
 
       return { newIdentityDoc: doc, validatedCredential };
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could not create the verifiable credential');
     }
   };
 
@@ -136,7 +139,8 @@ export class IdentityService {
 
       return validatedCredential;
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could not check the verifiable credential');
     }
   };
 
@@ -161,7 +165,8 @@ export class IdentityService {
       console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
       return { newIdentityDoc: newDoc, revoked: result };
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could not revoke the verifiable credential');
     }
   };
 
@@ -169,21 +174,24 @@ export class IdentityService {
     try {
       return await Identity.resolve(did, this.config);
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could get the latest identity');
     }
   };
 
-  restoreIdentity = (issuerIdentity: any) => {
+  restoreIdentity = (identity: any) => {
     try {
-      const key: Identity.KeyPair = Identity.KeyPair.fromJSON(issuerIdentity.key);
-      const doc = Document.fromJSON(issuerIdentity.doc) as any;
-
+      const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
+      const doc = Document.fromJSON(identity.doc) as any;
+      if (!key || !doc) {
+      }
       return {
         doc,
         key
       };
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error('could not parse key or doc of the identity');
     }
   };
 
@@ -196,7 +204,8 @@ export class IdentityService {
         key
       };
     } catch (error) {
-      throw new Error(error);
+      console.log('Error from identity sdk:', error);
+      throw new Error(`could not create identity document from keytype: ${this.config.keyType}`);
     }
   };
 }
