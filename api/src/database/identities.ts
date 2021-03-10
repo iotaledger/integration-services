@@ -16,7 +16,11 @@ export const saveIdentity = async (identity: IdentityUpdate): Promise<InsertOneW
     ...identity
   };
 
-  return MongoDbService.insertDocument<IdentityUpdate>(collectionName, document);
+  const res = await MongoDbService.insertDocument<IdentityUpdate>(collectionName, document);
+  if (!res.result.n) {
+    throw new Error('Could not save identity!');
+  }
+  return res;
 };
 
 export const updateIdentityDoc = async (docUpdate: DocumentUpdate) => {
@@ -35,5 +39,9 @@ export const updateIdentityDoc = async (docUpdate: DocumentUpdate) => {
     }
   };
 
-  return MongoDbService.updateDocument(collectionName, query, update);
+  const res = await MongoDbService.updateDocument(collectionName, query, update);
+  if (!res.result.n) {
+    throw new Error('could not update identity!');
+  }
+  return res;
 };

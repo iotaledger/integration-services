@@ -37,8 +37,6 @@ export class IdentityService {
       const { doc, key } = this.restoreIdentity(issuerIdentity);
       const keyCollection = new KeyCollection(this.config.keyType, count);
       const method = Method.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
-      console.log('prev hash', issuerIdentity.txHash);
-
       const newDoc = Identity.Document.fromJSON({
         ...doc.toJSON(),
         previous_message_id: issuerIdentity.txHash
@@ -47,11 +45,11 @@ export class IdentityService {
       newDoc.insertMethod(method, `VerificationMethod`);
       newDoc.sign(key);
 
-      console.log('Verified (doc): ', newDoc.verify());
+      if (!newDoc.verify()) {
+        throw new Error('could not add keycollection to the identity!');
+      }
 
-      const txHash = await Identity.publish(newDoc.toJSON(), this.config);
-      console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
-
+      const txHash = await this.publishSignedDoc(newDoc.toJSON());
       const { keys, type } = keyCollection?.toJSON();
       const kcp = {
         count,
@@ -70,9 +68,8 @@ export class IdentityService {
     try {
       const identity = this.generateIdentity();
       identity.doc.sign(identity.key);
-      const txHash = await Identity.publish(identity.doc.toJSON(), this.config);
+      const txHash = await this.publishSignedDoc(identity.doc.toJSON());
       const identityIsVerified = identity.doc.verify();
-      console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
 
       if (!identityIsVerified) {
         throw new Error('Could not create the identity. Please try it again.');
@@ -94,7 +91,7 @@ export class IdentityService {
     credential: Credential<T>,
     keyCollectionJson: KeyCollectionJson,
     subjectKeyIndex: number
-  ): Promise<{ validatedCredential: any }> => {
+  ): Promise<any> => {
     try {
       const { doc } = this.restoreIdentity(issuerIdentity);
       const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
@@ -108,41 +105,36 @@ export class IdentityService {
         credentialSubject: credential.subject
       });
 
-      const signedVc = doc.signCredential(unsignedVc, {
+      const signedVc = await doc.signCredential(unsignedVc, {
         method: method.id.toString(),
         public: issuerKeys.public(subjectKeyIndex),
         secret: issuerKeys.secret(subjectKeyIndex),
         proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
       });
+      const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
 
-      // Ensure the credential signature is valid
-      console.log('Verifiable Credential', signedVc);
-      console.log('Verified (credential)', doc.verify(signedVc));
-      if (!doc.verify(signedVc)) {
-        throw new Error('could not verify signed identity. Please try it again.');
+      if (!validatedCredential?.verified || !doc.verify(signedVc)) {
+        throw new Error('could not verify identity, please try it again.');
       }
 
-      const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
-      console.log('Credential Validation', validatedCredential);
-
-      return { validatedCredential };
+      return validatedCredential.credential;
     } catch (error) {
       console.log('Error from identity sdk:', error);
       throw new Error('could not create the verifiable credential');
     }
   };
 
-  checkVerifiableCredential = async (issuerIdentity: IdentityJson, signedVc: any): Promise<any> => {
+  checkVerifiableCredential = async (issuerIdentity: IdentityJson, signedVc: any): Promise<{ isVerified: true }> => {
     try {
       const { doc } = this.restoreIdentity(issuerIdentity);
       console.log('Verified (credential)', doc.verify(signedVc));
       const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
-
-      if (!validatedCredential.verified) {
+      const isVerified = validatedCredential.verified && doc.verify(signedVc);
+      if (!isVerified) {
         console.log(`Verifiable credential is not verified for: ${signedVc?.id}!`);
       }
 
-      return validatedCredential;
+      return { isVerified };
     } catch (error) {
       console.log('Error from identity sdk:', error);
       throw new Error('could not check the verifiable credential');
@@ -166,9 +158,7 @@ export class IdentityService {
 
       const result: boolean = newDoc.revokeMerkleKey(this.config.keyCollectionTag, index);
       newDoc.sign(key);
-      const txHash = await Identity.publish(newDoc.toJSON(), this.config);
-
-      console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
+      const txHash = await this.publishSignedDoc(newDoc.toJSON());
 
       return { docUpdate: { doc: newDoc.toJSON(), txHash }, revoked: result };
     } catch (error) {

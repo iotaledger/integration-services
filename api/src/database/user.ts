@@ -70,7 +70,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
   return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<UpdateWriteOpResult> => {
+export const updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
   const query = {
     _id: vup.userId
   };
@@ -89,7 +89,10 @@ export const updateUserVerification = async (vup: VerificationUpdatePersistence)
     $set: { ...updateObject }
   };
 
-  return MongoDbService.updateDocument(collectionName, query, update);
+  const res = await MongoDbService.updateDocument(collectionName, query, update);
+  if (!res?.result?.n) {
+    throw new Error('Could not udpate user verification!');
+  }
 };
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
   const query = { _id: userId };

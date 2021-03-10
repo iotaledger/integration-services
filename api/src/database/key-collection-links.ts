@@ -1,6 +1,5 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { KeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/data/key-collection';
 
 const collectionName = CollectionNames.keyCollectionLinks;
@@ -11,13 +10,16 @@ export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promis
   return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
-export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence): Promise<void> => {
   const document = {
     _id: getIndex(kci),
     ...kci
   };
 
-  return MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
+  const res = await MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
+  if (!res?.result?.n) {
+    throw new Error('could not add key collection to the identity!');
+  }
 };
 
 export const getKeyCollectionIdentity = async (did: string): Promise<KeyCollectionIdentityPersistence> => {
@@ -40,5 +42,8 @@ export const revokeKeyCollectionIdentity = async (kci: KeyCollectionIdentityPers
     $unset: { linkedIdentity: '' }
   };
 
-  return MongoDbService.updateDocument(collectionName, query, update);
+  const res = await MongoDbService.updateDocument(collectionName, query, update);
+  if (!res?.result.n) {
+    throw new Error('could not revoke identity');
+  }
 };
