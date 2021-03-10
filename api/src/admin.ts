@@ -42,6 +42,8 @@ async function setupApi() {
     if (!res?.result.n) {
       console.log('could not save keycollection!');
     }
+  } else {
+    console.log('key collection already there!');
   }
 
   console.log('done :)');

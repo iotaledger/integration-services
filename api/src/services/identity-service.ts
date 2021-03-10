@@ -1,6 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { IdentityDocument, IdentityResponse } from '../models/data/identity';
+import { DocumentUpdate, IdentityDocument, IdentityDocumentJson, IdentityJson, IdentityUpdate } from '../models/data/identity';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
 const { Document, VerifiableCredential, Method, KeyCollection } = Identity;
 
@@ -26,10 +26,10 @@ export class IdentityService {
   }
 
   generateKeyCollection = async (
-    issuerIdentity: IdentityResponse,
+    issuerIdentity: IdentityUpdate,
     index: number,
     count: number
-  ): Promise<{ doc: Identity.Document; kcp: KeyCollectionPersistence }> => {
+  ): Promise<{ docUpdate: DocumentUpdate; kcp: KeyCollectionPersistence }> => {
     try {
       if (count > 20) {
         throw new Error('Key collection count is too big!');
@@ -37,13 +37,19 @@ export class IdentityService {
       const { doc, key } = this.restoreIdentity(issuerIdentity);
       const keyCollection = new KeyCollection(this.config.keyType, count);
       const method = Method.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
+      console.log('prev hash', issuerIdentity.txHash);
 
-      doc.insertMethod(method, `VerificationMethod`);
-      doc.sign(key);
+      const newDoc = Identity.Document.fromJSON({
+        ...doc.toJSON(),
+        previous_message_id: issuerIdentity.txHash
+      });
 
-      console.log('Verified (doc): ', doc.verify());
+      newDoc.insertMethod(method, `VerificationMethod`);
+      newDoc.sign(key);
 
-      const txHash = await Identity.publish(doc.toJSON(), this.config);
+      console.log('Verified (doc): ', newDoc.verify());
+
+      const txHash = await Identity.publish(newDoc.toJSON(), this.config);
       console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
 
       const { keys, type } = keyCollection?.toJSON();
@@ -53,14 +59,14 @@ export class IdentityService {
         type,
         keys
       };
-      return { doc, kcp };
+      return { docUpdate: { doc: newDoc.toJSON(), txHash }, kcp };
     } catch (error) {
       console.log('Error from identity sdk:', error);
       throw new Error('could not generate the key collection');
     }
   };
 
-  createIdentity = async (): Promise<IdentityResponse> => {
+  createIdentity = async (): Promise<IdentityUpdate> => {
     try {
       const identity = this.generateIdentity();
       identity.doc.sign(identity.key);
@@ -75,7 +81,6 @@ export class IdentityService {
       return {
         doc: identity.doc.toJSON(),
         key: identity.key.toJSON(),
-        explorerUrl: `${this.config.explorer}/${txHash}`,
         txHash
       };
     } catch (error) {
@@ -85,11 +90,11 @@ export class IdentityService {
   };
 
   createVerifiableCredential = async <T>(
-    issuerIdentity: IdentityResponse,
+    issuerIdentity: IdentityJson,
     credential: Credential<T>,
     keyCollectionJson: KeyCollectionJson,
     subjectKeyIndex: number
-  ): Promise<{ newIdentityDoc: IdentityDocument; validatedCredential: any }> => {
+  ): Promise<{ validatedCredential: any }> => {
     try {
       const { doc } = this.restoreIdentity(issuerIdentity);
       const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
@@ -120,14 +125,14 @@ export class IdentityService {
       const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
       console.log('Credential Validation', validatedCredential);
 
-      return { newIdentityDoc: doc, validatedCredential };
+      return { validatedCredential };
     } catch (error) {
       console.log('Error from identity sdk:', error);
       throw new Error('could not create the verifiable credential');
     }
   };
 
-  checkVerifiableCredential = async (issuerIdentity: IdentityResponse, signedVc: any): Promise<any> => {
+  checkVerifiableCredential = async (issuerIdentity: IdentityJson, signedVc: any): Promise<any> => {
     try {
       const { doc } = this.restoreIdentity(issuerIdentity);
       console.log('Verified (credential)', doc.verify(signedVc));
@@ -144,26 +149,28 @@ export class IdentityService {
     }
   };
 
-  revokeVerifiableCredential = async (
-    issuerIdentity: IdentityResponse,
-    index: number
-  ): Promise<{ newIdentityDoc: Identity.Document; revoked: boolean }> => {
+  publishSignedDoc = async (newDoc: IdentityDocumentJson): Promise<string> => {
+    const txHash = await Identity.publish(newDoc, this.config);
+    console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
+    return txHash;
+  };
+
+  revokeVerifiableCredential = async (issuerIdentity: IdentityUpdate, index: number): Promise<{ docUpdate: DocumentUpdate; revoked: boolean }> => {
     try {
       const { doc, key } = this.restoreIdentity(issuerIdentity);
-      // what is this result saying?
-      const result: boolean = doc.revokeMerkleKey(this.config.keyCollectionTag, index);
+
       const newDoc = Identity.Document.fromJSON({
-        previous_message_id: issuerIdentity.txHash,
-        ...doc.toJSON()
+        ...doc.toJSON(),
+        previous_message_id: issuerIdentity.txHash
       });
 
+      const result: boolean = newDoc.revokeMerkleKey(this.config.keyCollectionTag, index);
       newDoc.sign(key);
       const txHash = await Identity.publish(newDoc.toJSON(), this.config);
 
-      // TODO update server doc!
-      console.log('New Server Identity:,', JSON.stringify(newDoc));
       console.log(`###### tx at: ${this.config.explorer}/${txHash}`);
-      return { newIdentityDoc: newDoc, revoked: result };
+
+      return { docUpdate: { doc: newDoc.toJSON(), txHash }, revoked: result };
     } catch (error) {
       console.log('Error from identity sdk:', error);
       throw new Error('could not revoke the verifiable credential');
@@ -179,7 +186,7 @@ export class IdentityService {
     }
   };
 
-  restoreIdentity = (identity: any) => {
+  restoreIdentity = (identity: IdentityJson) => {
     try {
       const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
       const doc = Document.fromJSON(identity.doc) as any;

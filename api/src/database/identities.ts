@@ -1,25 +1,26 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
-import { IdentityDocumentJson, IdentityResponse } from '../models/data/identity';
+import { DocumentUpdate, IdentityUpdate } from '../models/data/identity';
 
 const collectionName = CollectionNames.identitiesCollection;
 
-export const getIdentity = async (id: string): Promise<IdentityResponse> => {
+export const getIdentity = async (id: string): Promise<IdentityUpdate> => {
   const query = { _id: id };
-  return await MongoDbService.getDocument<IdentityResponse>(collectionName, query);
+  return await MongoDbService.getDocument<IdentityUpdate>(collectionName, query);
 };
 
-export const saveIdentity = async (identity: IdentityResponse): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveIdentity = async (identity: IdentityUpdate): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   const document = {
     _id: identity?.doc?.id,
     ...identity
   };
 
-  return MongoDbService.insertDocument<IdentityResponse>(collectionName, document);
+  return MongoDbService.insertDocument<IdentityUpdate>(collectionName, document);
 };
 
-export const updateIdentityDoc = async (doc: IdentityDocumentJson) => {
+export const updateIdentityDoc = async (docUpdate: DocumentUpdate) => {
+  const { doc, txHash } = docUpdate;
   if (!doc?.id) {
     throw new Error('No valid id provided for the identity!');
   }
@@ -29,7 +30,8 @@ export const updateIdentityDoc = async (doc: IdentityDocumentJson) => {
 
   const update: any = {
     $set: {
-      doc: doc
+      doc,
+      txHash
     }
   };
 

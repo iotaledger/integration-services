@@ -8,7 +8,7 @@ import {
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
-import { CreateIdentityBody, IdentityDocumentJson, IdentityResponse, UserCredential } from '../models/data/identity';
+import { CreateIdentityBody, DocumentUpdate, IdentityJson, IdentityUpdate, UserCredential } from '../models/data/identity';
 import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
@@ -31,14 +31,14 @@ export class AuthenticationService {
   }
 
   generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
-    const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE);
-    console.log('key collection doc:', doc.toJSON());
-    await this.updateDatabaseIdentityDoc(doc.toJSON());
+    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+    const { kcp, docUpdate: doc } = await this.identityService.generateKeyCollection(issuerIdentity, KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE);
+    console.log('key collection doc:', doc);
+    await this.updateDatabaseIdentityDoc(doc);
     return kcp;
   };
 
-  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityResponse> => {
+  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityUpdate> => {
     const identity = await this.identityService.createIdentity();
     const user: User = {
       ...createIdentityBody,
@@ -83,11 +83,11 @@ export class AuthenticationService {
       keys: keyCollection.keys
     };
 
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
+    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
     console.log('issuerIdentity', issuerIdentity);
 
     const rs = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
-    await this.updateDatabaseIdentityDoc(rs.newIdentityDoc?.toJSON());
+    await this.updateDatabaseIdentityDoc(issuerIdentity);
 
     const res = await addKeyCollectionIdentity({
       index,
@@ -103,7 +103,7 @@ export class AuthenticationService {
   };
 
   checkVerifiableCredential = async (vc: any, issuerId: string) => {
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJson = await getIdentity(issuerId);
     const res = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
     const user = await this.userService.getUser(vc?.id);
     const vup: VerificationUpdatePersistence = {
@@ -125,10 +125,10 @@ export class AuthenticationService {
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
+    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
     const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
-    const newDoc = res.newIdentityDoc;
-    await this.updateDatabaseIdentityDoc(newDoc.toJSON());
+    const newDoc = res.docUpdate;
+    await this.updateDatabaseIdentityDoc(newDoc);
 
     // TODO clarify in which situation this is true or false!
     if (res.revoked === true) {
@@ -156,8 +156,8 @@ export class AuthenticationService {
     return res;
   };
 
-  updateDatabaseIdentityDoc = async (idenitityDoc: IdentityDocumentJson) => {
-    const res = await updateIdentityDoc(idenitityDoc);
+  updateDatabaseIdentityDoc = async (docUpdate: DocumentUpdate) => {
+    const res = await updateIdentityDoc(docUpdate);
     if (!res.result.n) {
       throw new Error('could not update identity!');
     }
