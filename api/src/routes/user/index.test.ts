@@ -1,14 +1,17 @@
-import { addUser, getUser, updateUser, deleteUser, searchUsers } from '.';
+import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
-import { User, UserClassification, UserDto, UserSearch } from '../../models/data/user';
+import { UserPersistence, UserClassification, User, UserSearch } from '../../models/data/user';
+import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 describe('test Search user', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    userRoutes = new UserRoutes(userService);
 
     res = {
       send: sendMock,
@@ -43,18 +46,20 @@ describe('test Search user', () => {
       body: null
     };
 
-    await searchUsers(req, res, nextMock);
+    await userRoutes.searchUsers(req, res, nextMock);
 
     expect(searchUserSpy).toHaveBeenCalledWith(expectedUserSearch);
   });
 });
 
 describe('test GET user', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    userRoutes = new UserRoutes(userService);
 
     res = {
       send: sendMock,
@@ -68,13 +73,14 @@ describe('test GET user', () => {
       body: null
     };
 
-    await getUser(req, res, nextMock);
+    await userRoutes.getUser(req, res, nextMock);
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
   it('should return expected user', async () => {
     const date = getDateFromString('2021-02-12T14:58:05+01:00');
-    const user: User = {
-      userId: 'my-public-key-1',
+    const user: UserPersistence = {
+      userId: 'did:iota:123',
+      publicKey: 'my-public-key-1',
       username: 'first-user',
       classification: UserClassification.human,
       subscribedChannelIds: [],
@@ -86,15 +92,16 @@ describe('test GET user', () => {
     };
     const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
     const req: any = {
-      params: { userId: 'my-public-key-1' },
+      params: { userId: 'did:iota:123' },
       body: null
     };
 
-    await getUser(req, res, nextMock);
+    await userRoutes.getUser(req, res, nextMock);
 
     expect(getUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).toHaveBeenCalledWith({
-      userId: 'my-public-key-1',
+      userId: 'did:iota:123',
+      publicKey: 'my-public-key-1',
       username: 'first-user',
       classification: 'human',
       subscribedChannelIds: [],
@@ -115,7 +122,7 @@ describe('test GET user', () => {
       body: null
     };
 
-    await getUser(req, res, nextMock);
+    await userRoutes.getUser(req, res, nextMock);
 
     expect(getUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -123,9 +130,10 @@ describe('test GET user', () => {
   });
 });
 describe('test POST user', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-  const validBody: UserDto = {
-    userId: 'my-public-key-1',
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
+  const validBody: User = {
+    userId: 'did:iota:123',
+    publicKey: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
     subscribedChannelIds: [],
@@ -140,10 +148,13 @@ describe('test POST user', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    userRoutes = new UserRoutes(userService);
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -152,7 +163,8 @@ describe('test POST user', () => {
       params: {},
       body: null
     };
-    await addUser(req, res, nextMock);
+
+    await userRoutes.addUser(req, res, nextMock);
     expect(nextMock).toHaveBeenCalled();
   });
 
@@ -164,17 +176,11 @@ describe('test POST user', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await addUser(req, resUpdate, nextMock);
+    await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'Could not add user!' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'Could not add user!' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
   it('should add user', async () => {
     const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 1 } });
@@ -184,7 +190,7 @@ describe('test POST user', () => {
       body: validBody
     };
 
-    await addUser(req, res, nextMock);
+    await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(201);
@@ -198,7 +204,8 @@ describe('test POST user', () => {
       params: {},
       body: validBody
     };
-    await addUser(req, res, nextMock);
+
+    await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -206,9 +213,10 @@ describe('test POST user', () => {
   });
 });
 describe('test PUT user', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-  const validBody: UserDto = {
-    userId: 'my-public-key-1',
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: UserRoutes, userService: UserService;
+  const validBody: User = {
+    userId: 'did:iota:123',
+    publicKey: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
     subscribedChannelIds: [],
@@ -223,10 +231,13 @@ describe('test PUT user', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    userRoutes = new UserRoutes(userService);
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -235,7 +246,8 @@ describe('test PUT user', () => {
       params: {},
       body: null
     };
-    await updateUser(req, res, nextMock);
+
+    await userRoutes.updateUser(req, res, nextMock);
     expect(nextMock).toHaveBeenCalled();
   });
 
@@ -247,17 +259,11 @@ describe('test PUT user', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await updateUser(req, resUpdate, nextMock);
+    await userRoutes.updateUser(req, res, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'No user found to update!' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'No user found to update!' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 
   it('should return expected user', async () => {
@@ -268,7 +274,7 @@ describe('test PUT user', () => {
       body: validBody
     };
 
-    await updateUser(req, res, nextMock);
+    await userRoutes.updateUser(req, res, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(200);
@@ -282,7 +288,8 @@ describe('test PUT user', () => {
       params: {},
       body: validBody
     };
-    await updateUser(req, res, nextMock);
+
+    await userRoutes.updateUser(req, res, nextMock);
 
     expect(updateUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -291,12 +298,14 @@ describe('test PUT user', () => {
 });
 
 describe('test DELETE user', () => {
-  let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
 
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    userRoutes = new UserRoutes(userService);
 
     res = {
       send: sendMock,
@@ -309,7 +318,8 @@ describe('test DELETE user', () => {
       params: {},
       body: null
     };
-    await deleteUser(req, res, nextMock);
+
+    await userRoutes.deleteUser(req, res, nextMock);
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
 
@@ -321,7 +331,7 @@ describe('test DELETE user', () => {
       body: null
     };
 
-    await deleteUser(req, res, nextMock);
+    await userRoutes.deleteUser(req, res, nextMock);
 
     expect(deleteUserSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(200);
@@ -335,7 +345,7 @@ describe('test DELETE user', () => {
       params: { userId: 'my-public-key-1' },
       body: null
     };
-    await deleteUser(req, res, nextMock);
+    await userRoutes.deleteUser(req, res, nextMock);
 
     expect(deleteUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();

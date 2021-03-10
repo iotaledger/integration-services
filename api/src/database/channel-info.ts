@@ -1,16 +1,16 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { ChannelInfo, ChannelInfoSearch } from '../models/data/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '../models/data/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.channelInfo;
 
-export const getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
+export const getChannelInfo = async (channelAddress: string): Promise<ChannelInfoPersistence> => {
   const query = { _id: channelAddress };
-  return await MongoDbService.getDocument<ChannelInfo>(collectionName, query);
+  return await MongoDbService.getDocument<ChannelInfoPersistence>(collectionName, query);
 };
 
-export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
+export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
   const regex = (text: string) => text && new RegExp(text, 'i');
   const { authorId, created, latestMessage, topicType, topicSource, limit, index } = channelInfoSearch;
   const query = {
@@ -24,10 +24,10 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
   const skip = index > 0 ? (index - 1) * limit : 0;
   const options = limit != null ? { limit, skip } : undefined;
 
-  return await MongoDbService.getDocuments<ChannelInfo>(collectionName, plainQuery, options);
+  return await MongoDbService.getDocuments<ChannelInfoPersistence>(collectionName, plainQuery, options);
 };
 
-export const addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const addChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
   const document = {
     _id: channelInfo.channelAddress,
     ...channelInfo,
@@ -38,7 +38,7 @@ export const addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOn
   return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelInfo = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
+export const updateChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
   const query = {
     _id: channelInfo.channelAddress
   };

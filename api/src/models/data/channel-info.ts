@@ -6,8 +6,8 @@ const TopicSchema = Type.Object({
 });
 
 export const ChannelInfoSchema = Type.Object({
-  channelAddress: Type.String(),
-  authorId: Type.String(),
+  channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
+  authorId: Type.String({ minLength: 53, maxLength: 53 }),
   subscriberIds: Type.Optional(Type.Array(Type.String())),
   topics: Type.Array(TopicSchema),
   created: Type.Optional(Type.String()),
@@ -15,10 +15,11 @@ export const ChannelInfoSchema = Type.Object({
 });
 
 export type Topic = Static<typeof TopicSchema>;
-export type ChannelInfoDto = Static<typeof ChannelInfoSchema>;
-type OmitedChannelInfoDto = Omit<ChannelInfoDto, 'created' | 'latestMessage'>;
 
-export interface ChannelInfo extends OmitedChannelInfoDto {
+export type ChannelInfo = Static<typeof ChannelInfoSchema>;
+type OmitedChannelInfo = Omit<ChannelInfo, 'created' | 'latestMessage'>;
+
+export interface ChannelInfoPersistence extends OmitedChannelInfo {
   created: Date | null;
   latestMessage?: Date;
 }

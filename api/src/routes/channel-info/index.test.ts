@@ -1,23 +1,20 @@
-import { ChannelInfo, ChannelInfoDto, ChannelInfoSearch } from '../../models/data/channel-info';
-import {
-  getChannelInfo,
-  getChannelInfoDto,
-  getChannelInfoFromBody,
-  addChannelInfo,
-  updateChannelInfo,
-  deleteChannelInfo,
-  searchChannelInfo
-} from '.';
+import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
+import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
-import * as UserService from '../../services/user-service';
+import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { ChannelInfoService } from '../../services/channel-info-service';
 
 describe('test Search user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
 
     res = {
       send: sendMock,
@@ -37,7 +34,7 @@ describe('test Search user', () => {
       latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
     };
     const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-    const getUserSpy = spyOn(UserService, 'getUser').and.returnValue({ userId: '1234-5678-9' });
+    const getUserSpy = spyOn(userService, 'getUser').and.returnValue({ userId: '1234-5678-9' });
 
     const req: any = {
       params: {},
@@ -53,7 +50,7 @@ describe('test Search user', () => {
       body: null
     };
 
-    await searchChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.searchChannelInfo(req, res, nextMock);
 
     expect(getUserSpy).toHaveBeenCalledWith('charliebrown');
     expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
@@ -62,11 +59,15 @@ describe('test Search user', () => {
 
 describe('test GET channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
-
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
     res = {
       send: sendMock,
       sendStatus: sendStatusMock
@@ -79,13 +80,13 @@ describe('test GET channelInfo', () => {
       body: null
     };
 
-    await getChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.getChannelInfo(req, res, nextMock);
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
 
   it('should return expected channel info', async () => {
     const date = getDateFromString('2021-02-09T00:00:00+01:00');
-    const channelInfo: ChannelInfo = {
+    const channelInfo: ChannelInfoPersistence = {
       created: date,
       authorId: 'test-author2',
       subscriberIds: [],
@@ -104,7 +105,7 @@ describe('test GET channelInfo', () => {
       body: null
     };
 
-    await getChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.getChannelInfo(req, res, nextMock);
 
     expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).toHaveBeenCalledWith({
@@ -126,7 +127,7 @@ describe('test GET channelInfo', () => {
       body: null
     };
 
-    await getChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.getChannelInfo(req, res, nextMock);
 
     expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -136,7 +137,9 @@ describe('test GET channelInfo', () => {
 
 describe('test POST channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-  const validBody: ChannelInfoDto = {
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
+  const validBody: ChannelInfo = {
     authorId: 'test-author2',
     channelAddress: 'test-address3',
     created: '02-09-2021',
@@ -149,10 +152,14 @@ describe('test POST channelInfo', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -161,7 +168,7 @@ describe('test POST channelInfo', () => {
       params: {},
       body: null
     };
-    await addChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.addChannelInfo(req, res, nextMock);
     expect(nextMock).toHaveBeenCalled();
   });
 
@@ -173,17 +180,11 @@ describe('test POST channelInfo', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await addChannelInfo(req, resUpdate, nextMock);
+    await channelInfoRoutes.addChannelInfo(req, res, nextMock);
 
     expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'Could not add channel info' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'Could not add channel info' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 
   it('should add channel info', async () => {
@@ -194,7 +195,7 @@ describe('test POST channelInfo', () => {
       body: validBody
     };
 
-    await addChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.addChannelInfo(req, res, nextMock);
 
     expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(201);
@@ -208,7 +209,7 @@ describe('test POST channelInfo', () => {
       params: {},
       body: validBody
     };
-    await addChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.addChannelInfo(req, res, nextMock);
 
     expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -218,7 +219,9 @@ describe('test POST channelInfo', () => {
 
 describe('test PUT channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-  const validBody: ChannelInfoDto = {
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+
+  const validBody: ChannelInfo = {
     authorId: 'test-author2',
     channelAddress: 'test-address3',
     created: '02-09-2021',
@@ -231,10 +234,14 @@ describe('test PUT channelInfo', () => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
 
     res = {
       send: sendMock,
-      sendStatus: sendStatusMock
+      sendStatus: sendStatusMock,
+      status: jest.fn(() => res)
     };
   });
 
@@ -243,7 +250,7 @@ describe('test PUT channelInfo', () => {
       params: {},
       body: null
     };
-    await updateChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
     expect(nextMock).toHaveBeenCalled();
   });
 
@@ -255,17 +262,11 @@ describe('test PUT channelInfo', () => {
       body: validBody
     };
 
-    const resUpdate = {
-      ...res,
-      status: jest.fn(),
-      send: jest.fn()
-    };
-
-    await updateChannelInfo(req, resUpdate, nextMock);
+    await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
     expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
-    expect(resUpdate.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
-    expect(resUpdate.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 
   it('should return expected channel info', async () => {
@@ -276,7 +277,7 @@ describe('test PUT channelInfo', () => {
       body: validBody
     };
 
-    await updateChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
     expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(200);
@@ -290,7 +291,7 @@ describe('test PUT channelInfo', () => {
       params: {},
       body: validBody
     };
-    await updateChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
     expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
@@ -300,11 +301,15 @@ describe('test PUT channelInfo', () => {
 
 describe('test DELETE channelInfo', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+  let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
   beforeEach(() => {
     sendMock = jest.fn();
     sendStatusMock = jest.fn();
     nextMock = jest.fn();
+    userService = new UserService();
+    channelInfoService = new ChannelInfoService(userService);
+    channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
 
     res = {
       send: sendMock,
@@ -317,7 +322,7 @@ describe('test DELETE channelInfo', () => {
       params: {},
       body: null
     };
-    await deleteChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
     expect(sendStatusMock).toHaveBeenCalledWith(400);
   });
 
@@ -329,7 +334,7 @@ describe('test DELETE channelInfo', () => {
       body: null
     };
 
-    await deleteChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
 
     expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendStatusMock).toHaveBeenCalledWith(200);
@@ -343,76 +348,10 @@ describe('test DELETE channelInfo', () => {
       params: { channelAddress: 'test-address' },
       body: null
     };
-    await deleteChannelInfo(req, res, nextMock);
+    await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
 
     expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).not.toHaveBeenCalled();
     expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
-  });
-});
-
-describe('test getChannelInfoFromBody', () => {
-  it('should not return null for valid dto', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
-      authorId: 'test-author',
-      topics: [{ source: 'test', type: 'test-type' }],
-      channelAddress: 'test-address'
-    };
-    const result = getChannelInfoFromBody(validChannelInfoDto);
-
-    expect(result).not.toBeNull();
-    expect(result.channelAddress).toEqual('test-address');
-    expect(result.authorId).toEqual('test-author');
-    expect(result.topics).toEqual([{ source: 'test', type: 'test-type' }]);
-  });
-  it('should throw an error for empty address', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
-      authorId: 'test-author',
-      topics: [{ source: 'test', type: 'test-type' }],
-      channelAddress: ''
-    };
-
-    expect(() => getChannelInfoFromBody(validChannelInfoDto)).toThrow('Error when parsing the body: channelAddress and author must be provided!');
-  });
-  it('should throw an error for author=null', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
-      authorId: null,
-      topics: [{ source: 'test', type: 'test-type' }],
-      channelAddress: 'test-address'
-    };
-
-    expect(() => getChannelInfoFromBody(validChannelInfoDto)).toThrow('Error when parsing the body: channelAddress and author must be provided!');
-  });
-  it('should throw an error for empty topics', () => {
-    const validChannelInfoDto: ChannelInfoDto = {
-      authorId: 'test-author',
-      topics: [],
-      channelAddress: 'test-address'
-    };
-
-    expect(() => getChannelInfoFromBody(validChannelInfoDto)).toThrow('Error when parsing the body: channelAddress and author must be provided!');
-  });
-});
-
-describe('test getChannelInfoDto', () => {
-  it('should transform database object to transfer object', () => {
-    const date = new Date('2021-02-08T00:00:00+01:00');
-    const validChannelInfo: ChannelInfo = {
-      created: date,
-      subscriberIds: [],
-      latestMessage: date,
-      authorId: 'test-author',
-      topics: [{ source: 'test', type: 'test-type' }],
-      channelAddress: 'test-address'
-    };
-    const result = getChannelInfoDto(validChannelInfo);
-
-    expect(result).not.toBeNull();
-    expect(result.channelAddress).toEqual('test-address');
-    expect(result.authorId).toEqual('test-author');
-    expect(result.topics).toEqual([{ source: 'test', type: 'test-type' }]);
-    expect(result.created).toEqual(getDateStringFromDate(date));
-    expect(result.latestMessage).toEqual(getDateStringFromDate(date));
-    expect(result.subscriberIds).toEqual([]);
   });
 });

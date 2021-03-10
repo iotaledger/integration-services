@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { errorMiddleware } from './middlewares/error';
-import { channelInfoRouter, userRouter } from './routes/router';
+import { authenticationRouter, channelInfoRouter, userRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
@@ -27,8 +27,11 @@ const prefix = `/api/${version}`;
 
 useRouter(app, prefix + '/channel-info', channelInfoRouter);
 useRouter(app, prefix + '/users', userRouter);
+useRouter(app, prefix + '/authentication', authenticationRouter);
 
 app.use(errorMiddleware);
+
+// TODO check if server identity env var is set otherwise throw an error!
 
 app.listen(port, async () => {
   console.log(`Started API Server on port ${port}`);

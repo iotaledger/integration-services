@@ -2,37 +2,36 @@ import { Type, Static } from '@sinclair/typebox';
 
 const VerificationSchema = Type.Object({
   verified: Type.Boolean(),
-  verificationIssuerId: Type.Optional(Type.String()), // public-key
-  verificationDate: Type.Optional(Type.String())
+  verificationIssuerId: Type.Optional(Type.String()), // did
+  verificationDate: Type.Optional(Type.String()),
+  lastTimeChecked: Type.Optional(Type.String())
 });
 
-export const UserSchema = Type.Object({
-  userId: Type.String(), // public-key
-  username: Type.Optional(Type.String()),
+export const UserWithoutIdSchema = Type.Object({
+  username: Type.String({ minLength: 3 }),
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
-  organization: Type.Optional(Type.String()),
+  organization: Type.Optional(Type.String({ minLength: 2 })),
   subscribedChannelIds: Type.Array(Type.String()),
   registrationDate: Type.Optional(Type.String()),
   verification: Type.Optional(VerificationSchema),
-  classification: Type.String(),
+  classification: Type.String({ minLength: 3 }),
   description: Type.Optional(Type.String())
 });
 
-export type UserDto = Static<typeof UserSchema>;
+export const UserSchema = Type.Object({
+  userId: Type.String({ minLength: 53, maxLength: 53 }), // did
+  publicKey: Type.String({ minLength: 10 })
+});
+
+export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
+export type User = Static<typeof UserSchema> & UserWithoutId;
+export type Verification = Static<typeof VerificationSchema>;
 
 export const enum UserClassification {
   'human' = 'human',
   'device' = 'device',
   'api' = 'api'
-}
-
-type OmitedUserDto = Omit<UserDto, 'registrationDate' | 'classification' | 'verification'>;
-
-export interface User extends OmitedUserDto {
-  verification?: Verification;
-  registrationDate?: Date;
-  classification: UserClassification;
 }
 
 export interface UserSearch {
@@ -46,8 +45,25 @@ export interface UserSearch {
   index?: number;
 }
 
-export interface Verification {
+type OmittedUser = Omit<User, 'registrationDate' | 'classification' | 'verification'>;
+
+export interface UserPersistence extends OmittedUser {
+  verification?: VerificationPersistence;
+  registrationDate?: Date;
+  classification: UserClassification;
+}
+
+export interface VerificationPersistence {
   verified: boolean;
-  verificationIssuerId?: string; // public-key
+  verificationIssuerId?: string;
   verificationDate?: Date;
+  lastTimeChecked?: Date;
+}
+
+export interface VerificationUpdate extends Verification {
+  userId: string;
+}
+
+export interface VerificationUpdatePersistence extends VerificationPersistence {
+  userId: string;
 }

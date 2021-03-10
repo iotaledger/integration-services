@@ -6,9 +6,9 @@ name: Run Api Tests
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, develop ]
     paths: 
       - "api/**"
       - ".github/workflows/build-api.yaml"

@@ -1,12 +1,23 @@
-import { Config } from '../models/config';
+import { Config, IdentityConfig } from '../models/config';
 import isEmpty from 'lodash/isEmpty';
+import * as Identity from '@iota/identity-wasm/node';
+
+const IdentityConfig: IdentityConfig = {
+  network: process.env.NETWORK,
+  node: process.env.IOTA_PERMA_NODE,
+  explorer: process.env.EXPLORER,
+  keyType: Identity.KeyType.Ed25519,
+  hashFunction: Identity.Digest.Sha256,
+  keyCollectionTag: 'key-collection'
+};
 
 export const CONFIG: Config = {
   port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-  nodeUrl: process.env.IOTA_NODE_URL,
   apiVersion: process.env.API_VERSION,
   databaseUrl: process.env.DATABASE_URL,
-  databaseName: process.env.DATABASE_NAME
+  databaseName: process.env.DATABASE_NAME,
+  serverIdentityId: process.env.SERVER_IDENTITY,
+  identityConfig: IdentityConfig
 };
 
 const assertConfig = (config: Config) => {
