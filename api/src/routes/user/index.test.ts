@@ -179,7 +179,7 @@ describe('test POST user', () => {
     await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
-    expect(res.send).toHaveBeenCalledWith({ error: 'Could not add user!' });
+    expect(res.send).toHaveBeenCalledWith({ error: 'could not add user!' });
     expect(res.status).toHaveBeenCalledWith(404);
   });
   it('should add user', async () => {

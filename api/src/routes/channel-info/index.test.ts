@@ -183,7 +183,7 @@ describe('test POST channelInfo', () => {
     await channelInfoRoutes.addChannelInfo(req, res, nextMock);
 
     expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
-    expect(res.send).toHaveBeenCalledWith({ error: 'Could not add channel info' });
+    expect(res.send).toHaveBeenCalledWith({ error: 'could not add channel info' });
     expect(res.status).toHaveBeenCalledWith(404);
   });
 

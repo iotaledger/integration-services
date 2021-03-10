@@ -3,7 +3,7 @@ import { getIdentity, saveIdentity, updateIdentityDoc } from '../database/identi
 import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
 import {
   addKeyCollectionIdentity,
-  getKeyCollectionIdentity,
+  getLinkedKeyCollectionIdentity,
   getLinkedIdentitesSize,
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
@@ -85,7 +85,6 @@ export class AuthenticationService {
       throw new Error(`No identiity found for issuerId: ${issuerId}`);
     }
     const vc = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
-    await this.updateDatabaseIdentityDoc(issuerIdentity);
 
     await addKeyCollectionIdentity({
       index,
@@ -118,24 +117,23 @@ export class AuthenticationService {
   };
 
   revokeVerifiableCredential = async (did: string, issuerId: string) => {
-    const kci = await getKeyCollectionIdentity(did);
+    const kci = await getLinkedKeyCollectionIdentity(did);
     if (!kci) {
       throw new Error('No identity found to revoke the verification!');
     }
     const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+
     if (!issuerIdentity) {
       throw new Error(`No identiity found for issuerId: ${issuerId}`);
     }
 
     const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
-    const newDoc = res.docUpdate;
-    await this.updateDatabaseIdentityDoc(newDoc);
+    await this.updateDatabaseIdentityDoc(res.docUpdate);
 
-    // TODO clarify in which situation this is true or false!
     if (res.revoked === true) {
       console.log('Successfully revoked!');
     } else {
-      console.log(`Could not revoke identity for ${did} on the ledger!`);
+      console.log(`could not revoke identity for ${did} on the ledger, maybe it is already revoked!`);
     }
 
     await revokeKeyCollectionIdentity(kci);

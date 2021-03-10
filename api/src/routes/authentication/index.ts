@@ -63,6 +63,7 @@ export class AuthenticationRoutes {
       next(error);
     }
   };
+
   getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);

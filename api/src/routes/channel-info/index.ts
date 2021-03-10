@@ -43,7 +43,7 @@ export class ChannelInfoRoutes {
       const result = await this.channelInfoService.addChannelInfo(channelInfo);
 
       if (!result?.result?.n) {
-        res.status(StatusCodes.NOT_FOUND).send({ error: 'Could not add channel info' });
+        res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add channel info' });
         return;
       }
 

@@ -7,7 +7,7 @@ const VerificationSchema = Type.Object({
   lastTimeChecked: Type.Optional(Type.String())
 });
 
-export const UserWithoutIdSchema = Type.Object({
+const UserWithoutIdFields = {
   username: Type.String({ minLength: 3 }),
   firstName: Type.Optional(Type.String()),
   lastName: Type.Optional(Type.String()),
@@ -17,11 +17,16 @@ export const UserWithoutIdSchema = Type.Object({
   verification: Type.Optional(VerificationSchema),
   classification: Type.String({ minLength: 3 }),
   description: Type.Optional(Type.String())
+};
+
+export const UserWithoutIdSchema = Type.Object({
+  ...UserWithoutIdFields
 });
 
 export const UserSchema = Type.Object({
   userId: Type.String({ minLength: 53, maxLength: 53 }), // did
-  publicKey: Type.String({ minLength: 10 })
+  publicKey: Type.String({ minLength: 10 }),
+  ...UserWithoutIdFields
 });
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;

@@ -113,7 +113,7 @@ export class MongoDbService {
 
       MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
         if (err != null) {
-          console.error('Could not connect to mongodb');
+          console.error('could not connect to mongodb');
           reject(err);
           return;
         }

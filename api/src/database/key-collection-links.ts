@@ -1,16 +1,16 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { KeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/data/key-collection';
+import { LinkedKeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/data/key-collection';
 
 const collectionName = CollectionNames.keyCollectionLinks;
-const getIndex = (kci: KeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;
+const getIndex = (kci: LinkedKeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;
 
 export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promise<number> => {
   const query = { keyCollectionIndex };
   return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
-export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence): Promise<void> => {
+export const addKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityPersistence): Promise<void> => {
   const document = {
     _id: getIndex(kci),
     ...kci
@@ -22,14 +22,14 @@ export const addKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersist
   }
 };
 
-export const getKeyCollectionIdentity = async (did: string): Promise<KeyCollectionIdentityPersistence> => {
+export const getLinkedKeyCollectionIdentity = async (did: string): Promise<LinkedKeyCollectionIdentityPersistence> => {
   const regex = (text: string) => text && new RegExp(text, 'i');
 
   const query = { linkedIdentity: regex(did) };
-  return await MongoDbService.getDocument<KeyCollectionIdentityPersistence>(collectionName, query);
+  return await MongoDbService.getDocument<LinkedKeyCollectionIdentityPersistence>(collectionName, query);
 };
 
-export const revokeKeyCollectionIdentity = async (kci: KeyCollectionIdentityPersistence) => {
+export const revokeKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityPersistence) => {
   const query = {
     _id: getIndex(kci)
   };

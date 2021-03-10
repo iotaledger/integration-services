@@ -10,7 +10,7 @@ export interface SimpleKeyPair {
   secret: string;
 }
 
-export interface KeyCollectionIdentityPersistence {
+export interface LinkedKeyCollectionIdentityPersistence {
   keyCollectionIndex: number;
   index: number;
   linkedIdentity?: string;

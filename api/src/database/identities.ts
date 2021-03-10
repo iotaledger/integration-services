@@ -18,7 +18,7 @@ export const saveIdentity = async (identity: IdentityUpdate): Promise<InsertOneW
 
   const res = await MongoDbService.insertDocument<IdentityUpdate>(collectionName, document);
   if (!res.result.n) {
-    throw new Error('Could not save identity!');
+    throw new Error('could not save identity!');
   }
   return res;
 };
@@ -26,7 +26,7 @@ export const saveIdentity = async (identity: IdentityUpdate): Promise<InsertOneW
 export const updateIdentityDoc = async (docUpdate: DocumentUpdate) => {
   const { doc, txHash } = docUpdate;
   if (!doc?.id) {
-    throw new Error('No valid id provided for the identity!');
+    throw new Error('no valid id provided for the identity!');
   }
   const query = {
     _id: doc?.id

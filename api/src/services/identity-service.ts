@@ -72,7 +72,7 @@ export class IdentityService {
       const identityIsVerified = identity.doc.verify();
 
       if (!identityIsVerified) {
-        throw new Error('Could not create the identity. Please try it again.');
+        throw new Error('could not create the identity. Please try it again.');
       }
 
       return {

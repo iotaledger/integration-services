@@ -91,7 +91,7 @@ export const updateUserVerification = async (vup: VerificationUpdatePersistence)
 
   const res = await MongoDbService.updateDocument(collectionName, query, update);
   if (!res?.result?.n) {
-    throw new Error('Could not udpate user verification!');
+    throw new Error('could not udpate user verification!');
   }
 };
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
