@@ -124,7 +124,7 @@ export class IdentityService {
     }
   };
 
-  checkVerifiableCredential = async (issuerIdentity: IdentityJson, signedVc: any): Promise<{ isVerified: true }> => {
+  checkVerifiableCredential = async (issuerIdentity: IdentityJson, signedVc: any): Promise<boolean> => {
     try {
       const { doc } = this.restoreIdentity(issuerIdentity);
       console.log('Verified (credential)', doc.verify(signedVc));
@@ -134,7 +134,7 @@ export class IdentityService {
         console.log(`Verifiable credential is not verified for: ${signedVc?.id}!`);
       }
 
-      return { isVerified };
+      return isVerified;
     } catch (error) {
       console.log('Error from identity sdk:', error);
       throw new Error('could not check the verifiable credential');
@@ -150,12 +150,10 @@ export class IdentityService {
   revokeVerifiableCredential = async (issuerIdentity: IdentityUpdate, index: number): Promise<{ docUpdate: DocumentUpdate; revoked: boolean }> => {
     try {
       const { doc, key } = this.restoreIdentity(issuerIdentity);
-
       const newDoc = Identity.Document.fromJSON({
         ...doc.toJSON(),
         previous_message_id: issuerIdentity.txHash
       });
-
       const result: boolean = newDoc.revokeMerkleKey(this.config.keyCollectionTag, index);
       newDoc.sign(key);
       const txHash = await this.publishSignedDoc(newDoc.toJSON());

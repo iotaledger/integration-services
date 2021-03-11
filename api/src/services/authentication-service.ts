@@ -64,7 +64,6 @@ export class AuthenticationService {
     if (!user) {
       throw new Error("User does not exist, so he can't be verified!");
     }
-    console.log('userCredential', userCredential);
 
     const credential: Credential<UserCredential> = {
       type: 'UserCredential',
@@ -73,6 +72,7 @@ export class AuthenticationService {
         ...userCredential
       }
     };
+
     const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
     const index = await getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
     const keyCollectionJson: KeyCollectionJson = {
@@ -102,18 +102,18 @@ export class AuthenticationService {
     if (!issuerIdentity) {
       throw new Error(`No identiity found for issuerId: ${issuerId}`);
     }
-    const res = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
+    const isVerified = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
     const user = await this.userService.getUser(vc?.id);
     const vup: VerificationUpdatePersistence = {
       userId: vc?.id,
-      verified: res.isVerified,
+      verified: isVerified,
       lastTimeChecked: new Date(),
       verificationDate: getDateFromString(user?.verification?.verificationDate),
       verificationIssuerId: user?.verification?.verificationIssuerId
     };
     await this.userService.updateUserVerification(vup);
 
-    return res;
+    return { isVerified };
   };
 
   revokeVerifiableCredential = async (did: string, issuerId: string) => {
