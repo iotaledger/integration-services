@@ -31,9 +31,6 @@ export class IdentityService {
     count: number
   ): Promise<{ docUpdate: DocumentUpdate; kcp: KeyCollectionPersistence }> => {
     try {
-      if (count > 20) {
-        throw new Error('Key collection count is too big!');
-      }
       const { doc, key } = this.restoreIdentity(issuerIdentity);
       const keyCollection = new KeyCollection(this.config.keyType, count);
       const method = Method.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);

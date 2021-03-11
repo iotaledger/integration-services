@@ -79,7 +79,7 @@ describe('test GET user', () => {
   it('should return expected user', async () => {
     const date = getDateFromString('2021-02-12T14:58:05+01:00');
     const user: UserPersistence = {
-      userId: 'did:iota:123',
+      userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
       publicKey: 'my-public-key-1',
       username: 'first-user',
       classification: UserClassification.human,
@@ -92,7 +92,7 @@ describe('test GET user', () => {
     };
     const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
     const req: any = {
-      params: { userId: 'did:iota:123' },
+      params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
       body: null
     };
 
@@ -100,7 +100,7 @@ describe('test GET user', () => {
 
     expect(getUserSpy).toHaveBeenCalledTimes(1);
     expect(sendMock).toHaveBeenCalledWith({
-      userId: 'did:iota:123',
+      userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
       publicKey: 'my-public-key-1',
       username: 'first-user',
       classification: 'human',
@@ -132,7 +132,7 @@ describe('test GET user', () => {
 describe('test POST user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
   const validBody: User = {
-    userId: 'did:iota:123',
+    userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
     publicKey: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
@@ -179,8 +179,7 @@ describe('test POST user', () => {
     await userRoutes.addUser(req, res, nextMock);
 
     expect(addUserSpy).toHaveBeenCalledTimes(1);
-    expect(res.send).toHaveBeenCalledWith({ error: 'could not add user!' });
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(nextMock).toHaveBeenCalledWith(new Error('could not create user identity!'));
   });
   it('should add user', async () => {
     const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 1 } });
@@ -215,7 +214,7 @@ describe('test POST user', () => {
 describe('test PUT user', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: UserRoutes, userService: UserService;
   const validBody: User = {
-    userId: 'did:iota:123',
+    userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
     publicKey: 'my-public-key-1',
     username: 'first-user',
     classification: UserClassification.human,
