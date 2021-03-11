@@ -422,8 +422,6 @@ describe('test authentication routes', () => {
   });
 
   describe('test revokeVerifiableCredential route', () => {
-    beforeEach(() => {});
-
     it('should throw an error since no verfiable credential is found to revoke!', async () => {
       const identityToRevoke = vcMock.id;
       // since we won't have a linkedIdentity for it won't go further
@@ -528,8 +526,6 @@ describe('test authentication routes', () => {
   });
 
   describe('test getLatestDocument route', () => {
-    beforeEach(() => {});
-
     it('should return bad request if no id for the identity is provided!', async () => {
       const getLatestIdentitySpy = spyOn(identityService, 'getLatestIdentity');
       const req: any = {
