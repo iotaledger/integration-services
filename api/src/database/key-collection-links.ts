@@ -10,6 +10,13 @@ export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promis
   return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
+export const getLinkedKeyCollectionIdentity = async (did: string): Promise<LinkedKeyCollectionIdentityPersistence> => {
+  const regex = (text: string) => text && new RegExp(text, 'i');
+
+  const query = { linkedIdentity: regex(did) };
+  return await MongoDbService.getDocument<LinkedKeyCollectionIdentityPersistence>(collectionName, query);
+};
+
 export const addKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityPersistence): Promise<void> => {
   const document = {
     _id: getIndex(kci),
@@ -20,13 +27,6 @@ export const addKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityP
   if (!res?.result?.n) {
     throw new Error('could not add key collection to the identity!');
   }
-};
-
-export const getLinkedKeyCollectionIdentity = async (did: string): Promise<LinkedKeyCollectionIdentityPersistence> => {
-  const regex = (text: string) => text && new RegExp(text, 'i');
-
-  const query = { linkedIdentity: regex(did) };
-  return await MongoDbService.getDocument<LinkedKeyCollectionIdentityPersistence>(collectionName, query);
 };
 
 export const revokeKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityPersistence) => {

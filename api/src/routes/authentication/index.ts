@@ -7,6 +7,7 @@ import { Config } from '../../models/config';
 export class AuthenticationRoutes {
   private readonly authenticationService: AuthenticationService;
   private readonly config: Config;
+
   constructor(authenticationService: AuthenticationService, config: Config) {
     this.authenticationService = authenticationService;
     this.config = config;
@@ -37,6 +38,9 @@ export class AuthenticationRoutes {
   checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const vcBody: any = req.body;
+      if (!vcBody?.id) {
+        throw new Error('No valid verifiable credential provided!');
+      }
       const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
 
       res.status(StatusCodes.OK).send(vc);
