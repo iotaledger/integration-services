@@ -10,10 +10,8 @@
     "build": "npm-run-all build-tsc build-lint",
     "test": "jest",
     "test-watch": "npm run test -- --watchAll",
-    "start": "node dist/index.js",
-    "build-watch": "tsc --watch",
-    "serve-nodemon": "nodemon ./dist/index",
-    "serve": "run-p build-watch serve-nodemon"
+    "start": "npm-run-all build start1",
+    "start1": "node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -29,9 +27,8 @@
   },
   "homepage": "https://github.com/iotaledger/e-commerce-audit-log#readme",
   "dependencies": {
-    "@iota/converter": "^1.0.0-beta.30",
-    "mongodb": "^3.6.4",
-    "typescript-string-operations": "^1.4.1"
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.1"
   },
   "jest": {
     "testEnvironment": "node"
@@ -40,6 +37,7 @@
     "@types/jest": "^26.0.20",
     "@types/mongodb": "^3.6.7",
     "@types/node": "^14.14.22",
+    "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
     "eslint": "^7.18.0",
