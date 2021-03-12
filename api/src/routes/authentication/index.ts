@@ -80,4 +80,42 @@ export class AuthenticationRoutes {
       next(error);
     }
   };
+
+  getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+      const userId = req.query && decodeParam(<string>req.query['user-id']);
+
+      if (!userId) {
+        res.status(StatusCodes.BAD_REQUEST).send({ error: 'A user-id must be provided!' });
+        return;
+      }
+
+      const challenge = await this.authenticationService.getChallenge(userId);
+      res.status(StatusCodes.OK).send({ challenge });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+      const challengeResponse = req.query && decodeParam(<string>req.query['challenge-response']);
+      const userId = req.query && decodeParam(<string>req.query['user-id']);
+
+      if (!challengeResponse || !userId) {
+        res.status(StatusCodes.BAD_REQUEST).send({ error: 'a challenge-response and a user-id must be provided!' });
+        return;
+      }
+
+      const jwt = await this.authenticationService.authenticate(challengeResponse, userId);
+      console.log('jwt', jwt);
+      console.log('challengeResponse', challengeResponse);
+
+      res.status(StatusCodes.OK);
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -160,6 +160,26 @@ export class AuthenticationService {
     return await this.identityService.getLatestIdentity(did);
   };
 
+  getChallenge = async (userId: string) => {
+    const user = await this.userService.getUser(userId);
+    if (!user) {
+      throw new Error(`no user with id: ${userId} found!`);
+    }
+
+    // TODO create challenge and store it in db!
+    return 'CHALLENGE_SOLVE_IT!!';
+  };
+
+  authenticate = async (challengeResponse: string, userId: string) => {
+    const user = await this.userService.getUser(userId);
+    if (!user) {
+      throw new Error(`no user with id: ${userId} found!`);
+    }
+
+    // TODO verify challenge response and create + sign JWT
+    return 'JWT!!';
+  };
+
   private setUserVerified = async (userId: string, issuerId: string) => {
     if (!issuerId) {
       throw new Error('No valid issuer id!');

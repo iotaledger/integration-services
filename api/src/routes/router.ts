@@ -40,10 +40,18 @@ channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
 const authenticationService = new AuthenticationService(identityService, userService);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
-const { createIdentity, createVerifiableCredential, checkVerifiableCredential, revokeVerifiableCredential, getLatestDocument } = authenticationRoutes;
+const {
+  createIdentity,
+  createVerifiableCredential,
+  checkVerifiableCredential,
+  getChallenge,
+  revokeVerifiableCredential,
+  getLatestDocument
+} = authenticationRoutes;
 export const authenticationRouter = Router();
 
 authenticationRouter.get('/get-latest-document', getLatestDocument);
+authenticationRouter.get('/get-challenge', getChallenge);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/add-verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
 authenticationRouter.post('/check-verification', checkVerifiableCredential);
