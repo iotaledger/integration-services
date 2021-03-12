@@ -1,4 +1,4 @@
-# e-commerce-audit-log
+# Setup the E-Commerce Audit Log API
 
 
 ## 1. MongoDB
@@ -6,6 +6,8 @@
 ### Setup MongoDB
 
 Start the docker container using: `docker-compose up -d` in the api folder
+
+> Info: There are predefined connection credentials in the docker-compose.yml
 
 Verify it is running: `docker ps`
 
@@ -21,12 +23,18 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS   
 
 ### Connect to MongoDB
 
-Use client like for instance: MongoDB Compass
-
-Coonection String: `mongodb://root:rootpassword@0.0.0.0:27017`
+1. Use a client to connect to the mongodb like for instance: `MongoDB Compass`
+2. Use the connection url which will be defined in the following step to connect to the mongodb via `MongoDB Compass`!
+    If you didn't change the docker-compose it is: `mongodb://root:rootpassword@0.0.0.0:27017`
 
 ## 2. Add .env file
 Copy the `./api/.env-example` and rename it to `./api/.env`
+
+Set the correct `DATABASE_URL`, as currently seen in `docker-compose.yml` the following url (for development only) is used:
+
+```
+DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
+```
 
 ## 3. Create a server identity
 The server has its own identity so sign verifiable credentials. This id of the identity is part of the .env-example: `SERVER_IDENTITY=<server-identity>`.
