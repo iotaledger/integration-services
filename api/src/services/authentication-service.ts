@@ -13,6 +13,8 @@ import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
+import { createChallenge } from '../utils/encryption';
+import { upsertChallenge, getChallenge } from '../database/auth';
 
 export class AuthenticationService {
   private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -166,15 +168,18 @@ export class AuthenticationService {
       throw new Error(`no user with id: ${userId} found!`);
     }
 
-    // TODO create challenge and store it in db!
-    return 'CHALLENGE_SOLVE_IT!!';
+    const challenge = createChallenge();
+    await upsertChallenge({ userId: user.userId, challenge });
+    return { challenge };
   };
 
-  authenticate = async (challengeResponse: string, userId: string) => {
+  authenticate = async (signedChallenge: string, userId: string) => {
     const user = await this.userService.getUser(userId);
     if (!user) {
       throw new Error(`no user with id: ${userId} found!`);
     }
+    const { challenge } = await getChallenge(userId);
+    console.log('c', challenge);
 
     // TODO verify challenge response and create + sign JWT
     return 'JWT!!';

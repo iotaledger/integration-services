@@ -84,7 +84,7 @@ export class AuthenticationRoutes {
   getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-      const userId = req.query && decodeParam(<string>req.query['user-id']);
+      const userId = req.query && decodeParam(<string>req.params['userId']);
 
       if (!userId) {
         res.status(StatusCodes.BAD_REQUEST).send({ error: 'A user-id must be provided!' });
@@ -101,19 +101,20 @@ export class AuthenticationRoutes {
   auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-      const challengeResponse = req.query && decodeParam(<string>req.query['challenge-response']);
-      const userId = req.query && decodeParam(<string>req.query['user-id']);
+      const userId = req.query && decodeParam(<string>req.params['userId']);
+      const body = req.body;
+      const signedChallenge = body?.signedChallenge;
 
-      if (!challengeResponse || !userId) {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: 'a challenge-response and a user-id must be provided!' });
+      if (!signedChallenge || !userId) {
+        res.sendStatus(StatusCodes.BAD_REQUEST);
         return;
       }
 
-      const jwt = await this.authenticationService.authenticate(challengeResponse, userId);
+      const jwt = await this.authenticationService.authenticate(signedChallenge, userId);
       console.log('jwt', jwt);
-      console.log('challengeResponse', challengeResponse);
+      console.log('challengeResponse', signedChallenge);
 
-      res.status(StatusCodes.OK);
+      res.sendStatus(StatusCodes.OK);
     } catch (error) {
       next(error);
     }
