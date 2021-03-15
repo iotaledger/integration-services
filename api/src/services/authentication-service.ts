@@ -3,18 +3,19 @@ import { getIdentity, saveIdentity, updateIdentityDoc } from '../database/identi
 import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
 import {
   addKeyCollectionIdentity,
-  getKeyCollectionIdentity,
+  getLinkedKeyCollectionIdentity,
   getLinkedIdentitesSize,
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
-import { CreateIdentityBody, IdentityDocumentJson, IdentityResponse, UserCredential } from '../models/data/identity';
+import { CreateIdentityBody, DocumentUpdate, IdentityJson, IdentityUpdate, UserCredential } from '../models/data/identity';
 import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
 
 export class AuthenticationService {
+  private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
   identityService: IdentityService;
   userService: UserService;
   constructor(identityService: IdentityService, userService: UserService) {
@@ -31,14 +32,16 @@ export class AuthenticationService {
   }
 
   generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
-    const { kcp, doc } = await this.identityService.generateKeyCollection(issuerIdentity, KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE);
-    console.log('key collection doc:', doc.toJSON());
-    await this.updateDatabaseIdentityDoc(doc.toJSON());
+    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+    if (!issuerIdentity) {
+      throw new Error(this.noIssuerFoundErrMessage(issuerId));
+    }
+    const { kcp, docUpdate } = await this.identityService.generateKeyCollection(issuerIdentity, KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE);
+    await this.updateDatabaseIdentityDoc(docUpdate);
     return kcp;
   };
 
-  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityResponse> => {
+  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityUpdate> => {
     const identity = await this.identityService.createIdentity();
     const user: User = {
       ...createIdentityBody,
@@ -46,18 +49,12 @@ export class AuthenticationService {
       publicKey: identity.key.public
     };
 
-    const result = await this.userService.addUser(user);
+    await this.userService.addUser(user);
 
     if (createIdentityBody.storeIdentity) {
-      const res = await saveIdentity(identity);
-      if (!res.result.n) {
-        console.log('Could not save identity!');
-      }
+      await saveIdentity(identity);
     }
 
-    if (!result?.result?.n) {
-      throw new Error('Could not create user identity!');
-    }
     return {
       ...identity
     };
@@ -76,6 +73,7 @@ export class AuthenticationService {
         ...userCredential
       }
     };
+
     const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
     const index = await getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
     const keyCollectionJson: KeyCollectionJson = {
@@ -83,64 +81,64 @@ export class AuthenticationService {
       keys: keyCollection.keys
     };
 
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
-    console.log('issuerIdentity', issuerIdentity);
+    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+    if (!issuerIdentity) {
+      throw new Error(this.noIssuerFoundErrMessage(issuerId));
+    }
+    const vc = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
 
-    const rs = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
-    await this.updateDatabaseIdentityDoc(rs.newIdentityDoc?.toJSON());
-
-    const res = await addKeyCollectionIdentity({
+    await addKeyCollectionIdentity({
       index,
       isRevoked: false,
       linkedIdentity: userCredential.id,
       keyCollectionIndex: KEY_COLLECTION_INDEX
     });
-    if (!res?.result?.n) {
-      throw new Error('Could not verify identity!');
-    }
-    await this.setUserVerified(credential.id, rs?.validatedCredential?.issuer?.did?.toString());
-    return rs?.validatedCredential;
+
+    await this.setUserVerified(credential.id, issuerIdentity.doc.id);
+    return vc;
   };
 
   checkVerifiableCredential = async (vc: any, issuerId: string) => {
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
-    const res = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
-    const user = await this.userService.getUser(vc?.id);
+    const issuerIdentity: IdentityJson = await getIdentity(issuerId);
+    if (!issuerIdentity) {
+      throw new Error(this.noIssuerFoundErrMessage(issuerId));
+    }
+    const isVerified = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
+    const user = await this.userService.getUser(vc.id);
     const vup: VerificationUpdatePersistence = {
-      userId: vc?.id,
-      verified: res?.verified, // TODO!!!
+      userId: user.userId,
+      verified: isVerified,
       lastTimeChecked: new Date(),
       verificationDate: getDateFromString(user?.verification?.verificationDate),
       verificationIssuerId: user?.verification?.verificationIssuerId
     };
-    const uvUpdate = await this.userService.updateUserVerification(vup);
-    if (!uvUpdate?.result.n) {
-      throw new Error('Could not update identity verification');
-    }
-    return res;
+    await this.userService.updateUserVerification(vup);
+
+    return { isVerified };
   };
 
   revokeVerifiableCredential = async (did: string, issuerId: string) => {
-    const kci = await getKeyCollectionIdentity(did);
+    const kci = await getLinkedKeyCollectionIdentity(did);
     if (!kci) {
-      throw new Error('No identity found to revoke the verification!');
+      throw new Error('no identity found to revoke the verification! maybe the identity is already revoked.');
     }
-    const issuerIdentity: IdentityResponse = await getIdentity(issuerId);
+    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+
+    if (!issuerIdentity) {
+      throw new Error(this.noIssuerFoundErrMessage(issuerId));
+    }
+
     const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
-    const newDoc = res.newIdentityDoc;
-    await this.updateDatabaseIdentityDoc(newDoc.toJSON());
+    await this.updateDatabaseIdentityDoc(res.docUpdate);
 
-    // TODO clarify in which situation this is true or false!
     if (res.revoked === true) {
-      console.log('Successfully revoked!');
+      console.log('successfully revoked!');
     } else {
-      console.log(`Could not revoke identity for ${did} on the ledger!`);
+      console.log(`could not revoke identity for ${did} on the ledger, maybe it is already revoked!`);
+      return;
     }
 
-    const updateRes = await revokeKeyCollectionIdentity(kci);
-    if (!updateRes?.result.n) {
-      throw new Error('could not revoke identity');
-    }
+    await revokeKeyCollectionIdentity(kci);
 
     const vup: VerificationUpdatePersistence = {
       userId: did,
@@ -149,18 +147,13 @@ export class AuthenticationService {
       verificationDate: undefined,
       verificationIssuerId: undefined
     };
-    const uvUpdate = await this.userService.updateUserVerification(vup);
-    if (!uvUpdate?.result.n) {
-      throw new Error('could not revoke identity');
-    }
+    await this.userService.updateUserVerification(vup);
+
     return res;
   };
 
-  updateDatabaseIdentityDoc = async (idenitityDoc: IdentityDocumentJson) => {
-    const res = await updateIdentityDoc(idenitityDoc);
-    if (!res.result.n) {
-      throw new Error('could not update identity!');
-    }
+  private updateDatabaseIdentityDoc = async (docUpdate: DocumentUpdate) => {
+    await updateIdentityDoc(docUpdate);
   };
 
   getLatestDocument = async (did: string) => {
@@ -179,9 +172,6 @@ export class AuthenticationService {
       verificationDate: date,
       verificationIssuerId: issuerId
     };
-    const res = await this.userService.updateUserVerification(vup);
-    if (!res?.result?.n) {
-      throw new Error('Could not udpate user verification!');
-    }
+    await this.userService.updateUserVerification(vup);
   };
 }

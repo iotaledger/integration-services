@@ -43,7 +43,7 @@ export class UserRoutes {
       const result = await this.userService.addUser(user);
 
       if (!result?.result?.n) {
-        res.status(StatusCodes.NOT_FOUND).send({ error: 'Could not add user!' });
+        res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add user!' });
         return;
       }
 

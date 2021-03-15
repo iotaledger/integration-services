@@ -7,6 +7,7 @@ import { Config } from '../../models/config';
 export class AuthenticationRoutes {
   private readonly authenticationService: AuthenticationService;
   private readonly config: Config;
+
   constructor(authenticationService: AuthenticationService, config: Config) {
     this.authenticationService = authenticationService;
     this.config = config;
@@ -15,9 +16,6 @@ export class AuthenticationRoutes {
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const createIdentityBody: CreateIdentityBody = req.body;
-      if (!createIdentityBody.username) {
-        throw new Error('No valid body provided!');
-      }
       const identity = await this.authenticationService.createIdentity(createIdentityBody);
 
       res.status(StatusCodes.CREATED).send(identity);
@@ -29,9 +27,6 @@ export class AuthenticationRoutes {
   createVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userCredential: UserCredential = req.body;
-      if (!userCredential.id) {
-        throw new Error('No valid body provided!');
-      }
       const vc: any = await this.authenticationService.createVerifiableCredential(userCredential, this.config.serverIdentityId);
 
       res.status(StatusCodes.CREATED).send(vc);
@@ -43,7 +38,11 @@ export class AuthenticationRoutes {
   checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const vcBody: any = req.body;
+      if (!vcBody?.id) {
+        throw new Error('No valid verifiable credential provided!');
+      }
       const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
+
       res.status(StatusCodes.OK).send(vc);
     } catch (error) {
       next(error);
@@ -63,11 +62,11 @@ export class AuthenticationRoutes {
       next(error);
     }
   };
+
   getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
       const did = decodeParam(<string>req.query?.id);
-      console.log('id ', did);
 
       if (!did) {
         res.sendStatus(StatusCodes.BAD_REQUEST);

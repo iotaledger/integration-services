@@ -30,10 +30,14 @@ export class UserService {
 
   addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
     if (!this.hasValidFields(user)) {
-      throw new Error('No valid body provided!');
+      throw new Error('no valid body provided!');
     }
     const userPersistence = this.getUserPersistence(user);
-    return userDb.addUser(userPersistence);
+    const res = await userDb.addUser(userPersistence);
+    if (!res?.result?.n) {
+      throw new Error('could not create user identity!');
+    }
+    return res;
   };
 
   updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
@@ -41,8 +45,8 @@ export class UserService {
     return userDb.updateUser(userPersistence);
   };
 
-  updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<UpdateWriteOpResult> => {
-    return userDb.updateUserVerification(vup);
+  updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
+    await userDb.updateUserVerification(vup);
   };
 
   deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {

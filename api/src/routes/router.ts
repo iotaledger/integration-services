@@ -46,7 +46,5 @@ export const authenticationRouter = Router();
 authenticationRouter.get('/get-latest-document', getLatestDocument);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/add-verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
-// TODO add schema
 authenticationRouter.post('/check-verification', checkVerifiableCredential);
-// TODO add schema
 authenticationRouter.post('/revoke-verification', revokeVerifiableCredential);
