@@ -14,7 +14,6 @@ describe('test MongoDbService', () => {
       age: 0,
       userId: 'test-12334'
     };
-
     expect(updateObject).toEqual(expectedPlainObject);
   });
 });

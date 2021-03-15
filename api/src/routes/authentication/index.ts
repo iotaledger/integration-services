@@ -1,24 +1,81 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserWithoutId } from '../../models/data/user';
+import { CreateIdentityBody, UserCredential } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
+import { Config } from '../../models/config';
 
 export class AuthenticationRoutes {
   private readonly authenticationService: AuthenticationService;
+  private readonly config: Config;
 
-  constructor(authenticationService: AuthenticationService) {
+  constructor(authenticationService: AuthenticationService, config: Config) {
     this.authenticationService = authenticationService;
+    this.config = config;
   }
 
   createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const user: UserWithoutId = req.body;
-      if (!user.username) {
-        throw new Error('No valid body provided!');
-      }
-      const identity = await this.authenticationService.createIdentity(user);
+      const createIdentityBody: CreateIdentityBody = req.body;
+      const identity = await this.authenticationService.createIdentity(createIdentityBody);
 
       res.status(StatusCodes.CREATED).send(identity);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  createVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userCredential: UserCredential = req.body;
+      const vc: any = await this.authenticationService.createVerifiableCredential(userCredential, this.config.serverIdentityId);
+
+      res.status(StatusCodes.CREATED).send(vc);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const vcBody: any = req.body;
+      if (!vcBody?.id) {
+        throw new Error('No valid verifiable credential provided!');
+      }
+      const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
+
+      res.status(StatusCodes.OK).send(vc);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  revokeVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const revokeBody: any = req.body;
+      if (!revokeBody.id) {
+        throw new Error('No valid body provided!');
+      }
+      await this.authenticationService.revokeVerifiableCredential(revokeBody.id, this.config.serverIdentityId);
+
+      res.sendStatus(StatusCodes.OK);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+      const did = decodeParam(<string>req.query?.id);
+
+      if (!did) {
+        res.sendStatus(StatusCodes.BAD_REQUEST);
+        return;
+      }
+
+      const doc = await this.authenticationService.getLatestDocument(did);
+
+      res.status(StatusCodes.OK).send(doc);
     } catch (error) {
       next(error);
     }

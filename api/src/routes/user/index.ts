@@ -43,7 +43,7 @@ export class UserRoutes {
       const result = await this.userService.addUser(user);
 
       if (!result?.result?.n) {
-        res.status(StatusCodes.NOT_FOUND).send({ error: 'Could not add user!' });
+        res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add user!' });
         return;
       }
 
@@ -92,12 +92,12 @@ export class UserRoutes {
     const verifiedParam = decodeParam(<string>req.query.verified);
     const registrationDate = decodeParam(<string>req.query['registration-date']);
     const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
-    let subscribedChannels: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
-    if (subscribedChannels != null && !Array.isArray(subscribedChannels)) {
+    let subscribedChannelIds: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
+    if (subscribedChannelIds != null && !Array.isArray(subscribedChannelIds)) {
       // we have a string instead of string array!
-      subscribedChannels = [decodeParam(subscribedChannels)];
-    } else if (Array.isArray(subscribedChannels)) {
-      subscribedChannels = subscribedChannels.map((s) => decodeParam(s));
+      subscribedChannelIds = [decodeParam(subscribedChannelIds)];
+    } else if (Array.isArray(subscribedChannelIds)) {
+      subscribedChannelIds = subscribedChannelIds.map((s) => decodeParam(s));
     }
     const limitParam = parseInt(<string>req.query.limit, 10);
     const indexParam = parseInt(<string>req.query.index, 10);
@@ -112,7 +112,7 @@ export class UserRoutes {
       verified,
       username,
       registrationDate: getDateFromString(registrationDate),
-      subscribedChannelIds: subscribedChannels
+      subscribedChannelIds
     };
   };
 }

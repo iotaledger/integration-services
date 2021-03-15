@@ -1,13 +1,13 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence, UserSearch } from '../models/data/user';
+import { UserPersistence, UserSearch, VerificationPersistence, VerificationUpdatePersistence } from '../models/data/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.users;
 
 export const searchUsers = async (userSearch: UserSearch): Promise<UserPersistence[]> => {
   const regex = (text: string) => text && new RegExp(text, 'i');
-  const { classification, organization, subscribedChannelIds: subscribedChannels, username, verified, index, registrationDate } = userSearch;
+  const { classification, organization, subscribedChannelIds, username, verified, index, registrationDate } = userSearch;
   const limit = userSearch.limit != null ? userSearch.limit : 100;
   const query = {
     registrationDate: registrationDate && { $gte: registrationDate },
@@ -15,8 +15,9 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
     organization: regex(organization),
     username: regex(username),
     'verification.verified': verified,
-    subscribedChannels: subscribedChannels && { $in: subscribedChannels }
+    subscribedChannelIds: subscribedChannelIds && { $in: subscribedChannelIds }
   };
+
   const plainQuery = MongoDbService.getPlainObject(query);
   const skip = index > 0 ? (index - 1) * limit : 0;
   const options = { limit, skip };
@@ -50,7 +51,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
     _id: user.userId
   };
 
-  const { firstName, lastName, username, organization, subscribedChannelIds: subscribedChannels, description, classification } = user;
+  const { firstName, lastName, username, organization, subscribedChannelIds, description, classification } = user;
 
   const updateObject = MongoDbService.getPlainObject({
     firstName,
@@ -59,7 +60,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
     username: username || undefined, // username must not be ''
     classification: classification || undefined, // username must not be ''
     organization,
-    subscribedChannels
+    subscribedChannelIds
   });
 
   const update = {
@@ -69,6 +70,30 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
   return MongoDbService.updateDocument(collectionName, query, update);
 };
 
+export const updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
+  const query = {
+    _id: vup.userId
+  };
+  const verification: VerificationPersistence = {
+    verified: vup.verified,
+    verificationDate: vup.verificationDate,
+    lastTimeChecked: vup.lastTimeChecked,
+    verificationIssuerId: vup.verificationIssuerId
+  };
+
+  const updateObject = MongoDbService.getPlainObject({
+    verification: MongoDbService.getPlainObject(verification)
+  });
+
+  const update = {
+    $set: { ...updateObject }
+  };
+
+  const res = await MongoDbService.updateDocument(collectionName, query, update);
+  if (!res?.result?.n) {
+    throw new Error('could not udpate user verification!');
+  }
+};
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
   const query = { _id: userId };
   return MongoDbService.removeDocument(collectionName, query);

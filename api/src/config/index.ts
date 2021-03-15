@@ -6,7 +6,9 @@ const IdentityConfig: IdentityConfig = {
   network: process.env.NETWORK,
   node: process.env.IOTA_PERMA_NODE,
   explorer: process.env.EXPLORER,
-  keyType: Identity.KeyType.Ed25519
+  keyType: Identity.KeyType.Ed25519,
+  hashFunction: Identity.Digest.Sha256,
+  keyCollectionTag: 'key-collection'
 };
 
 export const CONFIG: Config = {
@@ -14,9 +16,8 @@ export const CONFIG: Config = {
   apiVersion: process.env.API_VERSION,
   databaseUrl: process.env.DATABASE_URL,
   databaseName: process.env.DATABASE_NAME,
-  identityConfig: {
-    ...IdentityConfig
-  }
+  serverIdentityId: process.env.SERVER_IDENTITY,
+  identityConfig: IdentityConfig
 };
 
 const assertConfig = (config: Config) => {

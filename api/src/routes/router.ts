@@ -10,6 +10,7 @@ import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { IdentityService } from '../services/identity-service';
+import { UserCredentialSchema } from '../models/data/identity';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -38,8 +39,12 @@ channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
 const authenticationService = new AuthenticationService(identityService, userService);
-const authenticationRoutes = new AuthenticationRoutes(authenticationService);
-const { createIdentity } = authenticationRoutes;
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
+const { createIdentity, createVerifiableCredential, checkVerifiableCredential, revokeVerifiableCredential, getLatestDocument } = authenticationRoutes;
 export const authenticationRouter = Router();
 
+authenticationRouter.get('/get-latest-document', getLatestDocument);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
+authenticationRouter.post('/add-verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
+authenticationRouter.post('/check-verification', checkVerifiableCredential);
+authenticationRouter.post('/revoke-verification', revokeVerifiableCredential);

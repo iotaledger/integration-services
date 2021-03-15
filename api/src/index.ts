@@ -31,6 +31,8 @@ useRouter(app, prefix + '/authentication', authenticationRouter);
 
 app.use(errorMiddleware);
 
+// TODO check if server identity env var is set otherwise throw an error! also check if server identity is in identities document!
+
 app.listen(port, async () => {
   console.log(`Started API Server on port ${port}`);
   await MongoDbService.connect(dbUrl, dbName);
