@@ -3,8 +3,9 @@ dotenv.config();
 import { fetchAuth } from './authenticate';
 
 async function app() {
+  console.log('Fetching authentication...');
   await fetchAuth();
-  console.log('IT RUNS!');
+  console.log('---- done ----');
 }
 
 app();

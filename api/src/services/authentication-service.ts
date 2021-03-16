@@ -13,16 +13,18 @@ import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
-import { createChallenge } from '../utils/encryption';
+import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
 import { upsertChallenge, getChallenge } from '../database/auth';
-
+import jwt from 'jsonwebtoken';
 export class AuthenticationService {
   private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
-  identityService: IdentityService;
-  userService: UserService;
-  constructor(identityService: IdentityService, userService: UserService) {
+  private readonly identityService: IdentityService;
+  private readonly userService: UserService;
+  private readonly serverId: string;
+  constructor(identityService: IdentityService, userService: UserService, serverId: string) {
     this.identityService = identityService;
     this.userService = userService;
+    this.serverId = serverId;
   }
 
   saveKeyCollection(keyCollection: KeyCollectionPersistence) {
@@ -106,16 +108,19 @@ export class AuthenticationService {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
     const isVerified = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
-    const user = await this.userService.getUser(vc.id);
-    const vup: VerificationUpdatePersistence = {
-      userId: user.userId,
-      verified: isVerified,
-      lastTimeChecked: new Date(),
-      verificationDate: getDateFromString(user?.verification?.verificationDate),
-      verificationIssuerId: user?.verification?.verificationIssuerId
-    };
-    await this.userService.updateUserVerification(vup);
-
+    try {
+      const user = await this.userService.getUser(vc.id);
+      const vup: VerificationUpdatePersistence = {
+        userId: user.userId,
+        verified: isVerified,
+        lastTimeChecked: new Date(),
+        verificationDate: getDateFromString(user?.verification?.verificationDate),
+        verificationIssuerId: user?.verification?.verificationIssuerId
+      };
+      await this.userService.updateUserVerification(vup);
+    } catch (err) {
+      console.error(err);
+    }
     return { isVerified };
   };
 
@@ -170,7 +175,7 @@ export class AuthenticationService {
 
     const challenge = createChallenge();
     await upsertChallenge({ userId: user.userId, challenge });
-    return { challenge };
+    return challenge;
   };
 
   authenticate = async (signedChallenge: string, userId: string) => {
@@ -180,9 +185,23 @@ export class AuthenticationService {
     }
     const { challenge } = await getChallenge(userId);
     console.log('c', challenge);
+    const publicKey = getHexEncodedKey(user.publicKey);
+    console.log('signedChallenge', signedChallenge);
 
-    // TODO verify challenge response and create + sign JWT
-    return 'JWT!!';
+    const verified = await verifiyChallenge(publicKey, challenge, signedChallenge);
+    if (!verified) {
+      throw new Error('signed challenge is not valid!');
+    }
+    const serverIdentity = await getIdentity(this.serverId);
+    if (!serverIdentity?.key?.secret) {
+      throw new Error(this.noIssuerFoundErrMessage(this.serverId));
+    }
+    const privateKey = getHexEncodedKey(serverIdentity.key.secret);
+    console.log('privateKey', privateKey);
+
+    // TODO add expiration date and validate jwt in authentication middleware!
+    const signedJwt = jwt.sign({ user }, privateKey);
+    return signedJwt;
   };
 
   private setUserVerified = async (userId: string, issuerId: string) => {

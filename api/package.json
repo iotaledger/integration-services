@@ -54,6 +54,7 @@
     "@types/bs58": "^4.0.1",
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.20",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/lodash": "^4.14.168",
     "@types/mongodb": "^3.6.5",
     "@types/morgan": "^1.9.2",

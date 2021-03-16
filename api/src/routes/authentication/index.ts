@@ -114,7 +114,7 @@ export class AuthenticationRoutes {
       console.log('jwt', jwt);
       console.log('challengeResponse', signedChallenge);
 
-      res.sendStatus(StatusCodes.OK);
+      res.status(StatusCodes.OK).send({ jwt });
     } catch (error) {
       next(error);
     }

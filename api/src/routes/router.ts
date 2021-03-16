@@ -38,7 +38,7 @@ channelInfoRouter.put('/channel', validate({ body: ChannelInfoSchema }), updateC
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService);
+const authenticationService = new AuthenticationService(identityService, userService, CONFIG.serverIdentityId);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
 const {
   createIdentity,

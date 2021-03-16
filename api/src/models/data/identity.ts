@@ -49,7 +49,7 @@ export interface IdentityDocumentJson {
 export interface IdentityKeyPairJson {
   type: Identity.Digest;
   public: string;
-  private: string;
+  secret: string;
 }
 
 export interface DocumentUpdate {
