@@ -52,18 +52,16 @@ export interface IdentityKeyPairJson {
   secret: string;
 }
 
-export interface DocumentUpdate {
+export interface DocumentJsonUpdate {
   doc: IdentityDocumentJson;
-  txHash: string;
-}
-
-export interface IdentityUpdate {
-  doc: IdentityDocumentJson;
-  key: IdentityKeyPairJson;
   txHash: string;
 }
 
 export interface IdentityJson {
   doc: IdentityDocumentJson;
   key: IdentityKeyPairJson;
+}
+
+export interface IdentityJsonUpdate extends IdentityJson {
+  txHash: string;
 }

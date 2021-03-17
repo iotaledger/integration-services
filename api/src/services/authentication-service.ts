@@ -8,7 +8,7 @@ import {
   revokeKeyCollectionIdentity
 } from '../database/key-collection-links';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
-import { CreateIdentityBody, DocumentUpdate, IdentityJson, IdentityUpdate, UserCredential } from '../models/data/identity';
+import { CreateIdentityBody, DocumentJsonUpdate, IdentityJson, IdentityJsonUpdate, UserCredential } from '../models/data/identity';
 import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
@@ -36,16 +36,22 @@ export class AuthenticationService {
   }
 
   generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
-    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+    const index = KEY_COLLECTION_INDEX;
+    const count = KEY_COLLECTION_SIZE;
+    const issuerIdentity: IdentityJsonUpdate = await getIdentity(issuerId);
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
-    const { kcp, docUpdate } = await this.identityService.generateKeyCollection(issuerIdentity, KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE);
+    const { keyCollectionJson, docUpdate } = await this.identityService.generateKeyCollection(issuerIdentity, count);
     await this.updateDatabaseIdentityDoc(docUpdate);
-    return kcp;
+    return {
+      ...keyCollectionJson,
+      count,
+      index
+    };
   };
 
-  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityUpdate> => {
+  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
     const identity = await this.identityService.createIdentity();
     const user: User = {
       ...createIdentityBody,
@@ -85,7 +91,7 @@ export class AuthenticationService {
       keys: keyCollection.keys
     };
 
-    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJsonUpdate = await getIdentity(issuerId);
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
@@ -129,7 +135,7 @@ export class AuthenticationService {
     if (!kci) {
       throw new Error('no identity found to revoke the verification! maybe the identity is already revoked.');
     }
-    const issuerIdentity: IdentityUpdate = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJsonUpdate = await getIdentity(issuerId);
 
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
@@ -159,7 +165,7 @@ export class AuthenticationService {
     return res;
   };
 
-  private updateDatabaseIdentityDoc = async (docUpdate: DocumentUpdate) => {
+  private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
     await updateIdentityDoc(docUpdate);
   };
 

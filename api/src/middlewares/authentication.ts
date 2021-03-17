@@ -15,15 +15,9 @@ export const isAuth = (serverSecret: string) => (req: Request, res: Response, ne
   }
 
   const token = split[1];
-  let decodedToken: any;
+  const decodedToken: any = jwt.verify(token, serverSecret);
 
-  try {
-    decodedToken = jwt.verify(token, serverSecret);
-  } catch (err) {
-    throw err;
-  }
-
-  if (!decodedToken || !decodedToken?.user?.userId) {
+  if (typeof decodedToken === 'string' || !decodedToken?.user?.userId) {
     return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authenticated!' });
   }
 
