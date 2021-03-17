@@ -20,11 +20,11 @@ export class AuthenticationService {
   private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
   private readonly identityService: IdentityService;
   private readonly userService: UserService;
-  private readonly serverId: string;
-  constructor(identityService: IdentityService, userService: UserService, serverId: string) {
+  private readonly serverSecret: string;
+  constructor(identityService: IdentityService, userService: UserService, serverSecret: string) {
     this.identityService = identityService;
     this.userService = userService;
-    this.serverId = serverId;
+    this.serverSecret = serverSecret;
   }
 
   saveKeyCollection(keyCollection: KeyCollectionPersistence) {
@@ -184,23 +184,18 @@ export class AuthenticationService {
       throw new Error(`no user with id: ${userId} found!`);
     }
     const { challenge } = await getChallenge(userId);
-    console.log('c', challenge);
     const publicKey = getHexEncodedKey(user.publicKey);
-    console.log('signedChallenge', signedChallenge);
 
     const verified = await verifiyChallenge(publicKey, challenge, signedChallenge);
     if (!verified) {
       throw new Error('signed challenge is not valid!');
     }
-    const serverIdentity = await getIdentity(this.serverId);
-    if (!serverIdentity?.key?.secret) {
-      throw new Error(this.noIssuerFoundErrMessage(this.serverId));
-    }
-    const privateKey = getHexEncodedKey(serverIdentity.key.secret);
-    console.log('privateKey', privateKey);
 
-    // TODO add expiration date and validate jwt in authentication middleware!
-    const signedJwt = jwt.sign({ user }, privateKey);
+    if (!this.serverSecret) {
+      throw new Error('no server secret set!');
+    }
+
+    const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: '2 days' });
     return signedJwt;
   };
 

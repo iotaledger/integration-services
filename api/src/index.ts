@@ -31,7 +31,7 @@ useRouter(app, prefix + '/authentication', authenticationRouter);
 
 app.use(errorMiddleware);
 
-// TODO check if server identity env var is set otherwise throw an error! also check if server identity is in identities document!
+// TODO check if server identity is available in identities db!
 
 app.listen(port, async () => {
   console.log(`Started API Server on port ${port}`);

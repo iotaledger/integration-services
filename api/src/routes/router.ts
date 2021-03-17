@@ -11,6 +11,7 @@ import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { IdentityService } from '../services/identity-service';
 import { UserCredentialSchema } from '../models/data/identity';
+import { isAuth } from '../middlewares/authentication';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -23,7 +24,7 @@ export const userRouter = Router();
 userRouter.get('/user/:userId', getUser);
 userRouter.get('/search', searchUsers);
 userRouter.post('/user', validate({ body: UserSchema }), addUser);
-userRouter.put('/user', validate({ body: UserSchema }), updateUser);
+userRouter.put('/user', isAuth, validate({ body: UserSchema }), updateUser);
 userRouter.delete('/user/:userId', deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
@@ -34,11 +35,11 @@ export const channelInfoRouter = Router();
 channelInfoRouter.get('/channel/:channelAddress', getChannelInfo);
 channelInfoRouter.get('/search', searchChannelInfo);
 channelInfoRouter.post('/channel', validate({ body: ChannelInfoSchema }), addChannelInfo);
-channelInfoRouter.put('/channel', validate({ body: ChannelInfoSchema }), updateChannelInfo);
+channelInfoRouter.put('/channel', isAuth, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, CONFIG.serverIdentityId);
+const authenticationService = new AuthenticationService(identityService, userService, CONFIG.serverSecret);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
 const {
   createIdentity,

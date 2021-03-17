@@ -7,6 +7,7 @@ export interface Config {
   databaseName: string;
   serverIdentityId: string;
   identityConfig: IdentityConfig;
+  serverSecret: string;
 }
 
 export interface IdentityConfig {

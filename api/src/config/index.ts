@@ -17,15 +17,17 @@ export const CONFIG: Config = {
   databaseUrl: process.env.DATABASE_URL,
   databaseName: process.env.DATABASE_NAME,
   serverIdentityId: process.env.SERVER_IDENTITY,
+  serverSecret: process.env.SERVER_SECRET,
   identityConfig: IdentityConfig
 };
 
 const assertConfig = (config: Config) => {
+  if (config.serverSecret === '<server-secret>' || config.serverIdentityId === '<server-identity>') {
+    throw new Error('please replace the default values!');
+  }
   Object.values(config).map((value, i) => {
     if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
-      console.log('========================================================');
-      console.error('Env var is missing or invalid:', Object.keys(config)[i]);
-      console.log('========================================================');
+      throw new Error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
     }
   });
 };
