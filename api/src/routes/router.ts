@@ -20,12 +20,14 @@ const userService = new UserService();
 const userRoutes = new UserRoutes(userService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
+const { serverSecret } = CONFIG;
+const authMiddleWare = isAuth(serverSecret);
 
 userRouter.get('/user/:userId', getUser);
-userRouter.get('/search', searchUsers);
+userRouter.get('/search', authMiddleWare, searchUsers);
 userRouter.post('/user', validate({ body: UserSchema }), addUser);
-userRouter.put('/user', isAuth, validate({ body: UserSchema }), updateUser);
-userRouter.delete('/user/:userId', deleteUser);
+userRouter.put('/user', authMiddleWare, validate({ body: UserSchema }), updateUser);
+userRouter.delete('/user/:userId', authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
@@ -33,13 +35,13 @@ const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, se
 export const channelInfoRouter = Router();
 
 channelInfoRouter.get('/channel/:channelAddress', getChannelInfo);
-channelInfoRouter.get('/search', searchChannelInfo);
-channelInfoRouter.post('/channel', validate({ body: ChannelInfoSchema }), addChannelInfo);
-channelInfoRouter.put('/channel', isAuth, validate({ body: ChannelInfoSchema }), updateChannelInfo);
-channelInfoRouter.delete('/channel/:channelAddress', deleteChannelInfo);
+channelInfoRouter.get('/search', authMiddleWare, searchChannelInfo);
+channelInfoRouter.post('/channel', authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
+channelInfoRouter.put('/channel', authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
+channelInfoRouter.delete('/channel/:channelAddress', authMiddleWare, deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, CONFIG.serverSecret);
+const authenticationService = new AuthenticationService(identityService, userService, serverSecret);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
 const {
   createIdentity,
@@ -56,6 +58,6 @@ authenticationRouter.get('/get-latest-document', getLatestDocument);
 authenticationRouter.get('/get-challenge/:userId', getChallenge);
 authenticationRouter.post('/auth/:userId', auth);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/add-verification', validate({ body: UserCredentialSchema }), createVerifiableCredential);
-authenticationRouter.post('/check-verification', checkVerifiableCredential);
-authenticationRouter.post('/revoke-verification', revokeVerifiableCredential);
+authenticationRouter.post('/add-verification', authMiddleWare, validate({ body: UserCredentialSchema }), createVerifiableCredential);
+authenticationRouter.post('/check-verification', authMiddleWare, checkVerifiableCredential);
+authenticationRouter.post('/revoke-verification', authMiddleWare, revokeVerifiableCredential);
