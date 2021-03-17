@@ -9,8 +9,9 @@ import * as KeyCollectionLinksDB from '../../database/key-collection-links';
 import * as IdentitiesDb from '../../database/identities';
 import { KEY_COLLECTION_INDEX } from '../../config/identity';
 import { LinkedKeyCollectionIdentityPersistence } from '../../models/data/key-collection';
+import { IdentityJsonUpdate } from '../../models/data/identity';
 
-const identityDocumentMock = {
+const identityDocumentMock: IdentityJsonUpdate = {
   doc: {
     id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
     authentication: [
@@ -35,7 +36,7 @@ const identityDocumentMock = {
     public: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
     secret: 'secret-key'
   },
-  explorerUrl: 'https://explorer.iota.org/mainnet/transaction/GOLMVJ9MRHOPVMXAYUDJZISYDVBMUGMHFLDXEFAMWRECFU9BFQFGMBPVMYRTFRUAHQCAC99O9LQPA9999',
+  encoding: 'base58',
   txHash: 'GOLMVJ9MRHOPVMXAYUDJZISYDVBMUGMHFLDXEFAMWRECFU9BFQFGMBPVMYRTFRUAHQCAC99O9LQPA9999'
 };
 

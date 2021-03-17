@@ -23,7 +23,6 @@ export interface IdentityDocument extends Identity.Document {
 
 export interface IdentityDocumentJson {
   id: string;
-  txHash: string;
   verificationMethod?: {
     id: string;
     controller: string;
@@ -47,7 +46,7 @@ export interface IdentityDocumentJson {
 }
 
 export interface IdentityKeyPairJson {
-  type: Identity.Digest;
+  type: string;
   public: string;
   secret: string;
 }
@@ -60,6 +59,7 @@ export interface DocumentJsonUpdate {
 export interface IdentityJson {
   doc: IdentityDocumentJson;
   key: IdentityKeyPairJson;
+  encoding: 'base16' | 'base58' | 'base64';
 }
 
 export interface IdentityJsonUpdate extends IdentityJson {

@@ -72,6 +72,7 @@ export class IdentityService {
       return {
         doc: identity.doc.toJSON(),
         key: identity.key.toJSON(),
+        encoding: 'base58',
         txHash
       };
     } catch (error) {
