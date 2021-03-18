@@ -678,7 +678,6 @@ describe('test authentication routes', () => {
       const verified = true;
       const userMock: User = validUserMock;
       const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-
       const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
       const getChallengeSpy = spyOn(AuthDb, 'getChallenge').and.returnValue({ challenge: 'CHALLENGE_TO_SOLVE' });
       const verifiyChallengeSpy = spyOn(EncryptionUtils, 'verifiyChallenge').and.returnValue(verified);

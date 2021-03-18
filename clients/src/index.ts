@@ -1,10 +1,10 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { fetchAuth } from './authenticate';
+import { updateUser } from './update-user';
 
 async function app() {
-  console.log('Fetching authentication...');
-  await fetchAuth();
+  console.log('---- start ----');
+  await updateUser();
   console.log('---- done ----');
 }
 
