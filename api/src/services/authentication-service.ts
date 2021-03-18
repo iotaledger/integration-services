@@ -16,6 +16,7 @@ import { UserService } from './user-service';
 import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
 import { upsertChallenge, getChallenge } from '../database/auth';
 import jwt from 'jsonwebtoken';
+
 export class AuthenticationService {
   private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
   private readonly identityService: IdentityService;
@@ -123,6 +124,7 @@ export class AuthenticationService {
         verificationDate: getDateFromString(user?.verification?.verificationDate),
         verificationIssuerId: user?.verification?.verificationIssuerId
       };
+
       await this.userService.updateUserVerification(vup);
     } catch (err) {
       console.error(err);
