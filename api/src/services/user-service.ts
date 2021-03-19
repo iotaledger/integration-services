@@ -23,6 +23,14 @@ export class UserService {
     return this.getUserObject(userPersistence);
   };
 
+  getUsersByIds = async (userIds: string[]): Promise<User[] | null> => {
+    const usersPersistence = await userDb.getUsersByIds(userIds);
+    if (!usersPersistence) {
+      return null;
+    }
+    return usersPersistence.map((userP: UserPersistence) => this.getUserObject(userP));
+  };
+
   getUserByUsername = async (username: string): Promise<User> => {
     const userPersistence = await userDb.getUserByUsername(username);
     return this.getUserObject(userPersistence);
@@ -94,7 +102,9 @@ export class UserService {
       organization,
       registrationDate,
       classification,
-      description
+      description,
+      organizationUrl,
+      location
     } = user;
 
     if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
@@ -114,7 +124,9 @@ export class UserService {
       description,
       organization,
       registrationDate: registrationDate && getDateFromString(registrationDate),
-      verification: this.getVerificationPersistence(verification)
+      verification: this.getVerificationPersistence(verification),
+      organizationUrl,
+      location
     };
 
     return userPersistence;
@@ -137,7 +149,9 @@ export class UserService {
       registrationDate,
       verification,
       classification,
-      description
+      description,
+      organizationUrl,
+      location
     } = userPersistence;
 
     const user: User = {
@@ -151,7 +165,9 @@ export class UserService {
       description,
       registrationDate: getDateStringFromDate(registrationDate),
       verification: this.getVerificationObject(verification),
-      organization
+      organization,
+      organizationUrl,
+      location
     };
     return user;
   };

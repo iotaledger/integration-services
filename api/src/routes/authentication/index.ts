@@ -81,6 +81,15 @@ export class AuthenticationRoutes {
     }
   };
 
+  getTrustedRootIdentities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const trustedRoots = await this.authenticationService.getTrustedRootIdentities();
+      res.status(StatusCodes.OK).send({ trustedRoots });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);

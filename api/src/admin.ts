@@ -36,6 +36,9 @@ async function setupApi() {
     console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
     console.log('==================================================================================================');
 
+    // TODO: call auth service to add trusted root of server identity!!!
+    // await  upsertTrustedRootId('did:iota:E8MrsAPQSKaccTpiqgfE5f5yctGuGnBYn4pU4bTXANwr');
+
     const kc = await authenticationService.generateKeyCollection(identity.doc.id.toString());
     const res = await authenticationService.saveKeyCollection(kc);
 

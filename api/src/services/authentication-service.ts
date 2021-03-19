@@ -1,12 +1,4 @@
 import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
-import { getIdentity, saveIdentity, updateIdentityDoc } from '../database/identities';
-import { getKeyCollection, saveKeyCollection } from '../database/key-collection';
-import {
-  addKeyCollectionIdentity,
-  getLinkedKeyCollectionIdentity,
-  getLinkedIdentitesSize,
-  revokeKeyCollectionIdentity
-} from '../database/key-collection-links';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
 import { CreateIdentityBody, DocumentJsonUpdate, IdentityJson, IdentityJsonUpdate, UserCredential } from '../models/data/identity';
 import { User, VerificationUpdatePersistence } from '../models/data/user';
@@ -14,7 +6,11 @@ import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
 import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
-import { upsertChallenge, getChallenge } from '../database/auth';
+import * as KeyCollectionDb from '../database/key-collection';
+import * as KeyCollectionLinksDb from '../database/key-collection-links';
+import * as AuthDb from '../database/auth';
+import * as IdentitiesDb from '../database/identities';
+import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
 
 export class AuthenticationService {
@@ -29,17 +25,17 @@ export class AuthenticationService {
   }
 
   saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-    return saveKeyCollection(keyCollection);
+    return KeyCollectionDb.saveKeyCollection(keyCollection);
   }
 
   getKeyCollection(index: number) {
-    return getKeyCollection(index);
+    return KeyCollectionDb.getKeyCollection(index);
   }
 
   generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
     const index = KEY_COLLECTION_INDEX;
     const count = KEY_COLLECTION_SIZE;
-    const issuerIdentity: IdentityJsonUpdate = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
@@ -63,7 +59,7 @@ export class AuthenticationService {
     await this.userService.addUser(user);
 
     if (createIdentityBody.storeIdentity) {
-      await saveIdentity(identity);
+      await IdentitiesDb.saveIdentity(identity);
     }
 
     return {
@@ -86,19 +82,19 @@ export class AuthenticationService {
     };
 
     const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
-    const index = await getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
+    const index = await KeyCollectionLinksDb.getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
     const keyCollectionJson: KeyCollectionJson = {
       type: keyCollection.type,
       keys: keyCollection.keys
     };
 
-    const issuerIdentity: IdentityJsonUpdate = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
     const vc = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
 
-    await addKeyCollectionIdentity({
+    await KeyCollectionLinksDb.addKeyCollectionIdentity({
       index,
       isRevoked: false,
       linkedIdentity: userCredential.id,
@@ -110,7 +106,7 @@ export class AuthenticationService {
   };
 
   checkVerifiableCredential = async (vc: any, issuerId: string) => {
-    const issuerIdentity: IdentityJson = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJson = await IdentitiesDb.getIdentity(issuerId);
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
@@ -133,11 +129,11 @@ export class AuthenticationService {
   };
 
   revokeVerifiableCredential = async (did: string, issuerId: string) => {
-    const kci = await getLinkedKeyCollectionIdentity(did);
+    const kci = await KeyCollectionLinksDb.getLinkedKeyCollectionIdentity(did);
     if (!kci) {
       throw new Error('no identity found to revoke the verification! maybe the identity is already revoked.');
     }
-    const issuerIdentity: IdentityJsonUpdate = await getIdentity(issuerId);
+    const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
 
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
@@ -153,7 +149,7 @@ export class AuthenticationService {
       return;
     }
 
-    await revokeKeyCollectionIdentity(kci);
+    await KeyCollectionLinksDb.revokeKeyCollectionIdentity(kci);
 
     const vup: VerificationUpdatePersistence = {
       userId: did,
@@ -168,11 +164,22 @@ export class AuthenticationService {
   };
 
   private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
-    await updateIdentityDoc(docUpdate);
+    await IdentitiesDb.updateIdentityDoc(docUpdate);
   };
 
   getLatestDocument = async (did: string) => {
     return await this.identityService.getLatestIdentity(did);
+  };
+
+  getTrustedRootIdentities = async () => {
+    const trustedRoots = await TrustedRootsDb.getTrustedRootIds();
+
+    if (!trustedRoots || trustedRoots.length === 0) {
+      throw new Error('no trusted roots found!');
+    }
+
+    const trustedRootIds = trustedRoots.map((root) => root.userId);
+    return await this.userService.getUsersByIds(trustedRootIds);
   };
 
   getChallenge = async (userId: string) => {
@@ -182,7 +189,7 @@ export class AuthenticationService {
     }
 
     const challenge = createChallenge();
-    await upsertChallenge({ userId: user.userId, challenge });
+    await AuthDb.upsertChallenge({ userId: user.userId, challenge });
     return challenge;
   };
 
@@ -191,7 +198,7 @@ export class AuthenticationService {
     if (!user) {
       throw new Error(`no user with id: ${userId} found!`);
     }
-    const { challenge } = await getChallenge(userId);
+    const { challenge } = await AuthDb.getChallenge(userId);
     const publicKey = getHexEncodedKey(user.publicKey);
 
     const verified = await verifiyChallenge(publicKey, challenge, signedChallenge);

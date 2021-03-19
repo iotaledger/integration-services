@@ -30,6 +30,11 @@ export const getUser = async (userId: string): Promise<UserPersistence | null> =
   return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
 };
 
+export const getUsersByIds = async (userIds: string[]): Promise<UserPersistence[] | null> => {
+  const query = { _id: { $in: userIds } };
+  return await MongoDbService.getDocuments<UserPersistence>(collectionName, query);
+};
+
 export const getUserByUsername = async (username: string): Promise<UserPersistence> => {
   const query = { username };
   return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
@@ -94,6 +99,7 @@ export const updateUserVerification = async (vup: VerificationUpdatePersistence)
     throw new Error('could not udpate user verification!');
   }
 };
+
 export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
   const query = { _id: userId };
   return MongoDbService.removeDocument(collectionName, query);

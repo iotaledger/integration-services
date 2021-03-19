@@ -4,5 +4,6 @@ export const enum CollectionNames {
   keyCollection = 'key-collection',
   identitiesCollection = 'identities',
   keyCollectionLinks = 'key-collection-links',
-  auth = 'auth'
+  auth = 'auth',
+  trustedRoots = 'trusted-roots'
 }

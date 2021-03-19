@@ -1,5 +1,10 @@
 import { Type, Static } from '@sinclair/typebox';
 
+const LocationSchema = Type.Object({
+  latitude: Type.Number(),
+  longitude: Type.Number()
+});
+
 const VerificationSchema = Type.Object({
   verified: Type.Boolean(),
   verificationIssuerId: Type.Optional(Type.String()), // did
@@ -16,7 +21,9 @@ const UserWithoutIdFields = {
   registrationDate: Type.Optional(Type.String()),
   verification: Type.Optional(VerificationSchema),
   classification: Type.String({ minLength: 3 }),
-  description: Type.Optional(Type.String())
+  description: Type.Optional(Type.String()),
+  location: Type.Optional(LocationSchema),
+  organizationUrl: Type.Optional(Type.String())
 };
 
 export const UserWithoutIdSchema = Type.Object({

@@ -50,11 +50,13 @@ const {
   getChallenge,
   revokeVerifiableCredential,
   getLatestDocument,
-  auth
+  auth,
+  getTrustedRootIdentities
 } = authenticationRoutes;
 export const authenticationRouter = Router();
 
 authenticationRouter.get('/get-latest-document', getLatestDocument);
+authenticationRouter.get('/get-trusted-roots', getTrustedRootIdentities);
 authenticationRouter.get('/get-challenge/:userId', getChallenge);
 authenticationRouter.post('/auth/:userId', auth);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
