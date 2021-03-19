@@ -12,6 +12,7 @@ import * as AuthDb from '../database/auth';
 import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 
 export class AuthenticationService {
   private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -110,7 +111,11 @@ export class AuthenticationService {
     if (!issuerIdentity) {
       throw new Error(this.noIssuerFoundErrMessage(issuerId));
     }
-    const isVerified = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
+    const isVerifiedCredential = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
+    const trustedRoots = await this.getTrustedRootIdentities();
+
+    const isTrustedIssuer = trustedRoots && trustedRoots.some((identity) => identity.userId === vc.issuer);
+    const isVerified = isVerifiedCredential && isTrustedIssuer;
     try {
       const user = await this.userService.getUser(vc.id);
       const vup: VerificationUpdatePersistence = {
