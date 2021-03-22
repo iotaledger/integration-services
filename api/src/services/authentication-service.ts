@@ -12,7 +12,6 @@ import * as AuthDb from '../database/auth';
 import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
-import _ from 'lodash';
 
 export class AuthenticationService {
   private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -68,7 +67,7 @@ export class AuthenticationService {
     };
   };
 
-  createVerifiableCredential = async (userCredential: UserCredential, issuerId: string) => {
+  verifyUser = async (userCredential: UserCredential, issuerId: string) => {
     const user = await this.userService.getUser(userCredential.id);
     if (!user) {
       throw new Error("User does not exist, so he can't be verified!");

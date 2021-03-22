@@ -45,7 +45,7 @@ const authenticationService = new AuthenticationService(identityService, userSer
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
 const {
   createIdentity,
-  createVerifiableCredential,
+  verifyUser,
   checkVerifiableCredential,
   getChallenge,
   revokeVerifiableCredential,
@@ -60,6 +60,6 @@ authenticationRouter.get('/get-trusted-roots', getTrustedRootIdentities);
 authenticationRouter.get('/get-challenge/:userId', getChallenge);
 authenticationRouter.post('/auth/:userId', auth);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/add-verification', authMiddleWare, validate({ body: UserCredentialSchema }), createVerifiableCredential);
+authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: UserCredentialSchema }), verifyUser);
 authenticationRouter.post('/check-verification', authMiddleWare, checkVerifiableCredential);
 authenticationRouter.post('/revoke-verification', authMiddleWare, revokeVerifiableCredential);

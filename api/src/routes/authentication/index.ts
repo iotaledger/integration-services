@@ -24,10 +24,13 @@ export class AuthenticationRoutes {
     }
   };
 
-  createVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  verifyUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userCredential: UserCredential = req.body;
-      const vc: any = await this.authenticationService.createVerifiableCredential(userCredential, this.config.serverIdentityId);
+
+      // TODO check if issuer has a verified credential
+      // body: subjectId:string, vc:any <-- of the issuer!
+      const vc: any = await this.authenticationService.verifyUser(userCredential, this.config.serverIdentityId);
 
       res.status(StatusCodes.CREATED).send(vc);
     } catch (error) {

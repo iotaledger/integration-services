@@ -240,7 +240,7 @@ describe('test authentication routes', () => {
     });
   });
 
-  describe('test createVerifiableCredential route', () => {
+  describe('test verifyUser route', () => {
     let createVerifiableCredentialSpy: any, userMock: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
     let getLinkedIdentitySpy: any, addKeyCollectionIdentitySpy: any, updateUserVerificationSpy: any, userCredential: any;
     beforeEach(() => {
@@ -285,7 +285,7 @@ describe('test authentication routes', () => {
         keyCollectionIndex: 0,
         linkedIdentity: userCredential.id
       };
-      await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+      await authenticationRoutes.verifyUser(req, res, nextMock);
 
       expect(getUserSpy).toHaveBeenCalledWith(userCredential.id);
       expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
@@ -311,7 +311,7 @@ describe('test authentication routes', () => {
         body: userCredential
       };
 
-      await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+      await authenticationRoutes.verifyUser(req, res, nextMock);
 
       expect(getUserSpy).toHaveBeenCalledWith(userCredential.id);
       expect(nextMock).toHaveBeenCalledWith(new Error("User does not exist, so he can't be verified!"));
@@ -326,7 +326,7 @@ describe('test authentication routes', () => {
         body: userCredential
       };
 
-      await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+      await authenticationRoutes.verifyUser(req, res, nextMock);
 
       expect(getUserSpy).toHaveBeenCalledWith(userCredential.id);
       expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
@@ -336,6 +336,7 @@ describe('test authentication routes', () => {
     });
   });
 
+  // TODO fix tests by mocking getTrustedRoots with identity ids
   describe('test checkVerifiableCredential route', () => {
     let userMock: any, updateUserVerificationSpy: any;
     beforeEach(() => {
