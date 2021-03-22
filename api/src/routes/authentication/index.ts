@@ -1,131 +1,150 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CreateIdentityBody, UserCredential } from '../../models/data/identity';
+import { CreateIdentityBody, VerifyUserBody } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
+import { AuthenticatedRequest } from '../../models/data/authentication';
+import { UserService } from '../../services/user-service';
+import { UserClassification } from '../../models/data/user';
 
 export class AuthenticationRoutes {
-  private readonly authenticationService: AuthenticationService;
-  private readonly config: Config;
+	private readonly authenticationService: AuthenticationService;
+	private readonly userService: UserService;
+	private readonly config: Config;
 
-  constructor(authenticationService: AuthenticationService, config: Config) {
-    this.authenticationService = authenticationService;
-    this.config = config;
-  }
+	constructor(authenticationService: AuthenticationService, userService: UserService, config: Config) {
+		this.authenticationService = authenticationService;
+		this.userService = userService;
+		this.config = config;
+	}
 
-  createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const createIdentityBody: CreateIdentityBody = req.body;
-      const identity = await this.authenticationService.createIdentity(createIdentityBody);
+	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const createIdentityBody: CreateIdentityBody = req.body;
+			const identity = await this.authenticationService.createIdentity(createIdentityBody);
 
-      res.status(StatusCodes.CREATED).send(identity);
-    } catch (error) {
-      next(error);
-    }
-  };
+			res.status(StatusCodes.CREATED).send(identity);
+		} catch (error) {
+			next(error);
+		}
+	};
 
-  verifyUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userCredential: UserCredential = req.body;
+	verifyUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const verifyUserBody: VerifyUserBody = req.body;
+			const { initiatorVC, subjectId } = verifyUserBody;
 
-      // TODO check if issuer has a verified credential
-      // body: subjectId:string, vc:any <-- of the issuer!
-      const vc: any = await this.authenticationService.verifyUser(userCredential, this.config.serverIdentityId);
+			// TODO uncomment authorization check!
+			if (req.userId !== initiatorVC.credentialSubject.id || req.userId !== initiatorVC.id) {
+				throw new Error('user id of request does not concur with the initiatorVC user id!');
+			}
 
-      res.status(StatusCodes.CREATED).send(vc);
-    } catch (error) {
-      next(error);
-    }
-  };
+			const initiator = await this.userService.getUser(initiatorVC.id);
+			if (!initiator || initiator.classification === UserClassification.device) {
+				throw new Error('initiator does not exist or is a device!');
+			}
 
-  checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const vcBody: any = req.body;
-      if (!vcBody?.id) {
-        throw new Error('No valid verifiable credential provided!');
-      }
-      const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
+			const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC, initiatorVC.issuer);
+			if (!isInitiatorVerified) {
+				throw new Error('initiator has to be verified.');
+			}
 
-      res.status(StatusCodes.OK).send(vc);
-    } catch (error) {
-      next(error);
-    }
-  };
+			const vc: any = await this.authenticationService.verifyUser(subjectId, this.config.serverIdentityId);
 
-  revokeVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const revokeBody: any = req.body;
-      if (!revokeBody.id) {
-        throw new Error('No valid body provided!');
-      }
-      await this.authenticationService.revokeVerifiableCredential(revokeBody.id, this.config.serverIdentityId);
+			res.status(StatusCodes.CREATED).send(vc);
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      res.sendStatus(StatusCodes.OK);
-    } catch (error) {
-      next(error);
-    }
-  };
+	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const vcBody: any = req.body;
+			if (!vcBody?.id) {
+				throw new Error('No valid verifiable credential provided!');
+			}
+			const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
 
-  getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-      const did = decodeParam(<string>req.query?.id);
+			res.status(StatusCodes.OK).send(vc);
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      if (!did) {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-        return;
-      }
+	revokeVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const revokeBody: any = req.body;
+			if (!revokeBody.id) {
+				throw new Error('No valid body provided!');
+			}
+			await this.authenticationService.revokeVerifiableCredential(revokeBody.id, this.config.serverIdentityId);
 
-      const doc = await this.authenticationService.getLatestDocument(did);
+			res.sendStatus(StatusCodes.OK);
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      res.status(StatusCodes.OK).send(doc);
-    } catch (error) {
-      next(error);
-    }
-  };
+	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+			const did = decodeParam(<string>req.query?.id);
 
-  getTrustedRootIdentities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const trustedRoots = await this.authenticationService.getTrustedRootIdentities();
-      res.status(StatusCodes.OK).send({ trustedRoots });
-    } catch (error) {
-      next(error);
-    }
-  };
+			if (!did) {
+				res.sendStatus(StatusCodes.BAD_REQUEST);
+				return;
+			}
 
-  getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-      const userId = req.params && decodeParam(<string>req.params['userId']);
+			const doc = await this.authenticationService.getLatestDocument(did);
 
-      if (!userId) {
-        res.status(StatusCodes.BAD_REQUEST).send({ error: 'A userId must be provided to the request path!' });
-        return;
-      }
+			res.status(StatusCodes.OK).send(doc);
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      const challenge = await this.authenticationService.getChallenge(userId);
-      res.status(StatusCodes.OK).send({ challenge });
-    } catch (error) {
-      next(error);
-    }
-  };
+	getTrustedRootIdentities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const trustedRoots = await this.authenticationService.getTrustedRootIdentities();
+			res.status(StatusCodes.OK).send({ trustedRoots });
+		} catch (error) {
+			next(error);
+		}
+	};
 
-  auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-      const userId = req.params && decodeParam(<string>req.params['userId']);
-      const body = req.body;
-      const signedChallenge = body?.signedChallenge;
+	getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+			const userId = req.params && decodeParam(<string>req.params['userId']);
 
-      if (!signedChallenge || !userId) {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-        return;
-      }
+			if (!userId) {
+				res.status(StatusCodes.BAD_REQUEST).send({ error: 'A userId must be provided to the request path!' });
+				return;
+			}
 
-      const jwt = await this.authenticationService.authenticate(signedChallenge, userId);
-      res.status(StatusCodes.OK).send({ jwt });
-    } catch (error) {
-      next(error);
-    }
-  };
+			const challenge = await this.authenticationService.getChallenge(userId);
+			res.status(StatusCodes.OK).send({ challenge });
+		} catch (error) {
+			next(error);
+		}
+	};
+
+	auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+			const userId = req.params && decodeParam(<string>req.params['userId']);
+			const body = req.body;
+			const signedChallenge = body?.signedChallenge;
+
+			if (!signedChallenge || !userId) {
+				res.sendStatus(StatusCodes.BAD_REQUEST);
+				return;
+			}
+
+			const jwt = await this.authenticationService.authenticate(signedChallenge, userId);
+			res.status(StatusCodes.OK).send({ jwt });
+		} catch (error) {
+			next(error);
+		}
+	};
 }

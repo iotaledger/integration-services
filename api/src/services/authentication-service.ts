@@ -1,7 +1,14 @@
 import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
 import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
-import { CreateIdentityBody, DocumentJsonUpdate, IdentityJson, IdentityJsonUpdate, UserCredential } from '../models/data/identity';
-import { User, VerificationUpdatePersistence } from '../models/data/user';
+import {
+	CreateIdentityBody,
+	CredentialSubject,
+	DocumentJsonUpdate,
+	IdentityJson,
+	IdentityJsonUpdate,
+	VerifiableCredentialJson
+} from '../models/data/identity';
+import { User, UserClassification, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';
@@ -67,20 +74,26 @@ export class AuthenticationService {
 		};
 	};
 
-	verifyUser = async (userCredential: UserCredential, issuerId: string) => {
-		const user = await this.userService.getUser(userCredential.id);
+	verifyUser = async (subjectId: string, issuerId: string) => {
+		const user = await this.userService.getUser(subjectId);
 		if (!user) {
-			throw new Error("User does not exist, so he can't be verified!");
+			throw new Error("subject/user does not exist, so he can't be verified!");
 		}
 
-		const credential: Credential<UserCredential> = {
+		const credential: Credential<CredentialSubject> = {
 			type: 'UserCredential',
-			id: userCredential.id,
+			id: subjectId,
 			subject: {
-				...userCredential
+				id: subjectId,
+				classification: user.classification,
+				organization: user.organization,
+				registrationDate: user.registrationDate,
+				username: user.username
 			}
 		};
 
+		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
+		// if reached create new keycollection, always get highest index
 		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
 		const index = await KeyCollectionLinksDb.getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
 		const keyCollectionJson: KeyCollectionJson = {
@@ -92,12 +105,12 @@ export class AuthenticationService {
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
-		const vc = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
+		const vc = await this.identityService.createVerifiableCredential<CredentialSubject>(issuerIdentity, credential, keyCollectionJson, index);
 
 		await KeyCollectionLinksDb.addKeyCollectionIdentity({
 			index,
 			isRevoked: false,
-			linkedIdentity: userCredential.id,
+			linkedIdentity: subjectId,
 			keyCollectionIndex: KEY_COLLECTION_INDEX
 		});
 
@@ -105,7 +118,7 @@ export class AuthenticationService {
 		return vc;
 	};
 
-	checkVerifiableCredential = async (vc: any, issuerId: string) => {
+	checkVerifiableCredential = async (vc: VerifiableCredentialJson, issuerId: string) => {
 		const issuerIdentity: IdentityJson = await IdentitiesDb.getIdentity(issuerId);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));

@@ -10,7 +10,7 @@ import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { IdentityService } from '../services/identity-service';
-import { UserCredentialSchema } from '../models/data/identity';
+import { VerifyUserSchema } from '../models/data/identity';
 import { isAuth } from '../middlewares/authentication';
 
 const validator = new Validator({ allErrors: true });
@@ -42,16 +42,16 @@ channelInfoRouter.delete('/channel/:channelAddress', authMiddleWare, deleteChann
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
 const authenticationService = new AuthenticationService(identityService, userService, serverSecret);
-const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, CONFIG);
 const {
-  createIdentity,
-  verifyUser,
-  checkVerifiableCredential,
-  getChallenge,
-  revokeVerifiableCredential,
-  getLatestDocument,
-  auth,
-  getTrustedRootIdentities
+	createIdentity,
+	verifyUser,
+	checkVerifiableCredential,
+	getChallenge,
+	revokeVerifiableCredential,
+	getLatestDocument,
+	auth,
+	getTrustedRootIdentities
 } = authenticationRoutes;
 export const authenticationRouter = Router();
 
@@ -60,6 +60,6 @@ authenticationRouter.get('/get-trusted-roots', getTrustedRootIdentities);
 authenticationRouter.get('/get-challenge/:userId', getChallenge);
 authenticationRouter.post('/auth/:userId', auth);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: UserCredentialSchema }), verifyUser);
+authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
 authenticationRouter.post('/check-verification', authMiddleWare, checkVerifiableCredential);
 authenticationRouter.post('/revoke-verification', authMiddleWare, revokeVerifiableCredential);

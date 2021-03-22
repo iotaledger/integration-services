@@ -29,7 +29,9 @@ const errFunc = (error: any) => {
 		originalRequest._retry = true;
 		return fetchAuth().then((res) => {
 			if (res.status === 200) {
-				axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data?.jwt;
+				console.log('### Valid JWT: ', res.data);
+				const bearerToken = 'Bearer ' + res.data?.jwt;
+				axios.defaults.headers.common['Authorization'] = bearerToken;
 				return axios(originalRequest);
 			}
 		});
