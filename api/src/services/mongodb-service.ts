@@ -1,19 +1,19 @@
 import {
-  Db,
-  MongoClient,
-  MongoClientOptions,
-  Collection,
-  UpdateWriteOpResult,
-  InsertOneWriteOpResult,
-  WithId,
-  DeleteWriteOpResultObject,
-  FilterQuery,
-  InsertWriteOpResult,
-  UpdateOneOptions,
-  CollectionInsertManyOptions,
-  CollectionInsertOneOptions,
-  FindOneOptions,
-  CommonOptions
+	Db,
+	MongoClient,
+	MongoClientOptions,
+	Collection,
+	UpdateWriteOpResult,
+	InsertOneWriteOpResult,
+	WithId,
+	DeleteWriteOpResultObject,
+	FilterQuery,
+	InsertWriteOpResult,
+	UpdateOneOptions,
+	CollectionInsertManyOptions,
+	CollectionInsertOneOptions,
+	FindOneOptions,
+	CommonOptions
 } from 'mongodb';
 
 type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
@@ -26,114 +26,114 @@ type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
  * @class MongoDbService
  */
 export class MongoDbService {
-  public static client: MongoClient;
-  public static db: Db;
+	public static client: MongoClient;
+	public static db: Db;
 
-  private static getCollection(collectionName: string): Collection | null {
-    if (!MongoDbService.db) {
-      console.error(`Database not found!`);
-      return null;
-    }
-    return MongoDbService.db.collection(collectionName);
-  }
+	private static getCollection(collectionName: string): Collection | null {
+		if (!MongoDbService.db) {
+			console.error(`Database not found!`);
+			return null;
+		}
+		return MongoDbService.db.collection(collectionName);
+	}
 
-  static async getDocument<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T> {
-    const collection = MongoDbService.getCollection(collectionName);
-    return collection.findOne(query, options);
-  }
+	static async getDocument<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.findOne(query, options);
+	}
 
-  static async getDocuments<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T[] | null> {
-    const collection = MongoDbService.getCollection(collectionName);
-    return collection.find(query, options).toArray();
-  }
+	static async getDocuments<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T[] | null> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.find(query, options).toArray();
+	}
 
-  static async insertDocument<T>(
-    collectionName: string,
-    data: any,
-    options?: CollectionInsertOneOptions
-  ): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
-    const collection = MongoDbService.getCollection(collectionName);
-    return collection.insertOne(data, options);
-  }
+	static async insertDocument<T>(
+		collectionName: string,
+		data: any,
+		options?: CollectionInsertOneOptions
+	): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.insertOne(data, options);
+	}
 
-  static async insertDocuments(collectionName: string, data: any, options?: CollectionInsertManyOptions): Promise<InsertWriteOpResult<any>> {
-    const collection = MongoDbService.getCollection(collectionName);
-    return collection.insertMany(data, options);
-  }
+	static async insertDocuments(collectionName: string, data: any, options?: CollectionInsertManyOptions): Promise<InsertWriteOpResult<any>> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.insertMany(data, options);
+	}
 
-  static async updateDocument(collectionName: string, query: any, update: any, options?: UpdateOneOptions): Promise<UpdateWriteOpResult | null> {
-    const collection = MongoDbService.getCollection(collectionName);
-    return collection.updateOne(query, update, options);
-  }
+	static async updateDocument(collectionName: string, query: any, update: any, options?: UpdateOneOptions): Promise<UpdateWriteOpResult | null> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.updateOne(query, update, options);
+	}
 
-  static async removeDocument(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
-    const collection = MongoDbService.getCollection(collectionName);
-    return collection.deleteOne(query, options);
-  }
+	static async removeDocument(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.deleteOne(query, options);
+	}
 
-  /**
-   * Get plain object for fields having a value not null and not undefined.
-   *
-   * @static
-   * @param {{ [key: string]: any }} fields Map of fields. For instance: { "height": 10, "length": 20, "unit": "metres", "depth": undefined }
-   * @return {*}  {{ [key: string]: any }} Map of fields with no fields having null or undefined. For instance: { "height": 10, "length": 20, "unit": "metres" }
-   * @memberof MongoDbService
-   */
-  static getPlainObject(fields: { [key: string]: any }): { [key: string]: any } {
-    const keys = Object.keys(fields);
-    const values = Object.values(fields);
-    const updateObject = values.reduce((acc, value, index) => {
-      if (value == null) {
-        return acc;
-      }
-      const key = keys[index];
+	/**
+	 * Get plain object for fields having a value not null and not undefined.
+	 *
+	 * @static
+	 * @param {{ [key: string]: any }} fields Map of fields. For instance: { "height": 10, "length": 20, "unit": "metres", "depth": undefined }
+	 * @return {*}  {{ [key: string]: any }} Map of fields with no fields having null or undefined. For instance: { "height": 10, "length": 20, "unit": "metres" }
+	 * @memberof MongoDbService
+	 */
+	static getPlainObject(fields: { [key: string]: any }): { [key: string]: any } {
+		const keys = Object.keys(fields);
+		const values = Object.values(fields);
+		const updateObject = values.reduce((acc, value, index) => {
+			if (value == null) {
+				return acc;
+			}
+			const key = keys[index];
 
-      return {
-        ...acc,
-        [key]: value
-      };
-    }, {});
+			return {
+				...acc,
+				[key]: value
+			};
+		}, {});
 
-    return updateObject;
-  }
-  /**
-   * Connect to the mongodb.
-   *
-   * @static
-   * @param {string} url The url to the mongodb.
-   * @param {string} dbName The name of the database.
-   * @return {*}  {Promise<MongoClient>}
-   * @memberof MongoDbService
-   */
-  static async connect(url: string, dbName: string): Promise<MongoClient> {
-    return new Promise((resolve, reject) => {
-      const options: MongoClientOptions = {
-        useUnifiedTopology: true
-      };
+		return updateObject;
+	}
+	/**
+	 * Connect to the mongodb.
+	 *
+	 * @static
+	 * @param {string} url The url to the mongodb.
+	 * @param {string} dbName The name of the database.
+	 * @return {*}  {Promise<MongoClient>}
+	 * @memberof MongoDbService
+	 */
+	static async connect(url: string, dbName: string): Promise<MongoClient> {
+		return new Promise((resolve, reject) => {
+			const options: MongoClientOptions = {
+				useUnifiedTopology: true
+			};
 
-      MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
-        if (err != null) {
-          console.error('could not connect to mongodb');
-          reject(err);
-          return;
-        }
-        console.log('Successfully connected to mongodb');
-        MongoDbService.client = client;
-        MongoDbService.db = client.db(dbName);
+			MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
+				if (err != null) {
+					console.error('could not connect to mongodb');
+					reject(err);
+					return;
+				}
+				console.log('Successfully connected to mongodb');
+				MongoDbService.client = client;
+				MongoDbService.db = client.db(dbName);
 
-        resolve(client);
-      });
-    });
-  }
+				resolve(client);
+			});
+		});
+	}
 
-  /**
-   * Disconnect from the mongodb.
-   *
-   * @static
-   * @return {*}  {Promise<void>}
-   * @memberof MongoDbService
-   */
-  public static disconnect(): Promise<void> {
-    return MongoDbService.client.close();
-  }
+	/**
+	 * Disconnect from the mongodb.
+	 *
+	 * @static
+	 * @return {*}  {Promise<void>}
+	 * @memberof MongoDbService
+	 */
+	public static disconnect(): Promise<void> {
+		return MongoDbService.client.close();
+	}
 }

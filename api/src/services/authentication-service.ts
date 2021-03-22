@@ -8,7 +8,7 @@ import {
 	IdentityJsonUpdate,
 	VerifiableCredentialJson
 } from '../models/data/identity';
-import { User, UserClassification, VerificationUpdatePersistence } from '../models/data/user';
+import { User, VerificationUpdatePersistence } from '../models/data/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';

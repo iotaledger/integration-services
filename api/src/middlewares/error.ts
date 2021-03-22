@@ -11,12 +11,12 @@ import { ValidationError } from 'express-json-validator-middleware';
  * @param {NextFunction} _next Next function
  */
 export const errorMiddleware = (err: Error, _req: Request, res: Response, _next: NextFunction): void => {
-  console.error(err);
-  if (err instanceof ValidationError) {
-    res.status(StatusCodes.BAD_REQUEST);
-    res.send({ error: 'No valid body provided!' });
-    return;
-  }
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR);
-  res.send({ error: err.message });
+	console.error(err);
+	if (err instanceof ValidationError) {
+		res.status(StatusCodes.BAD_REQUEST);
+		res.send({ error: 'No valid body provided!' });
+		return;
+	}
+	res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+	res.send({ error: err.message });
 };

@@ -15,8 +15,8 @@ const version = CONFIG.apiVersion;
 const loggerMiddleware = morgan('combined');
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
-  console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`));
-  app.use(prefix, router);
+	console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`));
+	app.use(prefix, router);
 }
 
 app.use(express.json({ limit: '10mb' }));
@@ -34,6 +34,6 @@ app.use(errorMiddleware);
 // TODO check if server identity is available in identities db!
 
 app.listen(port, async () => {
-  console.log(`Started API Server on port ${port}`);
-  await MongoDbService.connect(dbUrl, dbName);
+	console.log(`Started API Server on port ${port}`);
+	await MongoDbService.connect(dbUrl, dbName);
 });
