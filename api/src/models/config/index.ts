@@ -17,4 +17,5 @@ export interface IdentityConfig {
   keyType: Identity.KeyType;
   hashFunction: Identity.Digest;
   keyCollectionTag: string;
+  hashEncoding: 'base16' | 'base58' | 'base64';
 }

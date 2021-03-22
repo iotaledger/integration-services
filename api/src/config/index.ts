@@ -8,6 +8,7 @@ const IdentityConfig: IdentityConfig = {
   explorer: process.env.EXPLORER,
   keyType: Identity.KeyType.Ed25519,
   hashFunction: Identity.Digest.Sha256,
+  hashEncoding: 'base58',
   keyCollectionTag: 'key-collection'
 };
 

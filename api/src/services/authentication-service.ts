@@ -14,222 +14,222 @@ import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
 
 export class AuthenticationService {
-  private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
-  private readonly identityService: IdentityService;
-  private readonly userService: UserService;
-  private readonly serverSecret: string;
-  constructor(identityService: IdentityService, userService: UserService, serverSecret: string) {
-    this.identityService = identityService;
-    this.userService = userService;
-    this.serverSecret = serverSecret;
-  }
+	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
+	private readonly identityService: IdentityService;
+	private readonly userService: UserService;
+	private readonly serverSecret: string;
+	constructor(identityService: IdentityService, userService: UserService, serverSecret: string) {
+		this.identityService = identityService;
+		this.userService = userService;
+		this.serverSecret = serverSecret;
+	}
 
-  saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-    return KeyCollectionDb.saveKeyCollection(keyCollection);
-  }
+	saveKeyCollection(keyCollection: KeyCollectionPersistence) {
+		return KeyCollectionDb.saveKeyCollection(keyCollection);
+	}
 
-  getKeyCollection(index: number) {
-    return KeyCollectionDb.getKeyCollection(index);
-  }
+	getKeyCollection(index: number) {
+		return KeyCollectionDb.getKeyCollection(index);
+	}
 
-  generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
-    const index = KEY_COLLECTION_INDEX;
-    const count = KEY_COLLECTION_SIZE;
-    const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
-    if (!issuerIdentity) {
-      throw new Error(this.noIssuerFoundErrMessage(issuerId));
-    }
-    const { keyCollectionJson, docUpdate } = await this.identityService.generateKeyCollection(issuerIdentity, count);
-    await this.updateDatabaseIdentityDoc(docUpdate);
-    return {
-      ...keyCollectionJson,
-      count,
-      index
-    };
-  };
+	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
+		const index = KEY_COLLECTION_INDEX;
+		const count = KEY_COLLECTION_SIZE;
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+		if (!issuerIdentity) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
+		const { keyCollectionJson, docUpdate } = await this.identityService.generateKeyCollection(issuerIdentity, count);
+		await this.updateDatabaseIdentityDoc(docUpdate);
+		return {
+			...keyCollectionJson,
+			count,
+			index
+		};
+	};
 
-  createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
-    const identity = await this.identityService.createIdentity();
-    const user: User = {
-      ...createIdentityBody,
-      userId: identity.doc.id.toString(),
-      publicKey: identity.key.public
-    };
+	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
+		const identity = await this.identityService.createIdentity();
+		const user: User = {
+			...createIdentityBody,
+			userId: identity.doc.id.toString(),
+			publicKey: identity.key.public
+		};
 
-    await this.userService.addUser(user);
+		await this.userService.addUser(user);
 
-    if (createIdentityBody.storeIdentity) {
-      await IdentitiesDb.saveIdentity(identity);
-    }
+		if (createIdentityBody.storeIdentity) {
+			await IdentitiesDb.saveIdentity(identity);
+		}
 
-    return {
-      ...identity
-    };
-  };
+		return {
+			...identity
+		};
+	};
 
-  verifyUser = async (userCredential: UserCredential, issuerId: string) => {
-    const user = await this.userService.getUser(userCredential.id);
-    if (!user) {
-      throw new Error("User does not exist, so he can't be verified!");
-    }
+	verifyUser = async (userCredential: UserCredential, issuerId: string) => {
+		const user = await this.userService.getUser(userCredential.id);
+		if (!user) {
+			throw new Error("User does not exist, so he can't be verified!");
+		}
 
-    const credential: Credential<UserCredential> = {
-      type: 'UserCredential',
-      id: userCredential.id,
-      subject: {
-        ...userCredential
-      }
-    };
+		const credential: Credential<UserCredential> = {
+			type: 'UserCredential',
+			id: userCredential.id,
+			subject: {
+				...userCredential
+			}
+		};
 
-    const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
-    const index = await KeyCollectionLinksDb.getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
-    const keyCollectionJson: KeyCollectionJson = {
-      type: keyCollection.type,
-      keys: keyCollection.keys
-    };
+		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
+		const index = await KeyCollectionLinksDb.getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
+		const keyCollectionJson: KeyCollectionJson = {
+			type: keyCollection.type,
+			keys: keyCollection.keys
+		};
 
-    const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
-    if (!issuerIdentity) {
-      throw new Error(this.noIssuerFoundErrMessage(issuerId));
-    }
-    const vc = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+		if (!issuerIdentity) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
+		const vc = await this.identityService.createVerifiableCredential<UserCredential>(issuerIdentity, credential, keyCollectionJson, index);
 
-    await KeyCollectionLinksDb.addKeyCollectionIdentity({
-      index,
-      isRevoked: false,
-      linkedIdentity: userCredential.id,
-      keyCollectionIndex: KEY_COLLECTION_INDEX
-    });
+		await KeyCollectionLinksDb.addKeyCollectionIdentity({
+			index,
+			isRevoked: false,
+			linkedIdentity: userCredential.id,
+			keyCollectionIndex: KEY_COLLECTION_INDEX
+		});
 
-    await this.setUserVerified(credential.id, issuerIdentity.doc.id);
-    return vc;
-  };
+		await this.setUserVerified(credential.id, issuerIdentity.doc.id);
+		return vc;
+	};
 
-  checkVerifiableCredential = async (vc: any, issuerId: string) => {
-    const issuerIdentity: IdentityJson = await IdentitiesDb.getIdentity(issuerId);
-    if (!issuerIdentity) {
-      throw new Error(this.noIssuerFoundErrMessage(issuerId));
-    }
-    const isVerifiedCredential = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
-    const trustedRoots = await this.getTrustedRootIdentities();
+	checkVerifiableCredential = async (vc: any, issuerId: string) => {
+		const issuerIdentity: IdentityJson = await IdentitiesDb.getIdentity(issuerId);
+		if (!issuerIdentity) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
+		const isVerifiedCredential = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
+		const trustedRoots = await this.getTrustedRootIdentities();
 
-    const isTrustedIssuer = trustedRoots && trustedRoots.some((identity) => identity.userId === vc.issuer);
-    const isVerified = isVerifiedCredential && isTrustedIssuer;
-    try {
-      const user = await this.userService.getUser(vc.id);
-      const vup: VerificationUpdatePersistence = {
-        userId: user.userId,
-        verified: isVerified,
-        lastTimeChecked: new Date(),
-        verificationDate: getDateFromString(user?.verification?.verificationDate),
-        verificationIssuerId: user?.verification?.verificationIssuerId
-      };
+		const isTrustedIssuer = trustedRoots && trustedRoots.some((identity) => identity.userId === vc.issuer);
+		const isVerified = isVerifiedCredential && isTrustedIssuer;
+		try {
+			const user = await this.userService.getUser(vc.id);
+			const vup: VerificationUpdatePersistence = {
+				userId: user.userId,
+				verified: isVerified,
+				lastTimeChecked: new Date(),
+				verificationDate: getDateFromString(user?.verification?.verificationDate),
+				verificationIssuerId: user?.verification?.verificationIssuerId
+			};
 
-      await this.userService.updateUserVerification(vup);
-    } catch (err) {
-      console.error(err);
-    }
-    return { isVerified };
-  };
+			await this.userService.updateUserVerification(vup);
+		} catch (err) {
+			console.error(err);
+		}
+		return { isVerified };
+	};
 
-  revokeVerifiableCredential = async (did: string, issuerId: string) => {
-    const kci = await KeyCollectionLinksDb.getLinkedKeyCollectionIdentity(did);
-    if (!kci) {
-      throw new Error('no identity found to revoke the verification! maybe the identity is already revoked.');
-    }
-    const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+	revokeVerifiableCredential = async (did: string, issuerId: string) => {
+		const kci = await KeyCollectionLinksDb.getLinkedKeyCollectionIdentity(did);
+		if (!kci) {
+			throw new Error('no identity found to revoke the verification! maybe the identity is already revoked.');
+		}
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
 
-    if (!issuerIdentity) {
-      throw new Error(this.noIssuerFoundErrMessage(issuerId));
-    }
+		if (!issuerIdentity) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
 
-    const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
-    await this.updateDatabaseIdentityDoc(res.docUpdate);
+		const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
+		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
-    if (res.revoked === true) {
-      console.log('successfully revoked!');
-    } else {
-      console.log(`could not revoke identity for ${did} on the ledger, maybe it is already revoked!`);
-      return;
-    }
+		if (res.revoked === true) {
+			console.log('successfully revoked!');
+		} else {
+			console.log(`could not revoke identity for ${did} on the ledger, maybe it is already revoked!`);
+			return;
+		}
 
-    await KeyCollectionLinksDb.revokeKeyCollectionIdentity(kci);
+		await KeyCollectionLinksDb.revokeKeyCollectionIdentity(kci);
 
-    const vup: VerificationUpdatePersistence = {
-      userId: did,
-      verified: false,
-      lastTimeChecked: new Date(),
-      verificationDate: undefined,
-      verificationIssuerId: undefined
-    };
-    await this.userService.updateUserVerification(vup);
+		const vup: VerificationUpdatePersistence = {
+			userId: did,
+			verified: false,
+			lastTimeChecked: new Date(),
+			verificationDate: undefined,
+			verificationIssuerId: undefined
+		};
+		await this.userService.updateUserVerification(vup);
 
-    return res;
-  };
+		return res;
+	};
 
-  private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
-    await IdentitiesDb.updateIdentityDoc(docUpdate);
-  };
+	private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
+		await IdentitiesDb.updateIdentityDoc(docUpdate);
+	};
 
-  getLatestDocument = async (did: string) => {
-    return await this.identityService.getLatestIdentity(did);
-  };
+	getLatestDocument = async (did: string) => {
+		return await this.identityService.getLatestIdentity(did);
+	};
 
-  getTrustedRootIdentities = async () => {
-    const trustedRoots = await TrustedRootsDb.getTrustedRootIds();
+	getTrustedRootIdentities = async () => {
+		const trustedRoots = await TrustedRootsDb.getTrustedRootIds();
 
-    if (!trustedRoots || trustedRoots.length === 0) {
-      throw new Error('no trusted roots found!');
-    }
+		if (!trustedRoots || trustedRoots.length === 0) {
+			throw new Error('no trusted roots found!');
+		}
 
-    const trustedRootIds = trustedRoots.map((root) => root.userId);
-    return await this.userService.getUsersByIds(trustedRootIds);
-  };
+		const trustedRootIds = trustedRoots.map((root) => root.userId);
+		return await this.userService.getUsersByIds(trustedRootIds);
+	};
 
-  getChallenge = async (userId: string) => {
-    const user = await this.userService.getUser(userId);
-    if (!user) {
-      throw new Error(`no user with id: ${userId} found!`);
-    }
+	getChallenge = async (userId: string) => {
+		const user = await this.userService.getUser(userId);
+		if (!user) {
+			throw new Error(`no user with id: ${userId} found!`);
+		}
 
-    const challenge = createChallenge();
-    await AuthDb.upsertChallenge({ userId: user.userId, challenge });
-    return challenge;
-  };
+		const challenge = createChallenge();
+		await AuthDb.upsertChallenge({ userId: user.userId, challenge });
+		return challenge;
+	};
 
-  authenticate = async (signedChallenge: string, userId: string) => {
-    const user = await this.userService.getUser(userId);
-    if (!user) {
-      throw new Error(`no user with id: ${userId} found!`);
-    }
-    const { challenge } = await AuthDb.getChallenge(userId);
-    const publicKey = getHexEncodedKey(user.publicKey);
+	authenticate = async (signedChallenge: string, userId: string) => {
+		const user = await this.userService.getUser(userId);
+		if (!user) {
+			throw new Error(`no user with id: ${userId} found!`);
+		}
+		const { challenge } = await AuthDb.getChallenge(userId);
+		const publicKey = getHexEncodedKey(user.publicKey);
 
-    const verified = await verifiyChallenge(publicKey, challenge, signedChallenge);
-    if (!verified) {
-      throw new Error('signed challenge is not valid!');
-    }
+		const verified = await verifiyChallenge(publicKey, challenge, signedChallenge);
+		if (!verified) {
+			throw new Error('signed challenge is not valid!');
+		}
 
-    if (!this.serverSecret) {
-      throw new Error('no server secret set!');
-    }
+		if (!this.serverSecret) {
+			throw new Error('no server secret set!');
+		}
 
-    const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: '2 days' });
-    return signedJwt;
-  };
+		const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: '2 days' });
+		return signedJwt;
+	};
 
-  private setUserVerified = async (userId: string, issuerId: string) => {
-    if (!issuerId) {
-      throw new Error('No valid issuer id!');
-    }
-    const date = new Date();
-    const vup: VerificationUpdatePersistence = {
-      userId,
-      verified: true,
-      lastTimeChecked: date,
-      verificationDate: date,
-      verificationIssuerId: issuerId
-    };
-    await this.userService.updateUserVerification(vup);
-  };
+	private setUserVerified = async (userId: string, issuerId: string) => {
+		if (!issuerId) {
+			throw new Error('No valid issuer id!');
+		}
+		const date = new Date();
+		const vup: VerificationUpdatePersistence = {
+			userId,
+			verified: true,
+			lastTimeChecked: date,
+			verificationDate: date,
+			verificationIssuerId: issuerId
+		};
+		await this.userService.updateUserVerification(vup);
+	};
 }

@@ -151,7 +151,8 @@ describe('test authentication routes', () => {
       network: 'test',
       node: '',
       keyType: 0,
-      hashFunction: 0
+      hashFunction: 0,
+      hashEncoding: 'base58'
     };
     identityService = IdentityService.getInstance(identityConfig);
     userService = new UserService();
