@@ -7,14 +7,14 @@ export const createChallenge = (): string => {
   return crypto.createHash('sha256').update(challenge).digest().toString();
 };
 
-export const getHexEncodedKey = (base58Key: string) => {
+export const getHexEncodedKey = (base58Key: string): string => {
   return bs58.decode(base58Key).toString('hex');
 };
 
-export const signChallenge = async (privateKey: string, challenge: string) => {
+export const signChallenge = async (privateKey: string, challenge: string): Promise<string> => {
   return await ed.sign(challenge, privateKey);
 };
 
-export const verifiyChallenge = async (publicKey: string, challenge: string, signature: string) => {
+export const verifiyChallenge = async (publicKey: string, challenge: string, signature: string): Promise<boolean> => {
   return await ed.verify(signature, challenge, publicKey);
 };
