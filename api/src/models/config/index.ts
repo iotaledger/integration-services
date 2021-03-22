@@ -7,6 +7,7 @@ export interface Config {
   databaseName: string;
   serverIdentityId: string;
   identityConfig: IdentityConfig;
+  serverSecret: string;
 }
 
 export interface IdentityConfig {
@@ -16,4 +17,5 @@ export interface IdentityConfig {
   keyType: Identity.KeyType;
   hashFunction: Identity.Digest;
   keyCollectionTag: string;
+  hashEncoding: 'base16' | 'base58' | 'base64';
 }

@@ -17,7 +17,7 @@ async function setupApi() {
 
   const userService = new UserService();
   const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-  const authenticationService = new AuthenticationService(identityService, userService);
+  const authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret');
 
   const keyCollection = await authenticationService.getKeyCollection(0);
   console.log('keyCollection', keyCollection);

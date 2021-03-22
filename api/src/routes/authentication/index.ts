@@ -80,4 +80,40 @@ export class AuthenticationRoutes {
       next(error);
     }
   };
+
+  getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+      const userId = req.params && decodeParam(<string>req.params['userId']);
+
+      if (!userId) {
+        res.status(StatusCodes.BAD_REQUEST).send({ error: 'A userId must be provided to the request path!' });
+        return;
+      }
+
+      const challenge = await this.authenticationService.getChallenge(userId);
+      res.status(StatusCodes.OK).send({ challenge });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+      const userId = req.params && decodeParam(<string>req.params['userId']);
+      const body = req.body;
+      const signedChallenge = body?.signedChallenge;
+
+      if (!signedChallenge || !userId) {
+        res.sendStatus(StatusCodes.BAD_REQUEST);
+        return;
+      }
+
+      const jwt = await this.authenticationService.authenticate(signedChallenge, userId);
+      res.status(StatusCodes.OK).send({ jwt });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

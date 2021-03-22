@@ -1,0 +1,1 @@
+This folder includes client prototypes which do requests to the api.

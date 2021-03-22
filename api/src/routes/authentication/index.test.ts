@@ -7,10 +7,14 @@ import { StatusCodes } from 'http-status-codes';
 import * as KeyCollectionDB from '../../database/key-collection';
 import * as KeyCollectionLinksDB from '../../database/key-collection-links';
 import * as IdentitiesDb from '../../database/identities';
+import * as AuthDb from '../../database/auth';
 import { KEY_COLLECTION_INDEX } from '../../config/identity';
 import { LinkedKeyCollectionIdentityPersistence } from '../../models/data/key-collection';
+import { IdentityJsonUpdate } from '../../models/data/identity';
+import { User } from '../../models/data/user';
+import * as EncryptionUtils from '../../utils/encryption';
 
-const identityDocumentMock = {
+const identityDocumentMock: IdentityJsonUpdate = {
   doc: {
     id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
     authentication: [
@@ -35,7 +39,7 @@ const identityDocumentMock = {
     public: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
     secret: 'secret-key'
   },
-  explorerUrl: 'https://explorer.iota.org/mainnet/transaction/GOLMVJ9MRHOPVMXAYUDJZISYDVBMUGMHFLDXEFAMWRECFU9BFQFGMBPVMYRTFRUAHQCAC99O9LQPA9999',
+  encoding: 'base58',
   txHash: 'GOLMVJ9MRHOPVMXAYUDJZISYDVBMUGMHFLDXEFAMWRECFU9BFQFGMBPVMYRTFRUAHQCAC99O9LQPA9999'
 };
 
@@ -113,6 +117,23 @@ const issuerIdentityMock = {
   txHash: 'NWFOSJPZAYLXKRAPPMKKCZGFOPTBEANZNURTLVCTOVXMFZWOYXZOSDOOXM9MXLZPFQVKORHXKBHKZ9999'
 };
 
+const validUserMock: User = {
+  userId: 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk',
+  publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
+  username: 'test-device3',
+  classification: 'device',
+  subscribedChannelIds: ['test-address-c2', 'test-address'],
+  firstName: null,
+  lastName: null,
+  description: 'Device which measures temperature in the kitchen.',
+  registrationDate: '2021-03-02T16:05:26+01:00',
+  verification: {
+    verified: false,
+    lastTimeChecked: '2021-03-08T17:19:13+01:00'
+  },
+  organization: 'IOTA'
+};
+
 describe('test authentication routes', () => {
   let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
   let userService: UserService;
@@ -130,11 +151,12 @@ describe('test authentication routes', () => {
       network: 'test',
       node: '',
       keyType: 0,
-      hashFunction: 0
+      hashFunction: 0,
+      hashEncoding: 'base58'
     };
     identityService = IdentityService.getInstance(identityConfig);
     userService = new UserService();
-    authenticationService = new AuthenticationService(identityService, userService);
+    authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret');
     authenticationRoutes = new AuthenticationRoutes(authenticationService, config);
 
     res = {
@@ -319,22 +341,7 @@ describe('test authentication routes', () => {
     let userMock: any, updateUserVerificationSpy: any;
     beforeEach(() => {
       updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
-      userMock = {
-        userId: 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk',
-        publicKey: 'TEST_PUBLIC_KEY',
-        username: 'test-device3',
-        classification: 'device',
-        subscribedChannelIds: ['test-address-c2', 'test-address'],
-        firstName: null,
-        lastName: null,
-        description: 'Device which measures temperature in the kitchen.',
-        registrationDate: '2021-03-02T16:05:26+01:00',
-        verification: {
-          verified: false,
-          lastTimeChecked: '2021-03-08T17:19:13+01:00'
-        },
-        organization: 'IOTA'
-      };
+      userMock = validUserMock;
     });
 
     it('should return error since it is no valid vc', async () => {
@@ -551,6 +558,146 @@ describe('test authentication routes', () => {
 
       expect(getLatestIdentitySpy).toHaveBeenCalledWith(id);
       expect(res.send).toHaveBeenCalledWith(identityDocumentMock);
+    });
+  });
+
+  describe('test getChallenge route', () => {
+    it('should return bad request because no userId provided.', async () => {
+      const userMock: User = null;
+
+      const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+      const upsertChallengeSpy = spyOn(AuthDb, 'upsertChallenge');
+      const req: any = {
+        params: { userId: null },
+        body: null
+      };
+
+      await authenticationRoutes.getChallenge(req, res, nextMock);
+
+      expect(getUserSpy).not.toHaveBeenCalled();
+      expect(upsertChallengeSpy).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+      expect(res.send).toHaveBeenCalledWith({ error: 'A userId must be provided to the request path!' });
+    });
+
+    it('should throw an error since no user with the userId is found', async () => {
+      const userMock: User = null;
+      const userId = 'NO_USER_FOUND_WITH_THIS_ID';
+      const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+      const upsertChallengeSpy = spyOn(AuthDb, 'upsertChallenge');
+      const req: any = {
+        params: { userId },
+        body: null
+      };
+
+      await authenticationRoutes.getChallenge(req, res, nextMock);
+
+      expect(getUserSpy).toHaveBeenCalled();
+      expect(upsertChallengeSpy).not.toHaveBeenCalled();
+      expect(nextMock).toHaveBeenCalledWith(new Error(`no user with id: ${userId} found!`));
+    });
+    it('should return a valid challenge to solve', async () => {
+      const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+      const getUserSpy = spyOn(userService, 'getUser').and.returnValue(validUserMock);
+      const upsertChallengeSpy = spyOn(AuthDb, 'upsertChallenge');
+      const req: any = {
+        params: { userId },
+        body: null
+      };
+
+      await authenticationRoutes.getChallenge(req, res, nextMock);
+
+      expect(getUserSpy).toHaveBeenCalledWith(userId);
+      expect(upsertChallengeSpy).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+      expect(res.send).toHaveBeenCalled();
+    });
+  });
+
+  describe('test auth route', () => {
+    it('should return bad request because no userId provided.', async () => {
+      const req: any = {
+        params: { userId: null },
+        body: { signedChallenge: 'SIGNED_CHALLENGE' }
+      };
+
+      await authenticationRoutes.auth(req, res, nextMock);
+
+      expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+    });
+    it('should return bad request because no signedChallenge is provided in the body.', async () => {
+      const req: any = {
+        params: { userId: 'USERID' },
+        body: null
+      };
+
+      await authenticationRoutes.auth(req, res, nextMock);
+      expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+    });
+
+    it('should throw error since no user found', async () => {
+      const userMock: User = null;
+      const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+      const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+      const req: any = {
+        params: { userId },
+        body: { signedChallenge: 'SIGNED_CHALLENGE' }
+      };
+
+      await authenticationRoutes.auth(req, res, nextMock);
+
+      expect(getUserSpy).toHaveBeenCalledWith(userId);
+      expect(nextMock).toHaveBeenCalledWith(new Error(`no user with id: ${userId} found!`));
+    });
+
+    it('should throw error for a challenge which is verified=false', async () => {
+      const verified = false;
+      const userMock: User = validUserMock;
+      const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+
+      const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+      const getChallengeSpy = spyOn(AuthDb, 'getChallenge').and.returnValue({ challenge: 'CHALLENGE_TO_SOLVE' });
+      const verifiyChallengeSpy = spyOn(EncryptionUtils, 'verifiyChallenge').and.returnValue(verified);
+      const req: any = {
+        params: { userId },
+        body: { signedChallenge: 'SIGNED_CHALLENGE' }
+      };
+
+      await authenticationRoutes.auth(req, res, nextMock);
+
+      expect(getUserSpy).toHaveBeenCalledWith(userId);
+      expect(getChallengeSpy).toHaveBeenCalledWith(userId);
+      expect(verifiyChallengeSpy).toHaveBeenCalledWith(
+        '6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+        'CHALLENGE_TO_SOLVE',
+        'SIGNED_CHALLENGE'
+      );
+      expect(nextMock).toHaveBeenCalledWith(new Error(`signed challenge is not valid!`));
+    });
+
+    it('should return the jwt for challenge which is verified=true', async () => {
+      const verified = true;
+      const userMock: User = validUserMock;
+      const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+      const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+      const getChallengeSpy = spyOn(AuthDb, 'getChallenge').and.returnValue({ challenge: 'CHALLENGE_TO_SOLVE' });
+      const verifiyChallengeSpy = spyOn(EncryptionUtils, 'verifiyChallenge').and.returnValue(verified);
+      const req: any = {
+        params: { userId },
+        body: { signedChallenge: 'SIGNED_CHALLENGE' }
+      };
+
+      await authenticationRoutes.auth(req, res, nextMock);
+
+      expect(getUserSpy).toHaveBeenCalledWith(userId);
+      expect(getChallengeSpy).toHaveBeenCalledWith(userId);
+      expect(verifiyChallengeSpy).toHaveBeenCalledWith(
+        '6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+        'CHALLENGE_TO_SOLVE',
+        'SIGNED_CHALLENGE'
+      );
+      expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+      expect(res.send).toHaveBeenCalled();
     });
   });
 });
