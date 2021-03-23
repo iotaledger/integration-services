@@ -8,6 +8,7 @@ import { AuthenticationService } from './services/authentication-service';
 
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
+const serverSecret = CONFIG.serverSecret;
 
 async function setupApi() {
 	console.log(`Setting api please wait...`);
@@ -17,7 +18,7 @@ async function setupApi() {
 
 	const userService = new UserService();
 	const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-	const authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret');
+	const authenticationService = new AuthenticationService(identityService, userService, serverSecret);
 
 	const keyCollection = await authenticationService.getKeyCollection(0);
 	console.log('keyCollection', keyCollection);
@@ -43,8 +44,10 @@ async function setupApi() {
 		const res = await authenticationService.saveKeyCollection(kc);
 
 		if (!res?.result.n) {
-			console.log('could not save keycollection!');
+			throw new Error('could not save keycollection!');
 		}
+		// TODO create vc and update server identity
+		// await authenticationService.verifyUser(identity.doc.id, identity.doc.id);
 	} else {
 		console.log('key collection already there!');
 	}

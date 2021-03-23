@@ -74,10 +74,13 @@ export class AuthenticationService {
 		};
 	};
 
-	verifyUser = async (subjectId: string, issuerId: string) => {
+	verifyUser = async (subjectId: string, issuerId: string, initiatorOrganiziation?: string) => {
 		const user = await this.userService.getUser(subjectId);
 		if (!user) {
-			throw new Error("subject/user does not exist, so he can't be verified!");
+			throw new Error('user does not exist!');
+		}
+		if ((initiatorOrganiziation || user.organization) && user.organization !== initiatorOrganiziation) {
+			throw new Error('user must be in same organization!');
 		}
 
 		const credential: Credential<CredentialSubject> = {

@@ -34,7 +34,6 @@ export class AuthenticationRoutes {
 			const verifyUserBody: VerifyUserBody = req.body;
 			const { initiatorVC, subjectId } = verifyUserBody;
 
-			// TODO uncomment authorization check!
 			if (req.userId !== initiatorVC.credentialSubject.id || req.userId !== initiatorVC.id) {
 				throw new Error('user id of request does not concur with the initiatorVC user id!');
 			}
@@ -49,7 +48,7 @@ export class AuthenticationRoutes {
 				throw new Error('initiator has to be verified.');
 			}
 
-			const vc: any = await this.authenticationService.verifyUser(subjectId, this.config.serverIdentityId);
+			const vc: any = await this.authenticationService.verifyUser(subjectId, this.config.serverIdentityId, initiator.organization);
 
 			res.status(StatusCodes.CREATED).send(vc);
 		} catch (error) {
