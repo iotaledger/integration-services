@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CreateIdentityBody, VerifyUserBody } from '../../models/data/identity';
+import { CreateIdentityBody, VerifiableCredentialJson, VerifyUserBody } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest } from '../../models/data/authentication';
+import { AuthenticatedRequest, AuthorizationCheck } from '../../models/data/authentication';
 import { UserService } from '../../services/user-service';
-import { UserClassification } from '../../models/data/user';
+import { User, UserClassification } from '../../models/data/user';
 
 export class AuthenticationRoutes {
 	private readonly authenticationService: AuthenticationService;
@@ -33,22 +33,19 @@ export class AuthenticationRoutes {
 		try {
 			const verifyUserBody: VerifyUserBody = req.body;
 			const { initiatorVC, subjectId } = verifyUserBody;
-
-			if (req.userId !== initiatorVC.credentialSubject.id || req.userId !== initiatorVC.id) {
-				throw new Error('user id of request does not concur with the initiatorVC user id!');
-			}
-
 			const initiator = await this.userService.getUser(initiatorVC.id);
-			if (!initiator || initiator.classification === UserClassification.device) {
-				throw new Error('initiator does not exist or is a device!');
-			}
 
-			const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC, initiatorVC.issuer);
-			if (!isInitiatorVerified) {
-				throw new Error('initiator has to be verified.');
-			}
+			// TODO uncomment and make it private!
+			/*const { isAuthorized, error } = await this.isAuthorizedToVerify(req.userId, initiatorVC, initiator);
+			if (!isAuthorized) {
+				throw error;
+			}*/
 
-			const vc: any = await this.authenticationService.verifyUser(subjectId, this.config.serverIdentityId, initiator.organization);
+			const vc: VerifiableCredentialJson = await this.authenticationService.verifyUser(
+				subjectId,
+				this.config.serverIdentityId,
+				initiator.organization
+			);
 
 			res.status(StatusCodes.CREATED).send(vc);
 		} catch (error) {
@@ -62,7 +59,7 @@ export class AuthenticationRoutes {
 			if (!vcBody?.id) {
 				throw new Error('No valid verifiable credential provided!');
 			}
-			const vc: any = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
+			const vc = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
 
 			res.status(StatusCodes.OK).send(vc);
 		} catch (error) {
@@ -145,5 +142,21 @@ export class AuthenticationRoutes {
 		} catch (error) {
 			next(error);
 		}
+	};
+
+	isAuthorizedToVerify = async (reqUserId: string, initiatorVC: VerifiableCredentialJson, initiator: User): Promise<AuthorizationCheck> => {
+		if (reqUserId !== initiatorVC.credentialSubject.id || reqUserId !== initiatorVC.id) {
+			return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
+		}
+
+		if (!initiator || initiator.classification === UserClassification.device) {
+			return { isAuthorized: false, error: new Error('initiator does not exist or is a device!') };
+		}
+
+		const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC, initiatorVC.issuer);
+		if (!isInitiatorVerified) {
+			return { isAuthorized: false, error: new Error('initiator has to be verified.') };
+		}
+		return { isAuthorized: true, error: null };
 	};
 }

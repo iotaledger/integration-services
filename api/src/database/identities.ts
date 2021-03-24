@@ -45,28 +45,3 @@ export const updateIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
 	}
 	return res;
 };
-
-export const updateIdentity = async (identity: IdentityJsonUpdate) => {
-	const { doc, txHash, vc } = identity;
-	if (!doc?.id) {
-		throw new Error('no valid id provided for the identity!');
-	}
-	const query = {
-		_id: doc?.id
-	};
-
-	const updateObject = MongoDbService.getPlainObject({
-		doc,
-		txHash,
-		vc
-	});
-	const update: any = {
-		$set: updateObject
-	};
-
-	const res = await MongoDbService.updateDocument(collectionName, query, update);
-	if (!res.result.n) {
-		throw new Error('could not update identity!');
-	}
-	return res;
-};

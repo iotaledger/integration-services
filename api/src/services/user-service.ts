@@ -11,6 +11,7 @@ import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
+import { VerifiableCredentialJson } from '../models/data/identity';
 
 export class UserService {
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
@@ -55,6 +56,10 @@ export class UserService {
 
 	updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
 		await userDb.updateUserVerification(vup);
+	};
+
+	addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
+		await userDb.addUserVC(vc);
 	};
 
 	deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
@@ -104,7 +109,8 @@ export class UserService {
 			classification,
 			description,
 			organizationUrl,
-			location
+			location,
+			verifiableCredentials
 		} = user;
 
 		if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
@@ -126,7 +132,8 @@ export class UserService {
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			verification: this.getVerificationPersistence(verification),
 			organizationUrl,
-			location
+			location,
+			verifiableCredentials
 		};
 
 		return userPersistence;
@@ -151,7 +158,8 @@ export class UserService {
 			classification,
 			description,
 			organizationUrl,
-			location
+			location,
+			verifiableCredentials
 		} = userPersistence;
 
 		const user: User = {
@@ -167,7 +175,8 @@ export class UserService {
 			verification: this.getVerificationObject(verification),
 			organization,
 			organizationUrl,
-			location
+			location,
+			verifiableCredentials
 		};
 		return user;
 	};

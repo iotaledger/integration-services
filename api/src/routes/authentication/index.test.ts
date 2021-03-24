@@ -157,7 +157,7 @@ describe('test authentication routes', () => {
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
 		authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret');
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
 
 		res = {
 			send: sendMock,

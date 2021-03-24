@@ -13,7 +13,8 @@ const VcSubjectSchema = Type.Object({
 	registrationDate: Type.String({ minLength: 1 }),
 	username: Type.String({ minLength: 1 })
 });
-const VeriableCredentialSchema = Type.Object({
+
+export const VerifiableCredentialSchema = Type.Object({
 	'@context': Type.String(),
 	id: Type.String({ minLength: 53, maxLength: 53 }),
 	type: Type.Array(Type.String({ minLength: 1 })),
@@ -29,11 +30,11 @@ const VeriableCredentialSchema = Type.Object({
 
 export const VerifyUserSchema = Type.Object({
 	subjectId: Type.String({ minLength: 53, maxLength: 53 }), // did
-	initiatorVC: VeriableCredentialSchema
+	initiatorVC: VerifiableCredentialSchema
 });
 
 export type VerifyUserBody = Static<typeof VerifyUserSchema>;
-export type VerifiableCredentialJson = Static<typeof VeriableCredentialSchema>;
+export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
 export type CredentialSubject = Static<typeof VcSubjectSchema>;
 
 export interface IdentityDocument extends Identity.Document {
@@ -84,5 +85,4 @@ export interface IdentityJson {
 
 export interface IdentityJsonUpdate extends IdentityJson {
 	txHash: string;
-	vc?: VerifiableCredentialJson;
 }

@@ -117,11 +117,11 @@ export class AuthenticationService {
 			keyCollectionIndex: KEY_COLLECTION_INDEX
 		});
 
-		await this.setUserVerified(credential.id, issuerIdentity.doc.id);
+		await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
 		return vc;
 	};
 
-	checkVerifiableCredential = async (vc: VerifiableCredentialJson, issuerId: string) => {
+	checkVerifiableCredential = async (vc: VerifiableCredentialJson, issuerId: string): Promise<{ isVerified: boolean }> => {
 		const issuerIdentity: IdentityJson = await IdentitiesDb.getIdentity(issuerId);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
@@ -234,7 +234,7 @@ export class AuthenticationService {
 		return signedJwt;
 	};
 
-	private setUserVerified = async (userId: string, issuerId: string) => {
+	private setUserVerified = async (userId: string, issuerId: string, vc: VerifiableCredentialJson) => {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}
@@ -247,5 +247,6 @@ export class AuthenticationService {
 			verificationIssuerId: issuerId
 		};
 		await this.userService.updateUserVerification(vup);
+		await this.userService.addUserVC(vc);
 	};
 }

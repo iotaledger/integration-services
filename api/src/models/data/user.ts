@@ -1,5 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
-
+import { VerifiableCredentialSchema } from './identity';
 const LocationSchema = Type.Object({
 	latitude: Type.Number(),
 	longitude: Type.Number()
@@ -23,7 +23,8 @@ const UserWithoutIdFields = {
 	classification: Type.String({ minLength: 3 }),
 	description: Type.Optional(Type.String()),
 	location: Type.Optional(LocationSchema),
-	organizationUrl: Type.Optional(Type.String())
+	organizationUrl: Type.Optional(Type.String()),
+	verifiableCredentials: Type.Optional(Type.Array(VerifiableCredentialSchema))
 };
 
 export const UserWithoutIdSchema = Type.Object({

@@ -14,9 +14,11 @@ export const fetchAuth = async () => {
 	}
 	const body = await res.data;
 	const challenge: string = body.challenge;
+	console.log('received challenge: ', challenge);
 
 	const encodedKey = await getHexEncodedKey(identity.key.secret);
 	const signedChallenge = await signChallenge(encodedKey, challenge);
+	console.log('signed challenge: ', signedChallenge);
 
 	console.log('requesting authentication token using signed challenge...', identity.doc.id);
 	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/auth/${identity.doc.id}`, JSON.stringify({ signedChallenge }), {

@@ -2,6 +2,7 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { UserPersistence, UserSearch, VerificationPersistence, VerificationUpdatePersistence } from '../models/data/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+import { VerifiableCredentialJson } from '../models/data/identity';
 
 const collectionName = CollectionNames.users;
 
@@ -42,6 +43,7 @@ export const getUserByUsername = async (username: string): Promise<UserPersisten
 
 export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	delete user.verification;
+
 	const document = {
 		_id: user.userId,
 		...user,
@@ -56,7 +58,22 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		_id: user.userId
 	};
 
-	const { firstName, lastName, username, organization, subscribedChannelIds, description, classification } = user;
+	const {
+		firstName,
+		lastName,
+		username,
+		organization,
+		subscribedChannelIds,
+		description,
+		classification,
+		organizationUrl,
+		location,
+		verifiableCredentials
+	} = user;
+
+	if (verifiableCredentials?.some((vc) => vc?.id !== user.userId)) {
+		throw new Error('the passed verifiable credentials does not concur with the user!');
+	}
 
 	const updateObject = MongoDbService.getPlainObject({
 		firstName,
@@ -65,7 +82,10 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		username: username || undefined, // username must not be ''
 		classification: classification || undefined, // username must not be ''
 		organization,
-		subscribedChannelIds
+		subscribedChannelIds,
+		organizationUrl,
+		location,
+		verifiableCredentials
 	});
 
 	const update = {
@@ -96,7 +116,29 @@ export const updateUserVerification = async (vup: VerificationUpdatePersistence)
 
 	const res = await MongoDbService.updateDocument(collectionName, query, update);
 	if (!res?.result?.n) {
-		throw new Error('could not udpate user verification!');
+		throw new Error('could not update user verification!');
+	}
+};
+
+export const addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
+	const currentUser = await getUser(vc.id);
+	const currentVCs = currentUser.verifiableCredentials || [];
+
+	const query = {
+		_id: vc.id
+	};
+
+	const updateObject = MongoDbService.getPlainObject({
+		verifiableCredentials: [...currentVCs, vc]
+	});
+
+	const update = {
+		$set: { ...updateObject }
+	};
+
+	const res = await MongoDbService.updateDocument(collectionName, query, update);
+	if (!res?.result?.n) {
+		throw new Error('could not update user verifiable credential!');
 	}
 };
 

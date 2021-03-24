@@ -170,7 +170,7 @@ export class IdentityService {
 		}
 	};
 
-	getLatestIdentity = async (did: string) => {
+	getLatestIdentity = async (did: string): Promise<IdentityDocumentJson> => {
 		try {
 			return await Identity.resolve(did, this.config);
 		} catch (error) {
