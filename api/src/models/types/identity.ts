@@ -23,6 +23,7 @@ export interface IdentityDocumentJson {
 		type: string;
 		publicKeyBase58: string;
 	}[];
+	previous_message_id?: string;
 	authentication: {
 		id: string;
 		controller: string;
@@ -43,6 +44,7 @@ export interface IdentityKeyPairJson {
 	type: string;
 	public: string;
 	secret: string;
+	encoding: 'base16' | 'base58' | 'base64';
 }
 
 export interface DocumentJsonUpdate {
@@ -53,7 +55,6 @@ export interface DocumentJsonUpdate {
 export interface IdentityJson {
 	doc: IdentityDocumentJson;
 	key: IdentityKeyPairJson;
-	encoding: 'base16' | 'base58' | 'base64';
 }
 
 export interface IdentityJsonUpdate extends IdentityJson {

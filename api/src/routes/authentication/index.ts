@@ -167,17 +167,21 @@ export class AuthenticationRoutes {
 	};
 
 	private isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUserId: string): Promise<AuthorizationCheck> => {
+		if (!initiatorVC.credentialSubject) {
+			return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
+		}
+
 		if (requestUserId !== initiatorVC.credentialSubject.id || requestUserId !== initiatorVC.id) {
 			return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
 		}
 
-		if (!initiatorVC.credentialSubject || initiatorVC.credentialSubject.classification === UserClassification.device) {
-			return { isAuthorized: false, error: new Error('initiator does not exist or is a device!') };
+		if (initiatorVC.credentialSubject.classification === UserClassification.device) {
+			return { isAuthorized: false, error: new Error('initiator is a device!') };
 		}
 
 		const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC, initiatorVC.issuer);
 		if (!isInitiatorVerified) {
-			return { isAuthorized: false, error: new Error('initiator has to be verified.') };
+			return { isAuthorized: false, error: new Error('initiator has to be verified!') };
 		}
 
 		if ((initiatorVC.credentialSubject.organization || subject.organization) && subject.organization !== initiatorVC.credentialSubject.organization) {
