@@ -442,7 +442,7 @@ describe('test authentication routes', () => {
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				params: {},
-				body: { id: identityToRevoke }
+				body: { subjectId: identityToRevoke }
 			};
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
@@ -462,6 +462,7 @@ describe('test authentication routes', () => {
 			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
+				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
 				revokedIdentity: undefined
@@ -478,7 +479,7 @@ describe('test authentication routes', () => {
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				params: {},
-				body: { id: identityToRevoke }
+				body: { subjectId: identityToRevoke }
 			};
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
@@ -502,6 +503,7 @@ describe('test authentication routes', () => {
 			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
+				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
 				revokedIdentity: undefined
@@ -518,7 +520,7 @@ describe('test authentication routes', () => {
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				params: {},
-				body: { id: identityToRevoke }
+				body: { subjectId: identityToRevoke }
 			};
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);

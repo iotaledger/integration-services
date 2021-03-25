@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CreateIdentityBody, VerifiableCredentialJson, VerifyUserBody } from '../../models/data/identity';
+import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/data/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest, AuthorizationCheck } from '../../models/data/authentication';
+import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/data/authentication';
 import { UserService } from '../../services/user-service';
 import { User, UserClassification } from '../../models/data/user';
 import { LinkedKeyCollectionIdentityPersistence } from '../../models/data/key-collection';
@@ -87,7 +87,7 @@ export class AuthenticationRoutes {
 			if (!isAuthorized) {
 				throw error;
 			}
-			await this.authenticationService.revokeVerifiableCredential(kci, this.config.serverIdentityId, requestId);
+			await this.authenticationService.revokeVerifiableCredential(kci, this.config.serverIdentityId);
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {

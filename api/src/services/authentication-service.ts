@@ -144,7 +144,7 @@ export class AuthenticationService {
 		return { isVerified };
 	};
 
-	revokeVerifiableCredential = async (kci: LinkedKeyCollectionIdentityPersistence, issuerId: string, requestId: string) => {
+	revokeVerifiableCredential = async (kci: LinkedKeyCollectionIdentityPersistence, issuerId: string) => {
 		const subjectId = kci.linkedIdentity;
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
