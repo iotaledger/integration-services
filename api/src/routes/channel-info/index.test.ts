@@ -1,4 +1,4 @@
-import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
+import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '../../models/types/channel-info';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
 import { UserService } from '../../services/user-service';

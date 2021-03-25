@@ -1,5 +1,5 @@
 import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
-import { KeyCollectionJson, KeyCollectionPersistence, LinkedKeyCollectionIdentityPersistence } from '../models/data/key-collection';
+import { KeyCollectionJson, KeyCollectionPersistence, LinkedKeyCollectionIdentityPersistence } from '../models/types/key-collection';
 import {
 	CreateIdentityBody,
 	CredentialSubject,
@@ -7,8 +7,8 @@ import {
 	IdentityJson,
 	IdentityJsonUpdate,
 	VerifiableCredentialJson
-} from '../models/data/identity';
-import { User, VerificationUpdatePersistence } from '../models/data/user';
+} from '../models/types/identity';
+import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { getDateFromString } from '../utils/date';
 import { Credential, IdentityService } from './identity-service';
 import { UserService } from './user-service';

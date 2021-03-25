@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
-import { DocumentJsonUpdate, IdentityJsonUpdate } from '../models/data/identity';
+import { DocumentJsonUpdate, IdentityJsonUpdate } from '../models/types/identity';
 
 const collectionName = CollectionNames.identitiesCollection;
 

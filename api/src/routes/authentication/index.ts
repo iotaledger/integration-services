@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/data/identity';
+import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/types/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/data/authentication';
+import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
-import { User, UserClassification } from '../../models/data/user';
-import { LinkedKeyCollectionIdentityPersistence } from '../../models/data/key-collection';
+import { User, UserClassification } from '../../models/types/user';
+import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
 import * as KeyCollectionLinksDb from '../../database/key-collection-links';
 
 export class AuthenticationRoutes {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, UserSearch, UserClassification } from '../../models/data/user';
+import { User, UserSearch, UserClassification } from '../../models/types/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';

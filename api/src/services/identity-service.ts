@@ -7,8 +7,8 @@ import {
 	IdentityJson,
 	IdentityJsonUpdate,
 	VerifiableCredentialJson
-} from '../models/data/identity';
-import { KeyCollectionJson } from '../models/data/key-collection';
+} from '../models/types/identity';
+import { KeyCollectionJson } from '../models/types/key-collection';
 const { Document, VerifiableCredential, Method, KeyCollection } = Identity;
 
 export interface Credential<T> {

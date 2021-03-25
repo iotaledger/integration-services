@@ -1,6 +1,6 @@
 import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
-import { UserPersistence, UserClassification, User, UserSearch } from '../../models/data/user';
+import { UserPersistence, UserClassification, User, UserSearch } from '../../models/types/user';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 

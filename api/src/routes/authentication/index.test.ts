@@ -9,9 +9,9 @@ import * as KeyCollectionLinksDB from '../../database/key-collection-links';
 import * as IdentitiesDb from '../../database/identities';
 import * as AuthDb from '../../database/auth';
 import { KEY_COLLECTION_INDEX } from '../../config/identity';
-import { LinkedKeyCollectionIdentityPersistence } from '../../models/data/key-collection';
-import { IdentityJsonUpdate } from '../../models/data/identity';
-import { User } from '../../models/data/user';
+import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
+import { IdentityJsonUpdate } from '../../models/types/identity';
+import { User } from '../../models/types/user';
 import * as EncryptionUtils from '../../utils/encryption';
 
 const identityDocumentMock: IdentityJsonUpdate = {

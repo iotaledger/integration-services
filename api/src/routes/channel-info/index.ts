@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoSearch } from '../../models/data/channel-info';
+import { ChannelInfo, ChannelInfoSearch } from '../../models/types/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';

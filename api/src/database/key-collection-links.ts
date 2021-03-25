@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { LinkedKeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/data/key-collection';
+import { LinkedKeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/types/key-collection';
 
 const collectionName = CollectionNames.keyCollectionLinks;
 const getIndex = (kci: LinkedKeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;

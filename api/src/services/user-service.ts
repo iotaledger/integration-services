@@ -6,12 +6,12 @@ import {
 	Verification,
 	VerificationPersistence,
 	VerificationUpdatePersistence
-} from '../models/data/user';
+} from '../models/types/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
-import { VerifiableCredentialJson } from '../models/data/identity';
+import { VerifiableCredentialJson } from '../models/types/identity';
 
 export class UserService {
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
