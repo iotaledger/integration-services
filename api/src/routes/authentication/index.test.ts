@@ -156,7 +156,7 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
-		authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret');
+		authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret', '2 days');
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
 
 		res = {

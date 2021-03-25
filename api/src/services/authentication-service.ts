@@ -1,5 +1,5 @@
 import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
-import { KeyCollectionJson, KeyCollectionPersistence } from '../models/data/key-collection';
+import { KeyCollectionJson, KeyCollectionPersistence, LinkedKeyCollectionIdentityPersistence } from '../models/data/key-collection';
 import {
 	CreateIdentityBody,
 	CredentialSubject,
@@ -25,10 +25,13 @@ export class AuthenticationService {
 	private readonly identityService: IdentityService;
 	private readonly userService: UserService;
 	private readonly serverSecret: string;
-	constructor(identityService: IdentityService, userService: UserService, serverSecret: string) {
+	private readonly jwtExpiration: string;
+
+	constructor(identityService: IdentityService, userService: UserService, serverSecret: string, jwtExpiration: string) {
 		this.identityService = identityService;
 		this.userService = userService;
 		this.serverSecret = serverSecret;
+		this.jwtExpiration = jwtExpiration;
 	}
 
 	saveKeyCollection(keyCollection: KeyCollectionPersistence) {
@@ -74,24 +77,16 @@ export class AuthenticationService {
 		};
 	};
 
-	verifyUser = async (subjectId: string, issuerId: string, initiatorOrganiziation?: string) => {
-		const user = await this.userService.getUser(subjectId);
-		if (!user) {
-			throw new Error('user does not exist!');
-		}
-		if ((initiatorOrganiziation || user.organization) && user.organization !== initiatorOrganiziation) {
-			throw new Error('user must be in same organization!');
-		}
-
+	verifyUser = async (subject: User, issuerId: string, initiatorId: string) => {
 		const credential: Credential<CredentialSubject> = {
 			type: 'UserCredential',
-			id: subjectId,
+			id: subject.userId,
 			subject: {
-				id: subjectId,
-				classification: user.classification,
-				organization: user.organization,
-				registrationDate: user.registrationDate,
-				username: user.username
+				id: subject.userId,
+				classification: subject.classification,
+				organization: subject.organization,
+				registrationDate: subject.registrationDate,
+				username: subject.username
 			}
 		};
 
@@ -112,8 +107,9 @@ export class AuthenticationService {
 
 		await KeyCollectionLinksDb.addKeyCollectionIdentity({
 			index,
+			initiatorId,
 			isRevoked: false,
-			linkedIdentity: subjectId,
+			linkedIdentity: subject.userId,
 			keyCollectionIndex: KEY_COLLECTION_INDEX
 		});
 
@@ -148,13 +144,10 @@ export class AuthenticationService {
 		return { isVerified };
 	};
 
-	revokeVerifiableCredential = async (did: string, issuerId: string) => {
-		const kci = await KeyCollectionLinksDb.getLinkedKeyCollectionIdentity(did);
-		if (!kci) {
-			throw new Error('no identity found to revoke the verification! maybe the identity is already revoked.');
-		}
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+	revokeVerifiableCredential = async (kci: LinkedKeyCollectionIdentityPersistence, issuerId: string, requestId: string) => {
+		const subjectId = kci.linkedIdentity;
 
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
@@ -165,14 +158,14 @@ export class AuthenticationService {
 		if (res.revoked === true) {
 			console.log('successfully revoked!');
 		} else {
-			console.log(`could not revoke identity for ${did} on the ledger, maybe it is already revoked!`);
+			console.log(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
 			return;
 		}
 
 		await KeyCollectionLinksDb.revokeKeyCollectionIdentity(kci);
 
 		const vup: VerificationUpdatePersistence = {
-			userId: did,
+			userId: subjectId,
 			verified: false,
 			lastTimeChecked: new Date(),
 			verificationDate: undefined,
@@ -230,7 +223,7 @@ export class AuthenticationService {
 			throw new Error('no server secret set!');
 		}
 
-		const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: '2 days' });
+		const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: this.jwtExpiration });
 		return signedJwt;
 	};
 

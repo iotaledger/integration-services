@@ -113,7 +113,12 @@ export class UserService {
 			verifiableCredentials
 		} = user;
 
-		if (classification !== UserClassification.human && classification !== UserClassification.device && classification !== UserClassification.api) {
+		if (
+			classification &&
+			classification !== UserClassification.human &&
+			classification !== UserClassification.device &&
+			classification !== UserClassification.api
+		) {
 			throw new Error(
 				`No valid classification provided, it must be ${UserClassification.human}, ${UserClassification.device} or ${UserClassification.api}!`
 			);

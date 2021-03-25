@@ -1,13 +1,12 @@
-import { ClientIdentity, Config } from '../config';
+import { Config } from '../config';
 import { getHexEncodedKey, signChallenge } from '../utils/encryption';
 import axios from 'axios';
 
-const identity = ClientIdentity;
-
-export const fetchAuth = async () => {
+export const fetchAuth = async (identity: any) => {
 	console.log('requesting challenge to sign...');
 
-	const res = await axios.get(`${Config.baseUrl}/api/v1/authentication/get-challenge/${identity.doc.id}`);
+	const url = `${Config.baseUrl}/api/v1/authentication/get-challenge/${identity.doc.id}`;
+	const res = await axios.get(url);
 	if (res.status !== 200) {
 		console.error('didnt receive status 200 on get-challenge!');
 		return;

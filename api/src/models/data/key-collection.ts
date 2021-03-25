@@ -13,6 +13,7 @@ export interface SimpleKeyPair {
 export interface LinkedKeyCollectionIdentityPersistence {
 	keyCollectionIndex: number;
 	index: number;
+	initiatorId: string;
 	linkedIdentity?: string;
 	isRevoked: boolean;
 	revokedIdentity?: string;

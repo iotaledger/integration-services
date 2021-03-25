@@ -14,13 +14,13 @@ const VerificationSchema = Type.Object({
 
 const UserWithoutIdFields = {
 	username: Type.String({ minLength: 3 }),
+	classification: Type.String({ minLength: 3 }),
 	firstName: Type.Optional(Type.String()),
 	lastName: Type.Optional(Type.String()),
 	organization: Type.Optional(Type.String({ minLength: 2 })),
-	subscribedChannelIds: Type.Array(Type.String()),
+	subscribedChannelIds: Type.Optional(Type.Array(Type.String())),
 	registrationDate: Type.Optional(Type.String()),
 	verification: Type.Optional(VerificationSchema),
-	classification: Type.String({ minLength: 3 }),
 	description: Type.Optional(Type.String()),
 	location: Type.Optional(LocationSchema),
 	organizationUrl: Type.Optional(Type.String()),
@@ -35,6 +35,10 @@ export const UserSchema = Type.Object({
 	userId: Type.String({ minLength: 53, maxLength: 53 }), // did
 	publicKey: Type.String({ minLength: 10 }),
 	...UserWithoutIdFields
+});
+
+export const UpdateUserSchema = Type.Object({
+	userId: Type.String({ minLength: 53, maxLength: 53 }) // did
 });
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;

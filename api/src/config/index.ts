@@ -19,7 +19,8 @@ export const CONFIG: Config = {
 	databaseName: process.env.DATABASE_NAME,
 	serverIdentityId: process.env.SERVER_IDENTITY,
 	serverSecret: process.env.SERVER_SECRET,
-	identityConfig: IdentityConfig
+	identityConfig: IdentityConfig,
+	jwtExpiration: '2 days'
 };
 
 const assertConfig = (config: Config) => {

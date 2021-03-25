@@ -3,7 +3,7 @@ import { UserRoutes } from './user';
 import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../models/data/channel-info';
-import { UserSchema, UserWithoutIdSchema } from '../models/data/user';
+import { UpdateUserSchema, UserSchema, UserWithoutIdSchema } from '../models/data/user';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
 import { CONFIG } from '../config';
@@ -20,13 +20,13 @@ const userService = new UserService();
 const userRoutes = new UserRoutes(userService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
-const { serverSecret } = CONFIG;
+const { serverSecret, jwtExpiration } = CONFIG;
 const authMiddleWare = isAuth(serverSecret);
 
 userRouter.get('/user/:userId', getUser);
 userRouter.get('/search', authMiddleWare, searchUsers);
 userRouter.post('/user', validate({ body: UserSchema }), addUser);
-userRouter.put('/user', authMiddleWare, validate({ body: UserSchema }), updateUser);
+userRouter.put('/user', authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
 userRouter.delete('/user/:userId', authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
@@ -41,7 +41,7 @@ channelInfoRouter.put('/channel', authMiddleWare, validate({ body: ChannelInfoSc
 channelInfoRouter.delete('/channel/:channelAddress', authMiddleWare, deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, serverSecret);
+const authenticationService = new AuthenticationService(identityService, userService, serverSecret, jwtExpiration);
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, CONFIG);
 const {
 	createIdentity,
