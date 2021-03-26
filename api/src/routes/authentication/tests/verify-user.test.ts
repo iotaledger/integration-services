@@ -9,8 +9,8 @@ import { UserService } from '../../../services/user-service';
 import { AuthenticationService } from '../../../services/authentication-service';
 import { AuthenticationRoutes } from '..';
 import { IdentityConfig } from '../../../models/config';
-import { KeyCollectionMock } from './test-constants';
 import { StatusCodes } from 'http-status-codes';
+import { KeyCollectionMock } from '../../../test/mocks/key-collection';
 
 describe('test authentication routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;

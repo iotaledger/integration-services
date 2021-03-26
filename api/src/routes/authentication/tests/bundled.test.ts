@@ -1,14 +1,14 @@
-import { IdentityConfig } from '../../models/config';
-import { IdentityService } from '../../services/identity-service';
-import { AuthenticationRoutes } from './index';
-import { AuthenticationService } from '../../services/authentication-service';
-import { UserService } from '../../services/user-service';
+import { IdentityConfig } from '../../../models/config';
+import { IdentityService } from '../../../services/identity-service';
+import { AuthenticationRoutes } from '../index';
+import { AuthenticationService } from '../../../services/authentication-service';
+import { UserService } from '../../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
-import * as IdentitiesDb from '../../database/identities';
-import * as AuthDb from '../../database/auth';
-import { User } from '../../models/types/user';
-import * as EncryptionUtils from '../../utils/encryption';
-import { ServerIdentityMock, UserIdentityMock } from '../../test/mocks/identities';
+import * as IdentitiesDb from '../../../database/identities';
+import * as AuthDb from '../../../database/auth';
+import { User } from '../../../models/types/user';
+import * as EncryptionUtils from '../../../utils/encryption';
+import { ServerIdentityMock, UserIdentityMock } from '../../../test/mocks/identities';
 
 const validUserMock = UserIdentityMock.userData;
 
