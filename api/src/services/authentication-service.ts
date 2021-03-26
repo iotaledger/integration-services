@@ -131,7 +131,7 @@ export class AuthenticationService {
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
-		const isVerifiedCredential = await this.identityService.checkVerifiableCredential(serverIdentity, vc);
+		const isVerifiedCredential = await this.identityService.checkVerifiableCredential(vc);
 		const trustedRoots = await this.getTrustedRootIds();
 
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
@@ -190,7 +190,7 @@ export class AuthenticationService {
 	};
 
 	getLatestDocument = async (did: string) => {
-		return await this.identityService.getLatestIdentity(did);
+		return await this.identityService.getLatestIdentityJson(did);
 	};
 
 	getTrustedRootIds = async () => {

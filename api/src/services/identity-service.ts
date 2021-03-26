@@ -125,17 +125,14 @@ export class IdentityService {
 		}
 	};
 
-	checkVerifiableCredential = async (identityJson: IdentityJson, signedVc: VerifiableCredentialJson): Promise<boolean> => {
+	checkVerifiableCredential = async (signedVc: VerifiableCredentialJson): Promise<boolean> => {
 		try {
-			const { doc } = this.restoreIdentity(identityJson);
-			console.log('Verified (credential)', doc.verify(signedVc));
-			const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
-			const isVerified = validatedCredential.verified && doc.verify(signedVc);
-			if (!isVerified) {
-				console.log(`Verifiable credential is not verified for: ${signedVc?.id}!`);
-			}
-
-			return isVerified;
+			const issuerDoc = await this.getLatestIdentityDoc(signedVc.issuer);
+			const subject = await this.getLatestIdentityDoc(signedVc.id);
+			const credentialVerified = issuerDoc.verifyData(signedVc);
+			const subjectIsVerified = subject.verify();
+			const verified = issuerDoc.verify() && credentialVerified && subjectIsVerified;
+			return verified;
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not check the verifiable credential');
@@ -169,9 +166,23 @@ export class IdentityService {
 		}
 	};
 
-	getLatestIdentity = async (did: string): Promise<IdentityDocumentJson> => {
+	getLatestIdentityJson = async (did: string): Promise<IdentityDocumentJson> => {
 		try {
 			return await Identity.resolve(did, this.config);
+		} catch (error) {
+			console.log('Error from identity sdk:', error);
+			throw new Error('could get the latest identity');
+		}
+	};
+
+	getLatestIdentityDoc = async (did: string): Promise<Identity.Document> => {
+		try {
+			const json = await Identity.resolve(did, this.config);
+			const doc = Document.fromJSON(json) as any;
+			if (!doc) {
+				throw new Error('could not parse json');
+			}
+			return doc;
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could get the latest identity');
