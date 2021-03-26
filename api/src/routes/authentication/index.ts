@@ -64,7 +64,7 @@ export class AuthenticationRoutes {
 			if (!vcBody?.id) {
 				throw new Error('No valid verifiable credential provided!');
 			}
-			const vc = await this.authenticationService.checkVerifiableCredential(vcBody, this.config.serverIdentityId);
+			const vc = await this.authenticationService.checkVerifiableCredential(vcBody);
 
 			res.status(StatusCodes.OK).send(vc);
 		} catch (error) {
@@ -115,7 +115,7 @@ export class AuthenticationRoutes {
 
 	getTrustedRootIdentities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const trustedRoots = await this.authenticationService.getTrustedRootIdentities();
+			const trustedRoots = await this.authenticationService.getTrustedRootIds();
 			res.status(StatusCodes.OK).send({ trustedRoots });
 		} catch (error) {
 			next(error);
@@ -179,7 +179,7 @@ export class AuthenticationRoutes {
 			return { isAuthorized: false, error: new Error('initiator is a device!') };
 		}
 
-		const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC, initiatorVC.issuer);
+		const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC);
 		if (!isInitiatorVerified) {
 			return { isAuthorized: false, error: new Error('initiator has to be verified!') };
 		}

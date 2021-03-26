@@ -33,7 +33,11 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
-		authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret', '2 days');
+		authenticationService = new AuthenticationService(identityService, userService, {
+			jwtExpiration: '2 days',
+			serverSecret: 'very-secret-secret',
+			serverIdentityId: ServerIdentityMock.doc.id
+		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
 
 		res = {

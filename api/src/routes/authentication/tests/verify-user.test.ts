@@ -34,7 +34,11 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
-		authenticationService = new AuthenticationService(identityService, userService, 'very-secret-secret', '2 days');
+		authenticationService = new AuthenticationService(identityService, userService, {
+			jwtExpiration: '2 days',
+			serverSecret: 'very-secret-secret',
+			serverIdentityId: ServerIdentityMock.doc.id
+		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
 
 		res = {
@@ -134,7 +138,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC, initiatorVC.issuer);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator has to be verified!'));
 		});
@@ -157,7 +161,7 @@ describe('test authentication routes', () => {
 
 			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC, initiatorVC.issuer);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user must be in same organization!'));
 		});
@@ -207,7 +211,7 @@ describe('test authentication routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC, initiatorVC.issuer);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getLinkedIdentitySpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);

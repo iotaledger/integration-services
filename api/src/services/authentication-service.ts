@@ -20,17 +20,26 @@ import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
 
+export interface AuthenticationServiceConfig {
+	serverSecret: string;
+	jwtExpiration: string;
+	serverIdentityId: string;
+}
+
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
 	private readonly identityService: IdentityService;
 	private readonly userService: UserService;
 	private readonly serverSecret: string;
+	private readonly serverIdentityId: string;
 	private readonly jwtExpiration: string;
 
-	constructor(identityService: IdentityService, userService: UserService, serverSecret: string, jwtExpiration: string) {
+	constructor(identityService: IdentityService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
+		const { serverSecret, jwtExpiration, serverIdentityId } = authenticationServiceConfig;
 		this.identityService = identityService;
 		this.userService = userService;
 		this.serverSecret = serverSecret;
+		this.serverIdentityId = serverIdentityId;
 		this.jwtExpiration = jwtExpiration;
 	}
 
@@ -117,13 +126,13 @@ export class AuthenticationService {
 		return vc;
 	};
 
-	checkVerifiableCredential = async (vc: VerifiableCredentialJson, issuerId: string): Promise<{ isVerified: boolean }> => {
-		const issuerIdentity: IdentityJson = await IdentitiesDb.getIdentity(issuerId);
-		if (!issuerIdentity) {
-			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+	checkVerifiableCredential = async (vc: VerifiableCredentialJson): Promise<{ isVerified: boolean }> => {
+		const serverIdentity: IdentityJson = await IdentitiesDb.getIdentity(this.serverIdentityId);
+		if (!serverIdentity) {
+			throw new Error('no valid server identity to check the credential.');
 		}
-		const isVerifiedCredential = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
-		const trustedRoots = await this.getTrustedRootIdentities();
+		const isVerifiedCredential = await this.identityService.checkVerifiableCredential(serverIdentity, vc);
+		const trustedRoots = await this.getTrustedRootIds();
 
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
@@ -184,16 +193,14 @@ export class AuthenticationService {
 		return await this.identityService.getLatestIdentity(did);
 	};
 
-	getTrustedRootIdentities = async () => {
+	getTrustedRootIds = async () => {
 		const trustedRoots = await TrustedRootsDb.getTrustedRootIds();
 
 		if (!trustedRoots || trustedRoots.length === 0) {
 			throw new Error('no trusted roots found!');
 		}
 
-		const trustedRootIds = trustedRoots.map((root) => root.userId);
-		return trustedRootIds;
-		//return await this.userService.getUsersByIds(trustedRootIds);
+		return trustedRoots.map((root) => root.userId);
 	};
 
 	getChallenge = async (userId: string) => {

@@ -125,9 +125,9 @@ export class IdentityService {
 		}
 	};
 
-	checkVerifiableCredential = async (issuerIdentity: IdentityJson, signedVc: VerifiableCredentialJson): Promise<boolean> => {
+	checkVerifiableCredential = async (identityJson: IdentityJson, signedVc: VerifiableCredentialJson): Promise<boolean> => {
 		try {
-			const { doc } = this.restoreIdentity(issuerIdentity);
+			const { doc } = this.restoreIdentity(identityJson);
 			console.log('Verified (credential)', doc.verify(signedVc));
 			const validatedCredential = await Identity.checkCredential(JSON.stringify(signedVc), this.config);
 			const isVerified = validatedCredential.verified && doc.verify(signedVc);

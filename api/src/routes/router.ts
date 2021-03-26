@@ -20,7 +20,7 @@ const userService = new UserService();
 const userRoutes = new UserRoutes(userService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
-const { serverSecret, jwtExpiration } = CONFIG;
+const { serverSecret, jwtExpiration, serverIdentityId } = CONFIG;
 const authMiddleWare = isAuth(serverSecret);
 
 userRouter.get('/user/:userId', getUser);
@@ -41,7 +41,7 @@ channelInfoRouter.put('/channel', authMiddleWare, validate({ body: ChannelInfoSc
 channelInfoRouter.delete('/channel/:channelAddress', authMiddleWare, deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, serverSecret, jwtExpiration);
+const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration, serverIdentityId, serverSecret });
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, CONFIG);
 const {
 	createIdentity,

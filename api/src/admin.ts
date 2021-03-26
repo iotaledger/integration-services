@@ -10,6 +10,7 @@ import { addTrustedRootId } from './database/trusted-roots';
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
 const serverSecret = CONFIG.serverSecret;
+const serverIdentityId = CONFIG.serverIdentityId;
 
 async function setupApi() {
 	console.log(`Setting api please wait...`);
@@ -19,7 +20,7 @@ async function setupApi() {
 
 	const userService = new UserService();
 	const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-	const authenticationService = new AuthenticationService(identityService, userService, serverSecret, '2 days');
+	const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration: '2 days', serverSecret, serverIdentityId });
 
 	const keyCollection = await authenticationService.getKeyCollection(0);
 	console.log('keyCollection', keyCollection);
