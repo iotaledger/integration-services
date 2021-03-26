@@ -125,7 +125,7 @@ export class AuthenticationService {
 		const isVerifiedCredential = await this.identityService.checkVerifiableCredential(issuerIdentity, vc);
 		const trustedRoots = await this.getTrustedRootIdentities();
 
-		const isTrustedIssuer = trustedRoots && trustedRoots.some((identity) => identity.userId === vc.issuer);
+		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
 		try {
 			const user = await this.userService.getUser(vc.id);
@@ -192,7 +192,8 @@ export class AuthenticationService {
 		}
 
 		const trustedRootIds = trustedRoots.map((root) => root.userId);
-		return await this.userService.getUsersByIds(trustedRootIds);
+		return trustedRootIds;
+		//return await this.userService.getUsersByIds(trustedRootIds);
 	};
 
 	getChallenge = async (userId: string) => {
