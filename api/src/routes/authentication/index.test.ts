@@ -4,120 +4,15 @@ import { AuthenticationRoutes } from './index';
 import { AuthenticationService } from '../../services/authentication-service';
 import { UserService } from '../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
-import * as KeyCollectionLinksDB from '../../database/key-collection-links';
 import * as IdentitiesDb from '../../database/identities';
-import * as TrustedRootsDb from '../../database/trusted-roots';
 import * as AuthDb from '../../database/auth';
-import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
-import { IdentityJsonUpdate } from '../../models/types/identity';
 import { User } from '../../models/types/user';
 import * as EncryptionUtils from '../../utils/encryption';
+import { ServerIdentityMock, UserIdentityMock } from '../../test/mocks/identities';
 
-const identityDocumentMock: IdentityJsonUpdate = {
-	doc: {
-		id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
-		authentication: [
-			{
-				id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN#key',
-				controller: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
-				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D'
-			}
-		],
-		created: '2021-02-25T17:51:54Z',
-		updated: '2021-02-25T17:51:54Z',
-		immutable: false,
-		proof: {
-			type: 'JcsEd25519Signature2020',
-			verificationMethod: '#key',
-			signatureValue: '4REKUzJ5bw6FtF4FdY6xLaoHR5NnovEA2Hi6T3aMs459mkpMvHmwEUSvDQk8FzqwB28bu51VCfF1ZzswcQsSaFkP'
-		}
-	},
-	key: {
-		type: 'ed25519',
-		public: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
-		secret: 'secret-key',
-		encoding: 'base58'
-	},
-	txHash: 'GOLMVJ9MRHOPVMXAYUDJZISYDVBMUGMHFLDXEFAMWRECFU9BFQFGMBPVMYRTFRUAHQCAC99O9LQPA9999'
-};
+const validUserMock = UserIdentityMock.userData;
 
-const vcMock = {
-	'@context': 'https://www.w3.org/2018/credentials/v1',
-	id: 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk',
-	type: ['VerifiableCredential', 'UserCredential'],
-	credentialSubject: {
-		id: 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk',
-		classification: 'device',
-		organization: 'IOTA',
-		registrationDate: '2021-03-02T15:05:26.613Z',
-		username: 'test-device'
-	},
-	issuer: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt',
-	issuanceDate: '2021-03-11T09:56:36Z',
-	proof: {
-		type: 'MerkleKeySignature2021',
-		verificationMethod: '#key-collection',
-		signatureValue:
-			'9wZMHHmycPb47UtHkrWJaMPDpjEE8f7QnF6rxB8Th8pC.1119spw7ADgrjmAytGqBLDT8hbJ3tkcxTohTuDt5SyPHkR2WcqrqYJVHyw18QWnmfkor2x9ZXPiV7cYn2P3Twh4nd1t6DkEckrFJ1vZ7DM8iHvmMXUw6qGhgrW3uBQT6dMHf6qzxGrQ.427g9KcphAdJYnnDCaVs7GbLdrTzh2PEHDhAEdweP1CeAHDwJSwkv7SAUECtDvkqLxkE6AEPdkxksWk9c6sE5Zcn'
-	}
-};
-
-const issuerIdentityId = 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt';
-
-const issuerIdentityMock = {
-	_id: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt',
-	doc: {
-		id: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt',
-		verificationMethod: [
-			{
-				id: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt#key-collection',
-				controller: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt',
-				type: 'MerkleKeyCollection2021',
-				publicKeyBase58: '112EEFg1iVo3xsgboycoUkxbU25N9zEvJJbqhudazuq3gy',
-				revocation: 'OjAAAAEAAAAAAAEAEAAAAAIAAwA='
-			}
-		],
-		authentication: [
-			{
-				id: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt#key',
-				controller: 'did:iota:9SYbnYQbBj8b7ykE4yqsFtuNFUrUoWU2zSxLeMDq8Nkt',
-				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '5mMxNmByrAwfuC17pgSDxVfb8uRKUSiVCLJpTXRyQBKr'
-			}
-		],
-		created: '2021-03-10T14:55:11Z',
-		updated: '2021-03-10T14:55:11Z',
-		immutable: false,
-		previous_message_id: 'EDJNMT9BWHPTUMIUWBGJVNVVXWJPQOLDFINGHWI9PDUKMXLJKPMBEIEXPJDJH9SGFZFKJYTCAQVJA9999',
-		proof: {
-			type: 'JcsEd25519Signature2020',
-			verificationMethod: '#key',
-			signatureValue: '4kDpwXqbzeDHHNzqYUzU3sxbhk8g7d2BzwheHNq62tvW8esf994wXxKZE3iWRTtDpmc1DFCsTW1tLdtvz3euQo3W'
-		}
-	},
-	key: { type: 'ed25519', public: '5mMxNmByrAwfuC17pgSDxVfb8uRKUSiVCLJpTXRyQBKr', secret: '3z9CUwVGVq8HP3CYqczVnQXKKb3Yb2s2bsAUbTNroSTz' },
-	txHash: 'NWFOSJPZAYLXKRAPPMKKCZGFOPTBEANZNURTLVCTOVXMFZWOYXZOSDOOXM9MXLZPFQVKORHXKBHKZ9999'
-};
-
-const validUserMock: User = {
-	userId: 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk',
-	publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-	username: 'test-device3',
-	classification: 'device',
-	subscribedChannelIds: ['test-address-c2', 'test-address'],
-	firstName: null,
-	lastName: null,
-	description: 'Device which measures temperature in the kitchen.',
-	registrationDate: '2021-03-02T16:05:26+01:00',
-	verification: {
-		verified: false,
-		lastTimeChecked: '2021-03-08T17:19:13+01:00'
-	},
-	organization: 'IOTA'
-};
-
-xdescribe('test authentication routes', () => {
+describe('test authentication routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
@@ -126,7 +21,7 @@ xdescribe('test authentication routes', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config: any = {
-			serverIdentityId: issuerIdentityId
+			serverIdentityId: ServerIdentityMock.doc.id
 		};
 		const identityConfig: IdentityConfig = {
 			keyCollectionTag: 'key-collection',
@@ -151,8 +46,8 @@ xdescribe('test authentication routes', () => {
 
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
-			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(identityDocumentMock);
-			const saveIdentitySpy = spyOn(IdentitiesDb, 'saveIdentity').and.returnValue(identityDocumentMock);
+			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(UserIdentityMock);
+			const saveIdentitySpy = spyOn(IdentitiesDb, 'saveIdentity').and.returnValue(UserIdentityMock);
 			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
 				params: {},
@@ -174,8 +69,8 @@ xdescribe('test authentication routes', () => {
 				lastName: 'Subscriber',
 				organization: 'IOTA',
 				subscribedChannelIds: ['test-address-c2', 'test-address'],
-				userId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
-				publicKey: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
+				userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
 			};
 			await authenticationRoutes.createIdentity(req, res, nextMock);
@@ -183,10 +78,11 @@ xdescribe('test authentication routes', () => {
 			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
 			expect(saveIdentitySpy).not.toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			expect(res.send).toHaveBeenCalledWith(identityDocumentMock);
+			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
 		});
+
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
-			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(identityDocumentMock);
+			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(UserIdentityMock);
 			const saveIdentitySpy = spyOn(IdentitiesDb, 'saveIdentity');
 			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
@@ -211,122 +107,16 @@ xdescribe('test authentication routes', () => {
 				storeIdentity: true,
 				organization: 'IOTA',
 				subscribedChannelIds: ['test-address-c2', 'test-address'],
-				userId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
-				publicKey: 'AavQx5RH1c1zcHbUtwMEq9UVzdPKfPV1bXKxTsvW6b7D',
+				userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
 			};
 			await authenticationRoutes.createIdentity(req, res, nextMock);
 			expect(identitySpy).toHaveBeenCalledWith();
 			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
-			expect(saveIdentitySpy).toHaveBeenCalledWith(identityDocumentMock);
+			expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			expect(res.send).toHaveBeenCalledWith(identityDocumentMock);
-		});
-	});
-
-	describe('test revokeVerifiableCredential route', () => {
-		it('should throw an error since no verfiable credential is found to revoke!', async () => {
-			const identityToRevoke = vcMock.id;
-			// since we won't have a linkedIdentity for it won't go further
-			const linkedIdentity: any = null;
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity');
-			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential');
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
-			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
-			const req: any = {
-				params: {},
-				body: { subjectId: identityToRevoke }
-			};
-
-			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
-
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
-			expect(getIdentitySpy).not.toHaveBeenCalled();
-			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
-			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
-			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('no identity found to revoke the verification!'));
-		});
-
-		it('should revoke the identity', async () => {
-			const identityToRevoke = vcMock.id;
-			// since we won't have a linkedIdentity for it won't go further
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
-				keyCollectionIndex: 0,
-				index: 0,
-				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
-				isRevoked: false,
-				revokedIdentity: undefined
-			};
-			const revokeResult = {
-				docUpdate: issuerIdentityMock.doc,
-				revoked: true
-			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(issuerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
-			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
-			const req: any = {
-				params: {},
-				body: { subjectId: identityToRevoke }
-			};
-
-			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
-
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
-			expect(getIdentitySpy).toHaveBeenCalledWith(issuerIdentityId);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(issuerIdentityMock, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).toHaveBeenCalledWith(linkedIdentity);
-			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
-				expect.objectContaining({
-					verified: false
-				})
-			);
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
-		});
-
-		it('identity is already revoked', async () => {
-			const identityToRevoke = vcMock.id;
-			// since we won't have a linkedIdentity for it won't go further
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
-				keyCollectionIndex: 0,
-				index: 0,
-				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
-				isRevoked: false,
-				revokedIdentity: undefined
-			};
-			const revokeResult = {
-				docUpdate: issuerIdentityMock.doc,
-				revoked: false
-			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(issuerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
-			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
-			const req: any = {
-				params: {},
-				body: { subjectId: identityToRevoke }
-			};
-
-			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
-
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
-			expect(getIdentitySpy).toHaveBeenCalledWith(issuerIdentityId);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(issuerIdentityMock, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
-			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
 		});
 	});
 
@@ -345,8 +135,8 @@ xdescribe('test authentication routes', () => {
 		});
 
 		it('should return the document of the id', async () => {
-			const id = 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN';
-			const getLatestIdentitySpy = spyOn(identityService, 'getLatestIdentity').and.returnValue(identityDocumentMock);
+			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
+			const getLatestIdentitySpy = spyOn(identityService, 'getLatestIdentity').and.returnValue(UserIdentityMock);
 			const req: any = {
 				query: { id },
 				body: null
@@ -355,7 +145,7 @@ xdescribe('test authentication routes', () => {
 			await authenticationRoutes.getLatestDocument(req, res, nextMock);
 
 			expect(getLatestIdentitySpy).toHaveBeenCalledWith(id);
-			expect(res.send).toHaveBeenCalledWith(identityDocumentMock);
+			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
 		});
 	});
 
