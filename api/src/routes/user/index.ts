@@ -4,6 +4,7 @@ import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
+import { AuthenticatedRequest, AuthorizationCheck } from '../../models/types/authentication';
 
 export class UserRoutes {
 	private readonly userService: UserService;
@@ -11,7 +12,7 @@ export class UserRoutes {
 		this.userService = userService;
 	}
 
-	searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userSearch = this.getUserSearch(req);
 			const users = await this.userService.searchUsers(userSearch);
@@ -53,9 +54,15 @@ export class UserRoutes {
 		}
 	};
 
-	updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const user: User = req.body;
+
+			const { isAuthorized, error } = this.isAuthorized(req.userId, user.userId);
+			if (!isAuthorized) {
+				throw error;
+			}
+
 			const result = await this.userService.updateUser(user);
 
 			if (!result?.result?.n) {
@@ -69,12 +76,17 @@ export class UserRoutes {
 		}
 	};
 
-	deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userId = _.get(req, 'params.userId');
 			if (_.isEmpty(userId)) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
+			}
+
+			const { isAuthorized, error } = this.isAuthorized(req.userId, userId);
+			if (!isAuthorized) {
+				throw error;
 			}
 
 			await this.userService.deleteUser(userId);
@@ -114,5 +126,13 @@ export class UserRoutes {
 			registrationDate: getDateFromString(registrationDate),
 			subscribedChannelIds
 		};
+	};
+
+	private isAuthorized = (requestUid: string, userId: string): AuthorizationCheck => {
+		if (requestUid !== userId) {
+			return { isAuthorized: false, error: new Error('not allowed!') };
+		}
+
+		return { isAuthorized: true, error: null };
 	};
 }

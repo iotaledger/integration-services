@@ -58,7 +58,7 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	checkVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const vcBody: any = req.body;
 			if (!vcBody?.id) {
