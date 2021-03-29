@@ -2,15 +2,15 @@ import { ChannelInfoRoutes } from './channel-info';
 import { UserRoutes } from './user';
 import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
-import { ChannelInfoSchema } from '../models/data/channel-info';
-import { UserSchema, UserWithoutIdSchema } from '../models/data/user';
+import { ChannelInfoSchema } from '../models/schemas/channel-info';
+import { UpdateUserSchema, UserSchema, UserWithoutIdSchema } from '../models/schemas/user';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { IdentityService } from '../services/identity-service';
-import { UserCredentialSchema } from '../models/data/identity';
+import { RevokeVerificationSchema, VerifyUserSchema } from '../models/schemas/authentication';
 import { isAuth } from '../middlewares/authentication';
 
 const validator = new Validator({ allErrors: true });
@@ -20,13 +20,13 @@ const userService = new UserService();
 const userRoutes = new UserRoutes(userService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
-const { serverSecret } = CONFIG;
+const { serverSecret, jwtExpiration, serverIdentityId } = CONFIG;
 const authMiddleWare = isAuth(serverSecret);
 
 userRouter.get('/user/:userId', getUser);
 userRouter.get('/search', authMiddleWare, searchUsers);
 userRouter.post('/user', validate({ body: UserSchema }), addUser);
-userRouter.put('/user', authMiddleWare, validate({ body: UserSchema }), updateUser);
+userRouter.put('/user', authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
 userRouter.delete('/user/:userId', authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
@@ -41,23 +41,25 @@ channelInfoRouter.put('/channel', authMiddleWare, validate({ body: ChannelInfoSc
 channelInfoRouter.delete('/channel/:channelAddress', authMiddleWare, deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, serverSecret);
-const authenticationRoutes = new AuthenticationRoutes(authenticationService, CONFIG);
+const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration, serverIdentityId, serverSecret });
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, CONFIG);
 const {
-  createIdentity,
-  createVerifiableCredential,
-  checkVerifiableCredential,
-  getChallenge,
-  revokeVerifiableCredential,
-  getLatestDocument,
-  auth
+	createIdentity,
+	verifyUser,
+	checkVerifiableCredential,
+	getChallenge,
+	revokeVerifiableCredential,
+	getLatestDocument,
+	auth,
+	getTrustedRootIdentities
 } = authenticationRoutes;
 export const authenticationRouter = Router();
 
 authenticationRouter.get('/get-latest-document', getLatestDocument);
+authenticationRouter.get('/get-trusted-roots', getTrustedRootIdentities);
 authenticationRouter.get('/get-challenge/:userId', getChallenge);
 authenticationRouter.post('/auth/:userId', auth);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/add-verification', authMiddleWare, validate({ body: UserCredentialSchema }), createVerifiableCredential);
+authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
 authenticationRouter.post('/check-verification', authMiddleWare, checkVerifiableCredential);
-authenticationRouter.post('/revoke-verification', authMiddleWare, revokeVerifiableCredential);
+authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);

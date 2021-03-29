@@ -1,0 +1,46 @@
+import { Static } from '@sinclair/typebox';
+import { UserSchema, UserWithoutIdSchema, VerificationSchema } from '../schemas/user';
+
+export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
+export type User = Static<typeof UserSchema> & UserWithoutId;
+export type Verification = Static<typeof VerificationSchema>;
+
+export const enum UserClassification {
+	'human' = 'human',
+	'device' = 'device',
+	'api' = 'api'
+}
+
+export interface UserSearch {
+	username?: string;
+	organization?: string;
+	subscribedChannelIds?: string[];
+	verified?: boolean;
+	registrationDate?: Date;
+	classification?: UserClassification;
+	limit?: number;
+	index?: number;
+}
+
+type OmittedUser = Omit<User, 'registrationDate' | 'classification' | 'verification'>;
+
+export interface UserPersistence extends OmittedUser {
+	verification?: VerificationPersistence;
+	registrationDate?: Date;
+	classification: UserClassification;
+}
+
+export interface VerificationPersistence {
+	verified: boolean;
+	verificationIssuerId?: string;
+	verificationDate?: Date;
+	lastTimeChecked?: Date;
+}
+
+export interface VerificationUpdate extends Verification {
+	userId: string;
+}
+
+export interface VerificationUpdatePersistence extends VerificationPersistence {
+	userId: string;
+}
