@@ -3,6 +3,12 @@ import { Static } from '@sinclair/typebox';
 import { VerifiableCredentialSchema, VcSubjectSchema } from '../schemas/identity';
 import { UserWithoutId } from './user';
 
+export interface Credential<T> {
+	id: string;
+	type: string;
+	subject: T;
+}
+
 export interface CreateIdentityBody extends UserWithoutId {
 	storeIdentity?: boolean;
 }
