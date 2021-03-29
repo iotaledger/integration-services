@@ -103,7 +103,7 @@ export class UserRoutes {
 		const username = decodeParam(<string>req.query.username);
 		const verifiedParam = decodeParam(<string>req.query.verified);
 		const registrationDate = decodeParam(<string>req.query['registration-date']);
-		const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
+		const verified = verifiedParam != null ? Boolean(verifiedParam) && verifiedParam == 'true' : undefined;
 		let subscribedChannelIds: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
 		if (subscribedChannelIds != null && !Array.isArray(subscribedChannelIds)) {
 			// we have a string instead of string array!
