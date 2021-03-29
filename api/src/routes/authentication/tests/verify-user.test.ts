@@ -222,7 +222,7 @@ describe('test authentication routes', () => {
 				})
 			);
 			expect(addUserVCSpy).toHaveBeenCalled();
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith({ VCMOCK: 1 });
 		});
 	});

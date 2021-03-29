@@ -72,7 +72,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('No valid verifiable credential provided!'));
 		});
 
-		it('should throw an error since no server identity is found is found with the id!', async () => {
+		it('should throw an error since no server identity is found with the id!', async () => {
 			const isVerified = true;
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
 			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(isVerified);

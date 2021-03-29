@@ -6,11 +6,12 @@ import {
 	DocumentJsonUpdate,
 	IdentityJson,
 	IdentityJsonUpdate,
-	VerifiableCredentialJson
+	VerifiableCredentialJson,
+	Credential
 } from '../models/types/identity';
 import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { getDateFromString } from '../utils/date';
-import { Credential, IdentityService } from './identity-service';
+import { IdentityService } from './identity-service';
 import { UserService } from './user-service';
 import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
@@ -19,12 +20,7 @@ import * as AuthDb from '../database/auth';
 import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
-
-export interface AuthenticationServiceConfig {
-	serverSecret: string;
-	jwtExpiration: string;
-	serverIdentityId: string;
-}
+import { AuthenticationServiceConfig } from '../models/config/services-config';
 
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
