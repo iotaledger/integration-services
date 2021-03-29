@@ -52,7 +52,7 @@ export class AuthenticationRoutes {
 				initiatorVC.credentialSubject.id
 			);
 
-			res.status(StatusCodes.CREATED).send(vc);
+			res.status(StatusCodes.OK).send(vc);
 		} catch (error) {
 			next(error);
 		}

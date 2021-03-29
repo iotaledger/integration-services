@@ -72,7 +72,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('No valid verifiable credential provided!'));
 		});
 
-		it('should throw an error since no server identity is found is found with the id!', async () => {
+		it('should throw an error since no server identity is found with the id!', async () => {
 			const isVerified = true;
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
 			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(isVerified);
@@ -107,7 +107,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, vcToCheck);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(getUserSpy).not.toHaveBeenCalledWith();
 			expect(nextMock).toHaveBeenCalledWith(new Error('no trusted roots found!'));
@@ -128,7 +128,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, vcToCheck);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getUserSpy).toHaveBeenCalledWith(userMock.userId);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
@@ -155,7 +155,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, vcToCheck);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getUserSpy).toHaveBeenCalledWith(userMock.userId);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
@@ -181,7 +181,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, vcToCheck);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getUserSpy).toHaveBeenCalledWith(userMock.userId);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
