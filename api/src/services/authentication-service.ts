@@ -20,7 +20,7 @@ import * as AuthDb from '../database/auth';
 import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
-import { AuthenticationServiceConfig } from '../models/config/services-config';
+import { AuthenticationServiceConfig } from '../models/config/services';
 
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
