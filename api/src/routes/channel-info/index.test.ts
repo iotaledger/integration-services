@@ -142,7 +142,7 @@ describe('test POST channelInfo', () => {
 	const validBody: ChannelInfo = {
 		authorId: 'test-author2',
 		channelAddress: 'test-address3',
-		created: '02-09-2021',
+		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
 		subscriberIds: [],
 		topics: [{ source: 'test', type: 'test-type' }]
@@ -176,6 +176,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
+			userId: validBody.authorId,
 			params: {},
 			body: validBody
 		};
@@ -187,10 +188,26 @@ describe('test POST channelInfo', () => {
 		expect(res.status).toHaveBeenCalledWith(404);
 	});
 
-	it('should add channel info', async () => {
+	it('should not add channel info since request userid does not match', async () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
+			userId: 'did:iota:123456',
+			params: {},
+			body: validBody
+		};
+
+		await channelInfoRoutes.addChannelInfo(req, res, nextMock);
+
+		expect(addChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+	});
+
+	it('should add channel info since request userid does match', async () => {
+		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
+
+		const req: any = {
+			userId: validBody.authorId,
 			params: {},
 			body: validBody
 		};
@@ -200,12 +217,12 @@ describe('test POST channelInfo', () => {
 		expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendStatusMock).toHaveBeenCalledWith(201);
 	});
-
 	it('should call next(err) if an error occurs', async () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
+			userId: validBody.authorId,
 			params: {},
 			body: validBody
 		};
@@ -219,12 +236,12 @@ describe('test POST channelInfo', () => {
 
 describe('test PUT channelInfo', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService, getChannelInfoSpy: any;
 
 	const validBody: ChannelInfo = {
-		authorId: 'test-author2',
+		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		channelAddress: 'test-address3',
-		created: '02-09-2021',
+		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
 		subscriberIds: [],
 		topics: [{ source: 'test', type: 'test-type' }]
@@ -237,6 +254,19 @@ describe('test PUT channelInfo', () => {
 		userService = new UserService();
 		channelInfoService = new ChannelInfoService(userService);
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+		getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({
+			created: getDateFromString('2021-03-26T16:13:11+01:00'),
+			authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+			subscriberIds: [],
+			topics: [
+				{
+					source: 'device',
+					type: 'temperatures'
+				}
+			],
+			latestMessage: null,
+			channelAddress: 'test-address-c3-device'
+		});
 
 		res = {
 			send: sendMock,
@@ -258,6 +288,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
+			userId: validBody.authorId,
 			params: {},
 			body: validBody
 		};
@@ -269,18 +300,34 @@ describe('test PUT channelInfo', () => {
 		expect(res.status).toHaveBeenCalledWith(404);
 	});
 
-	it('should return expected channel info', async () => {
+	it('should update expected channel info', async () => {
 		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
+			userId: validBody.authorId,
 			params: {},
 			body: validBody
 		};
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
-
+		expect(getChannelInfoSpy).toHaveBeenCalled();
 		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendStatusMock).toHaveBeenCalledWith(200);
+	});
+
+	it('should not update expected channel info since not allowed', async () => {
+		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
+
+		const req: any = {
+			userId: 'did:iota:123456', // different userId as authorId
+			params: {},
+			body: validBody
+		};
+
+		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
+		expect(getChannelInfoSpy).toHaveBeenCalled();
+		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
 	});
 
 	it('should call next(err) if an error occurs', async () => {
@@ -288,6 +335,7 @@ describe('test PUT channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
+			userId: validBody.authorId,
 			params: {},
 			body: validBody
 		};
