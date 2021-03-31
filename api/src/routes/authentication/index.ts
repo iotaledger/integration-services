@@ -98,7 +98,7 @@ export class AuthenticationRoutes {
 	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const did = decodeParam(<string>req.query?.id);
+			const did = req.params && decodeParam(<string>req.params['userId']);
 
 			if (!did) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);

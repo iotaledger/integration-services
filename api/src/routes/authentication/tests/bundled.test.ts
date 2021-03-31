@@ -142,7 +142,7 @@ describe('test authentication routes', () => {
 			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
 			const getLatestIdentitySpy = spyOn(identityService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock);
 			const req: any = {
-				query: { id },
+				params: { userId: id },
 				body: null
 			};
 
