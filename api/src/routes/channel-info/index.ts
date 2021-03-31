@@ -63,7 +63,7 @@ export class ChannelInfoRoutes {
 		try {
 			const channelInfoBody: ChannelInfo = req.body;
 
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody.channelAddress);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress);
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
 			}

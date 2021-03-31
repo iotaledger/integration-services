@@ -34,7 +34,7 @@ describe('test Search user', () => {
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-		const getUserSpy = spyOn(userService, 'getUser').and.returnValue({ userId: '1234-5678-9' });
+		const getUserSpy = spyOn(userService, 'getUserByUsername').and.returnValue({ userId: '1234-5678-9' });
 
 		const req: any = {
 			params: {},
@@ -348,6 +348,17 @@ describe('test PUT channelInfo', () => {
 });
 
 describe('test DELETE channelInfo', () => {
+	const channel = {
+		created: getDateFromString('2021-03-26T16:13:11+01:00'),
+		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		topics: [
+			{
+				source: 'device',
+				type: 'temperatures'
+			}
+		],
+		channelAddress: 'test-address-c3-device'
+	};
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
@@ -366,38 +377,97 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should return bad request if no address is given as parameter', async () => {
+		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo');
 		const req: any = {
 			params: {},
 			body: null
 		};
 		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
+		expect(getChannelInfoSpy).toHaveBeenCalledTimes(0);
 		expect(sendStatusMock).toHaveBeenCalledWith(400);
 	});
 
-	it('should return expected channel info', async () => {
+	it('should not be able to parse the channel since it is null', async () => {
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(null); // return no channel
 
 		const req: any = {
+			userId: 'did:iota:1234567', // wrong userid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
 
 		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
 
+		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!'));
+	});
+
+	it('should return error since channel is not found', async () => {
+		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = spyOn(channelInfoService, 'getChannelInfo').and.returnValue(null); // return no channel
+
+		const req: any = {
+			userId: 'did:iota:1234567', // wrong userid
+			params: { channelAddress: 'test-address' },
+			body: null
+		};
+
+		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
+
+		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('channel does not exist!'));
+	});
+
+	it('should not delete the expected channel info since he is not authorized', async () => {
+		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
+
+		const req: any = {
+			userId: 'did:iota:1234567', // wrong userid
+			params: { channelAddress: 'test-address' },
+			body: null
+		};
+
+		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
+
+		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+	});
+
+	it('should delete the expected channel info since he is authorized', async () => {
+		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
+
+		const req: any = {
+			userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu', // same userId as authorId of channel
+			params: { channelAddress: 'test-address' },
+			body: null
+		};
+
+		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
+
+		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendStatusMock).toHaveBeenCalledWith(200);
 	});
 
 	it('should call next(err) if an error occurs', async () => {
+		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
+			userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu', // same userId as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
 		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
 
+		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
 		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
