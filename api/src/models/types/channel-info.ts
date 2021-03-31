@@ -13,7 +13,7 @@ export interface ChannelInfoPersistence extends OmitedChannelInfo {
 
 export interface ChannelInfoSearch {
 	authorId?: string;
-	author?: string;
+	author?: string; // username
 	topicType?: string;
 	topicSource?: string;
 	created?: Date;
