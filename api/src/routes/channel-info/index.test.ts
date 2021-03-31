@@ -387,9 +387,9 @@ describe('test DELETE channelInfo', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(400);
 	});
 
-	it('should not be able to parse the channel since it is null', async () => {
+	it('should not be able to parse the channel since it is no valid channel', async () => {
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(null); // return no channel
+		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({}); // no valid channel
 
 		const req: any = {
 			userId: 'did:iota:1234567', // wrong userid
@@ -406,7 +406,7 @@ describe('test DELETE channelInfo', () => {
 
 	it('should return error since channel is not found', async () => {
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
-		const getChannelInfoSpy = spyOn(channelInfoService, 'getChannelInfo').and.returnValue(null); // return no channel
+		const getChannelInfoSpy = spyOn(channelInfoService, 'getChannelInfo').and.returnValue(null); // channel is null
 
 		const req: any = {
 			userId: 'did:iota:1234567', // wrong userid

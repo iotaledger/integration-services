@@ -11,9 +11,9 @@ export class ChannelInfoService {
 		this.userService = userService;
 	}
 
-	getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
+	getChannelInfo = async (channelAddress: string): Promise<ChannelInfo | null> => {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		return this.getChannelInfoObject(channelInfoPersistence);
+		return channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
 	};
 
 	searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
