@@ -187,7 +187,8 @@ describe('test authentication routes', () => {
 				id: subject.userId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
-				username: subject.username
+				username: subject.username,
+				initiatorId: initiatorVC.id
 			};
 			const expectedCredential = {
 				type: 'UserCredential',
