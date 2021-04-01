@@ -35,7 +35,7 @@ export class AuthenticationRoutes {
 		try {
 			const verifyUserBody: VerifyUserBody = req.body;
 			const { initiatorVC, subjectId } = verifyUserBody;
-			const requestUserId = req.userId;
+			const requestUserId = req.user.userId;
 			const subject = await this.userService.getUser(subjectId);
 			if (!subject) {
 				throw new Error('subject does not exist!');
@@ -75,7 +75,7 @@ export class AuthenticationRoutes {
 	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const revokeBody = req.body;
-			const requestId = req.userId;
+			const requestId = req.user.userId;
 			if (!revokeBody.subjectId) {
 				throw new Error('No valid body provided!');
 			}

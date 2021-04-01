@@ -4,12 +4,15 @@ import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
-import { AuthenticatedRequest, AuthorizationCheck } from '../../models/types/authentication';
+import { AuthenticatedRequest } from '../../models/types/authentication';
+import { AuthorizationService } from '../../services/authorization-service';
 
 export class ChannelInfoRoutes {
 	private readonly channelInfoService: ChannelInfoService;
-	constructor(channelInfoService: ChannelInfoService) {
+	private readonly authorizationService: AuthorizationService;
+	constructor(channelInfoService: ChannelInfoService, authorizationService: AuthorizationService) {
 		this.channelInfoService = channelInfoService;
+		this.authorizationService = authorizationService;
 	}
 
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -42,7 +45,7 @@ export class ChannelInfoRoutes {
 		try {
 			const channelInfo: ChannelInfo = req.body;
 
-			const { isAuthorized, error } = this.isAuthorized(req.userId, channelInfo.authorId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -68,7 +71,7 @@ export class ChannelInfoRoutes {
 				throw new Error('channel does not exist!');
 			}
 
-			const { isAuthorized, error } = this.isAuthorized(req.userId, channelInfo.authorId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -97,7 +100,7 @@ export class ChannelInfoRoutes {
 				throw new Error('channel does not exist!');
 			}
 
-			const { isAuthorized, error } = this.isAuthorized(req.userId, channelInfo.authorId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -132,13 +135,5 @@ export class ChannelInfoRoutes {
 			created: getDateFromString(created),
 			latestMessage: getDateFromString(latestMessage)
 		};
-	};
-
-	private isAuthorized = (requestUid: string, channelAuthor: string): AuthorizationCheck => {
-		if (requestUid !== channelAuthor) {
-			return { isAuthorized: false, error: new Error('not allowed!') };
-		}
-
-		return { isAuthorized: true, error: null };
 	};
 }

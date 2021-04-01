@@ -17,10 +17,10 @@ export const isAuth = (serverSecret: string) => (req: Request, res: Response, ne
 	const token = split[1];
 	const decodedToken: any = jwt.verify(token, serverSecret);
 
-	if (typeof decodedToken === 'string' || !decodedToken?.user?.userId) {
+	if (typeof decodedToken === 'string' || !decodedToken?.user) {
 		return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authenticated!' });
 	}
 
-	(req as any).userId = decodedToken.user.userId;
+	(req as any).user = decodedToken.user;
 	next();
 };

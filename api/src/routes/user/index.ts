@@ -4,12 +4,15 @@ import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
-import { AuthenticatedRequest, AuthorizationCheck } from '../../models/types/authentication';
+import { AuthenticatedRequest } from '../../models/types/authentication';
+import { AuthorizationService } from '../../services/authorization-service';
 
 export class UserRoutes {
 	private readonly userService: UserService;
-	constructor(userService: UserService) {
+	private readonly authorizationService: AuthorizationService;
+	constructor(userService: UserService, authorizationService: AuthorizationService) {
 		this.userService = userService;
+		this.authorizationService = authorizationService;
 	}
 
 	searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -58,7 +61,7 @@ export class UserRoutes {
 		try {
 			const user: User = req.body;
 
-			const { isAuthorized, error } = this.isAuthorized(req.userId, user.userId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, user.userId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -84,7 +87,7 @@ export class UserRoutes {
 				return;
 			}
 
-			const { isAuthorized, error } = this.isAuthorized(req.userId, userId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, userId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -126,13 +129,5 @@ export class UserRoutes {
 			registrationDate: getDateFromString(registrationDate),
 			subscribedChannelIds
 		};
-	};
-
-	private isAuthorized = (requestUid: string, userId: string): AuthorizationCheck => {
-		if (requestUid !== userId) {
-			return { isAuthorized: false, error: new Error('not allowed!') };
-		}
-
-		return { isAuthorized: true, error: null };
 	};
 }

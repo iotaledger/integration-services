@@ -65,7 +65,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				userId: 'WRONGUSERID',
+				user: { userId: 'WRONGUSERID' },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -84,7 +84,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -106,7 +106,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -128,7 +128,7 @@ describe('test authentication routes', () => {
 
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -150,7 +150,7 @@ describe('test authentication routes', () => {
 			const initiatorVcIsVerified = true;
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -174,7 +174,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,

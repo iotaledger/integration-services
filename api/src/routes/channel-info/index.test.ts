@@ -4,6 +4,7 @@ import * as ChannelInfoDb from '../../database/channel-info';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { ChannelInfoService } from '../../services/channel-info-service';
+import { AuthorizationService } from '../../services/authorization-service';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -14,7 +15,8 @@ describe('test Search user', () => {
 		nextMock = jest.fn();
 		userService = new UserService();
 		channelInfoService = new ChannelInfoService(userService);
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+		const authorizationService = new AuthorizationService(userService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -67,7 +69,8 @@ describe('test GET channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService();
 		channelInfoService = new ChannelInfoService(userService);
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+		const authorizationService = new AuthorizationService(userService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 		res = {
 			send: sendMock,
 			sendStatus: sendStatusMock
@@ -154,7 +157,8 @@ describe('test POST channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService();
 		channelInfoService = new ChannelInfoService(userService);
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+		const authorizationService = new AuthorizationService(userService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -176,7 +180,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			userId: validBody.authorId,
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -192,7 +196,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			userId: 'did:iota:123456',
+			user: { userId: 'did:iota:123456' },
 			params: {},
 			body: validBody
 		};
@@ -207,7 +211,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			userId: validBody.authorId,
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -222,7 +226,7 @@ describe('test POST channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			userId: validBody.authorId,
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -253,7 +257,8 @@ describe('test PUT channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService();
 		channelInfoService = new ChannelInfoService(userService);
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+		const authorizationService = new AuthorizationService(userService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 		getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({
 			created: getDateFromString('2021-03-26T16:13:11+01:00'),
 			authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
@@ -288,7 +293,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			userId: validBody.authorId,
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -304,7 +309,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			userId: validBody.authorId,
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -319,7 +324,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			userId: 'did:iota:123456', // different userId as authorId
+			user: { userId: 'did:iota:123456' }, // different userId as authorId
 			params: {},
 			body: validBody
 		};
@@ -335,7 +340,7 @@ describe('test PUT channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			userId: validBody.authorId,
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -368,7 +373,8 @@ describe('test DELETE channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService();
 		channelInfoService = new ChannelInfoService(userService);
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService);
+		const authorizationService = new AuthorizationService(userService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -426,7 +432,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 
 		const req: any = {
-			userId: 'did:iota:1234567', // wrong userid
+			user: { userId: 'did:iota:1234567' }, // wrong userid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -443,7 +449,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 
 		const req: any = {
-			userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu', // same userId as authorId of channel
+			user: { userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same userId as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -461,7 +467,7 @@ describe('test DELETE channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu', // same userId as authorId of channel
+			user: { userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same userId as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};

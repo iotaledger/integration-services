@@ -11,6 +11,12 @@ export const enum UserClassification {
 	'api' = 'api'
 }
 
+export const enum UserRoles {
+	'Admin' = 'admin',
+	'OrgAdmin' = 'org-admin',
+	'User' = 'user'
+}
+
 export interface UserSearch {
 	username?: string;
 	organization?: string;
@@ -22,9 +28,10 @@ export interface UserSearch {
 	index?: number;
 }
 
-type OmittedUser = Omit<User, 'registrationDate' | 'classification' | 'verification'>;
+type OmittedUser = Omit<User, 'registrationDate' | 'classification' | 'verification' | 'role'>;
 
 export interface UserPersistence extends OmittedUser {
+	role?: UserRoles;
 	verification?: VerificationPersistence;
 	registrationDate?: Date;
 	classification: UserClassification;

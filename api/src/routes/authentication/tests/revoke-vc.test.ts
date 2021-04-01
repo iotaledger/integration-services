@@ -59,6 +59,7 @@ describe('test authentication routes', () => {
 			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
+				user: { userId: identityToRevoke },
 				params: {},
 				body: { subjectId: identityToRevoke }
 			};
@@ -95,7 +96,7 @@ describe('test authentication routes', () => {
 			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				userId: 'did:iota:4321', // different request user id than initiatorId
+				user: { userId: 'did:iota:4321' }, // different request user id than initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke }
 			};
@@ -132,7 +133,7 @@ describe('test authentication routes', () => {
 			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				userId: 'did:iota:1234', // same request user id as initiatorId
+				user: { userId: 'did:iota:1234' }, // same request user id as initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke }
 			};
@@ -173,7 +174,7 @@ describe('test authentication routes', () => {
 			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				userId: 'did:iota:1234', // same request user id as initiatorId
+				user: { userId: 'did:iota:1234' }, // same request user id as initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke }
 			};
