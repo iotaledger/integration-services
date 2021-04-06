@@ -9,6 +9,7 @@ import * as AuthDb from '../../../database/auth';
 import { User } from '../../../models/types/user';
 import * as EncryptionUtils from '../../../utils/encryption';
 import { ServerIdentityMock, UserIdentityMock } from '../../../test/mocks/identities';
+import { AuthorizationService } from '../../../services/authorization-service';
 
 const validUserMock = UserIdentityMock.userData;
 
@@ -34,12 +35,13 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
+		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret: 'very-secret-secret',
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,

@@ -8,14 +8,17 @@ import { UserService } from '../../services/user-service';
 import { User, UserClassification } from '../../models/types/user';
 import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
 import * as KeyCollectionLinksDb from '../../database/key-collection-links';
+import { AuthorizationService } from '../../services/authorization-service';
 
 export class AuthenticationRoutes {
 	private readonly authenticationService: AuthenticationService;
-	private readonly userService: UserService;
+	readonly authorizationService: AuthorizationService;
+	readonly userService: UserService;
 	private readonly config: Config;
 
-	constructor(authenticationService: AuthenticationService, userService: UserService, config: Config) {
+	constructor(authenticationService: AuthenticationService, userService: UserService, authorizationService: AuthorizationService, config: Config) {
 		this.authenticationService = authenticationService;
+		this.authorizationService = authorizationService;
 		this.userService = userService;
 		this.config = config;
 	}
@@ -158,7 +161,7 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	private isAuthorizedToRevoke = (kci: LinkedKeyCollectionIdentityPersistence, requestId: string): AuthorizationCheck => {
+	isAuthorizedToRevoke = (kci: LinkedKeyCollectionIdentityPersistence, requestId: string): AuthorizationCheck => {
 		if (kci.initiatorId !== requestId) {
 			return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 		}
@@ -166,7 +169,7 @@ export class AuthenticationRoutes {
 		return { isAuthorized: true, error: null };
 	};
 
-	private isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUserId: string): Promise<AuthorizationCheck> => {
+	isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUserId: string): Promise<AuthorizationCheck> => {
 		if (!initiatorVC.credentialSubject) {
 			return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 		}

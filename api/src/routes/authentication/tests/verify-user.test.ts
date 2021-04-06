@@ -11,6 +11,7 @@ import { AuthenticationRoutes } from '..';
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
+import { AuthorizationService } from '../../../services/authorization-service';
 
 describe('test authentication routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -34,12 +35,13 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
+		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret: 'very-secret-secret',
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,

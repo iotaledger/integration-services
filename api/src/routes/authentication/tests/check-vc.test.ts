@@ -7,6 +7,7 @@ import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import * as TrustedRootsDb from '../../../database/trusted-roots';
 import { AuthenticationRoutes } from '../index';
+import { AuthorizationService } from '../../../services/authorization-service';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
 const userMock = DeviceIdentityMock.userData;
@@ -33,12 +34,13 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
+		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret: 'very-secret-secret',
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,

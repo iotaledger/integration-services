@@ -8,6 +8,7 @@ import { StatusCodes } from 'http-status-codes';
 import { AuthenticationRoutes } from '../index';
 import * as KeyCollectionLinksDB from '../../../database/key-collection-links';
 import { LinkedKeyCollectionIdentityPersistence } from '../../../models/types/key-collection';
+import { AuthorizationService } from '../../../services/authorization-service';
 
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -33,12 +34,13 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
+		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret: 'very-secret-secret',
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,
