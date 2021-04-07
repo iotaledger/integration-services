@@ -1,6 +1,6 @@
 import { UserService } from './user-service';
 import { AuthorizationCheck } from '../models/types/authentication';
-import { User, UserRoles } from '../models/types/user';
+import { User, UserClassification, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
 	private readonly error: Error = new Error('not allowed!');
@@ -33,6 +33,9 @@ export class AuthorizationService {
 
 	isAuthorizedAdmin = async (requestUser: User, userId: string): Promise<boolean> => {
 		const role = requestUser.role;
+		if (requestUser.classification === UserClassification.device) {
+			return false;
+		}
 
 		if (role === UserRoles.Admin) {
 			return true;

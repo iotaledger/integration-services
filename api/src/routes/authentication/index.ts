@@ -177,7 +177,7 @@ export class AuthenticationRoutes {
 
 	isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
-		if (!isAdmin) {
+		if (!isAdmin || requestUser.classification === UserClassification.device) {
 			if (!initiatorVC.credentialSubject) {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
@@ -186,7 +186,7 @@ export class AuthenticationRoutes {
 				return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
 			}
 
-			if (initiatorVC.credentialSubject.classification === UserClassification.device) {
+			if (initiatorVC.credentialSubject.classification === UserClassification.device || requestUser.classification === UserClassification.device) {
 				return { isAuthorized: false, error: new Error('initiator is a device!') };
 			}
 

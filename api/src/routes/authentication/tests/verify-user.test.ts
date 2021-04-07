@@ -12,7 +12,7 @@ import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
-import { UserRoles } from '../../../models/types/user';
+import { UserClassification, UserRoles } from '../../../models/types/user';
 
 describe('test authentication routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -164,6 +164,28 @@ describe('test authentication routes', () => {
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user must be in same organization!'));
+		});
+
+		it('should not verify since initiator is admin but a device', async () => {
+			const subject = TestUsersMock[0];
+			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
+			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
+			spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(true);
+			spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const req: any = {
+				user: { userId: initiatorVC.id, classification: UserClassification.device, role: UserRoles.Admin },
+				params: {},
+				body: {
+					subjectId: subject.userId,
+					initiatorVC
+				}
+			};
+			await authenticationRoutes.verifyUser(req, res, nextMock);
+
+			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is a device!'));
 		});
 
 		it('should verify for user which has valid vc and different organization but admin user', async () => {
