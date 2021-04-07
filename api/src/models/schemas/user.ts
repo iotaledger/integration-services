@@ -25,7 +25,8 @@ const UserWithoutIdFields = {
 	description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	location: Type.Optional(Type.Union([LocationSchema, Type.Null()])),
 	organizationUrl: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	verifiableCredentials: Type.Optional(Type.Union([Type.Array(VerifiableCredentialSchema), Type.Null()]))
+	verifiableCredentials: Type.Optional(Type.Union([Type.Array(VerifiableCredentialSchema), Type.Null()])),
+	role: Type.Optional(Type.Union([Type.String(), Type.Null()]))
 };
 
 export const UserWithoutIdSchema = Type.Object({

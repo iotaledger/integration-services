@@ -82,7 +82,8 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 					classification: 'human',
 					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
-					username: 'first-user'
+					username: 'first-user',
+					initiatorId: ''
 				},
 				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 				issuanceDate: '2021-03-24T15:59:11Z',
@@ -157,7 +158,8 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 					classification: 'api',
 					organization: 'IOTA',
 					registrationDate: '2021-03-24T15:38:43+01:00',
-					username: 'api-identity'
+					username: 'api-identity',
+					initiatorId: ''
 				},
 				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 				issuanceDate: '2021-03-24T14:38:45Z',
@@ -224,7 +226,8 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 					classification: 'device',
 					organization: 'IOTA',
 					registrationDate: '2021-03-24T16:54:38+01:00',
-					username: 'test-device'
+					username: 'test-device',
+					initiatorId: ''
 				},
 				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 				issuanceDate: '2021-03-24T15:58:59Z',

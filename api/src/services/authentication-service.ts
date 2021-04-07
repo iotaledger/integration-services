@@ -91,7 +91,8 @@ export class AuthenticationService {
 				classification: subject.classification,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
-				username: subject.username
+				username: subject.username,
+				initiatorId
 			}
 		};
 

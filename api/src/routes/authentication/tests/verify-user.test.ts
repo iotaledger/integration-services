@@ -11,6 +11,8 @@ import { AuthenticationRoutes } from '..';
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
+import { AuthorizationService } from '../../../services/authorization-service';
+import { UserClassification, UserRoles } from '../../../models/types/user';
 
 describe('test authentication routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -34,12 +36,13 @@ describe('test authentication routes', () => {
 		};
 		identityService = IdentityService.getInstance(identityConfig);
 		userService = new UserService();
+		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret: 'very-secret-secret',
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,
@@ -65,7 +68,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				userId: 'WRONGUSERID',
+				user: { userId: 'WRONGUSERID' },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -84,7 +87,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -106,7 +109,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -128,7 +131,7 @@ describe('test authentication routes', () => {
 
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -147,10 +150,8 @@ describe('test authentication routes', () => {
 			const subject = TestUsersMock[1];
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
-			const initiatorVcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -161,20 +162,41 @@ describe('test authentication routes', () => {
 
 			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user must be in same organization!'));
 		});
 
-		it('should create vc for valid a', async () => {
+		it('should not verify since initiator is admin but a device', async () => {
 			const subject = TestUsersMock[0];
+			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
+			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
+			spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(true);
+			spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const req: any = {
+				user: { userId: initiatorVC.id, classification: UserClassification.device, role: UserRoles.Admin },
+				params: {},
+				body: {
+					subjectId: subject.userId,
+					initiatorVC
+				}
+			};
+			await authenticationRoutes.verifyUser(req, res, nextMock);
+
+			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is a device!'));
+		});
+
+		it('should verify for user which has valid vc and different organization but admin user', async () => {
+			const subject = TestUsersMock[1];
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const initiatorVcIsVerified = true;
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				userId: initiatorVC.id,
+				user: { userId: initiatorVC.id, role: UserRoles.Admin },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -187,7 +209,69 @@ describe('test authentication routes', () => {
 				id: subject.userId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
-				username: subject.username
+				username: subject.username,
+				initiatorId: initiatorVC.id
+			};
+			const expectedCredential = {
+				type: 'UserCredential',
+				id: subject.userId,
+				subject: {
+					...credentialSubject
+				}
+			};
+			const expectedKeyCollection = {
+				type: KeyCollectionMock.type,
+				keys: KeyCollectionMock.keys
+			};
+			const expectedAddKeyCollectionCall = {
+				index: 0,
+				isRevoked: false,
+				keyCollectionIndex: 0,
+				initiatorId: initiatorVC.id,
+				linkedIdentity: subject.userId
+			};
+			await authenticationRoutes.verifyUser(req, res, nextMock);
+
+			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
+			expect(getLinkedIdentitySpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
+			expect(addKeyCollectionIdentitySpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
+			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
+				expect.objectContaining({
+					verified: true
+				})
+			);
+			expect(addUserVCSpy).toHaveBeenCalled();
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith({ VCMOCK: 1 });
+		});
+
+		it('should verify for user which has valid vc and is in same organization', async () => {
+			const subject = TestUsersMock[0];
+			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
+			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
+			const initiatorVcIsVerified = true;
+			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
+			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const req: any = {
+				user: { userId: initiatorVC.id },
+				params: {},
+				body: {
+					subjectId: subject.userId,
+					initiatorVC
+				}
+			};
+
+			const credentialSubject: CredentialSubject = {
+				classification: subject.classification,
+				id: subject.userId,
+				organization: subject.organization,
+				registrationDate: subject.registrationDate,
+				username: subject.username,
+				initiatorId: initiatorVC.id
 			};
 			const expectedCredential = {
 				type: 'UserCredential',

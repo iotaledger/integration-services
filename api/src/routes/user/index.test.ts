@@ -1,6 +1,7 @@
 import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
 import { UserPersistence, UserClassification, User, UserSearch } from '../../models/types/user';
+import { AuthorizationService } from '../../services/authorization-service';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
@@ -11,7 +12,8 @@ describe('test Search user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -59,7 +61,8 @@ describe('test GET user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -150,7 +153,8 @@ describe('test POST user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -233,7 +237,8 @@ describe('test PUT user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -256,7 +261,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			userId: validBody.userId,
+			user: { userId: validBody.userId },
 			params: {},
 			body: validBody
 		};
@@ -272,7 +277,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			userId: 'did:iota:123456789', // different request userId than user to update
+			user: { userId: 'did:iota:123456789' }, // different request userId than user to update
 			params: {},
 			body: validBody
 		};
@@ -287,7 +292,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			userId: validBody.userId,
+			user: { userId: validBody.userId },
 			params: {},
 			body: validBody
 		};
@@ -303,7 +308,7 @@ describe('test PUT user', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			userId: validBody.userId,
+			user: { userId: validBody.userId },
 			params: {},
 			body: validBody
 		};
@@ -324,7 +329,8 @@ describe('test DELETE user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -346,7 +352,7 @@ describe('test DELETE user', () => {
 		const deleteUserSpy = spyOn(UserDb, 'deleteUser');
 
 		const req: any = {
-			userId: 'did:iota:123456789',
+			user: { userId: 'did:iota:123456789' },
 			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
@@ -361,7 +367,7 @@ describe('test DELETE user', () => {
 		const deleteUserSpy = spyOn(UserDb, 'deleteUser');
 
 		const req: any = {
-			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+			user: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
@@ -377,7 +383,7 @@ describe('test DELETE user', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+			user: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};

@@ -2,6 +2,7 @@ import {
 	User,
 	UserClassification,
 	UserPersistence,
+	UserRoles,
 	UserSearch,
 	Verification,
 	VerificationPersistence,
@@ -110,7 +111,8 @@ export class UserService {
 			description,
 			organizationUrl,
 			location,
-			verifiableCredentials
+			verifiableCredentials,
+			role
 		} = user;
 
 		if (
@@ -138,7 +140,8 @@ export class UserService {
 			verification: this.getVerificationPersistence(verification),
 			organizationUrl,
 			location,
-			verifiableCredentials
+			verifiableCredentials,
+			role: role && (role as UserRoles)
 		};
 
 		return userPersistence;
@@ -164,7 +167,8 @@ export class UserService {
 			description,
 			organizationUrl,
 			location,
-			verifiableCredentials
+			verifiableCredentials,
+			role
 		} = userPersistence;
 
 		const user: User = {
@@ -181,7 +185,8 @@ export class UserService {
 			organization,
 			organizationUrl,
 			location,
-			verifiableCredentials
+			verifiableCredentials,
+			role: role && (role as UserRoles)
 		};
 		return user;
 	};

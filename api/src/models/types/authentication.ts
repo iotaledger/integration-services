@@ -1,11 +1,12 @@
 import Express from 'express';
 import { Static } from '@sinclair/typebox';
 import { VerifyUserSchema } from '../schemas/authentication';
+import { User } from './user';
 
 export type VerifyUserBody = Static<typeof VerifyUserSchema>;
 
 export interface AuthenticatedRequest extends Express.Request {
-	userId: string;
+	user: User;
 }
 
 export interface AuthorizationCheck {
