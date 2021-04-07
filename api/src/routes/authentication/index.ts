@@ -5,7 +5,7 @@ import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
 import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
-import { User, UserClassification, UserRoles } from '../../models/types/user';
+import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/key-collection-links';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
@@ -177,7 +177,7 @@ export class AuthenticationRoutes {
 
 	isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
-		if (!isAdmin || requestUser.classification === UserClassification.device) {
+		if (!isAdmin || !this.authorizationService.isUserOrApi(requestUser.classification)) {
 			if (!initiatorVC.credentialSubject) {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
@@ -186,7 +186,10 @@ export class AuthenticationRoutes {
 				return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
 			}
 
-			if (initiatorVC.credentialSubject.classification === UserClassification.device || requestUser.classification === UserClassification.device) {
+			if (
+				!this.authorizationService.isUserOrApi(initiatorVC.credentialSubject.classification) ||
+				!this.authorizationService.isUserOrApi(requestUser.classification)
+			) {
 				return { isAuthorized: false, error: new Error('initiator is a device!') };
 			}
 
