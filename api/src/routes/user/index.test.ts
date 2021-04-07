@@ -87,8 +87,7 @@ describe('test GET user', () => {
 			username: 'first-user',
 			classification: UserClassification.human,
 			subscribedChannelIds: [],
-			firstName: 'Tom',
-			lastName: 'Tomson',
+			details: { firstName: 'Tom', lastName: 'Sonson' },
 			description: null,
 			registrationDate: date,
 			organization: 'IOTA'
@@ -141,8 +140,7 @@ describe('test POST user', () => {
 		username: 'first-user',
 		classification: UserClassification.human,
 		subscribedChannelIds: [],
-		firstName: 'Tom',
-		lastName: 'Tomson',
+		details: { firstName: 'Tom', lastName: 'Sonson' },
 		description: null,
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
@@ -225,8 +223,7 @@ describe('test PUT user', () => {
 		username: 'first-user',
 		classification: UserClassification.human,
 		subscribedChannelIds: [],
-		firstName: 'Tom',
-		lastName: 'Tomson',
+		details: { firstName: 'Tom', lastName: 'Sonson' },
 		description: null,
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'

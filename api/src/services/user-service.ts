@@ -1,6 +1,5 @@
 import {
 	User,
-	UserClassification,
 	UserPersistence,
 	UserRoles,
 	UserSearch,
@@ -98,8 +97,6 @@ export class UserService {
 			throw new Error('Error when parsing the body: userId must be provided!');
 		}
 		const {
-			firstName,
-			lastName,
 			publicKey,
 			subscribedChannelIds,
 			userId,
@@ -110,36 +107,23 @@ export class UserService {
 			classification,
 			description,
 			organizationUrl,
-			location,
+			details,
 			verifiableCredentials,
 			role
 		} = user;
-
-		if (
-			classification &&
-			classification !== UserClassification.human &&
-			classification !== UserClassification.device &&
-			classification !== UserClassification.api
-		) {
-			throw new Error(
-				`No valid classification provided, it must be ${UserClassification.human}, ${UserClassification.device} or ${UserClassification.api}!`
-			);
-		}
 
 		const userPersistence: UserPersistence = {
 			userId,
 			publicKey,
 			username,
-			classification: classification as UserClassification,
+			classification,
 			subscribedChannelIds,
-			firstName,
-			lastName,
 			description,
 			organization,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			verification: this.getVerificationPersistence(verification),
 			organizationUrl,
-			location,
+			details,
 			verifiableCredentials,
 			role: role && (role as UserRoles)
 		};
@@ -154,19 +138,17 @@ export class UserService {
 		}
 
 		const {
-			firstName,
 			username,
 			publicKey,
 			userId,
 			subscribedChannelIds,
 			organization,
-			lastName,
 			registrationDate,
 			verification,
 			classification,
 			description,
 			organizationUrl,
-			location,
+			details,
 			verifiableCredentials,
 			role
 		} = userPersistence;
@@ -177,14 +159,12 @@ export class UserService {
 			username,
 			classification,
 			subscribedChannelIds,
-			firstName,
-			lastName,
 			description,
 			registrationDate: getDateStringFromDate(registrationDate),
 			verification: this.getVerificationObject(verification),
 			organization,
 			organizationUrl,
-			location,
+			details,
 			verifiableCredentials,
 			role: role && (role as UserRoles)
 		};

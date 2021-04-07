@@ -61,8 +61,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		classification: 'human',
-		firstName: 'Tom',
-		lastName: 'Sonson',
+		details: { firstName: 'Tom', lastName: 'Sonson' },
 		description: 'Just a user',
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verification: {

@@ -59,33 +59,20 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		_id: user.userId
 	};
 
-	const {
-		firstName,
-		lastName,
-		username,
-		organization,
-		subscribedChannelIds,
-		description,
-		classification,
-		organizationUrl,
-		location,
-		verifiableCredentials
-	} = user;
+	const { username, organization, subscribedChannelIds, description, classification, organizationUrl, details, verifiableCredentials } = user;
 
 	if (verifiableCredentials?.some((vc) => vc?.id !== user.userId)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
 	}
 
 	const updateObject = MongoDbService.getPlainObject({
-		firstName,
-		lastName,
 		description,
 		username: username || undefined, // username must not be ''
 		classification: classification || undefined, // username must not be ''
 		organization,
 		subscribedChannelIds,
 		organizationUrl,
-		location,
+		details,
 		verifiableCredentials
 	});
 
