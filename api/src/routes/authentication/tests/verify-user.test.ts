@@ -131,7 +131,7 @@ describe('test authentication routes', () => {
 
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				user: { userId: initiatorVC.id },
+				user: { userId: initiatorVC.id, classification: UserClassification.human },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -151,7 +151,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				user: { userId: initiatorVC.id },
+				user: { userId: initiatorVC.id, classification: UserClassification.human },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -196,7 +196,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, role: UserRoles.Admin },
+				user: { userId: initiatorVC.id, role: UserRoles.Admin, classification: UserClassification.human },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -257,7 +257,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id },
+				user: { userId: initiatorVC.id, classification: UserClassification.human },
 				params: {},
 				body: {
 					subjectId: subject.userId,

@@ -33,7 +33,7 @@ export class AuthorizationService {
 
 	isAuthorizedAdmin = async (requestUser: User, userId: string): Promise<boolean> => {
 		const role = requestUser.role;
-		if (requestUser.classification === UserClassification.device) {
+		if (!this.isUserOrApi(requestUser.classification)) {
 			return false;
 		}
 
@@ -48,4 +48,8 @@ export class AuthorizationService {
 		}
 		return false;
 	};
+
+	isUserOrApi(classification: UserClassification | string): boolean {
+		return classification === UserClassification.human || classification === UserClassification.api;
+	}
 }
