@@ -87,7 +87,7 @@ describe('test GET user', () => {
 			username: 'first-user',
 			classification: UserClassification.human,
 			subscribedChannelIds: [],
-			details: { firstName: 'Tom', lastName: 'Sonson' },
+			details: { firstName: 'Tom', lastName: 'Tomson' },
 			description: null,
 			registrationDate: date,
 			organization: 'IOTA'
@@ -107,8 +107,7 @@ describe('test GET user', () => {
 			username: 'first-user',
 			classification: 'human',
 			subscribedChannelIds: [],
-			firstName: 'Tom',
-			lastName: 'Tomson',
+			details: { firstName: 'Tom', lastName: 'Tomson' },
 			description: null,
 			registrationDate: getDateStringFromDate(date),
 			organization: 'IOTA'
