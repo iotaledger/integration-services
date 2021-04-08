@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence, UserSearch, VerificationPersistence, VerificationUpdatePersistence } from '../models/types/user';
+import { UserPersistence, UserRoles, UserSearch, VerificationPersistence, VerificationUpdatePersistence } from '../models/types/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { VerifiableCredentialJson } from '../models/types/identity';
 
@@ -47,7 +47,8 @@ export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpRe
 	const document = {
 		_id: user.userId,
 		...user,
-		registrationDate: new Date()
+		registrationDate: new Date(),
+		role: UserRoles.User
 	};
 
 	return MongoDbService.insertDocument(collectionName, document);

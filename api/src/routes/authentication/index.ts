@@ -5,17 +5,20 @@ import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
 import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
-import { User, UserClassification } from '../../models/types/user';
-import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
+import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/key-collection-links';
+import { AuthorizationService } from '../../services/authorization-service';
+import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
 
 export class AuthenticationRoutes {
 	private readonly authenticationService: AuthenticationService;
-	private readonly userService: UserService;
+	readonly authorizationService: AuthorizationService;
+	readonly userService: UserService;
 	private readonly config: Config;
 
-	constructor(authenticationService: AuthenticationService, userService: UserService, config: Config) {
+	constructor(authenticationService: AuthenticationService, userService: UserService, authorizationService: AuthorizationService, config: Config) {
 		this.authenticationService = authenticationService;
+		this.authorizationService = authorizationService;
 		this.userService = userService;
 		this.config = config;
 	}
@@ -35,13 +38,13 @@ export class AuthenticationRoutes {
 		try {
 			const verifyUserBody: VerifyUserBody = req.body;
 			const { initiatorVC, subjectId } = verifyUserBody;
-			const requestUserId = req.userId;
+			const requestUser = req.user;
 			const subject = await this.userService.getUser(subjectId);
 			if (!subject) {
 				throw new Error('subject does not exist!');
 			}
 
-			const { isAuthorized, error } = await this.isAuthorizedToVerify(subject, initiatorVC, requestUserId);
+			const { isAuthorized, error } = await this.isAuthorizedToVerify(subject, initiatorVC, requestUser);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -58,7 +61,7 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	checkVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const vcBody: any = req.body;
 			if (!vcBody?.id) {
@@ -75,7 +78,7 @@ export class AuthenticationRoutes {
 	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const revokeBody = req.body;
-			const requestId = req.userId;
+			const requestUser = req.user;
 			if (!revokeBody.subjectId) {
 				throw new Error('No valid body provided!');
 			}
@@ -83,10 +86,11 @@ export class AuthenticationRoutes {
 			if (!kci) {
 				throw new Error('no identity found to revoke the verification!');
 			}
-			const { isAuthorized, error } = this.isAuthorizedToRevoke(kci, requestId);
+			const { isAuthorized, error } = await this.isAuthorizedToRevoke(kci, requestUser);
 			if (!isAuthorized) {
 				throw error;
 			}
+
 			await this.authenticationService.revokeVerifiableCredential(kci, this.config.serverIdentityId);
 
 			res.sendStatus(StatusCodes.OK);
@@ -98,7 +102,7 @@ export class AuthenticationRoutes {
 	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const did = decodeParam(<string>req.query?.id);
+			const did = req.params && decodeParam(<string>req.params['userId']);
 
 			if (!did) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -158,34 +162,48 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	private isAuthorizedToRevoke = (kci: LinkedKeyCollectionIdentityPersistence, requestId: string): AuthorizationCheck => {
-		if (kci.initiatorId !== requestId) {
-			return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
+	isAuthorizedToRevoke = async (kci: LinkedKeyCollectionIdentityPersistence, requestUser: User): Promise<AuthorizationCheck> => {
+		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.linkedIdentity);
+		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.initiatorId);
+		if (!isAuthorizedUser && !isAuthorizedInitiator) {
+			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.linkedIdentity);
+			if (!isAuthorizedAdmin) {
+				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
+			}
 		}
 
 		return { isAuthorized: true, error: null };
 	};
 
-	private isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUserId: string): Promise<AuthorizationCheck> => {
-		if (!initiatorVC.credentialSubject) {
-			return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
-		}
+	isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
+		const isAdmin = requestUser.role === UserRoles.Admin;
+		if (!isAdmin || !this.authorizationService.isUserOrApi(requestUser.classification)) {
+			if (!initiatorVC.credentialSubject) {
+				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
+			}
 
-		if (requestUserId !== initiatorVC.credentialSubject.id || requestUserId !== initiatorVC.id) {
-			return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
-		}
+			if (requestUser.userId !== initiatorVC.credentialSubject.id || requestUser.userId !== initiatorVC.id) {
+				return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
+			}
 
-		if (initiatorVC.credentialSubject.classification === UserClassification.device) {
-			return { isAuthorized: false, error: new Error('initiator is a device!') };
+			if (
+				!this.authorizationService.isUserOrApi(initiatorVC.credentialSubject.classification) ||
+				!this.authorizationService.isUserOrApi(requestUser.classification)
+			) {
+				return { isAuthorized: false, error: new Error('initiator is a device!') };
+			}
+
+			if (
+				(initiatorVC.credentialSubject.organization || subject.organization) &&
+				subject.organization !== initiatorVC.credentialSubject.organization
+			) {
+				return { isAuthorized: false, error: new Error('user must be in same organization!') };
+			}
 		}
 
 		const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC);
 		if (!isInitiatorVerified) {
 			return { isAuthorized: false, error: new Error('initiator has to be verified!') };
-		}
-
-		if ((initiatorVC.credentialSubject.organization || subject.organization) && subject.organization !== initiatorVC.credentialSubject.organization) {
-			return { isAuthorized: false, error: new Error('user must be in same organization!') };
 		}
 
 		return { isAuthorized: true, error: null };

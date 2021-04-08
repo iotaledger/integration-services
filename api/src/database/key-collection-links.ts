@@ -5,6 +5,8 @@ import { LinkedKeyCollectionIdentityPersistence, KeyCollectionPersistence } from
 const collectionName = CollectionNames.keyCollectionLinks;
 const getIndex = (kci: LinkedKeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;
 
+// TODO#54 get highest index instead of size. So a complete deleted entry does not break the logic!
+// get highest keyCollectionIndex as well & generate new keycollection dynamically
 export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promise<number> => {
 	const query = { keyCollectionIndex };
 	return MongoDbService.db.collection(collectionName).countDocuments(query);

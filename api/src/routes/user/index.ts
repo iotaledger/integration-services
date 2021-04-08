@@ -4,14 +4,18 @@ import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
+import { AuthenticatedRequest } from '../../models/types/authentication';
+import { AuthorizationService } from '../../services/authorization-service';
 
 export class UserRoutes {
 	private readonly userService: UserService;
-	constructor(userService: UserService) {
+	private readonly authorizationService: AuthorizationService;
+	constructor(userService: UserService, authorizationService: AuthorizationService) {
 		this.userService = userService;
+		this.authorizationService = authorizationService;
 	}
 
-	searchUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userSearch = this.getUserSearch(req);
 			const users = await this.userService.searchUsers(userSearch);
@@ -53,9 +57,15 @@ export class UserRoutes {
 		}
 	};
 
-	updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const user: User = req.body;
+
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, user.userId);
+			if (!isAuthorized) {
+				throw error;
+			}
+
 			const result = await this.userService.updateUser(user);
 
 			if (!result?.result?.n) {
@@ -69,12 +79,17 @@ export class UserRoutes {
 		}
 	};
 
-	deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userId = _.get(req, 'params.userId');
 			if (_.isEmpty(userId)) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
+			}
+
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, userId);
+			if (!isAuthorized) {
+				throw error;
 			}
 
 			await this.userService.deleteUser(userId);
@@ -91,7 +106,7 @@ export class UserRoutes {
 		const username = decodeParam(<string>req.query.username);
 		const verifiedParam = decodeParam(<string>req.query.verified);
 		const registrationDate = decodeParam(<string>req.query['registration-date']);
-		const verified = verifiedParam != null ? Boolean(verifiedParam) : undefined;
+		const verified = verifiedParam != null ? Boolean(verifiedParam) && verifiedParam == 'true' : undefined;
 		let subscribedChannelIds: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
 		if (subscribedChannelIds != null && !Array.isArray(subscribedChannelIds)) {
 			// we have a string instead of string array!

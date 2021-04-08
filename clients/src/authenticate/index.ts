@@ -5,7 +5,7 @@ import axios from 'axios';
 export const fetchAuth = async (identity: any) => {
 	console.log('requesting challenge to sign...');
 
-	const url = `${Config.baseUrl}/api/v1/authentication/get-challenge/${identity.doc.id}`;
+	const url = `${Config.baseUrl}/api/v1/authentication/challenge/${identity.doc.id}`;
 	const res = await axios.get(url);
 	if (res.status !== 200) {
 		console.error('didnt receive status 200 on get-challenge!');

@@ -1,6 +1,7 @@
 import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
 import { UserPersistence, UserClassification, User, UserSearch } from '../../models/types/user';
+import { AuthorizationService } from '../../services/authorization-service';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
@@ -11,7 +12,8 @@ describe('test Search user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -59,7 +61,8 @@ describe('test GET user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -113,12 +116,12 @@ describe('test GET user', () => {
 		});
 	});
 
-	it('should call next(err) if an error occurs', async () => {
+	it('should call next(err) if an error occurs when reading from db', async () => {
 		const getUserSpy = spyOn(UserDb, 'getUser').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			params: { userId: 'my-public-key-1' },
+			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 
@@ -129,6 +132,7 @@ describe('test GET user', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
 	});
 });
+
 describe('test POST user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
 	const validBody: User = {
@@ -149,7 +153,8 @@ describe('test POST user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -195,7 +200,7 @@ describe('test POST user', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(201);
 	});
 
-	it('should call next(err) if an error occurs', async () => {
+	it('should call next(err) if an error occurs when adding to db', async () => {
 		const addUserSpy = spyOn(UserDb, 'addUser').and.callFake(() => {
 			throw new Error('Test error');
 		});
@@ -211,6 +216,7 @@ describe('test POST user', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
 	});
 });
+
 describe('test PUT user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: UserRoutes, userService: UserService;
 	const validBody: User = {
@@ -231,7 +237,8 @@ describe('test PUT user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -254,6 +261,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
+			user: { userId: validBody.userId },
 			params: {},
 			body: validBody
 		};
@@ -265,10 +273,26 @@ describe('test PUT user', () => {
 		expect(res.status).toHaveBeenCalledWith(404);
 	});
 
+	it('is not authorized to update the user', async () => {
+		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
+
+		const req: any = {
+			user: { userId: 'did:iota:123456789' }, // different request userId than user to update
+			params: {},
+			body: validBody
+		};
+
+		await userRoutes.updateUser(req, res, nextMock);
+
+		expect(updateUserSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+	});
+
 	it('should return expected user', async () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
+			user: { userId: validBody.userId },
 			params: {},
 			body: validBody
 		};
@@ -279,11 +303,12 @@ describe('test PUT user', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(200);
 	});
 
-	it('should call next(err) if an error occurs', async () => {
+	it('should call next(err) if an error occurs when updating the db', async () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
+			user: { userId: validBody.userId },
 			params: {},
 			body: validBody
 		};
@@ -304,7 +329,8 @@ describe('test DELETE user', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		userService = new UserService();
-		userRoutes = new UserRoutes(userService);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new UserRoutes(userService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -322,11 +348,27 @@ describe('test DELETE user', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(400);
 	});
 
-	it('should return expected user', async () => {
+	it('is not authorized to delete different user', async () => {
 		const deleteUserSpy = spyOn(UserDb, 'deleteUser');
 
 		const req: any = {
-			params: { userId: 'my-public-key-1' },
+			user: { userId: 'did:iota:123456789' },
+			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			body: null
+		};
+
+		await userRoutes.deleteUser(req, res, nextMock);
+
+		expect(deleteUserSpy).toHaveBeenCalledTimes(0);
+		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+	});
+
+	it('should delete expected user', async () => {
+		const deleteUserSpy = spyOn(UserDb, 'deleteUser');
+
+		const req: any = {
+			user: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 
@@ -336,12 +378,13 @@ describe('test DELETE user', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(200);
 	});
 
-	it('should call next(err) if an error occurs', async () => {
+	it('should call next(err) if an error occurs when removing from db', async () => {
 		const deleteUserSpy = spyOn(UserDb, 'deleteUser').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			params: { userId: 'my-public-key-1' },
+			user: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 		await userRoutes.deleteUser(req, res, nextMock);

@@ -11,16 +11,16 @@ export class ChannelInfoService {
 		this.userService = userService;
 	}
 
-	getChannelInfo = async (channelAddress: string): Promise<ChannelInfo> => {
+	getChannelInfo = async (channelAddress: string): Promise<ChannelInfo | null> => {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		return this.getChannelInfoObject(channelInfoPersistence);
+		return channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
 	};
 
 	searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
 		let channelInfoPersistence: ChannelInfoPersistence[] = [];
 
 		if (channelInfoSearch.author && !channelInfoSearch.authorId) {
-			const authorId = (await this.userService.getUser(channelInfoSearch.author))?.userId;
+			const authorId = (await this.userService.getUserByUsername(channelInfoSearch.author))?.userId;
 
 			if (!authorId) {
 				throw Error(`No user id found for: ${channelInfoSearch.author}`);

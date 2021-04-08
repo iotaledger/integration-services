@@ -4,14 +4,18 @@ import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
+import { AuthenticatedRequest } from '../../models/types/authentication';
+import { AuthorizationService } from '../../services/authorization-service';
 
 export class ChannelInfoRoutes {
 	private readonly channelInfoService: ChannelInfoService;
-	constructor(channelInfoService: ChannelInfoService) {
+	private readonly authorizationService: AuthorizationService;
+	constructor(channelInfoService: ChannelInfoService, authorizationService: AuthorizationService) {
 		this.channelInfoService = channelInfoService;
+		this.authorizationService = authorizationService;
 	}
 
-	searchChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelInfoSearch = this.getChannelInfoSearch(req);
 			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
@@ -37,11 +41,16 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	addChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	addChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelInfo: ChannelInfo = req.body;
-			const result = await this.channelInfoService.addChannelInfo(channelInfo);
 
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			if (!isAuthorized) {
+				throw error;
+			}
+
+			const result = await this.channelInfoService.addChannelInfo(channelInfo);
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add channel info' });
 				return;
@@ -53,11 +62,21 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	updateChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	updateChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channelInfo: ChannelInfo = req.body;
-			const result = await this.channelInfoService.updateChannelInfo(channelInfo);
+			const channelInfoBody: ChannelInfo = req.body;
 
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress);
+			if (!channelInfo) {
+				throw new Error('channel does not exist!');
+			}
+
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			if (!isAuthorized) {
+				throw error;
+			}
+
+			const result = await this.channelInfoService.updateChannelInfo(channelInfoBody);
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'No channel info found to update!' });
 				return;
@@ -69,12 +88,21 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	deleteChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	deleteChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			if (_.isEmpty(channelAddress)) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
+			}
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+			if (!channelInfo) {
+				throw new Error('channel does not exist!');
+			}
+
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			if (!isAuthorized) {
+				throw error;
 			}
 
 			await this.channelInfoService.deleteChannelInfo(channelAddress);

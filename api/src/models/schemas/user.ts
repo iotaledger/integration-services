@@ -16,16 +16,17 @@ export const VerificationSchema = Type.Object({
 const UserWithoutIdFields = {
 	username: Type.String({ minLength: 3 }),
 	classification: Type.String({ minLength: 3 }),
-	firstName: Type.Optional(Type.String()),
-	lastName: Type.Optional(Type.String()),
-	organization: Type.Optional(Type.String({ minLength: 2 })),
-	subscribedChannelIds: Type.Optional(Type.Array(Type.String())),
-	registrationDate: Type.Optional(Type.String()),
-	verification: Type.Optional(VerificationSchema),
-	description: Type.Optional(Type.String()),
-	location: Type.Optional(LocationSchema),
-	organizationUrl: Type.Optional(Type.String()),
-	verifiableCredentials: Type.Optional(Type.Array(VerifiableCredentialSchema))
+	firstName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	lastName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	organization: Type.Optional(Type.Union([Type.String({ minLength: 2 }), Type.Null()])),
+	subscribedChannelIds: Type.Optional(Type.Union([Type.Array(Type.String()), Type.Null()])),
+	registrationDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	verification: Type.Optional(Type.Union([VerificationSchema, Type.Null()])),
+	description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	location: Type.Optional(Type.Union([LocationSchema, Type.Null()])),
+	organizationUrl: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	verifiableCredentials: Type.Optional(Type.Union([Type.Array(VerifiableCredentialSchema), Type.Null()])),
+	role: Type.Optional(Type.Union([Type.String(), Type.Null()]))
 };
 
 export const UserWithoutIdSchema = Type.Object({
