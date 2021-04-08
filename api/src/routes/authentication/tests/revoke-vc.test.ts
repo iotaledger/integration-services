@@ -86,7 +86,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -123,7 +124,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -160,7 +162,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -201,7 +204,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -242,7 +246,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -283,7 +288,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: identityToRevoke,
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -326,7 +332,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: identityToRevoke,
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -365,7 +372,8 @@ describe('test authentication routes', () => {
 				initiatorId: 'did:iota:1234',
 				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined
+				revokedIdentity: undefined,
+				vc: vcMock
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,

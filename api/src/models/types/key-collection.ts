@@ -1,3 +1,5 @@
+import { VerifiableCredentialJson } from './identity';
+
 export interface KeyCollectionPersistence {
 	index: number;
 	count: number;
@@ -17,6 +19,7 @@ export interface LinkedKeyCollectionIdentityPersistence {
 	linkedIdentity?: string;
 	isRevoked: boolean;
 	revokedIdentity?: string;
+	vc: VerifiableCredentialJson;
 }
 
 export interface KeyCollectionJson {

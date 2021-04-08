@@ -10,7 +10,6 @@ import {
 	Credential
 } from '../models/types/identity';
 import { User, VerificationUpdatePersistence } from '../models/types/user';
-import { getDateFromString } from '../utils/date';
 import { IdentityService } from './identity-service';
 import { UserService } from './user-service';
 import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
@@ -112,6 +111,7 @@ export class AuthenticationService {
 		const vc = await this.identityService.createVerifiableCredential<CredentialSubject>(issuerIdentity, credential, keyCollectionJson, index);
 
 		await KeyCollectionLinksDb.addKeyCollectionIdentity({
+			vc,
 			index,
 			initiatorId,
 			isRevoked: false,
@@ -133,20 +133,6 @@ export class AuthenticationService {
 
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
-		try {
-			const user = await this.userService.getUser(vc.id);
-			const vup: VerificationUpdatePersistence = {
-				userId: user.userId,
-				verified: isVerified,
-				lastTimeChecked: new Date(),
-				verificationDate: getDateFromString(user?.verification?.verificationDate),
-				verificationIssuerId: user?.verification?.verificationIssuerId
-			};
-
-			await this.userService.updateUserVerification(vup);
-		} catch (err) {
-			console.error(err);
-		}
 		return { isVerified };
 	};
 
@@ -170,6 +156,7 @@ export class AuthenticationService {
 
 		await KeyCollectionLinksDb.revokeKeyCollectionIdentity(kci);
 
+		// TODO remove vc from user data and check if there are valid credentials inside user array if not update UserVerification to false!
 		const vup: VerificationUpdatePersistence = {
 			userId: subjectId,
 			verified: false,

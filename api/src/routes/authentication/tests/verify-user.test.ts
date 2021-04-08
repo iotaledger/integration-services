@@ -53,9 +53,10 @@ describe('test authentication routes', () => {
 	describe('test verifyUser route', () => {
 		let createVerifiableCredentialSpy: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
 		let getLinkedIdentitySpy: any, addKeyCollectionIdentitySpy: any, updateUserVerificationSpy: any, addUserVCSpy: any;
+		const vcMock = { VCMOCK: 1 };
 		beforeEach(() => {
 			keyCollectionIndex = 0;
-			createVerifiableCredentialSpy = spyOn(identityService, 'createVerifiableCredential').and.returnValue({ VCMOCK: 1 });
+			createVerifiableCredentialSpy = spyOn(identityService, 'createVerifiableCredential').and.returnValue(vcMock);
 			getKeyCollectionSpy = spyOn(KeyCollectionDB, 'getKeyCollection').and.returnValue(KeyCollectionMock);
 			getLinkedIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedIdentitesSize').and.returnValue(keyCollectionIndex);
 			addKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'addKeyCollectionIdentity');
@@ -228,7 +229,8 @@ describe('test authentication routes', () => {
 				isRevoked: false,
 				keyCollectionIndex: 0,
 				initiatorId: initiatorVC.id,
-				linkedIdentity: subject.userId
+				linkedIdentity: subject.userId,
+				vc: vcMock
 			};
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
@@ -246,7 +248,7 @@ describe('test authentication routes', () => {
 			);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalledWith({ VCMOCK: 1 });
+			expect(res.send).toHaveBeenCalledWith(vcMock);
 		});
 
 		it('should verify for user which has valid vc and is in same organization', async () => {
@@ -289,7 +291,8 @@ describe('test authentication routes', () => {
 				isRevoked: false,
 				keyCollectionIndex: 0,
 				initiatorId: initiatorVC.id,
-				linkedIdentity: subject.userId
+				linkedIdentity: subject.userId,
+				vc: vcMock
 			};
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
@@ -307,7 +310,7 @@ describe('test authentication routes', () => {
 			);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalledWith({ VCMOCK: 1 });
+			expect(res.send).toHaveBeenCalledWith(vcMock);
 		});
 	});
 });

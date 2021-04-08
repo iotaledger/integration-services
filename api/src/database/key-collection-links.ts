@@ -2,7 +2,7 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { LinkedKeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/types/key-collection';
 
-const collectionName = CollectionNames.keyCollectionLinks;
+const collectionName = CollectionNames.verifiableCredentials;
 const getIndex = (kci: LinkedKeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;
 
 // TODO#54 get highest index instead of size. So a complete deleted entry does not break the logic!
@@ -27,7 +27,7 @@ export const addKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityP
 
 	const res = await MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
 	if (!res?.result?.n) {
-		throw new Error('could not add key collection to the identity!');
+		throw new Error('could not add verifiable credential!');
 	}
 };
 
