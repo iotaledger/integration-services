@@ -3,7 +3,6 @@ import { AuthorizationCheck } from '../models/types/authentication';
 import { User, UserClassification, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
-	private readonly error: Error = new Error('not allowed!');
 	private readonly userService: UserService;
 
 	constructor(userService: UserService) {
@@ -15,20 +14,14 @@ export class AuthorizationService {
 		if (!isAuthorizedUser) {
 			const isAuthorizedAdmin = await this.isAuthorizedAdmin(requestUser, userId);
 			if (!isAuthorizedAdmin) {
-				return { isAuthorized: false, error: this.error };
+				return { isAuthorized: false, error: new Error('not allowed!') };
 			}
 		}
 		return { isAuthorized: true, error: null };
 	};
 
 	isAuthorizedUser = (requestUserId: string, userId: string): boolean => {
-		const requestUid = requestUserId;
-
-		if (requestUid !== userId) {
-			return false;
-		}
-
-		return true;
+		return requestUserId === userId;
 	};
 
 	isAuthorizedAdmin = async (requestUser: User, userId: string): Promise<boolean> => {
