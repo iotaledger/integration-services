@@ -7,8 +7,11 @@ export type Verification = Static<typeof VerificationSchema>;
 
 export const enum UserClassification {
 	'human' = 'human',
+	'api' = 'api',
+	'organization' = 'organization',
 	'device' = 'device',
-	'api' = 'api'
+	'product' = 'product',
+	'unknown' = 'unknown'
 }
 
 export const enum UserRoles {
@@ -23,7 +26,7 @@ export interface UserSearch {
 	subscribedChannelIds?: string[];
 	verified?: boolean;
 	registrationDate?: Date;
-	classification?: UserClassification;
+	classification?: UserClassification | string;
 	limit?: number;
 	index?: number;
 }
@@ -34,7 +37,7 @@ export interface UserPersistence extends OmittedUser {
 	role?: UserRoles;
 	verification?: VerificationPersistence;
 	registrationDate?: Date;
-	classification: UserClassification;
+	classification: UserClassification | string;
 }
 
 export interface VerificationPersistence {
