@@ -136,15 +136,15 @@ export class AuthenticationService {
 		return { isVerified };
 	};
 
-	revokeVerifiableCredential = async (kci: VerifiableCredentialPersistence, issuerId: string) => {
-		const subjectId = kci.linkedIdentity;
+	revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence, issuerId: string) => {
+		const subjectId = vcp.linkedIdentity;
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
 
-		const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, kci.index);
+		const res = await this.identityService.revokeVerifiableCredential(issuerIdentity, vcp.index);
 		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
 		if (res.revoked === true) {
@@ -154,7 +154,7 @@ export class AuthenticationService {
 			return;
 		}
 
-		await KeyCollectionLinksDb.revokeVerifiableCredential(kci);
+		await KeyCollectionLinksDb.revokeVerifiableCredential(vcp);
 
 		// TODO remove vc from user data and check if there are valid credentials inside user array if not update UserVerification to false!
 		const vup: VerificationUpdatePersistence = {

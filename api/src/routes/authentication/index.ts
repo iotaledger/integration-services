@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/types/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/types/authentication';
+import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyUserBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -77,21 +77,21 @@ export class AuthenticationRoutes {
 
 	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const revokeBody = req.body;
+			const revokeBody: RevokeVerificationBody = req.body;
 			const requestUser = req.user;
 			if (!revokeBody.subjectId) {
 				throw new Error('No valid body provided!');
 			}
-			const kci = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId);
-			if (!kci) {
-				throw new Error('no identity found to revoke the verification!');
+			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId, revokeBody.signatureValue);
+			if (!vcp) {
+				throw new Error('no vc found to revoke the verification!');
 			}
-			const { isAuthorized, error } = await this.isAuthorizedToRevoke(kci, requestUser);
+			const { isAuthorized, error } = await this.isAuthorizedToRevoke(vcp, requestUser);
 			if (!isAuthorized) {
 				throw error;
 			}
 
-			await this.authenticationService.revokeVerifiableCredential(kci, this.config.serverIdentityId);
+			await this.authenticationService.revokeVerifiableCredential(vcp, this.config.serverIdentityId);
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {

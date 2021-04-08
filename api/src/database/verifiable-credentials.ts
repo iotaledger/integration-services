@@ -12,10 +12,10 @@ export const getNextCredentialIndex = async (keyCollectionIndex: number): Promis
 	return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
-export const getVerifiableCredential = async (did: string): Promise<VerifiableCredentialPersistence> => {
+export const getVerifiableCredential = async (did: string, vcHash: string): Promise<VerifiableCredentialPersistence> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 
-	const query = { linkedIdentity: regex(did) };
+	const query = { linkedIdentity: regex(did), 'vc.proof.signatureValue': regex(vcHash) };
 	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 
