@@ -6,9 +6,9 @@ import { Config } from '../../models/config';
 import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
-import * as KeyCollectionLinksDb from '../../database/key-collection-links';
+import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
-import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
+import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 
 export class AuthenticationRoutes {
 	private readonly authenticationService: AuthenticationService;
@@ -82,7 +82,7 @@ export class AuthenticationRoutes {
 			if (!revokeBody.subjectId) {
 				throw new Error('No valid body provided!');
 			}
-			const kci = await KeyCollectionLinksDb.getLinkedKeyCollectionIdentity(revokeBody.subjectId);
+			const kci = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId);
 			if (!kci) {
 				throw new Error('no identity found to revoke the verification!');
 			}
@@ -162,7 +162,7 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	isAuthorizedToRevoke = async (kci: LinkedKeyCollectionIdentityPersistence, requestUser: User): Promise<AuthorizationCheck> => {
+	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.linkedIdentity);
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {

@@ -6,8 +6,8 @@ import { AuthenticationService } from '../../../services/authentication-service'
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { AuthenticationRoutes } from '../index';
-import * as KeyCollectionLinksDB from '../../../database/key-collection-links';
-import { LinkedKeyCollectionIdentityPersistence } from '../../../models/types/key-collection';
+import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
+import { VerifiableCredentialPersistence } from '../../../models/types/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserClassification, UserRoles } from '../../../models/types/user';
 
@@ -55,11 +55,11 @@ describe('test authentication routes', () => {
 			const identityToRevoke = vcMock.id;
 			// since we won't have a linkedIdentity for it won't go further
 			const linkedIdentity: any = null;
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity');
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential');
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: identityToRevoke },
@@ -69,18 +69,18 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
+			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('no identity found to revoke the verification!'));
 		});
 
 		it('is not authorized to revoke the identity since not same request uid as initiatorId', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -93,11 +93,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: 'did:iota:4321' }, // different request user id than initiatorId
@@ -107,18 +107,18 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
+			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
 		});
 
 		it('is not authorized to revoke the identity since it is an admin user but a device', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -131,11 +131,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, classification: UserClassification.device }, // user is an admin but device
@@ -145,18 +145,18 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
+			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
 		});
 
 		it('is authorized to revoke the identity since same request uid as initiatorId', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -169,11 +169,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: 'did:iota:1234' }, // same request user id as initiatorId
@@ -183,11 +183,11 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).toHaveBeenCalledWith(linkedIdentity);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: false
@@ -198,7 +198,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since same request uid as subject id', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -211,11 +211,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' }, // same request user id as linkedIdentity / subject id
@@ -225,11 +225,11 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).toHaveBeenCalledWith(linkedIdentity);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: false
@@ -240,7 +240,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an admin user', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -253,11 +253,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, classification: UserClassification.human }, // user is an admin
@@ -267,11 +267,11 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).toHaveBeenCalledWith(linkedIdentity);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: false
@@ -282,7 +282,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an org admin user', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -295,11 +295,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(DeviceIdentityMock.userData); // return the device
 			const req: any = {
@@ -310,12 +310,12 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getUserSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).toHaveBeenCalledWith(linkedIdentity);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: false
@@ -326,7 +326,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an org admin user but different company', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -339,11 +339,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(DeviceIdentityMock.userData); // return the device
 			const req: any = {
@@ -354,19 +354,19 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getUserSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
+			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
 		});
 
 		it('identity is already revoked', async () => {
 			const identityToRevoke = vcMock.id;
-			const linkedIdentity: LinkedKeyCollectionIdentityPersistence = {
+			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -379,11 +379,11 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: false
 			};
-			const getLinkedKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedKeyCollectionIdentity').and.returnValue(linkedIdentity);
+			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
 			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
-			const revokeKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'revokeKeyCollectionIdentity');
+			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
 				user: { userId: 'did:iota:1234', classification: UserClassification.human }, // same request user id as initiatorId
@@ -393,11 +393,11 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
-			expect(getLinkedKeyCollectionIdentitySpy).toHaveBeenCalledWith(identityToRevoke);
+			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeKeyCollectionIdentitySpy).not.toHaveBeenCalled();
+			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(updateUserVerificationSpy).not.toHaveBeenCalled();
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});

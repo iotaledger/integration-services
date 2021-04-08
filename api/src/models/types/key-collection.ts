@@ -12,7 +12,7 @@ export interface SimpleKeyPair {
 	secret: string;
 }
 
-export interface LinkedKeyCollectionIdentityPersistence {
+export interface VerifiableCredentialPersistence {
 	keyCollectionIndex: number;
 	index: number;
 	initiatorId: string;

@@ -1,5 +1,5 @@
 import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
-import { KeyCollectionJson, KeyCollectionPersistence, LinkedKeyCollectionIdentityPersistence } from '../models/types/key-collection';
+import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
 import {
 	CreateIdentityBody,
 	CredentialSubject,
@@ -14,7 +14,7 @@ import { IdentityService } from './identity-service';
 import { UserService } from './user-service';
 import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
-import * as KeyCollectionLinksDb from '../database/key-collection-links';
+import * as KeyCollectionLinksDb from '../database/verifiable-credentials';
 import * as AuthDb from '../database/auth';
 import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
@@ -98,7 +98,7 @@ export class AuthenticationService {
 		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
 		// if reached create new keycollection, always get highest index
 		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
-		const index = await KeyCollectionLinksDb.getLinkedIdentitesSize(KEY_COLLECTION_INDEX);
+		const index = await KeyCollectionLinksDb.getNextCredentialIndex(KEY_COLLECTION_INDEX);
 		const keyCollectionJson: KeyCollectionJson = {
 			type: keyCollection.type,
 			keys: keyCollection.keys
@@ -110,7 +110,7 @@ export class AuthenticationService {
 		}
 		const vc = await this.identityService.createVerifiableCredential<CredentialSubject>(issuerIdentity, credential, keyCollectionJson, index);
 
-		await KeyCollectionLinksDb.addKeyCollectionIdentity({
+		await KeyCollectionLinksDb.addVerifiableCredential({
 			vc,
 			index,
 			initiatorId,
@@ -136,7 +136,7 @@ export class AuthenticationService {
 		return { isVerified };
 	};
 
-	revokeVerifiableCredential = async (kci: LinkedKeyCollectionIdentityPersistence, issuerId: string) => {
+	revokeVerifiableCredential = async (kci: VerifiableCredentialPersistence, issuerId: string) => {
 		const subjectId = kci.linkedIdentity;
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
@@ -154,7 +154,7 @@ export class AuthenticationService {
 			return;
 		}
 
-		await KeyCollectionLinksDb.revokeKeyCollectionIdentity(kci);
+		await KeyCollectionLinksDb.revokeVerifiableCredential(kci);
 
 		// TODO remove vc from user data and check if there are valid credentials inside user array if not update UserVerification to false!
 		const vup: VerificationUpdatePersistence = {

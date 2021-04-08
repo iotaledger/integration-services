@@ -1,45 +1,45 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { LinkedKeyCollectionIdentityPersistence, KeyCollectionPersistence } from '../models/types/key-collection';
+import { VerifiableCredentialPersistence } from '../models/types/key-collection';
 
 const collectionName = CollectionNames.verifiableCredentials;
-const getIndex = (kci: LinkedKeyCollectionIdentityPersistence) => `key-collection-index-${kci.keyCollectionIndex}-index-${kci.index}`;
+const getIndex = (vcp: VerifiableCredentialPersistence) => `key-collection-index-${vcp.keyCollectionIndex}-index-${vcp.index}`;
 
 // TODO#54 get highest index instead of size. So a complete deleted entry does not break the logic!
 // get highest keyCollectionIndex as well & generate new keycollection dynamically
-export const getLinkedIdentitesSize = async (keyCollectionIndex: number): Promise<number> => {
+export const getNextCredentialIndex = async (keyCollectionIndex: number): Promise<number> => {
 	const query = { keyCollectionIndex };
 	return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
-export const getLinkedKeyCollectionIdentity = async (did: string): Promise<LinkedKeyCollectionIdentityPersistence> => {
+export const getVerifiableCredential = async (did: string): Promise<VerifiableCredentialPersistence> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 
 	const query = { linkedIdentity: regex(did) };
-	return await MongoDbService.getDocument<LinkedKeyCollectionIdentityPersistence>(collectionName, query);
+	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 
-export const addKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityPersistence): Promise<void> => {
+export const addVerifiableCredential = async (vcp: VerifiableCredentialPersistence): Promise<void> => {
 	const document = {
-		_id: getIndex(kci),
-		...kci
+		_id: getIndex(vcp),
+		...vcp
 	};
 
-	const res = await MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
+	const res = await MongoDbService.insertDocument<VerifiableCredentialPersistence>(collectionName, document);
 	if (!res?.result?.n) {
 		throw new Error('could not add verifiable credential!');
 	}
 };
 
-export const revokeKeyCollectionIdentity = async (kci: LinkedKeyCollectionIdentityPersistence) => {
+export const revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence) => {
 	const query = {
-		_id: getIndex(kci)
+		_id: getIndex(vcp)
 	};
 
 	const update: any = {
 		$set: {
 			isRevoked: true,
-			revokedIdentity: kci.linkedIdentity
+			revokedIdentity: vcp.linkedIdentity
 		},
 		$unset: { linkedIdentity: '' }
 	};
