@@ -156,13 +156,9 @@ export class AuthenticationService {
 		await KeyCollectionLinksDb.revokeVerifiableCredential(vcp);
 
 		const updatedUser = await this.userService.removeUserVC(vcp.vc);
-		const vcVerifiedArr = await Promise.all(
-			updatedUser.verifiableCredentials.map(async (verifiableCred) => {
-				return this.checkVerifiableCredential(verifiableCred);
-			})
-		);
+		const hasVerifiedVCs = await this.hasVerifiedVerifiableCredential(updatedUser.verifiableCredentials);
 
-		if (updatedUser.verifiableCredentials.length === 0 || !vcVerifiedArr.some((v) => v)) {
+		if (updatedUser.verifiableCredentials.length === 0 || !hasVerifiedVCs) {
 			const vup: VerificationUpdatePersistence = {
 				userId: subjectId,
 				verified: false,
@@ -174,6 +170,18 @@ export class AuthenticationService {
 		}
 
 		return res;
+	};
+
+	hasVerifiedVerifiableCredential = async (vcs: VerifiableCredentialJson[]): Promise<boolean> => {
+		if (!vcs || vcs.length === 0) {
+			return false;
+		}
+		const vcVerifiedArr = await Promise.all(
+			vcs.map(async (vc) => {
+				return this.checkVerifiableCredential(vc);
+			})
+		);
+		return vcVerifiedArr.some((v) => v);
 	};
 
 	private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
@@ -226,7 +234,7 @@ export class AuthenticationService {
 		return signedJwt;
 	};
 
-	private setUserVerified = async (userId: string, issuerId: string, vc: VerifiableCredentialJson) => {
+	setUserVerified = async (userId: string, issuerId: string, vc: VerifiableCredentialJson) => {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}

@@ -44,6 +44,11 @@ export class AuthenticationRoutes {
 				throw new Error('subject does not exist!');
 			}
 
+			// check existing vcs and update verification state based on it
+			if (!initiatorVC) {
+				return await this.verifyByExistingVCs(res, subject, requestUser.userId);
+			}
+
 			const { isAuthorized, error } = await this.isAuthorizedToVerify(subject, initiatorVC, requestUser);
 			if (!isAuthorized) {
 				throw error;
@@ -59,6 +64,20 @@ export class AuthenticationRoutes {
 		} catch (error) {
 			next(error);
 		}
+	};
+
+	verifyByExistingVCs = async (res: Response, user: User, requestId: string) => {
+		const hasVerifiedVCs = await this.authenticationService.hasVerifiedVerifiableCredential(user.verifiableCredentials);
+		const date = new Date();
+		const vup = {
+			userId: user.userId,
+			verified: hasVerifiedVCs,
+			lastTimeChecked: date,
+			verificationDate: date,
+			verificationIssuerId: requestId
+		};
+		await this.userService.updateUserVerification(vup);
+		res.status(StatusCodes.OK).send(vup);
 	};
 
 	checkVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
