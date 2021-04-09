@@ -67,9 +67,9 @@ export class AuthenticationRoutes {
 			if (!vcBody?.id) {
 				throw new Error('No valid verifiable credential provided!');
 			}
-			const vc = await this.authenticationService.checkVerifiableCredential(vcBody);
+			const isVerified = await this.authenticationService.checkVerifiableCredential(vcBody);
 
-			res.status(StatusCodes.OK).send(vc);
+			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
 			next(error);
 		}
@@ -79,9 +79,7 @@ export class AuthenticationRoutes {
 		try {
 			const revokeBody: RevokeVerificationBody = req.body;
 			const requestUser = req.user;
-			if (!revokeBody.subjectId) {
-				throw new Error('No valid body provided!');
-			}
+
 			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId, revokeBody.signatureValue);
 			if (!vcp) {
 				throw new Error('no vc found to revoke the verification!');

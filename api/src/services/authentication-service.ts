@@ -123,7 +123,7 @@ export class AuthenticationService {
 		return vc;
 	};
 
-	checkVerifiableCredential = async (vc: VerifiableCredentialJson): Promise<{ isVerified: boolean }> => {
+	checkVerifiableCredential = async (vc: VerifiableCredentialJson): Promise<boolean> => {
 		const serverIdentity: IdentityJson = await IdentitiesDb.getIdentity(this.serverIdentityId);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
@@ -133,7 +133,7 @@ export class AuthenticationService {
 
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
-		return { isVerified };
+		return isVerified;
 	};
 
 	revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence, issuerId: string) => {
@@ -157,11 +157,13 @@ export class AuthenticationService {
 		await KeyCollectionLinksDb.revokeVerifiableCredential(vcp);
 
 		const updatedUser = await this.userService.removeUserVC(vcp.vc);
-		const hasVerifiedVc = updatedUser.verifiableCredentials.some(async (verifiableCred) => {
-			return await this.checkVerifiableCredential(verifiableCred);
-		});
+		const vcVerifiedArr = await Promise.all(
+			updatedUser.verifiableCredentials.map(async (verifiableCred) => {
+				return this.checkVerifiableCredential(verifiableCred);
+			})
+		);
 
-		if (updatedUser.verifiableCredentials.length === 0 || !hasVerifiedVc) {
+		if (updatedUser.verifiableCredentials.length === 0 || !vcVerifiedArr.some((v) => v)) {
 			const vup: VerificationUpdatePersistence = {
 				userId: subjectId,
 				verified: false,
