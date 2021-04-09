@@ -86,10 +86,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -124,10 +122,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -163,10 +159,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -201,16 +195,15 @@ describe('test authentication routes', () => {
 		});
 
 		it('is authorized to revoke the identity since same request uid as subject id', async () => {
-			const identityToRevoke = vcMock.id;
+			const vcToRevoke = { ...vcMock, id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' };
+			const identityToRevoke = vcToRevoke.id;
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: vcToRevoke // same id as request uid below
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -235,7 +228,7 @@ describe('test authentication routes', () => {
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity);
-			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
+			expect(removeUserVcSpy).toHaveBeenCalledWith(vcToRevoke);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: false
@@ -251,10 +244,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -296,10 +287,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -332,15 +321,14 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an admin user but has further invalid vcs', async () => {
 			const identityToRevoke = vcMock.id;
+			//const vc = { ...vcMock };
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [vcMock] }); // has another valid vc inside
 			const checkVcSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(false); // has further vcs but are invalid
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
 				vc: vcMock
 			};
 			const revokeResult = {
@@ -383,10 +371,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: identityToRevoke,
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,
@@ -428,9 +414,7 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: identityToRevoke,
 				isRevoked: false,
-				revokedIdentity: undefined,
 				vc: vcMock
 			};
 			const revokeResult = {
@@ -468,10 +452,8 @@ describe('test authentication routes', () => {
 				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
-				linkedIdentity: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN',
 				isRevoked: false,
-				revokedIdentity: undefined,
-				vc: vcMock
+				vc: { ...vcMock }
 			};
 			const revokeResult = {
 				docUpdate: ServerIdentityMock.doc,

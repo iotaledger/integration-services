@@ -229,7 +229,6 @@ describe('test authentication routes', () => {
 				isRevoked: false,
 				keyCollectionIndex: 0,
 				initiatorId: initiatorVC.id,
-				linkedIdentity: subject.userId,
 				vc: vcMock
 			};
 			await authenticationRoutes.verifyUser(req, res, nextMock);
@@ -291,7 +290,6 @@ describe('test authentication routes', () => {
 				isRevoked: false,
 				keyCollectionIndex: 0,
 				initiatorId: initiatorVC.id,
-				linkedIdentity: subject.userId,
 				vc: vcMock
 			};
 			await authenticationRoutes.verifyUser(req, res, nextMock);

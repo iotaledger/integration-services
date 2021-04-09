@@ -15,7 +15,7 @@ export const getNextCredentialIndex = async (keyCollectionIndex: number): Promis
 export const getVerifiableCredential = async (did: string, vcHash: string): Promise<VerifiableCredentialPersistence> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 
-	const query = { linkedIdentity: regex(did), 'vc.proof.signatureValue': regex(vcHash) };
+	const query = { 'vc.id': regex(did), 'vc.proof.signatureValue': regex(vcHash) };
 	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 
@@ -38,10 +38,8 @@ export const revokeVerifiableCredential = async (vcp: VerifiableCredentialPersis
 
 	const update: any = {
 		$set: {
-			isRevoked: true,
-			revokedIdentity: vcp.linkedIdentity
-		},
-		$unset: { linkedIdentity: '' }
+			isRevoked: true
+		}
 	};
 
 	const res = await MongoDbService.updateDocument(collectionName, query, update);

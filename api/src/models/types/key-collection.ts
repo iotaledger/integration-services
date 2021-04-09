@@ -16,9 +16,7 @@ export interface VerifiableCredentialPersistence {
 	keyCollectionIndex: number;
 	index: number;
 	initiatorId: string;
-	linkedIdentity?: string;
 	isRevoked: boolean;
-	revokedIdentity?: string;
 	vc: VerifiableCredentialJson;
 }
 

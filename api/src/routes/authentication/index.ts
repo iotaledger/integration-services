@@ -161,10 +161,10 @@ export class AuthenticationRoutes {
 	};
 
 	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
-		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.linkedIdentity);
+		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.vc.id);
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
-			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.linkedIdentity);
+			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.vc.id);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 			}

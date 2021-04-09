@@ -115,7 +115,6 @@ export class AuthenticationService {
 			index,
 			initiatorId,
 			isRevoked: false,
-			linkedIdentity: subject.userId,
 			keyCollectionIndex: KEY_COLLECTION_INDEX
 		});
 
@@ -137,7 +136,7 @@ export class AuthenticationService {
 	};
 
 	revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence, issuerId: string) => {
-		const subjectId = vcp.linkedIdentity;
+		const subjectId = vcp.vc.id;
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
 		if (!issuerIdentity) {
