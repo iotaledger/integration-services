@@ -156,15 +156,21 @@ export class AuthenticationService {
 
 		await KeyCollectionLinksDb.revokeVerifiableCredential(vcp);
 
-		// TODO remove vc from user data and check if there are valid credentials inside user array if not update UserVerification to false!
-		const vup: VerificationUpdatePersistence = {
-			userId: subjectId,
-			verified: false,
-			lastTimeChecked: new Date(),
-			verificationDate: undefined,
-			verificationIssuerId: undefined
-		};
-		await this.userService.updateUserVerification(vup);
+		const updatedUser = await this.userService.removeUserVC(vcp.vc);
+		const hasVerifiedVc = updatedUser.verifiableCredentials.some(async (verifiableCred) => {
+			return await this.checkVerifiableCredential(verifiableCred);
+		});
+
+		if (updatedUser.verifiableCredentials.length === 0 || !hasVerifiedVc) {
+			const vup: VerificationUpdatePersistence = {
+				userId: subjectId,
+				verified: false,
+				lastTimeChecked: new Date(),
+				verificationDate: undefined,
+				verificationIssuerId: undefined
+			};
+			await this.userService.updateUserVerification(vup);
+		}
 
 		return res;
 	};

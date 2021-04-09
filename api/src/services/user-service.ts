@@ -62,9 +62,8 @@ export class UserService {
 		await userDb.addUserVC(vc);
 	};
 
-	// TODO
-	removeUserVC = async (_vc: VerifiableCredentialJson): Promise<void> => {
-		// call userDb.removeUserVc()
+	removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPersistence> => {
+		return userDb.removeUserVC(vc);
 	};
 
 	deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
