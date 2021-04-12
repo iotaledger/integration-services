@@ -25,11 +25,11 @@ export const CONFIG: Config = {
 
 const assertConfig = (config: Config) => {
 	if (config.serverSecret === '<server-secret>' || config.serverIdentityId === '<server-identity>') {
-		throw new Error('please replace the default values!');
+		console.error('please replace the default values!');
 	}
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
-			throw new Error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
+			console.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
 		}
 	});
 };

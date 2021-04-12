@@ -18,3 +18,10 @@ export const saveKeyCollection = async (keyCollectionPersistence: KeyCollectionP
 
 	return MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
 };
+
+export const removeAllKeyCollections = async () => {
+	const res = await MongoDbService.removeDocuments(collectionName, {});
+	if (!res?.result.n) {
+		throw new Error('could not remove all keycollections!');
+	}
+};

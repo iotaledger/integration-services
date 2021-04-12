@@ -9,6 +9,16 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
-
-volumes:
-  mongodb_data_container:
+  ensuresec_api:
+    build: .
+    environment: 
+      PORT: 3000
+      API_VERSION: v1
+      DATABASE_NAME: e-commerce-audit-log
+      IOTA_PERMA_NODE: https://nodes.iota.org:443
+      NETWORK: main
+      EXPLORER: https://explorer.iota.org/mainnet/transaction
+      # DATABASE_URL: mongodb://root:rootpassword@192.168.2.114:27017
+      # SERVER_SECRET: 2671895fb73fed7f6168e3e29c0c28468a250043c64fb1d065fca670fda7
+    ports:
+      - 3000:3000

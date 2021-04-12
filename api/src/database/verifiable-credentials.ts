@@ -44,6 +44,13 @@ export const revokeVerifiableCredential = async (vcp: VerifiableCredentialPersis
 
 	const res = await MongoDbService.updateDocument(collectionName, query, update);
 	if (!res?.result.n) {
-		throw new Error('could not revoke identity');
+		throw new Error('could not revoke identity!');
+	}
+};
+
+export const removeAllVerifiableCredentials = async () => {
+	const res = await MongoDbService.removeDocuments(collectionName, {});
+	if (!res?.result.n) {
+		throw new Error('could not remove all vc!');
 	}
 };
