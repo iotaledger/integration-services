@@ -4,24 +4,21 @@ import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { KeyCollectionPersistence } from '../models/types/key-collection';
 
 const collectionName = CollectionNames.keyCollection;
+const getIndex = (index: number, id: string) => `${id}-${index}`;
 
-export const getKeyCollection = async (index: number): Promise<KeyCollectionPersistence> => {
-	const query = { _id: index };
+export const getKeyCollection = async (index: number, serverId: string): Promise<KeyCollectionPersistence> => {
+	const query = { _id: getIndex(index, serverId) };
 	return await MongoDbService.getDocument<KeyCollectionPersistence>(collectionName, query);
 };
 
-export const saveKeyCollection = async (keyCollectionPersistence: KeyCollectionPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveKeyCollection = async (
+	keyCollectionPersistence: KeyCollectionPersistence,
+	serverId: string
+): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const document = {
-		_id: keyCollectionPersistence.index,
+		_id: getIndex(keyCollectionPersistence.index, serverId),
 		...keyCollectionPersistence
 	};
 
 	return MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
-};
-
-export const removeAllKeyCollections = async () => {
-	const res = await MongoDbService.removeDocuments(collectionName, {});
-	if (!res?.result.n) {
-		throw new Error('could not remove all keycollections!');
-	}
 };
