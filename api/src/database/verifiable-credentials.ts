@@ -43,7 +43,7 @@ export const revokeVerifiableCredential = async (vcp: VerifiableCredentialPersis
 	};
 
 	const res = await MongoDbService.updateDocument(collectionName, query, update);
-	if (!res?.result.n) {
+	if (!res?.result?.n) {
 		throw new Error('could not revoke identity');
 	}
 };
