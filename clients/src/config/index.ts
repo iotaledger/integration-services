@@ -54,15 +54,13 @@ export const UserIdentity = {
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		classification: 'human',
-		firstName: 'Tom',
-		lastName: 'Sonson',
 		description: 'Just a user',
-		registrationDate: '2021-03-16T15:18:49+01:00',
+		registrationDate: '2021-03-16T14:18:49Z',
 		verification: {
 			verified: true,
-			verificationDate: '2021-03-24T16:59:12+01:00',
-			lastTimeChecked: '2021-03-24T16:59:12+01:00',
-			verificationIssuerId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ'
+			verificationDate: '2021-04-13T08:12:29Z',
+			lastTimeChecked: '2021-04-13T08:12:29Z',
+			verificationIssuerId: 'did:iota:HGz5ih7k7JkK9yCQTnR1vmuLs4vE7BNFCoigLuwCxwok'
 		},
 		organization: 'IOTA',
 		verifiableCredentials: [
@@ -73,17 +71,39 @@ export const UserIdentity = {
 				credentialSubject: {
 					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 					classification: 'human',
+					initiatorId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
 					username: 'first-user'
 				},
-				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				issuanceDate: '2021-03-24T15:59:11Z',
+				issuer: 'did:iota:DYc6feyWBHC6ns9gA53HCNrFvdgUYWSjw7BQbw9vH4vA',
+				issuanceDate: '2021-04-08T12:50:50Z',
 				proof: {
 					type: 'MerkleKeySignature2021',
 					verificationMethod: '#key-collection',
 					signatureValue:
-						'E7YtcGcEJuWE69djaDGZL425Qh3pCuhhF3RPum3Mm1WJ.1119t2nv9LDH5Qi8CgAK1P5W78XLxFgHjGddZW5ct1isxnaB5ZF7LPToUuxhgrbdZLfyhY2LSf3djsRjyE6wyeMVTE9w7BJZg8cZx6egUAPEy1DNzyZZXZkZWyjHqZAmZ2B24xwfyFd.32W1cWdfRK8YZ5sTDe7fpCzyqVtQQRc7Fkauygp4MUb4GUPd9TG8CBiktnvDgzC9SxtXJfCVc7Euf5N7H88o7nSU'
+						'5LHA1tXQvQVNv2f7KEE2C9aGqhEeET4SHo7owgQxaHEe.111Lcp5hAiyvWxmj4wSrDkfZgtazSFXotBGjTkwMSzZNgoX7iXNZSBLYFt4y1a3uMVue7fmTbmxQQQhn6Rm1aoxzhECnMeHX6YuJKroYuAJJCcDcWGgncw6euZfo3nDxN4RipgZdKrSMNWNG6zyhTFHqoMpMof28WBWc8M5wPrN3scabVUHhoXjGWjM8sfTzZeSS8F59kbD68rrTJJ4nXRJGvwL3tUk6CGeoA.44ufMTxw7UGhmYEVY3UoTF6dp3Hg4K8ZzrryDNQXoGzzXxhQwjh5zksH67DVJgXi8qCizCzvffrvhmhuHJmhnVkK'
+				}
+			},
+			{
+				'@context': 'https://www.w3.org/2018/credentials/v1',
+				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				type: ['VerifiableCredential', 'UserCredential'],
+				credentialSubject: {
+					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+					classification: 'human',
+					initiatorId: 'did:iota:DYc6feyWBHC6ns9gA53HCNrFvdgUYWSjw7BQbw9vH4vA',
+					organization: 'IOTA',
+					registrationDate: '2021-03-16T15:18:49+01:00',
+					username: 'first-user'
+				},
+				issuer: 'did:iota:HGz5ih7k7JkK9yCQTnR1vmuLs4vE7BNFCoigLuwCxwok',
+				issuanceDate: '2021-04-13T08:12:29Z',
+				proof: {
+					type: 'MerkleKeySignature2021',
+					verificationMethod: '#key-collection',
+					signatureValue:
+						'3iugc5oM8bEGF5bk8yj6jKtd5cvV7S7kMxcTr65UUmSb.1113qJLdpQDayzHtzPK9LHZ8PQDhGcnRr7xLSyUz3ySsgWHQRx1SUePTvxXqjzeXgJFDdQsBCWUPoBGJDQeTJJFg5Khbrqx2Ton5Z6mrehJT4gfEffv1h5BHqB9GPJTKE5oivARox1L4UM4sy1TwVtxZUSABH8LgnaCjQAcQJRos9NWzL1wwkSwhNPje1GVfKuqJSS1f1nsQVQspuVSgxWiqriy7ppe3ErbNVDzn6acG7mdatDtyCAwWVHHtBQUgSLhkqLhyHqFzC8WTiskYVnY2kVEEmiq4hy66ov6iVEukxoHoiEna6KZu46UoSUSaJSBj2EJvvvjPKqndW3BuxnVs46FVnJem3HihovbjMNn1XBg63bhVTWJfpXQ54YKBBdGA8qavhNfmAeqSdCxCJM7kjgH2gKXqG8TsiM8T25GW2tFs4HVVcypgrWFvq8SSV4FoPE7.52aMZLZSEJh1BCnSksJY1XYxQWyVyJSt8mzQ73om8ieMA4jqj1Y3PzPx1LJkCLhEZiQJyVbppy2RmLZeGLs14XDb'
 				}
 			}
 		]
@@ -132,11 +152,11 @@ export const ServerIdentity = {
 		username: 'api-identity',
 		classification: 'api',
 		description: 'Root identity of the api!',
-		registrationDate: '2021-03-24T15:38:43+01:00',
+		registrationDate: '2021-03-24T14:38:43Z',
 		verification: {
-			verified: true,
-			verificationDate: '2021-03-24T15:38:46+01:00',
-			lastTimeChecked: '2021-03-24T16:20:32+01:00',
+			verified: false,
+			verificationDate: '2021-03-24T14:38:46Z',
+			lastTimeChecked: '2021-04-08T08:39:25Z',
 			verificationIssuerId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ'
 		},
 		organization: 'IOTA',
@@ -161,7 +181,8 @@ export const ServerIdentity = {
 						'8rVDt6KCPoZVhMCGG5AQLZaUjFJ5LLv4iXsaoQjeqQpq.1117uJFpmAB6msQ9GdsSRvxfdSvfTas94EippDqh6foKFTY1diqiCzfAuqYVExhxeJGBYycQiDbxwGev9Chrtz51UYVbwUL1DR8gipj3zuZa4X2SF7UnTbAw74Dv3o2qsqi2FsxtssV.52yNV25JkS9sRw2tSCKw4yQ3hY4fEneEpk82vU9UX2G5vGJsPhvpjSwfX2cxvqJ48E8EvwDCXrFuetyLPLVQ1UGY'
 				}
 			}
-		]
+		],
+		role: 'admin'
 	},
 	key: { type: 'ed25519', public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb', secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp' },
 	encoding: 'base58',
@@ -192,39 +213,19 @@ export const DeviceIdentity = {
 		userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
-		classification: 'device',
+		classification: 'product',
 		subscribedChannelIds: ['test-address-c2', 'test-address'],
 		description: 'Device which measures temperature in the kitchen.',
-		registrationDate: '2021-03-24T16:54:38+01:00',
-		verification: {
-			verified: true,
-			verificationDate: '2021-03-24T16:59:00+01:00',
-			lastTimeChecked: '2021-03-24T16:59:00+01:00',
-			verificationIssuerId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ'
-		},
+		registrationDate: '2021-04-13T11:01:32Z',
 		organization: 'IOTA',
-		verifiableCredentials: [
-			{
-				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-				type: ['VerifiableCredential', 'UserCredential'],
-				credentialSubject: {
-					id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-					classification: 'device',
-					organization: 'IOTA',
-					registrationDate: '2021-03-24T16:54:38+01:00',
-					username: 'test-device'
-				},
-				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				issuanceDate: '2021-03-24T15:58:59Z',
-				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'9fNqgZfFZTnt6HpyRD2yXRovijjewVTpGSzwNX4YvPb1.1117u9ibPzu8itzHAWjLdo6j7vTWdWCuvADY1oUqrJLxUmQkCnhEgJWBoASweLXoJAPYuUe8iyyYEgoaQDDTHhaL5xZQ8fK6nbw67qLo5BuTbQHiqpnintZph9TjKFep7pk6zoLMGdD.3xh4r38iiLhXyjBwdJPMqzSyrJAtSp3u3pJUGTGydyN45rTEWXfqPEDLw8ux9ttXijADTH5SAwr924Agnk2Vm3wA'
-				}
+		details: {
+			category: 'heater',
+			location: {
+				lat: 49.123,
+				lon: 7.123
 			}
-		]
+		},
+		role: 'user'
 	},
 	key: {
 		type: 'ed25519',
