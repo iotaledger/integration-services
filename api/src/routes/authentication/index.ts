@@ -3,12 +3,12 @@ import { StatusCodes } from 'http-status-codes';
 import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/types/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest, AuthorizationCheck, VerifyUserBody } from '../../models/types/authentication';
+import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyUserBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
-import * as KeyCollectionLinksDb from '../../database/key-collection-links';
+import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
-import { LinkedKeyCollectionIdentityPersistence } from '../../models/types/key-collection';
+import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 
 export class AuthenticationRoutes {
 	private readonly authenticationService: AuthenticationService;
@@ -44,6 +44,11 @@ export class AuthenticationRoutes {
 				throw new Error('subject does not exist!');
 			}
 
+			// check existing vcs and update verification state based on it
+			if (!initiatorVC) {
+				return await this.verifyByExistingVCs(res, subject, requestUser.userId);
+			}
+
 			const { isAuthorized, error } = await this.isAuthorizedToVerify(subject, initiatorVC, requestUser);
 			if (!isAuthorized) {
 				throw error;
@@ -61,15 +66,29 @@ export class AuthenticationRoutes {
 		}
 	};
 
+	verifyByExistingVCs = async (res: Response, user: User, requestId: string) => {
+		const hasVerifiedVCs = await this.authenticationService.hasVerifiedVerifiableCredential(user.verifiableCredentials);
+		const date = new Date();
+		const vup = {
+			userId: user.userId,
+			verified: hasVerifiedVCs,
+			lastTimeChecked: date,
+			verificationDate: date,
+			verificationIssuerId: requestId
+		};
+		await this.userService.updateUserVerification(vup);
+		res.status(StatusCodes.OK).send(vup);
+	};
+
 	checkVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const vcBody: any = req.body;
 			if (!vcBody?.id) {
 				throw new Error('No valid verifiable credential provided!');
 			}
-			const vc = await this.authenticationService.checkVerifiableCredential(vcBody);
+			const isVerified = await this.authenticationService.checkVerifiableCredential(vcBody);
 
-			res.status(StatusCodes.OK).send(vc);
+			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
 			next(error);
 		}
@@ -77,21 +96,19 @@ export class AuthenticationRoutes {
 
 	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const revokeBody = req.body;
+			const revokeBody: RevokeVerificationBody = req.body;
 			const requestUser = req.user;
-			if (!revokeBody.subjectId) {
-				throw new Error('No valid body provided!');
+
+			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId, revokeBody.signatureValue);
+			if (!vcp) {
+				throw new Error('no vc found to revoke the verification!');
 			}
-			const kci = await KeyCollectionLinksDb.getLinkedKeyCollectionIdentity(revokeBody.subjectId);
-			if (!kci) {
-				throw new Error('no identity found to revoke the verification!');
-			}
-			const { isAuthorized, error } = await this.isAuthorizedToRevoke(kci, requestUser);
+			const { isAuthorized, error } = await this.isAuthorizedToRevoke(vcp, requestUser);
 			if (!isAuthorized) {
 				throw error;
 			}
 
-			await this.authenticationService.revokeVerifiableCredential(kci, this.config.serverIdentityId);
+			await this.authenticationService.revokeVerifiableCredential(vcp, this.config.serverIdentityId);
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
@@ -162,11 +179,11 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	isAuthorizedToRevoke = async (kci: LinkedKeyCollectionIdentityPersistence, requestUser: User): Promise<AuthorizationCheck> => {
-		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.linkedIdentity);
+	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
+		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.vc.id);
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
-			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.linkedIdentity);
+			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.vc.id);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 			}

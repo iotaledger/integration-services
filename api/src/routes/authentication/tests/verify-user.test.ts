@@ -2,7 +2,7 @@ import { KEY_COLLECTION_INDEX } from '../../../config/identity';
 import { CredentialSubject } from '../../../models/types/identity';
 import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock } from '../../../test/mocks/identities';
 import * as KeyCollectionDB from '../../../database/key-collection';
-import * as KeyCollectionLinksDB from '../../../database/key-collection-links';
+import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
 import * as IdentitiesDb from '../../../database/identities';
 import { IdentityService } from '../../../services/identity-service';
 import { UserService } from '../../../services/user-service';
@@ -52,13 +52,14 @@ describe('test authentication routes', () => {
 	});
 	describe('test verifyUser route', () => {
 		let createVerifiableCredentialSpy: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
-		let getLinkedIdentitySpy: any, addKeyCollectionIdentitySpy: any, updateUserVerificationSpy: any, addUserVCSpy: any;
+		let getNextCredentialIndexSpy: any, addVerifiableCredentialSpy: any, updateUserVerificationSpy: any, addUserVCSpy: any;
+		const vcMock = { VCMOCK: 1 };
 		beforeEach(() => {
 			keyCollectionIndex = 0;
-			createVerifiableCredentialSpy = spyOn(identityService, 'createVerifiableCredential').and.returnValue({ VCMOCK: 1 });
+			createVerifiableCredentialSpy = spyOn(identityService, 'createVerifiableCredential').and.returnValue(vcMock);
 			getKeyCollectionSpy = spyOn(KeyCollectionDB, 'getKeyCollection').and.returnValue(KeyCollectionMock);
-			getLinkedIdentitySpy = spyOn(KeyCollectionLinksDB, 'getLinkedIdentitesSize').and.returnValue(keyCollectionIndex);
-			addKeyCollectionIdentitySpy = spyOn(KeyCollectionLinksDB, 'addKeyCollectionIdentity');
+			getNextCredentialIndexSpy = spyOn(KeyCollectionLinksDB, 'getNextCredentialIndex').and.returnValue(keyCollectionIndex);
+			addVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'addVerifiableCredential');
 			updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			addUserVCSpy = spyOn(userService, 'addUserVC');
 		});
@@ -228,17 +229,17 @@ describe('test authentication routes', () => {
 				isRevoked: false,
 				keyCollectionIndex: 0,
 				initiatorId: initiatorVC.id,
-				linkedIdentity: subject.userId
+				vc: vcMock
 			};
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getLinkedIdentitySpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
-			expect(addKeyCollectionIdentitySpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: true
@@ -246,7 +247,7 @@ describe('test authentication routes', () => {
 			);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalledWith({ VCMOCK: 1 });
+			expect(res.send).toHaveBeenCalledWith(vcMock);
 		});
 
 		it('should verify for user which has valid vc and is in same organization', async () => {
@@ -289,17 +290,17 @@ describe('test authentication routes', () => {
 				isRevoked: false,
 				keyCollectionIndex: 0,
 				initiatorId: initiatorVC.id,
-				linkedIdentity: subject.userId
+				vc: vcMock
 			};
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getLinkedIdentitySpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
-			expect(addKeyCollectionIdentitySpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: true
@@ -307,7 +308,7 @@ describe('test authentication routes', () => {
 			);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalledWith({ VCMOCK: 1 });
+			expect(res.send).toHaveBeenCalledWith(vcMock);
 		});
 	});
 });
