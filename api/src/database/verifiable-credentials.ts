@@ -15,7 +15,7 @@ export const getNextCredentialIndex = async (keyCollectionIndex: number, serverI
 export const getVerifiableCredential = async (did: string, vcHash: string, serverId: string): Promise<VerifiableCredentialPersistence> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 
-	const query = { 'vc.id': regex(did), 'vc.proof.signatureValue': regex(vcHash) };
+	const query = { 'vc.id': regex(did), 'vc.proof.signatureValue': regex(vcHash), serverId: regex(serverId) };
 	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 

@@ -27,7 +27,7 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS   
 2. Use the connection url which will be defined in the following step to connect to the mongodb via `MongoDB Compass`!
     If you didn't change the docker-compose it is: `mongodb://root:rootpassword@0.0.0.0:27017`
 
-## 2. Add .env file
+## 2. For local development add .env file
 Copy the `./api/.env-example` and rename it to `./api/.env`
 
 Set the correct `DATABASE_URL`, as currently seen in `docker-compose.yml` the following url (for development only) is used:
@@ -36,27 +36,26 @@ Set the correct `DATABASE_URL`, as currently seen in `docker-compose.yml` the fo
 DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
 ```
 
-## 3. Create a server identity
-The server has its own identity so sign verifiable credentials. This id of the identity is part of the .env-example: `SERVER_IDENTITY=<server-identity>`.
+## 3. Run the API
 
-So before starting the api, you need to create a server identity. Therefor an admin tool is used which can be found at `./api/src/admin.ts`.
+> Run the api using `npm run start` or `npm run serve` to watch for file changes.
 
-This can be started using: `ts-node ./api/src/admin.ts`
+Before the api is able to run, there are two steps which have to be done in advance.
 
-The tool will log the id which need to be set as SERVER_IDENTITY environment variable like following:
-```
-=====================================================================================================================
-== Store this identity in the as ENV var as SERVER_IDENTITY: did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk ==
-=====================================================================================================================
-```
+1. Create a random secret and store it
 
-So replace the `SERVER_IDENTITY=<server-identity>` of the __.env__ file with the logged id starting at did like: 
+To encrypt the secret key of the server identity a server secret has to be generated and stored as env variable like following:
+````
+SERVER_SECRET=56912342314869723452317869234123491234
 
-```
-SERVER_IDENTITY=did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk
-```
+````
 
+2. Store the server identity as environment variable
 
-## 4. Run the API
-
-Run the api using `npm run start` or `npm run serve` to watch for file changes.
+The server has its own identity to sign verifiable credentials. This id of the identity is part of the .env-example: `SERVER_IDENTITY=<server-identity>`. When starting the api for the first time it will generate an identity by calling `setupApi()` function. The generated identity will be stored in the mongodb, but the id of the server must be set as environment variable which will be outputed in the console like following:
+````
+Setup Done!
+Please store the generated server identity as environment variable.
+Like: SERVER_IDENTITY=did:iota:HGz5ih7k7JkK9yCQTnR1vmuLs4vE7BNFCoigLuwCxwok
+````
+Store this env var in the .env or the environment variables of the deployed server.
