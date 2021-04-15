@@ -71,6 +71,11 @@ export class MongoDbService {
 		return collection.deleteOne(query, options);
 	}
 
+	static async removeDocuments(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
+		const collection = MongoDbService.getCollection(collectionName);
+		return collection.deleteMany(query, options);
+	}
+
 	/**
 	 * Get plain object for fields having a value not null and not undefined.
 	 *

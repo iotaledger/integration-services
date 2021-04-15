@@ -14,7 +14,7 @@ import { IdentityService } from './identity-service';
 import { UserService } from './user-service';
 import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
-import * as KeyCollectionLinksDb from '../database/verifiable-credentials';
+import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as AuthDb from '../database/auth';
 import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
@@ -39,11 +39,11 @@ export class AuthenticationService {
 	}
 
 	saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-		return KeyCollectionDb.saveKeyCollection(keyCollection);
+		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId);
 	}
 
 	getKeyCollection(index: number) {
-		return KeyCollectionDb.getKeyCollection(index);
+		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId);
 	}
 
 	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
@@ -61,6 +61,10 @@ export class AuthenticationService {
 			index
 		};
 	};
+
+	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
+		return IdentitiesDb.getIdentity(did);
+	}
 
 	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
 		const identity = await this.identityService.createIdentity();
@@ -98,7 +102,7 @@ export class AuthenticationService {
 		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
 		// if reached create new keycollection, always get highest index
 		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
-		const index = await KeyCollectionLinksDb.getNextCredentialIndex(KEY_COLLECTION_INDEX);
+		const index = await VerifiableCredentialsDb.getNextCredentialIndex(KEY_COLLECTION_INDEX, this.serverIdentityId);
 		const keyCollectionJson: KeyCollectionJson = {
 			type: keyCollection.type,
 			keys: keyCollection.keys
@@ -110,13 +114,16 @@ export class AuthenticationService {
 		}
 		const vc = await this.identityService.createVerifiableCredential<CredentialSubject>(issuerIdentity, credential, keyCollectionJson, index);
 
-		await KeyCollectionLinksDb.addVerifiableCredential({
-			vc,
-			index,
-			initiatorId,
-			isRevoked: false,
-			keyCollectionIndex: KEY_COLLECTION_INDEX
-		});
+		await VerifiableCredentialsDb.addVerifiableCredential(
+			{
+				vc,
+				index,
+				initiatorId,
+				isRevoked: false,
+				keyCollectionIndex: KEY_COLLECTION_INDEX
+			},
+			this.serverIdentityId
+		);
 
 		await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
 		return vc;
@@ -153,7 +160,7 @@ export class AuthenticationService {
 			return;
 		}
 
-		await KeyCollectionLinksDb.revokeVerifiableCredential(vcp);
+		await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.serverIdentityId);
 
 		const updatedUser = await this.userService.removeUserVC(vcp.vc);
 		const hasVerifiedVCs = await this.hasVerifiedVerifiableCredential(updatedUser.verifiableCredentials);

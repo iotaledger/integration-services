@@ -3,12 +3,28 @@ services:
   mongodb_container:
     image: mongo:latest
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: e-commerce-audit-log
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
-
+  ensuresec_api:
+    build: .
+    environment: 
+      PORT: 3000
+      API_VERSION: v1
+      DATABASE_NAME: e-commerce-audit-log
+      IOTA_PERMA_NODE: https://nodes.iota.org:443
+      NETWORK: main
+      EXPLORER: https://explorer.iota.org/mainnet/transaction
+      DATABASE_URL: ${DATABASE_URL}
+      SERVER_SECRET: ${SERVER_SECRET}
+      SERVER_IDENTITY: ${SERVER_IDENTITY}
+    depends_on: 
+      - mongodb_container
+    ports:
+      - 3000:3000
 volumes:
   mongodb_data_container:

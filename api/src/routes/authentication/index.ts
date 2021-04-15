@@ -99,7 +99,7 @@ export class AuthenticationRoutes {
 			const revokeBody: RevokeVerificationBody = req.body;
 			const requestUser = req.user;
 
-			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId, revokeBody.signatureValue);
+			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId, revokeBody.signatureValue, this.config.serverIdentityId);
 			if (!vcp) {
 				throw new Error('no vc found to revoke the verification!');
 			}
