@@ -79,7 +79,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user id of request does not concur with the initiatorVC user id!'));
 		});
 
@@ -101,7 +101,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('no valid verfiable credential!'));
 		});
 
@@ -120,7 +120,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is a device!'));
 		});
 
@@ -143,7 +143,7 @@ describe('test authentication routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator has to be verified!'));
 		});
 
@@ -163,7 +163,7 @@ describe('test authentication routes', () => {
 
 			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user must be in same organization!'));
 		});
 
@@ -185,7 +185,7 @@ describe('test authentication routes', () => {
 
 			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is a device!'));
 		});
 
@@ -234,12 +234,12 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
-			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: true
@@ -295,12 +295,12 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX);
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
-			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					verified: true
