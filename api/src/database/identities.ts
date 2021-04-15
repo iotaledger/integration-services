@@ -10,7 +10,8 @@ export const getIdentity = async (id: string): Promise<IdentityJsonUpdate> => {
 	return await MongoDbService.getDocument<IdentityJsonUpdate>(collectionName, query);
 };
 
-export const saveIdentity = async (identity: IdentityJsonUpdate): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveIdentity = async (identity: IdentityJsonUpdate, _secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+	// TODO encrypt private key
 	const document = {
 		_id: identity?.doc?.id,
 		...identity

@@ -27,6 +27,10 @@ const assertConfig = (config: Config) => {
 	if (config.serverSecret === '<server-secret>' || config.serverIdentityId === '<server-identity>') {
 		console.error('please replace the default values!');
 	}
+	if (config.serverSecret.length !== 32) {
+		throw Error('Server secret must to have a length of 32!');
+	}
+
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
 			console.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);

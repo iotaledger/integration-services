@@ -76,8 +76,8 @@ export class AuthenticationService {
 
 		await this.userService.addUser(user);
 
-		if (createIdentityBody.storeIdentity) {
-			await IdentitiesDb.saveIdentity(identity);
+		if (createIdentityBody.storeIdentity && this.serverSecret) {
+			await IdentitiesDb.saveIdentity(identity, this.serverSecret);
 		}
 
 		return {
