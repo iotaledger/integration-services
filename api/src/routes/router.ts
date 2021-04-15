@@ -13,6 +13,7 @@ import { IdentityService } from '../services/identity-service';
 import { RevokeVerificationSchema, VerifyUserSchema } from '../models/schemas/authentication';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
+import { VerifiableCredentialSchema } from '../models/schemas/identity';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -63,5 +64,5 @@ authenticationRouter.get('/challenge/:userId', getChallenge);
 authenticationRouter.post('/auth/:userId', auth);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
-authenticationRouter.post('/check-verification', authMiddleWare, checkVerifiableCredential);
+authenticationRouter.post('/check-verification', validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);

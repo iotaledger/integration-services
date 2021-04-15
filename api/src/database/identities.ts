@@ -2,19 +2,40 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { DocumentJsonUpdate, IdentityJsonUpdate } from '../models/types/identity';
+import { decrypt, encrypt } from '../utils/encryption';
 
 const collectionName = CollectionNames.identitiesCollection;
 
-export const getIdentity = async (id: string): Promise<IdentityJsonUpdate> => {
+export const getIdentity = async (id: string, secret: string): Promise<IdentityJsonUpdate | null> => {
 	const query = { _id: id };
-	return await MongoDbService.getDocument<IdentityJsonUpdate>(collectionName, query);
+	const identity = await MongoDbService.getDocument<IdentityJsonUpdate>(collectionName, query);
+	if (!identity) {
+		return identity;
+	}
+	const decryptedIdentity: IdentityJsonUpdate = {
+		...identity,
+		key: {
+			...identity.key,
+			secret: decrypt(identity.key.secret, secret)
+		}
+	};
+
+	return decryptedIdentity;
 };
 
-export const saveIdentity = async (identity: IdentityJsonUpdate, _secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
-	// TODO encrypt private key
+export const saveIdentity = async (identity: IdentityJsonUpdate, secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+	const encryptedKey = encrypt(identity.key.secret, secret);
+	const encryptedIdentity: IdentityJsonUpdate = {
+		...identity,
+		key: {
+			...identity.key,
+			secret: encryptedKey
+		}
+	};
+
 	const document = {
-		_id: identity?.doc?.id,
-		...identity
+		_id: encryptedIdentity?.doc?.id,
+		...encryptedIdentity
 	};
 
 	const res = await MongoDbService.insertDocument<IdentityJsonUpdate>(collectionName, document);

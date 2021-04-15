@@ -14,6 +14,7 @@ import { AuthorizationService } from '../../../services/authorization-service';
 const validUserMock = UserIdentityMock.userData;
 
 describe('test authentication routes', () => {
+	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
@@ -38,7 +39,7 @@ describe('test authentication routes', () => {
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
-			serverSecret: 'very-secret-secret',
+			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
@@ -120,7 +121,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.createIdentity(req, res, nextMock);
 			expect(identitySpy).toHaveBeenCalledWith();
 			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
-			expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock);
+			expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock, serverSecret);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
 		});
