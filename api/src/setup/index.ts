@@ -6,6 +6,7 @@ import { UserService } from '../services/user-service';
 import { IdentityService } from '../services/identity-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
+import { getHexEncodedKey, signChallenge, verifiyChallenge } from '../utils/encryption';
 
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
@@ -74,6 +75,23 @@ export async function setupApi() {
 		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.userId}`);
 		process.exit(0);
 	} else {
+		// verify if secret key of the server can be used to sign and verify a challenge
+		// if the secret key was changed the server won't be able to decrypt the secret key of the server
+		// and thus is not able to verify the challenge
+		console.log('Check if server has valid keypair...');
+		const challenge = 'test-challenge-to-solve';
+		let verified = false;
+		try {
+			const signedChallenge = await signChallenge(getHexEncodedKey(serverIdentity.key.secret), challenge);
+			verified = await verifiyChallenge(getHexEncodedKey(serverIdentity.key.public), challenge, signedChallenge);
+		} catch (e) {
+			console.error('error when signing or verifying the challenge, the secret key might have changed...');
+		} finally {
+			if (!verified) {
+				throw new Error('server keys cannot be verified!');
+			}
+		}
+
 		console.log('Api is ready to use!');
 	}
 }
