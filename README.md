@@ -16,7 +16,7 @@ MONGO_INITDB_ROOT_USERNAME, MONGO_INITDB_ROOT_PASSWORD, DATABASE_URL, SERVER_SEC
 
 The config should like following: (But please don't use the following values for username, password and secret in your env config.) The server secret is used to encrypt for instance the private key of the server identity but also to sign JWTs so it should be secure. 
 
-> Important: The SERVER_SECRET has to have a length of 32!!
+> Important: The SERVER_SECRET has to have a length of 32 characters!!
 
 ````
 PORT=3000

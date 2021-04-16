@@ -39,11 +39,11 @@ export class AuthenticationService {
 	}
 
 	saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId);
+		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
 	}
 
 	getKeyCollection(index: number) {
-		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId);
+		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId, this.serverSecret);
 	}
 
 	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
@@ -101,6 +101,7 @@ export class AuthenticationService {
 
 		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
 		// if reached create new keycollection, always get highest index
+		// TODO#80 use memoize for getKeyCollection
 		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(KEY_COLLECTION_INDEX, this.serverIdentityId);
 		const keyCollectionJson: KeyCollectionJson = {
