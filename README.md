@@ -59,6 +59,7 @@ eceaab9343eb   mongo:latest   "docker-entrypoint.s…"   7 seconds ago   Up 7 se
 2.1. Make sure you are in the `/api` folder and use the following commands:
 ```
 npm install
+npm run build
 npm run start
 ```
 
