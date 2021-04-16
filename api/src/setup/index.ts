@@ -86,12 +86,10 @@ export async function setupApi() {
 			verified = await verifiyChallenge(getHexEncodedKey(serverIdentity.key.public), challenge, signedChallenge);
 		} catch (e) {
 			console.error('error when signing or verifying the challenge, the secret key might have changed...');
-		} finally {
-			if (!verified) {
-				throw new Error('server keys cannot be verified!');
-			}
 		}
-
+		if (!verified) {
+			throw new Error('server keys cannot be verified!');
+		}
 		console.log('Api is ready to use!');
 	}
 }
