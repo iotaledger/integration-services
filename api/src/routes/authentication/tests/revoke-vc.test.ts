@@ -15,6 +15,7 @@ import { UserClassification, UserRoles } from '../../../models/types/user';
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
 describe('test authentication routes', () => {
+	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
@@ -40,7 +41,7 @@ describe('test authentication routes', () => {
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
-			serverSecret: 'very-secret-secret',
+			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
@@ -181,7 +182,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
@@ -224,7 +225,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
@@ -266,7 +267,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
@@ -309,7 +310,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
@@ -350,7 +351,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
@@ -395,7 +396,7 @@ describe('test authentication routes', () => {
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
 			expect(getUserSpy).toHaveBeenCalledWith(identityToRevoke);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
@@ -474,7 +475,7 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(identityToRevoke, SignatureValue, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();

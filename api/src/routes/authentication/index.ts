@@ -80,14 +80,10 @@ export class AuthenticationRoutes {
 		res.status(StatusCodes.OK).send(vup);
 	};
 
-	checkVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const vcBody: any = req.body;
-			if (!vcBody?.id) {
-				throw new Error('No valid verifiable credential provided!');
-			}
+			const vcBody: VerifiableCredentialJson = req.body;
 			const isVerified = await this.authenticationService.checkVerifiableCredential(vcBody);
-
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
 			next(error);

@@ -1,4 +1,4 @@
-import { createChallenge, getHexEncodedKey, signChallenge, verifiyChallenge } from '.';
+import { createChallenge, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signChallenge, verifiyChallenge } from '.';
 
 describe('test encryption', () => {
 	it('verify signed challenge using valid keys should be true', async () => {
@@ -53,5 +53,31 @@ describe('test encryption', () => {
 		const signed = await signChallenge(prvKey, challenge);
 		const isVerified = await verifiyChallenge(pubKey, challenge, signed);
 		expect(isVerified).toBe(false);
+	});
+
+	it('expect decrypted text to be same', async () => {
+		const secretKey = randomSecretKey();
+		const text = 'Hello World!';
+		const encryptedText = encrypt(text, secretKey);
+		const decryptedText = decrypt(encryptedText, secretKey);
+		expect(decryptedText).toBe(text);
+	});
+
+	it('expect too long key not to work', async () => {
+		const secretKey = randomSecretKey() + randomSecretKey(); // Too long key is used!
+		const text = 'Hello World!';
+		const encryptedText = () => {
+			encrypt(text, secretKey);
+		};
+		expect(encryptedText).toThrowError('Invalid key length');
+	});
+
+	it('expect too small key not to work', async () => {
+		const secretKey = 'notsecurekey';
+		const text = 'Hello World!';
+		const encryptedText = () => {
+			encrypt(text, secretKey);
+		};
+		expect(encryptedText).toThrowError('Invalid key length');
 	});
 });

@@ -14,7 +14,9 @@ MONGO_INITDB_ROOT_USERNAME, MONGO_INITDB_ROOT_PASSWORD, DATABASE_URL, SERVER_SEC
 
 > !! For now leave the `SERVER_IDENTITY` blank or remove the complete line. !!
 
-The config should like following: (But please don't use the following values for username, password and secret in your env config.) The server secret is used to encrypt for instance the private key of the server identity but also to sign JWTs so it should be secure.
+The config should like following: (But please don't use the following values for username, password and secret in your env config.) The server secret is used to encrypt for instance the private key of the server identity but also to sign JWTs so it should be secure. 
+
+> Important: The SERVER_SECRET has to have a length of 32 characters!!
 
 ````
 PORT=3000
@@ -26,7 +28,7 @@ DATABASE_NAME=e-commerce-audit-log
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
 DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
-SERVER_SECRET=supersecretsecret
+SERVER_SECRET=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
 ````
 
 Make sure you use the same username and password for the `DATABASE_URL` as in `MONGO_INITDB_ROOT_USERNAME` & `MONGO_INITDB_ROOT_PASSWORD`.
@@ -57,7 +59,6 @@ eceaab9343eb   mongo:latest   "docker-entrypoint.s…"   7 seconds ago   Up 7 se
 2.1. Make sure you are in the `/api` folder and use the following commands:
 ```
 npm install
-npm run build
 npm run start
 ```
 

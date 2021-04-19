@@ -39,17 +39,17 @@ export class AuthenticationService {
 	}
 
 	saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId);
+		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
 	}
 
 	getKeyCollection(index: number) {
-		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId);
+		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId, this.serverSecret);
 	}
 
 	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
 		const index = KEY_COLLECTION_INDEX;
 		const count = KEY_COLLECTION_SIZE;
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
@@ -63,7 +63,7 @@ export class AuthenticationService {
 	};
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
-		return IdentitiesDb.getIdentity(did);
+		return IdentitiesDb.getIdentity(did, this.serverSecret);
 	}
 
 	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
@@ -76,8 +76,8 @@ export class AuthenticationService {
 
 		await this.userService.addUser(user);
 
-		if (createIdentityBody.storeIdentity) {
-			await IdentitiesDb.saveIdentity(identity);
+		if (createIdentityBody.storeIdentity && this.serverSecret) {
+			await IdentitiesDb.saveIdentity(identity, this.serverSecret);
 		}
 
 		return {
@@ -101,6 +101,7 @@ export class AuthenticationService {
 
 		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
 		// if reached create new keycollection, always get highest index
+		// TODO#80 use memoize for getKeyCollection
 		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(KEY_COLLECTION_INDEX, this.serverIdentityId);
 		const keyCollectionJson: KeyCollectionJson = {
@@ -108,7 +109,7 @@ export class AuthenticationService {
 			keys: keyCollection.keys
 		};
 
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
@@ -130,7 +131,7 @@ export class AuthenticationService {
 	};
 
 	checkVerifiableCredential = async (vc: VerifiableCredentialJson): Promise<boolean> => {
-		const serverIdentity: IdentityJson = await IdentitiesDb.getIdentity(this.serverIdentityId);
+		const serverIdentity: IdentityJson = await IdentitiesDb.getIdentity(this.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
@@ -145,7 +146,7 @@ export class AuthenticationService {
 	revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence, issuerId: string) => {
 		const subjectId = vcp.vc.id;
 
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId);
+		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}

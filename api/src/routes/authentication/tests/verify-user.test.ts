@@ -15,6 +15,7 @@ import { AuthorizationService } from '../../../services/authorization-service';
 import { UserClassification, UserRoles } from '../../../models/types/user';
 
 describe('test authentication routes', () => {
+	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
@@ -39,7 +40,7 @@ describe('test authentication routes', () => {
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
 			jwtExpiration: '2 days',
-			serverSecret: 'very-secret-secret',
+			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
@@ -234,10 +235,10 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
+			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
@@ -295,10 +296,10 @@ describe('test authentication routes', () => {
 			await authenticationRoutes.verifyUser(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
-			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
+			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
