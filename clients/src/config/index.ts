@@ -8,7 +8,7 @@ export const users = [
 		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
-		classification: 'device',
+		type: 'device',
 		subscribedChannelIds: ['test-address-c2', 'test-address'],
 		description: 'Device which measures temperature in the kitchen.',
 		organization: 'IOTA',
@@ -20,7 +20,7 @@ export const users = [
 		firstName: 'Brandon',
 		lastName: 'Tomson',
 		organization: 'University Account',
-		classification: 'human',
+		type: 'Person',
 		description: 'Just a user from the university.',
 		verification: {
 			verified: true
@@ -53,7 +53,7 @@ export const UserIdentity = {
 		userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
-		classification: 'human',
+		type: 'Person',
 		description: 'Just a user',
 		registrationDate: '2021-03-16T14:18:49Z',
 		verification: {
@@ -67,10 +67,10 @@ export const UserIdentity = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				type: ['VerifiableCredential', 'UserCredential'],
+				type: ['VerifiableCredential', 'PersonCredential'],
 				credentialSubject: {
 					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-					classification: 'human',
+					type: 'Person',
 					initiatorId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
@@ -88,10 +88,10 @@ export const UserIdentity = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				type: ['VerifiableCredential', 'UserCredential'],
+				type: ['VerifiableCredential', 'PersonCredential'],
 				credentialSubject: {
 					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-					classification: 'human',
+					type: 'Person',
 					initiatorId: 'did:iota:DYc6feyWBHC6ns9gA53HCNrFvdgUYWSjw7BQbw9vH4vA',
 					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
@@ -150,7 +150,7 @@ export const ServerIdentity = {
 		userId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
-		classification: 'api',
+		type: 'api',
 		description: 'Root identity of the api!',
 		registrationDate: '2021-03-24T14:38:43Z',
 		verification: {
@@ -164,10 +164,10 @@ export const ServerIdentity = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: ['VerifiableCredential', 'UserCredential'],
+				type: ['VerifiableCredential', 'ApiCredential'],
 				credentialSubject: {
 					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-					classification: 'api',
+					type: 'api',
 					organization: 'IOTA',
 					registrationDate: '2021-03-24T15:38:43+01:00',
 					username: 'api-identity'
@@ -213,7 +213,7 @@ export const DeviceIdentity = {
 		userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
-		classification: 'product',
+		type: 'product',
 		subscribedChannelIds: ['test-address-c2', 'test-address'],
 		description: 'Device which measures temperature in the kitchen.',
 		registrationDate: '2021-04-13T11:01:32Z',

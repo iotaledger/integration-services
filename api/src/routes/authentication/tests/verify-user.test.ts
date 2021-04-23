@@ -12,7 +12,7 @@ import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
-import { UserClassification, UserRoles } from '../../../models/types/user';
+import { UserType, UserRoles } from '../../../models/types/user';
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -133,7 +133,7 @@ describe('test authentication routes', () => {
 
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				user: { userId: initiatorVC.id, classification: UserClassification.human },
+				user: { userId: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -153,7 +153,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				user: { userId: initiatorVC.id, classification: UserClassification.human },
+				user: { userId: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -175,7 +175,7 @@ describe('test authentication routes', () => {
 			spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(true);
 			spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, classification: UserClassification.device, role: UserRoles.Admin },
+				user: { userId: initiatorVC.id, type: UserType.Device, role: UserRoles.Admin },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -198,7 +198,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, role: UserRoles.Admin, classification: UserClassification.human },
+				user: { userId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -207,7 +207,7 @@ describe('test authentication routes', () => {
 			};
 
 			const credentialSubject: CredentialSubject = {
-				classification: subject.classification,
+				type: subject.type,
 				id: subject.userId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
@@ -215,7 +215,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential = {
-				type: 'UserCredential',
+				type: 'PersonCredential',
 				id: subject.userId,
 				subject: {
 					...credentialSubject
@@ -259,7 +259,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, classification: UserClassification.human },
+				user: { userId: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
 					subjectId: subject.userId,
@@ -268,7 +268,7 @@ describe('test authentication routes', () => {
 			};
 
 			const credentialSubject: CredentialSubject = {
-				classification: subject.classification,
+				type: subject.type,
 				id: subject.userId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
@@ -276,7 +276,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential = {
-				type: 'UserCredential',
+				type: 'DeviceCredential',
 				id: subject.userId,
 				subject: {
 					...credentialSubject

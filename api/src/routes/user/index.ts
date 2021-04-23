@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, UserSearch, UserClassification } from '../../models/types/user';
+import { User, UserSearch, UserType } from '../../models/types/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
@@ -101,7 +101,7 @@ export class UserRoutes {
 
 	getUserSearch = (req: Request): UserSearch => {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-		const classification = decodeParam(<string>req.query.classification);
+		const type = decodeParam(<string>req.query.type);
 		const organization = decodeParam(<string>req.query.organization);
 		const username = decodeParam(<string>req.query.username);
 		const verifiedParam = decodeParam(<string>req.query.verified);
@@ -120,7 +120,7 @@ export class UserRoutes {
 		const index = isNaN(indexParam) ? undefined : indexParam;
 
 		return {
-			classification: <UserClassification>classification,
+			type: <UserType>type,
 			index,
 			limit,
 			organization,

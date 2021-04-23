@@ -1,6 +1,6 @@
 import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
-import { UserPersistence, UserClassification, User, UserSearch } from '../../models/types/user';
+import { UserPersistence, UserType, User, UserSearch } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
@@ -23,7 +23,7 @@ describe('test Search user', () => {
 
 	it('should call searchUser with expected user search', async () => {
 		const expectedUserSearch: UserSearch = {
-			classification: UserClassification.human,
+			type: UserType.Person,
 			index: 1,
 			limit: 1,
 			username: 'charlie',
@@ -36,7 +36,7 @@ describe('test Search user', () => {
 		const req: any = {
 			params: {},
 			query: {
-				classification: 'human',
+				type: 'Person',
 				'registration-date': '2021-02-12T14:58:05+01:00',
 				verified: 'true',
 				limit: '1',
@@ -85,7 +85,7 @@ describe('test GET user', () => {
 			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
-			classification: UserClassification.human,
+			type: UserType.Person,
 			subscribedChannelIds: [],
 			details: { firstName: 'Tom', lastName: 'Tomson' },
 			description: null,
@@ -105,7 +105,7 @@ describe('test GET user', () => {
 			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
-			classification: 'human',
+			type: 'Person',
 			subscribedChannelIds: [],
 			details: { firstName: 'Tom', lastName: 'Tomson' },
 			description: null,
@@ -137,7 +137,7 @@ describe('test POST user', () => {
 		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
-		classification: UserClassification.human,
+		type: UserType.Person,
 		subscribedChannelIds: [],
 		details: { firstName: 'Tom', lastName: 'Sonson' },
 		description: null,
@@ -220,7 +220,7 @@ describe('test PUT user', () => {
 		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
-		classification: UserClassification.human,
+		type: UserType.Person,
 		subscribedChannelIds: [],
 		details: { firstName: 'Tom', lastName: 'Sonson' },
 		description: null,

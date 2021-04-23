@@ -60,7 +60,7 @@ describe('test authentication routes', () => {
 				params: {},
 				body: {
 					username: 'test-username',
-					classification: 'human',
+					type: 'Person',
 					firstName: 'Mister',
 					lastName: 'Subscriber',
 					organization: 'IOTA',
@@ -70,7 +70,7 @@ describe('test authentication routes', () => {
 			};
 
 			const exptectedUser = {
-				classification: 'human',
+				type: 'Person',
 				description: 'test',
 				firstName: 'Mister',
 				lastName: 'Subscriber',
@@ -96,7 +96,7 @@ describe('test authentication routes', () => {
 				params: {},
 				body: {
 					username: 'test-username',
-					classification: 'human',
+					type: 'Person',
 					firstName: 'Mister',
 					lastName: 'Subscriber',
 					storeIdentity: true,
@@ -107,7 +107,7 @@ describe('test authentication routes', () => {
 			};
 
 			const exptectedUser = {
-				classification: 'human',
+				type: 'Person',
 				description: 'test',
 				firstName: 'Mister',
 				lastName: 'Subscriber',
