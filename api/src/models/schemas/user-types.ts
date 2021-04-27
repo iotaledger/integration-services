@@ -44,6 +44,7 @@ export const ThingObject = {
 export const ThingSchema = Type.Object({
 	...ThingObject
 });
+
 export const QuantitativeValueSchema = Type.Object({
 	...ThingObject,
 	maxValue: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
@@ -58,6 +59,7 @@ export const DistanceSchema = Type.Object({
 
 export const AddressSchema = Type.Object({
 	...ThingObject,
+	addressCountry: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	addressLocality: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	addressRegion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	postalCode: Type.Optional(Type.Union([Type.String(), Type.Null()])),
@@ -108,16 +110,15 @@ export const OrganizationSchema = Type.Object({
 
 export const PersonSchema = Type.Object({
 	...ThingObject,
-	familyName: Type.String(),
-	givenName: Type.String(),
-	memberOf: Type.Optional(Type.Union([OrganizationSchema, Type.Null()])),
-	worksFor: Type.Optional(Type.Union([OrganizationSchema, Type.Null()])),
+	familyName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	givenName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	memberOf: Type.Optional(Type.Union([Type.Array(OrganizationSchema), OrganizationSchema, Type.String(), Type.Null()])),
+	worksFor: Type.Optional(Type.Union([Type.Array(OrganizationSchema), OrganizationSchema, Type.String(), Type.Null()])),
 	address: Type.Optional(Type.Union([AddressSchema, Type.String(), Type.Null()])),
 	colleague: Type.Optional(Type.Union([Type.Array(Type.String()), Type.Null()])),
 	email: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	jobTitle: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	alumniOf: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	birthPlace: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	birthPlace: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
 	birthDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	height: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.Null()])),
 	weight: Type.Optional(Type.Union([QuantitativeValueSchema, Type.Null()])),
@@ -170,4 +171,40 @@ export const ServiceSchema = Type.Object({
 	serviceOutput: Type.Optional(Type.Union([ThingSchema, Type.Null()])),
 	termsOfService: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	serviceType: Type.Optional(Type.Union([Type.String(), Type.Null()]))
+});
+
+export const DeviceCategorySchema = Type.Object({});
+export const StructuredValueSchema = Type.Object({ ...ThingObject });
+
+export const DeviceSchema = Type.Object({
+	batteryLevel: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+	category: Type.Any(), // todo use enum
+	configuration: Type.Optional(Type.Union([StructuredValueSchema, Type.Null()])),
+	controlledAsset: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Any(), Type.Null()])),
+	controlledProperty: Type.Optional(Type.Union([Type.Any(), Type.Array(Type.String()), Type.Null()])), // todo use map
+	dataProvider: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
+	dateFirstUsed: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	dateInstalled: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	dateLastCalibration: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	dateLastValueReported: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	dateManufacured: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	deviceState: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	firmwareVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	hardwareVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	ipAddress: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Null()])),
+	location: Type.Optional(Type.Union([Type.Any(), Type.Null()])),
+	macAddress: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	mcc: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	mnc: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	osVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	owner: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any(), Type.Null()])),
+	provider: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any(), Type.Null()])),
+	refDeviceModel: Type.Optional(Type.Union([Type.Any(), Type.Null()])),
+	rssi: Type.Optional(Type.Union([Type.Number(), Type.Array(Type.Number()), Type.Null()])),
+	serialNumber: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	softwareVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+	source: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
+	supportedProtocol: Type.Optional(Type.Union([Type.Any(), Type.Null()])), // todo use map
+	value: Type.Optional(Type.Union([Type.String(), QuantitativeValueSchema, Type.Null()])), // todo use map
+	fillingLevel: Type.Optional(Type.Union([Type.Number(), QuantitativeValueSchema, Type.Null()])) // todo use map
 });

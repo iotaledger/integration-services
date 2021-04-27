@@ -1,9 +1,15 @@
 import { Static } from '@sinclair/typebox';
 import { UserSchema, UserWithoutIdSchema, VerificationSchema } from '../schemas/user';
+import { OrganizationSchema, ServiceSchema, PersonSchema, ProductSchema, DeviceSchema } from '../schemas/user-types';
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
 export type User = Static<typeof UserSchema> & UserWithoutId;
 export type Verification = Static<typeof VerificationSchema>;
+export type Organization = Static<typeof OrganizationSchema>;
+export type Service = Static<typeof ServiceSchema>;
+export type Person = Static<typeof PersonSchema>;
+export type Product = Static<typeof ProductSchema>;
+export type Device = Static<typeof DeviceSchema>;
 
 export const enum UserType {
 	Organization = 'Organization',

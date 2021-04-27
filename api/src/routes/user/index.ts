@@ -6,6 +6,9 @@ import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/authentication';
 import { AuthorizationService } from '../../services/authorization-service';
+import Ajv from 'ajv';
+import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
+const ajv = new Ajv();
 
 export class UserRoutes {
 	private readonly userService: UserService;
@@ -44,6 +47,7 @@ export class UserRoutes {
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const user: User = req.body;
+			this.validateUser(user);
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {
@@ -129,5 +133,35 @@ export class UserRoutes {
 			registrationDate: getDateFromString(registrationDate),
 			subscribedChannelIds
 		};
+	};
+
+	validateUser = (user: User) => {
+		let validate: Ajv.ValidateFunction;
+
+		switch (user.type) {
+			case UserType.Person:
+				validate = ajv.compile(PersonSchema);
+				break;
+			case UserType.Device:
+				validate = ajv.compile(DeviceSchema);
+				break;
+			case UserType.Organization:
+				validate = ajv.compile(OrganizationSchema);
+				break;
+			case UserType.Product:
+				validate = ajv.compile(ProductSchema);
+				break;
+			case UserType.Service:
+				validate = ajv.compile(ServiceSchema);
+				break;
+
+			default:
+				break;
+		}
+
+		const validDetails = <boolean>validate(user.details);
+		if (!validDetails) {
+			throw new Error('no valid details');
+		}
 	};
 }
