@@ -14,6 +14,8 @@ import { RevokeVerificationSchema, VerifyUserSchema } from '../models/schemas/au
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
 import { VerifiableCredentialSchema } from '../models/schemas/identity';
+import { ChannelRoutes } from './channel';
+import { StreamsService } from '../services/streams-service';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -66,3 +68,10 @@ authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSche
 authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
 authenticationRouter.post('/check-verification', validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
+
+const streamsService = new StreamsService();
+const channelRoutes = new ChannelRoutes(streamsService);
+export const channelRouter = Router();
+channelRouter.post('/create', channelRoutes.createChannel);
+channelRouter.get('/logs', channelRoutes.getLogs);
+channelRouter.post('/logs', channelRoutes.addLogs);
