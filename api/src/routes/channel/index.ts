@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { StreamsService } from '../../services/streams-service';
+import { ChannelService } from '../../services/channel-service';
 
 export class ChannelRoutes {
-	private readonly streamsService: StreamsService;
-	constructor(streamsService: StreamsService) {
-		this.streamsService = streamsService;
+	private readonly channelService: ChannelService;
+	constructor(channelService: ChannelService) {
+		this.channelService = channelService;
 	}
 
 	createChannel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channel = await this.streamsService.create();
+			const channel = await this.channelService.create();
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);
@@ -20,7 +20,7 @@ export class ChannelRoutes {
 
 	getLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channel = await this.streamsService.getLogs();
+			const channel = await this.channelService.getLogs();
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);
@@ -31,7 +31,7 @@ export class ChannelRoutes {
 		try {
 			const body = req.body;
 			// TODO validate
-			const channel = await this.streamsService.addLogs(body.address, body.publicPayload, body.maskedPayload);
+			const channel = await this.channelService.addLogs(body.address, body.publicPayload, body.maskedPayload);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

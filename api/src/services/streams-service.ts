@@ -70,6 +70,38 @@ export class StreamsService {
 			maskedData
 		};
 	};
+
+	getSubscriptions = async (announcementLink: string): Promise<void> => {};
+	requestSubscription = async (announcementLink: string): Promise<void> => {
+		const annAddress = streams.Address.from_string(announcementLink);
+		let options2 = new streams.SendOptions(1, true, 1);
+		let seed2 = this.makeSeed(81);
+		let sub = new streams.Subscriber(this.node, seed2, options2);
+		let ann_link_copy = annAddress.copy();
+		await sub.clone().receive_announcement(ann_link_copy);
+
+		console.log('Subscribing...');
+		ann_link_copy = annAddress.copy();
+		const response = await sub.clone().send_subscribe(ann_link_copy);
+		let sub_link = response.get_link();
+		console.log('Subscription message at: ', sub_link.to_string());
+
+		console.log('Subscription processed');
+	};
+
+	authorizeSubscription = async (subscriptionLink: string, announcementLink: string): Promise<void> => {
+		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
+		const announcementAddress = streams.Address.from_string(announcementLink);
+		console.log('Subscription message at: ', subscriptionLink);
+		console.log('For channel at: ', announcementLink);
+		await this.tmpAuth.clone().receive_subscribe(subscriptionAddress);
+
+		console.log('Sending Keyload');
+		const response = await this.tmpAuth.clone().send_keyload_for_everyone(announcementAddress);
+		let keyload_link = response.get_link();
+		console.log('Keyload message at: ', keyload_link.to_string());
+	};
+
 	async callMain() {
 		await main()
 			.then(() => {
@@ -79,6 +111,7 @@ export class StreamsService {
 				console.log(err);
 			});
 	}
+
 	// TODO moveToLib
 	toBytes(str: string) {
 		let bytes = [];
@@ -118,7 +151,7 @@ export async function main() {
 	console.log('multi branching: ', auth.is_multi_branching());
 
 	let response = await auth.clone().send_announce();
-	let ann_link = response.get_link();
+	const ann_link = response.get_link();
 	console.log('announced at: ', ann_link.to_string());
 
 	let options2 = new streams.SendOptions(1, true, 1);

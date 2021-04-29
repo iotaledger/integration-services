@@ -16,6 +16,9 @@ import { AuthorizationService } from '../services/authorization-service';
 import { VerifiableCredentialSchema } from '../models/schemas/identity';
 import { ChannelRoutes } from './channel';
 import { StreamsService } from '../services/streams-service';
+import { ChannelService } from '../services/channel-service';
+import { SubscriptionService } from '../services/subscription-service';
+import { SubscriptionRoutes } from './subscription';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -70,8 +73,16 @@ authenticationRouter.post('/check-verification', validate({ body: VerifiableCred
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
 
 const streamsService = new StreamsService();
-const channelRoutes = new ChannelRoutes(streamsService);
+const channelService = new ChannelService(streamsService);
+const channelRoutes = new ChannelRoutes(channelService);
 export const channelRouter = Router();
 channelRouter.post('/create', channelRoutes.createChannel);
 channelRouter.get('/logs', channelRoutes.getLogs);
 channelRouter.post('/logs', channelRoutes.addLogs);
+
+const subscriptionService = new SubscriptionService(streamsService);
+const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
+export const subscriptionRouter = Router();
+subscriptionRouter.post('/subscriptions/:channelLink', subscriptionRoutes.getSubscriptions);
+subscriptionRouter.get('/request/:channelLink', subscriptionRoutes.requestSubscription);
+subscriptionRouter.post('/authorize/:channelLink', subscriptionRoutes.authorizeSubscription);
