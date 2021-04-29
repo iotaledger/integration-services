@@ -11,9 +11,11 @@ streams.set_panic_hook();
 export class StreamsService {
 	node = 'https://api.lb-0.testnet.chrysalis2.com/';
 	tmpAuth: streams.Author;
-	create = async (): Promise<{ seed: string; announcementLink: string }> => {
+	create = async (seed?: string): Promise<{ seed: string; announcementLink: string }> => {
 		const options = new streams.SendOptions(1, true, 1);
-		const seed = this.makeSeed(81);
+		if (!seed) {
+			seed = this.makeSeed(81);
+		}
 		this.tmpAuth = new streams.Author(this.node, seed, options, false);
 		console.log('channel address: ', this.tmpAuth.channel_address());
 		console.log('multi branching: ', this.tmpAuth.is_multi_branching());
@@ -72,11 +74,16 @@ export class StreamsService {
 	};
 
 	getSubscriptions = async (announcementLink: string): Promise<void> => {};
-	requestSubscription = async (announcementLink: string): Promise<void> => {
+
+	requestSubscription = async (announcementLink: string, seed?: string): Promise<{ seed: string; subLink: string }> => {
 		const annAddress = streams.Address.from_string(announcementLink);
-		let options2 = new streams.SendOptions(1, true, 1);
-		let seed2 = this.makeSeed(81);
-		let sub = new streams.Subscriber(this.node, seed2, options2);
+		let options = new streams.SendOptions(1, true, 1);
+
+		if (!seed) {
+			seed = this.makeSeed(81);
+		}
+
+		let sub = new streams.Subscriber(this.node, seed, options);
 		let ann_link_copy = annAddress.copy();
 		await sub.clone().receive_announcement(ann_link_copy);
 
@@ -85,6 +92,7 @@ export class StreamsService {
 		const response = await sub.clone().send_subscribe(ann_link_copy);
 		let sub_link = response.get_link();
 		console.log('Subscription message at: ', sub_link.to_string());
+		return { seed, subLink: sub_link };
 
 		console.log('Subscription processed');
 	};
