@@ -1,7 +1,8 @@
 import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
-import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
+import { SubscriptionSeed } from '../models/types/subscription';
 import { ChannelInfoService } from './channel-info-service';
+import { AccessRights } from '../models/schemas/channel-info';
 
 export class ChannelService {
 	private readonly streamsService: StreamsService;
@@ -12,21 +13,30 @@ export class ChannelService {
 		this.channelInfoService = channelInfoService;
 	}
 	create = async (userId: string, seed?: string): Promise<{ seed: string; announcementLink: string }> => {
-		const createChannel = await this.streamsService.create(seed);
-		const subscription: Subscription = {
+		const res = await this.streamsService.create(seed);
+		const subscription: SubscriptionSeed = {
 			userId,
-			channelAddress: createChannel.announcementLink,
-			seed: createChannel.seed,
-			subscriptionLink: createChannel.announcementLink,
-			type: SubscriptionType.Author,
-			accessRights: AccessRights.ReadAndWrite,
-			subscriptionAuthorized: true
+			channelAddress: res.announcementLink,
+			seed: res.seed,
+			subscriptionLink: res.announcementLink
 		};
 		// Todo use subscription service
 		await subscriptionDb.addSubscription(subscription);
-		console.log('todo use ', this.channelInfoService.addChannelInfo);
 
-		return createChannel;
+		const author = {
+			userId,
+			accessRights: AccessRights.ReadAndWrite,
+			subscriptionLink: res.announcementLink,
+			subscriptionIsAuthorized: true
+		};
+		this.channelInfoService.addChannelInfo({
+			author,
+			channelAddress: res.announcementLink,
+			latestLink: res.announcementLink,
+			topics: []
+		});
+
+		return res;
 	};
 
 	addLogs = async (address: string, publicPayload: string, maskedPayload: string): Promise<{ resLink: string; payload: string }> => {

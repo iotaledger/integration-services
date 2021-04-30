@@ -80,7 +80,7 @@ channelRouter.post('/create', channelRoutes.createChannel);
 channelRouter.get('/logs', channelRoutes.getLogs);
 channelRouter.post('/logs', channelRoutes.addLogs);
 
-const subscriptionService = new SubscriptionService(streamsService);
+const subscriptionService = new SubscriptionService(streamsService, channelInfoService);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
 export const subscriptionRouter = Router();
 subscriptionRouter.post('/subscriptions/:channelLink', subscriptionRoutes.getSubscriptions);

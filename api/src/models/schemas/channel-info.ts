@@ -5,15 +5,23 @@ export const TopicSchema = Type.Object({
 	source: Type.String()
 });
 
-export const ChannelSubscriberSchema = Type.Object({
-	subscriberId: Type.String(),
-	subscriberLink: Type.String()
+export enum AccessRights {
+	Read = 'Read',
+	Write = 'Write',
+	ReadAndWrite = 'ReadAndWrite'
+}
+
+export const ChannelSubscriptionSchema = Type.Object({
+	userId: Type.String(),
+	subscriptionIsAuthorized: Type.Boolean(),
+	subscriptionLink: Type.String(),
+	accessRights: Type.Enum(AccessRights)
 });
 
 export const ChannelInfoSchema = Type.Object({
 	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
-	authorId: Type.String({ minLength: 53, maxLength: 53 }),
-	subscribers: Type.Optional(Type.Array(ChannelSubscriberSchema)),
+	author: ChannelSubscriptionSchema,
+	subscribers: Type.Optional(Type.Array(ChannelSubscriptionSchema)),
 	latestLink: Type.String(),
 	topics: Type.Array(TopicSchema),
 	created: Type.Optional(Type.String()),

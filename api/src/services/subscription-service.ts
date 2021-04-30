@@ -1,12 +1,17 @@
 import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
-import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
+import { SubscriptionSeed } from '../models/types/subscription';
+import { ChannelInfoService } from './channel-info-service';
+import { AccessRights } from '../models/schemas/channel-info';
+import { ChannelSubscription } from '../models/types/channel-info';
 
 export class SubscriptionService {
 	streamsService: StreamsService;
+	private readonly channelInfoService: ChannelInfoService;
 
-	constructor(streamsService: StreamsService) {
+	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService) {
 		this.streamsService = streamsService;
+		this.channelInfoService = channelInfoService;
 	}
 
 	getSubscriptions = async (announcementLink: string): Promise<void> => {
@@ -15,24 +20,27 @@ export class SubscriptionService {
 
 	requestSubscription = async (
 		userId: string,
-		announcementLink: string,
+		channelAddress: string,
 		seed?: string,
 		accessRights?: AccessRights
 	): Promise<{ seed: string; subLink: string }> => {
 		// TODO check seed size == 81 if not null
-		const subReq = await this.streamsService.requestSubscription(announcementLink, seed);
-		const subscription: Subscription = {
+		const res = await this.streamsService.requestSubscription(channelAddress, seed);
+		const subscription: SubscriptionSeed = {
 			userId,
-			channelAddress: announcementLink,
-			seed: subReq.seed,
-			subscriptionLink: subReq.subLink,
-			type: SubscriptionType.Subscriber,
-			accessRights: accessRights || AccessRights.ReadAndWrite,
-			subscriptionAuthorized: false
+			channelAddress: channelAddress,
+			seed: res.seed,
+			subscriptionLink: res.subLink
 		};
 		await subscriptionDb.addSubscription(subscription);
-		// Todo update channel info
-		return subReq;
+		const channelSubscription: ChannelSubscription = {
+			accessRights,
+			subscriptionLink: res.subLink,
+			subscriptionIsAuthorized: false,
+			userId
+		};
+		await this.channelInfoService.addChannelSubscriber(channelAddress, channelSubscription);
+		return res;
 	};
 
 	authorizeSubscription = async (subscriptionLink: string, announcementLink: string): Promise<void> => {

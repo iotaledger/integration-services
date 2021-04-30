@@ -1,4 +1,4 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelSubscriber } from '../models/types/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelSubscription } from '../models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
@@ -50,7 +50,7 @@ export class ChannelInfoService {
 		return ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
 	};
 
-	addChannelSubscriber = async (channelAddress: string, channelSubscriber: ChannelSubscriber): Promise<UpdateWriteOpResult> => {
+	addChannelSubscriber = async (channelAddress: string, channelSubscriber: ChannelSubscription): Promise<UpdateWriteOpResult> => {
 		return ChannelInfoDb.addChannelSubscriber(channelAddress, channelSubscriber);
 	};
 
@@ -59,13 +59,13 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
-		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || isEmpty(ci.authorId)) {
-			throw new Error('Error when parsing the body: channelAddress and author must be provided!');
+		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || !ci.author) {
+			throw new Error('Error when parsing the body: channelAddress, topic and author must be provided!');
 		}
 
 		const channelInfoPersistence: ChannelInfoPersistence = {
 			created: ci.created ? getDateFromString(ci.created) : null,
-			authorId: ci.authorId,
+			author: ci.author,
 			subscribers: ci.subscribers || [],
 			topics: ci.topics,
 			latestLink: ci.latestLink,
@@ -77,13 +77,13 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
-		if (cip == null || isEmpty(cip.channelAddress) || isEmpty(cip.authorId)) {
+		if (cip == null || isEmpty(cip.channelAddress) || !cip.author) {
 			throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
 		}
 
 		const channelInfo: ChannelInfo = {
 			created: getDateStringFromDate(cip.created),
-			authorId: cip.authorId,
+			author: cip.author,
 			subscribers: cip.subscribers || [],
 			topics: cip.topics,
 			latestLink: cip.latestLink,
