@@ -73,7 +73,7 @@ authenticationRouter.post('/check-verification', validate({ body: VerifiableCred
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
 
 const streamsService = new StreamsService();
-const channelService = new ChannelService(streamsService);
+const channelService = new ChannelService(streamsService, channelInfoService);
 const channelRoutes = new ChannelRoutes(channelService);
 export const channelRouter = Router();
 channelRouter.post('/create', channelRoutes.createChannel);

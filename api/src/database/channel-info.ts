@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { ChannelInfoPersistence, ChannelInfoSearch } from '../models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch, ChannelSubscriber } from '../models/types/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.channelInfo;
@@ -38,7 +38,7 @@ export const addChannelInfo = async (channelInfo: ChannelInfoPersistence): Promi
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
+export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
 	const query = {
 		_id: channelInfo.channelAddress
 	};
@@ -46,6 +46,37 @@ export const updateChannelInfo = async (channelInfo: ChannelInfoPersistence): Pr
 	const update = {
 		$set: {
 			topics
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const updateLatestChannelLink = async (channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> => {
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			latestLink
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const addChannelSubscriber = async (channelAddress: string, channelSubscriber: ChannelSubscriber): Promise<UpdateWriteOpResult> => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.subscribers || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			subscribers: [...subs, channelSubscriber]
 		}
 	};
 

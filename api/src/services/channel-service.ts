@@ -1,12 +1,15 @@
 import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
 import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
+import { ChannelInfoService } from './channel-info-service';
 
 export class ChannelService {
-	streamsService: StreamsService;
+	private readonly streamsService: StreamsService;
+	private readonly channelInfoService: ChannelInfoService;
 
-	constructor(streamsService: StreamsService) {
+	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService) {
 		this.streamsService = streamsService;
+		this.channelInfoService = channelInfoService;
 	}
 	create = async (userId: string, seed?: string): Promise<{ seed: string; announcementLink: string }> => {
 		const createChannel = await this.streamsService.create(seed);
@@ -16,9 +19,12 @@ export class ChannelService {
 			seed: createChannel.seed,
 			subscriptionLink: createChannel.announcementLink,
 			type: SubscriptionType.Author,
-			accessRights: AccessRights.ReadAndWrite
+			accessRights: AccessRights.ReadAndWrite,
+			subscriptionAuthorized: true
 		};
+		// Todo use subscription service
 		await subscriptionDb.addSubscription(subscription);
+		console.log('todo use ', this.channelInfoService.addChannelInfo);
 
 		return createChannel;
 	};

@@ -1,7 +1,8 @@
 import { Static } from '@sinclair/typebox';
-import { TopicSchema, ChannelInfoSchema } from '../schemas/channel-info';
+import { TopicSchema, ChannelInfoSchema, ChannelSubscriberSchema } from '../schemas/channel-info';
 
 export type Topic = Static<typeof TopicSchema>;
+export type ChannelSubscriber = Static<typeof ChannelSubscriberSchema>;
 
 export type ChannelInfo = Static<typeof ChannelInfoSchema>;
 type OmitedChannelInfo = Omit<ChannelInfo, 'created' | 'latestMessage'>;

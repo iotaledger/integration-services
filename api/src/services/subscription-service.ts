@@ -27,7 +27,8 @@ export class SubscriptionService {
 			seed: subReq.seed,
 			subscriptionLink: subReq.subLink,
 			type: SubscriptionType.Subscriber,
-			accessRights: accessRights || AccessRights.ReadAndWrite
+			accessRights: accessRights || AccessRights.ReadAndWrite,
+			subscriptionAuthorized: false
 		};
 		await subscriptionDb.addSubscription(subscription);
 		// Todo update channel info

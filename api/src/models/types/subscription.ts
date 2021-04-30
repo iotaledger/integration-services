@@ -14,4 +14,5 @@ export interface Subscription {
 	userId: string;
 	type: SubscriptionType;
 	accessRights: AccessRights;
+	subscriptionAuthorized: boolean;
 }

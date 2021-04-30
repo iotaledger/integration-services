@@ -290,7 +290,7 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should return 404 since no channel updated', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 0 } });
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
 			user: { userId: validBody.authorId },
@@ -300,13 +300,13 @@ describe('test PUT channelInfo', () => {
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(res.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
 		expect(res.status).toHaveBeenCalledWith(404);
 	});
 
 	it('should update expected channel info', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
 			user: { userId: validBody.authorId },
@@ -316,12 +316,12 @@ describe('test PUT channelInfo', () => {
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalled();
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(sendStatusMock).toHaveBeenCalledWith(200);
 	});
 
 	it('should not update expected channel info since not allowed', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
 			user: { userId: 'did:iota:123456' }, // different userId as authorId
@@ -331,12 +331,12 @@ describe('test PUT channelInfo', () => {
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalled();
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(0);
 		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
 	});
 
 	it('should call next(err) if an error occurs', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.callFake(() => {
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
@@ -346,7 +346,7 @@ describe('test PUT channelInfo', () => {
 		};
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
 		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
 	});

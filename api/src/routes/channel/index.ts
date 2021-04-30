@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
+import { AuthenticatedRequest } from '../../models/types/authentication';
 
 export class ChannelRoutes {
 	private readonly channelService: ChannelService;
@@ -9,9 +10,9 @@ export class ChannelRoutes {
 		this.channelService = channelService;
 	}
 
-	createChannel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channel = await this.channelService.create();
+			const channel = await this.channelService.create(req.user.userId);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);

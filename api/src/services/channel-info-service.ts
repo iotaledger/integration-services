@@ -1,4 +1,4 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '../models/types/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelSubscriber } from '../models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
@@ -41,9 +41,17 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
 	};
 
-	updateChannelInfo = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
+	updateChannelTopic = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
-		return ChannelInfoDb.updateChannelInfo(channelInfoPersistence);
+		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
+	};
+
+	updateLatestChannelLink = async (channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> => {
+		return ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
+	};
+
+	addChannelSubscriber = async (channelAddress: string, channelSubscriber: ChannelSubscriber): Promise<UpdateWriteOpResult> => {
+		return ChannelInfoDb.addChannelSubscriber(channelAddress, channelSubscriber);
 	};
 
 	deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
@@ -58,8 +66,9 @@ export class ChannelInfoService {
 		const channelInfoPersistence: ChannelInfoPersistence = {
 			created: ci.created ? getDateFromString(ci.created) : null,
 			authorId: ci.authorId,
-			subscriberIds: ci.subscriberIds || [],
+			subscribers: ci.subscribers || [],
 			topics: ci.topics,
+			latestLink: ci.latestLink,
 			channelAddress: ci.channelAddress,
 			latestMessage: ci.latestMessage && getDateFromString(ci.created)
 		};
@@ -75,8 +84,9 @@ export class ChannelInfoService {
 		const channelInfo: ChannelInfo = {
 			created: getDateStringFromDate(cip.created),
 			authorId: cip.authorId,
-			subscriberIds: cip.subscriberIds || [],
+			subscribers: cip.subscribers || [],
 			topics: cip.topics,
+			latestLink: cip.latestLink,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress
 		};
