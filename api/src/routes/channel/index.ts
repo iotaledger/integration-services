@@ -20,7 +20,9 @@ export class ChannelRoutes {
 
 	getLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channel = await this.channelService.getLogs();
+			const body = req.body;
+			// TODO validate
+			const channel = await this.channelService.getLogs(body.isAuth);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);
@@ -31,7 +33,7 @@ export class ChannelRoutes {
 		try {
 			const body = req.body;
 			// TODO validate
-			const channel = await this.channelService.addLogs(body.address, body.publicPayload, body.maskedPayload);
+			const channel = await this.channelService.addLogs(body.address, body.publicPayload, body.maskedPayload, body.isAuth);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

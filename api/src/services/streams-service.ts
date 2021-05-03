@@ -1,16 +1,18 @@
 import streams, { Address } from '../streams-lib/wasm-node/iota_streams_wasm';
-//import fetch from 'node-fetch';
-/*
-globalThis.fetch = fetch;
-globalThis.Headers = fetch.Headers;
-globalThis.Request = fetch.Request;
-globalThis.Response = fetch.Response;
-*/
+// import fetch from 'node-fetch';
+
+// global.fetch = fetch as any;
+// global.Headers = (fetch as any).Headers;
+// global.Request = (fetch as any).Request;
+// global.Response = (fetch as any).Response;
+
 streams.set_panic_hook();
 
 export class StreamsService {
 	node = 'https://api.lb-0.testnet.chrysalis2.com/';
 	tmpAuth: streams.Author;
+	tmpSub: streams.Subscriber;
+
 	create = async (seed?: string): Promise<{ seed: string; announcementLink: string }> => {
 		const options = new streams.SendOptions(1, true, 1);
 		if (!seed) {
@@ -29,13 +31,21 @@ export class StreamsService {
 		};
 	};
 
-	addLogs = async (address: string, publicPayload: string, maskedPayload: string): Promise<{ resLink: string; payload: string }> => {
+	addLogs = async (address: string, publicPayload: string, maskedPayload: string, isAuth: boolean): Promise<{ resLink: string; payload: string }> => {
 		const keyloadLink = Address.from_string(address);
 		const pPayload: any = this.toBytes(publicPayload);
 		const mPayload: any = this.toBytes(maskedPayload);
 
 		console.log('Author Sending tagged packet');
-		const response = await this.tmpAuth.clone().send_tagged_packet(keyloadLink, pPayload, mPayload);
+		let response: any = null;
+
+		// TODO
+		if (isAuth) {
+			response = await this.tmpAuth.clone().send_tagged_packet(keyloadLink, pPayload, mPayload);
+		} else {
+			response = await this.tmpSub.clone().send_tagged_packet(keyloadLink, pPayload, mPayload);
+		}
+
 		const tag_link = response.get_link();
 		console.log('Tag packet at: ', tag_link.to_string());
 
@@ -45,13 +55,20 @@ export class StreamsService {
 		};
 	};
 
-	getLogs = async (): Promise<{ publicData: any; maskedData: any }> => {
+	getLogs = async (isAuth: boolean): Promise<{ publicData: any; maskedData: any }> => {
 		console.log('\nAuthor fetching next messages', this.tmpAuth);
 		let exists = true;
 		let publicData: string[] = [];
 		let maskedData: string[] = [];
 		while (exists) {
-			const next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
+			let next_msgs: any = [];
+
+			// TODO
+			if (isAuth) {
+				next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
+			} else {
+				next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
+			}
 
 			if (next_msgs.length === 0) {
 				exists = false;
@@ -83,13 +100,13 @@ export class StreamsService {
 			seed = this.makeSeed(81);
 		}
 
-		const sub = new streams.Subscriber(this.node, seed, options);
+		this.tmpSub = new streams.Subscriber(this.node, seed, options);
 		let ann_link_copy = annAddress.copy();
-		await sub.clone().receive_announcement(ann_link_copy);
+		await this.tmpSub.clone().receive_announcement(ann_link_copy);
 
 		console.log('Subscribing...');
 		ann_link_copy = annAddress.copy();
-		const response = await sub.clone().send_subscribe(ann_link_copy);
+		const response = await this.tmpSub.clone().send_subscribe(ann_link_copy);
 		const sub_link = response.get_link();
 		console.log('Subscription message at: ', sub_link.to_string());
 		return { seed, subLink: sub_link };

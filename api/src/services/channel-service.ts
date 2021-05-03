@@ -1,8 +1,7 @@
 import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
-import { SubscriptionSeed } from '../models/types/subscription';
+import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
 import { ChannelInfoService } from './channel-info-service';
-import { AccessRights } from '../models/schemas/channel-info';
 
 export class ChannelService {
 	private readonly streamsService: StreamsService;
@@ -14,23 +13,21 @@ export class ChannelService {
 	}
 	create = async (userId: string, seed?: string): Promise<{ seed: string; announcementLink: string }> => {
 		const res = await this.streamsService.create(seed);
-		const subscription: SubscriptionSeed = {
+		const subscription: Subscription = {
 			userId,
+			type: SubscriptionType.Author,
 			channelAddress: res.announcementLink,
 			seed: res.seed,
-			subscriptionLink: res.announcementLink
+			subscriptionLink: res.announcementLink,
+			state: '',
+			accessRights: AccessRights.ReadAndWrite,
+			subscriptionIsAuthorized: true
 		};
 		// Todo use subscription service
 		await subscriptionDb.addSubscription(subscription);
 
-		const author = {
-			userId,
-			accessRights: AccessRights.ReadAndWrite,
-			subscriptionLink: res.announcementLink,
-			subscriptionIsAuthorized: true
-		};
 		this.channelInfoService.addChannelInfo({
-			author,
+			author: userId,
 			channelAddress: res.announcementLink,
 			latestLink: res.announcementLink,
 			topics: []
@@ -39,11 +36,11 @@ export class ChannelService {
 		return res;
 	};
 
-	addLogs = async (address: string, publicPayload: string, maskedPayload: string): Promise<{ resLink: string; payload: string }> => {
-		return this.streamsService.addLogs(address, publicPayload, maskedPayload);
+	addLogs = async (address: string, publicPayload: string, maskedPayload: string, isAuth: boolean): Promise<{ resLink: string; payload: string }> => {
+		return this.streamsService.addLogs(address, publicPayload, maskedPayload, isAuth);
 	};
 
-	getLogs = async (): Promise<{ publicData: any; maskedData: any }> => {
-		return this.streamsService.getLogs();
+	getLogs = async (isAuth: boolean): Promise<{ publicData: any; maskedData: any }> => {
+		return this.streamsService.getLogs(isAuth);
 	};
 }

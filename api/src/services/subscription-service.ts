@@ -1,9 +1,7 @@
 import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
-import { SubscriptionSeed } from '../models/types/subscription';
+import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
 import { ChannelInfoService } from './channel-info-service';
-import { AccessRights } from '../models/schemas/channel-info';
-import { ChannelSubscription } from '../models/types/channel-info';
 
 export class SubscriptionService {
 	streamsService: StreamsService;
@@ -19,27 +17,26 @@ export class SubscriptionService {
 	};
 
 	requestSubscription = async (
-		userId: string,
+		subscriberId: string,
 		channelAddress: string,
 		seed?: string,
 		accessRights?: AccessRights
 	): Promise<{ seed: string; subLink: string }> => {
 		// TODO check seed size == 81 if not null
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
-		const subscription: SubscriptionSeed = {
-			userId,
+		const subscription: Subscription = {
+			type: SubscriptionType.Subscriber,
+			userId: subscriberId,
 			channelAddress: channelAddress,
 			seed: res.seed,
-			subscriptionLink: res.subLink
-		};
-		await subscriptionDb.addSubscription(subscription);
-		const channelSubscription: ChannelSubscription = {
-			accessRights,
 			subscriptionLink: res.subLink,
+			accessRights,
 			subscriptionIsAuthorized: false,
-			userId
+			state: ''
 		};
-		await this.channelInfoService.addChannelSubscriber(channelAddress, channelSubscription);
+
+		await subscriptionDb.addSubscription(subscription);
+		await this.channelInfoService.addChannelSubscriber(channelAddress, subscriberId);
 		return res;
 	};
 

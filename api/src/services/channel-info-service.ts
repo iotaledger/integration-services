@@ -1,4 +1,4 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelSubscription } from '../models/types/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '../models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
@@ -50,7 +50,7 @@ export class ChannelInfoService {
 		return ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
 	};
 
-	addChannelSubscriber = async (channelAddress: string, channelSubscriber: ChannelSubscription): Promise<UpdateWriteOpResult> => {
+	addChannelSubscriber = async (channelAddress: string, channelSubscriber: string): Promise<UpdateWriteOpResult> => {
 		return ChannelInfoDb.addChannelSubscriber(channelAddress, channelSubscriber);
 	};
 

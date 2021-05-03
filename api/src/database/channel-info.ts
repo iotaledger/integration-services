@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { ChannelInfoPersistence, ChannelInfoSearch, ChannelSubscription } from '../models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '../models/types/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.channelInfo;
@@ -65,7 +65,7 @@ export const updateLatestChannelLink = async (channelAddress: string, latestLink
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const addChannelSubscriber = async (channelAddress: string, channelSubscriber: ChannelSubscription): Promise<UpdateWriteOpResult> => {
+export const addChannelSubscriber = async (channelAddress: string, channelSubscriber: string): Promise<UpdateWriteOpResult> => {
 	const currChannel = await getChannelInfo(channelAddress);
 	if (!currChannel) {
 		throw new Error(`could not find channel with address ${channelAddress}`);
