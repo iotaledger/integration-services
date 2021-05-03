@@ -76,13 +76,13 @@ const streamsService = new StreamsService();
 const channelService = new ChannelService(streamsService, channelInfoService);
 const channelRoutes = new ChannelRoutes(channelService);
 export const channelRouter = Router();
-channelRouter.post('/create', channelRoutes.createChannel);
+channelRouter.post('/create', authMiddleWare, channelRoutes.createChannel);
 channelRouter.get('/logs', channelRoutes.getLogs);
 channelRouter.post('/logs', channelRoutes.addLogs);
 
 const subscriptionService = new SubscriptionService(streamsService, channelInfoService);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
 export const subscriptionRouter = Router();
-subscriptionRouter.post('/subscriptions/:channelLink', subscriptionRoutes.getSubscriptions);
-subscriptionRouter.get('/request/:channelLink', subscriptionRoutes.requestSubscription);
-subscriptionRouter.post('/authorize/:channelLink', subscriptionRoutes.authorizeSubscription);
+subscriptionRouter.post('/subscription/:channelAddress', subscriptionRoutes.getSubscriptions);
+subscriptionRouter.post('/request/:channelAddress', authMiddleWare, subscriptionRoutes.requestSubscription);
+subscriptionRouter.post('/authorize/:channelAddress', authMiddleWare, subscriptionRoutes.authorizeSubscription);

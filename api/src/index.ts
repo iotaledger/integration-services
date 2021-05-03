@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { errorMiddleware } from './middlewares/error';
-import { authenticationRouter, channelInfoRouter, channelRouter, userRouter } from './routes/router';
+import { authenticationRouter, channelInfoRouter, channelRouter, subscriptionRouter, userRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
@@ -31,6 +31,7 @@ async function startServer() {
 	const prefix = `/api/${version}`;
 	useRouter(app, prefix + '/channel-info', channelInfoRouter);
 	useRouter(app, prefix + '/channel', channelRouter);
+	useRouter(app, prefix + '/subscriptions', subscriptionRouter);
 	useRouter(app, prefix + '/users', userRouter);
 	useRouter(app, prefix + '/authentication', authenticationRouter);
 

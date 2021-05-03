@@ -55,8 +55,7 @@ export class StreamsService {
 		};
 	};
 
-	getLogs = async (isAuth: boolean): Promise<{ publicData: any; maskedData: any }> => {
-		console.log('\nAuthor fetching next messages', this.tmpAuth);
+	getLogs = async (isAuth: boolean): Promise<{ publicData: string[]; maskedData: string[] }> => {
 		let exists = true;
 		let publicData: string[] = [];
 		let maskedData: string[] = [];
@@ -65,9 +64,11 @@ export class StreamsService {
 
 			// TODO
 			if (isAuth) {
+				console.log('Author fetching next messages');
 				next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
 			} else {
-				next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
+				console.log('Sub fetching next messages');
+				next_msgs = await this.tmpSub.clone().fetch_next_msgs();
 			}
 
 			if (next_msgs.length === 0) {
@@ -92,7 +93,7 @@ export class StreamsService {
 
 	getSubscriptions = async (announcementLink: string): Promise<void> => {};
 
-	requestSubscription = async (announcementLink: string, seed?: string): Promise<{ seed: string; subLink: string }> => {
+	requestSubscription = async (announcementLink: string, seed?: string): Promise<{ seed: string; subscriptionLink: string }> => {
 		const annAddress = streams.Address.from_string(announcementLink);
 		const options = new streams.SendOptions(1, true, 1);
 
@@ -109,12 +110,10 @@ export class StreamsService {
 		const response = await this.tmpSub.clone().send_subscribe(ann_link_copy);
 		const sub_link = response.get_link();
 		console.log('Subscription message at: ', sub_link.to_string());
-		return { seed, subLink: sub_link };
-
-		console.log('Subscription processed');
+		return { seed, subscriptionLink: sub_link.to_string() };
 	};
 
-	authorizeSubscription = async (subscriptionLink: string, announcementLink: string): Promise<void> => {
+	authorizeSubscription = async (subscriptionLink: string, announcementLink: string): Promise<{ keyloadLink: string }> => {
 		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
 		const announcementAddress = streams.Address.from_string(announcementLink);
 		console.log('Subscription message at: ', subscriptionLink);
@@ -125,6 +124,7 @@ export class StreamsService {
 		const response = await this.tmpAuth.clone().send_keyload_for_everyone(announcementAddress);
 		const keyload_link = response.get_link();
 		console.log('Keyload message at: ', keyload_link.to_string());
+		return { keyloadLink: keyload_link.to_string() };
 	};
 
 	async callMain() {
