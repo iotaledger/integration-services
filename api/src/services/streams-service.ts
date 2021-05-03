@@ -20,8 +20,8 @@ export class StreamsService {
 		console.log('channel address: ', this.tmpAuth.channel_address());
 		console.log('multi branching: ', this.tmpAuth.is_multi_branching());
 
-		let response = await this.tmpAuth.clone().send_announce();
-		let ann_link = response.get_link();
+		const response = await this.tmpAuth.clone().send_announce();
+		const ann_link = response.get_link();
 		console.log('announced at: ', ann_link.to_string());
 		return {
 			seed,
@@ -31,12 +31,12 @@ export class StreamsService {
 
 	addLogs = async (address: string, publicPayload: string, maskedPayload: string): Promise<{ resLink: string; payload: string }> => {
 		const keyloadLink = Address.from_string(address);
-		let pPayload: any = this.toBytes(publicPayload);
-		let mPayload: any = this.toBytes(maskedPayload);
+		const pPayload: any = this.toBytes(publicPayload);
+		const mPayload: any = this.toBytes(maskedPayload);
 
 		console.log('Author Sending tagged packet');
 		const response = await this.tmpAuth.clone().send_tagged_packet(keyloadLink, pPayload, mPayload);
-		let tag_link = response.get_link();
+		const tag_link = response.get_link();
 		console.log('Tag packet at: ', tag_link.to_string());
 
 		return {
@@ -51,13 +51,13 @@ export class StreamsService {
 		let publicData: string[] = [];
 		let maskedData: string[] = [];
 		while (exists) {
-			let next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
+			const next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
 
 			if (next_msgs.length === 0) {
 				exists = false;
 			}
 
-			for (var i = 0; i < next_msgs.length; i++) {
+			for (let i = 0; i < next_msgs.length; i++) {
 				console.log('Found a message...');
 				const pubPayload = next_msgs[i].get_message().get_public_payload();
 				const maskedPayload = next_msgs[i].get_message().get_masked_payload();
@@ -77,20 +77,20 @@ export class StreamsService {
 
 	requestSubscription = async (announcementLink: string, seed?: string): Promise<{ seed: string; subLink: string }> => {
 		const annAddress = streams.Address.from_string(announcementLink);
-		let options = new streams.SendOptions(1, true, 1);
+		const options = new streams.SendOptions(1, true, 1);
 
 		if (!seed) {
 			seed = this.makeSeed(81);
 		}
 
-		let sub = new streams.Subscriber(this.node, seed, options);
+		const sub = new streams.Subscriber(this.node, seed, options);
 		let ann_link_copy = annAddress.copy();
 		await sub.clone().receive_announcement(ann_link_copy);
 
 		console.log('Subscribing...');
 		ann_link_copy = annAddress.copy();
 		const response = await sub.clone().send_subscribe(ann_link_copy);
-		let sub_link = response.get_link();
+		const sub_link = response.get_link();
 		console.log('Subscription message at: ', sub_link.to_string());
 		return { seed, subLink: sub_link };
 
@@ -106,7 +106,7 @@ export class StreamsService {
 
 		console.log('Sending Keyload');
 		const response = await this.tmpAuth.clone().send_keyload_for_everyone(announcementAddress);
-		let keyload_link = response.get_link();
+		const keyload_link = response.get_link();
 		console.log('Keyload message at: ', keyload_link.to_string());
 	};
 
@@ -122,7 +122,7 @@ export class StreamsService {
 
 	// TODO moveToLib
 	toBytes(str: string) {
-		let bytes = [];
+		const bytes = [];
 		for (let i = 0; i < str.length; ++i) {
 			bytes.push(str.charCodeAt(i));
 		}
@@ -148,12 +148,10 @@ export class StreamsService {
 }
 
 export async function main() {
-	console.log('###### STAAAART OF MAIN');
-
-	let node = 'https://api.lb-0.testnet.chrysalis2.com/';
-	let options = new streams.SendOptions(1, true, 1);
-	let seed = make_seed(81);
-	let auth = new streams.Author(node, seed, options, false);
+	const node = 'https://api.lb-0.testnet.chrysalis2.com/';
+	const options = new streams.SendOptions(9, true, 1);
+	const seed = make_seed(81);
+	const auth = new streams.Author(node, seed, options.clone(), false);
 
 	console.log('channel address: ', auth.channel_address());
 	console.log('multi branching: ', auth.is_multi_branching());
@@ -162,40 +160,39 @@ export async function main() {
 	const ann_link = response.get_link();
 	console.log('announced at: ', ann_link.to_string());
 
-	let options2 = new streams.SendOptions(1, true, 1);
-	let seed2 = make_seed(81);
-	let sub = new streams.Subscriber(node, seed2, options2);
+	const seed2 = make_seed(81);
+	const sub = new streams.Subscriber(node, seed2, options.clone());
 	let ann_link_copy = ann_link.copy();
 	await sub.clone().receive_announcement(ann_link_copy);
 
 	console.log('Subscribing...');
 	ann_link_copy = ann_link.copy();
 	response = await sub.clone().send_subscribe(ann_link_copy);
-	let sub_link = response.get_link();
+	const sub_link = response.get_link();
 	console.log('Subscription message at: ', sub_link.to_string());
 	await auth.clone().receive_subscribe(sub_link);
 	console.log('Subscription processed');
 
 	console.log('Sending Keyload');
 	response = await auth.clone().send_keyload_for_everyone(ann_link);
-	let keyload_link = response.get_link();
+	const keyload_link = response.get_link();
 	console.log('Keyload message at: ', keyload_link.to_string());
 
 	console.log('Subscriber syncing...');
 	await sub.clone().sync_state();
 
-	let public_payload: any = to_bytes('Public111');
-	let masked_payload: any = to_bytes('Masked111');
+	const public_payload = to_bytes('Public');
+	const masked_payload = to_bytes('Masked');
 
 	console.log('Subscriber Sending tagged packet');
 	response = await sub.clone().send_tagged_packet(keyload_link, public_payload, masked_payload);
-	let tag_link = response.get_link();
+	const tag_link = response.get_link();
 	console.log('Tag packet at: ', tag_link.to_string());
 
 	let last_link = tag_link;
 	console.log('Subscriber Sending multiple signed packets');
 
-	for (var x = 0; x < 10; x++) {
+	for (let x = 0; x < 10; x++) {
 		response = await sub.clone().send_signed_packet(last_link, public_payload, masked_payload);
 		last_link = response.get_link();
 		console.log('Signed packet at: ', last_link.to_string());
@@ -204,15 +201,14 @@ export async function main() {
 	console.log('\nAuthor fetching next messages');
 	let exists = true;
 	while (exists) {
-		let next_msgs = await auth.clone().fetch_next_msgs();
+		const next_msgs = await auth.clone().fetch_next_msgs();
 
 		if (next_msgs.length === 0) {
 			exists = false;
 		}
 
-		for (var i = 0; i < next_msgs.length; i++) {
+		for (let i = 0; i < next_msgs.length; i++) {
 			console.log('Found a message...');
-
 			console.log(
 				'Public: ',
 				from_bytes(next_msgs[i].get_message().get_public_payload()),
@@ -221,19 +217,32 @@ export async function main() {
 			);
 		}
 	}
-	console.log('##### EEEEEEND OF MAIN');
+
+	// Import export example
+	// TODO: Use stronghold
+	const password = 'password';
+	const exp = auth.clone().export(password);
+
+	const client = new streams.Client(node, options.clone());
+	const auth2 = streams.Author.import(client, exp, password);
+
+	if (auth2.channel_address !== auth.channel_address) {
+		console.log('import failed');
+	} else {
+		console.log('import succesfull');
+	}
 
 	function to_bytes(str: string) {
-		var bytes = [];
-		for (var i = 0; i < str.length; ++i) {
-			bytes.push(str.charCodeAt(i));
+		const bytes = new Uint8Array(str.length);
+		for (let i = 0; i < str.length; ++i) {
+			bytes[i] = str.charCodeAt(i);
 		}
 		return bytes;
 	}
 
 	function from_bytes(bytes: any) {
-		var str = '';
-		for (var i = 0; i < bytes.length; ++i) {
+		let str = '';
+		for (let i = 0; i < bytes.length; ++i) {
 			str += String.fromCharCode(bytes[i]);
 		}
 		return str;
@@ -242,7 +251,7 @@ export async function main() {
 	function make_seed(size: number) {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		let seed = '';
-		for (i = 9; i < size; i++) {
+		for (let i = 9; i < size; i++) {
 			seed += alphabet[Math.floor(Math.random() * alphabet.length)];
 		}
 		return seed;

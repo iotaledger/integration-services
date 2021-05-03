@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { SubscriptionService } from '../../services/subscription-service';
 import { AuthenticatedRequest } from '../../models/types/authentication';

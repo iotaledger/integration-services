@@ -49,6 +49,25 @@ export class Author {
 */
   constructor(node: string, seed: string, options: SendOptions, multi_branching: boolean);
 /**
+* @param {Client} client
+* @param {string} seed
+* @param {boolean} multi_branching
+* @returns {Author}
+*/
+  static from_client(client: Client, seed: string, multi_branching: boolean): Author;
+/**
+* @param {Client} client
+* @param {Uint8Array} bytes
+* @param {string} password
+* @returns {Author}
+*/
+  static import(client: Client, bytes: Uint8Array, password: string): Author;
+/**
+* @param {string} password
+* @returns {Uint8Array}
+*/
+  export(password: string): Uint8Array;
+/**
 * @returns {Author}
 */
   clone(): Author;
@@ -131,6 +150,16 @@ export class Author {
 * @returns {any}
 */
   gen_next_msg_ids(): any;
+}
+/**
+*/
+export class Client {
+  free(): void;
+/**
+* @param {string} node
+* @param {SendOptions} options
+*/
+  constructor(node: string, options: SendOptions);
 }
 /**
 */
@@ -251,6 +280,19 @@ export class Subscriber {
 */
   constructor(node: string, seed: string, options: SendOptions);
 /**
+* @param {Client} client
+* @param {string} seed
+* @returns {Subscriber}
+*/
+  static from_client(client: Client, seed: string): Subscriber;
+/**
+* @param {Client} client
+* @param {Uint8Array} bytes
+* @param {string} password
+* @returns {Subscriber}
+*/
+  static import(client: Client, bytes: Uint8Array, password: string): Subscriber;
+/**
 * @returns {Subscriber}
 */
   clone(): Subscriber;
@@ -273,6 +315,11 @@ export class Subscriber {
 /**
 */
   unregister(): void;
+/**
+* @param {string} password
+* @returns {Uint8Array}
+*/
+  export(password: string): Uint8Array;
 /**
 * @param {Address} link
 * @returns {any}
