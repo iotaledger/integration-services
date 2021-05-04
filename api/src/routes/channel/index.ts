@@ -33,7 +33,7 @@ export class ChannelRoutes {
 		try {
 			const body = req.body;
 			// TODO validate
-			const channel = await this.channelService.addLogs(body.address, body.publicPayload, body.maskedPayload, body.isAuth);
+			const channel = await this.channelService.addLogs(body.channelAddress, body.publicPayload, body.maskedPayload, body.isAuth);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

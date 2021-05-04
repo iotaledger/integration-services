@@ -31,8 +31,13 @@ export class StreamsService {
 		};
 	};
 
-	addLogs = async (address: string, publicPayload: string, maskedPayload: string, isAuth: boolean): Promise<{ resLink: string; payload: string }> => {
-		const keyloadLink = Address.from_string(address);
+	addLogs = async (
+		latestLink: string,
+		publicPayload: string,
+		maskedPayload: string,
+		isAuth: boolean
+	): Promise<{ resLink: string; payload: string }> => {
+		const keyloadLink = Address.from_string(latestLink);
 		const pPayload: any = this.toBytes(publicPayload);
 		const mPayload: any = this.toBytes(maskedPayload);
 
@@ -65,9 +70,11 @@ export class StreamsService {
 			// TODO
 			if (isAuth) {
 				console.log('Author fetching next messages');
+				await this.tmpAuth.clone().sync_state();
 				next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
 			} else {
 				console.log('Sub fetching next messages');
+				await this.tmpSub.clone().sync_state();
 				next_msgs = await this.tmpSub.clone().fetch_next_msgs();
 			}
 
@@ -91,8 +98,6 @@ export class StreamsService {
 		};
 	};
 
-	getSubscriptions = async (announcementLink: string): Promise<void> => {};
-
 	requestSubscription = async (announcementLink: string, seed?: string): Promise<{ seed: string; subscriptionLink: string }> => {
 		const annAddress = streams.Address.from_string(announcementLink);
 		const options = new streams.SendOptions(1, true, 1);
@@ -113,11 +118,11 @@ export class StreamsService {
 		return { seed, subscriptionLink: sub_link.to_string() };
 	};
 
-	authorizeSubscription = async (subscriptionLink: string, announcementLink: string): Promise<{ keyloadLink: string }> => {
+	authorizeSubscription = async (channelAddress: string, subscriptionLink: string): Promise<{ keyloadLink: string }> => {
+		const announcementAddress = streams.Address.from_string(channelAddress);
 		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
-		const announcementAddress = streams.Address.from_string(announcementLink);
 		console.log('Subscription message at: ', subscriptionLink);
-		console.log('For channel at: ', announcementLink);
+		console.log('For channel at: ', channelAddress);
 		await this.tmpAuth.clone().receive_subscribe(subscriptionAddress);
 
 		console.log('Sending Keyload');

@@ -8,9 +8,9 @@ const collectionName = CollectionNames.subscriptions;
 
 const getIndex = (id: string, address: string) => `${id}-${address}`;
 
-export const getSubscription = async (userId: string, channelAddress: string): Promise<Subscription | null> => {
+export const getSubscription = async (channelAddress: string, userId: string): Promise<Subscription | null> => {
 	const query = { _id: getIndex(userId, channelAddress) };
-	return await MongoDbService.getDocument<Subscription>(collectionName, query);
+	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
 export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {

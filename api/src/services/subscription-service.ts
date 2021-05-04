@@ -12,15 +12,15 @@ export class SubscriptionService {
 		this.channelInfoService = channelInfoService;
 	}
 
-	getSubscriptions = async (announcementLink: string): Promise<void> => {
-		return this.streamsService.getSubscriptions(announcementLink);
+	getSubscriptions = async (channelAddress: string, userId: string) => {
+		return subscriptionDb.getSubscription(channelAddress, userId);
 	};
 
 	requestSubscription = async (
 		subscriberId: string,
 		channelAddress: string,
-		seed?: string,
-		accessRights?: AccessRights
+		accessRights?: AccessRights,
+		seed?: string
 	): Promise<{ seed: string; subscriptionLink: string }> => {
 		// TODO check seed size == 81 if not null
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
@@ -30,7 +30,7 @@ export class SubscriptionService {
 			channelAddress: channelAddress,
 			seed: res.seed,
 			subscriptionLink: res.subscriptionLink,
-			accessRights,
+			accessRights: accessRights || AccessRights.ReadAndWrite,
 			subscriptionIsAuthorized: false,
 			state: ''
 		};
@@ -41,8 +41,8 @@ export class SubscriptionService {
 		return res;
 	};
 
-	authorizeSubscription = async (subscriptionLink: string, channelAddress: string) => {
-		const authSub = await this.streamsService.authorizeSubscription(subscriptionLink, channelAddress);
+	authorizeSubscription = async (channelAddress: string, subscriptionLink: string) => {
+		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink);
 		// Todo update subscription to be authorized
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
 		return authSub;

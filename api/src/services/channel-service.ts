@@ -37,8 +37,10 @@ export class ChannelService {
 	};
 
 	addLogs = async (address: string, publicPayload: string, maskedPayload: string, isAuth: boolean): Promise<{ resLink: string; payload: string }> => {
+		const channelInfo = await this.channelInfoService.getChannelInfo(address);
+		const latestLink = channelInfo.latestLink;
 		// TODO get subscription object by userId and check if it is the author or subscriber + pass state into method
-		const res = await this.streamsService.addLogs(address, publicPayload, maskedPayload, isAuth);
+		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, isAuth);
 		await this.channelInfoService.updateLatestChannelLink(address, res.resLink);
 		return res;
 	};

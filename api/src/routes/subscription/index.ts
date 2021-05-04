@@ -10,11 +10,11 @@ export class SubscriptionRoutes {
 		this.subscriptionService = subscriptionService;
 	}
 
-	getSubscriptions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			// TODO validate
-			const channel = await this.subscriptionService.getSubscriptions(channelAddress);
+			const channel = await this.subscriptionService.getSubscriptions(req.user.userId, channelAddress);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);
@@ -24,8 +24,9 @@ export class SubscriptionRoutes {
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const body = req.body;
 			// TODO validate
-			const channel = await this.subscriptionService.requestSubscription(req.user.userId, channelAddress);
+			const channel = await this.subscriptionService.requestSubscription(req.user.userId, channelAddress, body.accessRights, body.seed);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);
@@ -37,7 +38,15 @@ export class SubscriptionRoutes {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const body = req.body;
 			// TODO validate
-			const channel = await this.subscriptionService.authorizeSubscription(body.subscriptionLink, channelAddress);
+			let subscriptionLink = body.subscriptionLink;
+			if (!body.subscriptionLink && body.userId) {
+				const sub = await this.subscriptionService.getSubscriptions(channelAddress, body.userId);
+				subscriptionLink = sub?.subscriptionLink;
+			}
+			if (!subscriptionLink) {
+				throw new Error('no subscription link found or provided!');
+			}
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);
