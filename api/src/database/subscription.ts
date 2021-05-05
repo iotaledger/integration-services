@@ -1,9 +1,9 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { InsertOneWriteOpResult, WithId } from 'mongodb';
+import { InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { Subscription } from '../models/types/subscription';
 
-// Subscription documents keeps the mapping between channel -> seed -> userId
+// Subscription documents keeps information about a subscription a user in regard of a channel
 const collectionName = CollectionNames.subscriptions;
 
 const getIndex = (id: string, address: string) => `${id}-${address}`;
@@ -21,4 +21,17 @@ export const addSubscription = async (subscription: Subscription): Promise<Inser
 	};
 
 	return MongoDbService.insertDocument(collectionName, document);
+};
+
+export const setSubscriptionAuthorization = async (channelAddress: string, userId: string, isAuthorized: boolean): Promise<UpdateWriteOpResult> => {
+	const query = {
+		_id: getIndex(userId, channelAddress)
+	};
+	const update = {
+		$set: {
+			isAuthorized
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
 };

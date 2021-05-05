@@ -73,14 +73,15 @@ authenticationRouter.post('/check-verification', validate({ body: VerifiableCred
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
 
 const streamsService = new StreamsService();
-const channelService = new ChannelService(streamsService, channelInfoService);
+const subscriptionService = new SubscriptionService(streamsService, channelInfoService);
+const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService);
+
 const channelRoutes = new ChannelRoutes(channelService);
 export const channelRouter = Router();
 channelRouter.post('/create', authMiddleWare, channelRoutes.createChannel);
 channelRouter.post('/logs', channelRoutes.addLogs);
 channelRouter.get('/logs', channelRoutes.getLogs);
 
-const subscriptionService = new SubscriptionService(streamsService, channelInfoService);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
 export const subscriptionRouter = Router();
 subscriptionRouter.get('/subscription/:channelAddress', authMiddleWare, subscriptionRoutes.getSubscriptions);

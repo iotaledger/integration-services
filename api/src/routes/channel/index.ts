@@ -11,7 +11,10 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channel = await this.channelService.create(req.user.userId);
+			const body = req.body;
+			const { topics, seed } = body;
+
+			const channel = await this.channelService.create(req.user.userId, topics, seed);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);
@@ -29,11 +32,11 @@ export class ChannelRoutes {
 		}
 	};
 
-	addLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const body = req.body;
 			// TODO validate
-			const channel = await this.channelService.addLogs(body.channelAddress, body.publicPayload, body.maskedPayload, body.isAuth);
+			const channel = await this.channelService.addLogs(body.channelAddress, body.publicPayload, body.maskedPayload, req.user.userId);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

@@ -14,7 +14,7 @@ export interface Subscription {
 	channelAddress: string;
 	userId: string;
 	state: string;
-	subscriptionIsAuthorized: boolean;
+	isAuthorized: boolean;
 	subscriptionLink: string;
 	accessRights: AccessRights;
 }

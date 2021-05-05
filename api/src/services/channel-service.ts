@@ -1,17 +1,21 @@
 import { StreamsService } from './streams-service';
-import * as subscriptionDb from '../database/subscription';
 import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
+import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
+import { SubscriptionService } from './subscription-service';
 
 export class ChannelService {
 	private readonly streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
+	private readonly subscriptionService: SubscriptionService;
 
-	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService) {
+	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;
+		this.subscriptionService = subscriptionService;
 	}
-	create = async (userId: string, seed?: string): Promise<{ seed: string; announcementLink: string }> => {
+
+	create = async (userId: string, topics: Topic[], seed?: string): Promise<{ seed: string; announcementLink: string }> => {
 		const res = await this.streamsService.create(seed);
 		const subscription: Subscription = {
 			userId,
@@ -21,32 +25,33 @@ export class ChannelService {
 			subscriptionLink: res.announcementLink,
 			state: '',
 			accessRights: AccessRights.ReadAndWrite,
-			subscriptionIsAuthorized: true
+			isAuthorized: true
 		};
-		// Todo use subscription service
-		await subscriptionDb.addSubscription(subscription);
 
+		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
+			topics,
 			author: userId,
 			channelAddress: res.announcementLink,
-			latestLink: res.announcementLink,
-			topics: [{ type: 'test-channel', source: 'user' }]
+			latestLink: res.announcementLink
 		});
 
-		return res;
-	};
-
-	addLogs = async (address: string, publicPayload: string, maskedPayload: string, isAuth: boolean): Promise<{ resLink: string; payload: string }> => {
-		const channelInfo = await this.channelInfoService.getChannelInfo(address);
-		const latestLink = channelInfo.latestLink;
-		// TODO get subscription object by userId and check if it is the author or subscriber + pass state into method
-		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, isAuth);
-		await this.channelInfoService.updateLatestChannelLink(address, res.resLink);
 		return res;
 	};
 
 	getLogs = async (isAuth: boolean): Promise<{ publicData: any; maskedData: any }> => {
 		// TODO get subscription object by userId and check if it is the author or subscriber + pass state into method
 		return this.streamsService.getLogs(isAuth);
+	};
+
+	addLogs = async (address: string, publicPayload: string, maskedPayload: string, userId: string): Promise<{ resLink: string; payload: string }> => {
+		const channelInfo = await this.channelInfoService.getChannelInfo(address);
+		const isAuth = channelInfo.author === userId;
+		// TODO get state of subscription
+		// TODO decrypt seed
+		const latestLink = channelInfo.latestLink;
+		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, isAuth);
+		await this.channelInfoService.updateLatestChannelLink(address, res.resLink);
+		return res;
 	};
 }
