@@ -15,14 +15,14 @@ export class ChannelService {
 		this.subscriptionService = subscriptionService;
 	}
 
-	create = async (userId: string, topics: Topic[], seed?: string): Promise<{ seed: string; announcementLink: string }> => {
+	create = async (userId: string, topics: Topic[], seed?: string): Promise<{ seed: string; channelAddress: string }> => {
 		const res = await this.streamsService.create(seed);
 		const subscription: Subscription = {
 			userId,
 			type: SubscriptionType.Author,
-			channelAddress: res.announcementLink,
+			channelAddress: res.channelAddress,
 			seed: res.seed,
-			subscriptionLink: res.announcementLink,
+			subscriptionLink: res.channelAddress,
 			state: '',
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true
@@ -32,14 +32,17 @@ export class ChannelService {
 		await this.channelInfoService.addChannelInfo({
 			topics,
 			author: userId,
-			channelAddress: res.announcementLink,
-			latestLink: res.announcementLink
+			channelAddress: res.channelAddress,
+			latestLink: res.channelAddress
 		});
 
 		return res;
 	};
 
-	getLogs = async (isAuth: boolean): Promise<{ publicData: any; maskedData: any }> => {
+	getLogs = async (channelAddress: string, userId: string): Promise<{ publicData: any; maskedData: any }> => {
+		const subscription = await this.subscriptionService.getSubscription(channelAddress, userId);
+		const isAuth = subscription.type === SubscriptionType.Author;
+
 		// TODO get subscription object by userId and check if it is the author or subscriber + pass state into method
 		return this.streamsService.getLogs(isAuth);
 	};

@@ -13,7 +13,7 @@ export class StreamsService {
 	tmpAuth: streams.Author;
 	tmpSub: streams.Subscriber;
 
-	create = async (seed?: string): Promise<{ seed: string; announcementLink: string }> => {
+	create = async (seed?: string): Promise<{ seed: string; channelAddress: string }> => {
 		const options = new streams.SendOptions(1, true, 1);
 		if (!seed) {
 			seed = this.makeSeed(81);
@@ -27,7 +27,7 @@ export class StreamsService {
 		console.log('announced at: ', ann_link.to_string());
 		return {
 			seed,
-			announcementLink: ann_link.to_string()
+			channelAddress: ann_link.to_string()
 		};
 	};
 
@@ -41,13 +41,14 @@ export class StreamsService {
 		const pPayload: any = this.toBytes(publicPayload);
 		const mPayload: any = this.toBytes(maskedPayload);
 
-		console.log('Author Sending tagged packet');
 		let response: any = null;
 
 		// TODO
 		if (isAuth) {
+			console.log('Author Sending tagged packet');
 			response = await this.tmpAuth.clone().send_tagged_packet(keyloadLink, pPayload, mPayload);
 		} else {
+			console.log('Sbuscriber Sending tagged packet');
 			response = await this.tmpSub.clone().send_tagged_packet(keyloadLink, pPayload, mPayload);
 		}
 
@@ -70,11 +71,9 @@ export class StreamsService {
 			// TODO
 			if (isAuth) {
 				console.log('Author fetching next messages');
-				await this.tmpAuth.clone().sync_state();
 				next_msgs = await this.tmpAuth.clone().fetch_next_msgs();
 			} else {
 				console.log('Sub fetching next messages');
-				await this.tmpSub.clone().sync_state();
 				next_msgs = await this.tmpSub.clone().fetch_next_msgs();
 			}
 

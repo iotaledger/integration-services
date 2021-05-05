@@ -19,6 +19,12 @@ import { StreamsService } from '../services/streams-service';
 import { ChannelService } from '../services/channel-service';
 import { SubscriptionService } from '../services/subscription-service';
 import { SubscriptionRoutes } from './subscription';
+import {
+	AddChannelLogBodySchema,
+	AuthorizeSubscriptionBodySchema,
+	CreateChannelBodySchema,
+	RequestSubscriptionBodySchema
+} from '../models/schemas/request-bodies';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -77,13 +83,15 @@ const subscriptionService = new SubscriptionService(streamsService, channelInfoS
 const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService);
 
 const channelRoutes = new ChannelRoutes(channelService);
+const { addLogs, createChannel, getLogs } = channelRoutes;
 export const channelRouter = Router();
-channelRouter.post('/create', authMiddleWare, channelRoutes.createChannel);
-channelRouter.post('/logs', channelRoutes.addLogs);
-channelRouter.get('/logs', channelRoutes.getLogs);
+channelRouter.post('/create', authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
+channelRouter.post('/logs/:channelAddress', authMiddleWare, validate({ body: AddChannelLogBodySchema }), addLogs);
+channelRouter.get('/logs/:channelAddress', authMiddleWare, getLogs);
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
+const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 export const subscriptionRouter = Router();
-subscriptionRouter.get('/subscription/:channelAddress', authMiddleWare, subscriptionRoutes.getSubscriptions);
-subscriptionRouter.post('/request/:channelAddress', authMiddleWare, subscriptionRoutes.requestSubscription);
-subscriptionRouter.post('/authorize/:channelAddress', authMiddleWare, subscriptionRoutes.authorizeSubscription);
+subscriptionRouter.get('/subscription/:channelAddress', authMiddleWare, getSubscriptions);
+subscriptionRouter.post('/request/:channelAddress', authMiddleWare, validate({ body: RequestSubscriptionBodySchema }), requestSubscription);
+subscriptionRouter.post('/authorize/:channelAddress', authMiddleWare, validate({ body: AuthorizeSubscriptionBodySchema }), authorizeSubscription);

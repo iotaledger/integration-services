@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as _ from 'lodash';
 import { SubscriptionService } from '../../services/subscription-service';
 import { AuthenticatedRequest } from '../../models/types/authentication';
+import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-bodies';
 
 export class SubscriptionRoutes {
 	private readonly subscriptionService: SubscriptionService;
@@ -13,9 +14,11 @@ export class SubscriptionRoutes {
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			// TODO validate
-			const channel = await this.subscriptionService.getSubscriptions(req.user.userId, channelAddress);
-			res.status(StatusCodes.OK).send(channel);
+			const { userId } = req.body; // TODO don't use body use query param!
+
+			// TODO also provide possibility to get all subscriptions
+			const subscription = await this.subscriptionService.getSubscription(channelAddress, userId);
+			res.status(StatusCodes.OK).send(subscription);
 		} catch (error) {
 			next(error);
 		}
@@ -24,9 +27,9 @@ export class SubscriptionRoutes {
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const body = req.body;
+			const { seed, accessRights } = req.body as RequestSubscriptionBody;
 			// TODO validate
-			const channel = await this.subscriptionService.requestSubscription(req.user.userId, channelAddress, body.accessRights, body.seed);
+			const channel = await this.subscriptionService.requestSubscription(req.user.userId, channelAddress, accessRights, seed);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);
@@ -36,11 +39,9 @@ export class SubscriptionRoutes {
 	authorizeSubscription = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const body = req.body;
-			// TODO validate
-			let subscriptionLink = body.subscriptionLink;
-			if (!body.subscriptionLink && body.userId) {
-				const sub = await this.subscriptionService.getSubscriptions(channelAddress, body.userId);
+			let { subscriptionLink, userId } = req.body as AuthorizeSubscriptionBody;
+			if (!subscriptionLink && userId) {
+				const sub = await this.subscriptionService.getSubscription(channelAddress, userId);
 				subscriptionLink = sub?.subscriptionLink;
 			}
 			if (!subscriptionLink) {

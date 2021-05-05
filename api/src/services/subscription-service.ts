@@ -12,7 +12,7 @@ export class SubscriptionService {
 		this.channelInfoService = channelInfoService;
 	}
 
-	getSubscriptions = async (channelAddress: string, userId: string) => {
+	getSubscription = async (channelAddress: string, userId: string) => {
 		return subscriptionDb.getSubscription(channelAddress, userId);
 	};
 
@@ -45,15 +45,19 @@ export class SubscriptionService {
 		return res;
 	};
 
-	setSubscriptionAuthorized = async (channelAddress: string, userId: string) => {
+	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string) => {
 		const isAuthorized = true;
-		return subscriptionDb.setSubscriptionAuthorization(channelAddress, userId, isAuthorized);
+		return subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized);
 	};
 
 	authorizeSubscription = async (channelAddress: string, subscriptionLink: string) => {
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink);
-		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
-		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
+
+		const res = await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
+		console.log('res', res.result);
+
+		const res2 = await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
+		console.log('res', res2.result);
 		return authSub;
 	};
 }
