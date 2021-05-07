@@ -1,5 +1,5 @@
 import { IdentityJsonUpdate } from '../../models/types/identity';
-import { User } from '../../models/types/user';
+import { User, UserType } from '../../models/types/user';
 
 export const TestUsersMock = [
 	{
@@ -61,7 +61,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		type: 'Person',
-		details: { firstName: 'Tom', lastName: 'Sonson' },
+		data: { firstName: 'Tom', lastName: 'Sonson' },
 		description: 'Just a user',
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verification: {
@@ -78,7 +78,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 				type: ['VerifiableCredential', 'PersonCredential'],
 				credentialSubject: {
 					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-					type: 'Person',
+					type: UserType.Person,
 					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
 					username: 'first-user',

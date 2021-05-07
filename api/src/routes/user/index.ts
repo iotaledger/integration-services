@@ -159,9 +159,9 @@ export class UserRoutes {
 				break;
 		}
 
-		const validDetails = <boolean>validate(user.details);
+		const validDetails = <boolean>validate(user.data);
 		if (!validDetails) {
-			throw new Error('no valid details');
+			throw new Error('no valid user data');
 		}
 	};
 }

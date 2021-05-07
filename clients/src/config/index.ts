@@ -218,7 +218,7 @@ export const DeviceIdentity = {
 		description: 'Device which measures temperature in the kitchen.',
 		registrationDate: '2021-04-13T11:01:32Z',
 		organization: 'IOTA',
-		details: {
+		data: {
 			category: 'heater',
 			location: {
 				lat: 49.123,

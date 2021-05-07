@@ -110,7 +110,7 @@ export class UserService {
 			registrationDate,
 			type,
 			description,
-			details,
+			data,
 			verifiableCredentials,
 			role
 		} = user;
@@ -125,7 +125,7 @@ export class UserService {
 			organization,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			verification: this.getVerificationPersistence(verification),
-			details,
+			data,
 			verifiableCredentials,
 			role: role && (role as UserRoles)
 		};
@@ -149,7 +149,7 @@ export class UserService {
 			verification,
 			type,
 			description,
-			details,
+			data,
 			verifiableCredentials,
 			role
 		} = userPersistence;
@@ -164,7 +164,7 @@ export class UserService {
 			registrationDate: getDateStringFromDate(registrationDate),
 			verification: this.getVerificationObject(verification),
 			organization,
-			details,
+			data,
 			verifiableCredentials,
 			role: role && (role as UserRoles)
 		};

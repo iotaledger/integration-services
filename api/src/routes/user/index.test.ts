@@ -87,7 +87,7 @@ describe('test GET user', () => {
 			username: 'first-user',
 			type: UserType.Person,
 			subscribedChannelIds: [],
-			details: { firstName: 'Tom', lastName: 'Tomson' },
+			data: { firstName: 'Tom', lastName: 'Tomson' },
 			description: null,
 			registrationDate: date,
 			organization: 'IOTA'
@@ -107,7 +107,7 @@ describe('test GET user', () => {
 			username: 'first-user',
 			type: 'Person',
 			subscribedChannelIds: [],
-			details: { firstName: 'Tom', lastName: 'Tomson' },
+			data: { firstName: 'Tom', lastName: 'Tomson' },
 			description: null,
 			registrationDate: getDateStringFromDate(date),
 			organization: 'IOTA'
@@ -139,7 +139,7 @@ describe('test POST user', () => {
 		username: 'first-user',
 		type: UserType.Person,
 		subscribedChannelIds: [],
-		details: { firstName: 'Tom', lastName: 'Sonson' },
+		data: { firstName: 'Tom', lastName: 'Sonson' },
 		description: null,
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
@@ -222,7 +222,7 @@ describe('test PUT user', () => {
 		username: 'first-user',
 		type: UserType.Person,
 		subscribedChannelIds: [],
-		details: { firstName: 'Tom', lastName: 'Sonson' },
+		data: { firstName: 'Tom', lastName: 'Sonson' },
 		description: null,
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'

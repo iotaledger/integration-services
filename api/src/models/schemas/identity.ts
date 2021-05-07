@@ -6,7 +6,8 @@ export const VcSubjectSchema = Type.Object({
 	organization: Type.String({ minLength: 1 }),
 	registrationDate: Type.String({ minLength: 1 }),
 	username: Type.String({ minLength: 1 }),
-	initiatorId: Type.String({ minLength: 53, maxLength: 53 })
+	initiatorId: Type.String({ minLength: 53, maxLength: 53 }),
+	data: Type.Any()
 });
 
 export const VerifiableCredentialSchema = Type.Object({

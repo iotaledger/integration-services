@@ -1,210 +1,302 @@
 import { Type } from '@sinclair/typebox';
 
-// https://github.com/smart-data-models/dataModel.Device/blob/master/DeviceModel/doc/spec.md
-// export const DeviceSchema = Type.Object({
-// 	brandName: Type.String({ minLength: 1 }),
-// 	category: Type.Array(Type.String({ minLength: 1 })),
-// 	manufacturerName: Type.String({ minLength: 1 }),
-// 	name: Type.String({ minLength: 1 }),
-// 	type: Type.String({ minLength: 1 }),
-// 	function: Type.Array(Type.String({ minLength: 1 })),
-// 	controlledProperty: Type.Array(Type.String({ minLength: 1 })),
-// 	encoding: Type.Optional(Type.String({ minLength: 1 })),
-
-// 	// ??
-// 	location: Type.Object(Type.Any()) // { lat:number, long:number }
-// });
-
-// export const ProductSchema = Type.Object({
-// 	brandName: Type.String({ minLength: 1 }),
-// 	category: Type.Array(Type.String({ minLength: 1 })),
-// 	manufacturerName: Type.String({ minLength: 1 }),
-// 	name: Type.String({ minLength: 1 }),
-// 	type: Type.String({ minLength: 1 }),
-
-// 	weight: Type.Number(),
-// 	limitation: Type.Optional(Type.Number()),
-// 	price: Type.Optional(Type.Number()),
-
-// 	// ??
-// 	size: Type.Object(Type.Any()), // { width:number, heigth:number, depth:number }
-// 	packagingSize: Type.Object(Type.Any()) // { width:number, heigth:number, depth:number }
-// });
+const description = (name: string) => `${name} schema, see the specification at: https://schema.org/${name}`;
 
 export const ThingObject = {
 	'@context': Type.Optional(Type.String({ minLength: 1 })),
 	'@type': Type.String({ minLength: 1 }),
-	name: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	url: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	image: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Null()])),
-	sameAs: Type.Optional(Type.Union([Type.Array(Type.String()), Type.Null()]))
+	alternateName: Type.Optional(Type.String()),
+	name: Type.Optional(Type.String()),
+	description: Type.Optional(Type.String()),
+	url: Type.Optional(Type.String()),
+	image: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
+	sameAs: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())]))
 };
 
 export const ThingSchema = Type.Object({
 	...ThingObject
 });
 
-export const QuantitativeValueSchema = Type.Object({
-	...ThingObject,
-	maxValue: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
-	minValue: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
-	unitCode: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Null()])),
-	value: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Any(), Type.Null()]))
-});
-
-export const DistanceSchema = Type.Object({
-	...ThingObject
-});
-
-export const AddressSchema = Type.Object({
-	...ThingObject,
-	addressCountry: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	addressLocality: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	addressRegion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	postalCode: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	streetAddress: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
-export const BrandSchema = Type.Object({
-	...ThingObject,
-	slogan: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
-export const OfferSchema = Type.Object({
-	...ThingObject,
-	material: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	price: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Null()])),
-	priceCurrency: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	priceValidUntil: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	itemCondition: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	availability: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
-export const AggregateRatingSchema = Type.Object({
-	...ThingObject,
-	bestRating: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	ratingValue: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	reviewCount: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
-export const ReviewRatingSchema = Type.Object({
-	...ThingObject,
-	ratingValue: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Null()])),
-	bestRating: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Null()])),
-	worstRating: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Null()]))
-});
-
-export const OrganizationSchema = Type.Object({
-	...ThingObject,
-	brand: Type.Optional(Type.Union([BrandSchema, Type.String(), Type.Null()])),
-	address: Type.Optional(Type.Union([AddressSchema, Type.String(), Type.Any(), Type.Null()])),
-	email: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	faxNumber: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	location: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	slogan: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	taxID: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	telephone: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	vatID: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
-export const PersonSchema = Type.Object({
-	...ThingObject,
-	familyName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	givenName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	memberOf: Type.Optional(Type.Union([Type.Array(OrganizationSchema), OrganizationSchema, Type.String(), Type.Null()])),
-	worksFor: Type.Optional(Type.Union([Type.Array(OrganizationSchema), OrganizationSchema, Type.String(), Type.Null()])),
-	address: Type.Optional(Type.Union([AddressSchema, Type.String(), Type.Null()])),
-	colleague: Type.Optional(Type.Union([Type.Array(Type.String()), Type.Null()])),
-	email: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	jobTitle: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	birthPlace: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
-	birthDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	height: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.Null()])),
-	weight: Type.Optional(Type.Union([QuantitativeValueSchema, Type.Null()])),
-	gender: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	nationality: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	telephone: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
-export const ReviewSchema = Type.Object({
-	...ThingObject,
-	reviewRating: ReviewRatingSchema,
-	datePublished: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	reviewBody: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	author: Type.Optional(Type.Union([PersonSchema, Type.String(), Type.Null()]))
-});
-
-export const ProductSchema = Type.Object({
-	...ThingObject,
-	image: Type.Optional(Type.Union([Type.Array(Type.String()), Type.Null()])),
-	sku: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	size: Type.Optional(Type.Union([Type.String(), DistanceSchema, QuantitativeValueSchema, Type.Any(), Type.Null()])),
-	slogan: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	productID: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	productionDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	purchaseDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	releaseDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	color: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	category: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
-	gtin: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	nsn: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	width: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.Null()])),
-	weight: Type.Optional(Type.Union([QuantitativeValueSchema, Type.Null()])),
-	height: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.Null()])),
-	alternateName: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	mpn: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	material: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	brand: Type.Optional(Type.Union([BrandSchema, Type.String(), Type.Null()])),
-	review: ReviewSchema,
-	aggregateRating: Type.Optional(Type.Union([AggregateRatingSchema, Type.Null()])),
-	offers: Type.Optional(Type.Union([Type.Array(OfferSchema), Type.Null()]))
-});
-
-export const ServiceSchema = Type.Object({
-	...ThingObject,
-	brand: Type.Optional(Type.Union([BrandSchema, OrganizationSchema, Type.Null()])),
-	category: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	offers: Type.Optional(Type.Union([Type.Array(OfferSchema), Type.Null()])),
-	provider: Type.Optional(Type.Union([OrganizationSchema, PersonSchema, Type.Null()])),
-	review: Type.Optional(Type.Union([ReviewSchema, PersonSchema, Type.Null()])),
-	serviceOutput: Type.Optional(Type.Union([ThingSchema, Type.Null()])),
-	termsOfService: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	serviceType: Type.Optional(Type.Union([Type.String(), Type.Null()]))
-});
-
 export const DeviceCategorySchema = Type.Object({});
-export const StructuredValueSchema = Type.Object({ ...ThingObject });
+export const StructuredValueSchema = Type.Object({ ...ThingObject }, { description: description('StructuredValue') });
 
-export const DeviceSchema = Type.Object({
-	batteryLevel: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
-	category: Type.Any(), // todo use enum
-	configuration: Type.Optional(Type.Union([StructuredValueSchema, Type.Null()])),
-	controlledAsset: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Any(), Type.Null()])),
-	controlledProperty: Type.Optional(Type.Union([Type.Any(), Type.Array(Type.String()), Type.Null()])), // todo use map
-	dataProvider: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
-	dateFirstUsed: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	dateInstalled: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	dateLastCalibration: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	dateLastValueReported: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	dateManufacured: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	deviceState: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	firmwareVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	hardwareVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	ipAddress: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Null()])),
-	location: Type.Optional(Type.Union([Type.Any(), Type.Null()])),
-	macAddress: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	mcc: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	mnc: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	osVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	owner: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any(), Type.Null()])),
-	provider: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any(), Type.Null()])),
-	refDeviceModel: Type.Optional(Type.Union([Type.Any(), Type.Null()])),
-	rssi: Type.Optional(Type.Union([Type.Number(), Type.Array(Type.Number()), Type.Null()])),
-	serialNumber: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	softwareVersion: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	source: Type.Optional(Type.Union([Type.String(), Type.Any(), Type.Null()])),
-	supportedProtocol: Type.Optional(Type.Union([Type.Any(), Type.Null()])), // todo use map
-	value: Type.Optional(Type.Union([Type.String(), QuantitativeValueSchema, Type.Null()])), // todo use map
-	fillingLevel: Type.Optional(Type.Union([Type.Number(), QuantitativeValueSchema, Type.Null()])) // todo use map
+export const OfferSchema = Type.Object(
+	{
+		...ThingObject,
+		material: Type.Optional(Type.String()),
+		price: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		priceCurrency: Type.Optional(Type.String()),
+		priceValidUntil: Type.Optional(Type.String()),
+		itemCondition: Type.Optional(Type.String()),
+		availability: Type.Optional(Type.String())
+	},
+	{ description: description('Offer') }
+);
+
+export const AggregateRatingSchema = Type.Object(
+	{
+		...ThingObject,
+		itemReviewed: Type.Optional(ThingSchema),
+		ratingValue: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		reviewCount: Type.Optional(Type.Union([Type.String(), Type.Number()]))
+	},
+	{ description: description('AggregateRating') }
+);
+
+export const ReviewRatingSchema = Type.Object(
+	{
+		...ThingObject,
+		author: Type.Optional(Type.Any()), // reference organization or person
+		bestRating: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		ratingExplanation: Type.Optional(Type.String()),
+		ratingValue: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		reviewAspect: Type.Optional(Type.String()),
+		worstRating: Type.Optional(Type.Union([Type.String(), Type.Number()]))
+	},
+	{ description: description('Rating') }
+);
+
+export const QuantitativeValueSchema = Type.Object(
+	{
+		...ThingObject,
+		maxValue: Type.Optional(Type.Number()),
+		minValue: Type.Optional(Type.Number()),
+		unitCode: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		unitText: Type.Optional(Type.String()),
+		value: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Boolean(), StructuredValueSchema]))
+	},
+	{ description: description('QuantitativeValue') }
+);
+
+export const DistanceSchema = Type.Object(
+	{
+		...ThingObject
+	},
+	{ description: description('Distance') }
+);
+
+export const PostalAddressSchema = Type.Object(
+	{
+		...ThingObject,
+		addressCountry: Type.Optional(Type.String()),
+		addressLocality: Type.Optional(Type.String()),
+		addressRegion: Type.Optional(Type.String()),
+		postOfficeBoxNumber: Type.Optional(Type.String()),
+		postalCode: Type.Optional(Type.String()),
+		streetAddress: Type.Optional(Type.String())
+	},
+	{ description: description('PostalAddress') }
+);
+
+export const BrandSchema = Type.Object(
+	{
+		...ThingObject,
+		aggregateRating: Type.Optional(AggregateRatingSchema),
+		logo: Type.Optional(Type.String()),
+		review: Type.Optional(Type.Any()), // reference review schema
+		slogan: Type.Optional(Type.String())
+	},
+	{ description: description('Brand') }
+);
+
+export const OrganizationSchema = Type.Object(
+	{
+		...ThingObject,
+		brand: Type.Optional(Type.Union([BrandSchema, Type.String()])),
+		address: Type.Optional(Type.Union([PostalAddressSchema, Type.String()])),
+		email: Type.Optional(Type.String()),
+		faxNumber: Type.Optional(Type.String()),
+		location: Type.Optional(Type.String()),
+		slogan: Type.Optional(Type.String()),
+		taxID: Type.Optional(Type.String()),
+		telephone: Type.Optional(Type.String()),
+		vatID: Type.Optional(Type.String())
+	},
+	{ description: description('Organization') }
+);
+
+export const PersonSchema = Type.Object(
+	{
+		...ThingObject,
+		familyName: Type.Optional(Type.String()),
+		givenName: Type.Optional(Type.String()),
+		memberOf: Type.Optional(Type.Union([Type.Array(OrganizationSchema), OrganizationSchema, Type.String()])),
+		worksFor: Type.Optional(Type.Union([Type.Array(OrganizationSchema), OrganizationSchema, Type.String()])),
+		address: Type.Optional(Type.Union([PostalAddressSchema, Type.String()])),
+		colleague: Type.Optional(Type.Union([Type.Array(Type.String())])),
+		email: Type.Optional(Type.String()),
+		jobTitle: Type.Optional(Type.String()),
+		birthDate: Type.Optional(Type.String()),
+		height: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema])),
+		weight: Type.Optional(Type.Union([QuantitativeValueSchema])),
+		gender: Type.Optional(Type.String()),
+		nationality: Type.Optional(Type.String()),
+		telephone: Type.Optional(Type.String())
+	},
+	{ description: description('Person') }
+);
+
+export const ReviewSchema = Type.Object(
+	{
+		...ThingObject,
+		// TODO eventually add creativework schema and extend it??
+		itemReviewed: Type.Optional(ThingSchema),
+		reviewAspect: Type.Optional(Type.String()),
+		reviewBody: Type.Optional(Type.String()),
+		reviewRating: ReviewRatingSchema
+	},
+	{ description: description('Review') }
+);
+
+export const ProductSchema = Type.Object(
+	{
+		...ThingObject,
+		aggregateRating: Type.Optional(Type.Union([AggregateRatingSchema])),
+		award: Type.Optional(Type.String()),
+		brand: Type.Optional(Type.Union([Type.String(), BrandSchema, OrganizationSchema])),
+		category: Type.Optional(Type.Array(Type.String())),
+		color: Type.Optional(Type.String()),
+		image: Type.Optional(Type.Union([Type.Array(Type.String())])),
+		gtin: Type.Optional(Type.String()),
+		height: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.String()])),
+		logo: Type.Optional(Type.String()),
+		manufacturer: Type.Optional(OrganizationSchema),
+		material: Type.Optional(Type.String()), // reference type product
+		model: Type.Optional(Type.String()),
+		mpn: Type.Optional(Type.String()),
+		nsn: Type.Optional(Type.String()),
+		offers: Type.Optional(Type.Union([Type.Array(OfferSchema)])), // TODO add demand schema
+		pattern: Type.Optional(Type.String()),
+		productID: Type.Optional(Type.String()),
+		productionDate: Type.Optional(Type.String()),
+		purchaseDate: Type.Optional(Type.String()),
+		releaseDate: Type.Optional(Type.String()),
+		review: Type.Optional(ReviewSchema),
+		size: Type.Optional(Type.Union([Type.String(), QuantitativeValueSchema])),
+		sku: Type.Optional(Type.String()),
+		slogan: Type.Optional(Type.String()),
+		weight: Type.Optional(Type.Union([QuantitativeValueSchema, Type.String()])),
+		width: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.String()]))
+	},
+	{ description: description('Product') }
+);
+
+export const ServiceChannelSchema = Type.Object({
+	...ThingObject,
+	availableLanguage: Type.Optional(Type.String()),
+	serviceUrl: Type.Optional(Type.String())
 });
+
+export const ServiceSchema = Type.Object(
+	{
+		...ThingObject,
+		availableChannel: Type.Optional(ServiceChannelSchema),
+		brand: Type.Optional(Type.Union([BrandSchema, OrganizationSchema])),
+		category: Type.Optional(Type.String()),
+		offers: Type.Optional(Type.Union([Type.Array(OfferSchema)])), // TODO add Demand Schema
+		provider: Type.Optional(Type.Union([OrganizationSchema, PersonSchema])),
+		review: Type.Optional(Type.Union([ReviewSchema, PersonSchema])),
+		serviceOutput: Type.Optional(Type.Union([ThingSchema])),
+		serviceType: Type.Optional(Type.String()),
+		termsOfService: Type.Optional(Type.String())
+	},
+	{ description: description('Service') }
+);
+
+export enum ProductEnum {
+	'actuator' = 'actuator',
+	'beacon' = 'beacon',
+	'endgun' = 'endgun',
+	'HVAC' = 'HVAC',
+	'implement' = 'implement',
+	'irrSection' = 'irrSection',
+	'irrSystem' = 'irrSystem',
+	'meter' = 'meter',
+	'multimedia' = 'multimedia',
+	'network' = 'network',
+	'sensor' = 'sensor'
+}
+export enum DeviceControlledProperty {
+	'airPollution' = 'airPollution',
+	'atmosphericPressure' = 'atmosphericPressure',
+	'cdom' = 'cdom',
+	'conductance' = 'conductance',
+	'conductivity' = 'conductivity',
+	'depth' = 'depth',
+	'eatingActivity' = 'eatingActivity',
+	'electricityConsumption' = 'electricityConsumption',
+	'energy' = 'energy',
+	'fillingLevel' = 'fillingLevel',
+	'freeChlorine' = 'freeChlorine',
+	'gasComsumption' = 'gasComsumption',
+	'heading' = 'heading',
+	'humidity' = 'humidity',
+	'light' = 'light',
+	'location' = 'location',
+	'milking' = 'milking',
+	'motion' = 'motion',
+	'movementActivity' = 'movementActivity',
+	'noiseLevel' = 'noiseLevel',
+	'occupancy' = 'occupancy',
+	'orp' = 'orp',
+	'pH' = 'pH',
+	'power' = 'power',
+	'precipitation' = 'precipitation',
+	'pressure' = 'pressure',
+	'refractiveIndex' = 'refractiveIndex',
+	'salinity' = 'salinity',
+	'smoke' = 'smoke',
+	'soilMoisture' = 'soilMoisture',
+	'solarRadiation' = 'solarRadiation',
+	'speed' = 'speed',
+	'tds' = 'tds',
+	'temperature' = 'temperature',
+	'tss' = 'tss',
+	'turbidity' = 'turbidity',
+	'waterConsumption' = 'waterConsumption',
+	'waterPollution' = 'waterPollution',
+	'weatherConditions' = 'weatherConditions',
+	'weight' = 'weight',
+	'windDirection' = 'windDirection',
+	'windSpeed' = 'windSpeed'
+}
+export const DeviceSchema = Type.Object(
+	{
+		...ThingObject,
+		address: Type.Optional(PostalAddressSchema),
+		batteryLevel: Type.Optional(Type.Number()),
+		category: Type.Array(Type.Enum(ProductEnum)),
+		configuration: Type.Optional(Type.Union([StructuredValueSchema])),
+		controlledAsset: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Any()])),
+		controlledProperty: Type.Optional(Type.Enum(DeviceControlledProperty)),
+		dataProvider: Type.Optional(Type.Union([Type.String(), Type.Any()])),
+		dateFirstUsed: Type.Optional(Type.String()),
+		dateInstalled: Type.Optional(Type.String()),
+		dateLastCalibration: Type.Optional(Type.String()),
+		dateLastValueReported: Type.Optional(Type.String()),
+		dateManufacured: Type.Optional(Type.String()),
+		deviceState: Type.Optional(Type.String()),
+		firmwareVersion: Type.Optional(Type.String()),
+		hardwareVersion: Type.Optional(Type.String()),
+		ipAddress: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
+		location: Type.Optional(Type.Any()),
+		macAddress: Type.Optional(Type.String()),
+		mcc: Type.Optional(Type.String()),
+		mnc: Type.Optional(Type.String()),
+		osVersion: Type.Optional(Type.String()),
+		owner: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any()])),
+		provider: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any()])),
+		refDeviceModel: Type.Optional(Type.Any()),
+		rssi: Type.Optional(Type.Union([Type.Number(), Type.Array(Type.Number())])),
+		serialNumber: Type.Optional(Type.String()),
+		softwareVersion: Type.Optional(Type.String()),
+		source: Type.Optional(Type.Union([Type.String(), Type.Any()])),
+		supportedProtocol: Type.Optional(Type.Any()), // todo use map
+		value: Type.Optional(Type.Union([Type.String(), QuantitativeValueSchema])), // todo use map
+		fillingLevel: Type.Optional(Type.Union([Type.Number(), QuantitativeValueSchema])) // todo use map
+	},
+	{
+		description:
+			'Device schema, see the specification at: https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md or https://github.com/smart-data-models/dataModel.Device/blob/master/DeviceModel/doc/spec.md or https://petstore.swagger.io/?url=https://smart-data-models.github.io/dataModel.Device/Device/swagger.yaml#/ngsi-ld/get_ngsi_ld_v1_entities'
+	}
+);
