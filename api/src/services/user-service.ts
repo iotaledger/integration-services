@@ -100,28 +100,13 @@ export class UserService {
 		if (user == null || isEmpty(user.userId)) {
 			throw new Error('Error when parsing the body: userId must be provided!');
 		}
-		const {
-			publicKey,
-			subscribedChannelIds,
-			userId,
-			username,
-			verification,
-			organization,
-			registrationDate,
-			type,
-			description,
-			data,
-			verifiableCredentials,
-			role
-		} = user;
+		const { publicKey, userId, username, verification, organization, registrationDate, type, data, verifiableCredentials, role } = user;
 
 		const userPersistence: UserPersistence = {
 			userId,
 			publicKey,
 			username,
 			type,
-			subscribedChannelIds,
-			description,
 			organization,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			verification: this.getVerificationPersistence(verification),
@@ -139,28 +124,13 @@ export class UserService {
 			return null;
 		}
 
-		const {
-			username,
-			publicKey,
-			userId,
-			subscribedChannelIds,
-			organization,
-			registrationDate,
-			verification,
-			type,
-			description,
-			data,
-			verifiableCredentials,
-			role
-		} = userPersistence;
+		const { username, publicKey, userId, organization, registrationDate, verification, type, data, verifiableCredentials, role } = userPersistence;
 
 		const user: User = {
 			userId,
 			publicKey,
 			username,
 			type,
-			subscribedChannelIds,
-			description,
 			registrationDate: getDateStringFromDate(registrationDate),
 			verification: this.getVerificationObject(verification),
 			organization,

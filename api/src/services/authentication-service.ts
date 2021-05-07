@@ -96,7 +96,8 @@ export class AuthenticationService {
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
 				username: subject.username,
-				initiatorId
+				initiatorId,
+				data: subject.data
 			}
 		};
 

@@ -39,9 +39,7 @@ export async function setupApi() {
 			storeIdentity: true,
 			username: 'api-identity',
 			type: 'api',
-			organization: 'IOTA',
-			subscribedChannelIds: [],
-			description: 'Root identity of the api!'
+			organization: 'IOTA'
 		});
 
 		console.log('==================================================================================================');

@@ -4,7 +4,7 @@ const description = (name: string) => `${name} schema, see the specification at:
 
 export const ThingObject = {
 	'@context': Type.Optional(Type.String({ minLength: 1 })),
-	'@type': Type.String({ minLength: 1 }),
+	'@type': Type.Optional(Type.String({ minLength: 1 })),
 	alternateName: Type.Optional(Type.String()),
 	name: Type.Optional(Type.String()),
 	description: Type.Optional(Type.String()),
@@ -260,40 +260,72 @@ export enum DeviceControlledProperty {
 	'windDirection' = 'windDirection',
 	'windSpeed' = 'windSpeed'
 }
+
+export enum DeviceDirection {
+	'Inlet' = 'Inlet',
+	'Outlet' = 'Outlet',
+	'Entry' = 'Entry',
+	'Exit' = 'Exit'
+}
+
+export enum DeviceProtocol {
+	'3g' = '3g',
+	'bluetooth' = 'bluetooth',
+	'bluetooth LE' = 'bluetooth LE',
+	'cat-m' = 'cat-m',
+	'coap' = 'coap',
+	'ec-gsm-iot' = 'ec-gsm-iot',
+	'gprs' = 'gprs',
+	'http' = 'http',
+	'lwm2m' = 'lwm2m',
+	'lora' = 'lora',
+	'lte-m' = 'lte-m',
+	'mqtt' = 'mqtt',
+	'nb-iot' = 'nb-iot',
+	'onem2m' = 'onem2m',
+	'sigfox' = 'sigfox',
+	'ul20' = 'ul20',
+	'websocket' = 'websocket'
+}
 export const DeviceSchema = Type.Object(
 	{
 		...ThingObject,
+		type: Type.String({ minLength: 1 }),
+		category: Type.Array(Type.Enum(ProductEnum)),
+		controlledProperty: Type.Enum(DeviceControlledProperty),
 		address: Type.Optional(PostalAddressSchema),
 		batteryLevel: Type.Optional(Type.Number()),
-		category: Type.Array(Type.Enum(ProductEnum)),
-		configuration: Type.Optional(Type.Union([StructuredValueSchema])),
-		controlledAsset: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Any()])),
-		controlledProperty: Type.Optional(Type.Enum(DeviceControlledProperty)),
+		configuration: Type.Optional(Type.Union([StructuredValueSchema, Type.Any()])),
+		controlledAsset: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String()), Type.Any()], Type.Any())),
 		dataProvider: Type.Optional(Type.Union([Type.String(), Type.Any()])),
-		dateFirstUsed: Type.Optional(Type.String()),
-		dateInstalled: Type.Optional(Type.String()),
-		dateLastCalibration: Type.Optional(Type.String()),
-		dateLastValueReported: Type.Optional(Type.String()),
-		dateManufacured: Type.Optional(Type.String()),
+		dateFirstUsed: Type.Optional(Type.String({ format: 'date-time' })),
+		dateInstalled: Type.Optional(Type.String({ format: 'date-time' })),
+		dateLastCalibration: Type.Optional(Type.String({ format: 'date-time' })),
+		dateLastValueReported: Type.Optional(Type.String({ format: 'date-time' })),
+		dateManufacured: Type.Optional(Type.String({ format: 'date-time' })),
 		deviceState: Type.Optional(Type.String()),
+		direction: Type.Optional(Type.Enum(DeviceDirection)),
+		distance: Type.Optional(Type.Number()),
+		dstAware: Type.Optional(Type.Boolean()),
+		depth: Type.Optional(Type.Number()),
 		firmwareVersion: Type.Optional(Type.String()),
 		hardwareVersion: Type.Optional(Type.String()),
-		ipAddress: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
+		ipAddress: Type.Optional(Type.Array(Type.String())),
 		location: Type.Optional(Type.Any()),
-		macAddress: Type.Optional(Type.String()),
+		macAddress: Type.Optional(Type.Array(Type.String())),
 		mcc: Type.Optional(Type.String()),
 		mnc: Type.Optional(Type.String()),
 		osVersion: Type.Optional(Type.String()),
-		owner: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any()])),
-		provider: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.Any()])),
+		owner: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.String(), Type.Array(Type.String())])),
+		provider: Type.Optional(Type.Union([PersonSchema, OrganizationSchema, Type.String()])),
 		refDeviceModel: Type.Optional(Type.Any()),
+		relativePosition: Type.Optional(Type.String()),
 		rssi: Type.Optional(Type.Union([Type.Number(), Type.Array(Type.Number())])),
 		serialNumber: Type.Optional(Type.String()),
 		softwareVersion: Type.Optional(Type.String()),
 		source: Type.Optional(Type.Union([Type.String(), Type.Any()])),
-		supportedProtocol: Type.Optional(Type.Any()), // todo use map
-		value: Type.Optional(Type.Union([Type.String(), QuantitativeValueSchema])), // todo use map
-		fillingLevel: Type.Optional(Type.Union([Type.Number(), QuantitativeValueSchema])) // todo use map
+		supportedProtocol: Type.Optional(Type.Enum(DeviceProtocol)),
+		value: Type.Optional(Type.Union([Type.String(), QuantitativeValueSchema]))
 	},
 	{
 		description:
