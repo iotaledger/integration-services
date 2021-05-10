@@ -106,7 +106,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('no valid verfiable credential!'));
 		});
 
-		it('should not verify since initiator is a device!', async () => {
+		it('should not verify since initiator is not allowed to authorize others!', async () => {
 			const subject = TestUsersMock[0];
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
@@ -122,7 +122,7 @@ describe('test authentication routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is a device!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is not allowed based on its type!'));
 		});
 
 		it('should not verify since vc of initiator is not verified (initiatorVcIsVerified=false).', async () => {
@@ -187,7 +187,7 @@ describe('test authentication routes', () => {
 			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is a device!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is not allowed based on its type!'));
 		});
 
 		it('should verify for user which has valid vc and different organization but admin user', async () => {

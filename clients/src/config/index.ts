@@ -9,8 +9,6 @@ export const users = [
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'device',
-		subscribedChannelIds: ['test-address-c2', 'test-address'],
-		description: 'Device which measures temperature in the kitchen.',
 		organization: 'IOTA',
 		registrationDate: { $date: '2021-03-15T09:29:56.732Z' }
 	},
@@ -21,7 +19,6 @@ export const users = [
 		lastName: 'Tomson',
 		organization: 'University Account',
 		type: 'Person',
-		description: 'Just a user from the university.',
 		verification: {
 			verified: true
 		}
@@ -54,7 +51,6 @@ export const UserIdentity = {
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		type: 'Person',
-		description: 'Just a user',
 		registrationDate: '2021-03-16T14:18:49Z',
 		verification: {
 			verified: true,
@@ -151,7 +147,6 @@ export const ServerIdentity = {
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
 		type: 'api',
-		description: 'Root identity of the api!',
 		registrationDate: '2021-03-24T14:38:43Z',
 		verification: {
 			verified: false,
@@ -214,8 +209,6 @@ export const DeviceIdentity = {
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
 		type: 'product',
-		subscribedChannelIds: ['test-address-c2', 'test-address'],
-		description: 'Device which measures temperature in the kitchen.',
 		registrationDate: '2021-04-13T11:01:32Z',
 		organization: 'IOTA',
 		data: {

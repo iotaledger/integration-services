@@ -26,7 +26,7 @@ export class AuthorizationService {
 
 	isAuthorizedAdmin = async (requestUser: User, userId: string): Promise<boolean> => {
 		const role = requestUser.role;
-		if (!this.isUserOrApi(requestUser.type)) {
+		if (!this.hasAuthorizationType(requestUser.type)) {
 			return false;
 		}
 
@@ -42,7 +42,7 @@ export class AuthorizationService {
 		return false;
 	};
 
-	isUserOrApi(type: UserType | string): boolean {
-		return type === UserType.Person || type === UserType.Service;
+	hasAuthorizationType(type: UserType | string): boolean {
+		return type === UserType.Person || type === UserType.Service || type === UserType.Organization;
 	}
 }

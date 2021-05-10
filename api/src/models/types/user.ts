@@ -29,7 +29,6 @@ export const enum UserRoles {
 export interface UserSearch {
 	username?: string;
 	organization?: string;
-	subscribedChannelIds?: string[];
 	verified?: boolean;
 	registrationDate?: Date;
 	type?: UserType | string;

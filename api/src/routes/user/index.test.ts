@@ -29,8 +29,7 @@ describe('test Search user', () => {
 			username: 'charlie',
 			verified: true,
 			organization: 'IOTA',
-			registrationDate: getDateFromString('2021-02-12T14:58:05+01:00'),
-			subscribedChannelIds: ['test-address', 'test-address2']
+			registrationDate: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchUserSpy = spyOn(UserDb, 'searchUsers').and.returnValue([]);
 		const req: any = {
@@ -86,9 +85,7 @@ describe('test GET user', () => {
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			type: UserType.Person,
-			subscribedChannelIds: [],
 			data: { firstName: 'Tom', lastName: 'Tomson' },
-			description: null,
 			registrationDate: date,
 			organization: 'IOTA'
 		};
@@ -106,9 +103,7 @@ describe('test GET user', () => {
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			type: 'Person',
-			subscribedChannelIds: [],
 			data: { firstName: 'Tom', lastName: 'Tomson' },
-			description: null,
 			registrationDate: getDateStringFromDate(date),
 			organization: 'IOTA'
 		});
@@ -138,9 +133,7 @@ describe('test POST user', () => {
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
 		type: UserType.Person,
-		subscribedChannelIds: [],
 		data: { firstName: 'Tom', lastName: 'Sonson' },
-		description: null,
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
 	};
@@ -221,9 +214,7 @@ describe('test PUT user', () => {
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
 		type: UserType.Person,
-		subscribedChannelIds: [],
 		data: { firstName: 'Tom', lastName: 'Sonson' },
-		description: null,
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
 	};

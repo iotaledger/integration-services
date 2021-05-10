@@ -8,8 +8,6 @@ export const TestUsersMock = [
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'Device',
-		subscribedChannelIds: ['test-address-c2', 'test-address'],
-		description: 'Device which measures temperature in the kitchen.',
 		organization: 'IOTA',
 		registrationDate: '2021-03-15T10:29:56+01:00'
 	},
@@ -20,7 +18,6 @@ export const TestUsersMock = [
 		lastName: 'Tomson',
 		organization: 'University Account',
 		type: 'Person',
-		description: 'Just a user from the university.',
 		registrationDate: '2021-03-15T10:29:56+01:00'
 	},
 	{
@@ -30,7 +27,6 @@ export const TestUsersMock = [
 		lastName: 'Keen',
 		organization: 'IOTA',
 		type: 'Person',
-		description: 'Just a user from the iota foundation.',
 		registrationDate: '2021-03-15T10:29:56+01:00'
 	}
 ];
@@ -62,7 +58,6 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		username: 'first-user',
 		type: 'Person',
 		data: { firstName: 'Tom', lastName: 'Sonson' },
-		description: 'Just a user',
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verification: {
 			verified: true,
@@ -138,7 +133,6 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
 		type: 'Api',
-		description: 'Root identity of the api!',
 		registrationDate: '2021-03-24T15:38:43+01:00',
 		verification: {
 			verified: true,
@@ -205,8 +199,6 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
 		type: 'Device',
-		subscribedChannelIds: ['test-address-c2', 'test-address'],
-		description: 'Device which measures temperature in the kitchen.',
 		registrationDate: '2021-03-24T16:54:38+01:00',
 		verification: {
 			verified: true,
