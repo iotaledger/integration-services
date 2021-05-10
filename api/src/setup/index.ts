@@ -38,10 +38,8 @@ export async function setupApi() {
 		const identity = await tmpAuthenticationService.createIdentity({
 			storeIdentity: true,
 			username: 'api-identity',
-			classification: 'api',
-			organization: 'IOTA',
-			subscribedChannelIds: [],
-			description: 'Root identity of the api!'
+			type: 'api',
+			organization: 'IOTA'
 		});
 
 		console.log('==================================================================================================');

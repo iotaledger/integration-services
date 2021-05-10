@@ -1,43 +1,48 @@
 import { Static } from '@sinclair/typebox';
 import { UserSchema, UserWithoutIdSchema, VerificationSchema } from '../schemas/user';
+import { OrganizationSchema, ServiceSchema, PersonSchema, ProductSchema, DeviceSchema } from '../schemas/user-types';
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
 export type User = Static<typeof UserSchema> & UserWithoutId;
 export type Verification = Static<typeof VerificationSchema>;
+export type Organization = Static<typeof OrganizationSchema>;
+export type Service = Static<typeof ServiceSchema>;
+export type Person = Static<typeof PersonSchema>;
+export type Product = Static<typeof ProductSchema>;
+export type Device = Static<typeof DeviceSchema>;
 
-export const enum UserClassification {
-	'human' = 'human',
-	'api' = 'api',
-	'organization' = 'organization',
-	'device' = 'device',
-	'product' = 'product',
-	'unknown' = 'unknown'
+export const enum UserType {
+	Organization = 'Organization',
+	Service = 'Service',
+	Person = 'Person',
+	Device = 'Device',
+	Product = 'Product',
+	Unknown = 'Unknown'
 }
 
 export const enum UserRoles {
-	'Admin' = 'admin',
-	'OrgAdmin' = 'org-admin',
-	'User' = 'user'
+	Admin = 'Admin',
+	Manager = 'Manager',
+	User = 'User'
 }
 
 export interface UserSearch {
 	username?: string;
 	organization?: string;
-	subscribedChannelIds?: string[];
 	verified?: boolean;
 	registrationDate?: Date;
-	classification?: UserClassification | string;
+	type?: UserType | string;
 	limit?: number;
 	index?: number;
 }
 
-type OmittedUser = Omit<User, 'registrationDate' | 'classification' | 'verification' | 'role'>;
+type OmittedUser = Omit<User, 'registrationDate' | 'type' | 'verification' | 'role'>;
 
 export interface UserPersistence extends OmittedUser {
 	role?: UserRoles;
 	verification?: VerificationPersistence;
 	registrationDate?: Date;
-	classification: UserClassification | string;
+	type: UserType | string;
 }
 
 export interface VerificationPersistence {
