@@ -214,11 +214,17 @@ describe('test authentication routes', () => {
 				username: subject.username,
 				initiatorId: initiatorVC.id
 			};
-			const expectedCredential = {
+			const expectedCredential: any = {
 				type: 'PersonCredential',
 				id: subject.userId,
 				subject: {
-					...credentialSubject
+					...credentialSubject,
+					data: {
+						'@context': 'https://schema.org/',
+						'@type': 'Person',
+						type: undefined,
+						...subject.data
+					}
 				}
 			};
 			const expectedKeyCollection = {
@@ -275,11 +281,17 @@ describe('test authentication routes', () => {
 				username: subject.username,
 				initiatorId: initiatorVC.id
 			};
-			const expectedCredential = {
+			const expectedCredential: any = {
 				type: 'DeviceCredential',
 				id: subject.userId,
 				subject: {
-					...credentialSubject
+					...credentialSubject,
+					data: {
+						'@context': ['https://smartdatamodels.org/context.jsonld'],
+						'@type': undefined,
+						type: 'Device',
+						...subject.data
+					}
 				}
 			};
 			const expectedKeyCollection = {

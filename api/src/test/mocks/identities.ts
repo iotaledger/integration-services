@@ -9,16 +9,36 @@ export const TestUsersMock = [
 		username: 'test-device',
 		type: 'Device',
 		organization: 'IOTA',
-		registrationDate: '2021-03-15T10:29:56+01:00'
+		registrationDate: '2021-03-15T10:29:56+01:00',
+		data: {
+			id: 'test-device',
+			type: 'Device',
+			category: ['sensor'],
+			controlledProperty: ['fillingLevel', 'temperature'],
+			controlledAsset: ['wastecontainer-Osuna-100'],
+			ipAddress: ['192.14.56.78'],
+			mcc: '214',
+			mnc: '07',
+			batteryLevel: 0.75,
+			serialNumber: '9845A',
+			refDeviceModel: 'myDevice-wastecontainer-sensor-345',
+			rssi: 0.86,
+			value: 'l%3D0.22%3Bt%3D21.2',
+			deviceState: 'ok',
+			dateFirstUsed: '2014-09-11T11:00:00Z',
+			owner: ['http://person.org/leon']
+		}
 	},
 	{
 		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'second-user',
-		firstName: 'Brandon',
-		lastName: 'Tomson',
 		organization: 'University Account',
 		type: 'Person',
-		registrationDate: '2021-03-15T10:29:56+01:00'
+		registrationDate: '2021-03-15T10:29:56+01:00',
+		data: {
+			familyName: 'Tomson',
+			givenName: 'Brandon'
+		}
 	},
 	{
 		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
@@ -27,7 +47,11 @@ export const TestUsersMock = [
 		lastName: 'Keen',
 		organization: 'IOTA',
 		type: 'Person',
-		registrationDate: '2021-03-15T10:29:56+01:00'
+		registrationDate: '2021-03-15T10:29:56+01:00',
+		data: {
+			familyName: 'Keen',
+			givenName: 'Jon'
+		}
 	}
 ];
 

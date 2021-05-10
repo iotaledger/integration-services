@@ -1,6 +1,6 @@
 import { Static } from '@sinclair/typebox';
 import { UserSchema, UserWithoutIdSchema, VerificationSchema } from '../schemas/user';
-import { OrganizationSchema, ServiceSchema, PersonSchema, ProductSchema, DeviceSchema } from '../schemas/user-types';
+import { OrganizationSchema, ServiceSchema, PersonSchema, ProductSchema, DeviceSchema, ProductEnum } from '../schemas/user-types';
 
 export type UserWithoutId = Static<typeof UserWithoutIdSchema>;
 export type User = Static<typeof UserSchema> & UserWithoutId;

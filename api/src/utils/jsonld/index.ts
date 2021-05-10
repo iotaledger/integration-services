@@ -9,12 +9,14 @@ export class JsonldGenerator {
 		Service: 'https://schema.org/'
 	};
 
-	jsonldUserData = (userType: UserType, data: Person | Organization | Service | Device | Product) => {
+	jsonldUserData = (userType: string, data: Person | Organization | Service | Device | Product) => {
 		const context = this.contexts[userType];
-
+		if (!context) {
+			return data;
+		}
 		return {
 			'@context': context,
-			'@type': userType,
+			'@type': userType !== UserType.Device ? userType : undefined,
 			type: userType === UserType.Device ? userType : undefined,
 			...data
 		};

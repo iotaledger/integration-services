@@ -21,6 +21,7 @@ import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
 import { upperFirst } from 'lodash';
+import { JsonldGenerator } from '../utils/jsonld';
 
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -87,6 +88,9 @@ export class AuthenticationService {
 	};
 
 	verifyUser = async (subject: User, issuerId: string, initiatorId: string) => {
+		const jsonldGen = new JsonldGenerator();
+		const data = jsonldGen.jsonldUserData(subject.type, subject.data);
+
 		const credential: Credential<CredentialSubject> = {
 			type: `${upperFirst(subject.type)}Credential`,
 			id: subject.userId,
@@ -97,7 +101,7 @@ export class AuthenticationService {
 				registrationDate: subject.registrationDate,
 				username: subject.username,
 				initiatorId,
-				data: subject.data
+				data
 			}
 		};
 

@@ -292,7 +292,7 @@ export const DeviceSchema = Type.Object(
 		...ThingObject,
 		type: Type.String({ minLength: 1 }),
 		category: Type.Array(Type.Enum(ProductEnum)),
-		controlledProperty: Type.Enum(DeviceControlledProperty),
+		controlledProperty: Type.Array(Type.Enum(DeviceControlledProperty)),
 		address: Type.Optional(PostalAddressSchema),
 		batteryLevel: Type.Optional(Type.Number()),
 		configuration: Type.Optional(Type.Union([StructuredValueSchema, Type.Any()])),
