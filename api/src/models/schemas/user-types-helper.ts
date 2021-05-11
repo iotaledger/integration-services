@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox';
 
-const description = (name: string) => `${name} schema, see the specification at: https://schema.org/${name}`;
+export const schemaDescriptionCreator = (name: string) => `${name} schema, see the specification at: https://schema.org/${name}`;
 
 export enum ProductEnum {
 	'actuator' = 'actuator',
@@ -123,7 +123,7 @@ export const ThingSchema = Type.Object({
 	...ThingObject
 });
 
-export const StructuredValueSchema = Type.Object({ ...ThingObject }, { description: description('StructuredValue') });
+export const StructuredValueSchema = Type.Object({ ...ThingObject }, { description: schemaDescriptionCreator('StructuredValue') });
 
 export const OfferSchema = Type.Object(
 	{
@@ -146,7 +146,7 @@ export const OfferSchema = Type.Object(
 		validFrom: Type.Optional(Type.String()),
 		validThrough: Type.Optional(Type.String())
 	},
-	{ description: description('Offer') }
+	{ description: schemaDescriptionCreator('Offer') }
 );
 
 export const DemandSchema = Type.Object(
@@ -164,7 +164,7 @@ export const DemandSchema = Type.Object(
 		validFrom: Type.Optional(Type.String()),
 		validThrough: Type.Optional(Type.String())
 	},
-	{ description: description('Demand') }
+	{ description: schemaDescriptionCreator('Demand') }
 );
 
 export const AggregateRatingSchema = Type.Object(
@@ -178,7 +178,7 @@ export const AggregateRatingSchema = Type.Object(
 		ratingValue: Type.Optional(Type.Union([Type.String(), Type.Number()])),
 		reviewCount: Type.Optional(Type.Union([Type.String(), Type.Number()]))
 	},
-	{ description: description('AggregateRating') }
+	{ description: schemaDescriptionCreator('AggregateRating') }
 );
 
 export const ReviewRatingSchema = Type.Object(
@@ -191,7 +191,7 @@ export const ReviewRatingSchema = Type.Object(
 		reviewAspect: Type.Optional(Type.String()),
 		worstRating: Type.Optional(Type.Union([Type.String(), Type.Number()]))
 	},
-	{ description: description('Rating') }
+	{ description: schemaDescriptionCreator('Rating') }
 );
 
 export const ReviewSchema = Type.Object(
@@ -202,7 +202,7 @@ export const ReviewSchema = Type.Object(
 		reviewBody: Type.Optional(Type.String()),
 		reviewRating: ReviewRatingSchema
 	},
-	{ description: description('Review') }
+	{ description: schemaDescriptionCreator('Review') }
 );
 
 export const QuantitativeValueSchema = Type.Object(
@@ -214,7 +214,7 @@ export const QuantitativeValueSchema = Type.Object(
 		unitText: Type.Optional(Type.String()),
 		value: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Boolean(), StructuredValueSchema]))
 	},
-	{ description: description('QuantitativeValue') }
+	{ description: schemaDescriptionCreator('QuantitativeValue') }
 );
 
 export const ServiceChannelSchema = Type.Object({
@@ -227,7 +227,7 @@ export const DistanceSchema = Type.Object(
 	{
 		...ThingObject
 	},
-	{ description: description('Distance') }
+	{ description: schemaDescriptionCreator('Distance') }
 );
 
 export const PostalAddressSchema = Type.Object(
@@ -240,7 +240,7 @@ export const PostalAddressSchema = Type.Object(
 		postalCode: Type.Optional(Type.String()),
 		streetAddress: Type.Optional(Type.String())
 	},
-	{ description: description('PostalAddress') }
+	{ description: schemaDescriptionCreator('PostalAddress') }
 );
 
 export const BrandSchema = Type.Object(
@@ -251,5 +251,5 @@ export const BrandSchema = Type.Object(
 		review: Type.Optional(ThingSchema), // reference review schema
 		slogan: Type.Optional(Type.String())
 	},
-	{ description: description('Brand') }
+	{ description: schemaDescriptionCreator('Brand') }
 );

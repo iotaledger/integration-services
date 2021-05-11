@@ -12,13 +12,12 @@ import {
 	ProductEnum,
 	QuantitativeValueSchema,
 	ReviewSchema,
+	schemaDescriptionCreator,
 	ServiceChannelSchema,
 	StructuredValueSchema,
 	ThingObject,
 	ThingSchema
 } from './user-types-helper';
-
-const description = (name: string) => `${name} schema, see the specification at: https://schema.org/${name}`;
 
 export const OrganizationSchema = Type.Object(
 	{
@@ -33,7 +32,7 @@ export const OrganizationSchema = Type.Object(
 		telephone: Type.Optional(Type.String()),
 		vatID: Type.Optional(Type.String())
 	},
-	{ description: description('Organization') }
+	{ description: schemaDescriptionCreator('Organization') }
 );
 
 export const PersonSchema = Type.Object(
@@ -54,7 +53,7 @@ export const PersonSchema = Type.Object(
 		nationality: Type.Optional(Type.String()),
 		telephone: Type.Optional(Type.String())
 	},
-	{ description: description('Person') }
+	{ description: schemaDescriptionCreator('Person') }
 );
 
 export const ProductSchema = Type.Object(
@@ -87,7 +86,7 @@ export const ProductSchema = Type.Object(
 		weight: Type.Optional(Type.Union([QuantitativeValueSchema, Type.String()])),
 		width: Type.Optional(Type.Union([DistanceSchema, QuantitativeValueSchema, Type.String()]))
 	},
-	{ description: description('Product') }
+	{ description: schemaDescriptionCreator('Product') }
 );
 
 export const ServiceSchema = Type.Object(
@@ -104,7 +103,7 @@ export const ServiceSchema = Type.Object(
 		serviceType: Type.Optional(Type.String()),
 		termsOfService: Type.Optional(Type.String())
 	},
-	{ description: description('Service') }
+	{ description: schemaDescriptionCreator('Service') }
 );
 
 export const DeviceSchema = Type.Object(

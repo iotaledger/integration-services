@@ -11,7 +11,7 @@ export type Person = Static<typeof PersonSchema>;
 export type Product = Static<typeof ProductSchema>;
 export type Device = Static<typeof DeviceSchema>;
 
-export const enum UserType {
+export enum UserType {
 	Organization = 'Organization',
 	Service = 'Service',
 	Person = 'Person',
@@ -20,7 +20,7 @@ export const enum UserType {
 	Unknown = 'Unknown'
 }
 
-export const enum UserRoles {
+export enum UserRoles {
 	Admin = 'Admin',
 	Manager = 'Manager',
 	User = 'User'
@@ -36,13 +36,12 @@ export interface UserSearch {
 	index?: number;
 }
 
-type OmittedUser = Omit<User, 'registrationDate' | 'type' | 'verification' | 'role'>;
+type OmittedUser = Omit<User, 'registrationDate' | 'verification' | 'role'>;
 
 export interface UserPersistence extends OmittedUser {
 	role?: UserRoles;
 	verification?: VerificationPersistence;
 	registrationDate?: Date;
-	type: UserType | string;
 }
 
 export interface VerificationPersistence {

@@ -1,4 +1,5 @@
 import { Type } from '@sinclair/typebox';
+import { UserType } from '../types/user';
 import { VerifiableCredentialSchema } from './identity';
 
 export const LocationSchema = Type.Object({
@@ -15,7 +16,7 @@ export const VerificationSchema = Type.Object({
 
 const UserWithoutIdFields = {
 	username: Type.String({ minLength: 3 }),
-	type: Type.String({ minLength: 3 }),
+	type: Type.Union([Type.Enum(UserType), Type.String({ minLength: 3 })]),
 	registrationDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 	verification: Type.Optional(Type.Union([VerificationSchema, Type.Null()])),
 	organization: Type.Optional(Type.Union([Type.String({ minLength: 2 }), Type.Null()])),
