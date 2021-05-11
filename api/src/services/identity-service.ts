@@ -10,7 +10,7 @@ import {
 	Credential
 } from '../models/types/identity';
 import { KeyCollectionJson } from '../models/types/key-collection';
-const { Document, VerifiableCredential, Method, KeyCollection } = Identity;
+const { Document, VerifiableCredential, VerificationMethod, KeyCollection } = Identity;
 
 export class IdentityService {
 	private static instance: IdentityService;
@@ -34,7 +34,7 @@ export class IdentityService {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
 			const keyCollection = new KeyCollection(this.config.keyType, count);
-			const method = Method.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
+			const method = VerificationMethod.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
 			const newDoc = this.addPropertyToDoc(doc, { previous_message_id: issuerIdentity.txHash });
 
 			newDoc.insertMethod(method, `VerificationMethod`);
@@ -89,7 +89,7 @@ export class IdentityService {
 			const { doc } = this.restoreIdentity(issuerIdentity);
 			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
 			const digest = this.config.hashFunction;
-			const method = Method.createMerkleKey(digest, doc.id, issuerKeys, this.config.keyCollectionTag);
+			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.config.keyCollectionTag);
 
 			const unsignedVc = VerifiableCredential.extend({
 				id: credential?.id,
