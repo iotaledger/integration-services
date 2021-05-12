@@ -27,15 +27,15 @@ export class IdentityService {
 		return IdentityService.instance;
 	}
 
-	generateKeyCollection = async (
+	async generateKeyCollection(
 		issuerIdentity: IdentityJsonUpdate,
 		count: number
-	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> => {
+	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
 			const keyCollection = new KeyCollection(this.config.keyType, count);
 			const method = VerificationMethod.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
-			const newDoc = this.addPropertyToDoc(doc, { previous_message_id: issuerIdentity.txHash });
+			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: issuerIdentity.txHash });
 
 			newDoc.insertMethod(method, `VerificationMethod`);
 			newDoc.sign(key);
@@ -55,9 +55,9 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not generate the key collection');
 		}
-	};
+	}
 
-	createIdentity = async (): Promise<IdentityJsonUpdate> => {
+	async createIdentity(): Promise<IdentityJsonUpdate> {
 		try {
 			const identity = this.generateIdentity();
 			identity.doc.sign(identity.key);
@@ -77,14 +77,14 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not create the identity');
 		}
-	};
+	}
 
-	createVerifiableCredential = async <T>(
+	async createVerifiableCredential<T>(
 		issuerIdentity: IdentityJson,
 		credential: Credential<T>,
 		keyCollectionJson: KeyCollectionJson,
 		subjectKeyIndex: number
-	): Promise<VerifiableCredentialJson> => {
+	): Promise<VerifiableCredentialJson> {
 		try {
 			const { doc } = this.restoreIdentity(issuerIdentity);
 			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
@@ -115,9 +115,9 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not create the verifiable credential');
 		}
-	};
+	}
 
-	checkVerifiableCredential = async (signedVc: VerifiableCredentialJson): Promise<boolean> => {
+	async checkVerifiableCredential(signedVc: VerifiableCredentialJson): Promise<boolean> {
 		try {
 			const issuerDoc = await this.getLatestIdentityDoc(signedVc.issuer);
 			const subject = await this.getLatestIdentityDoc(signedVc.id);
@@ -129,20 +129,17 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not check the verifiable credential');
 		}
-	};
+	}
 
-	publishSignedDoc = async (newDoc: IdentityDocumentJson): Promise<string> => {
+	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
 		const txHash = await Identity.publish(newDoc, this.config);
 		return txHash;
-	};
+	}
 
-	revokeVerifiableCredential = async (
-		issuerIdentity: IdentityJsonUpdate,
-		index: number
-	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> => {
+	async revokeVerifiableCredential(issuerIdentity: IdentityJsonUpdate, index: number): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
-			const newDoc = this.addPropertyToDoc(doc, { previous_message_id: issuerIdentity.txHash });
+			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: issuerIdentity.txHash });
 			const result: boolean = newDoc.revokeMerkleKey(this.config.keyCollectionTag, index);
 			newDoc.sign(key);
 			const txHash = await this.publishSignedDoc(newDoc.toJSON());
@@ -152,18 +149,18 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not revoke the verifiable credential');
 		}
-	};
+	}
 
-	getLatestIdentityJson = async (did: string): Promise<IdentityDocumentJson> => {
+	async getLatestIdentityJson(did: string): Promise<IdentityDocumentJson> {
 		try {
 			return await Identity.resolve(did, this.config);
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could get the latest identity');
 		}
-	};
+	}
 
-	getLatestIdentityDoc = async (did: string): Promise<Identity.Document> => {
+	async getLatestIdentityDoc(did: string): Promise<Identity.Document> {
 		try {
 			const json = await Identity.resolve(did, this.config);
 			const doc = Document.fromJSON(json);
@@ -175,9 +172,9 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could get the latest identity');
 		}
-	};
+	}
 
-	restoreIdentity = (identity: IdentityJson) => {
+	restoreIdentity(identity: IdentityJson) {
 		try {
 			const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
 			const doc = Document.fromJSON(identity.doc) as any;
@@ -190,9 +187,9 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could not parse key or doc of the identity');
 		}
-	};
+	}
 
-	generateIdentity = () => {
+	generateIdentity() {
 		try {
 			const { doc, key } = new Document(this.config.keyType) as IdentityDocument;
 
@@ -204,12 +201,12 @@ export class IdentityService {
 			console.log('Error from identity sdk:', error);
 			throw new Error(`could not create identity document from keytype: ${this.config.keyType}`);
 		}
-	};
+	}
 
-	private addPropertyToDoc = (doc: Identity.Document, property: { [key: string]: any }): Identity.Document => {
+	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
 		return Identity.Document.fromJSON({
 			...doc.toJSON(),
 			...property
 		});
-	};
+	}
 }

@@ -90,7 +90,7 @@ export const ServerIdentity = {
 		created: '2021-03-24T14:38:41Z',
 		updated: '2021-03-24T14:38:41Z',
 		immutable: false,
-		previous_message_id: 'ANZAUTTZHLIJADRODGCTESKILHXCIVMZHSYDWYINODE9OMUDV9CWPPUFMDAURXUNJASFNBWPRSPOZ9999',
+		previousMessageId: 'ANZAUTTZHLIJADRODGCTESKILHXCIVMZHSYDWYINODE9OMUDV9CWPPUFMDAURXUNJASFNBWPRSPOZ9999',
 		proof: {
 			type: 'JcsEd25519Signature2020',
 			verificationMethod: '#key',
