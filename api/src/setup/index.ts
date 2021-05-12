@@ -7,6 +7,8 @@ import { IdentityService } from '../services/identity-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
 import { getHexEncodedKey, signChallenge, verifiyChallenge } from '../utils/encryption';
+import { UserType } from '../models/types/user';
+import { CreateIdentityBody } from '../models/types/identity';
 
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
@@ -35,14 +37,14 @@ export async function setupApi() {
 
 	if (!serverIdentityId || !serverIdentity) {
 		console.log('Create identity...');
-		const identity = await tmpAuthenticationService.createIdentity({
+		// TODO#94 make it dynamic
+		const serverData: CreateIdentityBody = {
 			storeIdentity: true,
-			username: 'api-identity',
-			classification: 'api',
-			organization: 'IOTA',
-			subscribedChannelIds: [],
-			description: 'Root identity of the api!'
-		});
+			username: 'root-identity',
+			type: UserType.Service
+		};
+
+		const identity = await tmpAuthenticationService.createIdentity(serverData);
 
 		console.log('==================================================================================================');
 		console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);

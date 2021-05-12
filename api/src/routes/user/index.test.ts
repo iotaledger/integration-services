@@ -1,6 +1,6 @@
 import { UserRoutes } from '.';
 import * as UserDb from '../../database/user';
-import { UserPersistence, UserClassification, User, UserSearch } from '../../models/types/user';
+import { UserPersistence, UserType, User, UserSearch } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
 import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
@@ -23,20 +23,19 @@ describe('test Search user', () => {
 
 	it('should call searchUser with expected user search', async () => {
 		const expectedUserSearch: UserSearch = {
-			classification: UserClassification.human,
+			type: UserType.Person,
 			index: 1,
 			limit: 1,
 			username: 'charlie',
 			verified: true,
 			organization: 'IOTA',
-			registrationDate: getDateFromString('2021-02-12T14:58:05+01:00'),
-			subscribedChannelIds: ['test-address', 'test-address2']
+			registrationDate: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchUserSpy = spyOn(UserDb, 'searchUsers').and.returnValue([]);
 		const req: any = {
 			params: {},
 			query: {
-				classification: 'human',
+				type: 'Person',
 				'registration-date': '2021-02-12T14:58:05+01:00',
 				verified: 'true',
 				limit: '1',
@@ -85,10 +84,8 @@ describe('test GET user', () => {
 			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
-			classification: UserClassification.human,
-			subscribedChannelIds: [],
-			details: { firstName: 'Tom', lastName: 'Tomson' },
-			description: null,
+			type: UserType.Person,
+			data: { firstName: 'Tom', lastName: 'Tomson' },
 			registrationDate: date,
 			organization: 'IOTA'
 		};
@@ -105,10 +102,8 @@ describe('test GET user', () => {
 			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
-			classification: 'human',
-			subscribedChannelIds: [],
-			details: { firstName: 'Tom', lastName: 'Tomson' },
-			description: null,
+			type: 'Person',
+			data: { firstName: 'Tom', lastName: 'Tomson' },
 			registrationDate: getDateStringFromDate(date),
 			organization: 'IOTA'
 		});
@@ -137,10 +132,8 @@ describe('test POST user', () => {
 		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
-		classification: UserClassification.human,
-		subscribedChannelIds: [],
-		details: { firstName: 'Tom', lastName: 'Sonson' },
-		description: null,
+		type: UserType.Person,
+		data: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
 	};
@@ -220,10 +213,8 @@ describe('test PUT user', () => {
 		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
-		classification: UserClassification.human,
-		subscribedChannelIds: [],
-		details: { firstName: 'Tom', lastName: 'Sonson' },
-		description: null,
+		type: UserType.Person,
+		data: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
 	};

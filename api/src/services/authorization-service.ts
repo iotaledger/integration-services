@@ -1,6 +1,6 @@
 import { UserService } from './user-service';
 import { AuthorizationCheck } from '../models/types/authentication';
-import { User, UserClassification, UserRoles } from '../models/types/user';
+import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
 	private readonly userService: UserService;
@@ -26,13 +26,13 @@ export class AuthorizationService {
 
 	isAuthorizedAdmin = async (requestUser: User, userId: string): Promise<boolean> => {
 		const role = requestUser.role;
-		if (!this.isUserOrApi(requestUser.classification)) {
+		if (!this.hasAuthorizationType(requestUser.type)) {
 			return false;
 		}
 
 		if (role === UserRoles.Admin) {
 			return true;
-		} else if (role === UserRoles.OrgAdmin) {
+		} else if (role === UserRoles.Manager) {
 			const user = await this.userService.getUser(userId);
 			const hasSameOrganization = requestUser.organization === user?.organization;
 			if (hasSameOrganization) {
@@ -42,7 +42,7 @@ export class AuthorizationService {
 		return false;
 	};
 
-	isUserOrApi(classification: UserClassification | string): boolean {
-		return classification === UserClassification.human || classification === UserClassification.api;
+	hasAuthorizationType(type: UserType | string): boolean {
+		return type === UserType.Person || type === UserType.Service || type === UserType.Organization;
 	}
 }

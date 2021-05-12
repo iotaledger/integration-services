@@ -10,7 +10,7 @@ import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials'
 import * as UserDb from '../../../database/user';
 import { VerifiableCredentialPersistence } from '../../../models/types/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
-import { UserClassification, UserRoles } from '../../../models/types/user';
+import { UserType, UserRoles } from '../../../models/types/user';
 
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -137,7 +137,7 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, classification: UserClassification.device }, // user is an admin but device
+				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Device }, // user is an admin but device
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -259,7 +259,7 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, classification: UserClassification.human }, // user is an admin
+				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -302,7 +302,7 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, classification: UserClassification.human }, // user is an admin
+				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -343,7 +343,7 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, classification: UserClassification.human }, // user is an admin
+				user: { userId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -387,7 +387,7 @@ describe('test authentication routes', () => {
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(DeviceIdentityMock.userData); // return the device
 			const req: any = {
-				user: { userId: 'did:iota:11223344', role: UserRoles.OrgAdmin, classification: UserClassification.human, organization: 'IOTA' }, // user is an org admin from same company
+				user: { userId: 'did:iota:11223344', role: UserRoles.Manager, type: UserType.Person, organization: 'IOTA' }, // user is an org admin from same company
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -430,7 +430,7 @@ describe('test authentication routes', () => {
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(DeviceIdentityMock.userData); // return the device
 			const req: any = {
-				user: { userId: 'did:iota:11223344', role: UserRoles.OrgAdmin, classification: UserClassification.human, organization: 'NOT FROM IOTA' }, // user is an org admin from different company
+				user: { userId: 'did:iota:11223344', role: UserRoles.Manager, type: UserType.Person, organization: 'NOT FROM IOTA' }, // user is an org admin from different company
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -467,7 +467,7 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
-				user: { userId: 'did:iota:1234', classification: UserClassification.human }, // same request user id as initiatorId
+				user: { userId: 'did:iota:1234', type: UserType.Person }, // same request user id as initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};

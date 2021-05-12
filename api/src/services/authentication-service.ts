@@ -20,6 +20,8 @@ import * as IdentitiesDb from '../database/identities';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
+import { upperFirst } from 'lodash';
+import { JsonldGenerator } from '../utils/jsonld';
 
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -86,16 +88,20 @@ export class AuthenticationService {
 	};
 
 	verifyUser = async (subject: User, issuerId: string, initiatorId: string) => {
+		const jsonldGen = new JsonldGenerator();
+		const data = jsonldGen.jsonldUserData(subject.type, subject.data);
+
 		const credential: Credential<CredentialSubject> = {
-			type: 'UserCredential',
+			type: `${upperFirst(subject.type)}Credential`,
 			id: subject.userId,
 			subject: {
 				id: subject.userId,
-				classification: subject.classification,
+				type: subject.type,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
 				username: subject.username,
-				initiatorId
+				initiatorId,
+				data
 			}
 		};
 

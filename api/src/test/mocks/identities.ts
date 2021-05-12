@@ -1,5 +1,5 @@
 import { IdentityJsonUpdate } from '../../models/types/identity';
-import { User } from '../../models/types/user';
+import { User, UserType } from '../../models/types/user';
 
 export const TestUsersMock = [
 	{
@@ -7,21 +7,38 @@ export const TestUsersMock = [
 		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
-		classification: 'device',
-		subscribedChannelIds: ['test-address-c2', 'test-address'],
-		description: 'Device which measures temperature in the kitchen.',
+		type: 'Device',
 		organization: 'IOTA',
-		registrationDate: '2021-03-15T10:29:56+01:00'
+		registrationDate: '2021-03-15T10:29:56+01:00',
+		data: {
+			id: 'test-device',
+			type: 'Device',
+			category: ['sensor'],
+			controlledProperty: ['fillingLevel', 'temperature'],
+			controlledAsset: ['wastecontainer-Osuna-100'],
+			ipAddress: ['192.14.56.78'],
+			mcc: '214',
+			mnc: '07',
+			batteryLevel: 0.75,
+			serialNumber: '9845A',
+			refDeviceModel: 'myDevice-wastecontainer-sensor-345',
+			rssi: 0.86,
+			value: 'l%3D0.22%3Bt%3D21.2',
+			deviceState: 'ok',
+			dateFirstUsed: '2014-09-11T11:00:00Z',
+			owner: ['http://person.org/leon']
+		}
 	},
 	{
 		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'second-user',
-		firstName: 'Brandon',
-		lastName: 'Tomson',
 		organization: 'University Account',
-		classification: 'human',
-		description: 'Just a user from the university.',
-		registrationDate: '2021-03-15T10:29:56+01:00'
+		type: 'Person',
+		registrationDate: '2021-03-15T10:29:56+01:00',
+		data: {
+			familyName: 'Tomson',
+			givenName: 'Brandon'
+		}
 	},
 	{
 		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
@@ -29,9 +46,12 @@ export const TestUsersMock = [
 		firstName: 'Jon',
 		lastName: 'Keen',
 		organization: 'IOTA',
-		classification: 'human',
-		description: 'Just a user from the iota foundation.',
-		registrationDate: '2021-03-15T10:29:56+01:00'
+		type: 'Person',
+		registrationDate: '2021-03-15T10:29:56+01:00',
+		data: {
+			familyName: 'Keen',
+			givenName: 'Jon'
+		}
 	}
 ];
 
@@ -60,9 +80,8 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
-		classification: 'human',
-		details: { firstName: 'Tom', lastName: 'Sonson' },
-		description: 'Just a user',
+		type: 'Person',
+		data: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verification: {
 			verified: true,
@@ -75,10 +94,10 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				type: ['VerifiableCredential', 'UserCredential'],
+				type: ['VerifiableCredential', 'PersonCredential'],
 				credentialSubject: {
 					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-					classification: 'human',
+					type: UserType.Person,
 					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
 					username: 'first-user',
@@ -137,8 +156,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		userId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
-		classification: 'api',
-		description: 'Root identity of the api!',
+		type: 'Api',
 		registrationDate: '2021-03-24T15:38:43+01:00',
 		verification: {
 			verified: true,
@@ -151,10 +169,10 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: ['VerifiableCredential', 'UserCredential'],
+				type: ['VerifiableCredential', 'ApiCredential'],
 				credentialSubject: {
 					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-					classification: 'api',
+					type: 'Api',
 					organization: 'IOTA',
 					registrationDate: '2021-03-24T15:38:43+01:00',
 					username: 'api-identity',
@@ -204,9 +222,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
-		classification: 'device',
-		subscribedChannelIds: ['test-address-c2', 'test-address'],
-		description: 'Device which measures temperature in the kitchen.',
+		type: 'Device',
 		registrationDate: '2021-03-24T16:54:38+01:00',
 		verification: {
 			verified: true,
@@ -219,10 +235,10 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-				type: ['VerifiableCredential', 'UserCredential'],
+				type: ['VerifiableCredential', 'DeviceCredential'],
 				credentialSubject: {
 					id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-					classification: 'device',
+					type: 'Device',
 					organization: 'IOTA',
 					registrationDate: '2021-03-24T16:54:38+01:00',
 					username: 'test-device',

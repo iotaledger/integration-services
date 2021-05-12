@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { User, UserSearch, UserClassification } from '../../models/types/user';
+import { User, UserSearch, UserType } from '../../models/types/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/authentication';
 import { AuthorizationService } from '../../services/authorization-service';
+import { SchemaValidator } from '../../utils/validator';
 
 export class UserRoutes {
 	private readonly userService: UserService;
@@ -44,6 +45,8 @@ export class UserRoutes {
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const user: User = req.body;
+			const validator = SchemaValidator.getInstance();
+			validator.validateUser(user);
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {
@@ -101,33 +104,25 @@ export class UserRoutes {
 
 	getUserSearch = (req: Request): UserSearch => {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-		const classification = decodeParam(<string>req.query.classification);
+		const type = decodeParam(<string>req.query.type);
 		const organization = decodeParam(<string>req.query.organization);
 		const username = decodeParam(<string>req.query.username);
 		const verifiedParam = decodeParam(<string>req.query.verified);
 		const registrationDate = decodeParam(<string>req.query['registration-date']);
 		const verified = verifiedParam != null ? Boolean(verifiedParam) && verifiedParam == 'true' : undefined;
-		let subscribedChannelIds: string[] = <string[]>req.query['subscribed-channel-ids'] || undefined;
-		if (subscribedChannelIds != null && !Array.isArray(subscribedChannelIds)) {
-			// we have a string instead of string array!
-			subscribedChannelIds = [decodeParam(subscribedChannelIds)];
-		} else if (Array.isArray(subscribedChannelIds)) {
-			subscribedChannelIds = subscribedChannelIds.map((s) => decodeParam(s));
-		}
 		const limitParam = parseInt(<string>req.query.limit, 10);
 		const indexParam = parseInt(<string>req.query.index, 10);
 		const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 		const index = isNaN(indexParam) ? undefined : indexParam;
 
 		return {
-			classification: <UserClassification>classification,
+			type: <UserType>type,
 			index,
 			limit,
 			organization,
 			verified,
 			username,
-			registrationDate: getDateFromString(registrationDate),
-			subscribedChannelIds
+			registrationDate: getDateFromString(registrationDate)
 		};
 	};
 }

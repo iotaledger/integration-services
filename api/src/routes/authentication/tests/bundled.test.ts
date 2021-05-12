@@ -60,22 +60,18 @@ describe('test authentication routes', () => {
 				params: {},
 				body: {
 					username: 'test-username',
-					classification: 'human',
+					type: 'Person',
 					firstName: 'Mister',
 					lastName: 'Subscriber',
-					organization: 'IOTA',
-					subscribedChannelIds: ['test-address-c2', 'test-address'],
-					description: 'test'
+					organization: 'IOTA'
 				}
 			};
 
 			const exptectedUser = {
-				classification: 'human',
-				description: 'test',
+				type: 'Person',
 				firstName: 'Mister',
 				lastName: 'Subscriber',
 				organization: 'IOTA',
-				subscribedChannelIds: ['test-address-c2', 'test-address'],
 				userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
@@ -96,24 +92,20 @@ describe('test authentication routes', () => {
 				params: {},
 				body: {
 					username: 'test-username',
-					classification: 'human',
+					type: 'Person',
 					firstName: 'Mister',
 					lastName: 'Subscriber',
 					storeIdentity: true,
-					organization: 'IOTA',
-					subscribedChannelIds: ['test-address-c2', 'test-address'],
-					description: 'test'
+					organization: 'IOTA'
 				}
 			};
 
 			const exptectedUser = {
-				classification: 'human',
-				description: 'test',
+				type: 'Person',
 				firstName: 'Mister',
 				lastName: 'Subscriber',
 				storeIdentity: true,
 				organization: 'IOTA',
-				subscribedChannelIds: ['test-address-c2', 'test-address'],
 				userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
