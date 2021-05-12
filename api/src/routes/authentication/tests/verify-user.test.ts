@@ -280,7 +280,8 @@ describe('test authentication routes', () => {
 					...credentialSubject,
 					'@context': ['https://smartdatamodels.org/context.jsonld'],
 					type: 'Device',
-					...subject.data
+					...subject.data,
+					id: subject.userId
 				}
 			};
 			const expectedKeyCollection = {

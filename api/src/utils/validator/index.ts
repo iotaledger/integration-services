@@ -1,6 +1,7 @@
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
 import { User, UserType } from '../../models/types/user';
 import Ajv, { ValidateFunction } from 'ajv';
+import addFormats from 'ajv-formats';
 
 export class SchemaValidator {
 	private static instance: SchemaValidator;
@@ -8,6 +9,8 @@ export class SchemaValidator {
 
 	private constructor() {
 		this.ajv = new Ajv({ strict: false });
+		addFormats(this.ajv);
+
 		this.addSchemas();
 	}
 
