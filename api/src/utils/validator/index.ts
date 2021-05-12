@@ -1,13 +1,13 @@
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
 import { User, UserType } from '../../models/types/user';
-import Ajv from 'ajv';
+import Ajv, { ValidateFunction } from 'ajv';
 
 export class SchemaValidator {
 	private static instance: SchemaValidator;
-	private ajv: Ajv.Ajv;
+	private ajv: Ajv;
 
 	private constructor() {
-		this.ajv = new Ajv();
+		this.ajv = new Ajv({ strict: false });
 		this.addSchemas();
 	}
 
@@ -19,7 +19,7 @@ export class SchemaValidator {
 	}
 
 	validateUser(user: User) {
-		let validate: Ajv.ValidateFunction;
+		let validate: ValidateFunction;
 
 		switch (user.type) {
 			case UserType.Person:
@@ -40,7 +40,10 @@ export class SchemaValidator {
 			default:
 				break;
 		}
-
+		if (!validate) {
+			console.log(`no schema found for user type: ${user.type}`);
+			return;
+		}
 		const validDetails = <boolean>validate(user.data);
 		if (!validDetails) {
 			throw new Error('no valid user data');
