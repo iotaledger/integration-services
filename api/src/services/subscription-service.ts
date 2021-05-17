@@ -5,7 +5,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { fromBytes } from '../utils/text';
 
 export class SubscriptionService {
-	private password: 'test123';
+	private password = 'test123';
 	streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
 
@@ -47,7 +47,7 @@ export class SubscriptionService {
 			subscriptionLink: res.subscriptionLink,
 			accessRights: accessRights || AccessRights.ReadAndWrite,
 			isAuthorized: false,
-			state: fromBytes(res.subscription.export(this.password))
+			state: fromBytes(res.subscription.clone().export(this.password))
 		};
 
 		await subscriptionDb.addSubscription(subscription);

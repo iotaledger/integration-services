@@ -6,7 +6,7 @@ import { SubscriptionService } from './subscription-service';
 import { fromBytes } from '../utils/text';
 
 export class ChannelService {
-	private readonly password: 'test123';
+	private readonly password = 'test123';
 	private readonly streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
 	private readonly subscriptionService: SubscriptionService;
@@ -26,7 +26,7 @@ export class ChannelService {
 			channelAddress: res.channelAddress,
 			seed: res.seed,
 			subscriptionLink: res.channelAddress,
-			state: fromBytes(res.subscription.export(this.password)),
+			state: fromBytes(res.subscription.clone().export(this.password)),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true
 		};
@@ -48,7 +48,7 @@ export class ChannelService {
 
 		// TODO get subscription object by userId and check if it is the author or subscriber + pass state into method
 		const logs = await this.streamsService.getLogs(isAuth);
-		await this.subscriptionService.updateSubscriptionState(channelAddress, userId, fromBytes(logs.subscription.export(this.password)));
+		await this.subscriptionService.updateSubscriptionState(channelAddress, userId, fromBytes(logs.subscription.clone().export(this.password)));
 		return logs;
 	};
 
@@ -59,7 +59,7 @@ export class ChannelService {
 		// TODO decrypt seed
 		const latestLink = channelInfo.latestLink;
 		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, isAuth);
-		await this.subscriptionService.updateSubscriptionState(address, userId, fromBytes(res.subscription.export(this.password)));
+		await this.subscriptionService.updateSubscriptionState(address, userId, fromBytes(res.subscription.clone().export(this.password)));
 		await this.channelInfoService.updateLatestChannelLink(address, res.resLink);
 		return res;
 	};

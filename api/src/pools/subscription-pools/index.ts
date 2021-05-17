@@ -5,7 +5,7 @@ import { toBytes } from '../../utils/text';
 
 // TODO#39 use more robust object pool: https://github.com/electricessence/TypeScript.NET/blob/master/source/System/Disposable/ObjectPool.ts
 export class SubscriptionPool {
-	password = 'test';
+	password = 'test123';
 	node = 'https://api.lb-0.testnet.chrysalis2.com/';
 
 	private authors: { userId: string; channelAddress: string; author: Author }[] = [];
