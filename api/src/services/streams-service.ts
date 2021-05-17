@@ -1,4 +1,5 @@
 import streams, { Address } from '../streams-lib/wasm-node/iota_streams_wasm';
+import { toBytes } from '../utils/text';
 // import fetch from 'node-fetch';
 
 // global.fetch = fetch as any;
@@ -38,8 +39,8 @@ export class StreamsService {
 		isAuth: boolean
 	): Promise<{ resLink: string; payload: string }> => {
 		const keyloadLink = Address.from_string(latestLink);
-		const pPayload: any = this.toBytes(publicPayload);
-		const mPayload: any = this.toBytes(maskedPayload);
+		const pPayload = toBytes(publicPayload);
+		const mPayload = toBytes(maskedPayload);
 
 		let response: any = null;
 
