@@ -2,8 +2,10 @@ import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
 import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
 import { ChannelInfoService } from './channel-info-service';
+import { fromBytes } from '../utils/text';
 
 export class SubscriptionService {
+	private password: 'test123';
 	streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
 
@@ -18,6 +20,15 @@ export class SubscriptionService {
 
 	addSubscription = async (subscription: Subscription) => {
 		return subscriptionDb.addSubscription(subscription);
+	};
+
+	updateSubscriptionState = async (channelAddress: string, userId: string, state: string) => {
+		return subscriptionDb.updateSubscriptionState(channelAddress, userId, state);
+	};
+
+	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string) => {
+		const isAuthorized = true;
+		return subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized);
 	};
 
 	requestSubscription = async (
@@ -36,18 +47,14 @@ export class SubscriptionService {
 			subscriptionLink: res.subscriptionLink,
 			accessRights: accessRights || AccessRights.ReadAndWrite,
 			isAuthorized: false,
-			state: ''
+			state: fromBytes(res.subscription.export(this.password))
 		};
 
 		await subscriptionDb.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriber(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
-		return res;
-	};
 
-	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string) => {
-		const isAuthorized = true;
-		return subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized);
+		return res;
 	};
 
 	authorizeSubscription = async (channelAddress: string, subscriptionLink: string) => {

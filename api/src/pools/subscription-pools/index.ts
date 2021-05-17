@@ -21,8 +21,10 @@ export class SubscriptionPool {
 
 	async restoreSubscription(channelAddress: string, userId: string) {
 		const sub = await SubscriptionDb.getSubscription(channelAddress, userId);
-		if (!sub.state) {
-			throw new Error('No state found to restore!');
+		if (!sub?.state) {
+			// TODO handle properly
+			console.log('No state found to restore!');
+			return;
 		}
 		const isAuthor = sub.type === SubscriptionType.Author;
 
@@ -43,6 +45,10 @@ export class SubscriptionPool {
 			subscription = this.authors.filter(predicate)[0]?.author;
 		} else {
 			subscription = this.subscribers.filter(predicate)[0]?.subscriber;
+		}
+		if (!subscription) {
+			// try to restore sub from state in db
+			subscription = await this.restoreSubscription(channelAddress, userId);
 		}
 		return subscription;
 	}

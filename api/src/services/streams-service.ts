@@ -1,5 +1,5 @@
-import streams, { Address } from '../streams-lib/wasm-node/iota_streams_wasm';
-import { toBytes } from '../utils/text';
+import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
+import { fromBytes, toBytes } from '../utils/text';
 // import fetch from 'node-fetch';
 
 // global.fetch = fetch as any;
@@ -14,7 +14,7 @@ export class StreamsService {
 	tmpAuth: streams.Author;
 	tmpSub: streams.Subscriber;
 
-	create = async (seed?: string): Promise<{ seed: string; channelAddress: string }> => {
+	create = async (seed?: string): Promise<{ seed: string; channelAddress: string; subscription: Author }> => {
 		const options = new streams.SendOptions(1, true, 1);
 		if (!seed) {
 			seed = this.makeSeed(81);
@@ -28,7 +28,8 @@ export class StreamsService {
 		console.log('announced at: ', ann_link.to_string());
 		return {
 			seed,
-			channelAddress: ann_link.to_string()
+			channelAddress: ann_link.to_string(),
+			subscription: this.tmpAuth
 		};
 	};
 
@@ -37,7 +38,7 @@ export class StreamsService {
 		publicPayload: string,
 		maskedPayload: string,
 		isAuth: boolean
-	): Promise<{ resLink: string; payload: string }> => {
+	): Promise<{ resLink: string; subscription: Author | Subscriber }> => {
 		const keyloadLink = Address.from_string(latestLink);
 		const pPayload = toBytes(publicPayload);
 		const mPayload = toBytes(maskedPayload);
@@ -58,11 +59,11 @@ export class StreamsService {
 
 		return {
 			resLink: tag_link.to_string(),
-			payload: ''
+			subscription: isAuth ? this.tmpAuth : this.tmpSub
 		};
 	};
 
-	getLogs = async (isAuth: boolean): Promise<{ publicData: string[]; maskedData: string[] }> => {
+	getLogs = async (isAuth: boolean): Promise<{ publicData: string[]; maskedData: string[]; subscription: Author | Subscriber }> => {
 		let exists = true;
 		let publicData: string[] = [];
 		let maskedData: string[] = [];
@@ -86,19 +87,23 @@ export class StreamsService {
 				console.log('Found a message...');
 				const pubPayload = next_msgs[i].get_message().get_public_payload();
 				const maskedPayload = next_msgs[i].get_message().get_masked_payload();
-				console.log('Public: ', this.fromBytes(pubPayload), '\tMasked: ', this.fromBytes(maskedPayload));
-				publicData = [...publicData, this.fromBytes(pubPayload)];
-				maskedData = [...maskedData, this.fromBytes(maskedPayload)];
+				console.log('Public: ', fromBytes(pubPayload), '\tMasked: ', fromBytes(maskedPayload));
+				publicData = [...publicData, fromBytes(pubPayload)];
+				maskedData = [...maskedData, fromBytes(maskedPayload)];
 			}
 		}
 
 		return {
 			publicData,
-			maskedData
+			maskedData,
+			subscription: isAuth ? this.tmpAuth : this.tmpSub
 		};
 	};
 
-	requestSubscription = async (announcementLink: string, seed?: string): Promise<{ seed: string; subscriptionLink: string }> => {
+	requestSubscription = async (
+		announcementLink: string,
+		seed?: string
+	): Promise<{ seed: string; subscriptionLink: string; subscription: Author | Subscriber }> => {
 		const annAddress = streams.Address.from_string(announcementLink);
 		const options = new streams.SendOptions(1, true, 1);
 
@@ -115,10 +120,10 @@ export class StreamsService {
 		const response = await this.tmpSub.clone().send_subscribe(ann_link_copy);
 		const sub_link = response.get_link();
 		console.log('Subscription message at: ', sub_link.to_string());
-		return { seed, subscriptionLink: sub_link.to_string() };
+		return { seed, subscriptionLink: sub_link.to_string(), subscription: this.tmpSub };
 	};
 
-	authorizeSubscription = async (channelAddress: string, subscriptionLink: string): Promise<{ keyloadLink: string }> => {
+	authorizeSubscription = async (channelAddress: string, subscriptionLink: string): Promise<{ keyloadLink: string; subscription: Author }> => {
 		const announcementAddress = streams.Address.from_string(channelAddress);
 		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
 		console.log('Subscription message at: ', subscriptionLink);
@@ -129,7 +134,7 @@ export class StreamsService {
 		const response = await this.tmpAuth.clone().send_keyload_for_everyone(announcementAddress);
 		const keyload_link = response.get_link();
 		console.log('Keyload message at: ', keyload_link.to_string());
-		return { keyloadLink: keyload_link.to_string() };
+		return { keyloadLink: keyload_link.to_string(), subscription: this.tmpAuth };
 	};
 
 	async callMain() {
@@ -140,23 +145,6 @@ export class StreamsService {
 			.catch((err) => {
 				console.log(err);
 			});
-	}
-
-	// TODO moveToLib
-	toBytes(str: string) {
-		const bytes = [];
-		for (let i = 0; i < str.length; ++i) {
-			bytes.push(str.charCodeAt(i));
-		}
-		return bytes;
-	}
-
-	fromBytes(bytes: any) {
-		let str = '';
-		for (let i = 0; i < bytes.length; ++i) {
-			str += String.fromCharCode(bytes[i]);
-		}
-		return str;
 	}
 
 	makeSeed(size: number) {
