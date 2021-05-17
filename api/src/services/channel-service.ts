@@ -4,17 +4,20 @@ import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import { fromBytes } from '../utils/text';
+import { SubscriptionPool } from '../pools/subscription-pools';
 
 export class ChannelService {
 	private readonly password = 'test123';
 	private readonly streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
 	private readonly subscriptionService: SubscriptionService;
+	private readonly subscriptionPool: SubscriptionPool;
 
 	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;
 		this.subscriptionService = subscriptionService;
+		this.subscriptionPool = SubscriptionPool.getInstance();
 	}
 
 	create = async (userId: string, topics: Topic[], seed?: string): Promise<{ seed: string; channelAddress: string }> => {
@@ -26,11 +29,12 @@ export class ChannelService {
 			channelAddress: res.channelAddress,
 			seed: res.seed,
 			subscriptionLink: res.channelAddress,
-			state: fromBytes(res.subscription.clone().export(this.password)),
+			state: fromBytes(res.author.clone().export(this.password)),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true
 		};
 
+		await this.subscriptionPool.add(res.author, userId, res.channelAddress, true);
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,
@@ -45,22 +49,27 @@ export class ChannelService {
 	getLogs = async (channelAddress: string, userId: string) => {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, userId);
 		const isAuth = subscription.type === SubscriptionType.Author;
-
-		// TODO get subscription object by userId and check if it is the author or subscriber + pass state into method
-		const logs = await this.streamsService.getLogs(isAuth);
+		const sub = await this.subscriptionPool.get(channelAddress, userId, isAuth);
+		if (!sub) {
+			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
+		}
+		const logs = await this.streamsService.getLogs(sub);
 		await this.subscriptionService.updateSubscriptionState(channelAddress, userId, fromBytes(logs.subscription.clone().export(this.password)));
 		return logs;
 	};
 
-	addLogs = async (address: string, publicPayload: string, maskedPayload: string, userId: string) => {
-		const channelInfo = await this.channelInfoService.getChannelInfo(address);
+	addLogs = async (channelAddress: string, publicPayload: string, maskedPayload: string, userId: string) => {
+		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 		const isAuth = channelInfo.author === userId;
-		// TODO get state of subscription
-		// TODO decrypt seed
+		// TODO encrypt/decrypt seed
 		const latestLink = channelInfo.latestLink;
-		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, isAuth);
-		await this.subscriptionService.updateSubscriptionState(address, userId, fromBytes(res.subscription.clone().export(this.password)));
-		await this.channelInfoService.updateLatestChannelLink(address, res.resLink);
+		const sub = await this.subscriptionPool.get(channelAddress, userId, isAuth);
+		if (!sub) {
+			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
+		}
+		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, sub);
+		await this.subscriptionService.updateSubscriptionState(channelAddress, userId, fromBytes(res.subscription.clone().export(this.password)));
+		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
 		return res;
 	};
 }

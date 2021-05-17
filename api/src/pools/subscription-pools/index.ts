@@ -5,17 +5,31 @@ import { toBytes } from '../../utils/text';
 
 // TODO#39 use more robust object pool: https://github.com/electricessence/TypeScript.NET/blob/master/source/System/Disposable/ObjectPool.ts
 export class SubscriptionPool {
-	password = 'test123';
-	node = 'https://api.lb-0.testnet.chrysalis2.com/';
+	private static instance: SubscriptionPool;
+	private readonly password = 'test123';
+	private readonly node = 'https://api.lb-0.testnet.chrysalis2.com/';
+	private authors: { userId: string; channelAddress: string; author: Author }[];
+	private subscribers: { userId: string; channelAddress: string; subscriber: Subscriber }[];
 
-	private authors: { userId: string; channelAddress: string; author: Author }[] = [];
-	private subscribers: { userId: string; channelAddress: string; subscriber: Subscriber }[] = [];
+	private constructor() {
+		this.authors = [];
+		this.subscribers = [];
+	}
+
+	public static getInstance(): SubscriptionPool {
+		if (!SubscriptionPool.instance) {
+			SubscriptionPool.instance = new SubscriptionPool();
+		}
+		return SubscriptionPool.instance;
+	}
 
 	add(subscription: Author | Subscriber, userId: string, channelAddress: string, isAuthor: boolean) {
 		if (isAuthor) {
 			this.authors = [...this.authors, { author: <Author>subscription, channelAddress, userId }];
+			console.log('added author to the pool');
 		} else {
 			this.subscribers = [...this.subscribers, { subscriber: <Subscriber>subscription, channelAddress, userId }];
+			console.log('added subscriber to the pool');
 		}
 	}
 
@@ -47,9 +61,11 @@ export class SubscriptionPool {
 			subscription = this.subscribers.filter(predicate)[0]?.subscriber;
 		}
 		if (!subscription) {
-			// try to restore sub from state in db
+			// try to restore subscription from state in db
 			subscription = await this.restoreSubscription(channelAddress, userId);
 		}
+		console.log('found subscription in pool: ', subscription);
+
 		return subscription;
 	}
 }

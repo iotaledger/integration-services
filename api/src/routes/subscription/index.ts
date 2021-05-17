@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as _ from 'lodash';
 import { SubscriptionService } from '../../services/subscription-service';
@@ -36,10 +36,11 @@ export class SubscriptionRoutes {
 		}
 	};
 
-	authorizeSubscription = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			let { subscriptionLink, userId } = req.body as AuthorizeSubscriptionBody;
+			const authorId = req.user.userId;
 			if (!subscriptionLink && userId) {
 				const sub = await this.subscriptionService.getSubscription(channelAddress, userId);
 				subscriptionLink = sub?.subscriptionLink;
@@ -47,7 +48,7 @@ export class SubscriptionRoutes {
 			if (!subscriptionLink) {
 				throw new Error('no subscription link found or provided!');
 			}
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink);
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink, authorId);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

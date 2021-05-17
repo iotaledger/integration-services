@@ -3,15 +3,19 @@ import * as subscriptionDb from '../database/subscription';
 import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
 import { ChannelInfoService } from './channel-info-service';
 import { fromBytes } from '../utils/text';
+import { SubscriptionPool } from '../pools/subscription-pools';
+import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 
 export class SubscriptionService {
 	private password = 'test123';
-	streamsService: StreamsService;
+	private readonly streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
+	private readonly subscriptionPool: SubscriptionPool;
 
 	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;
+		this.subscriptionPool = SubscriptionPool.getInstance();
 	}
 
 	getSubscription = async (channelAddress: string, userId: string) => {
@@ -47,9 +51,10 @@ export class SubscriptionService {
 			subscriptionLink: res.subscriptionLink,
 			accessRights: accessRights || AccessRights.ReadAndWrite,
 			isAuthorized: false,
-			state: fromBytes(res.subscription.clone().export(this.password))
+			state: fromBytes(res.subscriber.clone().export(this.password))
 		};
 
+		await this.subscriptionPool.add(res.subscriber, subscriberId, channelAddress, false);
 		await subscriptionDb.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriber(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
@@ -57,8 +62,12 @@ export class SubscriptionService {
 		return res;
 	};
 
-	authorizeSubscription = async (channelAddress: string, subscriptionLink: string) => {
-		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink);
+	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string) => {
+		const sub = await this.subscriptionPool.get(channelAddress, authorId, true);
+		if (!sub) {
+			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${authorId}`);
+		}
+		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>sub);
 
 		const res = await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
 		console.log('res', res.result);
