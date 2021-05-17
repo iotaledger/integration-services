@@ -76,7 +76,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 
 	const updateObject = MongoDbService.getPlainObject({
 		username: username || undefined, // username must not be ''
-		type: type || undefined, // username must not be ''
+		type: type || undefined, // type must not be ''
 		organization,
 		data,
 		verifiableCredentials

@@ -29,7 +29,7 @@ export interface IdentityDocumentJson {
 		type: string;
 		publicKeyBase58: string;
 	}[];
-	previous_message_id?: string;
+	previousMessageId?: string;
 	authentication: {
 		id: string;
 		controller: string;

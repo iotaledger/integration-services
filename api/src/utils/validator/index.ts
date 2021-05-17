@@ -1,55 +1,63 @@
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
 import { User, UserType } from '../../models/types/user';
-import Ajv from 'ajv';
+import Ajv, { ValidateFunction } from 'ajv';
+import addFormats from 'ajv-formats';
 
-export class Validator {
-	private static instance: Validator;
-	private static ajv: Ajv.Ajv;
+export class SchemaValidator {
+	private static instance: SchemaValidator;
+	private ajv: Ajv;
 
 	private constructor() {
-		Validator.ajv = new Ajv();
-		Validator.ajv.addSchema(PersonSchema, 'person');
-		Validator.ajv.addSchema(DeviceSchema, 'device');
-		Validator.ajv.addSchema(OrganizationSchema, 'organization');
-		Validator.ajv.addSchema(ProductSchema, 'product');
-		Validator.ajv.addSchema(ServiceSchema, 'service');
+		this.ajv = new Ajv({ strict: false });
+		addFormats(this.ajv);
+
+		this.addSchemas();
 	}
 
-	public static getInstance(): Validator {
-		if (!Validator.instance) {
-			Validator.instance = new Validator();
+	public static getInstance(): SchemaValidator {
+		if (!SchemaValidator.instance) {
+			SchemaValidator.instance = new SchemaValidator();
 		}
-		return Validator.instance;
+		return SchemaValidator.instance;
 	}
 
-	compileSchemas() {}
-
-	validateUser = (user: User) => {
-		let validate: Ajv.ValidateFunction;
+	validateUser(user: User) {
+		let validate: ValidateFunction;
 
 		switch (user.type) {
 			case UserType.Person:
-				validate = Validator.ajv.getSchema('person');
+				validate = this.ajv.getSchema('person');
 				break;
 			case UserType.Device:
-				validate = Validator.ajv.getSchema('device');
+				validate = this.ajv.getSchema('device');
 				break;
 			case UserType.Organization:
-				validate = Validator.ajv.getSchema('organization');
+				validate = this.ajv.getSchema('organization');
 				break;
 			case UserType.Product:
-				validate = Validator.ajv.getSchema('product');
+				validate = this.ajv.getSchema('product');
 				break;
 			case UserType.Service:
-				validate = Validator.ajv.getSchema('service');
+				validate = this.ajv.getSchema('service');
 				break;
 			default:
 				break;
 		}
-
+		if (!validate) {
+			console.log(`no schema found for user type: ${user.type}`);
+			return;
+		}
 		const validDetails = <boolean>validate(user.data);
 		if (!validDetails) {
 			throw new Error('no valid user data');
 		}
-	};
+	}
+
+	private addSchemas() {
+		this.ajv.addSchema(PersonSchema, 'person');
+		this.ajv.addSchema(DeviceSchema, 'device');
+		this.ajv.addSchema(OrganizationSchema, 'organization');
+		this.ajv.addSchema(ProductSchema, 'product');
+		this.ajv.addSchema(ServiceSchema, 'service');
+	}
 }

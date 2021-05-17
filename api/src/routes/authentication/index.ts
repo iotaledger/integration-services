@@ -37,7 +37,7 @@ export class AuthenticationRoutes {
 	verifyUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const verifyUserBody: VerifyUserBody = req.body;
-			const { initiatorVC, subjectId } = verifyUserBody;
+			const { initiatorVC, subjectId, checkExistingVC } = verifyUserBody;
 			const requestUser = req.user;
 			const subject = await this.userService.getUser(subjectId);
 			if (!subject) {
@@ -45,7 +45,7 @@ export class AuthenticationRoutes {
 			}
 
 			// check existing vcs and update verification state based on it
-			if (!initiatorVC) {
+			if (!initiatorVC && checkExistingVC) {
 				return await this.verifyByExistingVCs(res, subject, requestUser.userId);
 			}
 
@@ -57,7 +57,7 @@ export class AuthenticationRoutes {
 			const vc: VerifiableCredentialJson = await this.authenticationService.verifyUser(
 				subject,
 				this.config.serverIdentityId,
-				initiatorVC.credentialSubject.id
+				initiatorVC?.credentialSubject?.id || requestUser.userId
 			);
 
 			res.status(StatusCodes.OK).send(vc);
@@ -191,7 +191,7 @@ export class AuthenticationRoutes {
 	isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
 		if (!isAdmin || !this.authorizationService.hasAuthorizationType(requestUser.type)) {
-			if (!initiatorVC.credentialSubject) {
+			if (!initiatorVC || !initiatorVC.credentialSubject) {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
 
@@ -212,13 +212,12 @@ export class AuthenticationRoutes {
 			) {
 				return { isAuthorized: false, error: new Error('user must be in same organization!') };
 			}
-		}
 
-		const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC);
-		if (!isInitiatorVerified) {
-			return { isAuthorized: false, error: new Error('initiator has to be verified!') };
+			const isInitiatorVerified = await this.authenticationService.checkVerifiableCredential(initiatorVC);
+			if (!isInitiatorVerified) {
+				return { isAuthorized: false, error: new Error('initiator has to be verified!') };
+			}
 		}
-
 		return { isAuthorized: true, error: null };
 	};
 }

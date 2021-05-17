@@ -1,4 +1,4 @@
-import { Organization, Person, Service, Device, Product, UserType } from '../../models/types/user';
+import { Organization, Person, Service, Device, Product } from '../../models/types/user';
 
 export class JsonldGenerator {
 	contexts: { [key: string]: string | string[] } = {
@@ -9,14 +9,14 @@ export class JsonldGenerator {
 		Service: 'https://schema.org/'
 	};
 
-	jsonldUserData = (userType: UserType, data: Person | Organization | Service | Device | Product) => {
+	jsonldUserData(userType: string, data: Person | Organization | Service | Device | Product) {
 		const context = this.contexts[userType];
-
+		if (!context) {
+			return data;
+		}
 		return {
 			'@context': context,
-			'@type': userType,
-			type: userType === UserType.Device ? userType : undefined,
 			...data
 		};
-	};
+	}
 }

@@ -194,8 +194,6 @@ describe('test authentication routes', () => {
 			const subject = TestUsersMock[1];
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
-			const initiatorVcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
 				user: { userId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
@@ -211,14 +209,16 @@ describe('test authentication routes', () => {
 				id: subject.userId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
-				username: subject.username,
 				initiatorId: initiatorVC.id
 			};
-			const expectedCredential = {
+			const expectedCredential: any = {
 				type: 'PersonCredential',
 				id: subject.userId,
 				subject: {
-					...credentialSubject
+					...credentialSubject,
+					'@context': 'https://schema.org/',
+					type: 'Person',
+					...subject.data
 				}
 			};
 			const expectedKeyCollection = {
@@ -236,7 +236,6 @@ describe('test authentication routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
@@ -272,14 +271,17 @@ describe('test authentication routes', () => {
 				id: subject.userId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
-				username: subject.username,
 				initiatorId: initiatorVC.id
 			};
-			const expectedCredential = {
+			const expectedCredential: any = {
 				type: 'DeviceCredential',
 				id: subject.userId,
 				subject: {
-					...credentialSubject
+					...credentialSubject,
+					'@context': ['https://smartdatamodels.org/context.jsonld'],
+					type: 'Device',
+					...subject.data,
+					id: subject.userId
 				}
 			};
 			const expectedKeyCollection = {
