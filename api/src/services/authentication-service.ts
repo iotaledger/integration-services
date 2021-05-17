@@ -95,13 +95,12 @@ export class AuthenticationService {
 			type: `${upperFirst(subject.type)}Credential`,
 			id: subject.userId,
 			subject: {
+				...data,
 				id: subject.userId,
 				type: subject.type,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
-				username: subject.username,
-				initiatorId,
-				data
+				initiatorId
 			}
 		};
 

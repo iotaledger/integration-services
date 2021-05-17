@@ -3,7 +3,8 @@ import { VerifiableCredentialSchema } from './identity';
 
 export const VerifyUserSchema = Type.Object({
 	subjectId: Type.String({ minLength: 53, maxLength: 53 }), // did
-	initiatorVC: Type.Optional(VerifiableCredentialSchema)
+	initiatorVC: Type.Optional(VerifiableCredentialSchema),
+	checkExistingVC: Type.Optional(Type.Boolean())
 });
 
 export const RevokeVerificationSchema = Type.Object({

@@ -110,7 +110,7 @@ export enum ItemAvailability {
 
 export const ThingObject = {
 	'@context': Type.Optional(Type.String({ minLength: 1 })),
-	'@type': Type.Optional(Type.String({ minLength: 1 })),
+	type: Type.Optional(Type.String({ minLength: 1 })),
 	alternateName: Type.Optional(Type.String()),
 	name: Type.Optional(Type.String()),
 	description: Type.Optional(Type.String()),
