@@ -1,11 +1,5 @@
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
-// import fetch from 'node-fetch';
-
-// global.fetch = fetch as any;
-// global.Headers = (fetch as any).Headers;
-// global.Request = (fetch as any).Request;
-// global.Response = (fetch as any).Response;
 
 streams.set_panic_hook();
 
@@ -59,7 +53,7 @@ export class StreamsService {
 		console.log('Syncing state...');
 		await subscription.clone().sync_state();
 
-		console.log(' Sending tagged packet');
+		console.log('Sending tagged packet...');
 		response = await subscription.clone().send_tagged_packet(latestAddress, pPayload, mPayload);
 		const tag_link = response.get_link();
 		console.log('Tag packet at: ', tag_link.to_string());

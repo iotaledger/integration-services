@@ -29,7 +29,7 @@ export class ChannelService {
 			channelAddress: res.channelAddress,
 			seed: res.seed,
 			subscriptionLink: res.channelAddress,
-			state: fromBytes(res.author.clone().export(this.password)),
+			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true
 		};
@@ -54,7 +54,11 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
 		}
 		const logs = await this.streamsService.getLogs(sub);
-		await this.subscriptionService.updateSubscriptionState(channelAddress, userId, fromBytes(logs.subscription.clone().export(this.password)));
+		await this.subscriptionService.updateSubscriptionState(
+			channelAddress,
+			userId,
+			this.streamsService.exportSubscription(logs.subscription, this.password)
+		);
 		return logs;
 	};
 
@@ -68,7 +72,11 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
 		}
 		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, sub);
-		await this.subscriptionService.updateSubscriptionState(channelAddress, userId, fromBytes(res.subscription.clone().export(this.password)));
+		await this.subscriptionService.updateSubscriptionState(
+			channelAddress,
+			userId,
+			this.streamsService.exportSubscription(res.subscription, this.password)
+		);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
 		return res;
 	};

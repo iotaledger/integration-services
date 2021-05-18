@@ -51,7 +51,7 @@ export class SubscriptionService {
 			subscriptionLink: res.subscriptionLink,
 			accessRights: accessRights || AccessRights.ReadAndWrite,
 			isAuthorized: false,
-			state: fromBytes(res.subscriber.clone().export(this.password))
+			state: this.streamsService.exportSubscription(res.subscriber, this.password)
 		};
 
 		await this.subscriptionPool.add(res.subscriber, subscriberId, channelAddress, false);
