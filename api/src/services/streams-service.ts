@@ -56,6 +56,8 @@ export class StreamsService {
 		const mPayload = toBytes(maskedPayload);
 
 		let response: any = null;
+		console.log('Syncing state...');
+		await subscription.clone().sync_state();
 
 		console.log(' Sending tagged packet');
 		response = await subscription.clone().send_tagged_packet(latestAddress, pPayload, mPayload);
@@ -68,19 +70,24 @@ export class StreamsService {
 		};
 	};
 
-	getLogs = async (subscription: Author | Subscriber): Promise<{ publicData: string[]; maskedData: string[]; subscription: Author | Subscriber }> => {
+	getLogs = async (
+		subscription: Author | Subscriber
+	): Promise<{ publicData: string[]; maskedData: string[]; subscription: Author | Subscriber; latestLink: string }> => {
 		let exists = true;
 		let publicData: string[] = [];
 		let maskedData: string[] = [];
+		let latestLink = '';
+
 		while (exists) {
 			let next_msgs: any = [];
 
-			// TODO
 			console.log('fetching next messages');
 			next_msgs = await subscription.clone().fetch_next_msgs();
 
 			if (next_msgs.length === 0) {
 				exists = false;
+			} else {
+				latestLink = next_msgs[next_msgs.length - 1]?.get_link()?.to_string();
 			}
 
 			for (let i = 0; i < next_msgs.length; i++) {
@@ -96,7 +103,8 @@ export class StreamsService {
 		return {
 			publicData,
 			maskedData,
-			subscription
+			subscription,
+			latestLink
 		};
 	};
 
