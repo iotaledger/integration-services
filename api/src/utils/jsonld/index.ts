@@ -1,4 +1,4 @@
-import { Organization, Person, Service, Device, Product, UserType } from '../../models/types/user';
+import { Organization, Person, Service, Device, Product } from '../../models/types/user';
 
 export class JsonldGenerator {
 	contexts: { [key: string]: string | string[] } = {
@@ -16,8 +16,6 @@ export class JsonldGenerator {
 		}
 		return {
 			'@context': context,
-			'@type': userType !== UserType.Device ? userType : undefined,
-			type: userType === UserType.Device ? userType : undefined,
 			...data
 		};
 	}
