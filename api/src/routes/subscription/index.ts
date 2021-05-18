@@ -39,7 +39,9 @@ export class SubscriptionRoutes {
 	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			let { subscriptionLink, userId } = req.body as AuthorizeSubscriptionBody;
+			const body = req.body as AuthorizeSubscriptionBody;
+			let { subscriptionLink } = body;
+			const { userId } = body;
 			const authorId = req.user.userId;
 			if (!subscriptionLink && userId) {
 				const sub = await this.subscriptionService.getSubscription(channelAddress, userId);

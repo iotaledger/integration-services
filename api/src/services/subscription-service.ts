@@ -2,7 +2,6 @@ import { StreamsService } from './streams-service';
 import * as subscriptionDb from '../database/subscription';
 import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
 import { ChannelInfoService } from './channel-info-service';
-import { fromBytes } from '../utils/text';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 
@@ -56,7 +55,7 @@ export class SubscriptionService {
 
 		await this.subscriptionPool.add(res.subscriber, subscriberId, channelAddress, false);
 		await subscriptionDb.addSubscription(subscription);
-		await this.channelInfoService.addChannelSubscriber(channelAddress, subscriberId);
+		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
 
 		return res;

@@ -65,18 +65,18 @@ export const updateLatestChannelLink = async (channelAddress: string, latestLink
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const addChannelSubscriber = async (channelAddress: string, channelSubscriber: string): Promise<UpdateWriteOpResult> => {
+export const addChannelSubscriberId = async (channelAddress: string, subscriberId: string): Promise<UpdateWriteOpResult> => {
 	const currChannel = await getChannelInfo(channelAddress);
 	if (!currChannel) {
 		throw new Error(`could not find channel with address ${channelAddress}`);
 	}
-	const subs = currChannel?.subscribers || [];
+	const subs = currChannel?.subscriberIds || [];
 	const query = {
 		_id: channelAddress
 	};
 	const update = {
 		$set: {
-			subscribers: [...subs, channelSubscriber]
+			subscriberIds: [...subs, subscriberId]
 		}
 	};
 

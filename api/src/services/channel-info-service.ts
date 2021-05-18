@@ -50,8 +50,8 @@ export class ChannelInfoService {
 		return ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
 	};
 
-	addChannelSubscriber = async (channelAddress: string, channelSubscriber: string): Promise<UpdateWriteOpResult> => {
-		return ChannelInfoDb.addChannelSubscriber(channelAddress, channelSubscriber);
+	addChannelSubscriberId = async (channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> => {
+		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	};
 
 	deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
@@ -59,14 +59,14 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
-		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || !ci.author) {
+		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || !ci.authorId) {
 			throw new Error('Error when parsing the body: channelAddress, topic and author must be provided!');
 		}
 
 		const channelInfoPersistence: ChannelInfoPersistence = {
 			created: ci.created ? getDateFromString(ci.created) : null,
-			author: ci.author,
-			subscribers: ci.subscribers || [],
+			authorId: ci.authorId,
+			subscriberIds: ci.subscriberIds || [],
 			topics: ci.topics,
 			latestLink: ci.latestLink,
 			channelAddress: ci.channelAddress,
@@ -77,14 +77,14 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
-		if (cip == null || isEmpty(cip.channelAddress) || !cip.author) {
+		if (cip == null || isEmpty(cip.channelAddress) || !cip.authorId) {
 			throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
 		}
 
 		const channelInfo: ChannelInfo = {
 			created: getDateStringFromDate(cip.created),
-			author: cip.author,
-			subscribers: cip.subscribers || [],
+			authorId: cip.authorId,
+			subscriberIds: cip.subscriberIds || [],
 			topics: cip.topics,
 			latestLink: cip.latestLink,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),

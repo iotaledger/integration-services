@@ -3,7 +3,6 @@ import { AccessRights, Subscription, SubscriptionType } from '../models/types/su
 import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
-import { fromBytes } from '../utils/text';
 import { SubscriptionPool } from '../pools/subscription-pools';
 
 export class ChannelService {
@@ -38,7 +37,7 @@ export class ChannelService {
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,
-			author: userId,
+			authorId: userId,
 			channelAddress: res.channelAddress,
 			latestLink: res.channelAddress
 		});
@@ -64,7 +63,7 @@ export class ChannelService {
 
 	addLogs = async (channelAddress: string, publicPayload: string, maskedPayload: string, userId: string) => {
 		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-		const isAuth = channelInfo.author === userId;
+		const isAuth = channelInfo.authorId === userId;
 		// TODO encrypt/decrypt seed
 		const latestLink = channelInfo.latestLink;
 		const sub = await this.subscriptionPool.get(channelAddress, userId, isAuth);

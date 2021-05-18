@@ -5,7 +5,6 @@ import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
-import { AccessRights } from '../../models/schemas/channel-info';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -92,7 +91,7 @@ describe('test GET channelInfo', () => {
 		const date = getDateFromString('2021-02-09T00:00:00+01:00');
 		const channelInfo: ChannelInfoPersistence = {
 			created: date,
-			author: { userId: 'test-author2', accessRights: AccessRights.ReadAndWrite, subscriptionIsAuthorized: true, subscriptionLink: '' },
+			authorId: 'test-author2',
 			latestLink: '',
 			topics: [
 				{
@@ -113,7 +112,7 @@ describe('test GET channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).toHaveBeenCalledWith({
-			author: { userId: 'test-author2', accessRights: AccessRights.ReadAndWrite, subscriptionIsAuthorized: true, subscriptionLink: '' },
+			authorId: 'test-author2',
 			latestLink: '',
 			channelAddress: 'test-address3',
 			created: getDateStringFromDate(date),
@@ -145,7 +144,7 @@ describe('test POST channelInfo', () => {
 	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
 
 	const validBody: ChannelInfo = {
-		author: { userId: 'test-author2', accessRights: AccessRights.ReadAndWrite, subscriptionIsAuthorized: true, subscriptionLink: '' },
+		authorId: 'test-author2',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
@@ -182,7 +181,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			user: { userId: validBody.author.userId },
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -213,7 +212,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: validBody.author.userId },
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -228,7 +227,7 @@ describe('test POST channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: validBody.author.userId },
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -245,12 +244,7 @@ describe('test PUT channelInfo', () => {
 	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService, getChannelInfoSpy: any;
 
 	const validBody: ChannelInfo = {
-		author: {
-			userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-			accessRights: AccessRights.ReadAndWrite,
-			subscriptionLink: '',
-			subscriptionIsAuthorized: true
-		},
+		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		latestLink: '',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
@@ -300,7 +294,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			user: { userId: validBody.author.userId },
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -316,7 +310,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: validBody.author.userId },
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -347,7 +341,7 @@ describe('test PUT channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: validBody.author.userId },
+			user: { userId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
