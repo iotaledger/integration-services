@@ -57,6 +57,7 @@ describe('test channel routes', () => {
 			await channelRoutes.createChannel(req, res, nextMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 		});
+
 		it('should create and return a channel for the user', async () => {
 			const req: any = {
 				params: {},
@@ -90,6 +91,30 @@ describe('test channel routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			// TODO author should be the exported string not object
 			expect(res.send).toHaveBeenCalledWith({ author: {}, channelAddress: '1234234234', seed: 'verysecretseed' });
+		});
+	});
+
+	describe('test getLogs channel route', () => {
+		it('should bad request if no channelAddress is provided', async () => {
+			const req: any = {
+				params: { channelAddress: '12345' },
+				user: { userId: undefined }, //no userId,
+				body: {}
+			};
+
+			await channelRoutes.getLogs(req, res, nextMock);
+			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		});
+
+		it('should bad request if no userId is provided', async () => {
+			const req: any = {
+				params: {}, // no channelAddress
+				user: { userId: 'did:iota:1234' },
+				body: {}
+			};
+
+			await channelRoutes.getLogs(req, res, nextMock);
+			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 		});
 	});
 });
