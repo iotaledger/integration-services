@@ -2,7 +2,7 @@
 
 ## Create and verify an identity
 
-In order to interact with other users in a trusted way there are two major calls to be done which are described in the section 1 & 2.
+In order to interact with other users in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
 ### 1. Create identity
 
@@ -73,7 +73,77 @@ The request returns the following body:
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to authenticate at the api.
 
-### 2. Verify user
+### 2. Authenticate at the api
+
+In order to being able to authenticate and verify other users at the api three scripts must be implemented by the client:
+
+```
+import * as ed from 'noble-ed25519';
+import * as bs58 from 'bs58';
+
+// Decode a base58 key and encode it as hex key. (Needed for signChallenge & verifiyChallenge)
+export const getHexEncodedKey = (base58Key: string) => {
+	return bs58.decode(base58Key).toString('hex');
+};
+
+// Sign a challenge using the private key.
+ export const signChallenge = async (privateKey: string, challenge: string) => {
+	return await ed.sign(challenge, privateKey);
+};
+
+// Verify signed challenge using the public key.
+export const verifiyChallenge = async (publicKey: string, challenge: string, signature: string) => {
+	return await ed.verify(signature, challenge, publicKey);
+};
+```
+
+To authenticate at the api, first of all a challenge must be created that's when the challenge endpoint must be called with the userId that wants to authenticate like:
+
+https://ensuresec.solutions.iota.org/api/v1/authentication/challenge/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
+
+It returns a json object with the challenge:
+```
+{
+    "challenge":"�r�*[����hl6�����Y�>(+(��F"
+}
+```
+
+This challenge must now be signed using the private key of the keypair and sent to the `auth` endpoint via POST, which then returns a JWT if it is signed with the correct key. This JWT can then be added as Authorization header to the request.
+
+https://ensuresec.solutions.iota.org/api/v1/authentication/auth/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
+
+
+A more detailed usage script how to integrate the authentication into a typescript client can be found in the following:
+
+```
+export const fetchAuth = async (identity: any) => {
+	console.log('requesting challenge to sign...');
+
+	const url = `${Config.baseUrl}/api/v1/authentication/challenge/${identity.doc.id}`;
+	const res = await axios.get(url);
+	if (res.status !== 200) {
+		console.error('didnt receive status 200 on get-challenge!');
+		return;
+	}
+	const body = await res.data;
+	const challenge: string = body.challenge;
+	console.log('received challenge: ', challenge);
+
+	const encodedKey = await getHexEncodedKey(identity.key.secret);
+	const signedChallenge = await signChallenge(encodedKey, challenge);
+	console.log('signed challenge: ', signedChallenge);
+
+	console.log('requesting authentication token using signed challenge...', identity.doc.id);
+	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/auth/${identity.doc.id}`, JSON.stringify({ signedChallenge }), {
+		method: 'post',
+		headers: { 'Content-Type': 'application/json' }
+	});
+
+	return response;
+};
+```
+
+### 3. Verify user
 
 Everyone can create an identity and add any data he wants to his identity, that is why it is needed to know if the person or device really belongs to the company it is claiming to be. Hence an identity must be verified. This can be done by an administrator of the ssi bridge or an already verified user of an organization. The verification creates a so called verifiable credential, which contains information about the user and a signature proof of the information, so the data of the verifiable credential can not be changed later but verified.
 
@@ -81,7 +151,9 @@ The endpoint of this request is as following:
 
 https://ensuresec.solutions.iota.org/api/v1/authentication/verify-user
 
-The body must contain the userId of the identity which needs to be verified in the `subjectId` field. Furthermore, if the user is not an administrator he needs to add a verifiable credential which was generated when verifying him. This verifiable credential is stored by the api and can be requested at the user api. How to request the verifiable credential at the api will be described in section 3. As pointed, the verifiable credential must be part of the request body, if it is not a request by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies a user. The request could look like the following:
+> As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
+
+The body must contain the userId of the identity which needs to be verified in the `subjectId` field. Furthermore, if the user is not an administrator he needs to add a verifiable credential which was generated when verifying him. This verifiable credential is stored by the api and can be requested at the user api. How to request the verifiable credential at the api will be described in section 4. As pointed, the verifiable credential must be part of the request body, if it is not a request by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies a user. The request could look like the following:
 
 ```
 {
@@ -118,9 +190,9 @@ The body must contain the userId of the identity which needs to be verified in t
 
 The api then checks if the subject exists at the api and belongs to the same organization, furthermore it checks if the verifiable credential of the initiator is valid. If both applies, it creates a verifiable credential for the subject and stores the credential in the subjects' user data, in addition it returns the verifiable credential in the response.
 
-### 3. Get user data
+### 4. Get user data
 
-The verified user can now be requested to get information about him. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 4 can be used.
+The verified user can now be requested to get information about him. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
 
 But first request the user by his userId with a GET request at the api:
 
@@ -180,7 +252,7 @@ https://ensuresec.solutions.iota.org/api/v1/users/user/did:iota:D3TG1ojfVhpA28L4
 ```
 
 
-### 4. Check verifiable credential
+### 5. Check verifiable credential
 
 To check whether the verifiable credential is valid the following api can be called:
 
@@ -229,11 +301,11 @@ It should return:
 for verified users and `false` for not verified users. A reason for not verified verifiable credentials could be:
 
 - Data of verifiable credential was altered (so it does not match with the proof hash)
-- Verifiable credential got revoked (as described in section 5)
+- Verifiable credential got revoked (as described in section 6)
 
 
 
-### 5. Revoke verifiable credential
+### 6. Revoke verifiable credential
 
 A verifiable credential can be revoked so it is no more verified, a reason therefor could be: A person left the organization or a device broke and got removed by the organization. To revoke the credential the following api must be called via POST:
 
@@ -248,7 +320,7 @@ The body of the request contains the `subjectId` which is the userId of the user
 }
 ```
 
-### 6. Trusted roots
+### 7. Trusted roots
 
 In regard to support verifiable credentials of other systems, the root of their network of trust can be added to the api. When checking a verifiable credential it checks:
 
@@ -271,7 +343,7 @@ It returns all trusted identity ids which are trusted by the api.
 }
 ```
 
-### 7. Get latest document
+### 8. Get latest document
 
 To receive the latest document of an identity from the tangle, the SSI Bridge also offers an endpoint which can be called via GET.
 
