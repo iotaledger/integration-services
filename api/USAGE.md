@@ -6,9 +6,11 @@ In order to interact with other users in a trusted way there are three major cal
 
 ### 1. Create identity
 
-The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, the service creates a public/private key pair which is used to verify that the identity belongs to a specific user by having the private key he is able to proof so. Furthermore it is possible to add several information about this identity like a name or to which company the user belongs. Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are types which will be validated and adapt mainly the data models of https://schema.org. In addition, it is possible to define custom types for users, since there could be use cases with different data types we do not support. The type of a user is defined by the type field, if it is a custom type which is not known by the api it won't be validated.
+The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, a user creates a public/private key pair which is used to verify that the identity belongs to a specific user. Ownership of the private key allows the user to proof the identity ownership. Furthermore it is possible to add several information (attributes) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party. 
 
-The following demonstrates an example where an identity for a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE is used.
+Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if a custom type which is not known by the api is provided, it won't be validated.
+
+The following demonstrates an example where an identity of a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE is used.
 
 
 https://ensuresec.solutions.iota.org/api/v1/authentication/create-identity
