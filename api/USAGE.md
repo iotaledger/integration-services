@@ -108,7 +108,7 @@ It returns a json object with the challenge:
 }
 ```
 
-This challenge must now be signed using the private key of the keypair and sent to the `auth` endpoint via POST, which then returns a JWT if it is signed with the correct key. This JWT can then be added as Authorization header to the request.
+This challenge must now be signed using the private key of the keypair and sent to the `auth` endpoint via POST, which then returns a JWT if it is signed with the correct key. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
 
 https://ensuresec.solutions.iota.org/api/v1/authentication/auth/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
 
