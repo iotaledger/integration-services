@@ -63,6 +63,7 @@ export class SubscriptionService {
 	};
 
 	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string) => {
+		const errMsg = 'could not authorize the subscription!';
 		const author = await this.subscriptionPool.get(channelAddress, authorId, true, this.password);
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and userId: ${authorId}`);
@@ -70,10 +71,14 @@ export class SubscriptionService {
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>author);
 
 		const res = await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
-		console.log('res', res.result);
+		if (!res?.result?.n) {
+			throw Error(errMsg);
+		}
 
 		const res2 = await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
-		console.log('res', res2.result);
+		if (!res2?.result?.n) {
+			throw Error(errMsg);
+		}
 		return authSub;
 	};
 }

@@ -18,14 +18,15 @@ describe('test channel routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		//	const config: any = {
-		//		serverIdentityId: ''
-		//	};
+		const config = {
+			streamsNode: '',
+			statePassword: 'test123'
+		};
 		userService = new UserService();
-		streamsService = new StreamsService();
+		streamsService = new StreamsService(config.streamsNode);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService);
 
 		res = {
