@@ -12,6 +12,7 @@ import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult,
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
 import { VerifiableCredentialJson } from '../models/types/identity';
+import { SchemaValidator } from '../utils/validator';
 
 export class UserService {
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
@@ -41,6 +42,9 @@ export class UserService {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
 		}
+		const validator = SchemaValidator.getInstance();
+		validator.validateUser(user);
+
 		const userPersistence = this.getUserPersistence(user);
 		const res = await userDb.addUser(userPersistence);
 		if (!res?.result?.n) {
