@@ -1,18 +1,31 @@
-# Usage of the IOTA Identity SSI Bridge
+# Usage of the IOTA-SSI Bridge
+
+The IOTA-SSI Bridge allows Issuers and Owners to create decentralized identifiers and SSI identities (DID Documents). It allows an identified trust root to verify issuers and progate issuer verification using a network of trust approach (see figure below). 
+
+<img width="755" alt="Screenshot 2021-05-21 at 22 21 31" src="https://user-images.githubusercontent.com/1702827/119199456-fdb5d880-ba82-11eb-8983-bec1e36afdab.png">
+
+
+It then allows Issuers to issue Verifiable Credentials for selected Owners and Owners to present them to Verifiers. Verifiers can use the IOTA-SSI Bridge APIs to verify credentials authenticity.
+
+<img width="742" alt="Screenshot 2021-05-21 at 22 21 11" src="https://user-images.githubusercontent.com/1702827/119199429-ef67bc80-ba82-11eb-8d74-c92f5bc66717.png">
+
+
+The Bridge provides an abstraction layer through REST APIs that allows entity to create decentralized identities (the identity), verify them, attach verifiable credentials and verify them.
+
 
 ## Create and verify an identity
 
 In order to interact with other users in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
-### 1. Create identity
+### 1. Create an identity
 
-The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, a user creates a public/private key pair which is used to verify that the identity belongs to a specific user. Ownership of the private key allows the user to proof the identity ownership. Furthermore it is possible to add several information (attributes) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party. 
+The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, a user creates a public/private key pair. Th public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to proof the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
 
-Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if a custom type which is not known by the api is provided, it won't be validated.
+Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if an unknown type is provided, the api will reject it.
 
 > The exact data model definition can be found here: https://gist.github.com/dominic22/186f67b759f9694f45d35e9354fa5525
 
-The following demonstrates an example where an identity of a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE is used.
+The following snippet demonstrates an example where an identity of a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE was used.
 
 
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/create-identity
@@ -79,7 +92,7 @@ The `key` field of the body is the essential part which must be stored by the cl
 
 ### 2. Authenticate at the api
 
-For several endpoints it is needed to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need an authenticated client are as following:
+For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication are as following:
 
 - get('/users/search')
 - put('/users/user')
@@ -91,11 +104,11 @@ For several endpoints it is needed to be authenticated by using the public/priva
 - post('/authentication/verify-user')
 - post('/authentication/revoke-verification')
 
-How the client can authenticate at the api is described in the following sequence diagram which uses verify user (section 3) as an example.
+How the client can authenticate at the api is described in the following sequence diagram which refers to verify user (section 3) as an example.
 
 ![verify user sd](./src/assets/diagrams/verify-user-sd.jpeg)
 
-As described in the sequence diagram the client must sign a challenge in order to being able to authenticate at the api. Therefor two three scripts must be implemented by the client `getHexEncodedKey` & `signChallenge` which are described in the following:
+As described in the sequence diagram the client must sign a challenge in order to being able to authenticate at the api. Therefore two scripts must be implemented by the client `getHexEncodedKey` & `signChallenge` which are described in the following:
 
 ```
 import * as ed from 'noble-ed25519';
