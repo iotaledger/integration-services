@@ -34,7 +34,7 @@ const authorizationService = new AuthorizationService(userService);
 const userRoutes = new UserRoutes(userService, authorizationService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
-const { serverSecret, jwtExpiration, serverIdentityId } = CONFIG;
+const { serverSecret, jwtExpiration, serverIdentityId, streamsNode } = CONFIG;
 const authMiddleWare = isAuth(serverSecret);
 
 userRouter.get('/user/:userId', getUser);
@@ -78,9 +78,10 @@ authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: Verif
 authenticationRouter.post('/check-verification', validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
 
-const streamsService = new StreamsService();
-const subscriptionService = new SubscriptionService(streamsService, channelInfoService);
-const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService);
+const streamsService = new StreamsService(streamsNode);
+const streamsConfig = { statePassword: serverSecret, streamsNode };
+const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
+const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig);
 
 const channelRoutes = new ChannelRoutes(channelService);
 const { addLogs, createChannel, getLogs } = channelRoutes;

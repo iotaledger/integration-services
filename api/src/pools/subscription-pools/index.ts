@@ -6,19 +6,19 @@ import { toBytes } from '../../utils/text';
 // TODO#39 use more robust object pool: https://github.com/electricessence/TypeScript.NET/blob/master/source/System/Disposable/ObjectPool.ts
 export class SubscriptionPool {
 	private static instance: SubscriptionPool;
-	private readonly password = 'test123';
-	private readonly node = 'https://api.lb-0.testnet.chrysalis2.com/';
+	private readonly node: string;
 	private authors: { userId: string; channelAddress: string; author: Author }[];
 	private subscribers: { userId: string; channelAddress: string; subscriber: Subscriber }[];
 
-	private constructor() {
+	private constructor(node: string) {
 		this.authors = [];
 		this.subscribers = [];
+		this.node = node;
 	}
 
-	public static getInstance(): SubscriptionPool {
+	public static getInstance(node: string): SubscriptionPool {
 		if (!SubscriptionPool.instance) {
-			SubscriptionPool.instance = new SubscriptionPool();
+			SubscriptionPool.instance = new SubscriptionPool(node);
 		}
 		return SubscriptionPool.instance;
 	}
@@ -33,7 +33,7 @@ export class SubscriptionPool {
 		}
 	}
 
-	async restoreSubscription(channelAddress: string, userId: string) {
+	async restoreSubscription(channelAddress: string, userId: string, password: string) {
 		const sub = await SubscriptionDb.getSubscription(channelAddress, userId);
 		if (!sub?.state) {
 			// TODO handle properly
@@ -46,13 +46,13 @@ export class SubscriptionPool {
 		const client = new streams.Client(this.node, options.clone());
 
 		if (isAuthor) {
-			return Author.import(client, toBytes(sub.state), this.password);
+			return Author.import(client, toBytes(sub.state), password);
 		} else {
-			return Subscriber.import(client, toBytes(sub.state), this.password);
+			return Subscriber.import(client, toBytes(sub.state), password);
 		}
 	}
 
-	async get(channelAddress: string, userId: string, isAuthor: boolean): Promise<Author | Subscriber> {
+	async get(channelAddress: string, userId: string, isAuthor: boolean, password: string): Promise<Author | Subscriber> {
 		const predicate = (pool: any) => pool.userId === userId && pool.channelAddress === channelAddress;
 		let subscription = null;
 		if (isAuthor) {
@@ -62,7 +62,7 @@ export class SubscriptionPool {
 		}
 		if (!subscription) {
 			// try to restore subscription from state in db
-			subscription = await this.restoreSubscription(channelAddress, userId);
+			subscription = await this.restoreSubscription(channelAddress, userId, password);
 		}
 		console.log('found subscription in pool: ', subscription);
 

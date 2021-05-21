@@ -4,7 +4,11 @@ import { fromBytes, toBytes } from '../utils/text';
 streams.set_panic_hook();
 
 export class StreamsService {
-	node = 'https://api.lb-0.testnet.chrysalis2.com/';
+	private readonly node: string;
+
+	constructor(node: string) {
+		this.node = node;
+	}
 
 	importSubscription = (state: string, isAuthor: boolean, password: string): Author | Subscriber => {
 		const options = new streams.SendOptions(1, true, 1);

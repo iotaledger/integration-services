@@ -6,15 +6,16 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 
 export class SubscriptionService {
-	private password = 'test123';
+	private password: string;
 	private readonly streamsService: StreamsService;
 	private readonly channelInfoService: ChannelInfoService;
 	private readonly subscriptionPool: SubscriptionPool;
 
-	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService) {
+	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService, config: { statePassword: string; streamsNode: string }) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;
-		this.subscriptionPool = SubscriptionPool.getInstance();
+		this.subscriptionPool = SubscriptionPool.getInstance(config.streamsNode);
+		this.password = config.statePassword;
 	}
 
 	getSubscription = async (channelAddress: string, userId: string) => {
@@ -62,11 +63,11 @@ export class SubscriptionService {
 	};
 
 	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string) => {
-		const sub = await this.subscriptionPool.get(channelAddress, authorId, true);
-		if (!sub) {
-			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${authorId}`);
+		const author = await this.subscriptionPool.get(channelAddress, authorId, true, this.password);
+		if (!author) {
+			throw new Error(`no author found with channelAddress: ${channelAddress} and userId: ${authorId}`);
 		}
-		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>sub);
+		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>author);
 
 		const res = await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
 		console.log('res', res.result);

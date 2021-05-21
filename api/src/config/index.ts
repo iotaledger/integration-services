@@ -18,6 +18,7 @@ export const CONFIG: Config = {
 	databaseUrl: process.env.DATABASE_URL,
 	databaseName: process.env.DATABASE_NAME,
 	serverIdentityId: process.env.SERVER_IDENTITY,
+	streamsNode: process.env.IOTA_STREAMS_NODE,
 	serverSecret: process.env.SERVER_SECRET,
 	identityConfig: IdentityConfig,
 	jwtExpiration: '2 days'
