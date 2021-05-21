@@ -90,9 +90,9 @@ The request returns the following body:
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to authenticate at the api.
 
-### 2. Authenticate at the api
+### 2. Authentication and authorised an identity
 
-For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication are as following:
+An identity can be used to authenticate a user to a number of services provided by the Bridge. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication are as following:
 
 - get('/users/search')
 - put('/users/user')
@@ -125,11 +125,11 @@ export const getHexEncodedKey = (base58Key: string) => {
 };
 ```
 
-To authenticate at the api, first of all a challenge must be created that's when the challenge endpoint must be called with the userId that wants to authenticate like:
+To verify an identity ownership and to authenticate the user against a corresponding endpoint, first of all a challenge must be created by the selected endpoint. This is triggered by calling the selected endpoint with the userId that requires authentication. An example is:
 
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/challenge/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
 
-It returns a json object with the challenge:
+It returns a json object with the challenge (encrypted with the public key of the corresponding user):
 
 ```
 {
@@ -137,9 +137,9 @@ It returns a json object with the challenge:
 }
 ```
 
-This challenge must now be signed using the private key of the keypair and sent to the `auth` endpoint via POST, which then returns a JWT if it is signed with the correct key. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
+This challenge must now be decrypted using the private key of the user keypair and sent back to the `auth` endpoint via POST, which then returns a JWT, in case the challenge was successfully decrypted. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
 
-Signing the challenge by the client can be done with the following two function calls.
+Decrypt the challenge by the client can be done with the following two function calls.
 
 ```
 const encodedKey = await getHexEncodedKey(identity.key.secret);
@@ -187,9 +187,9 @@ export const fetchAuth = async (identity: any) => {
 };
 ```
 
-### 3. Verify user
+### 3. Verify an identity
 
-Everyone can create an identity and add any data he wants to his identity, that is why it is needed to know if the person or device really belongs to the company it is claiming to be. Hence an identity must be verified. This can be done by an administrator of the ssi bridge or an already verified user of an organization. The verification creates a so called verifiable credential, which contains information about the user and a signature proof of the information, so the data of the verifiable credential can not be changed later but verified.
+Everyone can create an identity and add any data to such identity, that is why it is needed to know if the person or device really belongs to the company they claim to be. Hence their identity must be verified. This can be done by an administrator of the SSI bridge or an already verified user of an organization (based on the principle of network of trust described above). Upon verification, the system allows to create a so called verifiable credential, which contains information about the identity and a signature proof of the information of the verifier, so that authenticity of data in the verifiable credential can not be changed later but verified.
 
 The endpoint of this request is as following:
 
@@ -197,7 +197,7 @@ https://ensuresec.solutions.iota.org/api/v0.1/authentication/verify-user
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
 
-The body must contain the userId of the identity which needs to be verified in the `subjectId` field. Furthermore, if the user is not an administrator he needs to add a verifiable credential which was generated when verifying him. This verifiable credential is stored by the api and can be requested at the user api. How to request the verifiable credential at the api will be described in section 4. As pointed, the verifiable credential must be part of the request body, if it is not a request by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies a user. The request could look like the following:
+The api body must contain the userId of the identity which needs to be verified in the `subjectId` field. Furthermore, if the user is not an administrator it needs to add a verifiable credential which was generated when verifying itself. This verifiable credential is stored by the api and can be requested at the user api. How to request the verifiable credential at the api will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies a user. The request could look like the following:
 
 ```
 {
@@ -232,11 +232,11 @@ The body must contain the userId of the identity which needs to be verified in t
 }
 ```
 
-The api then checks if the subject exists at the api and belongs to the same organization, furthermore it checks if the verifiable credential of the initiator is valid. If both applies, it creates a verifiable credential for the subject and stores the credential in the subjects' user data, in addition it returns the verifiable credential in the response.
+The api then checks if the subjectId exists at the api and belongs to the same organization, furthermore it checks if the verifiable credential of the initiator is valid. If both applies, a verifiable credential for the subjectId is created and stores the credential in the subjects' user data, in addition it returns the verifiable credential in the response.
 
 ### 4. Get user data
 
-The verified user can now be requested to get information about him. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
+The verified user can now be requested to provide information about it through presentation of a verifiable credential. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
 
 But first request the user by his userId with a GET request at the api:
 
@@ -351,11 +351,11 @@ for verified users and `false` for not verified users. A reason for not verified
 
 ### 6. Revoke verifiable credential
 
-A verifiable credential can be revoked so it is no more verified, a reason therefor could be: A person left the organization or a device broke and got removed by the organization. To revoke the credential the following api must be called via POST:
+A verifiable credential can be revoked so it is no more verified, a reason therefore could be: A person left the organization or a device broke and got removed by the organization. To revoke the credential the following api must be called via POST:
 
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/revoke-verification
 
-The body of the request contains the `subjectId` which is the userId of the user which credential shall be revoked furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
+The body of the request contains the `subjectId` which is the userId of the user which credential shall be revoked. Furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
 
 ```
 {
