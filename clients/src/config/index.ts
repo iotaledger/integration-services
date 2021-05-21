@@ -2,146 +2,118 @@ export const Config = {
 	baseUrl: process.env.BASE_URL
 };
 
-export const users = [
-	{
-		_id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
-		username: 'test-device',
-		type: 'Device',
-		organization: 'IOTA',
-		registrationDate: { $date: '2021-03-15T09:29:56.732Z' }
-	},
-	{
-		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		username: 'second-user',
-		firstName: 'Brandon',
-		lastName: 'Tomson',
-		organization: 'University Account',
-		type: 'Person',
-		verification: {
-			verified: true
-		}
-	}
-];
-
 // returned from localhost:3000/api/v1/authentication/create-identity
 export const UserIdentity = {
 	doc: {
-		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+		id: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
 		authentication: [
 			{
-				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4#key',
-				controller: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				id: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc#key',
+				controller: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
 				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm'
+				publicKeyBase58: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X'
 			}
 		],
-		created: '2021-03-16T14:18:47Z',
-		updated: '2021-03-16T14:18:47Z',
-		immutable: false,
+		created: '2021-05-20T08:40:42Z',
+		updated: '2021-05-20T08:40:42Z',
 		proof: {
 			type: 'JcsEd25519Signature2020',
 			verificationMethod: '#key',
-			signatureValue: '2AKaB7KC9rQQLirMgRoYYns6fF2wVtryCnqKesMiwxuhmYzYPtPBbc6jeMPxgMHWtSoQQKyPkVdcFKx87LPabAq1'
+			signatureValue: '3Zy52A4rdLZLqawH86rEsbquhWmVkRwDw8rxNTWZkt8TZFE8kUfwPiXEjRRv1BfLxMoepRs8fabnoZv4TZtppDYr'
 		}
 	},
 	userData: {
-		userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-		username: 'first-user',
+		userId: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
+		publicKey: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X',
+		username: 'iota-test',
 		type: 'Person',
-		registrationDate: '2021-05-10T17:23:18+02:00',
-		organization: 'IOTA',
+		registrationDate: '2021-05-20T10:40:47+02:00',
+		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
 		data: {
-			familyName: 'Testinomium',
-			givenName: 'Testa'
+			name: 'Test User',
+			familyName: 'User',
+			givenName: 'Test',
+			jobTitle: 'Software Engineer'
 		},
 		role: 'User'
 	},
 	key: {
 		type: 'ed25519',
-		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8'
+		public: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X',
+		secret: 'Ch5HptuinwJXQXuCvjpnNeZUBsJrQ9wYZtY3SDPQRh2h',
+		encoding: 'base58'
 	},
-	txHash: 'OGNVRNPA9LQKPEUQJEECRZRVMRAQA99RVTVUPIYQQGYVVFYBDRIHZGFVQQVKQHAPVGCZKMGUTZXAZ9999'
+	txHash: 'fce665229c9156c0fc90ab484417a7405cd2aa241f396c89d128ee26a39d5e5e'
 };
 
 export const ServerIdentity = {
-	_id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 	doc: {
-		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-		verificationMethod: [
-			{
-				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ#key-collection',
-				controller: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: 'MerkleKeyCollection2021',
-				publicKeyBase58: '116Bo8Pfvanc2WNYLkYH4GdEk6hdZuFKA1razmkBqoBPzY'
-			}
-		],
+		id: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
 		authentication: [
 			{
-				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ#key',
-				controller: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+				id: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y#key',
+				controller: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
 				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb'
+				publicKeyBase58: 'GmNyvaJESvUgLL42Zo5Lar1QRN9rDTBtxC4wMbNC7S4w'
 			}
 		],
-		created: '2021-03-24T14:38:41Z',
-		updated: '2021-03-24T14:38:41Z',
-		immutable: false,
-		previousMessageId: 'ANZAUTTZHLIJADRODGCTESKILHXCIVMZHSYDWYINODE9OMUDV9CWPPUFMDAURXUNJASFNBWPRSPOZ9999',
+		created: '2021-05-20T08:46:54Z',
+		updated: '2021-05-20T08:46:54Z',
 		proof: {
 			type: 'JcsEd25519Signature2020',
 			verificationMethod: '#key',
-			signatureValue: 'mCKHiqnAUaipR8rBc5skPuGRvo5xAj8PkByXnaKrznwmMMcVYQhcA6Zwdjkj7EHpMgTsZhXKPRPAbChTfz14qy5'
+			signatureValue: '47d1rNxyJbTCtPAdLMv5C7tS8xcSyPNApSWKyqWWpXNCnciqZDHVLMV24ghPavCtiwmuf1daRhcuxcX5kz9pU53W'
 		}
 	},
+	key: {
+		type: 'ed25519',
+		public: 'GmNyvaJESvUgLL42Zo5Lar1QRN9rDTBtxC4wMbNC7S4w',
+		secret: 'FpiRnxwUbiNrkiWCatkhzYPZBJBhGdWQNt1BUikixA3P',
+		encoding: 'base58'
+	},
 	userData: {
-		userId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
-		username: 'api-identity',
+		userId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+		publicKey: 'GmNyvaJESvUgLL42Zo5Lar1QRN9rDTBtxC4wMbNC7S4w',
+		username: 'iota-service-test',
 		type: 'Service',
-		registrationDate: '2021-05-10T17:18:58+02:00',
-		organization: 'IOTA',
-		data: {},
+		registrationDate: '2021-05-20T10:47:16+02:00',
+		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
+		data: {
+			name: 'Test Service',
+			description: 'Just a test service to verify users.'
+		},
 		role: 'Admin'
 	},
-	key: { type: 'ed25519', public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb', secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp' },
-	encoding: 'base58',
-	txHash: 'LCHPWELIWGXUSHX9YACHICTLRHVGTFHXBEQILQBCCTDDRLJTBLYHTGRT9HKOLQZQHENEHPEGYMZD99999'
+	txHash: '91e85c4a3b90eb8be0ea688a671c00611c7363a0d07fecf4dd37d1f4610661d6'
 };
 
 export const DeviceIdentity = {
 	doc: {
-		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		id: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
 		authentication: [
 			{
-				id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu#key',
-				controller: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+				id: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW#key',
+				controller: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
 				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp'
+				publicKeyBase58: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM'
 			}
 		],
-		created: '2021-03-24T15:54:33Z',
-		updated: '2021-03-24T15:54:33Z',
-		immutable: false,
+		created: '2021-05-20T08:43:01Z',
+		updated: '2021-05-20T08:43:01Z',
 		proof: {
 			type: 'JcsEd25519Signature2020',
 			verificationMethod: '#key',
-			signatureValue: '4tyirinqCRqf3Sa4RMwFocrjJWqAWuLFWWP3oGzkhvA7SbjbFNXKfPRPxePtixgzsdvBubd6f4VR23jvaV1c44y'
+			signatureValue: '4VUKEJ2sbbCf7GWs4phmaZLs8jcGJAPXUQS5zUkbQaUaZwnvcS7jq6sTa5CExhYAKVEJPFsEutPypxBbnUwp4bE'
 		}
 	},
 	userData: {
-		userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
-		username: 'test-device',
+		userId: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
+		publicKey: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM',
+		username: 'iota-test-device',
 		type: 'Device',
-		registrationDate: '2021-05-10T17:16:39+02:00',
-		organization: 'IOTA',
+		registrationDate: '2021-05-20T10:43:02+02:00',
+		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
 		data: {
-			id: 'test-device',
-			type: 'Device',
 			category: ['sensor'],
 			controlledProperty: ['fillingLevel', 'temperature'],
 			controlledAsset: ['wastecontainer-Osuna-100'],
@@ -152,7 +124,7 @@ export const DeviceIdentity = {
 			serialNumber: '9845A',
 			refDeviceModel: 'myDevice-wastecontainer-sensor-345',
 			rssi: 0.86,
-			value: 'l%3D0.22%3Bt%3D21.2',
+			value: 'l=0.22;t=21.2',
 			deviceState: 'ok',
 			dateFirstUsed: '2014-09-11T11:00:00Z',
 			owner: ['http://person.org/leon']
@@ -161,11 +133,11 @@ export const DeviceIdentity = {
 	},
 	key: {
 		type: 'ed25519',
-		public: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
-		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR'
+		public: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM',
+		secret: 'AsxeJjhBnWaxwNzhKpJrwyXgzEbzmiPDDGLznVcjrvwd',
+		encoding: 'base58'
 	},
-	encoding: 'base58',
-	txHash: 'CETPVHOIBPNGCWQQCQALVKQQOD9B9MLMU9ZMNFZHBPEAOTMWFTVDRRBMFYIETHDWXA9GLGYWAFQRA9999'
+	txHash: '654a1514ea0cc1220ef7e173408fdec4c154a5ee1bcbc194a6a50f62b819664b'
 };
 
 export const CLIENT_IDENTITY = DeviceIdentity;
