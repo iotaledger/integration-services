@@ -13,7 +13,7 @@ Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organiz
 The following demonstrates an example where an identity of a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE is used.
 
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/create-identity
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/create-identity
 
 Body of the POST request contains the `Device` type, an organization id, username and a data field which contains detailed information about the device.
 
@@ -77,7 +77,23 @@ The `key` field of the body is the essential part which must be stored by the cl
 
 ### 2. Authenticate at the api
 
-In order to being able to authenticate and verify other users at the api three scripts must be implemented by the client:
+For several endpoints it is needed to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need an authenticated client are as following:
+
+- get('/users/search')
+- put('/users/user')
+- delete('/users/user/:userId')
+- get('/channel-info/search')
+- post('/channel-info/channel')
+- put('/channel-info/channel')
+- delete('/channel-info/channel/:channelAddress')
+- post('/authentication/verify-user')
+- post('/authentication/revoke-verification')
+
+How the client can authenticate at the api is described in the following sequence diagram which uses verify user (section 3) as an example.
+
+// TODO image of sequence diagram
+
+As described in the sequence diagram the client must sign a challenge in order to being able to authenticate at the api. Therefor two three scripts must be implemented by the client `getHexEncodedKey` & `signChallenge` which are described in the following:
 
 ```
 import * as ed from 'noble-ed25519';
@@ -92,18 +108,14 @@ export const getHexEncodedKey = (base58Key: string) => {
  export const signChallenge = async (privateKey: string, challenge: string) => {
 	return await ed.sign(challenge, privateKey);
 };
-
-// Verify signed challenge using the public key.
-export const verifiyChallenge = async (publicKey: string, challenge: string, signature: string) => {
-	return await ed.verify(signature, challenge, publicKey);
-};
 ```
 
 To authenticate at the api, first of all a challenge must be created that's when the challenge endpoint must be called with the userId that wants to authenticate like:
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/challenge/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/challenge/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
 
 It returns a json object with the challenge:
+
 ```
 {
     "challenge":"�r�*[����hl6�����Y�>(+(��F"
@@ -112,7 +124,22 @@ It returns a json object with the challenge:
 
 This challenge must now be signed using the private key of the keypair and sent to the `auth` endpoint via POST, which then returns a JWT if it is signed with the correct key. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/auth/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
+Signing the challenge by the client can be done with the following two function calls.
+
+```
+const encodedKey = await getHexEncodedKey(identity.key.secret);
+const signedChallenge = await signChallenge(encodedKey, challenge);
+```
+
+This challenge must then be sent to the following api via POST:
+
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/auth/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
+
+As body of the request the `signedChallenge` must be added like following:
+
+```
+{ signedChallenge: 'thisisthecontentofthesignedchallenge' }
+```
 
 
 A more detailed usage script how to integrate the authentication into a typescript client can be found in the following:
@@ -121,7 +148,7 @@ A more detailed usage script how to integrate the authentication into a typescri
 export const fetchAuth = async (identity: any) => {
 	console.log('requesting challenge to sign...');
 
-	const url = `${Config.baseUrl}/api/v1/authentication/challenge/${identity.doc.id}`;
+	const url = `${Config.baseUrl}/api/v0.1/authentication/challenge/${identity.doc.id}`;
 	const res = await axios.get(url);
 	if (res.status !== 200) {
 		console.error('didnt receive status 200 on get-challenge!');
@@ -136,7 +163,7 @@ export const fetchAuth = async (identity: any) => {
 	console.log('signed challenge: ', signedChallenge);
 
 	console.log('requesting authentication token using signed challenge...', identity.doc.id);
-	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/auth/${identity.doc.id}`, JSON.stringify({ signedChallenge }), {
+	const response = await axios.post(`${Config.baseUrl}/api/v0.1/authentication/auth/${identity.doc.id}`, JSON.stringify({ signedChallenge }), {
 		method: 'post',
 		headers: { 'Content-Type': 'application/json' }
 	});
@@ -151,7 +178,7 @@ Everyone can create an identity and add any data he wants to his identity, that 
 
 The endpoint of this request is as following:
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/verify-user
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/verify-user
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
 
@@ -198,7 +225,7 @@ The verified user can now be requested to get information about him. If a user i
 
 But first request the user by his userId with a GET request at the api:
 
-https://ensuresec.solutions.iota.org/api/v1/users/user/did:iota:D3TG1ojfVhpA28L4DVaHBYzNPYS6JBjfZT2ZYKEovs1v
+https://ensuresec.solutions.iota.org/api/v0.1/users/user/did:iota:D3TG1ojfVhpA28L4DVaHBYzNPYS6JBjfZT2ZYKEovs1v
 
 ```
 {
@@ -258,7 +285,7 @@ https://ensuresec.solutions.iota.org/api/v1/users/user/did:iota:D3TG1ojfVhpA28L4
 
 To check whether the verifiable credential is valid the following api can be called:
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/check-verification
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/check-verification
 
 Simply insert the verifiable credential to check into the body of the POST request.
 
@@ -311,7 +338,7 @@ for verified users and `false` for not verified users. A reason for not verified
 
 A verifiable credential can be revoked so it is no more verified, a reason therefor could be: A person left the organization or a device broke and got removed by the organization. To revoke the credential the following api must be called via POST:
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/revoke-verification
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/revoke-verification
 
 The body of the request contains the `subjectId` which is the userId of the user which credential shall be revoked furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
 
@@ -332,7 +359,7 @@ In regard to support verifiable credentials of other systems, the root of their 
 
 To receive the list of trusted identities the SSI Bridge offers an endpoint which can be called as the following:
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/trusted-roots
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/trusted-roots
 
 It returns all trusted identity ids which are trusted by the api.
 
@@ -349,7 +376,7 @@ It returns all trusted identity ids which are trusted by the api.
 
 To receive the latest document of an identity from the tangle, the SSI Bridge also offers an endpoint which can be called via GET.
 
-https://ensuresec.solutions.iota.org/api/v1/authentication/latest-document
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/latest-document
 
 It returns information about the identity document on the tangle.
 
