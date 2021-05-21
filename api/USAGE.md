@@ -91,7 +91,7 @@ For several endpoints it is needed to be authenticated by using the public/priva
 
 How the client can authenticate at the api is described in the following sequence diagram which uses verify user (section 3) as an example.
 
-// TODO image of sequence diagram
+![verify user sd]('./src/assets/diagrams/verify-user-sd.jpeg')
 
 As described in the sequence diagram the client must sign a challenge in order to being able to authenticate at the api. Therefor two three scripts must be implemented by the client `getHexEncodedKey` & `signChallenge` which are described in the following:
 
