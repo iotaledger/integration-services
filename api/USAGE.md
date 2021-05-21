@@ -10,6 +10,8 @@ The creation of an identity is one of the key aspects when interacting with othe
 
 Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if a custom type which is not known by the api is provided, it won't be validated.
 
+> The exact data model definition can be found here: https://gist.github.com/dominic22/186f67b759f9694f45d35e9354fa5525
+
 The following demonstrates an example where an identity of a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE is used.
 
 
