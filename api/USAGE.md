@@ -1,6 +1,6 @@
 # Usage of the IOTA-SSI Bridge
 
-The IOTA-SSI Bridge allows users to create SSI identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)). Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials (VCs), certificates contaning identity attributes andsigned by an Issuer identity. 
+The IOTA-SSI Bridge allows users to create SSI identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)). Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates contaning identity attributes and signed by an Issuer identity. 
 
 The Bridge allows an identified trust root to verify users identity and to progate this verification verification using a network of trust approach (see figure below). 
 
