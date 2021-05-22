@@ -14,14 +14,14 @@ It then allows Issuers to issue Verifiable Credentials for selected Owners and O
 
 The Bridge provides an abstraction layer through REST APIs that allows entity to create decentralized identities (the identity), verify them, attach verifiable credentials and verify them.
 
-An Example is provided below.
+An example of the Bridge use is provided below.
 
 ## Example
 TBD
 
 
 
-## Create and verify an identity
+## Create and Verify an Identity
 
 In order to interact with other users in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
