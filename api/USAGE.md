@@ -399,7 +399,7 @@ It returns all trusted identity ids which are trusted by the api.
 
 To receive the latest document of an identity from the tangle, the SSI Bridge also offers an endpoint which can be called via GET.
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/latest-document
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/latest-document/did:iota:8P4uV9haNks6N8aXXLt2Ps3nQtSqGXc2kJM4K6urm62Y
 
 It returns information about the identity document on the tangle.
 
