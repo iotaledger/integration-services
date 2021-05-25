@@ -4,6 +4,7 @@ import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
+import * as ChannelDataDb from '../database/channel-data';
 
 export class ChannelService {
 	private readonly password: string;
@@ -64,6 +65,9 @@ export class ChannelService {
 			userId,
 			this.streamsService.exportSubscription(logs.subscription, this.password)
 		);
+		if (logs.channelData?.length > 0) {
+			await ChannelDataDb.addChannelData(logs.channelData);
+		}
 		return logs;
 	};
 
