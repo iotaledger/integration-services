@@ -6,7 +6,7 @@ import { UserService } from '../services/user-service';
 import { IdentityService } from '../services/identity-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
-import { getHexEncodedKey, signChallenge, verifiyChallenge } from '../utils/encryption';
+import { getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
 import { CreateIdentityBody } from '../models/types/identity';
 
@@ -84,8 +84,8 @@ export async function setupApi() {
 		const challenge = 'test-challenge-to-solve';
 		let verified = false;
 		try {
-			const signedChallenge = await signChallenge(getHexEncodedKey(serverIdentity.key.secret), challenge);
-			verified = await verifiyChallenge(getHexEncodedKey(serverIdentity.key.public), challenge, signedChallenge);
+			const signedChallenge = await signNonce(getHexEncodedKey(serverIdentity.key.secret), challenge);
+			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), challenge, signedChallenge);
 		} catch (e) {
 			console.error('error when signing or verifying the challenge, the secret key might have changed...');
 		}

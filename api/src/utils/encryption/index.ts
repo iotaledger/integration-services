@@ -2,21 +2,23 @@ import * as crypto from 'crypto';
 import * as ed from 'noble-ed25519';
 import * as bs58 from 'bs58';
 
-export const createChallenge = (): string => {
-	const challenge = crypto.randomBytes(30).toString('hex');
-	return crypto.createHash('sha256').update(challenge).digest().toString();
+export const createNonce = (): string => {
+	return crypto.randomBytes(20).toString('hex');
 };
 
 export const getHexEncodedKey = (base58Key: string): string => {
 	return bs58.decode(base58Key).toString('hex');
 };
 
-export const signChallenge = async (privateKey: string, challenge: string): Promise<string> => {
-	return await ed.sign(challenge, privateKey);
+export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
+	if (nonce.length !== 40) {
+		throw new Error('nonce does not match length of 40 characters!');
+	}
+	return await ed.sign(nonce, privateKey);
 };
 
-export const verifiyChallenge = async (publicKey: string, challenge: string, signature: string): Promise<boolean> => {
-	return await ed.verify(signature, challenge, publicKey);
+export const verifySignedNonce = async (publicKey: string, nonce: string, signature: string): Promise<boolean> => {
+	return await ed.verify(signature, nonce, publicKey);
 };
 
 export const randomSecretKey = () => crypto.randomBytes(24).toString('base64');

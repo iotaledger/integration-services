@@ -12,7 +12,7 @@ import {
 import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { IdentityService } from './identity-service';
 import { UserService } from './user-service';
-import { createChallenge, getHexEncodedKey, verifiyChallenge } from '../utils/encryption';
+import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as AuthDb from '../database/auth';
@@ -215,28 +215,28 @@ export class AuthenticationService {
 		return trustedRoots.map((root) => root.userId);
 	};
 
-	getChallenge = async (userId: string) => {
+	getNonce = async (userId: string) => {
 		const user = await this.userService.getUser(userId);
 		if (!user) {
 			throw new Error(`no user with id: ${userId} found!`);
 		}
 
-		const challenge = createChallenge();
-		await AuthDb.upsertChallenge({ userId: user.userId, challenge });
-		return challenge;
+		const nonce = createNonce();
+		await AuthDb.upsertNonce(user.userId, nonce);
+		return nonce;
 	};
 
-	authenticate = async (signedChallenge: string, userId: string) => {
+	authenticate = async (signedNonce: string, userId: string) => {
 		const user = await this.userService.getUser(userId);
 		if (!user) {
 			throw new Error(`no user with id: ${userId} found!`);
 		}
-		const { challenge } = await AuthDb.getChallenge(userId);
+		const { nonce } = await AuthDb.getNonce(userId);
 		const publicKey = getHexEncodedKey(user.publicKey);
 
-		const verified = await verifiyChallenge(publicKey, challenge, signedChallenge);
+		const verified = await verifySignedNonce(publicKey, nonce, signedNonce);
 		if (!verified) {
-			throw new Error('signed challenge is not valid!');
+			throw new Error('signed nonce is not valid!');
 		}
 
 		if (!this.serverSecret) {
