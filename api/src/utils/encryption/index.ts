@@ -10,15 +10,19 @@ export const getHexEncodedKey = (base58Key: string): string => {
 	return bs58.decode(base58Key).toString('hex');
 };
 
+const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
+
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
 	if (nonce.length !== 40) {
 		throw new Error('nonce does not match length of 40 characters!');
 	}
-	return await ed.sign(nonce, privateKey);
+	const hash = hashNonce(nonce);
+	return await ed.sign(hash, privateKey);
 };
 
 export const verifySignedNonce = async (publicKey: string, nonce: string, signature: string): Promise<boolean> => {
-	return await ed.verify(signature, nonce, publicKey);
+	const hash = hashNonce(nonce);
+	return await ed.verify(signature, hash, publicKey);
 };
 
 export const randomSecretKey = () => crypto.randomBytes(24).toString('base64');
