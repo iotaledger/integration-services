@@ -149,8 +149,8 @@ export class AuthenticationRoutes {
 				return;
 			}
 
-			const challenge = await this.authenticationService.getNonce(userId);
-			res.status(StatusCodes.OK).send({ challenge });
+			const nonce = await this.authenticationService.getNonce(userId);
+			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
 			next(error);
 		}

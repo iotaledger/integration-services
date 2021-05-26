@@ -13,9 +13,6 @@ export const getHexEncodedKey = (base58Key: string): string => {
 const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
 
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
-	if (nonce.length !== 40) {
-		throw new Error('nonce does not match length of 40 characters!');
-	}
 	const hash = hashNonce(nonce);
 	return await ed.sign(hash, privateKey);
 };

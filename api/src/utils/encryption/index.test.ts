@@ -19,22 +19,6 @@ describe('test encryption', () => {
 		expect(isVerified).toBe(true);
 	});
 
-	it('verify signed challenge using a wrong nonce should throw an error', async () => {
-		const keypair = {
-			type: 'ed25519',
-			public: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
-			secret: 'DizmPAxTct7rAxzDXEdSJB4Ni8HRwJ71vrRxLmy3H499'
-		};
-		const prvKey = getHexEncodedKey(keypair.secret);
-		const pubKey = getHexEncodedKey(keypair.public);
-
-		expect(prvKey).toBe('bd0e5f2291ba549f162b3b692738bf711d3d4fd582dcbba1473bab0df81cce64');
-		expect(pubKey).toBe('f93d13cee076a3660d5bd212719654a3c50c9575ae8f19de2c9a0155f3891fea');
-
-		const nonce = 'not a valid nonce since it is too long somaybe host tried to inject a message';
-		await expect(signNonce(prvKey, nonce)).rejects.toThrow('nonce does not match length of 40 characters!');
-	});
-
 	it('verify signed challenge using a wrong public key should return false', async () => {
 		const keypair = {
 			type: 'ed25519',

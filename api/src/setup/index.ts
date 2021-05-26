@@ -81,13 +81,13 @@ export async function setupApi() {
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
 		console.log('Check if server has valid keypair...');
-		const challenge = 'test-challenge-to-solve';
+		const nonce = 'test-challenge-to-solve';
 		let verified = false;
 		try {
-			const signedChallenge = await signNonce(getHexEncodedKey(serverIdentity.key.secret), challenge);
-			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), challenge, signedChallenge);
+			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.key.secret), nonce);
+			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), nonce, signedNonce);
 		} catch (e) {
-			console.error('error when signing or verifying the challenge, the secret key might have changed...');
+			console.error('error when signing or verifying the nonce, the secret key might have changed...');
 		}
 		if (!verified) {
 			throw new Error('server keys cannot be verified!');
