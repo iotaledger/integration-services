@@ -39,7 +39,7 @@ export class ChannelService {
 			isAuthorized: true
 		};
 
-		await this.subscriptionPool.add(res.author, userId, res.channelAddress, true);
+		await this.subscriptionPool.add(res.channelAddress, res.author, userId, true);
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,

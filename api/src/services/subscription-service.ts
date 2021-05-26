@@ -54,7 +54,7 @@ export class SubscriptionService {
 			state: this.streamsService.exportSubscription(res.subscriber, this.password)
 		};
 
-		await this.subscriptionPool.add(res.subscriber, subscriberId, channelAddress, false);
+		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
 		await subscriptionDb.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
