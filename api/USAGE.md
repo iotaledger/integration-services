@@ -20,22 +20,27 @@ Below we provide two examples on how the Bridge could be used in the context of 
 
 ## Example scenarios
 ### 1. Customer identity and credential (age) verification ###
-In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* item A user creates a decentralized identity (DID document) using a mobile application
-* item The user requests an issuer (e.g., a bank) to issue a credential staying her age
-* item The issuer uses information about the user held on local record (and previously verified) and the Ecommerce-SSI Bridge to create and issue a Verifiable Credential to the user
-* item The user downloads the credential in her app, using a credential wallet
-* item The user purchases a verified age item on an e-commerce site
-* item The user provides her credential to the e-commerce website using the Ecommerce-SSI Bridge
-* item The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
+In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
+* An authorised bank employee registers an _organization_ decentralised identity for its bank
+* A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
+* The user requests an Issuer (e.g., the bank) to issue a credential staying her age
+* The issuer uses information about the user held on local record (and previously verified) and the Ecommerce-SSI Bridge to create and issue a Verifiable Credential to the user
+* The user (namely Owner) downloads the credential in her app, using a credential wallet
+* The user purchases a verified age item on an e-commerce site
+* The user provides her credential to the e-commerce website using the Ecommerce-SSI Bridge
+* The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
 
-### 2. Product and seller identity and product authenticity ### 
-* item In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* item An e-commerce site allows a producer to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
-* item An e-commerce site allows a producer to create a decentralized identity for its product (DID document for product) using the Ecommerce-SSI Bridge
-* item An e-commerce site allows a producer to create and sign an authenticity credential associated to a given product identity using the Ecommerce-SSI Bridge
-* item A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product)
-* item A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (including verification of producer identity)
+### 2. Seller identity verificaiton ### 
+In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
+* An e-commerce site allows a seller authorised employee to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
+* The seller requests an Issuer (e.g., its bank) to issue a credential stating its KYC (Know Your Customer) status
+* The seller presents the credentials to the e-commerce site operator using the Ecommerce-SSI Bridge
+* The e-commerce site operator verifies the seller credentials using the Ecommerce-SSI Bridge and allow the seller to trade on its marketplace
+#### 2.1 Product identity and authenticity
+* The e-commerce site allows the seller to create a decentralized identity for each of its products (DID document for product) using the Ecommerce-SSI Bridge
+* The e-commerce site allows the seller to create and sign an authenticity credential associated to a given product identity using the Ecommerce-SSI Bridge
+* A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product)
+* A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (including verification of the seller identity)
 
 
 The figure below shows the envisioned system architecture (within the full set of IOTA ecommerce tools for ENSURESEC).
