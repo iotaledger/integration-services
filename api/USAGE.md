@@ -23,10 +23,10 @@ Below we provide examples on how the Bridge could be used in the context of ecom
 
 ## Ecommerce example scenarios: secure goods distribution
 
-_Problem_: Verify **TBD**
+_Problem_: Proof of Delivery: avoid goods being stolen and gurantee being delivered to the correct customer
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* dfgdgd
+* TBD
 
 ## Ecommerce example scenarios: secure sales
 ### 1. Customer identity and credential (age) verification ###
