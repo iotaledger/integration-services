@@ -1,23 +1,42 @@
-# Ensuresec-SSI Bridge
+# Ecommerce-SSI Bridge
 
-The Ensuresec-SSI Bridge allows users to create self sovereign identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)). Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates contaning identity attributes and signed by an Issuer identity. 
+The Ecommerce-SSI Bridge allows users to create self sovereign identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)) for organizations, persons and objects. Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates contaning identity attributes and signed by an Issuer identity. 
 
-The Bridge allows an identified trust root to verify users identity and to progate this verification using a network of trust approach (see figure below). 
+Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then progate this verification to other entities (organizations, persons, objects) using a network of trust approach (see figure below). 
 
 <img width="755" alt="Screenshot 2021-05-21 at 22 21 31" src="https://user-images.githubusercontent.com/1702827/119199456-fdb5d880-ba82-11eb-8983-bec1e36afdab.png">
 
 
-It then allows Issuers to issue Verifiable Credentials for selected Owners and Owners to present them to Verifiers. Verifiers can use the Ensuresec-SSI Bridge APIs to verify credentials authenticity.
+The Bridge also allows Issuers to issue Verifiable Credentials for selected Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires to verify that a credentila contains the identifier of the owner presenting it, and it is signed by an authorised Issuer. This requires to access the information stored onto a ledger.
+
+The image below shows the interaction between Issuer, Owner, Verifier and the ledger to manage the lifecycle of decentralized identities and verifiable credentials.
 
 <img width="742" alt="Screenshot 2021-05-21 at 22 21 11" src="https://user-images.githubusercontent.com/1702827/119199429-ef67bc80-ba82-11eb-8d74-c92f5bc66717.png">
 
 
-The Bridge provides an abstraction layer through REST APIs that allows entity to create decentralized identities (the identity), verify them, attach verifiable credentials and verify them.
+Our Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that allows entities to create decentralized identities (the identity), verify them, attach verifiable credentials and verify them.
 
-An example of the Bridge use is provided below.
+Below we provide two examples on how the Bridge could be used in the context of ecommerce.
 
 ## Example
-TBD
+### 1. Customer identity and credential (age) verification ###
+In the context of ENSURESEC e-commerce the proposed use case will make use of the IOTA-SSI Bridge to implement the following workflow:
+A user creates a decentralized identity (DID document) using a mobile application
+The user requests an issuer (e.g., a bank) to issue a credential staying her age
+The issuer uses information about the user held on local record (and previously verified) and the IOTA-SSI Bridge to create and issue a Verifiable Credential to the user
+The user downloads the credential in her app, using a credential wallet
+The user purchases a verified age item on an e-commerce site
+The user provides her credential to the e-commerce website using the IOTA-SSI Bridge
+The e-commerce site uses the IOTA-SSI Bridge to verify the credential and authorise the purchase
+
+### 2. Product and seller identity and product authenticity ### 
+In the context of ENSURESEC e-commerce the proposed use case will make use of the IOTA-SSI Bridge to implement the following workflow:
+An e-commerce site allows a producer to create a decentralized identity (DID document for organization) using the IOTA-SSI Bridge
+An e-commerce site allows a producer to create a decentralized identity for its product (DID document for product) using the IOTA-SSI Bridge
+An e-commerce site allows a producer to create and sign an authenticity credential associated to a given product identity using the IOTA-SSI Bridge
+A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product)
+A user app allows a customer to verify signature of the product authenticity credential using the IOTA-SSI Bridge (including verification of producer identity)
+
 
 
 ## SSI-Bridge Api Definition
