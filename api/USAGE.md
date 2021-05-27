@@ -33,7 +33,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The user provides her credential to the e-commerce website using the Ecommerce-SSI Bridge
 * The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
 
-### 2. Seller identity verificaiton ### 
+### 2. Seller identity verification ### 
 In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An e-commerce site allows a seller authorised employee to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
 * The seller requests an Issuer (e.g., its bank) to issue a credential stating its KYC (Know Your Customer) status
@@ -46,7 +46,8 @@ In the context of ENSURESEC e-commerce the proposed use case will make use of th
 * A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (including verification of the seller identity)
 
 
-## Ecommerce-SSI Bridge Api Definition
+## Ecommerce-SSI Bridge APIs Definition
+The list of provided APIs is shown in figure below.
 
 ![ensuresec-ssi-bridge](./src/assets/diagrams/ensuresec-ssi-bridge.jpeg)
 
