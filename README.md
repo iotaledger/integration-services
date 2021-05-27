@@ -1,5 +1,5 @@
-# Work in progress and will evolve as IOTA core tools develop and ENSURESEC project requirements update
-
+# WIP
+Work in progress and will evolve as IOTA core tools develop and ENSURESEC project requirements update
 # Setup the E-Commerce Tools
 
 ## 1. Copy .env file
