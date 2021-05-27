@@ -1,13 +1,13 @@
-# Usage of the IOTA-SSI Bridge
+# Ensuresec-SSI Bridge
 
-The IOTA-SSI Bridge allows users to create SSI identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)). Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates contaning identity attributes and signed by an Issuer identity. 
+The Ensuresec-SSI Bridge allows users to create SSI identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)). Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates contaning identity attributes and signed by an Issuer identity. 
 
 The Bridge allows an identified trust root to verify users identity and to progate this verification verification using a network of trust approach (see figure below). 
 
 <img width="755" alt="Screenshot 2021-05-21 at 22 21 31" src="https://user-images.githubusercontent.com/1702827/119199456-fdb5d880-ba82-11eb-8983-bec1e36afdab.png">
 
 
-It then allows Issuers to issue Verifiable Credentials for selected Owners and Owners to present them to Verifiers. Verifiers can use the IOTA-SSI Bridge APIs to verify credentials authenticity.
+It then allows Issuers to issue Verifiable Credentials for selected Owners and Owners to present them to Verifiers. Verifiers can use the Ensuresec-SSI Bridge APIs to verify credentials authenticity.
 
 <img width="742" alt="Screenshot 2021-05-21 at 22 21 11" src="https://user-images.githubusercontent.com/1702827/119199429-ef67bc80-ba82-11eb-8d74-c92f5bc66717.png">
 
@@ -20,8 +20,72 @@ An example of the Bridge use is provided below.
 TBD
 
 
+## SSI-Bridge Api Definition
 
-## Create and Verify an Identity
+![ensuresec-ssi-bridge](./src/assets/diagrams/ensuresec-ssi-bridge.jpeg)
+
+### Authentication Service 
+__Prefix:__ `/api/v1/authentication`
+
+
+`GET /trusted-roots`
+
+Returns a list of trusted root identity IDs.
+
+`GET /latest-document/{user-id}`
+
+Get the latest version of an identity from the tangle.
+
+`POST /create-identity`
+
+Create a new decentralized digital identity. It will be signed and published to the tangle! A digital identity can represent a device, user or even an organization. Do not lose the privateAuthKey, since it won’t be stored on the API side and do only store it encrypted.
+
+`GET /check-verification`
+
+Check the verification of a user. Validates the signed identity against the tangle and checks if the issuer of the credential is a trusted root.
+
+`POST /verify-user`
+
+Verify a user, device or organization at the api. Only verified users with assigned privileges can verify other identities at the api. Having a verified identity provides the opportunity that other users are able to identify and verify a subscriber or publisher of a channel. 
+
+`POST /revoke-verification`
+
+Remove the verification of a user. Reasons could be, that the user has left the organization. Only organization admins, the initiator or the user itself can do that!
+
+`GET /prove-ownership/{user-id}`
+
+Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{user-id} endpoint via POST.
+
+`POST /prove-ownership/{user-id}`
+
+Get an authentication token by signing a nonce using the private key. The challenge can be received from `GET /prove-ownership/{user-id}` endpoint, if it is signed correctly a JWT string will be returned in the response. 
+
+### User Service 
+
+__Prefix:__ `/api/v1/users`
+
+`GET /search`
+
+Search for a user in the system which returns a list of queried users in the system. 
+
+`GET /user/{user-id}`
+
+Get information about a specific user by its user-id. 
+
+`PUT /user`
+
+Update user data. 
+
+`POST /user`
+
+Register a new user in the system. Registering a user in the system makes it possible to search for him by the username.
+
+`DELETE /user/{user-id}`
+
+Removes a user from the system. A user can only delete itself and is not able to delete other users. Administrators are able to remove other users.
+
+
+## Example: Create and verify an identity of a device
 
 In order to interact with other users in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
@@ -98,7 +162,7 @@ The request returns the following body:
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to authenticate at the api.
 
-### 2. Authentication and authorised an identity
+### 2. Authentication and authorise an identity
 
 An identity can be used to authenticate a user to a number of services provided by the Bridge. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication are as following:
 
