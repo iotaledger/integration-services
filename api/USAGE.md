@@ -19,9 +19,13 @@ Our Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that al
 The figure below shows the envisioned system architecture (within the full set of IOTA ecommerce tools for ENSURESEC).
 ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
-Below we provide two examples on how the Bridge could be used in the context of ecommerce.
+Below we provide examples on how the Bridge could be used in the context of ecommerce ecosystems, in particular: 1) secure goods distribution 2) secure sales.
 
-## Example scenarios
+## Ecommerce example scenarios: secure goods distribution
+In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
+* 
+
+## Ecommerce example scenarios: secure sales
 ### 1. Customer identity and credential (age) verification ###
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An authorised bank employee registers an _organization_ decentralised identity for its bank
@@ -112,8 +116,9 @@ Register a new user in the system. Registering a user in the system makes it pos
 Removes a user from the system. A user can only delete itself and is not able to delete other users. Administrators are able to remove other users.
 
 
-## Example: Create and verify an identity of a device
+## HowTo: Create and verify an identity of a device
 
+In the following we focus on the secure goods distribution scenario.
 In order to interact with other users in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
 ### 1. Create an identity
