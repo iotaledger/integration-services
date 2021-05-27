@@ -58,7 +58,7 @@ Request a nonce which must be signed by the private key of the client and send i
 
 `POST /prove-ownership/{user-id}`
 
-Get an authentication token by signing a nonce using the private key. The challenge can be received from `GET /prove-ownership/{user-id}` endpoint, if it is signed correctly a JWT string will be returned in the response. 
+Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{user-id}` endpoint. 
 
 ### User Service 
 
@@ -91,7 +91,7 @@ In order to interact with other users in a trusted way there are three major cal
 
 ### 1. Create an identity
 
-The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, a user creates a public/private key pair. Th public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to proof the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
+The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to proof the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
 
 Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if an unknown type is provided, the api will reject it.
 
@@ -99,10 +99,9 @@ Currently the SSI Bridge supports five data models: `Device`, `Person`, `Organiz
 
 The following snippet demonstrates an example where an identity of a device will be created. Since schema.org does not have a data model for devices, the device data model of FIWARE was used.
 
-
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/create-identity
 
-Body of the POST request contains the `Device` type, an organization id, username and a data field which contains detailed information about the device.
+The body of the POST request contains the Device type, an organization id, username and a data field which contains detailed information about the device.
 
 ```
 {
@@ -180,77 +179,80 @@ How the client can authenticate at the api is described in the following sequenc
 
 ![verify user sd](./src/assets/diagrams/verify-user-sd.jpeg)
 
-As described in the sequence diagram the client must sign a challenge in order to being able to authenticate at the api. Therefore two scripts must be implemented by the client `getHexEncodedKey` & `signChallenge` which are described in the following:
+As described in the sequence diagram the client must request and then sign a nonce in order to being able to authenticate at the api. Therefore two scripts must be implemented by the client `getHexEncodedKey` & `signNonce` which are described in the following:
 
 ```
 import * as ed from 'noble-ed25519';
 import * as bs58 from 'bs58';
 
-// Decode a base58 key and encode it as hex key. (Needed for signChallenge & verifiyChallenge)
+// Decode a base58 key and encode it as hex key. (Needed for signNonce & verifySignedNonce)
 export const getHexEncodedKey = (base58Key: string) => {
 	return bs58.decode(base58Key).toString('hex');
 };
 
-// Sign a challenge using the private key.
- export const signChallenge = async (privateKey: string, challenge: string) => {
-	return await ed.sign(challenge, privateKey);
+// hash a string
+const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
+
+// Sign a nonce using the private key.
+export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
+	const hash = hashNonce(nonce);
+	return await ed.sign(hash, privateKey);
 };
 ```
 
-To verify an identity ownership and to authenticate the user against a corresponding endpoint, first of all a challenge must be created by the selected endpoint. This is triggered by calling the selected endpoint with the userId that requires authentication. An example is:
+To verify an identity ownership and to authenticate the user against a corresponding endpoint, first of all a nonce must be created by the api endpoint. This is triggered by calling the selected endpoint with the userId that requires authentication via __GET__. An example is:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/challenge/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/prove-ownership/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
 
-It returns a json object with the challenge (encrypted with the public key of the corresponding user):
+It returns a json object with the generated nonce:
 
 ```
 {
-    "challenge":"�r�*[����hl6�����Y�>(+(��F"
+    "nonce":"25110bd1742ebcabdc9962819a181e91515d51aa"
 }
 ```
 
-This challenge must now be decrypted using the private key of the user keypair and sent back to the `auth` endpoint via POST, which then returns a JWT, in case the challenge was successfully decrypted. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
+This nonce must now be signed using the private key of the user keypair and sent back to the `prove-ownership` endpoint via POST, which then returns a JWT string, in case the nonce was successfully signed. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
 
-Decrypt the challenge by the client can be done with the following two function calls.
+Signing the nonce by the client can be done with the following two function calls.
 
 ```
 const encodedKey = await getHexEncodedKey(identity.key.secret);
-const signedChallenge = await signChallenge(encodedKey, challenge);
+const signedNonce = await signNonce(encodedKey, nonce);
 ```
 
-This challenge must then be sent to the following api via POST:
+This nonce must then be sent to the following api via POST request:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/auth/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/prove-ownership/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
 
-As body of the request the `signedChallenge` must be added like following:
+As body of the request the `signedNonce` must be added like following:
 
 ```
-{ signedChallenge: 'thisisthecontentofthesignedchallenge' }
+{ signedNonce: 'thisisthecontentofthesignednonce' }
 ```
-
 
 A more detailed usage script how to integrate the authentication into a typescript client can be found in the following:
 
 ```
 export const fetchAuth = async (identity: any) => {
-	console.log('requesting challenge to sign...');
+	console.log('requesting nonce to sign...');
 
-	const url = `${Config.baseUrl}/api/v0.1/authentication/challenge/${identity.doc.id}`;
+	const url = `${Config.baseUrl}/api/v1/authentication/prove-ownership/${identity.doc.id}`;
 	const res = await axios.get(url);
 	if (res.status !== 200) {
-		console.error('didnt receive status 200 on get-challenge!');
+		console.error('didnt receive status 200 on get request for prove-ownership!');
 		return;
 	}
 	const body = await res.data;
-	const challenge: string = body.challenge;
-	console.log('received challenge: ', challenge);
+	const nonce: string = body.nonce;
+	console.log('received nonce: ', nonce);
 
 	const encodedKey = await getHexEncodedKey(identity.key.secret);
-	const signedChallenge = await signChallenge(encodedKey, challenge);
-	console.log('signed challenge: ', signedChallenge);
+	const signedNonce = await signNonce(encodedKey, nonce);
+	console.log('signed nonce: ', signedNonce);
 
-	console.log('requesting authentication token using signed challenge...', identity.doc.id);
-	const response = await axios.post(`${Config.baseUrl}/api/v0.1/authentication/auth/${identity.doc.id}`, JSON.stringify({ signedChallenge }), {
+	console.log('requesting authentication token using signed nonce...', identity.doc.id);
+	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/prove-ownership/${identity.doc.id}`, JSON.stringify({ signedNonce }), {
 		method: 'post',
 		headers: { 'Content-Type': 'application/json' }
 	});
