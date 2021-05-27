@@ -16,6 +16,9 @@ The image below shows the interaction between Issuer, Owner, Verifier and the le
 
 Our Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that allows entities to create decentralized identities (the identity), verify them, attach verifiable credentials and verify them.
 
+The figure below shows the envisioned system architecture (within the full set of IOTA ecommerce tools for ENSURESEC).
+![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
+
 Below we provide two examples on how the Bridge could be used in the context of ecommerce.
 
 ## Example scenarios
@@ -41,10 +44,6 @@ In the context of ENSURESEC e-commerce the proposed use case will make use of th
 * The e-commerce site allows the seller to create and sign an authenticity credential associated to a given product identity using the Ecommerce-SSI Bridge
 * A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product)
 * A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (including verification of the seller identity)
-
-
-The figure below shows the envisioned system architecture (within the full set of IOTA ecommerce tools for ENSURESEC).
-![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
 
 ## Ecommerce-SSI Bridge Api Definition
