@@ -22,11 +22,17 @@ The figure below shows the envisioned system architecture (within the full set o
 Below we provide examples on how the Bridge could be used in the context of ecommerce ecosystems, in particular: 1) secure goods distribution 2) secure sales.
 
 ## Ecommerce example scenarios: secure goods distribution
+
+_Problem_: Verify **TBD**
+
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* 
+* dfgdgd
 
 ## Ecommerce example scenarios: secure sales
 ### 1. Customer identity and credential (age) verification ###
+
+_Problem_: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability.
+
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An authorised bank employee registers an _organization_ decentralised identity for its bank
 * A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
@@ -38,6 +44,9 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
 
 ### 2. Seller identity verification ### 
+
+_Problem_: Verify sellers identity and product authenticity; reducing small sellers compliance burden.
+
 In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An e-commerce site allows a seller authorised employee to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
 * The seller requests an Issuer (e.g., its bank) to issue a credential stating its KYC (Know Your Customer) status
