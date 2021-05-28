@@ -285,7 +285,7 @@ https://ensuresec.solutions.iota.org/api/v0.1/authentication/prove-ownership/did
 As body of the request the `signedNonce` must be added like following:
 
 ```
-{ signedNonce: 'thisisthecontentofthesignednonce' }
+{ signedNonce: 'ed0bee53f0ef32b4b3d1934d690bf34bfa098394280f16c21c3ac85595d9dfc9a8dba11d1e1839e427c17d81d2dda0e614325ee363282fd61af6e6ebbeadb007' }
 ```
 
 A more detailed usage script how to integrate the authentication into a typescript client can be found in the following:
