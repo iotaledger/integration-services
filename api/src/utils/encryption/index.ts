@@ -13,11 +13,17 @@ export const getHexEncodedKey = (base58Key: string): string => {
 const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
 
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
+	if (nonce?.length !== 40) {
+		throw new Error('nonce must have a length of 40 characters!');
+	}
 	const hash = hashNonce(nonce);
 	return await ed.sign(hash, privateKey);
 };
 
 export const verifySignedNonce = async (publicKey: string, nonce: string, signature: string): Promise<boolean> => {
+	if (nonce?.length !== 40 || signature?.length !== 128) {
+		throw new Error('wrong length of nonce or signature!');
+	}
 	const hash = hashNonce(nonce);
 	return await ed.verify(signature, hash, publicKey);
 };

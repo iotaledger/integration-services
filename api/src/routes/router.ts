@@ -23,6 +23,7 @@ import {
 	AddChannelLogBodySchema,
 	AuthorizeSubscriptionBodySchema,
 	CreateChannelBodySchema,
+	ProveOwnershipPostBodySchema,
 	RequestSubscriptionBodySchema
 } from '../models/schemas/request-bodies';
 
@@ -72,7 +73,7 @@ export const authenticationRouter = Router();
 authenticationRouter.get('/latest-document/:userId', getLatestDocument);
 authenticationRouter.get('/trusted-roots', getTrustedRootIdentities);
 authenticationRouter.get('/prove-ownership/:userId', getNonce);
-authenticationRouter.post('/prove-ownership/:userId', proveOwnership);
+authenticationRouter.post('/prove-ownership/:userId', validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
 authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
 authenticationRouter.post('/check-verification', validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);

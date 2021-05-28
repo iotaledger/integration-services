@@ -1,4 +1,4 @@
-import { createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce as signNonce, verifySignedNonce } from '.';
+import { createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce, verifySignedNonce } from '.';
 
 describe('test encryption', () => {
 	it('verify signed challenge using valid keys should be true', async () => {

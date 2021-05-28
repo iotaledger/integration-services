@@ -6,7 +6,7 @@ import { UserService } from '../services/user-service';
 import { IdentityService } from '../services/identity-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
-import { getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
+import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
 import { CreateIdentityBody } from '../models/types/identity';
 
@@ -81,7 +81,7 @@ export async function setupApi() {
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
 		console.log('Check if server has valid keypair...');
-		const nonce = 'test-challenge-to-solve';
+		const nonce = createNonce();
 		let verified = false;
 		try {
 			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.key.secret), nonce);

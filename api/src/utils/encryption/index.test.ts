@@ -1,6 +1,40 @@
-import { createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce as signNonce, verifySignedNonce } from '.';
+import { createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce, verifySignedNonce } from '.';
 
 describe('test encryption', () => {
+	it('too short nonce so it should throw an error', async () => {
+		const keypair = {
+			type: 'ed25519',
+			public: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
+			secret: 'DizmPAxTct7rAxzDXEdSJB4Ni8HRwJ71vrRxLmy3H499'
+		};
+		const prvKey = getHexEncodedKey(keypair.secret);
+		const pubKey = getHexEncodedKey(keypair.public);
+
+		expect(prvKey).toBe('bd0e5f2291ba549f162b3b692738bf711d3d4fd582dcbba1473bab0df81cce64');
+		expect(pubKey).toBe('f93d13cee076a3660d5bd212719654a3c50c9575ae8f19de2c9a0155f3891fea');
+
+		const nonce = 'shortnonce';
+		await expect(signNonce(prvKey, nonce)).rejects.toThrow('nonce must have a length of 40 characters!');
+	});
+	it('too short signature so it should throw an error', async () => {
+		const keypair = {
+			type: 'ed25519',
+			public: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
+			secret: 'DizmPAxTct7rAxzDXEdSJB4Ni8HRwJ71vrRxLmy3H499'
+		};
+		const prvKey = getHexEncodedKey(keypair.secret);
+		const pubKey = getHexEncodedKey(keypair.public);
+
+		expect(prvKey).toBe('bd0e5f2291ba549f162b3b692738bf711d3d4fd582dcbba1473bab0df81cce64');
+		expect(pubKey).toBe('f93d13cee076a3660d5bd212719654a3c50c9575ae8f19de2c9a0155f3891fea');
+
+		const nonce = createNonce();
+		const signed = 'tooshortsignature';
+		console.log('signed', signed.length);
+
+		await expect(verifySignedNonce(pubKey, nonce, signed)).rejects.toThrow('wrong length of nonce or signature!');
+	});
+
 	it('verify signed challenge using valid keys should be true', async () => {
 		const keypair = {
 			type: 'ed25519',
