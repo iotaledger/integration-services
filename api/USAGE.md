@@ -36,7 +36,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 
 ### 1. Customer identity and delivery verification ###
 
-_Problem_: Proof of Delivery: guarantee goods being delivered to the right customer; avoid threats and frauds in the distribution chain 
+_Problem_: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
@@ -46,6 +46,8 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity; the delivery is safely handled over to the right customer
 * (optionally) The user acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised dleivery company; the user (customer) knows the delivery is legit
 
+_The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification.
+_
 
 ## Ecommerce example scenarios: secure sales
 ### 1. Customer identity and credential (age) verification ###
