@@ -62,7 +62,7 @@ In the context of ENSURESEC e-commerce the proposed use case will make use of th
 ## Ecommerce-SSI Bridge APIs Definition
 The list of provided APIs is shown in figure below.
 
-![ensuresec-ssi-bridge](./src/assets/diagrams/ensuresec-ssi-bridge.jpeg)
+![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
 ### Authentication Service 
 __Prefix:__ `/api/v1/authentication`
