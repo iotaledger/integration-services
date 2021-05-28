@@ -24,19 +24,19 @@ Below we provide examples on how the Bridge could be used in the context of ecom
 ## Ecommerce example scenarios: secure goods distribution
 ### 1. Delivery company identity and scanners verification ###
 
-_Problem_: Proof of Delivery: avoid goods being stolen in transit; avoid threats and frauds in the distribution chain 
+__Problem__: Proof of Delivery: avoid goods being stolen in transit; avoid threats and frauds in the distribution chain 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An authorised employee of a delivery company registers an _organization_ decentralised identity for its company using the Ecommerce-SSI Bridge
+* An authorised employee of a delivery company registers an _organization_ decentralized identity for its company using the Ecommerce-SSI Bridge
 * An e-commerce operator verifies the delivery company identity and use the Bridge to issue a credential for the company to deliver on their behalf
 * The authorised employee of the registered delivery company registers decentralized identities for the scanners (i.e. android scanners) used by the company couriers
 * The authorised employee use the Ecommerce-Bridge to issue authorisation credentials for handling delivery to each courier device (with the credential stored locally into the device)
 * When a courier hands over the delivery the scanner uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
 * The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by the authorised courier and not stolen in transit
 
-### 1. Customer identity and delivery verification ###
+### 2. Customer identity and delivery verification ###
 
-_Problem_: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain 
+__Problem__: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
@@ -46,16 +46,15 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity; the delivery is safely handled over to the right customer
 * (optionally) The user acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised dleivery company; the user (customer) knows the delivery is legit
 
-_The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification.
-_
+_The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification._
 
 ## Ecommerce example scenarios: secure sales
 ### 1. Customer identity and credential (age) verification ###
 
-_Problem_: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability.
+__Problem__: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability.
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An authorised bank employee registers an _organization_ decentralised identity for its bank
+* An authorised bank employee registers an _organization_ decentralized identity for its bank
 * A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
 * The user requests an Issuer (e.g., the bank) to issue a credential staying her age
 * The issuer uses information about the user held on local record (and previously verified) and the Ecommerce-SSI Bridge to create and issue a Verifiable Credential to the user
@@ -66,7 +65,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 
 ### 2. Seller identity verification ### 
 
-_Problem_: Verify sellers identity and product authenticity; reducing small sellers compliance burden.
+__Problem__: Verify sellers identity and product authenticity; reducing small sellers compliance burden.
 
 In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An e-commerce site allows a seller authorised employee to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
