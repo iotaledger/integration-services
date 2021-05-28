@@ -8,7 +8,7 @@ const getIndex = (link: string, userId: string) => `${link}-${userId}`;
 export const getChannelData = async (channelAddress: string, userId: string, limit?: number, index?: number): Promise<any> => {
 	const query = { channelAddress, userId };
 	const skip = index > 0 ? (index - 1) * limit : 0;
-	const options = limit != null ? { limit, skip } : undefined;
+	const options = limit != null ? { limit, skip, sort: { creationDate: 1 } } : undefined;
 
 	const channelData = await MongoDbService.getDocuments<any>(collectionName, query, options);
 	return channelData.map((data) => {

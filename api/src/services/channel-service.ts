@@ -80,13 +80,9 @@ export class ChannelService {
 		return logs.channelData;
 	};
 
-	getLogsFromDatabase = async (channelAddress: string, userId: string) => {
-		return ChannelDataDb.getChannelData(channelAddress, userId);
-	};
-
-	getLogs = async (channelAddress: string, userId: string) => {
+	getLogs = async (channelAddress: string, userId: string, options?: { limit: number; index: number }) => {
 		await this.fetchLogsFromTangle(channelAddress, userId);
-		return await this.getLogsFromDatabase(channelAddress, userId);
+		return await ChannelDataDb.getChannelData(channelAddress, userId, options?.limit, options?.index);
 	};
 
 	addLogs = async (channelAddress: string, publicPayload: string, maskedPayload: string, userId: string) => {
