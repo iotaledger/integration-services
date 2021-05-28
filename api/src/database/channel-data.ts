@@ -3,19 +3,30 @@ import { MongoDbService } from '../services/mongodb-service';
 import { ChannelData } from '../models/types/channel-data';
 
 const collectionName = CollectionNames.channelData;
+const getIndex = (link: string, userId: string) => `${link}-${userId}`;
 
-export const getChannelData = async (channelAddress: string, limit?: number, index?: number): Promise<any> => {
-	const query = { _id: channelAddress };
+export const getChannelData = async (channelAddress: string, userId: string, limit?: number, index?: number): Promise<any> => {
+	const query = { channelAddress, userId };
 	const skip = index > 0 ? (index - 1) * limit : 0;
 	const options = limit != null ? { limit, skip } : undefined;
 
-	return await MongoDbService.getDocuments<any>(collectionName, query, options);
+	const channelData = await MongoDbService.getDocuments<any>(collectionName, query, options);
+	return channelData.map((data) => {
+		const { link, maskedPayload, publicPayload } = data;
+		return {
+			link,
+			publicPayload,
+			maskedPayload
+		};
+	});
 };
 
-export const addChannelData = async (channelData: ChannelData[]): Promise<void> => {
+export const addChannelData = async (channelAddress: string, userId: string, channelData: ChannelData[]): Promise<void> => {
 	const documents = channelData.map((data) => {
 		return {
-			_id: data.link,
+			_id: getIndex(data.link, userId),
+			channelAddress,
+			userId,
 			...data
 		};
 	});
