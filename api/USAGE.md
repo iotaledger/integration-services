@@ -22,11 +22,30 @@ The figure below shows the envisioned system architecture (within the full set o
 Below we provide examples on how the Bridge could be used in the context of ecommerce ecosystems, in particular: 1) secure goods distribution 2) secure sales.
 
 ## Ecommerce example scenarios: secure goods distribution
+### 1. Delivery company identity and scanners verification ###
 
-_Problem_: Proof of Delivery: avoid goods being stolen and gurantee being delivered to the correct customer
+_Problem_: Proof of Delivery: avoid goods being stolen in transit; avoid threats and frauds in the distribution chain 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* TBD
+* An authorised employee of a delivery company registers an _organization_ decentralised identity for its company using the Ecommerce-SSI Bridge
+* An e-commerce operator verifies the delivery company identity and use the Bridge to issue a credential for the company to deliver on their behalf
+* The authorised employee of the registered delivery company registers decentralized identities for the scanners (i.e. android scanners) used by the company couriers
+* The authorised employee use the Ecommerce-Bridge to issue authorisation credentials for handling delivery to each courier device (with the credential stored locally into the device)
+* When a courier hands over the delivery the scanner uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
+* The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by the authorised courier and not stolen in transit
+
+### 1. Customer identity and delivery verification ###
+
+_Problem_: Proof of Delivery: guarantee goods being delivered to the right customer; avoid threats and frauds in the distribution chain 
+
+In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
+* A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
+* A user performs a purchase on an e-commerce site (see below use case 2 in case of age verification is required)
+* The e-commerce site uses the Ecommerce-SSI Bridge to issue a proof of purchase credential to the user (this is saved to the user phone) 
+* The user receives the good delivery and present the credential in the form af a QR code to the courier scanner
+* The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity; the delivery is safely handled over to the right customer
+* (optionally) The user acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised dleivery company; the user (customer) knows the delivery is legit
+
 
 ## Ecommerce example scenarios: secure sales
 ### 1. Customer identity and credential (age) verification ###
