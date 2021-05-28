@@ -91,11 +91,11 @@ __Prefix:__ `/api/v1/authentication`
 
 `GET /trusted-roots`
 
-Returns a list of trusted root identity IDs.
+Returns a list of trusted root identity IDs. Trusted roots are IDs of identities which are trusted by the bridge. This identity IDs can be IDs of other companies, by adding them to the list trusted roots their verifiable credentials are trusted when checking at the bridge.
 
 `GET /latest-document/{user-id}`
 
-Get the latest version of an identity from the tangle.
+Get the latest version of an identity document from the tangle.
 
 `POST /create-identity`
 
@@ -103,11 +103,11 @@ Create a new decentralized digital identity. It will be signed and published to 
 
 `GET /check-verification`
 
-Check the verification of a user. Validates the signed identity against the tangle and checks if the issuer of the credential is a trusted root.
+Check the verifiable credential of a user. Validates the signed verifiable credential against the tangle and checks if the issuer id of the credential is a trusted root.
 
 `POST /verify-user`
 
-Verify a user, device or organization at the api. Only verified users with assigned privileges can verify other identities at the api. Having a verified identity provides the opportunity that other users are able to identify and verify a subscriber or publisher of a channel. 
+Verify a user, device or organization etc. at the api. Only verified users with assigned privileges can verify other identities at the api. Having a verified identity provides the opportunity that other users are able to identify and verify a subscriber by the verifiable credential. 
 
 `POST /revoke-verification`
 
@@ -127,7 +127,7 @@ __Prefix:__ `/api/v1/users`
 
 `GET /search`
 
-Search for a user in the system which returns a list of queried users in the system. 
+Search for users in the system which returns a list of queried users in the system. 
 
 `GET /user/{user-id}`
 
@@ -135,11 +135,11 @@ Get information about a specific user by its user-id.
 
 `PUT /user`
 
-Update user data. 
+Update user data of an existing user.
 
 `POST /user`
 
-Register a new user in the system. Registering a user in the system makes it possible to search for him by the username.
+Register a new user in the system, this can be used if the identity already exists or will be created locally. Registering a user in the system makes it possible to search for him by for instance the username.
 
 `DELETE /user/{user-id}`
 
@@ -225,15 +225,11 @@ The `key` field of the body is the essential part which must be stored by the cl
 
 ### 2. Authentication and authorise an identity
 
-An identity can be used to authenticate a user to a number of services provided by the Bridge. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication are as following:
+An identity can be used to authenticate a user to a number of services provided by the Bridge. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication for the SSI bridge are as following:
 
 - get('/users/search')
 - put('/users/user')
 - delete('/users/user/:userId')
-- get('/channel-info/search')
-- post('/channel-info/channel')
-- put('/channel-info/channel')
-- delete('/channel-info/channel/:channelAddress')
 - post('/authentication/verify-user')
 - post('/authentication/revoke-verification')
 
@@ -663,7 +659,9 @@ After the credential got revoked the verifiable credential can be checked again 
 
 ### 7. Trusted roots
 
-In regard to support verifiable credentials of other systems, the root of their network of trust can be added to the api. When checking a verifiable credential it checks:
+In regard to support verifiable credentials of other systems, the root id of their network of trust can be added to the bridge. For instance if Company X has the id `did:iota:abc` and Company Z `did:iota:xyz`. Company X can add the did `did:iota:xyz` next to his trusted root id to also trust credentials signed by Company Z.
+
+When checking a verifiable credential it checks:
 
 - Is the signature and content of the credential the same
 - Is the credential valid or revoked
