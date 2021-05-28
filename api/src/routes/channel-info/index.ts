@@ -76,7 +76,7 @@ export class ChannelInfoRoutes {
 				throw error;
 			}
 
-			const result = await this.channelInfoService.updateChannelInfo(channelInfoBody);
+			const result = await this.channelInfoService.updateChannelTopic(channelInfoBody);
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'No channel info found to update!' });
 				return;

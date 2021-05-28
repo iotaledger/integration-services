@@ -6,7 +6,6 @@ import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/authentication';
 import { AuthorizationService } from '../../services/authorization-service';
-import { SchemaValidator } from '../../utils/validator';
 
 export class UserRoutes {
 	private readonly userService: UserService;
@@ -45,8 +44,6 @@ export class UserRoutes {
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const user: User = req.body;
-			const validator = SchemaValidator.getInstance();
-			validator.validateUser(user);
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {

@@ -18,7 +18,9 @@ export const CONFIG: Config = {
 	databaseUrl: process.env.DATABASE_URL,
 	databaseName: process.env.DATABASE_NAME,
 	serverIdentityId: process.env.SERVER_IDENTITY,
+	streamsNode: process.env.IOTA_STREAMS_NODE,
 	serverSecret: process.env.SERVER_SECRET,
+	apiKey: process.env.API_KEY,
 	identityConfig: IdentityConfig,
 	jwtExpiration: '2 days'
 };
@@ -33,6 +35,11 @@ const assertConfig = (config: Config) => {
 
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
+			// apiKey can be empty if the host decides so
+			if (Object.keys(config)[i] === 'apiKey') {
+				return;
+			}
+
 			console.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
 		}
 	});

@@ -38,7 +38,7 @@ export const addChannelInfo = async (channelInfo: ChannelInfoPersistence): Promi
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
+export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
 	const query = {
 		_id: channelInfo.channelAddress
 	};
@@ -46,6 +46,37 @@ export const updateChannelInfo = async (channelInfo: ChannelInfoPersistence): Pr
 	const update = {
 		$set: {
 			topics
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const updateLatestChannelLink = async (channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> => {
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			latestLink
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const addChannelSubscriberId = async (channelAddress: string, subscriberId: string): Promise<UpdateWriteOpResult> => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.subscriberIds || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			subscriberIds: [...subs, subscriberId]
 		}
 	};
 
