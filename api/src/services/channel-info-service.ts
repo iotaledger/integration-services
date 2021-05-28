@@ -41,9 +41,17 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
 	};
 
-	updateChannelInfo = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
+	updateChannelTopic = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
-		return ChannelInfoDb.updateChannelInfo(channelInfoPersistence);
+		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
+	};
+
+	updateLatestChannelLink = async (channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> => {
+		return ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
+	};
+
+	addChannelSubscriberId = async (channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> => {
+		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	};
 
 	deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
@@ -51,8 +59,8 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
-		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || isEmpty(ci.authorId)) {
-			throw new Error('Error when parsing the body: channelAddress and author must be provided!');
+		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || !ci.authorId) {
+			throw new Error('Error when parsing the body: channelAddress, topic and author must be provided!');
 		}
 
 		const channelInfoPersistence: ChannelInfoPersistence = {
@@ -60,6 +68,7 @@ export class ChannelInfoService {
 			authorId: ci.authorId,
 			subscriberIds: ci.subscriberIds || [],
 			topics: ci.topics,
+			latestLink: ci.latestLink,
 			channelAddress: ci.channelAddress,
 			latestMessage: ci.latestMessage && getDateFromString(ci.created)
 		};
@@ -68,7 +77,7 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
-		if (cip == null || isEmpty(cip.channelAddress) || isEmpty(cip.authorId)) {
+		if (cip == null || isEmpty(cip.channelAddress) || !cip.authorId) {
 			throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
 		}
 
@@ -77,6 +86,7 @@ export class ChannelInfoService {
 			authorId: cip.authorId,
 			subscriberIds: cip.subscriberIds || [],
 			topics: cip.topics,
+			latestLink: cip.latestLink,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress
 		};

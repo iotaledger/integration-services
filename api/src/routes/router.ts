@@ -14,6 +14,17 @@ import { RevokeVerificationSchema, VerifyUserSchema } from '../models/schemas/au
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
 import { VerifiableCredentialSchema } from '../models/schemas/identity';
+import { ChannelRoutes } from './channel';
+import { StreamsService } from '../services/streams-service';
+import { ChannelService } from '../services/channel-service';
+import { SubscriptionService } from '../services/subscription-service';
+import { SubscriptionRoutes } from './subscription';
+import {
+	AddChannelLogBodySchema,
+	AuthorizeSubscriptionBodySchema,
+	CreateChannelBodySchema,
+	RequestSubscriptionBodySchema
+} from '../models/schemas/request-bodies';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -23,7 +34,7 @@ const authorizationService = new AuthorizationService(userService);
 const userRoutes = new UserRoutes(userService, authorizationService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
-const { serverSecret, jwtExpiration, serverIdentityId } = CONFIG;
+const { serverSecret, jwtExpiration, serverIdentityId, streamsNode } = CONFIG;
 const authMiddleWare = isAuth(serverSecret);
 
 userRouter.get('/user/:userId', getUser);
@@ -66,3 +77,22 @@ authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSche
 authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
 authenticationRouter.post('/check-verification', validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
 authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
+
+const streamsService = new StreamsService(streamsNode);
+const streamsConfig = { statePassword: serverSecret, streamsNode };
+const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
+const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig);
+
+const channelRoutes = new ChannelRoutes(channelService);
+const { addLogs, createChannel, getLogs } = channelRoutes;
+export const channelRouter = Router();
+channelRouter.post('/create', authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
+channelRouter.post('/logs/:channelAddress', authMiddleWare, validate({ body: AddChannelLogBodySchema }), addLogs);
+channelRouter.get('/logs/:channelAddress', authMiddleWare, getLogs);
+
+const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
+const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
+export const subscriptionRouter = Router();
+subscriptionRouter.get('/subscription/:channelAddress', authMiddleWare, getSubscriptions);
+subscriptionRouter.post('/request/:channelAddress', authMiddleWare, validate({ body: RequestSubscriptionBodySchema }), requestSubscription);
+subscriptionRouter.post('/authorize/:channelAddress', authMiddleWare, validate({ body: AuthorizeSubscriptionBodySchema }), authorizeSubscription);

@@ -92,7 +92,7 @@ describe('test GET channelInfo', () => {
 		const channelInfo: ChannelInfoPersistence = {
 			created: date,
 			authorId: 'test-author2',
-			subscriberIds: [],
+			latestLink: '',
 			topics: [
 				{
 					source: 'test',
@@ -113,6 +113,7 @@ describe('test GET channelInfo', () => {
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).toHaveBeenCalledWith({
 			authorId: 'test-author2',
+			latestLink: '',
 			channelAddress: 'test-address3',
 			created: getDateStringFromDate(date),
 			latestMessage: null,
@@ -147,7 +148,7 @@ describe('test POST channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		subscriberIds: [],
+		latestLink: '',
 		topics: [{ source: 'test', type: 'test-type' }]
 	};
 
@@ -244,10 +245,10 @@ describe('test PUT channelInfo', () => {
 
 	const validBody: ChannelInfo = {
 		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		latestLink: '',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		subscriberIds: [],
 		topics: [{ source: 'test', type: 'test-type' }]
 	};
 
@@ -290,7 +291,7 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should return 404 since no channel updated', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 0 } });
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
 			user: { userId: validBody.authorId },
@@ -300,13 +301,13 @@ describe('test PUT channelInfo', () => {
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(res.send).toHaveBeenCalledWith({ error: 'No channel info found to update!' });
 		expect(res.status).toHaveBeenCalledWith(404);
 	});
 
 	it('should update expected channel info', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
 			user: { userId: validBody.authorId },
@@ -316,12 +317,12 @@ describe('test PUT channelInfo', () => {
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalled();
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(sendStatusMock).toHaveBeenCalledWith(200);
 	});
 
 	it('should not update expected channel info since not allowed', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.returnValue({ result: { n: 1 } });
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
 			user: { userId: 'did:iota:123456' }, // different userId as authorId
@@ -331,12 +332,12 @@ describe('test PUT channelInfo', () => {
 
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalled();
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(0);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(0);
 		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
 	});
 
 	it('should call next(err) if an error occurs', async () => {
-		const updateChannelInfoSpy = spyOn(ChannelInfoDb, 'updateChannelInfo').and.callFake(() => {
+		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.callFake(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
@@ -346,7 +347,7 @@ describe('test PUT channelInfo', () => {
 		};
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 
-		expect(updateChannelInfoSpy).toHaveBeenCalledTimes(1);
+		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
 		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
 	});

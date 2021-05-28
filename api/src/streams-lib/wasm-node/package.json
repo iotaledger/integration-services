@@ -1,0 +1,24 @@
+{
+  "name": "iota_streams_wasm",
+  "collaborators": [
+    "huhn511 <huhn@einfachIOTA.de>",
+    "Vlad Semenov <vlad.semenov@iota.org>",
+    "Dyrell Chapman <dyrell.chapman@iota.org>",
+    "Brord van Wierst <brord@iota.org>"
+  ],
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iotaledger/streams"
+  },
+  "files": [
+    "iota_streams_wasm_bg.wasm",
+    "iota_streams_wasm.js",
+    "iota_streams_wasm_bg.js",
+    "iota_streams_wasm.d.ts"
+  ],
+  "main": "iota_streams_wasm.js",
+  "homepage": "https://www.iota.org",
+  "types": "iota_streams_wasm.d.ts"
+}

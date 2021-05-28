@@ -8,6 +8,7 @@ export interface Config {
 	serverIdentityId: string;
 	identityConfig: IdentityConfig;
 	serverSecret: string;
+	streamsNode: string;
 	jwtExpiration: string;
 }
 
