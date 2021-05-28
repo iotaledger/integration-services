@@ -23,8 +23,10 @@ import {
 	AddChannelLogBodySchema,
 	AuthorizeSubscriptionBodySchema,
 	CreateChannelBodySchema,
+	ProveOwnershipPostBodySchema,
 	RequestSubscriptionBodySchema
 } from '../models/schemas/request-bodies';
+import { hasValidApiKey } from '../middlewares/api-key';
 
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
@@ -34,25 +36,26 @@ const authorizationService = new AuthorizationService(userService);
 const userRoutes = new UserRoutes(userService, authorizationService);
 const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
 export const userRouter = Router();
-const { serverSecret, jwtExpiration, serverIdentityId, streamsNode } = CONFIG;
+const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
 const authMiddleWare = isAuth(serverSecret);
+const apiKeyMiddleware = hasValidApiKey(apiKey);
 
-userRouter.get('/user/:userId', getUser);
-userRouter.get('/search', authMiddleWare, searchUsers);
-userRouter.post('/user', validate({ body: UserSchema }), addUser);
-userRouter.put('/user', authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
-userRouter.delete('/user/:userId', authMiddleWare, deleteUser);
+userRouter.get('/user/:userId', apiKeyMiddleware, getUser);
+userRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
+userRouter.post('/user', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
+userRouter.put('/user', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
+userRouter.delete('/user/:userId', apiKeyMiddleware, authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } = channelInfoRoutes;
 export const channelInfoRouter = Router();
 
-channelInfoRouter.get('/channel/:channelAddress', getChannelInfo);
-channelInfoRouter.get('/search', authMiddleWare, searchChannelInfo);
-channelInfoRouter.post('/channel', authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
-channelInfoRouter.put('/channel', authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
-channelInfoRouter.delete('/channel/:channelAddress', authMiddleWare, deleteChannelInfo);
+channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
+channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannelInfo);
+channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
+channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
+channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
 const identityService = IdentityService.getInstance(CONFIG.identityConfig);
 const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration, serverIdentityId, serverSecret });
@@ -61,22 +64,28 @@ const {
 	createIdentity,
 	verifyUser,
 	checkVerifiableCredential,
-	getChallenge,
+	getNonce,
 	revokeVerifiableCredential,
 	getLatestDocument,
-	auth,
+	proveOwnership,
 	getTrustedRootIdentities
 } = authenticationRoutes;
 export const authenticationRouter = Router();
 
-authenticationRouter.get('/latest-document/:userId', getLatestDocument);
-authenticationRouter.get('/trusted-roots', getTrustedRootIdentities);
-authenticationRouter.get('/challenge/:userId', getChallenge);
-authenticationRouter.post('/auth/:userId', auth);
-authenticationRouter.post('/create-identity', validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/verify-user', authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
-authenticationRouter.post('/check-verification', validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
-authenticationRouter.post('/revoke-verification', authMiddleWare, validate({ body: RevokeVerificationSchema }), revokeVerifiableCredential);
+authenticationRouter.get('/latest-document/:userId', apiKeyMiddleware, getLatestDocument);
+authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
+authenticationRouter.get('/prove-ownership/:userId', apiKeyMiddleware, getNonce);
+authenticationRouter.post('/prove-ownership/:userId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+authenticationRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
+authenticationRouter.post('/verify-user', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
+authenticationRouter.post('/check-verification', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
+authenticationRouter.post(
+	'/revoke-verification',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: RevokeVerificationSchema }),
+	revokeVerifiableCredential
+);
 
 const streamsService = new StreamsService(streamsNode);
 const streamsConfig = { statePassword: serverSecret, streamsNode };
@@ -86,13 +95,25 @@ const channelService = new ChannelService(streamsService, channelInfoService, su
 const channelRoutes = new ChannelRoutes(channelService);
 const { addLogs, createChannel, getLogs } = channelRoutes;
 export const channelRouter = Router();
-channelRouter.post('/create', authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
-channelRouter.post('/logs/:channelAddress', authMiddleWare, validate({ body: AddChannelLogBodySchema }), addLogs);
-channelRouter.get('/logs/:channelAddress', authMiddleWare, getLogs);
+channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
+channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: AddChannelLogBodySchema }), addLogs);
+channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, getLogs);
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
 const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 export const subscriptionRouter = Router();
-subscriptionRouter.get('/subscription/:channelAddress', authMiddleWare, getSubscriptions);
-subscriptionRouter.post('/request/:channelAddress', authMiddleWare, validate({ body: RequestSubscriptionBodySchema }), requestSubscription);
-subscriptionRouter.post('/authorize/:channelAddress', authMiddleWare, validate({ body: AuthorizeSubscriptionBodySchema }), authorizeSubscription);
+subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
+subscriptionRouter.post(
+	'/request/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: RequestSubscriptionBodySchema }),
+	requestSubscription
+);
+subscriptionRouter.post(
+	'/authorize/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: AuthorizeSubscriptionBodySchema }),
+	authorizeSubscription
+);

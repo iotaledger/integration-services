@@ -14,9 +14,9 @@ export class SubscriptionRoutes {
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const { userId } = req.body; // TODO don't use body use query param!
+			const { userId } = req.body; // TODO#26 don't use body use query param!
 
-			// TODO also provide possibility to get all subscriptions
+			// TODO#26 also provide possibility to get all subscriptions
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, userId);
 			res.status(StatusCodes.OK).send(subscription);
 		} catch (error) {
@@ -28,7 +28,7 @@ export class SubscriptionRoutes {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { seed, accessRights } = req.body as RequestSubscriptionBody;
-			// TODO validate
+			// TODO#25 validate
 			const channel = await this.subscriptionService.requestSubscription(req.user.userId, channelAddress, accessRights, seed);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {

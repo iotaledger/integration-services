@@ -1,7 +1,9 @@
-# Setup the E-Commerce Audit Log API
----
+# **** Disclaimer ****
+This is work in progress and will evolve as IOTA core tools develop and ENSURESEC project requirements update
+# Setup the E-Commerce Tools
+
 ## 1. Copy .env file
----
+
 > This section must be done for local development start or when starting via docker.
 
 Copy the `./api/.env-example` and rename it to `./api/.env`
@@ -35,9 +37,7 @@ Make sure you use the same username and password for the `DATABASE_URL` as in `M
 
 > If you run the api through docker you need to set the ip of the machine the database is running on if you use `npm run start` you can use `0.0.0.0` as host!
 
----
 ## 2. Local Development
----
 
 For local development it makes sense to only use docker for the database and use nodejs to run the api.
 
@@ -88,9 +88,7 @@ Started API Server on port 3000
 Successfully connected to mongodb
 ```
 
----
 ## 3. Run all using Docker
----
 
 3.1. Start the api
 
