@@ -10,6 +10,7 @@ export const ChannelInfoSchema = Type.Object({
 	authorId: Type.String({ minLength: 50, maxLength: 53 }),
 	subscriberIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
 	latestLink: Type.String(),
+	encrypted: Type.Boolean(),
 	topics: Type.Array(TopicSchema),
 	created: Type.Optional(Type.String()),
 	latestMessage: Type.Optional(Type.String())

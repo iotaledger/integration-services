@@ -6,6 +6,7 @@ import { SubscriptionService } from './subscription-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData } from '../models/types/channel-data';
+import { ChannelLog } from '../models/types/request-bodies';
 
 export class ChannelService {
 	private readonly password: string;
@@ -27,7 +28,7 @@ export class ChannelService {
 		this.password = config.statePassword;
 	}
 
-	create = async (userId: string, topics: Topic[], seed?: string): Promise<{ seed: string; channelAddress: string }> => {
+	create = async (userId: string, topics: Topic[], encrypted: boolean, seed?: string): Promise<{ seed: string; channelAddress: string }> => {
 		const res = await this.streamsService.create(seed);
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');
@@ -49,6 +50,7 @@ export class ChannelService {
 		await this.channelInfoService.addChannelInfo({
 			topics,
 			authorId: userId,
+			encrypted,
 			channelAddress: res.channelAddress,
 			latestLink: res.channelAddress
 		});
@@ -58,6 +60,10 @@ export class ChannelService {
 
 	fetchLogsFromTangle = async (channelAddress: string, userId: string): Promise<ChannelData[]> => {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, userId);
+		if (!subscription) {
+			throw new Error('no subscription found!');
+		}
+
 		const isAuth = subscription.type === SubscriptionType.Author;
 		const sub = await this.subscriptionPool.get(channelAddress, userId, isAuth, this.password);
 		if (!sub) {
@@ -85,7 +91,7 @@ export class ChannelService {
 		return await ChannelDataDb.getChannelData(channelAddress, userId, options?.limit, options?.index);
 	};
 
-	addLogs = async (channelAddress: string, publicPayload: string, maskedPayload: string, userId: string) => {
+	addLogs = async (channelAddress: string, userId: string, channelLog: ChannelLog) => {
 		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 		const isAuth = channelInfo.authorId === userId;
 		// TODO encrypt/decrypt seed
@@ -94,7 +100,7 @@ export class ChannelService {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
 		}
-		const res = await this.streamsService.addLogs(latestLink, publicPayload, maskedPayload, sub);
+		const res = await this.streamsService.addLogs(latestLink, sub, channelLog);
 		await this.subscriptionService.updateSubscriptionState(
 			channelAddress,
 			userId,

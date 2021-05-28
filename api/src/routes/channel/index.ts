@@ -13,14 +13,14 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { topics, seed } = req.body as CreateChannelBody;
+			const { topics, seed, encrypted } = req.body as CreateChannelBody;
 			const { userId } = req.user;
 
 			if (!userId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.create(userId, topics, seed);
+			const channel = await this.channelService.create(userId, topics, encrypted, seed);
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);
@@ -53,13 +53,13 @@ export class ChannelRoutes {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { userId } = req.user;
-			const { publicPayload, maskedPayload } = req.body as AddChannelLogBody;
+			const body = req.body as AddChannelLogBody;
 
 			if (!channelAddress || !userId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.addLogs(channelAddress, publicPayload, maskedPayload, userId);
+			const channel = await this.channelService.addLogs(channelAddress, userId, body);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

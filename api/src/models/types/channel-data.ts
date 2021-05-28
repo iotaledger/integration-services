@@ -1,5 +1,6 @@
+import { ChannelLog } from './request-bodies';
+
 export interface ChannelData {
 	link: string;
-	publicPayload: string;
-	maskedPayload: string;
+	channelLog: ChannelLog;
 }
