@@ -30,11 +30,11 @@ export const UserWithoutIdSchema = Type.Object({
 });
 
 export const UserSchema = Type.Object({
-	userId: Type.String({ minLength: 53, maxLength: 53 }), // did
+	userId: Type.String({ minLength: 50, maxLength: 53 }), // did
 	publicKey: Type.String({ minLength: 10 }),
 	...UserWithoutIdFields
 });
 
 export const UpdateUserSchema = Type.Object({
-	userId: Type.String({ minLength: 53, maxLength: 53 }) // did
+	userId: Type.String({ minLength: 50, maxLength: 53 }) // did
 });
