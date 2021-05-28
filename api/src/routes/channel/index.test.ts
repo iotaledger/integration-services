@@ -90,7 +90,7 @@ describe('test channel routes', () => {
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			// TODO author should be the exported string not object
+			// TODO#105 author should be the exported string not object
 			expect(res.send).toHaveBeenCalledWith({ author: {}, channelAddress: '1234234234', seed: 'verysecretseed' });
 		});
 	});
