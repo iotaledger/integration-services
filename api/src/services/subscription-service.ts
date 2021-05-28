@@ -41,7 +41,6 @@ export class SubscriptionService {
 		accessRights?: AccessRights,
 		seed?: string
 	): Promise<{ seed: string; subscriptionLink: string }> => {
-		// TODO check seed size == 81 if not null
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
@@ -54,7 +53,7 @@ export class SubscriptionService {
 			state: this.streamsService.exportSubscription(res.subscriber, this.password)
 		};
 
-		await this.subscriptionPool.add(res.subscriber, subscriberId, channelAddress, false);
+		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
 		await subscriptionDb.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);

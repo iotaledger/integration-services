@@ -27,6 +27,9 @@ export class ChannelService {
 
 	create = async (userId: string, topics: Topic[], seed?: string): Promise<{ seed: string; channelAddress: string }> => {
 		const res = await this.streamsService.create(seed);
+		if (!res?.seed || !res?.channelAddress || !res?.author) {
+			throw new Error('could not create the channel');
+		}
 
 		const subscription: Subscription = {
 			userId,
@@ -39,7 +42,7 @@ export class ChannelService {
 			isAuthorized: true
 		};
 
-		await this.subscriptionPool.add(res.author, userId, res.channelAddress, true);
+		await this.subscriptionPool.add(res.channelAddress, res.author, userId, true);
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,

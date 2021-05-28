@@ -23,25 +23,21 @@ export class SubscriptionPool {
 		return SubscriptionPool.instance;
 	}
 
-	add(subscription: Author | Subscriber, userId: string, channelAddress: string, isAuthor: boolean) {
+	add(channelAddress: string, subscription: Author | Subscriber, userId: string, isAuthor: boolean) {
 		if (isAuthor) {
 			this.authors = [...this.authors, { author: <Author>subscription, channelAddress, userId }];
-			console.log('added author to the pool');
 		} else {
 			this.subscribers = [...this.subscribers, { subscriber: <Subscriber>subscription, channelAddress, userId }];
-			console.log('added subscriber to the pool');
 		}
 	}
 
 	async restoreSubscription(channelAddress: string, userId: string, password: string) {
 		const sub = await SubscriptionDb.getSubscription(channelAddress, userId);
 		if (!sub?.state) {
-			// TODO handle properly
-			console.log('No state found to restore!');
-			return;
+			throw new Error(`no subscription found for channelAddress: ${channelAddress} and userId: ${userId}`);
 		}
-		const isAuthor = sub.type === SubscriptionType.Author;
 
+		const isAuthor = sub.type === SubscriptionType.Author;
 		const options = new streams.SendOptions(9, true, 1);
 		const client = new streams.Client(this.node, options.clone());
 
@@ -56,15 +52,14 @@ export class SubscriptionPool {
 		const predicate = (pool: any) => pool.userId === userId && pool.channelAddress === channelAddress;
 		let subscription = null;
 		if (isAuthor) {
-			subscription = this.authors.filter(predicate)[0]?.author;
+			subscription = this.authors.filter(predicate)?.[0]?.author;
 		} else {
-			subscription = this.subscribers.filter(predicate)[0]?.subscriber;
+			subscription = this.subscribers.filter(predicate)?.[0]?.subscriber;
 		}
 		if (!subscription) {
 			// try to restore subscription from state in db
 			subscription = await this.restoreSubscription(channelAddress, userId, password);
 		}
-		console.log('found subscription in pool: ', subscription);
 
 		return subscription;
 	}
