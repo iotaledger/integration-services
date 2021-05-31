@@ -220,8 +220,11 @@ The request returns the following body:
     "txHash": "eda7001adc5e8c9b9b473ca6586cfe9deab3f19e4ce9fba0bbead09e5b649dce"
 }
 ```
+The `doc`field contains the created identity document of the newly created identity. Furthermore `doc.id` is the unique user id of the identity.
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to authenticate at the API.
+
+The `txHash`contains the transaction hash of the identity creation which can be used to query the identity at a iota explorer.
 _
 In production environments it is recommended that each organization installs and runs its Bridge locally. In case of centralized Bridge the Bridge implementation should be adapted to only receive the identity public (with private/public key pair generated locally)._
 
