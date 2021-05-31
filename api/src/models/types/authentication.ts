@@ -1,9 +1,9 @@
 import Express from 'express';
 import { Static } from '@sinclair/typebox';
-import { RevokeVerificationSchema, VerifyUserSchema } from '../schemas/authentication';
+import { RevokeVerificationSchema, VerifyIdentitySchema } from '../schemas/authentication';
 import { User } from './user';
 
-export type VerifyUserBody = Static<typeof VerifyUserSchema>;
+export type VerifyIdentityBody = Static<typeof VerifyIdentitySchema>;
 export type RevokeVerificationBody = Static<typeof RevokeVerificationSchema>;
 
 export interface AuthenticatedRequest extends Express.Request {
