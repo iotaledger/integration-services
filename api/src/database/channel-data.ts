@@ -11,13 +11,7 @@ export const getChannelData = async (channelAddress: string, userId: string, lim
 	const options = limit != null ? { limit, skip, sort: { creationDate: 1 } } : undefined;
 
 	const channelDataArr = await MongoDbService.getDocuments<ChannelData>(collectionName, query, options);
-	return channelDataArr.map((data: ChannelData) => {
-		const { link, channelLog } = data;
-		return {
-			link,
-			channelLog
-		};
-	});
+	return channelDataArr.map(({ link, channelLog }) => ({ link, channelLog }));
 };
 
 export const addChannelData = async (channelAddress: string, userId: string, channelData: ChannelData[]): Promise<void> => {

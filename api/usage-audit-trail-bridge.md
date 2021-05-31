@@ -63,7 +63,7 @@ _Response:_
 
 `POST /logs`
 
-Write data to a channel. __Write__ permission is mandatory. 
+Write data to a channel. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
 
 _Body:_
 
