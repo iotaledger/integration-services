@@ -3,19 +3,19 @@ import { MongoDbService } from '../services/mongodb-service';
 
 const collectionName = CollectionNames.auth;
 
-export const getChallenge = async (userId: string): Promise<{ userId: string; challenge: string }> => {
+export const getNonce = async (userId: string): Promise<{ userId: string; nonce: string }> => {
 	const query = { _id: userId };
-	return await MongoDbService.getDocument<{ userId: string; challenge: string }>(collectionName, query);
+	return await MongoDbService.getDocument<{ userId: string; nonce: string }>(collectionName, query);
 };
 
-export const upsertChallenge = async (challengResponse: { userId: string; challenge: string }) => {
-	const query = { _id: challengResponse.userId };
+export const upsertNonce = async (userId: string, nonce: string) => {
+	const query = { _id: userId };
 	const update = {
-		$set: { _id: challengResponse.userId, userId: challengResponse.userId, challenge: challengResponse.challenge }
+		$set: { _id: userId, userId, nonce }
 	};
 
 	const res = await MongoDbService.updateDocument(collectionName, query, update, { upsert: true });
 	if (!res?.result?.n) {
-		throw new Error('could not add or update the challenge!');
+		throw new Error('could not add or update the message to sign!');
 	}
 };

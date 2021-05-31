@@ -6,7 +6,7 @@ import { UserService } from '../services/user-service';
 import { IdentityService } from '../services/identity-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
-import { getHexEncodedKey, signChallenge, verifiyChallenge } from '../utils/encryption';
+import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
 import { CreateIdentityBody } from '../models/types/identity';
 
@@ -81,13 +81,13 @@ export async function setupApi() {
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
 		console.log('Check if server has valid keypair...');
-		const challenge = 'test-challenge-to-solve';
+		const nonce = createNonce();
 		let verified = false;
 		try {
-			const signedChallenge = await signChallenge(getHexEncodedKey(serverIdentity.key.secret), challenge);
-			verified = await verifiyChallenge(getHexEncodedKey(serverIdentity.key.public), challenge, signedChallenge);
+			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.key.secret), nonce);
+			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), nonce, signedNonce);
 		} catch (e) {
-			console.error('error when signing or verifying the challenge, the secret key might have changed...');
+			console.error('error when signing or verifying the nonce, the secret key might have changed...');
 		}
 		if (!verified) {
 			throw new Error('server keys cannot be verified!');

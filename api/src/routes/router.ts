@@ -23,6 +23,7 @@ import {
 	AddChannelLogBodySchema,
 	AuthorizeSubscriptionBodySchema,
 	CreateChannelBodySchema,
+	ProveOwnershipPostBodySchema,
 	RequestSubscriptionBodySchema
 } from '../models/schemas/request-bodies';
 import { hasValidApiKey } from '../middlewares/api-key';
@@ -63,18 +64,18 @@ const {
 	createIdentity,
 	verifyUser,
 	checkVerifiableCredential,
-	getChallenge,
+	getNonce,
 	revokeVerifiableCredential,
 	getLatestDocument,
-	auth,
+	proveOwnership,
 	getTrustedRootIdentities
 } = authenticationRoutes;
 export const authenticationRouter = Router();
 
 authenticationRouter.get('/latest-document/:userId', apiKeyMiddleware, getLatestDocument);
 authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
-authenticationRouter.get('/challenge/:userId', apiKeyMiddleware, getChallenge);
-authenticationRouter.post('/auth/:userId', apiKeyMiddleware, auth);
+authenticationRouter.get('/prove-ownership/:userId', apiKeyMiddleware, getNonce);
+authenticationRouter.post('/prove-ownership/:userId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
 authenticationRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/verify-user', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
 authenticationRouter.post('/check-verification', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);

@@ -1,26 +1,26 @@
 import { Config } from '../config';
-import { getHexEncodedKey, signChallenge } from '../utils/encryption';
+import { getHexEncodedKey, signNonce } from '../utils/encryption';
 import axios from 'axios';
 
 export const fetchAuth = async (identity: any) => {
-	console.log('requesting challenge to sign...');
+	console.log('requesting nonce to sign...');
 
-	const url = `${Config.baseUrl}/api/v1/authentication/challenge/${identity.doc.id}`;
+	const url = `${Config.baseUrl}/api/v1/authentication/prove-ownership/${identity.doc.id}`;
 	const res = await axios.get(url);
 	if (res.status !== 200) {
-		console.error('didnt receive status 200 on get-challenge!');
+		console.error('didnt receive status 200 on get request for prove-ownership!');
 		return;
 	}
 	const body = await res.data;
-	const challenge: string = body.challenge;
-	console.log('received challenge: ', challenge);
+	const nonce: string = body.nonce;
+	console.log('received nonce: ', nonce);
 
 	const encodedKey = await getHexEncodedKey(identity.key.secret);
-	const signedChallenge = await signChallenge(encodedKey, challenge);
-	console.log('signed challenge: ', signedChallenge);
+	const signedNonce = await signNonce(encodedKey, nonce);
+	console.log('signed nonce: ', signedNonce);
 
-	console.log('requesting authentication token using signed challenge...', identity.doc.id);
-	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/auth/${identity.doc.id}`, JSON.stringify({ signedChallenge }), {
+	console.log('requesting authentication token using signed nonce...', identity.doc.id);
+	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/prove-ownership/${identity.doc.id}`, JSON.stringify({ signedNonce }), {
 		method: 'post',
 		headers: { 'Content-Type': 'application/json' }
 	});

@@ -139,7 +139,7 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	getChallenge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getNonce = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 			const userId = req.params && decodeParam(<string>req.params['userId']);
@@ -149,26 +149,26 @@ export class AuthenticationRoutes {
 				return;
 			}
 
-			const challenge = await this.authenticationService.getChallenge(userId);
-			res.status(StatusCodes.OK).send({ challenge });
+			const nonce = await this.authenticationService.getNonce(userId);
+			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
 			next(error);
 		}
 	};
 
-	auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	proveOwnership = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 			const userId = req.params && decodeParam(<string>req.params['userId']);
 			const body = req.body;
-			const signedChallenge = body?.signedChallenge;
+			const signedNonce = body?.signedNonce;
 
-			if (!signedChallenge || !userId) {
+			if (!signedNonce || !userId) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
 			}
 
-			const jwt = await this.authenticationService.authenticate(signedChallenge, userId);
+			const jwt = await this.authenticationService.authenticate(signedNonce, userId);
 			res.status(StatusCodes.OK).send({ jwt });
 		} catch (error) {
 			next(error);
