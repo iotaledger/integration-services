@@ -21,7 +21,7 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
 	};
 
 	const plainQuery = MongoDbService.getPlainObject(query);
-	const skip = index > 0 ? (index - 1) * limit : 0;
+	const skip = index > 0 ? index * limit : 0;
 	const options = { limit, skip };
 
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, plainQuery, options);
