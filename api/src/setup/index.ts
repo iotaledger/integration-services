@@ -73,7 +73,7 @@ export async function setupApi() {
 		}
 
 		console.log('Set server identity as verified...');
-		await authenticationService.verifyUser(serverUser, serverUser.userId, serverUser.userId);
+		await authenticationService.verifyIdentity(serverUser, serverUser.userId, serverUser.userId);
 		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.userId}`);
 		process.exit(0);
 	} else {

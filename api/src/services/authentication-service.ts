@@ -87,7 +87,7 @@ export class AuthenticationService {
 		};
 	};
 
-	verifyUser = async (subject: User, issuerId: string, initiatorId: string) => {
+	verifyIdentity = async (subject: User, issuerId: string, initiatorId: string) => {
 		const jsonldGen = new JsonldGenerator();
 		const data = jsonldGen.jsonldUserData(subject.type, subject.data);
 

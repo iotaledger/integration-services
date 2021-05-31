@@ -51,7 +51,7 @@ describe('test authentication routes', () => {
 			status: jest.fn(() => res)
 		};
 	});
-	describe('test verifyUser route', () => {
+	describe('test verifyIdentity route', () => {
 		let createVerifiableCredentialSpy: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
 		let getNextCredentialIndexSpy: any, addVerifiableCredentialSpy: any, updateUserVerificationSpy: any, addUserVCSpy: any;
 		const vcMock = { VCMOCK: 1 };
@@ -77,7 +77,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
@@ -99,7 +99,7 @@ describe('test authentication routes', () => {
 					}
 				}
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
@@ -118,7 +118,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
@@ -140,7 +140,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
@@ -160,7 +160,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
@@ -182,7 +182,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
@@ -232,7 +232,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id,
 				vc: vcMock
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
@@ -295,7 +295,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id,
 				vc: vcMock
 			};
-			await authenticationRoutes.verifyUser(req, res, nextMock);
+			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);

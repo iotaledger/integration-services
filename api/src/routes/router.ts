@@ -10,7 +10,7 @@ import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { IdentityService } from '../services/identity-service';
-import { RevokeVerificationSchema, VerifyUserSchema } from '../models/schemas/authentication';
+import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/authentication';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
 import { VerifiableCredentialSchema } from '../models/schemas/identity';
@@ -62,7 +62,7 @@ const authenticationService = new AuthenticationService(identityService, userSer
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, CONFIG);
 const {
 	createIdentity,
-	verifyUser,
+	verifyIdentity,
 	checkVerifiableCredential,
 	getNonce,
 	revokeVerifiableCredential,
@@ -77,7 +77,7 @@ authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdent
 authenticationRouter.get('/prove-ownership/:userId', apiKeyMiddleware, getNonce);
 authenticationRouter.post('/prove-ownership/:userId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
 authenticationRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/verify-user', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyUserSchema }), verifyUser);
+authenticationRouter.post('/verify-identity', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), verifyIdentity);
 authenticationRouter.post('/check-verification', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
 authenticationRouter.post(
 	'/revoke-verification',
