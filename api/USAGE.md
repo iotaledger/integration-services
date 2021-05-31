@@ -105,13 +105,13 @@ Create a new decentralized digital identity (DID). It will be signed and publish
 
 Check the verifiable credential of a user. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
 
-`POST /verify-user`
+`POST /verify-identity`
 
-Verify a user, device or organization at the API Bridge. Only verified users with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other users are able to identify and verify a subscriber by the verifiable credential. 
+Verify an identity like a person, device or organization at the API Bridge. Only verified identities with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other users are able to identify and verify a subscriber by the verifiable credential. 
 
 `POST /revoke-verification`
 
-Remove the verification of a user. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the user itself can do that.
+Remove the verification of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the user itself can do that.
 
 `GET /prove-ownership/{user-id}`
 
@@ -235,12 +235,12 @@ An identity can be used to authenticate a user to a number of services provided 
 - get('/users/search')
 - put('/users/user')
 - delete('/users/user/:userId')
-- post('/authentication/verify-user')
+- post('/authentication/verify-identity')
 - post('/authentication/revoke-verification')
 
 How the client can authenticate at the API is described in the following sequence diagram which refers to verify user (section 3) as an example.
 
-![verify user sd](./src/assets/diagrams/verify-user-sd.jpeg)
+![verify user sd](./src/assets/diagrams/verify-identity-sd.jpeg)
 
 As described in the sequence diagram the client must request and then sign a nonce in order to being able to authenticate at the API. Therefore two scripts must be implemented by the client `getHexEncodedKey` & `signNonce` which are described in the following:
 
@@ -360,7 +360,7 @@ Everyone can create an identity and add any data to such identity, that is why i
 
 The endpoint of this request is as following:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/verify-user
+https://ensuresec.solutions.iota.org/api/v0.1/authentication/verify-identity
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
 

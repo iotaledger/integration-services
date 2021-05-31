@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/types/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyUserBody } from '../../models/types/authentication';
+import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/authentication';
 import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -34,10 +34,10 @@ export class AuthenticationRoutes {
 		}
 	};
 
-	verifyUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	verifyIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const verifyUserBody: VerifyUserBody = req.body;
-			const { initiatorVC, subjectId, checkExistingVC } = verifyUserBody;
+			const verifyIdentityBody: VerifyIdentityBody = req.body;
+			const { initiatorVC, subjectId, checkExistingVC } = verifyIdentityBody;
 			const requestUser = req.user;
 			const subject = await this.userService.getUser(subjectId);
 			if (!subject) {
@@ -54,7 +54,7 @@ export class AuthenticationRoutes {
 				throw error;
 			}
 
-			const vc: VerifiableCredentialJson = await this.authenticationService.verifyUser(
+			const vc: VerifiableCredentialJson = await this.authenticationService.verifyIdentity(
 				subject,
 				this.config.serverIdentityId,
 				initiatorVC?.credentialSubject?.id || requestUser.userId
