@@ -99,6 +99,7 @@ describe('test GET channelInfo', () => {
 					type: 'test-type'
 				}
 			],
+			encrypted: true,
 			latestMessage: null,
 			channelAddress: 'test-address3'
 		};
@@ -118,7 +119,8 @@ describe('test GET channelInfo', () => {
 			created: getDateStringFromDate(date),
 			latestMessage: null,
 			subscriberIds: [],
-			topics: [{ source: 'test', type: 'test-type' }]
+			topics: [{ source: 'test', type: 'test-type' }],
+			encrypted: true
 		});
 	});
 
@@ -149,7 +151,8 @@ describe('test POST channelInfo', () => {
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
 		latestLink: '',
-		topics: [{ source: 'test', type: 'test-type' }]
+		topics: [{ source: 'test', type: 'test-type' }],
+		encrypted: true
 	};
 
 	beforeEach(() => {
@@ -249,7 +252,8 @@ describe('test PUT channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		topics: [{ source: 'test', type: 'test-type' }]
+		topics: [{ source: 'test', type: 'test-type' }],
+		encrypted: true
 	};
 
 	beforeEach(() => {

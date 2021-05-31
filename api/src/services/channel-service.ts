@@ -5,8 +5,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
-import { ChannelData } from '../models/types/channel-data';
-import { ChannelLog } from '../models/types/request-bodies';
+import { ChannelData, ChannelLog } from '../models/types/channel-data';
 
 export class ChannelService {
 	private readonly password: string;
@@ -101,6 +100,12 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
 		}
 		const res = await this.streamsService.addLogs(latestLink, sub, channelLog);
+
+		// store prev logs in db, they are not fetchable again after writing to a channel
+		if (res?.prevLogs && res?.prevLogs.length > 0) {
+			await ChannelDataDb.addChannelData(channelAddress, userId, res.prevLogs);
+		}
+
 		await this.subscriptionService.updateSubscriptionState(
 			channelAddress,
 			userId,

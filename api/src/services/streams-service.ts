@@ -1,5 +1,4 @@
-import { ChannelData } from '../models/types/channel-data';
-import { ChannelLog } from '../models/types/request-bodies';
+import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
 
@@ -62,18 +61,20 @@ export class StreamsService {
 		latestLink: string,
 		subscription: Author | Subscriber,
 		channelLog: ChannelLog
-	): Promise<{ link: string; subscription: Author | Subscriber }> => {
+	): Promise<{ link: string; subscription: Author | Subscriber; prevLogs: ChannelData[] }> => {
 		try {
 			const latestAddress = Address.from_string(latestLink);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			let response: any = null;
+			const prevLogs = (await this.getLogs(subscription))?.channelData;
 			await subscription.clone().sync_state();
 			response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response.get_link();
 
 			return {
 				link: tag_link.to_string(),
+				prevLogs,
 				subscription
 			};
 		} catch (error) {
@@ -106,7 +107,7 @@ export class StreamsService {
 					.map((userResponse: any) => {
 						const link = userResponse?.get_link()?.to_string();
 						const message = userResponse.get_message();
-						let maskedPayload = message && fromBytes(message.get_masked_payload());
+						const maskedPayload = message && fromBytes(message.get_masked_payload());
 						try {
 							const channelData: ChannelData = {
 								link,
