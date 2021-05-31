@@ -44,6 +44,7 @@ Get data from the stream. First entry is the start of the subscription. __Read__
 _Body:_
 
 ```
+-
 ```
 
 _Response:_
@@ -105,6 +106,7 @@ Get information about a channel.
 _Body:_
 
 ```
+-
 ```
 
 _Response:_
@@ -146,6 +148,7 @@ _Body:_
 
 _Response:_
 ```
+-
 ```
 
 
@@ -172,6 +175,7 @@ _Body:_
 
 _Response:_
 ```
+-
 ```
 
 
@@ -182,10 +186,12 @@ Delete information of a channel. The author of a channel can delete its entry in
 _Body:_
 
 ```
+-
 ```
 
 _Response:_
 ```
+-
 ```
 
 `GET /search`
