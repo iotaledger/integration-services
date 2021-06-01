@@ -3,7 +3,7 @@ dotenv.config();
 import { MongoDbService } from '../services/mongodb-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
-import { IdentityService } from '../services/identity-service';
+import { SsiService } from '../services/ssi-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
 import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
@@ -26,7 +26,7 @@ export async function setupApi() {
 	// key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
 
 	const userService = new UserService();
-	const identityService = IdentityService.getInstance(CONFIG.identityConfig);
+	const identityService = SsiService.getInstance(CONFIG.identityConfig);
 	const tmpAuthenticationService = new AuthenticationService(identityService, userService, {
 		jwtExpiration: '2 days',
 		serverSecret,

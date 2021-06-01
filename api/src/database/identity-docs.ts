@@ -4,7 +4,7 @@ import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { DocumentJsonUpdate, IdentityJsonUpdate } from '../models/types/identity';
 import { decrypt, encrypt } from '../utils/encryption';
 
-const collectionName = CollectionNames.identitiesCollection;
+const collectionName = CollectionNames.identityDocsCollection;
 
 export const getIdentity = async (id: string, secret: string): Promise<IdentityJsonUpdate | null> => {
 	const query = { _id: id };

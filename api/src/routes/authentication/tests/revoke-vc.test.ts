@@ -1,6 +1,6 @@
 import { DeviceIdentityMock, ServerIdentityMock } from '../../../test/mocks/identities';
-import * as IdentitiesDb from '../../../database/identities';
-import { IdentityService } from '../../../services/identity-service';
+import * as IdentityDocsDb from '../../../database/identity-docs';
+import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { AuthenticationService } from '../../../services/authentication-service';
 import { IdentityConfig } from '../../../models/config';
@@ -18,7 +18,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let identityService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	const SignatureValue = 'SignatureOfTheVc';
 	beforeEach(() => {
 		sendMock = jest.fn();
@@ -36,7 +36,7 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		identityService = IdentityService.getInstance(identityConfig);
+		identityService = SsiService.getInstance(identityConfig);
 		userService = new UserService();
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
@@ -59,9 +59,9 @@ describe('test authentication routes', () => {
 			// since we won't have a linkedIdentity for it won't go further
 			const linkedIdentity: any = null;
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity');
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity');
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential');
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -95,9 +95,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -131,9 +131,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -168,9 +168,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -211,9 +211,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -253,9 +253,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -296,9 +296,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -337,9 +337,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {
@@ -380,9 +380,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(DeviceIdentityMock.userData); // return the device
@@ -423,9 +423,9 @@ describe('test authentication routes', () => {
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(DeviceIdentityMock.userData); // return the device
@@ -461,9 +461,9 @@ describe('test authentication routes', () => {
 				revoked: false
 			};
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const revokeVerifiableCredentialSpy = spyOn(identityService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentitiesDb, 'updateIdentityDoc');
+			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
 			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
 			const updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			const req: any = {

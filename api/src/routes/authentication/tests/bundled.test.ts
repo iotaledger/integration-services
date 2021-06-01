@@ -1,10 +1,10 @@
 import { IdentityConfig } from '../../../models/config';
-import { IdentityService } from '../../../services/identity-service';
+import { SsiService } from '../../../services/ssi-service';
 import { AuthenticationRoutes } from '../index';
 import { AuthenticationService } from '../../../services/authentication-service';
 import { UserService } from '../../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
-import * as IdentitiesDb from '../../../database/identities';
+import * as IdentityDocsDb from '../../../database/identity-docs';
 import * as AuthDb from '../../../database/auth';
 import { User } from '../../../models/types/user';
 import * as EncryptionUtils from '../../../utils/encryption';
@@ -17,7 +17,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let identityService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -34,7 +34,7 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		identityService = IdentityService.getInstance(identityConfig);
+		identityService = SsiService.getInstance(identityConfig);
 		userService = new UserService();
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(identityService, userService, {
@@ -54,7 +54,7 @@ describe('test authentication routes', () => {
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
 			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(UserIdentityMock);
-			const saveIdentitySpy = spyOn(IdentitiesDb, 'saveIdentity').and.returnValue(UserIdentityMock);
+			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity').and.returnValue(UserIdentityMock);
 			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
 				params: {},
@@ -86,7 +86,7 @@ describe('test authentication routes', () => {
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
 			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(UserIdentityMock);
-			const saveIdentitySpy = spyOn(IdentitiesDb, 'saveIdentity');
+			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity');
 			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
 				params: {},

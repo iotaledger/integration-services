@@ -9,7 +9,7 @@ import { AuthenticationService } from '../services/authentication-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
-import { IdentityService } from '../services/identity-service';
+import { SsiService } from '../services/ssi-service';
 import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/authentication';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
@@ -57,7 +57,7 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
-const identityService = IdentityService.getInstance(CONFIG.identityConfig);
+const identityService = SsiService.getInstance(CONFIG.identityConfig);
 const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration, serverIdentityId, serverSecret });
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, CONFIG);
 const {

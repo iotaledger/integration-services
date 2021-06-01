@@ -10,13 +10,13 @@ import {
 	Credential
 } from '../models/types/identity';
 import { User, VerificationUpdatePersistence } from '../models/types/user';
-import { IdentityService } from './identity-service';
+import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
 import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as AuthDb from '../database/auth';
-import * as IdentitiesDb from '../database/identities';
+import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
@@ -25,13 +25,13 @@ import { JsonldGenerator } from '../utils/jsonld';
 
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
-	private readonly identityService: IdentityService;
+	private readonly identityService: SsiService;
 	private readonly userService: UserService;
 	private readonly serverSecret: string;
 	private readonly serverIdentityId: string;
 	private readonly jwtExpiration: string;
 
-	constructor(identityService: IdentityService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
+	constructor(identityService: SsiService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
 		const { serverSecret, jwtExpiration, serverIdentityId } = authenticationServiceConfig;
 		this.identityService = identityService;
 		this.userService = userService;
@@ -51,7 +51,7 @@ export class AuthenticationService {
 	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
 		const index = KEY_COLLECTION_INDEX;
 		const count = KEY_COLLECTION_SIZE;
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId, this.serverSecret);
+		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
@@ -65,7 +65,7 @@ export class AuthenticationService {
 	};
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
-		return IdentitiesDb.getIdentity(did, this.serverSecret);
+		return IdentityDocsDb.getIdentity(did, this.serverSecret);
 	}
 
 	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
@@ -79,7 +79,7 @@ export class AuthenticationService {
 		await this.userService.addUser(user);
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
-			await IdentitiesDb.saveIdentity(identity, this.serverSecret);
+			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
 		}
 
 		return {
@@ -114,7 +114,7 @@ export class AuthenticationService {
 			keys: keyCollection.keys
 		};
 
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId, this.serverSecret);
+		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
@@ -136,7 +136,7 @@ export class AuthenticationService {
 	};
 
 	checkVerifiableCredential = async (vc: VerifiableCredentialJson): Promise<boolean> => {
-		const serverIdentity: IdentityJson = await IdentitiesDb.getIdentity(this.serverIdentityId, this.serverSecret);
+		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentity(this.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
@@ -151,7 +151,7 @@ export class AuthenticationService {
 	revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence, issuerId: string) => {
 		const subjectId = vcp.vc.id;
 
-		const issuerIdentity: IdentityJsonUpdate = await IdentitiesDb.getIdentity(issuerId, this.serverSecret);
+		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
@@ -198,7 +198,7 @@ export class AuthenticationService {
 	};
 
 	private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
-		await IdentitiesDb.updateIdentityDoc(docUpdate);
+		await IdentityDocsDb.updateIdentityDoc(docUpdate);
 	};
 
 	getLatestDocument = async (did: string) => {
