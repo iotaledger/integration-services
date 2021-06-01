@@ -62,11 +62,11 @@ channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddl
 const authenticationService = new AuthenticationService(ssiService, userService, { jwtExpiration, serverIdentityId, serverSecret });
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, CONFIG);
 const {
-	verifyIdentity,
+	createVerifiableCredential,
 	checkVerifiableCredential,
-	getNonce,
 	revokeVerifiableCredential,
 	getLatestDocument,
+	getNonce,
 	proveOwnership,
 	getTrustedRootIdentities
 } = authenticationRoutes;
@@ -76,10 +76,16 @@ authenticationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLa
 authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
 authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
-authenticationRouter.post('/verify-identity', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), verifyIdentity);
-authenticationRouter.post('/check-verification', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
 authenticationRouter.post(
-	'/revoke-verification',
+	'/create-credential',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: VerifyIdentitySchema }),
+	createVerifiableCredential
+);
+authenticationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
+authenticationRouter.post(
+	'/revoke-credential',
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeVerificationSchema }),

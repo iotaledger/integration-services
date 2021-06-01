@@ -23,7 +23,7 @@ export class AuthenticationRoutes {
 		this.config = config;
 	}
 
-	verifyIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const verifyIdentityBody: VerifyIdentityBody = req.body;
 			const { initiatorVC, subjectId, checkExistingVC } = verifyIdentityBody;
