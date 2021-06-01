@@ -4,6 +4,8 @@ import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
+import * as ChannelDataDb from '../database/channel-data';
+import { ChannelData } from '../models/types/channel-data';
 
 export class ChannelService {
 	private readonly password: string;
@@ -54,7 +56,7 @@ export class ChannelService {
 		return res;
 	};
 
-	getLogs = async (channelAddress: string, userId: string) => {
+	fetchLogsFromTangle = async (channelAddress: string, userId: string): Promise<ChannelData[]> => {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, userId);
 		const isAuth = subscription.type === SubscriptionType.Author;
 		const sub = await this.subscriptionPool.get(channelAddress, userId, isAuth, this.password);
@@ -62,12 +64,25 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and userId: ${userId}`);
 		}
 		const logs = await this.streamsService.getLogs(sub);
+		if (!logs) {
+			return [];
+		}
 		await this.subscriptionService.updateSubscriptionState(
 			channelAddress,
 			userId,
 			this.streamsService.exportSubscription(logs.subscription, this.password)
 		);
-		return logs;
+
+		// store logs in database
+		if (logs.channelData?.length > 0) {
+			await ChannelDataDb.addChannelData(channelAddress, userId, logs.channelData);
+		}
+		return logs.channelData;
+	};
+
+	getLogs = async (channelAddress: string, userId: string, options?: { limit: number; index: number }) => {
+		await this.fetchLogsFromTangle(channelAddress, userId);
+		return await ChannelDataDb.getChannelData(channelAddress, userId, options?.limit, options?.index);
 	};
 
 	addLogs = async (channelAddress: string, publicPayload: string, maskedPayload: string, userId: string) => {

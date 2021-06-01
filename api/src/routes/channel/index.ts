@@ -36,7 +36,13 @@ export class ChannelRoutes {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.getLogs(channelAddress, userId);
+			const limitParam = parseInt(<string>req.query.limit, 10);
+			const indexParam = parseInt(<string>req.query.index, 10);
+			const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
+			const index = isNaN(indexParam) ? undefined : indexParam;
+			const options = limit !== undefined && index !== undefined && { limit, index };
+
+			const channel = await this.channelService.getLogs(channelAddress, userId, options);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

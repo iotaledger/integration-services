@@ -1,3 +1,4 @@
+import { ChannelData } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
 
@@ -84,42 +85,44 @@ export class StreamsService {
 
 	getLogs = async (
 		subscription: Author | Subscriber
-	): Promise<{ publicData: string[]; maskedData: string[]; subscription: Author | Subscriber; latestLink: string }> => {
-		try {
-			let exists = true;
-			let publicData: string[] = [];
-			let maskedData: string[] = [];
-			let latestLink = '';
+	): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber; latestLink: string }> => {
+		let foundNewMessage = true;
+		let channelData: ChannelData[] = [];
+		let latestLink = '';
 
-			while (exists) {
-				let next_msgs: any = [];
+		while (foundNewMessage) {
+			let next_msgs: any = [];
 
-				next_msgs = await subscription.clone().fetch_next_msgs();
+			next_msgs = await subscription.clone().fetch_next_msgs();
 
-				if (next_msgs.length === 0) {
-					exists = false;
-				} else {
-					latestLink = next_msgs[next_msgs.length - 1]?.get_link()?.to_string();
-				}
-
-				for (let i = 0; i < next_msgs.length; i++) {
-					const pubPayload = next_msgs[i].get_message().get_public_payload();
-					const maskedPayload = next_msgs[i].get_message().get_masked_payload();
-					publicData = [...publicData, fromBytes(pubPayload)];
-					maskedData = [...maskedData, fromBytes(maskedPayload)];
-				}
+			if (next_msgs.length === 0) {
+				foundNewMessage = false;
+			} else {
+				latestLink = next_msgs[next_msgs.length - 1]?.get_link()?.to_string();
 			}
 
-			return {
-				publicData,
-				maskedData,
-				subscription,
-				latestLink
-			};
-		} catch (error) {
-			console.log('Error from streams sdk:', error);
-			throw new Error('could not get logs from the channel');
+			if (next_msgs && next_msgs.length > 0) {
+				const cData = next_msgs.map((userResponse: any) => {
+					const link = userResponse?.get_link()?.to_string();
+					const message = userResponse.get_message();
+					const publicPayload = message && fromBytes(message.get_public_payload());
+					const maskedPayload = message && fromBytes(message.get_masked_payload());
+
+					return {
+						link,
+						publicPayload,
+						maskedPayload
+					};
+				});
+				channelData = [...channelData, ...cData];
+			}
 		}
+
+		return {
+			channelData,
+			subscription,
+			latestLink
+		};
 	};
 
 	requestSubscription = async (
