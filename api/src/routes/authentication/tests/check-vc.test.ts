@@ -15,7 +15,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let identityService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -32,10 +32,10 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		identityService = SsiService.getInstance(identityConfig);
+		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService();
 		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(identityService, userService, {
+		authenticationService = new AuthenticationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
@@ -52,7 +52,7 @@ describe('test authentication routes', () => {
 	describe('test checkVerifiableCredential route', () => {
 		it('should throw an error since no server identity is found with the id!', async () => {
 			const isVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(isVerified);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
 			// no server identity found
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(null);
 			const req: any = {
@@ -69,7 +69,7 @@ describe('test authentication routes', () => {
 
 		it('should throw error since no trusted roots found!', async () => {
 			const isVerified = false;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(isVerified);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([]);
 
@@ -88,7 +88,7 @@ describe('test authentication routes', () => {
 
 		it('should return false since since root is not trusted', async () => {
 			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ userId: 'did:iota:123noissuer' }]);
 
@@ -108,7 +108,7 @@ describe('test authentication routes', () => {
 
 		it('should return false since it is not verified', async () => {
 			const vcIsVerified = false;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ userId: ServerIdentityMock.doc.id }]);
 
@@ -127,7 +127,7 @@ describe('test authentication routes', () => {
 		});
 		it('should return true since vc is verified and root is trusted', async () => {
 			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ userId: ServerIdentityMock.doc.id }]);
 

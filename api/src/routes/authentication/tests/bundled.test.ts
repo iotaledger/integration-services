@@ -17,7 +17,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let identityService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -34,10 +34,10 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		identityService = SsiService.getInstance(identityConfig);
+		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService();
 		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(identityService, userService, {
+		authenticationService = new AuthenticationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
@@ -53,7 +53,7 @@ describe('test authentication routes', () => {
 
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
-			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(UserIdentityMock);
+			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
 			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity').and.returnValue(UserIdentityMock);
 			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
@@ -85,7 +85,7 @@ describe('test authentication routes', () => {
 		});
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
-			const identitySpy = spyOn(identityService, 'createIdentity').and.returnValue(UserIdentityMock);
+			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
 			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity');
 			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
@@ -121,7 +121,7 @@ describe('test authentication routes', () => {
 
 	describe('test getLatestDocument route', () => {
 		it('should return bad request if no id for the identity is provided!', async () => {
-			const getLatestIdentitySpy = spyOn(identityService, 'getLatestIdentityJson');
+			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson');
 			const req: any = {
 				params: {},
 				body: null
@@ -135,7 +135,7 @@ describe('test authentication routes', () => {
 
 		it('should return the document of the id', async () => {
 			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
-			const getLatestIdentitySpy = spyOn(identityService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock);
+			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock);
 			const req: any = {
 				params: { userId: id },
 				body: null

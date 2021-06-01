@@ -18,7 +18,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let identityService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -35,10 +35,10 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		identityService = SsiService.getInstance(identityConfig);
+		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService();
 		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(identityService, userService, {
+		authenticationService = new AuthenticationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
@@ -57,7 +57,7 @@ describe('test authentication routes', () => {
 		const vcMock = { VCMOCK: 1 };
 		beforeEach(() => {
 			keyCollectionIndex = 0;
-			createVerifiableCredentialSpy = spyOn(identityService, 'createVerifiableCredential').and.returnValue(vcMock);
+			createVerifiableCredentialSpy = spyOn(ssiService, 'createVerifiableCredential').and.returnValue(vcMock);
 			getKeyCollectionSpy = spyOn(KeyCollectionDB, 'getKeyCollection').and.returnValue(KeyCollectionMock);
 			getNextCredentialIndexSpy = spyOn(KeyCollectionLinksDB, 'getNextCredentialIndex').and.returnValue(keyCollectionIndex);
 			addVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'addVerifiableCredential');

@@ -26,8 +26,8 @@ export async function setupApi() {
 	// key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
 
 	const userService = new UserService();
-	const identityService = SsiService.getInstance(CONFIG.identityConfig);
-	const tmpAuthenticationService = new AuthenticationService(identityService, userService, {
+	const ssiService = SsiService.getInstance(CONFIG.identityConfig);
+	const tmpAuthenticationService = new AuthenticationService(ssiService, userService, {
 		jwtExpiration: '2 days',
 		serverSecret,
 		serverIdentityId
@@ -51,7 +51,7 @@ export async function setupApi() {
 		console.log('==================================================================================================');
 
 		// re-create the authentication service with a valid server identity id
-		const authenticationService = new AuthenticationService(identityService, userService, {
+		const authenticationService = new AuthenticationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: identity.doc.id

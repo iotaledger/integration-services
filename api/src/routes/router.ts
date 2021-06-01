@@ -57,8 +57,8 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
-const identityService = SsiService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration, serverIdentityId, serverSecret });
+const ssiService = SsiService.getInstance(CONFIG.identityConfig);
+const authenticationService = new AuthenticationService(ssiService, userService, { jwtExpiration, serverIdentityId, serverSecret });
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, CONFIG);
 const {
 	createIdentity,
