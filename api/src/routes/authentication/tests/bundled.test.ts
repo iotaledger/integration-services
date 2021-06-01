@@ -2,7 +2,7 @@ import { IdentityConfig } from '../../../models/config';
 import { SsiService } from '../../../services/ssi-service';
 import { AuthenticationRoutes } from '../index';
 import { AuthenticationService } from '../../../services/authentication-service';
-import { UserService } from '../../../services/user-service';
+import { IdentityService } from '../../../services/identity-service';
 import { StatusCodes } from 'http-status-codes';
 import * as IdentityDocsDb from '../../../database/identity-docs';
 import * as AuthDb from '../../../database/auth';
@@ -16,7 +16,7 @@ const validUserMock = UserIdentityMock.userData;
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let userService: UserService;
+	let identityService: IdentityService;
 	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
@@ -35,14 +35,14 @@ describe('test authentication routes', () => {
 			hashEncoding: 'base58'
 		};
 		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService();
-		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(ssiService, userService, {
+		identityService = new IdentityService();
+		const authorizationService = new AuthorizationService(identityService);
+		authenticationService = new AuthenticationService(ssiService, identityService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, identityService, authorizationService, config);
 
 		res = {
 			send: sendMock,
@@ -55,7 +55,7 @@ describe('test authentication routes', () => {
 		it('should send result for valid body', async () => {
 			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
 			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity').and.returnValue(UserIdentityMock);
-			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
+			const userSpy = spyOn(identityService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
 				params: {},
 				body: {
@@ -87,7 +87,7 @@ describe('test authentication routes', () => {
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
 			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
 			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity');
-			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
+			const userSpy = spyOn(identityService, 'addUser').and.returnValue({ result: { n: 1 } });
 			const req: any = {
 				params: {},
 				body: {
@@ -152,7 +152,7 @@ describe('test authentication routes', () => {
 		it('should return bad request because no userId provided.', async () => {
 			const userMock: User = null;
 
-			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const upsertNonceSpy = spyOn(AuthDb, 'upsertNonce');
 			const req: any = {
 				params: { userId: null },
@@ -170,7 +170,7 @@ describe('test authentication routes', () => {
 		it('should throw an error since no user with the userId is found', async () => {
 			const userMock: User = null;
 			const userId = 'NO_USER_FOUND_WITH_THIS_ID';
-			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const upsertNonceSpy = spyOn(AuthDb, 'upsertNonce');
 			const req: any = {
 				params: { userId },
@@ -185,7 +185,7 @@ describe('test authentication routes', () => {
 		});
 		it('should return a valid nonce to solve', async () => {
 			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(validUserMock);
+			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(validUserMock);
 			const upsertNonceSpy = spyOn(AuthDb, 'upsertNonce');
 			const req: any = {
 				params: { userId },
@@ -225,7 +225,7 @@ describe('test authentication routes', () => {
 		it('should throw error since no user found', async () => {
 			const userMock: User = null;
 			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const req: any = {
 				params: { userId },
 				body: { signedNonce: 'SIGNED_NONCE' }
@@ -242,7 +242,7 @@ describe('test authentication routes', () => {
 			const userMock: User = validUserMock;
 			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 
-			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const getNonceSpy = spyOn(AuthDb, 'getNonce').and.returnValue({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' });
 			const verifySignedNonceSpy = spyOn(EncryptionUtils, 'verifySignedNonce').and.returnValue(verified);
 			const req: any = {
@@ -266,7 +266,7 @@ describe('test authentication routes', () => {
 			const verified = true;
 			const userMock: User = validUserMock;
 			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
+			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const getNonceSpy = spyOn(AuthDb, 'getNonce').and.returnValue({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' });
 			const verifySignedNonceSpy = spyOn(EncryptionUtils, 'verifySignedNonce').and.returnValue(verified);
 			const req: any = {

@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { MongoDbService } from '../services/mongodb-service';
 import { CONFIG } from '../config';
-import { UserService } from '../services/user-service';
+import { IdentityService } from '../services/identity-service';
 import { SsiService } from '../services/ssi-service';
 import { AuthenticationService } from '../services/authentication-service';
 import { addTrustedRootId } from '../database/trusted-roots';
@@ -25,9 +25,9 @@ export async function setupApi() {
 	// TODO create database, documents and indexes in mongodb at the first time!
 	// key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
 
-	const userService = new UserService();
+	const identityService = new IdentityService();
 	const ssiService = SsiService.getInstance(CONFIG.identityConfig);
-	const tmpAuthenticationService = new AuthenticationService(ssiService, userService, {
+	const tmpAuthenticationService = new AuthenticationService(ssiService, identityService, {
 		jwtExpiration: '2 days',
 		serverSecret,
 		serverIdentityId
@@ -51,13 +51,13 @@ export async function setupApi() {
 		console.log('==================================================================================================');
 
 		// re-create the authentication service with a valid server identity id
-		const authenticationService = new AuthenticationService(ssiService, userService, {
+		const authenticationService = new AuthenticationService(ssiService, identityService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: identity.doc.id
 		});
 
-		const serverUser = await userService.getUser(identity.doc.id);
+		const serverUser = await identityService.getUser(identity.doc.id);
 		if (!serverUser) {
 			throw new Error('server user not found!');
 		}

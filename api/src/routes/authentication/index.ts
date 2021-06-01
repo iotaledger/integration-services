@@ -4,7 +4,7 @@ import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/types
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
 import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/authentication';
-import { UserService } from '../../services/user-service';
+import { IdentityService } from '../../services/identity-service';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
@@ -13,13 +13,18 @@ import { VerifiableCredentialPersistence } from '../../models/types/key-collecti
 export class AuthenticationRoutes {
 	private readonly authenticationService: AuthenticationService;
 	readonly authorizationService: AuthorizationService;
-	readonly userService: UserService;
+	readonly identityService: IdentityService;
 	private readonly config: Config;
 
-	constructor(authenticationService: AuthenticationService, userService: UserService, authorizationService: AuthorizationService, config: Config) {
+	constructor(
+		authenticationService: AuthenticationService,
+		identityService: IdentityService,
+		authorizationService: AuthorizationService,
+		config: Config
+	) {
 		this.authenticationService = authenticationService;
 		this.authorizationService = authorizationService;
-		this.userService = userService;
+		this.identityService = identityService;
 		this.config = config;
 	}
 
@@ -39,7 +44,7 @@ export class AuthenticationRoutes {
 			const verifyIdentityBody: VerifyIdentityBody = req.body;
 			const { initiatorVC, subjectId, checkExistingVC } = verifyIdentityBody;
 			const requestUser = req.user;
-			const subject = await this.userService.getUser(subjectId);
+			const subject = await this.identityService.getUser(subjectId);
 			if (!subject) {
 				throw new Error('subject does not exist!');
 			}
@@ -76,7 +81,7 @@ export class AuthenticationRoutes {
 			verificationDate: date,
 			verificationIssuerId: requestId
 		};
-		await this.userService.updateUserVerification(vup);
+		await this.identityService.updateUserVerification(vup);
 		res.status(StatusCodes.OK).send(vup);
 	};
 

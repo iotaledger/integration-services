@@ -3,10 +3,10 @@ import { AuthorizationCheck } from '../models/types/authentication';
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
-	private readonly userService: UserService;
+	private readonly identityService: UserService;
 
-	constructor(userService: UserService) {
-		this.userService = userService;
+	constructor(identityService: UserService) {
+		this.identityService = identityService;
 	}
 
 	isAuthorized = async (requestUser: User, userId: string): Promise<AuthorizationCheck> => {
@@ -33,7 +33,7 @@ export class AuthorizationService {
 		if (role === UserRoles.Admin) {
 			return true;
 		} else if (role === UserRoles.Manager) {
-			const user = await this.userService.getUser(userId);
+			const user = await this.identityService.getUser(userId);
 			const hasSameOrganization = requestUser.organization === user?.organization;
 			if (hasSameOrganization) {
 				return true;

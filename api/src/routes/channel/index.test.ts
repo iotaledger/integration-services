@@ -12,7 +12,7 @@ describe('test channel routes', () => {
 	//const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, identityService: UserService, subscriptionService: SubscriptionService;
 
 	beforeEach(() => {
 		sendMock = jest.fn();
@@ -22,9 +22,9 @@ describe('test channel routes', () => {
 			streamsNode: '',
 			statePassword: 'test123'
 		};
-		userService = new UserService();
+		identityService = new UserService();
 		streamsService = new StreamsService(config.streamsNode);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService(identityService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService);

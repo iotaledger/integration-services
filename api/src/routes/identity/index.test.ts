@@ -1,19 +1,19 @@
-import { UserRoutes } from '.';
+import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
 import { UserPersistence, UserType, User, UserSearch } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
-import { UserService } from '../../services/user-service';
+import { IdentityService } from '../../services/identity-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 
 describe('test Search user', () => {
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, identityService: IdentityService, userRoutes: IdentityRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		const authorizationService = new AuthorizationService(userService);
-		userRoutes = new UserRoutes(userService, authorizationService);
+		identityService = new IdentityService();
+		const authorizationService = new AuthorizationService(identityService);
+		userRoutes = new IdentityRoutes(identityService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -54,14 +54,14 @@ describe('test Search user', () => {
 });
 
 describe('test GET user', () => {
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, identityService: IdentityService, userRoutes: IdentityRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		const authorizationService = new AuthorizationService(userService);
-		userRoutes = new UserRoutes(userService, authorizationService);
+		identityService = new IdentityService();
+		const authorizationService = new AuthorizationService(identityService);
+		userRoutes = new IdentityRoutes(identityService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -127,7 +127,7 @@ describe('test GET user', () => {
 });
 
 describe('test POST user', () => {
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, identityService: IdentityService, userRoutes: IdentityRoutes;
 	const validBody: User = {
 		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
@@ -142,9 +142,9 @@ describe('test POST user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		const authorizationService = new AuthorizationService(userService);
-		userRoutes = new UserRoutes(userService, authorizationService);
+		identityService = new IdentityService();
+		const authorizationService = new AuthorizationService(identityService);
+		userRoutes = new IdentityRoutes(identityService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -208,7 +208,7 @@ describe('test POST user', () => {
 });
 
 describe('test PUT user', () => {
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: UserRoutes, userService: UserService;
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: IdentityRoutes, identityService: IdentityService;
 	const validBody: User = {
 		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
@@ -223,9 +223,9 @@ describe('test PUT user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		const authorizationService = new AuthorizationService(userService);
-		userRoutes = new UserRoutes(userService, authorizationService);
+		identityService = new IdentityService();
+		const authorizationService = new AuthorizationService(identityService);
+		userRoutes = new IdentityRoutes(identityService, authorizationService);
 
 		res = {
 			send: sendMock,
@@ -309,15 +309,15 @@ describe('test PUT user', () => {
 });
 
 describe('test DELETE user', () => {
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: UserRoutes;
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, identityService: IdentityService, userRoutes: IdentityRoutes;
 
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		const authorizationService = new AuthorizationService(userService);
-		userRoutes = new UserRoutes(userService, authorizationService);
+		identityService = new IdentityService();
+		const authorizationService = new AuthorizationService(identityService);
+		userRoutes = new IdentityRoutes(identityService, authorizationService);
 
 		res = {
 			send: sendMock,
