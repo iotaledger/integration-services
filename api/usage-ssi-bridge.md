@@ -88,6 +88,137 @@ The list of provided APIs is shown in figure below.
 ### Authentication Service 
 __Prefix:__ `/api/v1/authentication`
 
+`GET /prove-ownership/{identity-id}`
+
+Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
+
+_Body:_
+
+```
+-
+```
+
+_Response:_
+```
+{
+    "nonce": string
+}
+```
+
+`POST /prove-ownership/{identity-id}`
+
+Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
+
+_Body:_
+
+```
+{
+    "signedNonce": string
+}
+```
+
+_Response:_
+
+```
+{
+    "jwt": string
+}
+```
+
+
+### Verification Service
+__Prefix:__ `/api/v1/verification`
+
+
+`GET /check-credential`
+
+Check the verifiable credential of a user. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
+
+_Body:_
+
+```
+{
+    "@context": string,
+    "id": string,
+    "type": string[],
+    "credentialSubject": any,
+    "issuer": string,
+    "issuanceDate": string,
+    "proof": {
+        "type": string,
+        "verificationMethod": string,
+        "signatureValue": string
+    }
+}
+```
+
+_Response:_
+```
+{
+    "isVerified": boolean
+}
+```
+
+`POST /create-credential`
+
+Verify an identity like a person, device or organization at the API Bridge. Only verified identities with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other identities are able to identify and verify a subscriber by the verifiable credential. 
+
+_Body:_
+
+```
+{
+    "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+    "initiatorVC": {
+        "@context": string,
+        "id": string,
+        "type": string[],
+        "credentialSubject": any,
+        "issuer": string,
+        "issuanceDate": string,
+        "proof": {
+            "type": string,
+            "verificationMethod": string,
+            "signatureValue": string
+        }
+    }
+}
+```
+
+_Response:_
+```
+{
+    "@context": string,
+    "id": string,
+    "type": string[],
+    "credentialSubject": any,
+    "issuer": string,
+    "issuanceDate": string,
+    "proof": {
+        "type": string,
+        "verificationMethod": string,
+        "signatureValue": string
+    }
+}
+```
+
+`POST /revoke-credential`
+
+Remove the verification of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the user itself can do that.
+
+_Body:_
+
+```
+{
+   "subjectId": string,
+   "signatureValue": string
+}
+```
+
+_Response:_
+```
+-
+```
+
 
 `GET /trusted-roots`
 
@@ -138,191 +269,13 @@ _Response:_
 }
 ```
 
-`POST /create-identity`
+### Identity Service 
 
-Create a new decentralized digital identity (DID). It will be signed and published to the Tangle! A digital identity can represent a device, user or even an organization. It is recommended to securely (encrypt) store the privateAuthKey locally, since it won’t be stored on the API side.
-
-_Body:_
-
-```
-{
-  "username": string,
-  "type": string,
-  "organization"?: string,
-  "data": {
-        "name"?: string,
-        "familyName"?: string,
-        "givenName"?: string,
-        "jobTitle"?: string,
-   }
-}
-```
-
-_Response:_
-```
-{
-    "doc": {
-        "id": string,
-        "authentication": [
-            {
-                "id": string,
-                "controller": string,
-                "type": string,
-                "publicKeyBase58": string,
-            }
-        ],
-        "created": string,
-        "updated": string,
-        "proof": {
-            "type": string,
-            "verificationMethod": string,
-            "signatureValue": string,
-        }
-    },
-    "key": {
-        "type": string,
-        "public": string,
-        "secret": string,
-        "encoding": string
-    },
-    "txHash": string
-}
-```
-
-`GET /check-verification`
-
-Check the verifiable credential of a user. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
-
-_Body:_
-
-```
-{
-    "@context": string,
-    "id": string,
-    "type": string[],
-    "credentialSubject": any,
-    "issuer": string,
-    "issuanceDate": string,
-    "proof": {
-        "type": string,
-        "verificationMethod": string,
-        "signatureValue": string
-    }
-}
-```
-
-_Response:_
-```
-{
-    "isVerified": boolean
-}
-```
-
-`POST /verify-identity`
-
-Verify an identity like a person, device or organization at the API Bridge. Only verified identities with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other users are able to identify and verify a subscriber by the verifiable credential. 
-
-_Body:_
-
-```
-{
-    "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
-    "initiatorVC": {
-        "@context": string,
-        "id": string,
-        "type": string[],
-        "credentialSubject": any,
-        "issuer": string,
-        "issuanceDate": string,
-        "proof": {
-            "type": string,
-            "verificationMethod": string,
-            "signatureValue": string
-        }
-    }
-}
-```
-
-_Response:_
-```
-{
-    "@context": string,
-    "id": string,
-    "type": string[],
-    "credentialSubject": any,
-    "issuer": string,
-    "issuanceDate": string,
-    "proof": {
-        "type": string,
-        "verificationMethod": string,
-        "signatureValue": string
-    }
-}
-```
-
-`POST /revoke-verification`
-
-Remove the verification of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the user itself can do that.
-
-_Body:_
-
-```
-{
-   "subjectId": string,
-   "signatureValue": string
-}
-```
-
-_Response:_
-```
--
-```
-
-`GET /prove-ownership/{identity-id}`
-
-Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-{
-    "nonce": string
-}
-```
-
-`POST /prove-ownership/{identity-id}`
-
-Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
-
-_Body:_
-
-```
-{
-    "signedNonce": string
-}
-```
-
-_Response:_
-
-```
-{
-    "jwt": string
-}
-```
-
-
-### User Service 
-
-__Prefix:__ `/api/v1/users`
+__Prefix:__ `/api/v1/identities`
 
 `GET /search`
 
-Search for users in the system which returns a list of queried users in the system. 
+Search for identities in the system which returns a list of queried identities in the system. 
 
 _Body:_
 
@@ -334,6 +287,7 @@ _Response:_
 ```
 -
 ```
+
 
 `GET /identity/{identity-id}`
 
@@ -376,6 +330,101 @@ _Response:_
     }[],
     "role": string
 }
+```
+
+`POST /create-identity`
+
+Create a new decentralized digital identity (DID). It will be signed and published to the Tangle! A digital identity can represent a device, user or even an organization. It is recommended to securely (encrypt) store the privateAuthKey locally, since it won’t be stored on the API side.
+
+_Body:_
+
+```
+{
+  "username"?: string,
+  "type": string,
+  "organization"?: string,
+  "data": {
+        "name"?: string,
+        "familyName"?: string,
+        "givenName"?: string,
+        "jobTitle"?: string,
+   }
+}
+```
+
+_Response:_
+```
+{
+    "doc": {
+        "id": string,
+        "authentication": [
+            {
+                "id": string,
+                "controller": string,
+                "type": string,
+                "publicKeyBase58": string,
+            }
+        ],
+        "created": string,
+        "updated": string,
+        "proof": {
+            "type": string,
+            "verificationMethod": string,
+            "signatureValue": string,
+        }
+    },
+    "key": {
+        "type": string,
+        "public": string,
+        "secret": string,
+        "encoding": string
+    },
+    "txHash": string
+}
+```
+
+
+`POST /identity`
+
+Register a new user in the system, this can be used if the identity already exists or will be created locally. Registering a user in the system makes it possible to search for him by for instance the username.
+
+_Body:_
+
+```
+{
+    "identityId": string,
+    "publicKey": string,
+    "username": string,
+    "type": string,
+    "registrationDate": string,
+    "verification": {
+        "verified": boolean,
+        "verificationDate": string,
+        "lastTimeChecked": string,
+        "verificationIssuerId": string
+    },
+    "organization": string,
+    "data": any,
+    "verifiableCredentials": {
+        "@context": string,
+        "id": string,
+        "type": string[],
+        "credentialSubject": any,
+        "issuer": string,
+        "issuanceDate": string,
+        "proof": {
+            "type": string,
+            "verificationMethod": string,
+            "signatureValue": string
+        }
+    }[],
+    "role": string
+}
+```
+
+_Response:_
+```
+-
 ```
 
 `PUT /identity`
@@ -421,52 +470,9 @@ _Response:_
 -
 ```
 
-`POST /identity`
-
-Register a new user in the system, this can be used if the identity already exists or will be created locally. Registering a user in the system makes it possible to search for him by for instance the username.
-
-_Body:_
-
-```
-{
-    "identityId": string,
-    "publicKey": string,
-    "username": string,
-    "type": string,
-    "registrationDate": string,
-    "verification": {
-        "verified": boolean,
-        "verificationDate": string,
-        "lastTimeChecked": string,
-        "verificationIssuerId": string
-    },
-    "organization": string,
-    "data": any,
-    "verifiableCredentials": {
-        "@context": string,
-        "id": string,
-        "type": string[],
-        "credentialSubject": any,
-        "issuer": string,
-        "issuanceDate": string,
-        "proof": {
-            "type": string,
-            "verificationMethod": string,
-            "signatureValue": string
-        }
-    }[],
-    "role": string
-}
-```
-
-_Response:_
-```
--
-```
-
 `DELETE /identity/{identity-id}`
 
-Removes a user from the system. A user can only delete itself and is not able to delete other users. Administrators are able to remove other users.
+Removes a user from the system. A user can only delete itself and is not able to delete other identities. Administrators are able to remove other identities.
 
 _Body:_
 
@@ -482,11 +488,11 @@ _Response:_
 ## HowTo: Create and verify an identity of a device
 
 In the following we focus on the secure goods distribution scenario and organization and object identities.
-In order to interact with other users in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
+In order to interact with other identities in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
 ### 1. Create an identity
 
-The creation of an identity is one of the key aspects when interacting with other users. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
+The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
 
 Currently the Ecommerce-SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if an unknown type is provided, the API will reject it.
 
@@ -494,7 +500,7 @@ Currently the Ecommerce-SSI Bridge supports five data models: `Device`, `Person`
 
 The following snippet demonstrates an example where an identity of a device will be created by a previously registered organization. Since schema.org does not have a data model for devices, the device data model of FIWARE was used.
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/create-identity
+https://ensuresec.solutions.iota.org/api/v0.1/identities/create-identity
 
 The body of the POST request contains the Device type, an organization id, username and a data field which contains detailed information about the device.
 
@@ -568,8 +574,8 @@ An identity can be used to authenticate a user to a number of services provided 
 - get('/identities/search')
 - put('/identities/user')
 - delete('/identities/identity/:identityId')
-- post('/authentication/verify-identity')
-- post('/authentication/revoke-verification')
+- post('/verification/create-credential')
+- post('/verification/revoke-credential')
 
 How the client can authenticate at the API is described in the following sequence diagram which refers to verify user (section 3) as an example.
 
@@ -693,7 +699,7 @@ Everyone can create an identity and add any data to such identity, that is why i
 
 The endpoint of this request is as following:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/verify-identity
+https://ensuresec.solutions.iota.org/api/v0.1/verifcation/create-credential
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
 
@@ -899,7 +905,7 @@ The response contains now all information of the device like for instance its us
 
 To check whether the verifiable credential is valid the following api can be called:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/check-verification
+https://ensuresec.solutions.iota.org/api/v0.1/verification/check-credential
 
 Simply insert the verifiable credential to check into the body of the POST request.
 
@@ -964,7 +970,7 @@ It should return:
 }
 ```
 
-for verified users and `false` for not verified users. A reason for not verified verifiable credentials could be:
+for verified identities and `false` for not verified identities. A reason for not verified verifiable credentials could be:
 
 - Data of verifiable credential was altered (so it does not match with the proof hash)
 - Verifiable credential got revoked (as described in section 6)
@@ -975,7 +981,7 @@ for verified users and `false` for not verified users. A reason for not verified
 
 A verifiable credential can be revoked so it is no more verified, a reason therefore could be: A person left the organization or a device broke and got removed by the organization. To revoke the credential the following api must be called via POST:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/revoke-verification
+https://ensuresec.solutions.iota.org/api/v0.1/verification/revoke-credential
 
 The body of the request contains the `subjectId` which is the identityId of the user which credential shall be revoked, in this case the identityId of the device. Furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
 
@@ -1007,7 +1013,7 @@ When checking a verifiable credential it checks:
 
 To receive the list of trusted identities the SSI Bridge offers an endpoint which can be called as the following:
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/trusted-roots
+https://ensuresec.solutions.iota.org/api/v0.1/verification/trusted-roots
 
 It returns all trusted identity ids which are trusted by the api.
 
@@ -1024,7 +1030,7 @@ It returns all trusted identity ids which are trusted by the api.
 
 To receive the latest document of an identity from the tangle, the Ecommerce-SSI Bridge also offers an endpoint which can be called via GET.
 
-https://ensuresec.solutions.iota.org/api/v0.1/authentication/latest-document/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
+https://ensuresec.solutions.iota.org/api/v0.1/verification/latest-document/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
 
 It returns information about the identity document of the device on the Tangle.
 
