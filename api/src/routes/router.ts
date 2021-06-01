@@ -4,8 +4,8 @@ import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../models/schemas/channel-info';
 import { UpdateUserSchema, UserSchema, UserWithoutIdSchema } from '../models/schemas/user';
-import { AuthenticationRoutes } from './authentication';
-import { AuthenticationService } from '../services/authentication-service';
+import { VerificationRoutes } from './verification';
+import { VerificationService } from '../services/verification-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
@@ -27,6 +27,8 @@ import {
 	RequestSubscriptionBodySchema
 } from '../models/schemas/request-bodies';
 import { hasValidApiKey } from '../middlewares/api-key';
+import { AuthenticationRoutes } from './authentication';
+import { AuthenticationService } from '../services/authentication-service';
 
 const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
 const validator = new Validator({ allErrors: true });
@@ -59,32 +61,28 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
-const authenticationService = new AuthenticationService(ssiService, userService, { jwtExpiration, serverIdentityId, serverSecret });
-const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, CONFIG);
+const authenticationService = new AuthenticationService(userService, { jwtExpiration, serverIdentityId, serverSecret });
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
+const { getNonce, proveOwnership } = authenticationRoutes;
+export const authenticationRouter = Router();
+authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
+authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+
+const verificationService = new VerificationService(ssiService, userService, { jwtExpiration, serverIdentityId, serverSecret });
+const verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, CONFIG);
 const {
 	createVerifiableCredential,
 	checkVerifiableCredential,
 	revokeVerifiableCredential,
 	getLatestDocument,
-	getNonce,
-	proveOwnership,
 	getTrustedRootIdentities
-} = authenticationRoutes;
-export const authenticationRouter = Router();
-
-authenticationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
-authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
-authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
-authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
-authenticationRouter.post(
-	'/create-credential',
-	apiKeyMiddleware,
-	authMiddleWare,
-	validate({ body: VerifyIdentitySchema }),
-	createVerifiableCredential
-);
-authenticationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
-authenticationRouter.post(
+} = verificationRoutes;
+export const verificationRouter = Router();
+verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
+verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
+verificationRouter.post('/create-credential', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), createVerifiableCredential);
+verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
+verificationRouter.post(
 	'/revoke-credential',
 	apiKeyMiddleware,
 	authMiddleWare,

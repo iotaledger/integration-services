@@ -1,29 +1,25 @@
-import { IdentityConfig } from '../../../models/config';
-import { SsiService } from '../../../services/ssi-service';
-import { AuthenticationRoutes } from '../index';
-import { AuthenticationService } from '../../../services/authentication-service';
-import { UserService } from '../../../services/user-service';
+import { AuthenticationRoutes } from './index';
+import { AuthenticationService } from '../../services/authentication-service';
+import { UserService } from '../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
-import * as AuthDb from '../../../database/auth';
-import { User } from '../../../models/types/user';
-import * as EncryptionUtils from '../../../utils/encryption';
-import { ServerIdentityMock, UserIdentityMock } from '../../../test/mocks/identities';
-import { AuthorizationService } from '../../../services/authorization-service';
+import * as AuthDb from '../../database/auth';
+import { User } from '../../models/types/user';
+import * as EncryptionUtils from '../../utils/encryption';
+import { ServerIdentityMock, UserIdentityMock } from '../../test/mocks/identities';
+import { SsiService } from '../../services/ssi-service';
+import { IdentityConfig } from '../../models/config';
 
 const validUserMock = UserIdentityMock.userData;
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let userService: UserService;
-	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let userService: UserService, ssiService: SsiService;
+	let authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config: any = {
-			serverIdentityId: ServerIdentityMock.doc.id
-		};
 		const identityConfig: IdentityConfig = {
 			keyCollectionTag: 'key-collection',
 			explorer: '',
@@ -34,49 +30,19 @@ describe('test authentication routes', () => {
 			hashEncoding: 'base58'
 		};
 		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService({} as any, '');
-		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(ssiService, userService, {
+		userService = new UserService(ssiService, serverSecret);
+		authenticationService = new AuthenticationService(userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
 
 		res = {
 			send: sendMock,
 			sendStatus: sendStatusMock,
 			status: jest.fn(() => res)
 		};
-	});
-
-	describe('test getLatestDocument route', () => {
-		it('should return bad request if no id for the identity is provided!', async () => {
-			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson');
-			const req: any = {
-				params: {},
-				body: null
-			};
-
-			await authenticationRoutes.getLatestDocument(req, res, nextMock);
-
-			expect(getLatestIdentitySpy).not.toHaveBeenCalled();
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		});
-
-		it('should return the document of the id', async () => {
-			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
-			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock);
-			const req: any = {
-				params: { identityId: id },
-				body: null
-			};
-
-			await authenticationRoutes.getLatestDocument(req, res, nextMock);
-
-			expect(getLatestIdentitySpy).toHaveBeenCalledWith(id);
-			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
-		});
 	});
 
 	describe('test getNonce route', () => {
@@ -193,7 +159,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
 		});
 
-		it('should return the jwt for nonce which is verified=true', async () => {
+		fit('should return the jwt for nonce which is verified=true', async () => {
 			const verified = true;
 			const userMock: User = validUserMock;
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';

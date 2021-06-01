@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { errorMiddleware } from './middlewares/error';
-import { authenticationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routes/router';
+import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routes/router';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
@@ -34,6 +34,7 @@ async function startServer() {
 	useRouter(app, prefix + '/subscriptions', subscriptionRouter);
 	useRouter(app, prefix + '/identities', identityRouter);
 	useRouter(app, prefix + '/authentication', authenticationRouter);
+	useRouter(app, prefix + '/verification', verificationRouter);
 
 	app.use(errorMiddleware);
 	app.listen(port, async () => {

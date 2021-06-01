@@ -2,11 +2,11 @@ import { DeviceIdentityMock, ServerIdentityMock } from '../../../test/mocks/iden
 import * as IdentityDocsDb from '../../../database/identity-docs';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
-import { AuthenticationService } from '../../../services/authentication-service';
+import { VerificationService } from '../../../services/verification-service';
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import * as TrustedRootsDb from '../../../database/trusted-roots';
-import { AuthenticationRoutes } from '../index';
+import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
@@ -15,7 +15,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -35,12 +35,12 @@ describe('test authentication routes', () => {
 		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(ssiService, userService, {
+		verificationService = new VerificationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
+		verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,
@@ -60,7 +60,7 @@ describe('test authentication routes', () => {
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).not.toHaveBeenCalled();
@@ -78,7 +78,7 @@ describe('test authentication routes', () => {
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
@@ -97,7 +97,7 @@ describe('test authentication routes', () => {
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
@@ -117,7 +117,7 @@ describe('test authentication routes', () => {
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
@@ -136,7 +136,7 @@ describe('test authentication routes', () => {
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);

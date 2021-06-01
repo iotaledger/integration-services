@@ -6,8 +6,8 @@ import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials'
 import * as IdentityDocsDb from '../../../database/identity-docs';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
-import { AuthenticationService } from '../../../services/authentication-service';
-import { AuthenticationRoutes } from '..';
+import { VerificationService } from '../../../services/verification-service';
+import { VerificationRoutes } from '..';
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
@@ -18,7 +18,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let ssiService: SsiService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -38,12 +38,12 @@ describe('test authentication routes', () => {
 		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(ssiService, userService, {
+		verificationService = new VerificationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
+		verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,
@@ -77,7 +77,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
@@ -99,7 +99,7 @@ describe('test authentication routes', () => {
 					}
 				}
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
@@ -118,7 +118,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
@@ -131,7 +131,7 @@ describe('test authentication routes', () => {
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const initiatorVcIsVerified = false;
 
-			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
+			const checkVerifiableCredentialSpy = spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},
@@ -140,7 +140,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
@@ -160,7 +160,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
@@ -172,7 +172,7 @@ describe('test authentication routes', () => {
 			const subject = TestUsersMock[0];
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
-			spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(true);
+			spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(true);
 			spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Device, role: UserRoles.Admin },
@@ -182,7 +182,7 @@ describe('test authentication routes', () => {
 					initiatorVC
 				}
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
@@ -232,7 +232,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id,
 				vc: vcMock
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
@@ -255,7 +255,7 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const initiatorVcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
+			const checkVerifiableCredentialSpy = spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
@@ -295,7 +295,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id,
 				vc: vcMock
 			};
-			await authenticationRoutes.createVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);

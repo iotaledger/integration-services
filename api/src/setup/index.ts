@@ -4,7 +4,7 @@ import { MongoDbService } from '../services/mongodb-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { SsiService } from '../services/ssi-service';
-import { AuthenticationService } from '../services/authentication-service';
+import { VerificationService } from '../services/verification-service';
 import { addTrustedRootId } from '../database/trusted-roots';
 import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
@@ -27,7 +27,7 @@ export async function setupApi() {
 
 	const ssiService = SsiService.getInstance(CONFIG.identityConfig);
 	const userService = new UserService(ssiService, serverSecret);
-	const tmpAuthenticationService = new AuthenticationService(ssiService, userService, {
+	const tmpAuthenticationService = new VerificationService(ssiService, userService, {
 		jwtExpiration: '2 days',
 		serverSecret,
 		serverIdentityId
@@ -51,7 +51,7 @@ export async function setupApi() {
 		console.log('==================================================================================================');
 
 		// re-create the authentication service with a valid server identity id
-		const authenticationService = new AuthenticationService(ssiService, userService, {
+		const verificationService = new VerificationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: identity.doc.id
@@ -65,15 +65,15 @@ export async function setupApi() {
 		await addTrustedRootId(serverUser.identityId);
 
 		console.log('Generate key collection...');
-		const kc = await authenticationService.generateKeyCollection(serverUser.identityId);
-		const res = await authenticationService.saveKeyCollection(kc);
+		const kc = await verificationService.generateKeyCollection(serverUser.identityId);
+		const res = await verificationService.saveKeyCollection(kc);
 
 		if (!res?.result.n) {
 			throw new Error('could not save keycollection!');
 		}
 
 		console.log('Set server identity as verified...');
-		await authenticationService.verifyIdentity(serverUser, serverUser.identityId, serverUser.identityId);
+		await verificationService.verifyIdentity(serverUser, serverUser.identityId, serverUser.identityId);
 		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.identityId}`);
 		process.exit(0);
 	} else {
