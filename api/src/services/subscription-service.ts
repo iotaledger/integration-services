@@ -31,8 +31,13 @@ export class SubscriptionService {
 	};
 
 	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string) => {
+		const errMsg = 'could not authorize the subscription!';
 		const isAuthorized = true;
-		return subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized);
+		const res = await subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized);
+		if (!res?.result?.n) {
+			throw Error(errMsg);
+		}
+		return res;
 	};
 
 	requestSubscription = async (
@@ -61,23 +66,18 @@ export class SubscriptionService {
 		return res;
 	};
 
-	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string) => {
-		const errMsg = 'could not authorize the subscription!';
+	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string): Promise<{ keyloadLink: string }> => {
 		const author = await this.subscriptionPool.get(channelAddress, authorId, true, this.password);
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and userId: ${authorId}`);
 		}
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>author);
-
-		const res = await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
-		if (!res?.result?.n) {
-			throw Error(errMsg);
+		if (!authSub?.keyloadLink) {
+			throw new Error('could not authorize the subscription!');
 		}
+		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
+		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
 
-		const res2 = await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
-		if (!res2?.result?.n) {
-			throw Error(errMsg);
-		}
-		return authSub;
+		return { keyloadLink: authSub.keyloadLink };
 	};
 }
