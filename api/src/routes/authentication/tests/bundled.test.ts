@@ -72,7 +72,7 @@ describe('test authentication routes', () => {
 				firstName: 'Mister',
 				lastName: 'Subscriber',
 				organization: 'IOTA',
-				userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
 			};
@@ -106,7 +106,7 @@ describe('test authentication routes', () => {
 				lastName: 'Subscriber',
 				storeIdentity: true,
 				organization: 'IOTA',
-				userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
 			};
@@ -137,7 +137,7 @@ describe('test authentication routes', () => {
 			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
 			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock);
 			const req: any = {
-				params: { userId: id },
+				params: { identityId: id },
 				body: null
 			};
 
@@ -149,13 +149,13 @@ describe('test authentication routes', () => {
 	});
 
 	describe('test getNonce route', () => {
-		it('should return bad request because no userId provided.', async () => {
+		it('should return bad request because no identityId provided.', async () => {
 			const userMock: User = null;
 
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const upsertNonceSpy = spyOn(AuthDb, 'upsertNonce');
 			const req: any = {
-				params: { userId: null },
+				params: { identityId: null },
 				body: null
 			};
 
@@ -164,16 +164,16 @@ describe('test authentication routes', () => {
 			expect(getUserSpy).not.toHaveBeenCalled();
 			expect(upsertNonceSpy).not.toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'A userId must be provided to the request path!' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'A identityId must be provided to the request path!' });
 		});
 
-		it('should throw an error since no user with the userId is found', async () => {
+		it('should throw an error since no user with the identityId is found', async () => {
 			const userMock: User = null;
-			const userId = 'NO_USER_FOUND_WITH_THIS_ID';
+			const identityId = 'NO_USER_FOUND_WITH_THIS_ID';
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const upsertNonceSpy = spyOn(AuthDb, 'upsertNonce');
 			const req: any = {
-				params: { userId },
+				params: { identityId },
 				body: null
 			};
 
@@ -181,20 +181,20 @@ describe('test authentication routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalled();
 			expect(upsertNonceSpy).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error(`no user with id: ${userId} found!`));
+			expect(nextMock).toHaveBeenCalledWith(new Error(`no user with id: ${identityId} found!`));
 		});
 		it('should return a valid nonce to solve', async () => {
-			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(validUserMock);
 			const upsertNonceSpy = spyOn(AuthDb, 'upsertNonce');
 			const req: any = {
-				params: { userId },
+				params: { identityId },
 				body: null
 			};
 
 			await authenticationRoutes.getNonce(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(userId);
+			expect(getUserSpy).toHaveBeenCalledWith(identityId);
 			expect(upsertNonceSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalled();
@@ -202,9 +202,9 @@ describe('test authentication routes', () => {
 	});
 
 	describe('test auth route', () => {
-		it('should return bad request because no userId provided.', async () => {
+		it('should return bad request because no identityId provided.', async () => {
 			const req: any = {
-				params: { userId: null },
+				params: { identityId: null },
 				body: { signedNonce: 'SIGNED_NONCE' }
 			};
 
@@ -214,7 +214,7 @@ describe('test authentication routes', () => {
 		});
 		it('should return bad request because no signedNonce is provided in the body.', async () => {
 			const req: any = {
-				params: { userId: 'USERID' },
+				params: { identityId: 'identityid' },
 				body: null
 			};
 
@@ -224,36 +224,36 @@ describe('test authentication routes', () => {
 
 		it('should throw error since no user found', async () => {
 			const userMock: User = null;
-			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const req: any = {
-				params: { userId },
+				params: { identityId },
 				body: { signedNonce: 'SIGNED_NONCE' }
 			};
 
 			await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(userId);
-			expect(nextMock).toHaveBeenCalledWith(new Error(`no user with id: ${userId} found!`));
+			expect(getUserSpy).toHaveBeenCalledWith(identityId);
+			expect(nextMock).toHaveBeenCalledWith(new Error(`no user with id: ${identityId} found!`));
 		});
 
 		it('should throw error for a nonce which is verified=false', async () => {
 			const verified = false;
 			const userMock: User = validUserMock;
-			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const getNonceSpy = spyOn(AuthDb, 'getNonce').and.returnValue({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' });
 			const verifySignedNonceSpy = spyOn(EncryptionUtils, 'verifySignedNonce').and.returnValue(verified);
 			const req: any = {
-				params: { userId },
+				params: { identityId },
 				body: { signedNonce: 'SIGNED_NONCE' }
 			};
 
 			await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(userId);
-			expect(getNonceSpy).toHaveBeenCalledWith(userId);
+			expect(getUserSpy).toHaveBeenCalledWith(identityId);
+			expect(getNonceSpy).toHaveBeenCalledWith(identityId);
 			expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 				'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
 				'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
@@ -265,19 +265,19 @@ describe('test authentication routes', () => {
 		it('should return the jwt for nonce which is verified=true', async () => {
 			const verified = true;
 			const userMock: User = validUserMock;
-			const userId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(userMock);
 			const getNonceSpy = spyOn(AuthDb, 'getNonce').and.returnValue({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' });
 			const verifySignedNonceSpy = spyOn(EncryptionUtils, 'verifySignedNonce').and.returnValue(verified);
 			const req: any = {
-				params: { userId },
+				params: { identityId },
 				body: { signedNonce: 'SIGNED_NONCE' }
 			};
 
 			await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(userId);
-			expect(getNonceSpy).toHaveBeenCalledWith(userId);
+			expect(getUserSpy).toHaveBeenCalledWith(identityId);
+			expect(getNonceSpy).toHaveBeenCalledWith(identityId);
 			expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 				'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
 				'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',

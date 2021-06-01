@@ -18,7 +18,7 @@ export const AddChannelLogBodySchema = Type.Object({
 
 export const AuthorizeSubscriptionBodySchema = Type.Object({
 	subscriptionLink: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
-	userId: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
+	identityId: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
 });
 
 export const RequestSubscriptionBodySchema = Type.Object({

@@ -20,10 +20,10 @@ describe('test subscription pool', () => {
 
 			// called from database but not found
 			await expect(pool.get(channelAddress, 'iota:did:authornotfoundinpool', false, pw)).rejects.toThrow(
-				'no subscription found for channelAddress: test123 and userId: iota:did:authornotfoundinpool'
+				'no subscription found for channelAddress: test123 and identityId: iota:did:authornotfoundinpool'
 			);
 			await expect(pool.get(channelAddress, 'iota:did:subscribernotfoundinpool', true, pw)).rejects.toThrow(
-				'no subscription found for channelAddress: test123 and userId: iota:did:subscribernotfoundinpool'
+				'no subscription found for channelAddress: test123 and identityId: iota:did:subscribernotfoundinpool'
 			);
 			expect(getSubscriptionSpy).toHaveBeenCalledTimes(2);
 		});

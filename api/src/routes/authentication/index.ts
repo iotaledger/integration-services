@@ -51,7 +51,7 @@ export class AuthenticationRoutes {
 
 			// check existing vcs and update verification state based on it
 			if (!initiatorVC && checkExistingVC) {
-				return await this.verifyByExistingVCs(res, subject, requestUser.userId);
+				return await this.verifyByExistingVCs(res, subject, requestUser.identityId);
 			}
 
 			const { isAuthorized, error } = await this.isAuthorizedToVerify(subject, initiatorVC, requestUser);
@@ -62,7 +62,7 @@ export class AuthenticationRoutes {
 			const vc: VerifiableCredentialJson = await this.authenticationService.verifyIdentity(
 				subject,
 				this.config.serverIdentityId,
-				initiatorVC?.credentialSubject?.id || requestUser.userId
+				initiatorVC?.credentialSubject?.id || requestUser.identityId
 			);
 
 			res.status(StatusCodes.OK).send(vc);
@@ -75,7 +75,7 @@ export class AuthenticationRoutes {
 		const hasVerifiedVCs = await this.authenticationService.hasVerifiedVerifiableCredential(user.verifiableCredentials);
 		const date = new Date();
 		const vup = {
-			userId: user.userId,
+			identityId: user.identityId,
 			verified: hasVerifiedVCs,
 			lastTimeChecked: date,
 			verificationDate: date,
@@ -120,7 +120,7 @@ export class AuthenticationRoutes {
 	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const did = req.params && decodeParam(<string>req.params['userId']);
+			const did = req.params && decodeParam(<string>req.params['identityId']);
 
 			if (!did) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
@@ -147,14 +147,14 @@ export class AuthenticationRoutes {
 	getNonce = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const userId = req.params && decodeParam(<string>req.params['userId']);
+			const identityId = req.params && decodeParam(<string>req.params['identityId']);
 
-			if (!userId) {
-				res.status(StatusCodes.BAD_REQUEST).send({ error: 'A userId must be provided to the request path!' });
+			if (!identityId) {
+				res.status(StatusCodes.BAD_REQUEST).send({ error: 'A identityId must be provided to the request path!' });
 				return;
 			}
 
-			const nonce = await this.authenticationService.getNonce(userId);
+			const nonce = await this.authenticationService.getNonce(identityId);
 			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
 			next(error);
@@ -164,16 +164,16 @@ export class AuthenticationRoutes {
 	proveOwnership = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const userId = req.params && decodeParam(<string>req.params['userId']);
+			const identityId = req.params && decodeParam(<string>req.params['identityId']);
 			const body = req.body;
 			const signedNonce = body?.signedNonce;
 
-			if (!signedNonce || !userId) {
+			if (!signedNonce || !identityId) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
 			}
 
-			const jwt = await this.authenticationService.authenticate(signedNonce, userId);
+			const jwt = await this.authenticationService.authenticate(signedNonce, identityId);
 			res.status(StatusCodes.OK).send({ jwt });
 		} catch (error) {
 			next(error);
@@ -181,8 +181,8 @@ export class AuthenticationRoutes {
 	};
 
 	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
-		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.vc.id);
-		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.userId, kci.initiatorId);
+		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.vc.id);
+		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
 			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.vc.id);
 			if (!isAuthorizedAdmin) {
@@ -200,7 +200,7 @@ export class AuthenticationRoutes {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
 
-			if (requestUser.userId !== initiatorVC.credentialSubject.id || requestUser.userId !== initiatorVC.id) {
+			if (requestUser.identityId !== initiatorVC.credentialSubject.id || requestUser.identityId !== initiatorVC.id) {
 				return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
 			}
 

@@ -81,7 +81,7 @@ describe('test GET user', () => {
 	it('should return expected user', async () => {
 		const date = getDateFromString('2021-02-12T14:58:05+01:00');
 		const user: UserPersistence = {
-			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+			identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			type: UserType.Person,
@@ -91,7 +91,7 @@ describe('test GET user', () => {
 		};
 		const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
 		const req: any = {
-			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 
@@ -99,7 +99,7 @@ describe('test GET user', () => {
 
 		expect(getUserSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).toHaveBeenCalledWith({
-			userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+			identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			type: 'Person',
@@ -114,7 +114,7 @@ describe('test GET user', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 
@@ -129,7 +129,7 @@ describe('test GET user', () => {
 describe('test POST user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, identityService: IdentityService, userRoutes: IdentityRoutes;
 	const validBody: User = {
-		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+		identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
 		type: UserType.Person,
@@ -210,7 +210,7 @@ describe('test POST user', () => {
 describe('test PUT user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: IdentityRoutes, identityService: IdentityService;
 	const validBody: User = {
-		userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+		identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
 		type: UserType.Person,
@@ -248,7 +248,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			user: { userId: validBody.userId },
+			user: { identityId: validBody.identityId },
 			params: {},
 			body: validBody
 		};
@@ -264,7 +264,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: 'did:iota:123456789' }, // different request userId than user to update
+			user: { identityId: 'did:iota:123456789' }, // different request identityId than user to update
 			params: {},
 			body: validBody
 		};
@@ -279,7 +279,7 @@ describe('test PUT user', () => {
 		const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: validBody.userId },
+			user: { identityId: validBody.identityId },
 			params: {},
 			body: validBody
 		};
@@ -295,7 +295,7 @@ describe('test PUT user', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: validBody.userId },
+			user: { identityId: validBody.identityId },
 			params: {},
 			body: validBody
 		};
@@ -339,8 +339,8 @@ describe('test DELETE user', () => {
 		const deleteUserSpy = spyOn(UserDb, 'deleteUser');
 
 		const req: any = {
-			user: { userId: 'did:iota:123456789' },
-			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			user: { identityId: 'did:iota:123456789' },
+			params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 
@@ -354,8 +354,8 @@ describe('test DELETE user', () => {
 		const deleteUserSpy = spyOn(UserDb, 'deleteUser');
 
 		const req: any = {
-			user: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 
@@ -370,8 +370,8 @@ describe('test DELETE user', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-			params: { userId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+			params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 			body: null
 		};
 		await userRoutes.deleteUser(req, res, nextMock);

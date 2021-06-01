@@ -41,10 +41,10 @@ const authMiddleWare = isAuth(serverSecret);
 const apiKeyMiddleware = hasValidApiKey(apiKey);
 
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
-identityRouter.get('/identity/:userId', apiKeyMiddleware, getUser);
+identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
 identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
-identityRouter.delete('/identity/:userId', apiKeyMiddleware, authMiddleWare, deleteUser);
+identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(identityService);
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -72,10 +72,10 @@ const {
 } = authenticationRoutes;
 export const authenticationRouter = Router();
 
-authenticationRouter.get('/latest-document/:userId', apiKeyMiddleware, getLatestDocument);
+authenticationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
 authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
-authenticationRouter.get('/prove-ownership/:userId', apiKeyMiddleware, getNonce);
-authenticationRouter.post('/prove-ownership/:userId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
+authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
 authenticationRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
 authenticationRouter.post('/verify-identity', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), verifyIdentity);
 authenticationRouter.post('/check-verification', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);

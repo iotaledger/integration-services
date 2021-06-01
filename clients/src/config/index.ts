@@ -23,7 +23,7 @@ export const UserIdentity = {
 		}
 	},
 	userData: {
-		userId: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
+		identityId: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
 		publicKey: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X',
 		username: 'iota-test',
 		type: 'Person',
@@ -72,7 +72,7 @@ export const ServerIdentity = {
 		encoding: 'base58'
 	},
 	userData: {
-		userId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+		identityId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
 		publicKey: 'GmNyvaJESvUgLL42Zo5Lar1QRN9rDTBtxC4wMbNC7S4w',
 		username: 'iota-service-test',
 		type: 'Service',
@@ -107,7 +107,7 @@ export const DeviceIdentity = {
 		}
 	},
 	userData: {
-		userId: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
+		identityId: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
 		publicKey: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM',
 		username: 'iota-test-device',
 		type: 'Device',

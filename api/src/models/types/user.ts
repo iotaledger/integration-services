@@ -52,9 +52,9 @@ export interface VerificationPersistence {
 }
 
 export interface VerificationUpdate extends Verification {
-	userId: string;
+	identityId: string;
 }
 
 export interface VerificationUpdatePersistence extends VerificationPersistence {
-	userId: string;
+	identityId: string;
 }

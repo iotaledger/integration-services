@@ -7,8 +7,8 @@ import { toBytes } from '../../utils/text';
 export class SubscriptionPool {
 	private static instance: SubscriptionPool;
 	private readonly node: string;
-	private authors: { userId: string; channelAddress: string; author: Author }[];
-	private subscribers: { userId: string; channelAddress: string; subscriber: Subscriber }[];
+	private authors: { identityId: string; channelAddress: string; author: Author }[];
+	private subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber }[];
 
 	private constructor(node: string) {
 		this.authors = [];
@@ -23,18 +23,18 @@ export class SubscriptionPool {
 		return SubscriptionPool.instance;
 	}
 
-	add(channelAddress: string, subscription: Author | Subscriber, userId: string, isAuthor: boolean) {
+	add(channelAddress: string, subscription: Author | Subscriber, identityId: string, isAuthor: boolean) {
 		if (isAuthor) {
-			this.authors = [...this.authors, { author: <Author>subscription, channelAddress, userId }];
+			this.authors = [...this.authors, { author: <Author>subscription, channelAddress, identityId }];
 		} else {
-			this.subscribers = [...this.subscribers, { subscriber: <Subscriber>subscription, channelAddress, userId }];
+			this.subscribers = [...this.subscribers, { subscriber: <Subscriber>subscription, channelAddress, identityId }];
 		}
 	}
 
-	async restoreSubscription(channelAddress: string, userId: string, password: string) {
-		const sub = await SubscriptionDb.getSubscription(channelAddress, userId);
+	async restoreSubscription(channelAddress: string, identityId: string, password: string) {
+		const sub = await SubscriptionDb.getSubscription(channelAddress, identityId);
 		if (!sub?.state) {
-			throw new Error(`no subscription found for channelAddress: ${channelAddress} and userId: ${userId}`);
+			throw new Error(`no subscription found for channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
 
 		const isAuthor = sub.type === SubscriptionType.Author;
@@ -48,8 +48,8 @@ export class SubscriptionPool {
 		}
 	}
 
-	async get(channelAddress: string, userId: string, isAuthor: boolean, password: string): Promise<Author | Subscriber> {
-		const predicate = (pool: any) => pool.userId === userId && pool.channelAddress === channelAddress;
+	async get(channelAddress: string, identityId: string, isAuthor: boolean, password: string): Promise<Author | Subscriber> {
+		const predicate = (pool: any) => pool.identityId === identityId && pool.channelAddress === channelAddress;
 		let subscription = null;
 		if (isAuthor) {
 			subscription = this.authors.filter(predicate)?.[0]?.author;
@@ -58,7 +58,7 @@ export class SubscriptionPool {
 		}
 		if (!subscription) {
 			// try to restore subscription from state in db
-			subscription = await this.restoreSubscription(channelAddress, userId, password);
+			subscription = await this.restoreSubscription(channelAddress, identityId, password);
 		}
 
 		return subscription;

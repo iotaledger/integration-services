@@ -72,7 +72,7 @@ export class AuthenticationService {
 		const identity = await this.ssiService.createIdentity();
 		const user: User = {
 			...createIdentityBody,
-			userId: identity.doc.id.toString(),
+			identityId: identity.doc.id.toString(),
 			publicKey: identity.key.public
 		};
 
@@ -93,10 +93,10 @@ export class AuthenticationService {
 
 		const credential: Credential<CredentialSubject> = {
 			type: `${upperFirst(subject.type)}Credential`,
-			id: subject.userId,
+			id: subject.identityId,
 			subject: {
 				...data,
-				id: subject.userId,
+				id: subject.identityId,
 				type: subject.type,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
@@ -173,7 +173,7 @@ export class AuthenticationService {
 
 		if (updatedUser.verifiableCredentials.length === 0 || !hasVerifiedVCs) {
 			const vup: VerificationUpdatePersistence = {
-				userId: subjectId,
+				identityId: subjectId,
 				verified: false,
 				lastTimeChecked: new Date(),
 				verificationDate: undefined,
@@ -212,26 +212,26 @@ export class AuthenticationService {
 			throw new Error('no trusted roots found!');
 		}
 
-		return trustedRoots.map((root) => root.userId);
+		return trustedRoots.map((root) => root.identityId);
 	};
 
-	getNonce = async (userId: string) => {
-		const user = await this.identityService.getUser(userId);
+	getNonce = async (identityId: string) => {
+		const user = await this.identityService.getUser(identityId);
 		if (!user) {
-			throw new Error(`no user with id: ${userId} found!`);
+			throw new Error(`no user with id: ${identityId} found!`);
 		}
 
 		const nonce = createNonce();
-		await AuthDb.upsertNonce(user.userId, nonce);
+		await AuthDb.upsertNonce(user.identityId, nonce);
 		return nonce;
 	};
 
-	authenticate = async (signedNonce: string, userId: string) => {
-		const user = await this.identityService.getUser(userId);
+	authenticate = async (signedNonce: string, identityId: string) => {
+		const user = await this.identityService.getUser(identityId);
 		if (!user) {
-			throw new Error(`no user with id: ${userId} found!`);
+			throw new Error(`no user with id: ${identityId} found!`);
 		}
-		const { nonce } = await AuthDb.getNonce(userId);
+		const { nonce } = await AuthDb.getNonce(identityId);
 		const publicKey = getHexEncodedKey(user.publicKey);
 
 		const verified = await verifySignedNonce(publicKey, nonce, signedNonce);
@@ -247,13 +247,13 @@ export class AuthenticationService {
 		return signedJwt;
 	};
 
-	setUserVerified = async (userId: string, issuerId: string, vc: VerifiableCredentialJson) => {
+	setUserVerified = async (identityId: string, issuerId: string, vc: VerifiableCredentialJson) => {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}
 		const date = new Date();
 		const vup: VerificationUpdatePersistence = {
-			userId,
+			identityId,
 			verified: true,
 			lastTimeChecked: date,
 			verificationDate: date,

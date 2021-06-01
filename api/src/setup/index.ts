@@ -62,10 +62,10 @@ export async function setupApi() {
 			throw new Error('server user not found!');
 		}
 		console.log('Add server id as trusted root...');
-		await addTrustedRootId(serverUser.userId);
+		await addTrustedRootId(serverUser.identityId);
 
 		console.log('Generate key collection...');
-		const kc = await authenticationService.generateKeyCollection(serverUser.userId);
+		const kc = await authenticationService.generateKeyCollection(serverUser.identityId);
 		const res = await authenticationService.saveKeyCollection(kc);
 
 		if (!res?.result.n) {
@@ -73,8 +73,8 @@ export async function setupApi() {
 		}
 
 		console.log('Set server identity as verified...');
-		await authenticationService.verifyIdentity(serverUser, serverUser.userId, serverUser.userId);
-		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.userId}`);
+		await authenticationService.verifyIdentity(serverUser, serverUser.identityId, serverUser.identityId);
+		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.identityId}`);
 		process.exit(0);
 	} else {
 		// verify if secret key of the server can be used to sign and verify a challenge

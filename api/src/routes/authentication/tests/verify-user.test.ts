@@ -65,21 +65,21 @@ describe('test authentication routes', () => {
 			addUserVCSpy = spyOn(identityService, 'addUserVC');
 		});
 
-		it('should not verify since different userId in request', async () => {
+		it('should not verify since different identityId in request', async () => {
 			const subject = TestUsersMock[0];
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				user: { userId: 'WRONGUSERID' },
+				user: { identityId: 'WRONGUSERID' },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user id of request does not concur with the initiatorVC user id!'));
 		});
@@ -89,10 +89,10 @@ describe('test authentication routes', () => {
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				user: { userId: initiatorVC.id },
+				user: { identityId: initiatorVC.id },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC: {
 						...initiatorVC,
 						credentialSubject: null
@@ -101,7 +101,7 @@ describe('test authentication routes', () => {
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('no valid verfiable credential!'));
 		});
@@ -111,16 +111,16 @@ describe('test authentication routes', () => {
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				user: { userId: initiatorVC.id },
+				user: { identityId: initiatorVC.id },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is not allowed based on its type!'));
 		});
@@ -133,16 +133,16 @@ describe('test authentication routes', () => {
 
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const req: any = {
-				user: { userId: initiatorVC.id, type: UserType.Person },
+				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator has to be verified!'));
@@ -153,17 +153,17 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(subject);
 			const req: any = {
-				user: { userId: initiatorVC.id, type: UserType.Person },
+				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('user must be in same organization!'));
 		});
@@ -175,17 +175,17 @@ describe('test authentication routes', () => {
 			spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(true);
 			spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, type: UserType.Device, role: UserRoles.Admin },
+				user: { identityId: initiatorVC.id, type: UserType.Device, role: UserRoles.Admin },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
 			expect(subject.organization).toEqual(initiatorVC.credentialSubject.organization);
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is not allowed based on its type!'));
 		});
@@ -196,24 +196,24 @@ describe('test authentication routes', () => {
 			const getUserSpy = spyOn(identityService, 'getUser').and.returnValue(subject);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
+				user: { identityId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 
 			const credentialSubject: CredentialSubject = {
 				type: subject.type,
-				id: subject.userId,
+				id: subject.identityId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
 				type: 'PersonCredential',
-				id: subject.userId,
+				id: subject.identityId,
 				subject: {
 					...credentialSubject,
 					'@context': 'https://schema.org/',
@@ -234,7 +234,7 @@ describe('test authentication routes', () => {
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
@@ -258,30 +258,30 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(authenticationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const req: any = {
-				user: { userId: initiatorVC.id, type: UserType.Person },
+				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
-					subjectId: subject.userId,
+					subjectId: subject.identityId,
 					initiatorVC
 				}
 			};
 
 			const credentialSubject: CredentialSubject = {
 				type: subject.type,
-				id: subject.userId,
+				id: subject.identityId,
 				organization: subject.organization,
 				registrationDate: subject.registrationDate,
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
 				type: 'DeviceCredential',
-				id: subject.userId,
+				id: subject.identityId,
 				subject: {
 					...credentialSubject,
 					'@context': ['https://smartdatamodels.org/context.jsonld'],
 					type: 'Device',
 					...subject.data,
-					id: subject.userId
+					id: subject.identityId
 				}
 			};
 			const expectedKeyCollection = {
@@ -297,7 +297,7 @@ describe('test authentication routes', () => {
 			};
 			await authenticationRoutes.verifyIdentity(req, res, nextMock);
 
-			expect(getUserSpy).toHaveBeenCalledWith(subject.userId);
+			expect(getUserSpy).toHaveBeenCalledWith(subject.identityId);
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(KEY_COLLECTION_INDEX, ServerIdentityMock.doc.id);

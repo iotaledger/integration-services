@@ -20,7 +20,7 @@ export class ChannelInfoService {
 		let channelInfoPersistence: ChannelInfoPersistence[] = [];
 
 		if (channelInfoSearch.author && !channelInfoSearch.authorId) {
-			const authorId = (await this.identityService.getUserByUsername(channelInfoSearch.author))?.userId;
+			const authorId = (await this.identityService.getUserByUsername(channelInfoSearch.author))?.identityId;
 
 			if (!authorId) {
 				throw Error(`No user id found for: ${channelInfoSearch.author}`);

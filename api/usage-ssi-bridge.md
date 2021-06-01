@@ -106,7 +106,7 @@ _Response:_
 }
 ```
 
-`GET /latest-document/{user-id}`
+`GET /latest-document/{identity-id}`
 
 Get the latest version of an identity document (DID) from the Tangle.
 
@@ -278,9 +278,9 @@ _Response:_
 -
 ```
 
-`GET /prove-ownership/{user-id}`
+`GET /prove-ownership/{identity-id}`
 
-Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{user-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
+Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
 
 _Body:_
 
@@ -295,9 +295,9 @@ _Response:_
 }
 ```
 
-`POST /prove-ownership/{user-id}`
+`POST /prove-ownership/{identity-id}`
 
-Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{user-id}` endpoint. 
+Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
 
 _Body:_
 
@@ -335,9 +335,9 @@ _Response:_
 -
 ```
 
-`GET /user/{user-id}`
+`GET /identity/{identity-id}`
 
-Get information about a specific user by its user-id. 
+Get information about a specific user by its identity-id. 
 
 _Body:_
 
@@ -348,7 +348,7 @@ _Body:_
 _Response:_
 ```
 {
-    "userId": string,
+    "identityId": string,
     "publicKey": string,
     "username": string,
     "type": string,
@@ -378,7 +378,7 @@ _Response:_
 }
 ```
 
-`PUT /user`
+`PUT /identity`
 
 Update user data of an existing user.
 
@@ -386,7 +386,7 @@ _Body:_
 
 ```
 {
-    "userId": string,
+    "identityId": string,
     "publicKey": string,
     "username": string,
     "type": string,
@@ -421,7 +421,7 @@ _Response:_
 -
 ```
 
-`POST /user`
+`POST /identity`
 
 Register a new user in the system, this can be used if the identity already exists or will be created locally. Registering a user in the system makes it possible to search for him by for instance the username.
 
@@ -429,7 +429,7 @@ _Body:_
 
 ```
 {
-    "userId": string,
+    "identityId": string,
     "publicKey": string,
     "username": string,
     "type": string,
@@ -464,7 +464,7 @@ _Response:_
 -
 ```
 
-`DELETE /user/{user-id}`
+`DELETE /identity/{identity-id}`
 
 Removes a user from the system. A user can only delete itself and is not able to delete other users. Administrators are able to remove other users.
 
@@ -565,9 +565,9 @@ In production environments it is recommended that each organization installs and
 
 An identity can be used to authenticate a user to a number of services provided by the Bridge in order to manage identities. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication for the Ecommerce-SSI bridge are as following:
 
-- get('/users/search')
-- put('/users/user')
-- delete('/users/user/:userId')
+- get('/identities/search')
+- put('/identities/user')
+- delete('/identities/identity/:identityId')
 - post('/authentication/verify-identity')
 - post('/authentication/revoke-verification')
 
@@ -596,7 +596,7 @@ export const signNonce = async (privateKey: string, nonce: string): Promise<stri
 };
 ```
 
-To verify an identity ownership and to authenticate the user against a corresponding endpoint, first of all a nonce must be created by the API endpoint. This is triggered by calling the selected endpoint with the userId that requires authentication via __GET__. An example is:
+To verify an identity ownership and to authenticate the user against a corresponding endpoint, first of all a nonce must be created by the API endpoint. This is triggered by calling the selected endpoint with the identityId that requires authentication via __GET__. An example is:
 
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/prove-ownership/did:iota:7Vk97eWqUfyhq92Cp3VsUPe42efdueNyPZMTXKUnsAJL
 
@@ -697,7 +697,7 @@ https://ensuresec.solutions.iota.org/api/v0.1/authentication/verify-identity
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
 
-The API body must contain the userId of the identity which needs to be verified in the `subjectId` field. In this case the id of the device. Furthermore, if the user is not an administrator it needs to add a verifiable credential which was generated when verifying itself. This verifiable credential is stored by the API and can be requested at the GET `/user/{user-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies the device. The request could look like the following:
+The API body must contain the identityId of the identity which needs to be verified in the `subjectId` field. In this case the id of the device. Furthermore, if the user is not an administrator it needs to add a verifiable credential which was generated when verifying itself. This verifiable credential is stored by the API and can be requested at the GET `/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies the device. The request could look like the following:
 
 ```
 {
@@ -789,17 +789,17 @@ The API then checks if the subjectId exists at the API and belongs to the same o
 
 ### 4. Get user data of the device
 
-The verified device can now be requested to provide information about it by using the userId. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
+The verified device can now be requested to provide information about it by using the identityId. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
 
-But first request the user by her userId with a GET request at the api:
+But first request the user by her identityId with a GET request at the api:
 
-https://ensuresec.solutions.iota.org/api/v0.1/users/user/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
+https://ensuresec.solutions.iota.org/api/v0.1/identities/identity/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
 
 The response contains now all information of the device like for instance its username, data but also the verifiableCredentials of the device.
 
 ```
 {
-    "userId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+    "identityId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
     "publicKey": "4iGULWnqjbKtf4KxkZYtLvcJHsQvgJY5jndK1esXU1Dv",
     "username": "iota-test-device",
     "type": "Device",
@@ -977,7 +977,7 @@ A verifiable credential can be revoked so it is no more verified, a reason there
 
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/revoke-verification
 
-The body of the request contains the `subjectId` which is the userId of the user which credential shall be revoked, in this case the userId of the device. Furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
+The body of the request contains the `subjectId` which is the identityId of the user which credential shall be revoked, in this case the identityId of the device. Furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
 
 ```
 {
