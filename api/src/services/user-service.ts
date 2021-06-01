@@ -14,7 +14,7 @@ import isEmpty from 'lodash/isEmpty';
 import { VerifiableCredentialJson } from '../models/types/identity';
 import { SchemaValidator } from '../utils/validator';
 
-export class IdentityService {
+export class UserService {
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
 		const usersPersistence = await userDb.searchUsers(userSearch);
 		return usersPersistence.map((user) => this.getUserObject(user));

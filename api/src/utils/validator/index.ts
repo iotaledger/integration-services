@@ -47,9 +47,12 @@ export class SchemaValidator {
 			console.log(`no schema found for user type: ${user.type}`);
 			return;
 		}
-		const validDetails = <boolean>validate(user.data);
-		if (!validDetails) {
-			throw new Error('no valid user data');
+
+		if (user.data) {
+			const validDetails = <boolean>validate(user.data);
+			if (!validDetails) {
+				throw new Error('no valid user data');
+			}
 		}
 	}
 

@@ -11,7 +11,7 @@ import {
 } from '../models/types/identity';
 import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { SsiService } from './ssi-service';
-import { IdentityService } from './identity-service';
+import { UserService } from './user-service';
 import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
@@ -26,15 +26,15 @@ import { JsonldGenerator } from '../utils/jsonld';
 export class AuthenticationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
 	private readonly ssiService: SsiService;
-	private readonly identityService: IdentityService;
+	private readonly userService: UserService;
 	private readonly serverSecret: string;
 	private readonly serverIdentityId: string;
 	private readonly jwtExpiration: string;
 
-	constructor(ssiService: SsiService, identityService: IdentityService, authenticationServiceConfig: AuthenticationServiceConfig) {
+	constructor(ssiService: SsiService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
 		const { serverSecret, jwtExpiration, serverIdentityId } = authenticationServiceConfig;
 		this.ssiService = ssiService;
-		this.identityService = identityService;
+		this.userService = userService;
 		this.serverSecret = serverSecret;
 		this.serverIdentityId = serverIdentityId;
 		this.jwtExpiration = jwtExpiration;
@@ -76,7 +76,7 @@ export class AuthenticationService {
 			publicKey: identity.key.public
 		};
 
-		await this.identityService.addUser(user);
+		await this.userService.addUser(user);
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
 			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
@@ -168,7 +168,7 @@ export class AuthenticationService {
 
 		await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.serverIdentityId);
 
-		const updatedUser = await this.identityService.removeUserVC(vcp.vc);
+		const updatedUser = await this.userService.removeUserVC(vcp.vc);
 		const hasVerifiedVCs = await this.hasVerifiedVerifiableCredential(updatedUser.verifiableCredentials);
 
 		if (updatedUser.verifiableCredentials.length === 0 || !hasVerifiedVCs) {
@@ -179,7 +179,7 @@ export class AuthenticationService {
 				verificationDate: undefined,
 				verificationIssuerId: undefined
 			};
-			await this.identityService.updateUserVerification(vup);
+			await this.userService.updateUserVerification(vup);
 		}
 
 		return res;
@@ -216,7 +216,7 @@ export class AuthenticationService {
 	};
 
 	getNonce = async (identityId: string) => {
-		const user = await this.identityService.getUser(identityId);
+		const user = await this.userService.getUser(identityId);
 		if (!user) {
 			throw new Error(`no user with id: ${identityId} found!`);
 		}
@@ -227,7 +227,7 @@ export class AuthenticationService {
 	};
 
 	authenticate = async (signedNonce: string, identityId: string) => {
-		const user = await this.identityService.getUser(identityId);
+		const user = await this.userService.getUser(identityId);
 		if (!user) {
 			throw new Error(`no user with id: ${identityId} found!`);
 		}
@@ -259,7 +259,7 @@ export class AuthenticationService {
 			verificationDate: date,
 			verificationIssuerId: issuerId
 		};
-		await this.identityService.updateUserVerification(vup);
-		await this.identityService.addUserVC(vc);
+		await this.userService.updateUserVerification(vup);
+		await this.userService.addUserVC(vc);
 	};
 }

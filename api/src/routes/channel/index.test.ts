@@ -6,13 +6,13 @@ import { ChannelInfoService } from '../../services/channel-info-service';
 import { ChannelService } from '../../services/channel-service';
 import { StreamsService } from '../../services/streams-service';
 import { SubscriptionService } from '../../services/subscription-service';
-import { IdentityService } from '../../services/identity-service';
+import { UserService } from '../../services/user-service';
 
 describe('test channel routes', () => {
 	//const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, identityService: IdentityService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 
 	beforeEach(() => {
 		sendMock = jest.fn();
@@ -22,9 +22,9 @@ describe('test channel routes', () => {
 			streamsNode: '',
 			statePassword: 'test123'
 		};
-		identityService = new IdentityService();
+		userService = new UserService();
 		streamsService = new StreamsService(config.streamsNode);
-		channelInfoService = new ChannelInfoService(identityService);
+		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService);

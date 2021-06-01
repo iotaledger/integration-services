@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { User, UserSearch, UserType } from '../../models/types/user';
-import { IdentityService } from '../../services/identity-service';
+import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
@@ -8,17 +8,17 @@ import { AuthenticatedRequest } from '../../models/types/authentication';
 import { AuthorizationService } from '../../services/authorization-service';
 
 export class IdentityRoutes {
-	private readonly identityService: IdentityService;
+	private readonly userService: UserService;
 	private readonly authorizationService: AuthorizationService;
-	constructor(identityService: IdentityService, authorizationService: AuthorizationService) {
-		this.identityService = identityService;
+	constructor(userService: UserService, authorizationService: AuthorizationService) {
+		this.userService = userService;
 		this.authorizationService = authorizationService;
 	}
 
 	searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const userSearch = this.getUserSearch(req);
-			const users = await this.identityService.searchUsers(userSearch);
+			const users = await this.userService.searchUsers(userSearch);
 			res.send(users);
 		} catch (error) {
 			next(error);
@@ -34,7 +34,7 @@ export class IdentityRoutes {
 				return;
 			}
 
-			const user = await this.identityService.getUser(identityId);
+			const user = await this.userService.getUser(identityId);
 			res.send(user);
 		} catch (error) {
 			next(error);
@@ -44,7 +44,7 @@ export class IdentityRoutes {
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const user: User = req.body;
-			const result = await this.identityService.addUser(user);
+			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add user!' });
@@ -66,7 +66,7 @@ export class IdentityRoutes {
 				throw error;
 			}
 
-			const result = await this.identityService.updateUser(user);
+			const result = await this.userService.updateUser(user);
 
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'No user found to update!' });
@@ -92,7 +92,7 @@ export class IdentityRoutes {
 				throw error;
 			}
 
-			await this.identityService.deleteUser(identityId);
+			await this.userService.deleteUser(identityId);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			next(error);
