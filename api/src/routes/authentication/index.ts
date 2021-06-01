@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CreateIdentityBody, VerifiableCredentialJson } from '../../models/types/identity';
+import { VerifiableCredentialJson } from '../../models/types/identity';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Config } from '../../models/config';
 import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/authentication';
@@ -22,17 +22,6 @@ export class AuthenticationRoutes {
 		this.userService = userService;
 		this.config = config;
 	}
-
-	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-		try {
-			const createIdentityBody: CreateIdentityBody = req.body;
-			const identity = await this.authenticationService.createIdentity(createIdentityBody);
-
-			res.status(StatusCodes.CREATED).send(identity);
-		} catch (error) {
-			next(error);
-		}
-	};
 
 	verifyIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {

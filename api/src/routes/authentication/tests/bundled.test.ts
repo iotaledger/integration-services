@@ -4,7 +4,6 @@ import { AuthenticationRoutes } from '../index';
 import { AuthenticationService } from '../../../services/authentication-service';
 import { UserService } from '../../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
-import * as IdentityDocsDb from '../../../database/identity-docs';
 import * as AuthDb from '../../../database/auth';
 import { User } from '../../../models/types/user';
 import * as EncryptionUtils from '../../../utils/encryption';
@@ -35,7 +34,7 @@ describe('test authentication routes', () => {
 			hashEncoding: 'base58'
 		};
 		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(ssiService, userService, {
 			jwtExpiration: '2 days',
@@ -49,74 +48,6 @@ describe('test authentication routes', () => {
 			sendStatus: sendStatusMock,
 			status: jest.fn(() => res)
 		};
-	});
-
-	describe('test create-identity route', () => {
-		it('should send result for valid body', async () => {
-			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
-			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity').and.returnValue(UserIdentityMock);
-			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
-			const req: any = {
-				params: {},
-				body: {
-					username: 'test-username',
-					type: 'Person',
-					firstName: 'Mister',
-					lastName: 'Subscriber',
-					organization: 'IOTA'
-				}
-			};
-
-			const exptectedUser = {
-				type: 'Person',
-				firstName: 'Mister',
-				lastName: 'Subscriber',
-				organization: 'IOTA',
-				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-				username: 'test-username'
-			};
-			await authenticationRoutes.createIdentity(req, res, nextMock);
-			expect(identitySpy).toHaveBeenCalledWith();
-			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
-			expect(saveIdentitySpy).not.toHaveBeenCalled();
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
-		});
-
-		it('should save the identity since it is called to with storeIdentity=true', async () => {
-			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
-			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity');
-			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
-			const req: any = {
-				params: {},
-				body: {
-					username: 'test-username',
-					type: 'Person',
-					firstName: 'Mister',
-					lastName: 'Subscriber',
-					storeIdentity: true,
-					organization: 'IOTA'
-				}
-			};
-
-			const exptectedUser = {
-				type: 'Person',
-				firstName: 'Mister',
-				lastName: 'Subscriber',
-				storeIdentity: true,
-				organization: 'IOTA',
-				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-				username: 'test-username'
-			};
-			await authenticationRoutes.createIdentity(req, res, nextMock);
-			expect(identitySpy).toHaveBeenCalledWith();
-			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
-			expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock, serverSecret);
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
-		});
 	});
 
 	describe('test getLatestDocument route', () => {

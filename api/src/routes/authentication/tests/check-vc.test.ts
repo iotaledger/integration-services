@@ -33,7 +33,7 @@ describe('test authentication routes', () => {
 			hashEncoding: 'base58'
 		};
 		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		authenticationService = new AuthenticationService(ssiService, userService, {
 			jwtExpiration: '2 days',

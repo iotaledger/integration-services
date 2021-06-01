@@ -1,7 +1,6 @@
 import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
 import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
 import {
-	CreateIdentityBody,
 	CredentialSubject,
 	DocumentJsonUpdate,
 	IdentityJson,
@@ -67,25 +66,6 @@ export class AuthenticationService {
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
 		return IdentityDocsDb.getIdentity(did, this.serverSecret);
 	}
-
-	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
-		const identity = await this.ssiService.createIdentity();
-		const user: User = {
-			...createIdentityBody,
-			identityId: identity.doc.id.toString(),
-			publicKey: identity.key.public
-		};
-
-		await this.userService.addUser(user);
-
-		if (createIdentityBody.storeIdentity && this.serverSecret) {
-			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
-		}
-
-		return {
-			...identity
-		};
-	};
 
 	verifyIdentity = async (subject: User, issuerId: string, initiatorId: string) => {
 		const jsonldGen = new JsonldGenerator();

@@ -25,8 +25,8 @@ export async function setupApi() {
 	// TODO create database, documents and indexes in mongodb at the first time!
 	// key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
 
-	const userService = new UserService();
 	const ssiService = SsiService.getInstance(CONFIG.identityConfig);
+	const userService = new UserService(ssiService, serverSecret);
 	const tmpAuthenticationService = new AuthenticationService(ssiService, userService, {
 		jwtExpiration: '2 days',
 		serverSecret,
@@ -44,7 +44,7 @@ export async function setupApi() {
 			type: UserType.Service
 		};
 
-		const identity = await tmpAuthenticationService.createIdentity(serverData);
+		const identity = await userService.createIdentity(serverData);
 
 		console.log('==================================================================================================');
 		console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);

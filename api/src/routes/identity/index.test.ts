@@ -1,9 +1,14 @@
 import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
+import * as IdentityDocsDb from '../../database/identity-docs';
+import { IdentityConfig } from '../../models/config';
 import { UserPersistence, UserType, User, UserSearch } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
+import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
+import { UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { StatusCodes } from 'http-status-codes';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: IdentityRoutes;
@@ -11,7 +16,7 @@ describe('test Search user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		userRoutes = new IdentityRoutes(userService, authorizationService);
 
@@ -59,7 +64,7 @@ describe('test GET user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		userRoutes = new IdentityRoutes(userService, authorizationService);
 
@@ -142,7 +147,7 @@ describe('test POST user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		userRoutes = new IdentityRoutes(userService, authorizationService);
 
@@ -207,6 +212,103 @@ describe('test POST user', () => {
 	});
 });
 
+describe('test create-identity route', () => {
+	const serverSecret = 'very-secret-secret';
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: IdentityRoutes, ssiService: SsiService;
+
+	beforeEach(() => {
+		sendMock = jest.fn();
+		sendStatusMock = jest.fn();
+		nextMock = jest.fn();
+
+		const identityConfig: IdentityConfig = {
+			keyCollectionTag: 'key-collection',
+			explorer: '',
+			network: 'test',
+			node: '',
+			keyType: 0,
+			hashFunction: 0,
+			hashEncoding: 'base58'
+		};
+		ssiService = SsiService.getInstance(identityConfig);
+		userService = new UserService(ssiService, serverSecret);
+		const authorizationService = new AuthorizationService(userService);
+		userRoutes = new IdentityRoutes(userService, authorizationService);
+
+		res = {
+			send: sendMock,
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
+		};
+	});
+
+	it('should send result for valid body', async () => {
+		const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
+		const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity').and.returnValue(UserIdentityMock);
+		const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
+		const req: any = {
+			params: {},
+			body: {
+				username: 'test-username',
+				type: 'Person',
+				firstName: 'Mister',
+				lastName: 'Subscriber',
+				organization: 'IOTA'
+			}
+		};
+
+		const exptectedUser = {
+			type: 'Person',
+			firstName: 'Mister',
+			lastName: 'Subscriber',
+			organization: 'IOTA',
+			identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+			publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
+			username: 'test-username'
+		};
+		await userRoutes.createIdentity(req, res, nextMock);
+		expect(identitySpy).toHaveBeenCalledWith();
+		expect(userSpy).toHaveBeenCalledWith(exptectedUser);
+		expect(saveIdentitySpy).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
+		expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
+	});
+
+	it('should save the identity since it is called to with storeIdentity=true', async () => {
+		const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
+		const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity');
+		const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
+		const req: any = {
+			params: {},
+			body: {
+				username: 'test-username',
+				type: 'Person',
+				firstName: 'Mister',
+				lastName: 'Subscriber',
+				storeIdentity: true,
+				organization: 'IOTA'
+			}
+		};
+
+		const exptectedUser = {
+			type: 'Person',
+			firstName: 'Mister',
+			lastName: 'Subscriber',
+			storeIdentity: true,
+			organization: 'IOTA',
+			identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+			publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
+			username: 'test-username'
+		};
+		await userRoutes.createIdentity(req, res, nextMock);
+		expect(identitySpy).toHaveBeenCalledWith();
+		expect(userSpy).toHaveBeenCalledWith(exptectedUser);
+		expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock, serverSecret);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
+		expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
+	});
+});
+
 describe('test PUT user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userRoutes: IdentityRoutes, userService: UserService;
 	const validBody: User = {
@@ -223,7 +325,7 @@ describe('test PUT user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		userRoutes = new IdentityRoutes(userService, authorizationService);
 
@@ -315,7 +417,8 @@ describe('test DELETE user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		userRoutes = new IdentityRoutes(userService, authorizationService);
 

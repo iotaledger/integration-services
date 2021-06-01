@@ -22,7 +22,7 @@ describe('test channel routes', () => {
 			streamsNode: '',
 			statePassword: 'test123'
 		};
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		streamsService = new StreamsService(config.streamsNode);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);

@@ -11,13 +11,42 @@ import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
-import { VerifiableCredentialJson } from '../models/types/identity';
+import { CreateIdentityBody, IdentityJsonUpdate, VerifiableCredentialJson } from '../models/types/identity';
 import { SchemaValidator } from '../utils/validator';
+import * as IdentityDocsDb from '../database/identity-docs';
+import { SsiService } from './ssi-service';
 
 export class UserService {
+	private readonly ssiService: SsiService;
+	private readonly serverSecret: string;
+
+	constructor(ssiService: SsiService, serverSecret: string) {
+		this.ssiService = ssiService;
+		this.serverSecret = serverSecret;
+	}
+
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
 		const usersPersistence = await userDb.searchUsers(userSearch);
 		return usersPersistence.map((user) => this.getUserObject(user));
+	};
+
+	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
+		const identity = await this.ssiService.createIdentity();
+		const user: User = {
+			...createIdentityBody,
+			identityId: identity.doc.id.toString(),
+			publicKey: identity.key.public
+		};
+
+		await this.addUser(user);
+
+		if (createIdentityBody.storeIdentity && this.serverSecret) {
+			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
+		}
+
+		return {
+			...identity
+		};
 	};
 
 	getUser = async (identityId: string): Promise<User | null> => {

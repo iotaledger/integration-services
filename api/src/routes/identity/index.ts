@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/authentication';
 import { AuthorizationService } from '../../services/authorization-service';
+import { CreateIdentityBody } from '../../models/types/identity';
 
 export class IdentityRoutes {
 	private readonly userService: UserService;
@@ -14,6 +15,17 @@ export class IdentityRoutes {
 		this.userService = userService;
 		this.authorizationService = authorizationService;
 	}
+
+	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const createIdentityBody: CreateIdentityBody = req.body;
+			const identity = await this.userService.createIdentity(createIdentityBody);
+
+			res.status(StatusCodes.CREATED).send(identity);
+		} catch (error) {
+			next(error);
+		}
+	};
 
 	searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
