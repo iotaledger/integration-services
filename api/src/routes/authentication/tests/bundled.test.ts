@@ -29,7 +29,8 @@ describe('test authentication routes', () => {
 			keyCollectionTag: 'key-collection',
 			explorer: '',
 			network: 'test',
-			node: '',
+			chronicleNode: 'pathtochronicle',
+			hornetNode: 'pathtohornet',
 			keyType: 0,
 			hashFunction: 0,
 			hashEncoding: 'base58'
