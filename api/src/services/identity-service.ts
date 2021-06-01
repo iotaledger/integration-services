@@ -86,10 +86,14 @@ export class IdentityService {
 		subjectKeyIndex: number
 	): Promise<VerifiableCredentialJson> {
 		try {
+			const config = {
+				...this.config,
+				node: this.config.hornetNode
+			};
 			const { doc } = this.restoreIdentity(issuerIdentity);
 			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
-			const digest = this.config.hashFunction;
-			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.config.keyCollectionTag);
+			const digest = config.hashFunction;
+			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, config.keyCollectionTag);
 
 			const unsignedVc = VerifiableCredential.extend({
 				id: credential?.id,
@@ -104,7 +108,7 @@ export class IdentityService {
 				secret: issuerKeys.secret(subjectKeyIndex),
 				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
 			});
-			const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
+			const validatedCredential = await Identity.checkCredential(signedVc.toString(), config);
 
 			if (!validatedCredential?.verified || !doc.verify(signedVc)) {
 				throw new Error('could not verify identity, please try it again.');
@@ -132,7 +136,11 @@ export class IdentityService {
 	}
 
 	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
-		const txHash = await Identity.publish(newDoc, this.config);
+		const config = {
+			...this.config,
+			node: this.config.hornetNode
+		};
+		const txHash = await Identity.publish(newDoc, config);
 		return txHash;
 	}
 
@@ -153,7 +161,12 @@ export class IdentityService {
 
 	async getLatestIdentityJson(did: string): Promise<IdentityDocumentJson> {
 		try {
-			return await Identity.resolve(did, this.config);
+			const config = {
+				...this.config,
+				node: this.config.chronicleNode
+			};
+
+			return await Identity.resolve(did, config);
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
 			throw new Error('could get the latest identity');
@@ -162,7 +175,7 @@ export class IdentityService {
 
 	async getLatestIdentityDoc(did: string): Promise<Identity.Document> {
 		try {
-			const json = await Identity.resolve(did, this.config);
+			const json = await this.getLatestIdentityJson(did);
 			const doc = Document.fromJSON(json);
 			if (!doc) {
 				throw new Error('could not parse json');

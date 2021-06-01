@@ -15,7 +15,8 @@ export interface Config {
 
 export interface IdentityConfig {
 	network: string;
-	node: string;
+	chronicleNode: string;
+	hornetNode: string;
 	explorer: string;
 	keyType: Identity.KeyType;
 	hashFunction: Identity.Digest;

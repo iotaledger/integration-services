@@ -4,7 +4,8 @@ import * as Identity from '@iota/identity-wasm/node';
 
 const IdentityConfig: IdentityConfig = {
 	network: process.env.NETWORK,
-	node: process.env.IOTA_PERMA_NODE,
+	hornetNode: process.env.IOTA_HORNET_NODE,
+	chronicleNode: process.env.IOTA_CHRONICLE_NODE,
 	explorer: process.env.EXPLORER,
 	keyType: Identity.KeyType.Ed25519,
 	hashFunction: Identity.Digest.Sha256,
