@@ -22,18 +22,18 @@ The figure below shows the envisioned system architecture (within the full set o
 Below we provide examples on how the Bridge could be used in the context of ecommerce ecosystems, in particular: 1) secure goods distribution 2) secure sales.
 
 ## Ecommerce example scenarios: secure goods distribution
-### 1. Delivery company identity and scanners verification ###
+### 1. Delivery organization identity and scanners verification ###
 
 __Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An authorised employee of a delivery company registers an _organization_ decentralized identity for its company using the Ecommerce-SSI Bridge
-* An e-commerce operator verifies the delivery company identity and use the Bridge to issue a credential for the company to deliver on its behalf
-* The authorised employee of the verified delivery company registers decentralized identities for the scanners (i.e. android scanners) used by the company couriers
+* An authorised employee of a delivery organization registers an _organization_ decentralized identity for its organization using the Ecommerce-SSI Bridge
+* An e-commerce operator verifies the delivery organization identity and use the Bridge to issue a credential for the organization to deliver on its behalf
+* The authorised employee of the verified delivery organization registers decentralized identities for the scanners (i.e. android scanners) used by the organization couriers
 * The authorised employee use the Ecommerce-Bridge to issue authorisation credentials for handling delivery to each courier device (with the credential stored locally into the device)
 * When a courier hands over the delivery the scanner uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
 * The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by the authorised courier and not diverted in transit
-* (optionally) The user acquires the courier scanner credentials (in the form of a QR code) and use the Ecommerce-SSI Bridge to verify that the device belogns to a delivery company authorised by her e-commerce site
+* (optionally) The user acquires the courier scanner credentials (in the form of a QR code) and use the Ecommerce-SSI Bridge to verify that the device belogns to a delivery organization authorised by her e-commerce site
 
 ### 2. Customer identity and delivery verification ###
 
@@ -45,7 +45,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The e-commerce site uses the Ecommerce-SSI Bridge to issue a proof of purchase credential to the user (this is saved to the user phone) 
 * The user receives the good delivery and present the credential in the form af a QR code to the courier scanner
 * The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity; the delivery is safely handled over to the right customer
-* (optionally) The user acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised dleivery company; the user (customer) knows the delivery is legit
+* (optionally) The user acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised dleivery organization; the user (customer) knows the delivery is legit
 
 _The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification._
 
@@ -492,7 +492,7 @@ In order to interact with other identities in a trusted way there are three majo
 
 ### 1. Create an identity
 
-The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which company the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
+The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which organization the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
 
 Currently the Ecommerce-SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if an unknown type is provided, the API will reject it.
 
@@ -665,7 +665,7 @@ export const fetchAuth = async (identity: any) => {
 
 ### 3. Verify a registered identity (i.e., a device identity)
 
-Everyone can create an identity and add any data to such identity, that is why it is needed to know if the person or device really belongs to the company they claim to be. Hence their identity must be verified. This can be done by an administrator of the Ecommerce-SSI bridge or an already verified identity of an organization (based on the principle of network of trust described above). Upon verification, the system allows to create a so called verifiable credential, which contains information about the identity and a signature proof of the information of the issuer, so that authenticity of data in the verifiable credential cannot be changed later but verified. In this case we verify the previously generated device identity by an already authorized Test User with the following verifiable credential:
+Everyone can create an identity and add any data to such identity, that is why it is needed to know if the person or device really belongs to the organization they claim to be. Hence their identity must be verified. This can be done by an administrator of the Ecommerce-SSI bridge or an already verified identity of an organization (based on the principle of network of trust described above). Upon verification, the system allows to create a so called verifiable credential, which contains information about the identity and a signature proof of the information of the issuer, so that authenticity of data in the verifiable credential cannot be changed later but verified. In this case we verify the previously generated device identity by an already authorized Test User with the following verifiable credential:
 
 ```
 {
@@ -1003,7 +1003,7 @@ After the credential got revoked the verifiable credential can be checked again 
 
 ### 7. Trusted roots
 
-In regard to support verifiable credentials of other systems, the root id of their network of trust can be added to the Bridge. For instance if Company X has the id `did:iota:abc` and Company Z `did:iota:xyz`. Company X can add the did `did:iota:xyz` next to his trusted root id to also trust credentials signed by Company Z.
+In regard to support verifiable credentials of other systems, the root id of their network of trust can be added to the Bridge. For instance if Organization X has the id `did:iota:abc` and Organization Z `did:iota:xyz`. Organization X can add the did `did:iota:xyz` next to his trusted root id to also trust credentials signed by Organization Z.
 
 When checking a verifiable credential it checks:
 
