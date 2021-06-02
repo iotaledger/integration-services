@@ -28,12 +28,12 @@ __Problem__: Protection of Delivery: avoid goods being handled by unauthorised c
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An authorised employee of a delivery company X registers a DID for their organization using the Ecommerce-SSI Bridge
-* An e-commerce operator verifies the delivery company organization identity and uses the Bridge to issue a credential for the company to deliver on their behalf. The credential contains the company organization DID and it is signed by the e-commerce operator private key (associated to its identity)
-* The authorised employee of the verified delivery company registers a DID for the scanners (i.e. android scanners) used by the company couriers
-* The authorised employee use the Ecommerce-Bridge to issue authorisation credentials to the scanner devices used to handling deliveries (with the credentials stored locally into the scanner devices)
-* When a courier hands over the delivery the scanner device uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
+* An e-commerce operator verifies the delivery company organization identity and uses the Bridge to issue a credential for the company to deliver on their behalf The credential contains the company organization DID and it is signed by the e-commerce operator private key (associated to its identity)
+* The authorised employee of the verified delivery company registers a DID for each scanner (i.e. android scanners) used by the company couriers
+* The authorised employee uses the Ecommerce-SSI Bridge to issue authorisation credentials to the scanner devices used to handling deliveries (with such credentials stored locally into the scanner devices)
+* When a courier hands over the delivery, the scanner device uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
 * The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by an authorised courier and device and not stolen or diverted in transit. This is possible because of the verification of the device handling the delivery scan
-* (optionally) The user can acquire the courier scanner device credentials (in the form of a QR code) and uses the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator
+* (optionally) The user can acquire the courier scanner device credential (in the form of a QR code) and uses the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator. This allows to verify authentic deliveries.
 
 
 ### 2. Customer identity and delivery verification ###
