@@ -4,7 +4,8 @@ The Ecommerce-Audit Trail Bridge allows users to create immutable data channels 
 
 ## Ecommerce-Audit Trail Bridge APIs Definition
 
-The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
+The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey. 
+> The api currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is able to read and write from/to the channel.
 
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
@@ -250,3 +251,13 @@ _Response:_
 __TBD!__ _Remove subscription to a channel. The author or subscriber of a channel can remove a subscription from a channel. (A subscriber can only remove its own subscription)_
 
 
+### Basic usage approach
+
+1. Authenticate at API
+2. Create channel (this user becomes the author)
+3. Subscribe to channel as different user (this user becomes the subscriber)
+4. Authorize subscription to channel as author
+5. Subscriber writes to channel
+6. Author reads from channel
+7. Author writes to channel
+8. Subscriber reads from channel
