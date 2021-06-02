@@ -13,7 +13,7 @@ describe('test Search user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService(userService);
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -36,7 +36,7 @@ describe('test Search user', () => {
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-		const getUserSpy = spyOn(userService, 'getUserByUsername').and.returnValue({ userId: '1234-5678-9' });
+		const getUserSpy = spyOn(userService, 'getUserByUsername').and.returnValue({ identityId: '1234-5678-9' });
 
 		const req: any = {
 			params: {},
@@ -67,7 +67,7 @@ describe('test GET channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService(userService);
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -156,7 +156,7 @@ describe('test POST channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService(userService);
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -181,7 +181,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			user: { userId: validBody.authorId },
+			user: { identityId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -193,11 +193,11 @@ describe('test POST channelInfo', () => {
 		expect(res.status).toHaveBeenCalledWith(404);
 	});
 
-	it('should not add channel info since request userid does not match', async () => {
+	it('should not add channel info since request identityid does not match', async () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: 'did:iota:123456' },
+			user: { identityId: 'did:iota:123456' },
 			params: {},
 			body: validBody
 		};
@@ -208,11 +208,11 @@ describe('test POST channelInfo', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
 	});
 
-	it('should add channel info since request userid does match', async () => {
+	it('should add channel info since request identityid does match', async () => {
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: validBody.authorId },
+			user: { identityId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -227,7 +227,7 @@ describe('test POST channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: validBody.authorId },
+			user: { identityId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -256,7 +256,7 @@ describe('test PUT channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService(userService);
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -294,7 +294,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 0 } });
 
 		const req: any = {
-			user: { userId: validBody.authorId },
+			user: { identityId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -310,7 +310,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: validBody.authorId },
+			user: { identityId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -325,7 +325,7 @@ describe('test PUT channelInfo', () => {
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
-			user: { userId: 'did:iota:123456' }, // different userId as authorId
+			user: { identityId: 'did:iota:123456' }, // different identityId as authorId
 			params: {},
 			body: validBody
 		};
@@ -341,7 +341,7 @@ describe('test PUT channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: validBody.authorId },
+			user: { identityId: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -372,7 +372,7 @@ describe('test DELETE channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService(userService);
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -399,7 +399,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({}); // no valid channel
 
 		const req: any = {
-			userId: 'did:iota:1234567', // wrong userid
+			identityId: 'did:iota:1234567', // wrong identityid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -416,7 +416,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = spyOn(channelInfoService, 'getChannelInfo').and.returnValue(null); // channel is null
 
 		const req: any = {
-			userId: 'did:iota:1234567', // wrong userid
+			identityId: 'did:iota:1234567', // wrong identityid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -433,7 +433,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 
 		const req: any = {
-			user: { userId: 'did:iota:1234567' }, // wrong userid
+			user: { identityId: 'did:iota:1234567' }, // wrong identityid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -450,7 +450,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 
 		const req: any = {
-			user: { userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same userId as authorId of channel
+			user: { identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same identityId as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -468,7 +468,7 @@ describe('test DELETE channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same userId as authorId of channel
+			user: { identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same identityId as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};

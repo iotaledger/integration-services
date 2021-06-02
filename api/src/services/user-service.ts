@@ -11,22 +11,51 @@ import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
-import { VerifiableCredentialJson } from '../models/types/identity';
+import { CreateIdentityBody, IdentityJsonUpdate, VerifiableCredentialJson } from '../models/types/identity';
 import { SchemaValidator } from '../utils/validator';
+import * as IdentityDocsDb from '../database/identity-docs';
+import { SsiService } from './ssi-service';
 
 export class UserService {
+	private readonly ssiService: SsiService;
+	private readonly serverSecret: string;
+
+	constructor(ssiService: SsiService, serverSecret: string) {
+		this.ssiService = ssiService;
+		this.serverSecret = serverSecret;
+	}
+
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
 		const usersPersistence = await userDb.searchUsers(userSearch);
 		return usersPersistence.map((user) => this.getUserObject(user));
 	};
 
-	getUser = async (userId: string): Promise<User | null> => {
-		const userPersistence = await userDb.getUser(userId);
+	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
+		const identity = await this.ssiService.createIdentity();
+		const user: User = {
+			...createIdentityBody,
+			identityId: identity.doc.id.toString(),
+			publicKey: identity.key.public
+		};
+
+		await this.addUser(user);
+
+		if (createIdentityBody.storeIdentity && this.serverSecret) {
+			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
+		}
+
+		return {
+			...identity
+		};
+	};
+
+	getUser = async (identityId: string): Promise<User | null> => {
+		const userPersistence = await userDb.getUser(identityId);
 		return this.getUserObject(userPersistence);
 	};
 
-	getUsersByIds = async (userIds: string[]): Promise<User[] | null> => {
-		const usersPersistence = await userDb.getUsersByIds(userIds);
+	getUsersByIds = async (identityIds: string[]): Promise<User[] | null> => {
+		const usersPersistence = await userDb.getUsersByIds(identityIds);
 		if (!usersPersistence) {
 			return null;
 		}
@@ -70,12 +99,12 @@ export class UserService {
 		return userDb.removeUserVC(vc);
 	};
 
-	deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
-		return userDb.deleteUser(userId);
+	deleteUser = async (identityId: string): Promise<DeleteWriteOpResultObject> => {
+		return userDb.deleteUser(identityId);
 	};
 
 	private hasValidFields = (user: User): boolean => {
-		return !(!user.publicKey && !user.userId);
+		return !(!user.publicKey && !user.identityId);
 	};
 
 	private getVerificationPersistence = (verification: Verification): VerificationPersistence | null => {
@@ -101,13 +130,13 @@ export class UserService {
 	};
 
 	private getUserPersistence = (user: User): UserPersistence | null => {
-		if (user == null || isEmpty(user.userId)) {
-			throw new Error('Error when parsing the body: userId must be provided!');
+		if (user == null || isEmpty(user.identityId)) {
+			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
-		const { publicKey, userId, username, verification, organization, registrationDate, type, data, verifiableCredentials, role } = user;
+		const { publicKey, identityId, username, verification, organization, registrationDate, type, data, verifiableCredentials, role } = user;
 
 		const userPersistence: UserPersistence = {
-			userId,
+			identityId,
 			publicKey,
 			username,
 			type,
@@ -123,15 +152,26 @@ export class UserService {
 	};
 
 	private getUserObject = (userPersistence: UserPersistence): User | null => {
-		if (userPersistence == null || isEmpty(userPersistence.userId)) {
+		if (userPersistence == null || isEmpty(userPersistence.identityId)) {
 			console.error(`Error when parsing the body, no user id found on persistence model with username ${userPersistence?.username}`);
 			return null;
 		}
 
-		const { username, publicKey, userId, organization, registrationDate, verification, type, data, verifiableCredentials, role } = userPersistence;
+		const {
+			username,
+			publicKey,
+			identityId,
+			organization,
+			registrationDate,
+			verification,
+			type,
+			data,
+			verifiableCredentials,
+			role
+		} = userPersistence;
 
 		const user: User = {
-			userId,
+			identityId,
 			publicKey,
 			username,
 			type,

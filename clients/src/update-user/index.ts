@@ -32,7 +32,7 @@ axios.interceptors.response.use((response) => response, errFunc);
 
 export const updateUser = async () => {
 	console.log('requesting update user endpoint...', identity);
-	const res = await axios.put(`${Config.baseUrl}/api/v1/users/user`, JSON.stringify(body), axiosOptions);
+	const res = await axios.put(`${Config.baseUrl}/api/v1/identities/identity`, JSON.stringify(body), axiosOptions);
 
 	console.log(`received status from update user endpoint: ${res?.status}`);
 

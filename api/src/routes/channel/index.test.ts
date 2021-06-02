@@ -22,7 +22,7 @@ describe('test channel routes', () => {
 			streamsNode: '',
 			statePassword: 'test123'
 		};
-		userService = new UserService();
+		userService = new UserService({} as any, '');
 		streamsService = new StreamsService(config.streamsNode);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
@@ -40,7 +40,7 @@ describe('test channel routes', () => {
 		it('should call nextMock if no body is provided', async () => {
 			const req: any = {
 				params: {},
-				user: { userId: undefined },
+				user: { identityId: undefined },
 				body: undefined // no body
 			};
 
@@ -48,10 +48,10 @@ describe('test channel routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error("Cannot read property 'topics' of undefined"));
 		});
 
-		it('should bad request if no userId is provided', async () => {
+		it('should bad request if no identityId is provided', async () => {
 			const req: any = {
 				params: {},
-				user: { userId: undefined }, //no userId,
+				user: { identityId: undefined }, //no identityId,
 				body: {}
 			};
 
@@ -62,7 +62,7 @@ describe('test channel routes', () => {
 		it('should create and return a channel for the user', async () => {
 			const req: any = {
 				params: {},
-				user: { userId: 'did:iota:1234' },
+				user: { identityId: 'did:iota:1234' },
 				body: { topics: [], seed: 'verysecretseed' }
 			};
 
@@ -74,7 +74,7 @@ describe('test channel routes', () => {
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
-				userId: 'did:iota:1234'
+				identityId: 'did:iota:1234'
 			};
 			const expectedChannelInfo: ChannelInfo = { authorId: 'did:iota:1234', channelAddress: '1234234234', latestLink: '1234234234', topics: [] };
 
@@ -99,7 +99,7 @@ describe('test channel routes', () => {
 		it('should bad request if no channelAddress is provided', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
-				user: { userId: undefined }, //no userId,
+				user: { identityId: undefined }, //no identityId,
 				body: {}
 			};
 
@@ -107,10 +107,10 @@ describe('test channel routes', () => {
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 		});
 
-		it('should bad request if no userId is provided', async () => {
+		it('should bad request if no identityId is provided', async () => {
 			const req: any = {
 				params: {}, // no channelAddress
-				user: { userId: 'did:iota:1234' },
+				user: { identityId: 'did:iota:1234' },
 				body: {}
 			};
 

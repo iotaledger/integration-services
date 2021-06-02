@@ -8,14 +8,14 @@ const collectionName = CollectionNames.subscriptions;
 
 const getIndex = (id: string, address: string) => `${id}-${address}`;
 
-export const getSubscription = async (channelAddress: string, userId: string): Promise<Subscription | null> => {
-	const query = { _id: getIndex(userId, channelAddress) };
+export const getSubscription = async (channelAddress: string, identityId: string): Promise<Subscription | null> => {
+	const query = { _id: getIndex(identityId, channelAddress) };
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
 export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const document = {
-		_id: getIndex(subscription.userId, subscription.channelAddress),
+		_id: getIndex(subscription.identityId, subscription.channelAddress),
 		...subscription,
 		creationDate: new Date()
 	};
@@ -23,9 +23,9 @@ export const addSubscription = async (subscription: Subscription): Promise<Inser
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateSubscriptionState = async (channelAddress: string, userId: string, state: string): Promise<UpdateWriteOpResult> => {
+export const updateSubscriptionState = async (channelAddress: string, identityId: string, state: string): Promise<UpdateWriteOpResult> => {
 	const query = {
-		_id: getIndex(userId, channelAddress)
+		_id: getIndex(identityId, channelAddress)
 	};
 	const update = {
 		$set: {

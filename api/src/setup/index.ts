@@ -3,8 +3,8 @@ dotenv.config();
 import { MongoDbService } from '../services/mongodb-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
-import { IdentityService } from '../services/identity-service';
-import { AuthenticationService } from '../services/authentication-service';
+import { SsiService } from '../services/ssi-service';
+import { VerificationService } from '../services/verification-service';
 import { addTrustedRootId } from '../database/trusted-roots';
 import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
@@ -25,9 +25,9 @@ export async function setupApi() {
 	// TODO create database, documents and indexes in mongodb at the first time!
 	// key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
 
-	const userService = new UserService();
-	const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-	const tmpAuthenticationService = new AuthenticationService(identityService, userService, {
+	const ssiService = SsiService.getInstance(CONFIG.identityConfig);
+	const userService = new UserService(ssiService, serverSecret);
+	const tmpAuthenticationService = new VerificationService(ssiService, userService, {
 		jwtExpiration: '2 days',
 		serverSecret,
 		serverIdentityId
@@ -44,14 +44,14 @@ export async function setupApi() {
 			type: UserType.Service
 		};
 
-		const identity = await tmpAuthenticationService.createIdentity(serverData);
+		const identity = await userService.createIdentity(serverData);
 
 		console.log('==================================================================================================');
 		console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
 		console.log('==================================================================================================');
 
 		// re-create the authentication service with a valid server identity id
-		const authenticationService = new AuthenticationService(identityService, userService, {
+		const verificationService = new VerificationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: identity.doc.id
@@ -62,19 +62,19 @@ export async function setupApi() {
 			throw new Error('server user not found!');
 		}
 		console.log('Add server id as trusted root...');
-		await addTrustedRootId(serverUser.userId);
+		await addTrustedRootId(serverUser.identityId);
 
 		console.log('Generate key collection...');
-		const kc = await authenticationService.generateKeyCollection(serverUser.userId);
-		const res = await authenticationService.saveKeyCollection(kc);
+		const kc = await verificationService.generateKeyCollection(serverUser.identityId);
+		const res = await verificationService.saveKeyCollection(kc);
 
 		if (!res?.result.n) {
 			throw new Error('could not save keycollection!');
 		}
 
 		console.log('Set server identity as verified...');
-		await authenticationService.verifyIdentity(serverUser, serverUser.userId, serverUser.userId);
-		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.userId}`);
+		await verificationService.verifyIdentity(serverUser, serverUser.identityId, serverUser.identityId);
+		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.identityId}`);
 		process.exit(0);
 	} else {
 		// verify if secret key of the server can be used to sign and verify a challenge

@@ -18,16 +18,16 @@ export class SubscriptionService {
 		this.password = config.statePassword;
 	}
 
-	getSubscription = async (channelAddress: string, userId: string) => {
-		return subscriptionDb.getSubscription(channelAddress, userId);
+	getSubscription = async (channelAddress: string, identityId: string) => {
+		return subscriptionDb.getSubscription(channelAddress, identityId);
 	};
 
 	addSubscription = async (subscription: Subscription) => {
 		return subscriptionDb.addSubscription(subscription);
 	};
 
-	updateSubscriptionState = async (channelAddress: string, userId: string, state: string) => {
-		return subscriptionDb.updateSubscriptionState(channelAddress, userId, state);
+	updateSubscriptionState = async (channelAddress: string, identityId: string, state: string) => {
+		return subscriptionDb.updateSubscriptionState(channelAddress, identityId, state);
 	};
 
 	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string) => {
@@ -44,7 +44,7 @@ export class SubscriptionService {
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
-			userId: subscriberId,
+			identityId: subscriberId,
 			channelAddress: channelAddress,
 			seed: res.seed,
 			subscriptionLink: res.subscriptionLink,
@@ -65,7 +65,7 @@ export class SubscriptionService {
 		const errMsg = 'could not authorize the subscription!';
 		const author = await this.subscriptionPool.get(channelAddress, authorId, true, this.password);
 		if (!author) {
-			throw new Error(`no author found with channelAddress: ${channelAddress} and userId: ${authorId}`);
+			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorId}`);
 		}
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>author);
 

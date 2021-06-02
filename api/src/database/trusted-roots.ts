@@ -3,15 +3,15 @@ import { MongoDbService } from '../services/mongodb-service';
 
 const collectionName = CollectionNames.trustedRoots;
 
-export const getTrustedRootIds = async (): Promise<{ userId: string }[]> => {
+export const getTrustedRootIds = async (): Promise<{ identityId: string }[]> => {
 	const query = {};
-	return await MongoDbService.getDocuments<{ userId: string }>(collectionName, query);
+	return await MongoDbService.getDocuments<{ identityId: string }>(collectionName, query);
 };
 
-export const addTrustedRootId = async (userId: string) => {
+export const addTrustedRootId = async (identityId: string) => {
 	const document = {
-		_id: userId,
-		userId,
+		_id: identityId,
+		identityId,
 		creationDate: new Date()
 	};
 
@@ -21,7 +21,7 @@ export const addTrustedRootId = async (userId: string) => {
 	}
 };
 
-export const deleteTrustedRootId = async (userId: string) => {
-	const query = { _id: userId };
+export const deleteTrustedRootId = async (identityId: string) => {
+	const query = { _id: identityId };
 	return MongoDbService.removeDocument(collectionName, query);
 };

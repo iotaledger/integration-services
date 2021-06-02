@@ -4,7 +4,7 @@ import { User, UserType } from '../../models/types/user';
 export const TestUsersMock = [
 	{
 		_id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
+		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'Device',
@@ -30,7 +30,7 @@ export const TestUsersMock = [
 		}
 	},
 	{
-		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
+		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'second-user',
 		organization: 'University Account',
 		type: 'Person',
@@ -41,7 +41,7 @@ export const TestUsersMock = [
 		}
 	},
 	{
-		userId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
+		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'another-iota-user',
 		firstName: 'Jon',
 		lastName: 'Keen',
@@ -77,7 +77,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		}
 	},
 	userData: {
-		userId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+		identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		type: 'Person',
@@ -153,7 +153,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		}
 	},
 	userData: {
-		userId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+		identityId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
 		type: 'Api',
@@ -219,7 +219,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		}
 	},
 	userData: {
-		userId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
 		type: 'Device',

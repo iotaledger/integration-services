@@ -9,10 +9,10 @@ export class AuthorizationService {
 		this.userService = userService;
 	}
 
-	isAuthorized = async (requestUser: User, userId: string): Promise<AuthorizationCheck> => {
-		const isAuthorizedUser = this.isAuthorizedUser(requestUser.userId, userId);
+	isAuthorized = async (requestUser: User, identityId: string): Promise<AuthorizationCheck> => {
+		const isAuthorizedUser = this.isAuthorizedUser(requestUser.identityId, identityId);
 		if (!isAuthorizedUser) {
-			const isAuthorizedAdmin = await this.isAuthorizedAdmin(requestUser, userId);
+			const isAuthorizedAdmin = await this.isAuthorizedAdmin(requestUser, identityId);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed!') };
 			}
@@ -20,11 +20,11 @@ export class AuthorizationService {
 		return { isAuthorized: true, error: null };
 	};
 
-	isAuthorizedUser = (requestUserId: string, userId: string): boolean => {
-		return requestUserId === userId;
+	isAuthorizedUser = (requestUserId: string, identityId: string): boolean => {
+		return requestUserId === identityId;
 	};
 
-	isAuthorizedAdmin = async (requestUser: User, userId: string): Promise<boolean> => {
+	isAuthorizedAdmin = async (requestUser: User, identityId: string): Promise<boolean> => {
 		const role = requestUser.role;
 		if (!this.hasAuthorizationType(requestUser.type)) {
 			return false;
@@ -33,7 +33,7 @@ export class AuthorizationService {
 		if (role === UserRoles.Admin) {
 			return true;
 		} else if (role === UserRoles.Manager) {
-			const user = await this.userService.getUser(userId);
+			const user = await this.userService.getUser(identityId);
 			const hasSameOrganization = requestUser.organization === user?.organization;
 			if (hasSameOrganization) {
 				return true;
