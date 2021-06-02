@@ -43,7 +43,7 @@ export const identityRouter = Router();
 const authMiddleWare = isAuth(serverSecret);
 const apiKeyMiddleware = hasValidApiKey(apiKey);
 
-identityRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
+identityRouter.post('/create', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
@@ -55,8 +55,8 @@ const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizatio
 const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } = channelInfoRoutes;
 export const channelInfoRouter = Router();
 
-channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
 channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannelInfo);
+channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
 channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);

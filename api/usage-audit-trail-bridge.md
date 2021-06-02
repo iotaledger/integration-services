@@ -2,6 +2,8 @@
 
 The Ecommerce-Audit Trail Bridge allows users to create immutable data channels and share them with others. By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (author) of the channel. After a subscriber is authorized, he is then able to write/read to/from the channel. 
 
+> __Important:__ The audit trail bridge currently has a dependency to the [ssi bridge](./usage-ssi-bridge.md), since the audit trail needs an authentication mechanism when storing, editing and requesting info of a channel from the database. (This might will change with the progress of the project.) __This means, everyone interacting with the audit trail needs to create its own identity before.__
+
 ## Ecommerce-Audit Trail Bridge APIs Definition
 
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
@@ -11,7 +13,7 @@ The list of provided APIs is shown in figure below. Endpoints which are currentl
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
 ### Channel Service 
-__Prefix:__ `/api/v1/channel`
+__Prefix:__ `/api/v1/channels`
 
 `POST /create`
 
@@ -236,7 +238,7 @@ _Body:_
 
 ```
 {
-    "userId": string
+    "identityId": string
 }
 ```
 
@@ -251,4 +253,6 @@ _Response:_
 
 __TBD!__ _Remove subscription to a channel. The author or subscriber of a channel can remove a subscription from a channel. (A subscriber can only remove its own subscription)_
 
+
+## HowTo: Create a channel and add a subscriber
 

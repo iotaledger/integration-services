@@ -55,7 +55,7 @@ export const TestUsersMock = [
 	}
 ];
 
-// returned from localhost:3000/api/v1/authentication/create-identity
+// returned from localhost:3000/api/v1/identities/create
 export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 	doc: {
 		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',

@@ -2,7 +2,7 @@ export const Config = {
 	baseUrl: process.env.BASE_URL
 };
 
-// returned from localhost:3000/api/v1/authentication/create-identity
+// returned from localhost:3000/api/v1/identities/create
 export const UserIdentity = {
 	doc: {
 		id: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',

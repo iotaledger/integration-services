@@ -30,7 +30,7 @@ async function startServer() {
 
 	const prefix = `/api/${version}`;
 	useRouter(app, prefix + '/channel-info', channelInfoRouter);
-	useRouter(app, prefix + '/channel', channelRouter);
+	useRouter(app, prefix + '/channels', channelRouter);
 	useRouter(app, prefix + '/subscriptions', subscriptionRouter);
 	useRouter(app, prefix + '/identities', identityRouter);
 	useRouter(app, prefix + '/authentication', authenticationRouter);

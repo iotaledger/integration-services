@@ -148,7 +148,7 @@ _Response:_
 }
 ```
 
-`POST /create-identity`
+`POST /create`
 
 Create a new decentralized digital identity (DID). It will be signed and published to the Tangle! A digital identity can represent a device, person or even an organization. It is recommended to securely (encrypt) store the privateAuthKey locally, since it won’t be stored on the API side.
 
@@ -500,7 +500,7 @@ Currently the Ecommerce-SSI Bridge supports five data models: `Device`, `Person`
 
 The following snippet demonstrates an example where an identity of a device will be created by a previously registered organization. Since schema.org does not have a data model for devices, the device data model of FIWARE was used.
 
-https://ensuresec.solutions.iota.org/api/v0.1/identities/create-identity
+https://ensuresec.solutions.iota.org/api/v0.1/identities/create
 
 The body of the POST request contains the Device type, an organization id, username and a data field which contains detailed information about the device.
 
