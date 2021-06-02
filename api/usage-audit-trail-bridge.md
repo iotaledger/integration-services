@@ -65,7 +65,7 @@ _Response:_
 ]
 ```
 
-`POST /logs`
+`POST /logs/{channel-address}`
 
 Write data to a channel. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
 
@@ -212,13 +212,14 @@ __TBD!__ _Get all subscriptions of a channel._
 
 `POST /request/{channel-address}`
 
-Request subscription to a channel. A client can request a subscription to a channel which he then is able to read/write from.
+Request subscription to a channel. A client can request a subscription to a channel which he then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
 
 _Body:_
 
 ```
 {
-    "accessRights": "ReadAndWrite" | "Read" | "Write"
+    "accessRights": "ReadAndWrite" | "Read" | "Write",
+    "seed"?: string
 }
 ```
 
@@ -254,5 +255,16 @@ _Response:_
 __TBD!__ _Remove subscription to a channel. The author or subscriber of a channel can remove a subscription from a channel. (A subscriber can only remove its own subscription)_
 
 
-## HowTo: Create a channel and add a subscriber
+## HowTo: Create a channel, add a subscriber and read + write from it
 
+The following sequence diagram demonstrates the requests need to write and read to/from a channel. The sequence diagram indicates two users: Tom which becomes the author and a IoT Device which is the subscriber.
+
+![create channel sd](./src/assets/diagrams/write-logs-to-channel-sd.jpeg)
+
+1. Each of the users trying to write or read from a channel needs to create an identity at the api
+2. Each of the identity must authenticate at the api in order to authenticate the requests are legit
+3. One identity must create a channel (in this case Tom), this identity becomes the author of the channel and is able to authorize further identities to read and write from/to the channel
+4. The second identity can request a subscription to the channel so it is able to read or write
+5. The author is then able to authorize this suscription
+6. After the author authorized the IoT Device it is able to write data to the channel
+7. The author is then able to fetch the logs of the IoT Device
