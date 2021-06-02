@@ -1,22 +1,22 @@
 # Ecommerce-SSI Bridge
 
-The Ecommerce-SSI Bridge allows users to create self sovereign identities and decentralized identifiers ([DID Documents](https://www.w3.org/TR/did-core/)) for organizations, persons and objects. Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates contaning identity attributes and signed by an Issuer identity. 
+The Ecommerce-SSI Bridge allows users to create Self-Sovereign Identities, linking Decentralized Identifiers (DIDs) to their specification ([DID Documents](https://www.w3.org/TR/did-core/)). DIDs are public/private key pairs and can be created for organizations, individuals and objects. Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off-chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates containing identity attributes and signed by an Issuer identity (using its private key).
 
-Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then progate this verification to other entities (organizations, persons, objects) using a network of trust approach (see figure below). 
+The Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then propagate this verification to other entities (organizations, individuals, objects) using a network of trust approach (see figure below).
 
 <img width="755" alt="Screenshot 2021-05-21 at 22 21 31" src="https://user-images.githubusercontent.com/1702827/119199456-fdb5d880-ba82-11eb-8983-bec1e36afdab.png">
 
-
-The Bridge also allows Issuers to issue Verifiable Credentials for selected Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires to verify that a credentila contains the identifier of the owner presenting it, and it is signed by an authorised Issuer. This requires to access the information stored onto a ledger.
+The Bridge also allows Issuers to issue Verifiable Credentials for selected Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires verifying that a credential contains the identifier (DID) of the owner presenting it, and it is signed by an authorised Issuer. This requires access to the information stored onto a ledger.
 
 The image below shows the interaction between Issuer, Owner, Verifier and the ledger to manage the lifecycle of decentralized identities and verifiable credentials.
+
 
 <img width="742" alt="Screenshot 2021-05-21 at 22 21 11" src="https://user-images.githubusercontent.com/1702827/119199429-ef67bc80-ba82-11eb-8d74-c92f5bc66717.png">
 
 
-Our Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that allows entities to create decentralized identities (the identity), verify them, attach verifiable credentials and verify them.
+Our Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that allows entities to create decentralized identities (DIDs), verify them, attach verifiable credentials and verify them.
 
-The figure below shows the envisioned system architecture (within the full set of IOTA ecommerce tools for ENSURESEC).
+The figure below shows the envisioned system architecture (within the full set of IOTA e-commerce tools for ENSURESEC).
 ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
 Below we provide examples on how the Bridge could be used in the context of ecommerce ecosystems, in particular: 1) secure goods distribution 2) secure sales.
@@ -27,13 +27,14 @@ Below we provide examples on how the Bridge could be used in the context of ecom
 __Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An authorised employee of a delivery organization registers an _organization_ decentralized identity for its organization using the Ecommerce-SSI Bridge
-* An e-commerce operator verifies the delivery organization identity and use the Bridge to issue a credential for the organization to deliver on its behalf
-* The authorised employee of the verified delivery organization registers decentralized identities for the scanners (i.e. android scanners) used by the organization couriers
-* The authorised employee use the Ecommerce-Bridge to issue authorisation credentials for handling delivery to each courier device (with the credential stored locally into the device)
-* When a courier hands over the delivery the scanner uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
-* The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by the authorised courier and not diverted in transit
-* (optionally) The user acquires the courier scanner credentials (in the form of a QR code) and use the Ecommerce-SSI Bridge to verify that the device belogns to a delivery organization authorised by her e-commerce site
+* An authorised employee of a delivery company X registers a DID for their organization using the Ecommerce-SSI Bridge
+* An e-commerce operator verifies the delivery company organization identity and uses the Bridge to issue a credential for the company to deliver on their behalf. The credential contains the company organization DID and it is signed by the e-commerce operator private key (associated to its identity)
+* The authorised employee of the verified delivery company registers a DID for the scanners (i.e. android scanners) used by the company couriers
+* The authorised employee use the Ecommerce-Bridge to issue authorisation credentials to the scanner devices used to handling deliveries (with the credentials stored locally into the scanner devices)
+* When a courier hands over the delivery the scanner device uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
+* The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by an authorised courier and device and not stolen or diverted in transit. This is possible because of the verification of the device handling the delivery scan
+* (optionally) The user can acquire the courier scanner device credentials (in the form of a QR code) and uses the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator
+
 
 ### 2. Customer identity and delivery verification ###
 
