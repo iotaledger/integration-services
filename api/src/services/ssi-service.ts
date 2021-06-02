@@ -156,7 +156,7 @@ export class SsiService {
 			return await Identity.resolve(did, this.config);
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
-			throw new Error('could get the latest identity');
+			throw new Error('could not get the latest identity');
 		}
 	}
 
@@ -170,7 +170,7 @@ export class SsiService {
 			return doc;
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
-			throw new Error('could get the latest identity');
+			throw new Error('could not get the latest identity');
 		}
 	}
 

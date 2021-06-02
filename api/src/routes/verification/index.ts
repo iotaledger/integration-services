@@ -33,6 +33,10 @@ export class VerificationRoutes {
 				throw new Error('subject does not exist!');
 			}
 
+			if (!requestUser.identityId || initiatorVC?.credentialSubject?.id) {
+				throw new Error('no initiator id could be found!');
+			}
+
 			// check existing vcs and update verification state based on it
 			if (!initiatorVC && checkExistingVC) {
 				return await this.verifyByExistingVCs(res, subject, requestUser.identityId);

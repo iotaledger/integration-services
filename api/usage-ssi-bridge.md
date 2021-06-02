@@ -85,54 +85,13 @@ The list of provided APIs is shown in figure below.
 
 ![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
-### Authentication Service 
-__Prefix:__ `/api/v1/authentication`
-
-`GET /prove-ownership/{identity-id}`
-
-Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-{
-    "nonce": string
-}
-```
-
-`POST /prove-ownership/{identity-id}`
-
-Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
-
-_Body:_
-
-```
-{
-    "signedNonce": string
-}
-```
-
-_Response:_
-
-```
-{
-    "jwt": string
-}
-```
-
-
 ### Verification Service
 __Prefix:__ `/api/v1/verification`
 
 
 `GET /check-credential`
 
-Check the verifiable credential of a user. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
+Check the verifiable credential of an identity. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
 
 _Body:_
 
@@ -203,7 +162,7 @@ _Response:_
 
 `POST /revoke-credential`
 
-Remove the verification of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the user itself can do that.
+Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the identity itself can do that.
 
 _Body:_
 
@@ -269,6 +228,46 @@ _Response:_
 }
 ```
 
+### Authentication Service 
+__Prefix:__ `/api/v1/authentication`
+
+`GET /prove-ownership/{identity-id}`
+
+Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
+
+_Body:_
+
+```
+-
+```
+
+_Response:_
+```
+{
+    "nonce": string
+}
+```
+
+`POST /prove-ownership/{identity-id}`
+
+Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
+
+_Body:_
+
+```
+{
+    "signedNonce": string
+}
+```
+
+_Response:_
+
+```
+{
+    "jwt": string
+}
+```
+
 ### Identity Service 
 
 __Prefix:__ `/api/v1/identities`
@@ -291,7 +290,7 @@ _Response:_
 
 `GET /identity/{identity-id}`
 
-Get information about a specific user by its identity-id. 
+Get information about a specific identity by its identity-id. 
 
 _Body:_
 
@@ -334,7 +333,7 @@ _Response:_
 
 `POST /create-identity`
 
-Create a new decentralized digital identity (DID). It will be signed and published to the Tangle! A digital identity can represent a device, user or even an organization. It is recommended to securely (encrypt) store the privateAuthKey locally, since it won’t be stored on the API side.
+Create a new decentralized digital identity (DID). It will be signed and published to the Tangle! A digital identity can represent a device, person or even an organization. It is recommended to securely (encrypt) store the privateAuthKey locally, since it won’t be stored on the API side.
 
 _Body:_
 
@@ -386,7 +385,7 @@ _Response:_
 
 `POST /identity`
 
-Register a new user in the system, this can be used if the identity already exists or will be created locally. Registering a user in the system makes it possible to search for him by for instance the username.
+Register an existing identity in the system, this can be used if the identity already exists or will be created locally. Registering an identity in the system makes it possible to search for it by for instance the username.
 
 _Body:_
 
@@ -429,7 +428,7 @@ _Response:_
 
 `PUT /identity`
 
-Update user data of an existing user.
+Update data of a registered identity.
 
 _Body:_
 
@@ -472,7 +471,7 @@ _Response:_
 
 `DELETE /identity/{identity-id}`
 
-Removes a user from the system. A user can only delete itself and is not able to delete other identities. Administrators are able to remove other identities.
+Removes an identity from the system. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity doc won't be removed from the tangle but only at the bridge and so its verifiable credential signed by the bridge. But the identity is still able to interact with other bridges.
 
 _Body:_
 
@@ -559,7 +558,7 @@ The request returns the following body:
     "txHash": "eda7001adc5e8c9b9b473ca6586cfe9deab3f19e4ce9fba0bbead09e5b649dce"
 }
 ```
-The `doc`field contains the created identity document of the newly created identity. Furthermore `doc.id` is the unique user id of the identity.
+The `doc`field contains the created identity document of the newly created identity. Furthermore `doc.id` is the unique user-id of the identity.
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to authenticate at the API.
 
@@ -569,17 +568,17 @@ In production environments it is recommended that each organization installs and
 
 ### 2. Authentication and authorise an identity
 
-An identity can be used to authenticate a user to a number of services provided by the Bridge in order to manage identities. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication for the Ecommerce-SSI bridge are as following:
+An identity can be used to authenticate to a number of services provided by the Bridge in order to manage identities. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication for the Ecommerce-SSI bridge are as following:
 
 - get('/identities/search')
-- put('/identities/user')
+- put('/identities/identity')
 - delete('/identities/identity/:identityId')
 - post('/verification/create-credential')
 - post('/verification/revoke-credential')
 
-How the client can authenticate at the API is described in the following sequence diagram which refers to verify user (section 3) as an example.
+How the client can authenticate at the API is described in the following sequence diagram which refers to verify a registered identity (section 3) as an example.
 
-![verify user sd](./src/assets/diagrams/verify-identity-sd.jpeg)
+![verify identity sd](./src/assets/diagrams/verify-identity-sd.jpeg)
 
 As described in the sequence diagram the client must request and then sign a nonce in order to being able to authenticate at the API. Therefore two scripts must be implemented by the client `getHexEncodedKey` & `signNonce` which are described in the following:
 
@@ -614,7 +613,7 @@ It returns a json object with the generated nonce:
 }
 ```
 
-This nonce must now be signed using the private key of the user keypair and sent back to the `prove-ownership` endpoint via POST, which then returns a JWT string, in case the nonce was successfully signed. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
+This nonce must now be signed using the private key of the keypair and sent back to the `prove-ownership` endpoint via POST, which then returns a JWT string, in case the nonce was successfully signed. This JWT can then be transformed into a Bearer token and be added into the Authorization header of the request.
 
 Signing the nonce by the client can be done with the following two function calls.
 
@@ -665,7 +664,7 @@ export const fetchAuth = async (identity: any) => {
 
 ### 3. Verify a registered identity (i.e., a device identity)
 
-Everyone can create an identity and add any data to such identity, that is why it is needed to know if the person or device really belongs to the company they claim to be. Hence their identity must be verified. This can be done by an administrator of the Ecommerce-SSI bridge or an already verified user of an organization (based on the principle of network of trust described above). Upon verification, the system allows to create a so called verifiable credential, which contains information about the identity and a signature proof of the information of the issuer, so that authenticity of data in the verifiable credential cannot be changed later but verified. In this case we verify the previously generated device identity by an already authorized user with the following verifiable credential:
+Everyone can create an identity and add any data to such identity, that is why it is needed to know if the person or device really belongs to the company they claim to be. Hence their identity must be verified. This can be done by an administrator of the Ecommerce-SSI bridge or an already verified identity of an organization (based on the principle of network of trust described above). Upon verification, the system allows to create a so called verifiable credential, which contains information about the identity and a signature proof of the information of the issuer, so that authenticity of data in the verifiable credential cannot be changed later but verified. In this case we verify the previously generated device identity by an already authorized Test User with the following verifiable credential:
 
 ```
 {
@@ -703,7 +702,7 @@ https://ensuresec.solutions.iota.org/api/v0.1/verifcation/create-credential
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the api returns a "401 Unauthorized" status code.
 
-The API body must contain the identityId of the identity which needs to be verified in the `subjectId` field. In this case the id of the device. Furthermore, if the user is not an administrator it needs to add a verifiable credential which was generated when verifying itself. This verifiable credential is stored by the API and can be requested at the GET `/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies the device. The request could look like the following:
+The API body must contain the identityId of the identity which needs to be set in the `subjectId` field. In this case the id of the device. Furthermore, if the user is not an administrator, the initiator needs to add a verifiable credential which was generated when verifying itself. This verifiable credential is stored by the API and can be requested at the GET `/identities/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. Add the verifiable credential in the `initiatorVC` field since it is the initiator which verifies the device. The request could look like the following:
 
 ```
 {
@@ -793,11 +792,11 @@ The API then checks if the subjectId exists at the API and belongs to the same o
 }
 ```
 
-### 4. Get user data of the device
+### 4. Get data of the device
 
-The verified device can now be requested to provide information about it by using the identityId. If a user is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
+The verified device can now be requested to provide information about it by using the identityId. If an identity is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
 
-But first request the user by her identityId with a GET request at the api:
+But first request the identity by its identityId with a GET request at the api:
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/identity/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
 
