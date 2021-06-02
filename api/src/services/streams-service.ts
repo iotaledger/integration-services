@@ -1,4 +1,4 @@
-import { ChannelData } from '../models/types/channel-data';
+import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
 
@@ -59,22 +59,30 @@ export class StreamsService {
 
 	addLogs = async (
 		latestLink: string,
-		publicPayload: string,
-		maskedPayload: string,
-		subscription: Author | Subscriber
-	): Promise<{ link: string; subscription: Author | Subscriber }> => {
+		subscription: Author | Subscriber,
+		channelLog: ChannelLog
+	): Promise<{ link: string; subscription: Author | Subscriber; prevLogs: ChannelData[] | undefined }> => {
 		try {
-			const latestAddress = Address.from_string(latestLink);
-			const pPayload = toBytes(publicPayload);
-			const mPayload = toBytes(maskedPayload);
+			// fetch prev logs before writing new data to the channel
+			const prevLogs = await this.getLogs(subscription);
+			let link = latestLink;
+			if (prevLogs?.latestLink) {
+				link = prevLogs.latestLink;
+			}
+			const latestAddress = Address.from_string(link);
+			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			let response: any = null;
+
+			console.log('prev logs: ', prevLogs);
+
 			await subscription.clone().sync_state();
-			response = await subscription.clone().send_tagged_packet(latestAddress, pPayload, mPayload);
+			response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response.get_link();
 
 			return {
 				link: tag_link.to_string(),
+				prevLogs: prevLogs?.channelData,
 				subscription
 			};
 		} catch (error) {
@@ -83,46 +91,57 @@ export class StreamsService {
 		}
 	};
 
+	// TODO consider if channel is encrypted or not when getting adding data to channel
 	getLogs = async (
 		subscription: Author | Subscriber
 	): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber; latestLink: string }> => {
-		let foundNewMessage = true;
-		let channelData: ChannelData[] = [];
-		let latestLink = '';
+		try {
+			let foundNewMessage = true;
+			let channelData: ChannelData[] = [];
+			let latestLink = '';
 
-		while (foundNewMessage) {
-			let next_msgs: any = [];
+			while (foundNewMessage) {
+				let next_msgs: any = [];
 
-			next_msgs = await subscription.clone().fetch_next_msgs();
+				next_msgs = await subscription.clone().fetch_next_msgs();
 
-			if (next_msgs.length === 0) {
-				foundNewMessage = false;
-			} else {
-				latestLink = next_msgs[next_msgs.length - 1]?.get_link()?.to_string();
+				if (next_msgs.length === 0) {
+					foundNewMessage = false;
+				} else {
+					latestLink = next_msgs[next_msgs.length - 1]?.get_link()?.to_string();
+				}
+
+				if (next_msgs && next_msgs.length > 0) {
+					const cData: ChannelData[] = next_msgs
+						.map((userResponse: any) => {
+							const link = userResponse?.get_link()?.to_string();
+							const message = userResponse.get_message();
+							const maskedPayload = message && fromBytes(message.get_masked_payload());
+							try {
+								const channelData: ChannelData = {
+									link,
+									channelLog: JSON.parse(maskedPayload)
+								};
+								return channelData;
+							} catch (e) {
+								console.log('could not parse maskedPayload: ', maskedPayload);
+								return;
+							}
+						})
+						.filter((c: ChannelData | undefined) => c);
+					channelData = [...channelData, ...cData];
+				}
 			}
 
-			if (next_msgs && next_msgs.length > 0) {
-				const cData = next_msgs.map((userResponse: any) => {
-					const link = userResponse?.get_link()?.to_string();
-					const message = userResponse.get_message();
-					const publicPayload = message && fromBytes(message.get_public_payload());
-					const maskedPayload = message && fromBytes(message.get_masked_payload());
-
-					return {
-						link,
-						publicPayload,
-						maskedPayload
-					};
-				});
-				channelData = [...channelData, ...cData];
-			}
+			return {
+				channelData,
+				subscription,
+				latestLink
+			};
+		} catch (error) {
+			console.log('Error from streams sdk:', error);
+			throw new Error('could not get logs from the channel');
 		}
-
-		return {
-			channelData,
-			subscription,
-			latestLink
-		};
 	};
 
 	requestSubscription = async (

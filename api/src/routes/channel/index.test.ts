@@ -63,7 +63,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { identityId: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed' }
+				body: { topics: [], seed: 'verysecretseed', encrypted: true }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -76,7 +76,13 @@ describe('test channel routes', () => {
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234'
 			};
-			const expectedChannelInfo: ChannelInfo = { authorId: 'did:iota:1234', channelAddress: '1234234234', latestLink: '1234234234', topics: [] };
+			const expectedChannelInfo: ChannelInfo = {
+				authorId: 'did:iota:1234',
+				channelAddress: '1234234234',
+				latestLink: '1234234234',
+				topics: [],
+				encrypted: true
+			};
 
 			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
 			const createSpy = spyOn(streamsService, 'create').and.returnValue({ seed: 'verysecretseed', author: {}, channelAddress: '1234234234' });

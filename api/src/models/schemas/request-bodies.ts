@@ -8,12 +8,15 @@ export const ProveOwnershipPostBodySchema = Type.Object({
 
 export const CreateChannelBodySchema = Type.Object({
 	topics: Type.Array(TopicSchema),
+	encrypted: Type.Boolean(),
 	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
 });
 
 export const AddChannelLogBodySchema = Type.Object({
-	publicPayload: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
-	maskedPayload: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
+	type: Type.String({ minLength: 1 }),
+	creationDate: Type.Optional(Type.String()),
+	metadata: Type.Optional(Type.Any()),
+	payload: Type.Any()
 });
 
 export const AuthorizeSubscriptionBodySchema = Type.Object({
