@@ -14,13 +14,13 @@ export class ChannelRoutes {
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const { topics, seed, encrypted } = req.body as CreateChannelBody;
-			const { userId } = req.user;
+			const { identityId } = req.user;
 
-			if (!userId) {
+			if (!identityId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.create(userId, topics, encrypted, seed);
+			const channel = await this.channelService.create(identityId, topics, encrypted, seed);
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			next(error);
@@ -30,9 +30,9 @@ export class ChannelRoutes {
 	getLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const { userId } = req.user;
+			const { identityId } = req.user;
 
-			if (!channelAddress || !userId) {
+			if (!channelAddress || !identityId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
@@ -42,7 +42,7 @@ export class ChannelRoutes {
 			const index = isNaN(indexParam) ? undefined : indexParam;
 			const options = limit !== undefined && index !== undefined && { limit, index };
 
-			const channel = await this.channelService.getLogs(channelAddress, userId, options);
+			const channel = await this.channelService.getLogs(channelAddress, identityId, options);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);
@@ -52,14 +52,14 @@ export class ChannelRoutes {
 	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const { userId } = req.user;
+			const { identityId } = req.user;
 			const body = req.body as AddChannelLogBody;
 
-			if (!channelAddress || !userId) {
+			if (!channelAddress || !identityId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.addLogs(channelAddress, userId, body);
+			const channel = await this.channelService.addLogs(channelAddress, identityId, body);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			next(error);

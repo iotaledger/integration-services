@@ -3,9 +3,9 @@ import { Type } from '@sinclair/typebox';
 export const VcSubjectSchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }),
 	type: Type.String({ minLength: 1 }),
-	organization: Type.String({ minLength: 1 }),
-	registrationDate: Type.String({ minLength: 1 }),
-	initiatorId: Type.String({ minLength: 50, maxLength: 53 })
+	organization: Type.Optional(Type.String({ minLength: 1 })),
+	registrationDate: Type.Optional(Type.String({ minLength: 1 })),
+	initiatorId: Type.Optional(Type.String({ minLength: 50, maxLength: 53 }))
 });
 
 export const VerifiableCredentialSchema = Type.Object({

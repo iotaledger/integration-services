@@ -12,19 +12,19 @@ import {
 import { KeyCollectionJson } from '../models/types/key-collection';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection } = Identity;
 
-export class IdentityService {
-	private static instance: IdentityService;
+export class SsiService {
+	private static instance: SsiService;
 	private readonly config: IdentityConfig;
 
 	private constructor(config: IdentityConfig) {
 		this.config = config;
 	}
 
-	public static getInstance(config: IdentityConfig): IdentityService {
-		if (!IdentityService.instance) {
-			IdentityService.instance = new IdentityService(config);
+	public static getInstance(config: IdentityConfig): SsiService {
+		if (!SsiService.instance) {
+			SsiService.instance = new SsiService(config);
 		}
-		return IdentityService.instance;
+		return SsiService.instance;
 	}
 
 	async generateKeyCollection(
@@ -156,7 +156,7 @@ export class IdentityService {
 			return await Identity.resolve(did, this.config);
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
-			throw new Error('could get the latest identity');
+			throw new Error('could not get the latest identity');
 		}
 	}
 
@@ -170,7 +170,7 @@ export class IdentityService {
 			return doc;
 		} catch (error) {
 			console.log('Error from identity sdk:', error);
-			throw new Error('could get the latest identity');
+			throw new Error('could not get the latest identity');
 		}
 	}
 

@@ -1,15 +1,15 @@
 import { ChannelInfoRoutes } from './channel-info';
-import { UserRoutes } from './user';
+import { IdentityRoutes } from './identity';
 import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../models/schemas/channel-info';
 import { UpdateUserSchema, UserSchema, UserWithoutIdSchema } from '../models/schemas/user';
-import { AuthenticationRoutes } from './authentication';
-import { AuthenticationService } from '../services/authentication-service';
+import { VerificationRoutes } from './verification';
+import { VerificationService } from '../services/verification-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
-import { IdentityService } from '../services/identity-service';
+import { SsiService } from '../services/ssi-service';
 import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/authentication';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
@@ -27,24 +27,28 @@ import {
 	RequestSubscriptionBodySchema
 } from '../models/schemas/request-bodies';
 import { hasValidApiKey } from '../middlewares/api-key';
+import { AuthenticationRoutes } from './authentication';
+import { AuthenticationService } from '../services/authentication-service';
 
+const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
 const validator = new Validator({ allErrors: true });
 const validate = validator.validate;
+const ssiService = SsiService.getInstance(CONFIG.identityConfig);
 
-const userService = new UserService();
+const userService = new UserService(ssiService, serverSecret);
 const authorizationService = new AuthorizationService(userService);
-const userRoutes = new UserRoutes(userService, authorizationService);
-const { getUser, searchUsers, addUser, updateUser, deleteUser } = userRoutes;
-export const userRouter = Router();
-const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
+const identityRoutes = new IdentityRoutes(userService, authorizationService);
+const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
+export const identityRouter = Router();
 const authMiddleWare = isAuth(serverSecret);
 const apiKeyMiddleware = hasValidApiKey(apiKey);
 
-userRouter.get('/user/:userId', apiKeyMiddleware, getUser);
-userRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
-userRouter.post('/user', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
-userRouter.put('/user', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
-userRouter.delete('/user/:userId', apiKeyMiddleware, authMiddleWare, deleteUser);
+identityRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
+identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
+identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
+identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
+identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
+identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
@@ -57,30 +61,29 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
-const identityService = IdentityService.getInstance(CONFIG.identityConfig);
-const authenticationService = new AuthenticationService(identityService, userService, { jwtExpiration, serverIdentityId, serverSecret });
-const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, CONFIG);
+const authenticationService = new AuthenticationService(userService, { jwtExpiration, serverIdentityId, serverSecret });
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
+const { getNonce, proveOwnership } = authenticationRoutes;
+export const authenticationRouter = Router();
+authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
+authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+
+const verificationService = new VerificationService(ssiService, userService, { jwtExpiration, serverIdentityId, serverSecret });
+const verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, CONFIG);
 const {
-	createIdentity,
-	verifyIdentity,
+	createVerifiableCredential,
 	checkVerifiableCredential,
-	getNonce,
 	revokeVerifiableCredential,
 	getLatestDocument,
-	proveOwnership,
 	getTrustedRootIdentities
-} = authenticationRoutes;
-export const authenticationRouter = Router();
-
-authenticationRouter.get('/latest-document/:userId', apiKeyMiddleware, getLatestDocument);
-authenticationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
-authenticationRouter.get('/prove-ownership/:userId', apiKeyMiddleware, getNonce);
-authenticationRouter.post('/prove-ownership/:userId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
-authenticationRouter.post('/create-identity', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
-authenticationRouter.post('/verify-identity', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), verifyIdentity);
-authenticationRouter.post('/check-verification', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
-authenticationRouter.post(
-	'/revoke-verification',
+} = verificationRoutes;
+export const verificationRouter = Router();
+verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
+verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
+verificationRouter.post('/create-credential', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), createVerifiableCredential);
+verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
+verificationRouter.post(
+	'/revoke-credential',
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeVerificationSchema }),

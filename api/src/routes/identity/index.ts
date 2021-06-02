@@ -6,14 +6,26 @@ import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/authentication';
 import { AuthorizationService } from '../../services/authorization-service';
+import { CreateIdentityBody } from '../../models/types/identity';
 
-export class UserRoutes {
+export class IdentityRoutes {
 	private readonly userService: UserService;
 	private readonly authorizationService: AuthorizationService;
 	constructor(userService: UserService, authorizationService: AuthorizationService) {
 		this.userService = userService;
 		this.authorizationService = authorizationService;
 	}
+
+	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const createIdentityBody: CreateIdentityBody = req.body;
+			const identity = await this.userService.createIdentity(createIdentityBody);
+
+			res.status(StatusCodes.CREATED).send(identity);
+		} catch (error) {
+			next(error);
+		}
+	};
 
 	searchUsers = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
@@ -27,14 +39,14 @@ export class UserRoutes {
 
 	getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const userId = _.get(req, 'params.userId');
+			const identityId = _.get(req, 'params.identityId');
 
-			if (_.isEmpty(userId)) {
+			if (_.isEmpty(identityId)) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
 			}
 
-			const user = await this.userService.getUser(userId);
+			const user = await this.userService.getUser(identityId);
 			res.send(user);
 		} catch (error) {
 			next(error);
@@ -61,7 +73,7 @@ export class UserRoutes {
 		try {
 			const user: User = req.body;
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, user.userId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, user.identityId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -81,18 +93,18 @@ export class UserRoutes {
 
 	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const userId = _.get(req, 'params.userId');
-			if (_.isEmpty(userId)) {
+			const identityId = _.get(req, 'params.identityId');
+			if (_.isEmpty(identityId)) {
 				res.sendStatus(StatusCodes.BAD_REQUEST);
 				return;
 			}
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, userId);
+			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, identityId);
 			if (!isAuthorized) {
 				throw error;
 			}
 
-			await this.userService.deleteUser(userId);
+			await this.userService.deleteUser(identityId);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			next(error);

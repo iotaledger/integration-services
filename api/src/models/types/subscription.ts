@@ -12,7 +12,7 @@ export interface Subscription {
 	type: SubscriptionType;
 	seed: string;
 	channelAddress: string;
-	userId: string;
+	identityId: string;
 	state: string;
 	isAuthorized: boolean;
 	subscriptionLink: string;

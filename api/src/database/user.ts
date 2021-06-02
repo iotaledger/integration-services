@@ -27,13 +27,13 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, plainQuery, options);
 };
 
-export const getUser = async (userId: string): Promise<UserPersistence | null> => {
-	const query = { _id: userId };
+export const getUser = async (identityId: string): Promise<UserPersistence | null> => {
+	const query = { _id: identityId };
 	return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
 };
 
-export const getUsersByIds = async (userIds: string[]): Promise<UserPersistence[] | null> => {
-	const query = { _id: { $in: userIds } };
+export const getUsersByIds = async (identityIds: string[]): Promise<UserPersistence[] | null> => {
+	const query = { _id: { $in: identityIds } };
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, query);
 };
 
@@ -50,7 +50,7 @@ export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpRe
 	}
 
 	const document = {
-		_id: user.userId,
+		_id: user.identityId,
 		...user,
 		registrationDate: new Date(),
 		role: UserRoles.User
@@ -61,12 +61,12 @@ export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpRe
 
 export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpResult> => {
 	const query = {
-		_id: user.userId
+		_id: user.identityId
 	};
 
 	const { username, organization, type, data, verifiableCredentials } = user;
 
-	if (verifiableCredentials?.some((vc) => vc?.id !== user.userId)) {
+	if (verifiableCredentials?.some((vc) => vc?.id !== user.identityId)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
 	}
 
@@ -91,7 +91,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 
 export const updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
 	const query = {
-		_id: vup.userId
+		_id: vup.identityId
 	};
 	const verification: VerificationPersistence = {
 		verified: vup.verified,
@@ -167,7 +167,7 @@ export const removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPe
 	};
 };
 
-export const deleteUser = async (userId: string): Promise<DeleteWriteOpResultObject> => {
-	const query = { _id: userId };
+export const deleteUser = async (identityId: string): Promise<DeleteWriteOpResultObject> => {
+	const query = { _id: identityId };
 	return MongoDbService.removeDocument(collectionName, query);
 };

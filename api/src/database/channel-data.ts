@@ -3,10 +3,10 @@ import { MongoDbService } from '../services/mongodb-service';
 import { ChannelData } from '../models/types/channel-data';
 
 const collectionName = CollectionNames.channelData;
-const getIndex = (link: string, userId: string) => `${link}-${userId}`;
+const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
 
-export const getChannelData = async (channelAddress: string, userId: string, limit?: number, index?: number): Promise<ChannelData[]> => {
-	const query = { channelAddress, userId };
+export const getChannelData = async (channelAddress: string, identityId: string, limit?: number, index?: number): Promise<ChannelData[]> => {
+	const query = { channelAddress, identityId };
 	const skip = index > 0 ? index * limit : 0;
 	const options = limit != null ? { limit, skip, sort: { creationDate: 1 } } : undefined;
 
@@ -14,12 +14,12 @@ export const getChannelData = async (channelAddress: string, userId: string, lim
 	return channelDataArr.map(({ link, channelLog }) => ({ link, channelLog }));
 };
 
-export const addChannelData = async (channelAddress: string, userId: string, channelData: ChannelData[]): Promise<void> => {
+export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[]): Promise<void> => {
 	const documents = channelData.map((data) => {
 		return {
-			_id: getIndex(data.link, userId),
+			_id: getIndex(data.link, identityId),
 			channelAddress,
-			userId,
+			identityId,
 			...data
 		};
 	});

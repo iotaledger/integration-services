@@ -4,7 +4,7 @@ export const enum CollectionNames {
 	subscriptions = 'subscriptions',
 	users = 'users',
 	keyCollection = 'key-collection',
-	identitiesCollection = 'identities',
+	identityDocsCollection = 'identity-docs',
 	verifiableCredentials = 'verifiable-credentials',
 	auth = 'auth',
 	trustedRoots = 'trusted-roots'

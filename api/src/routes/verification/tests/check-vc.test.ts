@@ -1,12 +1,12 @@
 import { DeviceIdentityMock, ServerIdentityMock } from '../../../test/mocks/identities';
-import * as IdentitiesDb from '../../../database/identities';
-import { IdentityService } from '../../../services/identity-service';
+import * as IdentityDocsDb from '../../../database/identity-docs';
+import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
-import { AuthenticationService } from '../../../services/authentication-service';
+import { VerificationService } from '../../../services/verification-service';
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import * as TrustedRootsDb from '../../../database/trusted-roots';
-import { AuthenticationRoutes } from '../index';
+import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
@@ -15,7 +15,7 @@ describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
-	let identityService: IdentityService, authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
+	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -32,15 +32,15 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		identityService = IdentityService.getInstance(identityConfig);
-		userService = new UserService();
+		ssiService = SsiService.getInstance(identityConfig);
+		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
-		authenticationService = new AuthenticationService(identityService, userService, {
+		verificationService = new VerificationService(ssiService, userService, {
 			jwtExpiration: '2 days',
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService, authorizationService, config);
+		verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, config);
 
 		res = {
 			send: sendMock,
@@ -52,15 +52,15 @@ describe('test authentication routes', () => {
 	describe('test checkVerifiableCredential route', () => {
 		it('should throw an error since no server identity is found with the id!', async () => {
 			const isVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(isVerified);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
 			// no server identity found
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(null);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(null);
 			const req: any = {
 				params: {},
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).not.toHaveBeenCalled();
@@ -69,8 +69,8 @@ describe('test authentication routes', () => {
 
 		it('should throw error since no trusted roots found!', async () => {
 			const isVerified = false;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(isVerified);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([]);
 
 			const req: any = {
@@ -78,7 +78,7 @@ describe('test authentication routes', () => {
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
@@ -88,16 +88,16 @@ describe('test authentication routes', () => {
 
 		it('should return false since since root is not trusted', async () => {
 			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ userId: 'did:iota:123noissuer' }]);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ identityId: 'did:iota:123noissuer' }]);
 
 			const req: any = {
 				params: {},
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
@@ -108,16 +108,16 @@ describe('test authentication routes', () => {
 
 		it('should return false since it is not verified', async () => {
 			const vcIsVerified = false;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ userId: ServerIdentityMock.doc.id }]);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ identityId: ServerIdentityMock.doc.id }]);
 
 			const req: any = {
 				params: {},
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
@@ -127,16 +127,16 @@ describe('test authentication routes', () => {
 		});
 		it('should return true since vc is verified and root is trusted', async () => {
 			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(identityService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
-			const getIdentitySpy = spyOn(IdentitiesDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ userId: ServerIdentityMock.doc.id }]);
+			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
+			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ identityId: ServerIdentityMock.doc.id }]);
 
 			const req: any = {
 				params: {},
 				body: vcToCheck
 			};
 
-			await authenticationRoutes.checkVerifiableCredential(req, res, nextMock);
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
