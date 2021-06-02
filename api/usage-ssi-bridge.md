@@ -85,189 +85,6 @@ The list of provided APIs is shown in figure below.
 
 ![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
-### Verification Service
-__Prefix:__ `/api/v1/verification`
-
-
-`GET /check-credential`
-
-Check the verifiable credential of an identity. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
-
-_Body:_
-
-```
-{
-    "@context": string,
-    "id": string,
-    "type": string[],
-    "credentialSubject": any,
-    "issuer": string,
-    "issuanceDate": string,
-    "proof": {
-        "type": string,
-        "verificationMethod": string,
-        "signatureValue": string
-    }
-}
-```
-
-_Response:_
-```
-{
-    "isVerified": boolean
-}
-```
-
-`POST /create-credential`
-
-Verify an identity like a person, device or organization at the API Bridge. Only verified identities with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other identities are able to identify and verify a subscriber by the verifiable credential. 
-
-_Body:_
-
-```
-{
-    "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
-    "initiatorVC": {
-        "@context": string,
-        "id": string,
-        "type": string[],
-        "credentialSubject": any,
-        "issuer": string,
-        "issuanceDate": string,
-        "proof": {
-            "type": string,
-            "verificationMethod": string,
-            "signatureValue": string
-        }
-    }
-}
-```
-
-_Response:_
-```
-{
-    "@context": string,
-    "id": string,
-    "type": string[],
-    "credentialSubject": any,
-    "issuer": string,
-    "issuanceDate": string,
-    "proof": {
-        "type": string,
-        "verificationMethod": string,
-        "signatureValue": string
-    }
-}
-```
-
-`POST /revoke-credential`
-
-Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the identity itself can do that.
-
-_Body:_
-
-```
-{
-   "subjectId": string,
-   "signatureValue": string
-}
-```
-
-_Response:_
-```
--
-```
-
-
-`GET /trusted-roots`
-
-Returns a list of trusted root identity IDs. Trusted roots are IDs of identities which are trusted by the Bridge. This identity IDs can be IDs of other companies, by adding them to the list trusted roots their Verifiable Credentials (VCs) are trusted when checking at the Bridge.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-{
-    "trustedRoots": string[]
-}
-```
-
-`GET /latest-document/{identity-id}`
-
-Get the latest version of an identity document (DID) from the Tangle.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-{
-    "id": string,
-    "authentication": [
-        {
-            "id": string,
-            "controller": string,
-            "type": string,
-            "publicKeyBase58": string
-        }
-    ],
-    "created": string,
-    "updated": string,
-    "proof": {
-        "type": string,
-        "verificationMethod": string,
-        "signatureValue": string
-    }
-}
-```
-
-### Authentication Service 
-__Prefix:__ `/api/v1/authentication`
-
-`GET /prove-ownership/{identity-id}`
-
-Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-{
-    "nonce": string
-}
-```
-
-`POST /prove-ownership/{identity-id}`
-
-Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
-
-_Body:_
-
-```
-{
-    "signedNonce": string
-}
-```
-
-_Response:_
-
-```
-{
-    "jwt": string
-}
-```
-
 ### Identity Service 
 
 __Prefix:__ `/api/v1/identities`
@@ -482,6 +299,190 @@ _Body:_
 _Response:_
 ```
 -
+```
+
+
+### Authentication Service 
+__Prefix:__ `/api/v1/authentication`
+
+`GET /prove-ownership/{identity-id}`
+
+Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
+
+_Body:_
+
+```
+-
+```
+
+_Response:_
+```
+{
+    "nonce": string
+}
+```
+
+`POST /prove-ownership/{identity-id}`
+
+Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
+
+_Body:_
+
+```
+{
+    "signedNonce": string
+}
+```
+
+_Response:_
+
+```
+{
+    "jwt": string
+}
+```
+
+### Verification Service
+__Prefix:__ `/api/v1/verification`
+
+
+`GET /check-credential`
+
+Check the verifiable credential of an identity. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
+
+_Body:_
+
+```
+{
+    "@context": string,
+    "id": string,
+    "type": string[],
+    "credentialSubject": any,
+    "issuer": string,
+    "issuanceDate": string,
+    "proof": {
+        "type": string,
+        "verificationMethod": string,
+        "signatureValue": string
+    }
+}
+```
+
+_Response:_
+```
+{
+    "isVerified": boolean
+}
+```
+
+`POST /create-credential`
+
+Verify an identity like a person, device or organization at the API Bridge. Only verified identities with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other identities are able to identify and verify a subscriber by the verifiable credential. 
+
+_Body:_
+
+```
+{
+    "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+    "initiatorVC": {
+        "@context": string,
+        "id": string,
+        "type": string[],
+        "credentialSubject": any,
+        "issuer": string,
+        "issuanceDate": string,
+        "proof": {
+            "type": string,
+            "verificationMethod": string,
+            "signatureValue": string
+        }
+    }
+}
+```
+
+_Response:_
+```
+{
+    "@context": string,
+    "id": string,
+    "type": string[],
+    "credentialSubject": any,
+    "issuer": string,
+    "issuanceDate": string,
+    "proof": {
+        "type": string,
+        "verificationMethod": string,
+        "signatureValue": string
+    }
+}
+```
+
+`POST /revoke-credential`
+
+Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the identity itself can do that.
+
+_Body:_
+
+```
+{
+   "subjectId": string,
+   "signatureValue": string
+}
+```
+
+_Response:_
+```
+-
+```
+
+
+`GET /trusted-roots`
+
+Returns a list of trusted root identity IDs. Trusted roots are IDs of identities which are trusted by the Bridge. This identity IDs can be IDs of other companies, by adding them to the list trusted roots their Verifiable Credentials (VCs) are trusted when checking at the Bridge.
+
+_Body:_
+
+```
+-
+```
+
+_Response:_
+```
+{
+    "trustedRoots": string[]
+}
+```
+
+`GET /latest-document/{identity-id}`
+
+Get the latest version of an identity document (DID) from the Tangle.
+
+_Body:_
+
+```
+-
+```
+
+_Response:_
+```
+{
+    "id": string,
+    "authentication": [
+        {
+            "id": string,
+            "controller": string,
+            "type": string,
+            "publicKeyBase58": string
+        }
+    ],
+    "created": string,
+    "updated": string,
+    "proof": {
+        "type": string,
+        "verificationMethod": string,
+        "signatureValue": string
+    }
+}
 ```
 
 ## HowTo: Create and verify an identity of a device
