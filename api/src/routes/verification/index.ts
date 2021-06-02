@@ -33,7 +33,7 @@ export class VerificationRoutes {
 				throw new Error('subject does not exist!');
 			}
 
-			if (!requestUser.identityId || initiatorVC?.credentialSubject?.id) {
+			if (!requestUser.identityId && !initiatorVC?.credentialSubject?.id) {
 				throw new Error('no initiator id could be found!');
 			}
 
