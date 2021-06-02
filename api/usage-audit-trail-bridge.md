@@ -6,6 +6,8 @@ The Ecommerce-Audit Trail Bridge allows users to create immutable data channels 
 
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
 
+> The api currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is able to read and write from/to the channel.
+> 
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
 ### Channel Service 
