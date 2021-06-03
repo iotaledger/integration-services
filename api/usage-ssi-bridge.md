@@ -1,5 +1,7 @@
 # Ecommerce-SSI Bridge
 
+## Concept and logic architecture
+
 The Ecommerce-SSI Bridge allows users to create Self-Sovereign Identities, linking Decentralized Identifiers (DIDs) to their specification ([DID Documents](https://www.w3.org/TR/did-core/)). DIDs are public/private key pairs and can be created for organizations, individuals and objects. Each identity is represented by a unique public key immutably stored onto the ledger. Identities and public keys are used to anchor off-chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)), certificates containing identity attributes and signed by an Issuer identity (using its private key).
 
 The Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then propagate this verification to other entities (organizations, individuals, objects) using a network of trust approach (see figure below).
@@ -21,8 +23,9 @@ The figure below shows the envisioned system architecture (within the full set o
 
 Below we provide examples on how the Bridge could be used in the context of ecommerce ecosystems, in particular: 1) secure goods distribution 2) secure sales.
 
-## Ecommerce example scenarios: secure goods distribution
-### 1. Delivery organization identity and scanners verification ###
+## Use cases
+### Secure goods distribution
+#### Use case 1. Delivery organization identity and scanners verification ###
 
 __Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain 
 
@@ -36,7 +39,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * (optionally) The user can acquire the courier scanner device credential (in the form of a QR code) and uses the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator. This allows to verify authentic deliveries.
 
 
-### 2. Customer identity and delivery verification ###
+#### Use case 2. Customer identity and delivery verification ###
 
 __Problem__: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain 
 
@@ -50,8 +53,8 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 
 _The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification._
 
-## Ecommerce example scenarios: secure sales
-### 1. Customer identity and credential (age) verification ###
+### Secure ecommerce sales
+#### Use case 1. Customer identity and credential (age) verification ###
 
 __Problem__: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability.
 
@@ -65,7 +68,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The user provides her credential to the e-commerce website using the Ecommerce-SSI Bridge
 * The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
 
-### 2. Seller identity verification ### 
+#### Use case 2. Seller identity verification ### 
 
 __Problem__: Verify sellers identity and product authenticity; reducing small sellers compliance burden.
 
@@ -81,7 +84,7 @@ In the context of ENSURESEC e-commerce the proposed use case will make use of th
 * A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (including verification of the seller identity)
 
 
-## Ecommerce-SSI Bridge APIs Definition
+## Software Architecture and APIs Definition
 The list of provided APIs is shown in figure below.
 
 ![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
@@ -486,12 +489,15 @@ _Response:_
 }
 ```
 
-## HowTo: Create and verify an identity of a device
+## HowTos
+<!-- to replace with an end-to-end tutorial -->
+
+### Create and verify a device DID
 
 In the following we focus on the secure goods distribution scenario and organization and object identities.
 In order to interact with other identities in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
-### 1. Create an identity
+#### 1. Create the device DID
 
 The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which organization the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
 
@@ -568,7 +574,8 @@ The `txHash`contains the transaction hash of the identity creation which can be 
 _
 In production environments it is recommended that each organization installs and runs its Bridge locally. In case of centralized Bridge the Bridge implementation should be adapted to only receive the identity public (with private/public key pair generated locally)._
 
-### 2. Authentication and authorise an identity
+#### 2. Authenticate the device identity (DID) and authorise access to the Bridge
+<!-- should this be split in two parts? -->
 
 An identity can be used to authenticate to a number of services provided by the Bridge in order to manage identities. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication for the Ecommerce-SSI bridge are as following:
 
@@ -664,7 +671,7 @@ export const fetchAuth = async (identity: any) => {
 };
 ```
 
-### 3. Verify a registered identity (i.e., a device identity)
+#### 3. Verify a device identity and issue a "verified" identity credential
 
 Everyone can create an identity and add any data to such identity, that is why it is needed to know if the person or device really belongs to the organization they claim to be. Hence their identity must be verified. This can be done by an administrator of the Ecommerce-SSI bridge or an already verified identity of an organization (based on the principle of network of trust described above). Upon verification, the system allows to create a so called verifiable credential, which contains information about the identity and a signature proof of the information of the issuer, so that authenticity of data in the verifiable credential cannot be changed later but verified. In this case we verify the previously generated device identity by an already authorized Test User with the following verifiable credential:
 
@@ -794,7 +801,7 @@ The API then checks if the subjectId exists at the API and belongs to the same o
 }
 ```
 
-### 4. Get data of the device
+#### 4. Read credentials (i.e., properties, attributes) of the device identity (DID)
 
 The verified device can now be requested to provide information about it by using the identityId. If an identity is verified, can be seen by the `verification.verified` field but also by checking the verifiable credentials of the `verifiableCredentials` array. To check whether the verifiable credential is still valid and not revoked the request in section 5 can be used.
 
@@ -902,7 +909,7 @@ The response contains now all information of the device like for instance its us
 ```
 
 
-### 5. Check verifiable credential
+#### 5. Verify authenticity of a verifiable credential
 
 To check whether the verifiable credential is valid the following api can be called:
 
@@ -978,7 +985,7 @@ for verified identities and `false` for not verified identities. A reason for no
 
 
 
-### 6. Revoke verifiable credential
+#### 6. Revoke an identity (DID) verifiable credential (i.e., a device property)
 
 A verifiable credential can be revoked so it is no more verified, a reason therefore could be: A person left the organization or a device broke and got removed by the organization. To revoke the credential the following api must be called via POST:
 
@@ -1002,32 +1009,7 @@ After the credential got revoked the verifiable credential can be checked again 
 ```
 
 
-### 7. Trusted roots
-
-In regard to support verifiable credentials of other systems, the root id of their network of trust can be added to the Bridge. For instance if Organization X has the id `did:iota:abc` and Organization Z `did:iota:xyz`. Organization X can add the did `did:iota:xyz` next to his trusted root id to also trust credentials signed by Organization Z.
-
-When checking a verifiable credential it checks:
-
-- Is the signature and content of the credential the same
-- Is the credential valid or revoked
-- Is the issuer id trusted
-
-To receive the list of trusted identities the SSI Bridge offers an endpoint which can be called as the following:
-
-https://ensuresec.solutions.iota.org/api/v0.1/verification/trusted-roots
-
-It returns all trusted identity ids which are trusted by the api.
-
-```
-{
-    "trustedRoots": [
-        "did:iota:HUReLjBy79sk4Jbah9S56GtRDyGoEskHdQjFXSashKGr",
-        "did:iota:8P4uV9haNks6N8aXXLt2Ps3nQtSqGXc2kJM4K6urm62Y"
-    ]
-}
-```
-
-### 8. Get latest DID document
+#### 7. Retrieve a specific identity description (DID document)
 
 To receive the latest document of an identity from the tangle, the Ecommerce-SSI Bridge also offers an endpoint which can be called via GET.
 
@@ -1055,3 +1037,29 @@ It returns information about the identity document of the device on the Tangle.
     }
 }
 ```
+
+#### 8. Expand the network of trust
+
+In regard to support verifiable credentials of other systems, the root id of their network of trust can be added to the Bridge. For instance if Organization X has the id `did:iota:abc` and Organization Z `did:iota:xyz`. Organization X can add the did `did:iota:xyz` next to his trusted root id to also trust credentials signed by Organization Z.
+
+When checking a verifiable credential it checks:
+
+- Is the signature and content of the credential the same
+- Is the credential valid or revoked
+- Is the issuer id trusted
+
+To receive the list of trusted identities the SSI Bridge offers an endpoint which can be called as the following:
+
+https://ensuresec.solutions.iota.org/api/v0.1/verification/trusted-roots
+
+It returns all trusted identity ids which are trusted by the api.
+
+```
+{
+    "trustedRoots": [
+        "did:iota:HUReLjBy79sk4Jbah9S56GtRDyGoEskHdQjFXSashKGr",
+        "did:iota:8P4uV9haNks6N8aXXLt2Ps3nQtSqGXc2kJM4K6urm62Y"
+    ]
+}
+```
+
