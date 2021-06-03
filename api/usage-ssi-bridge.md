@@ -528,7 +528,9 @@ The creation of an identity is one of the key aspects when interacting with othe
 
 The public key represents the identity public identifier (DID), represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership of that the identity. 
 
-To specify the identity attributes, currently the Ecommerce-SSI Bridge supports five data models types: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the currently valid type for an identity and are derived by adapting the data models of https://schema.org. In addition, our implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of an identity is defined by the field type; if an unknown type is provided, the API will reject the call.
+To specify the identity attributes, currently the Ecommerce-SSI Bridge supports five data models types: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the currently valid type for an identity and are derived by adapting the data models of https://schema.org. 
+<!-- do we have a better link -->
+In addition, our implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of an identity is defined by the field type; if an unknown type is provided, the API will reject the call.
 
 <!-- to check. In a normal process; I would create first the identity then add attributes. But I might be wrong. Check DID standards for this -->
 
