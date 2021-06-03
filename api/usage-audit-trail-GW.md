@@ -1,4 +1,4 @@
-# Ecommerce-Audit Trail Gateway
+# Ecommerce-Audit Trail Gateway (GW)
 
 <!-- I feel better to call this GW but we can go back to Bridge especially if we need to do any refactoring in case we switch to GW. This is something I want to avoid -->
 
