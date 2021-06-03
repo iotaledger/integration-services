@@ -606,13 +606,15 @@ The `doc`field contains the created identity document of the newly created ident
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to control the identity ownership and to authenticate at the APIs Bridge.
 
 The `txHash`contains the transaction hash (i.e., the unique address of the IOTA Ledger) where the identity document is stored. The `txHash`can be used to retrieve the identity information using any Ledger explorer and without the need to access the APIs Bridge. You can test [here](https://explorer.iota.org/mainnet)
+
+
+_In production environments it is recommended that each organization installs and runs its Bridge locally. In case of centralized Bridge the Bridge implementation should be adapted to only receive the identity public from a private/public key pair generated locally.
 _
-In production environments it is recommended that each organization installs and runs its Bridge locally. In case of centralized Bridge the Bridge implementation should be adapted to only receive the identity public from a private/public key pair generated locally._
 
 #### 2. Authenticate the device identity (DID) and authorise access to the Bridge
 <!-- should this be split in two parts? -->
 
-An identity can be used to authenticate to a number of services provided by the Bridge in order to manage identities. For accessing the service at several endpoints an identity needs to be authenticated by using the public/private key pair which is generated when creating an identity. Endpoints which need client authentication for the Ecommerce-SSI bridge are as following:
+A created identity can be used to authenticatem the user linked to it, to a number of services provided by the Bridge. These services allow to manage the identity itself. For accessing the provided endpoint services the entity is authenticated using the public/private key pair associated to the used identity, which was generated when creating the identity itself. Endpoints which need user authentication for the Ecommerce-SSI bridge are as following:
 
 - get('/identities/search')
 - put('/identities/identity')
@@ -620,7 +622,7 @@ An identity can be used to authenticate to a number of services provided by the 
 - post('/verification/create-credential')
 - post('/verification/revoke-credential')
 
-How the client can authenticate at the API is described in the following sequence diagram which refers to verify a registered identity (section 3) as an example.
+User authentication is described in the following sequence diagram which refers to verify a registered identity (section 3) as an example.
 
 ![verify identity sd](./src/assets/diagrams/verify-identity-sd.jpeg)
 
