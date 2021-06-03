@@ -30,13 +30,13 @@ Below we provide examples on how the Bridge could be used in the context of e-co
 __Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain. 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An authorised employee of a delivery company X registers a DID for their organization using the Ecommerce-SSI Bridge
-* An e-commerce operator verifies the delivery company organization identity and uses the Bridge to issue a credential for the company to deliver on their behalf The credential contains the company organization DID and it is signed by the e-commerce operator private key (associated to its identity)
-* The authorised employee of the verified delivery company registers a DID for each scanner (i.e. android scanners) used by the company couriers
-* The authorised employee uses the Ecommerce-SSI Bridge to issue authorisation credentials to the scanner devices used to handling deliveries (with such credentials stored locally into the scanner devices)
-* When a courier hands over the delivery, the scanner device uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator
-* The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by an authorised courier and device and not stolen or diverted in transit. This is possible because of the verification of the device handling the delivery scan
-* (optionally) The user can acquire the courier scanner device credential (in the form of a QR code) and uses the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator. This allows to verify authentic deliveries.
+* An authorised employee of a delivery company X registers an identity (DID) for their organization using the Ecommerce-SSI Bridge;
+* An e-commerce operator verifies the delivery company organization identity and uses the Bridge to issue a credential for the company to deliver on their behalf. The credential contains the company organization DID and it is signed by the e-commerce operator private key (associated to its identity; previously established);
+* The authorised employee of the verified delivery company registers a DID for each scanner (i.e. android scanners) used by the company couriers;
+* The authorised employee uses the Ecommerce-SSI Bridge to issue authorisation credentials to the scanner devices used to handling deliveries (with such credentials stored locally into the scanner devices);
+* When a courier hands over the delivery, the scanner device uses the Ecommerce-SSI Bridge to present its credential to the e-commerce operator;
+* The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was handled by an authorised courier and device and not stolen or diverted in transit. This is possible because of the verification of the device handling the scanning of the delivery;
+* (optionally) The customer can acquire the courier scanner device credential (in the form of a QR code read through her mobile phone) and use the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator. This allows to verify authentic deliveries.
 
 
 #### Use case 2. Customer identity and delivery verification
@@ -44,48 +44,52 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 __Problem__: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain. 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
-* A user performs a purchase on an e-commerce site (see below use case 2 in case of age verification is required)
-* The e-commerce site uses the Ecommerce-SSI Bridge to issue a proof of purchase credential to the user (this is saved to the user phone) 
-* The user receives the good delivery and present the credential in the form af a QR code to the courier scanner
-* The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity; the delivery is safely handled over to the right customer
-* (optionally) The user acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised dleivery organization; the user (customer) knows the delivery is legit
+* A customer creates a decentralized identity (DID) using a mobile application (a standalone credential wallet or an e-commerce shopping app);
+* The customer performs a purchase on an e-commerce site (see below use case 2 in case of age verification is required);
+* The e-commerce site uses the Ecommerce-SSI Bridge to issue a proof of purchase credential to the customer (this is saved to the customer phone);
+* The customer receives the product delivery and present the credential in the form af a QR code to the courier scanner;
+* The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity; the delivery is safely handled over to the right customer;
+* (optionally) The customer acquires the courier scanner credential (see above, use case 1) and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorised delivery company; the customer knows the delivery is legit.
 
-_The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification._
+_The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also product identification._
 
 ### Secure e-commerce sales
 #### Use case 1. Customer identity and credential (age) verification
 
-__Problem__: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability.
+__Problem__: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability for e-commerce and small sellers.
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An authorised bank employee registers an _organization_ decentralized identity for its bank
-* A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
-* The user requests an Issuer (e.g., the bank) to issue a credential staying her age
-* The issuer uses information about the user held on local record (and previously verified) and the Ecommerce-SSI Bridge to create and issue a Verifiable Credential to the user
-* The user (namely Owner) downloads the credential in her app, using a credential wallet
-* The user purchases a verified age item on an e-commerce site
-* The user provides her credential to the e-commerce website using the Ecommerce-SSI Bridge
-* The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
+* An authorised bank employee registers an _organization_ decentralized identity (DID) for its bank;
+* A customer creates a decentralized identity (DID) using a mobile application (a standalone credential wallet or an e-commerce shopping app);
+* The customer requests an Issuer (e.g., the bank) to issue a credential staying her age;
+* The issuer uses information about the user held on local record (and previously verified) and the Ecommerce-SSI Bridge to create and issue a Verifiable Credential to the customer;
+* The customer (namely Owner) downloads the credential in her app, using a credential wallet;
+* The customer purchases an item that requires age verification on an e-commerce site;
+* The customer provides her credential to the e-commerce website using the Ecommerce-SSI Bridge;
+* The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase.
+
+_A similar scenarion can be applied in case of online purchase of dedicated drugs for specific health condition. The customer can be issued with a credential from her GP statying her condition._
+
 
 #### Use case 2. Seller identity verification 
 
-__Problem__: Verify sellers identity; reducing small sellers compliance burden.
+__Problem__: Verify sellers identity; reducing small sellers compliance burden and reputation risks.
 
-In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
-* An e-commerce site allows a seller authorised employee to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
-* The seller requests an Issuer (e.g., its bank) to issue a credential stating its KYC (Know Your Customer) status
-* The seller presents the credentials to the e-commerce site operator using the Ecommerce-SSI Bridge
+In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
+* An e-commerce site allows a seller authorised employee to create a decentralized identity (DID for organization) using the Ecommerce-SSI Bridge;
+* The seller requests an Issuer (e.g., its bank) to issue a credential stating its KYC (Know Your Customer) status;
+* The seller presents the credentials to the e-commerce site operator using the Ecommerce-SSI Bridge;
 * The e-commerce site operator verifies the seller credentials using the Ecommerce-SSI Bridge and allow the seller to trade on its marketplace
 
 #### Use case 3. Product identity and authenticity
 
 __Problem__: Verify product authenticity; reducing counterfeit.
 
-* The e-commerce site allows the seller to create a decentralized identity for each of its products (DID document for product) using the Ecommerce-SSI Bridge
-* The e-commerce site allows the seller to create and sign an authenticity credential associated to a given product identity using the Ecommerce-SSI Bridge
-* A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product)
-* A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (including verification of the seller identity)
+In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
+* The e-commerce site allows the seller to create a decentralized identity for each of its products (DID for objects) using the Ecommerce-SSI Bridge;
+* The e-commerce site allows the seller to create and sign an authenticity credential associated to a given product identity using the Ecommerce-SSI Bridge;
+* A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product);
+* A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (thus allowing verification of the seller identity).
 
 
 ## Software Architecture and APIs Definition
