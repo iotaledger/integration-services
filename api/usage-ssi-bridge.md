@@ -8,7 +8,7 @@ The Issuer itself is an entity with its own decentralized identity. The Bridge a
 
 <img width="755" alt="Screenshot 2021-05-21 at 22 21 31" src="https://user-images.githubusercontent.com/1702827/119199456-fdb5d880-ba82-11eb-8983-bec1e36afdab.png">
 
-The Bridge also allows Issuers to issue Verifiable Credentials for selected Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires verifying that a credential contains the identifier (DID) of the owner presenting it, and it is signed by an authorised Issuer. This requires access to the information stored onto a ledger.
+The Bridge also allows Issuers to issue Verifiable Credentials for selected identity Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires verifying that a credential contains the identifier (DID) of the owner presenting it, and it is signed by an authorised Issuer. This requires access to the information stored onto a ledger.
 
 The image below shows the interaction between Issuer, Owner, Verifier and the ledger to manage the lifecycle of decentralized identities and verifiable credentials.
 
