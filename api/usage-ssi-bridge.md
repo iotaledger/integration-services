@@ -98,6 +98,7 @@ The software and services architecture and the list of provided APIs are shown i
 ![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
 ### Identity Service 
+The service allows to create decentralized identity onto the IOTA Tangle and to locally manage information for their indexing and search. This service is provided centrally for ease of use but in production ready scenario it is recommended to be installed locally.
 
 __Prefix:__ `/api/v1/identities`
 
@@ -320,6 +321,8 @@ _Response:_
 
 
 ### Authentication Service 
+The service allows previously created identies to be authenticated and authorized to use the Bridge. This is required to maintain the security of the Bridge and audit its use, but it can be removed in case the Bridge is deployed locally to each party.
+
 __Prefix:__ `/api/v1/authentication`
 
 `GET /prove-ownership/{identity-id}`
@@ -341,7 +344,7 @@ _Response:_
 
 `POST /prove-ownership/{identity-id}`
 
-Get an authentication token by signing a nonce using the private key, if it is signed correctly a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. 
+Get an authentication token by signing a nonce using the private key. If signature is verified, a JWT string will be returned in the response. The nonce can be received from `GET /prove-ownership/{identity-id}` endpoint. The JWT is used for any future API interaction.
 
 _Body:_
 
@@ -360,12 +363,14 @@ _Response:_
 ```
 
 ### Verification Service
+The service allows to verify identities, create and verify credentials. This is the abstraction layer that allows every entity to easily deal with IOTA decentralized (SSI) identity implementation. 
+
 __Prefix:__ `/api/v1/verification`
 
 
 `GET /check-credential`
 
-Check the verifiable credential of an identity. Validates the signed verifiable credential against the Tangle and checks if the issuer DID contained in the credential is a trusted root.
+Check the verifiable credential of an identity. Validates the signed verifiable credential against the Issuer information stored onto the IOTA Tangle and checks if the issuer identity (DID) contained in the credential is from a trusted root.
 
 _Body:_
 
@@ -394,7 +399,9 @@ _Response:_
 
 `POST /create-credential`
 
-Verify an identity like a person, device or organization at the API Bridge. Only verified identities with assigned privileges can verify other identities at the API. Having a verified identity provides the opportunity that other identities are able to identify and verify a subscriber by the verifiable credential. 
+Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to. 
+
+<!-- check if the above is correct--> 
 
 _Body:_
 
@@ -436,7 +443,9 @@ _Response:_
 
 `POST /revoke-credential`
 
-Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins, the initiator or the identity itself can do that.
+Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins (with verified identities) or the identity owner itself can do that.
+
+<!-- not here but in the deliverable we need to explain how revocation is implemented in practice --> 
 
 _Body:_
 
@@ -455,7 +464,7 @@ _Response:_
 
 `GET /trusted-roots`
 
-Returns a list of trusted root identity IDs. Trusted roots are IDs of identities which are trusted by the Bridge. This identity IDs can be IDs of other companies, by adding them to the list trusted roots their Verifiable Credentials (VCs) are trusted when checking at the Bridge.
+Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
 _Body:_
 
@@ -503,7 +512,7 @@ _Response:_
 ```
 
 ## HowTos
-<!-- to replace with an end-to-end tutorial -->
+<!-- to replace with an end-to-end tutorial based on a selected use case -->
 
 ### Create and verify a device identity (DID)
 
