@@ -18,24 +18,29 @@ The following workflow can be implemented:
 * We assume a Company X identity has been registered and verified (see Ecommerce-SSI Bridge documentation); in addition an identity for employee Y and device (sensor) Z of Company X have also been registered and verified;
 * In addition a Company A identity has been registered and verified, as well as the identity of an employee B and tool C of Company A have been registered and verified;
 * The device Z uses the GW APIs to create a channel _a_;
-* The tool C uses the GW APIs to request subscription to the channel _a_;
+* The tool C uses the GW APIs to search for channel (based on available indexing metadata) and to request subscription to the selected channel _a_;
 * The device Z uses the GW APIs to authorize tool C to access the channel _a_;
-* The device Z uses the GW APIs to 
-*  
-* A sensor (device) identity is registered and verified 
+* The device Z uses the GW APIs to add data to a channel _a_;
+* The tool C is automatically notified of new data coming from device Z.
+
+<!-- are we using credentials to check authorization? How do we implement specific access policies -->
 
 ### 2. _Guaranteeing the immutability of large data sets._ 
 This includes storing and sharing data sets maintained in large data lakes while guaranteeing that the data sets have not being altered over time or when passing across different parties. This requires that Author and writer subscribers of a channel first index the data sets, then hash them and then store on the Audit Trail (using the GW) an index and a hash of the given data sets. Authorised reader subscribers will receive access to the channel, the given data set and its index and will use the index to retrieve and compare the hash stored in the Audit Trail with the one generated from the received data set. An example includes storing on the Audit Trail hashes of data logs collected by e-commerce systems. This allows to perform forensing investigation in case of cyberphysical attacks to e.commerce infrastructure and to avoid altering evidence.
 
-The following workflow can be implemented:
-* dgdg
-
+A similar workflow can be implemented in the scenario above. The exchange of data sets and the extraction of hash/their comparison shall be implemented by the client using the Audit Trail GW APIs.
 
 <!-- in a second version and for the deliverable; I will write the above as workflow -->
 
 ## Ecommerce-Audit Trail GW APIs Definition
 
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
+
+The Audit Trail GW implementation provides the following services:
+* gf
+* gfg
+* fg
+
 
 > The api currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is able to read and write from/to the channel.
 > 
