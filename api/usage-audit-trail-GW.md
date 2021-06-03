@@ -48,6 +48,9 @@ The Audit Trail GW implementation provides the following services:
 <!-- update figure name if we decide to call it GW--> 
 <!-- delete information from a channel/not to a channel-->
 
+
+<!-- perhaps we need to explain the data model -->
+
 ### Channel Service 
 __Prefix:__ `/api/v1/channels`
 
@@ -79,7 +82,7 @@ _Response:_
 
 `GET /logs/{channel-address}`
 
-Get data from the channel. First entry is the start of the subscription. __Read__ permission is mandatory.
+Get data from the channel with address _channel address_. First entry is the start of the subscription. __Read__ permission is mandatory.
 
 <!-- entry is not clear. Need to check -->
 
@@ -105,7 +108,7 @@ _Response:_
 
 `POST /logs/{channel-address}`
 
-Write data to a channel. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
+Write data to a channel with address _channel address_. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
 
 _Body:_
 
@@ -127,7 +130,7 @@ _Response:_
 
 `GET /history/{channel-address}`
 
-__TBD!__ _Get all data of a stream using a shared key. Mainly used from auditors to evaluate a log stream. Read permissions are mandatory._
+__TBD!__ _Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory._
 
 
 ### Channel Info Service 
@@ -135,15 +138,19 @@ __Prefix:__ `/api/v1/channel-info`
 
 `POST /validate`
 
-__TBD!__ _Validates data of a stream. Verifies data of the database against data on the tangle. If the data is verified the status field will be set to verified. Other data states are: synchronizing, outdated, malicious. If the client does not want to verify the data and trusts the status of the server it can tell the api that it only wants to receive the status._
+__TBD!__ _Validates data of a channel. Verifies data of the database against data on the IOTA Tangle. If the data is verified the status field will be set to verified. Other data states are: synchronizing, outdated, malicious. If the client does not want to verify the data and trusts the status of the server it can tell the API that it only wants to receive the status._
+
+>__Note:__ To increase speed of retrieving data from a channel, data are replicated in a local database, this prevents from fetching them directly from the ledger. However _validate_ allows to verify that a local database has the same copy of data.
+
+<!-- this we need to explain since someone would expect data are only in the Tangle. What in case of permanodes? -->
 
 `POST /re-import`
 
-__TBD!__ _Re imports data into the database from the tangle. The user can decide to re import the data from the tangle into the database. A reason for it could be a malicious state of the data._
+__TBD!__ _Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data._
 
 `GET /channel/{channel-address}`
 
-Get information about a channel.
+Get information about a channel with address _channel-address_.
 
 _Body:_
 
@@ -170,6 +177,8 @@ _Response:_
 `POST /channel`
 
 Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
+
+<!-- isn't the channel also created on the Tangle?-->
 
 _Body:_
 
@@ -223,7 +232,7 @@ _Response:_
 
 `DELETE /channel/{channel-address}`
 
-Delete information of a channel. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the tangle since its data is immutable on the tangle!
+Delete information of a channel with address _channel-address_. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
 
 _Body:_
 
@@ -238,7 +247,7 @@ _Response:_
 
 `GET /search`
 
-Search for a channel. A client can search for a channel which he is interested in.
+Search for a channel. A client can search for a channel which it is interested in.
 
 
 ### Subscription Service 
@@ -250,7 +259,9 @@ __TBD!__ _Get all subscriptions of a channel._
 
 `POST /request/{channel-address}`
 
-Request subscription to a channel. A client can request a subscription to a channel which he then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
+Request subscription to a channel with address _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
+
+<!-- we need to explain what the seed is used for-->
 
 _Body:_
 
@@ -271,7 +282,7 @@ _Response:_
 
 `POST /authorize/{channel-address}`
 
-Authorize a subscription to a channel. The author of a channel can authorize a subscriber to read/write from a channel.
+Authorize a subscription to a channel with address _channel-address_. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
 
 _Body:_
 
@@ -295,14 +306,16 @@ __TBD!__ _Remove subscription to a channel. The author or subscriber of a channe
 
 ## HowTo: Create a channel, add a subscriber and read + write from it
 
-The following sequence diagram demonstrates the requests need to write and read to/from a channel. The sequence diagram indicates two users: Tom which becomes the author and a IoT Device which is the subscriber.
+<!-- adapt to one of the example above -->
+
+The following sequence diagram demonstrates the requests needed to write and read to/from a channel. The sequence diagram indicates two users: Tom which becomes the author and a IoT Device which is the subscriber.
 
 ![create channel sd](./src/assets/diagrams/write-logs-to-channel-sd.jpeg)
 
-1. Each of the users trying to write or read from a channel needs to create an identity at the api
-2. Each of the identity must authenticate at the api in order to authenticate the requests are legit
+1. Each of the users trying to write or read from a channel needs to create an identity using the Ecommerce-SSI Bridge
+2. Each of the identity must authenticate at the APIs in order to authenticate the requests are legit
 3. One identity must create a channel (in this case Tom), this identity becomes the author of the channel and is able to authorize further identities to read and write from/to the channel
 4. The second identity can request a subscription to the channel so it is able to read or write
 5. The author is then able to authorize this suscription
 6. After the author authorized the IoT Device it is able to write data to the channel
-7. The author is then able to fetch the logs of the IoT Device
+7. The author is then able to fetch the data of the IoT Device
