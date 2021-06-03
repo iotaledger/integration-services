@@ -91,6 +91,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product);
 * A user app allows a customer to verify signature of the product authenticity credential using the Ecommerce-SSI Bridge (thus allowing verification of the seller identity).
 
+<!-- perhaps we need to explain the data model -->
 
 ## Software Architecture and APIs Definition
 The software and services architecture and the list of provided APIs are shown in the figure below.
