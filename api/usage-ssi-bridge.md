@@ -25,9 +25,9 @@ Below we provide examples on how the Bridge could be used in the context of ecom
 
 ## Use cases
 ### Secure goods distribution
-#### Use case 1. Delivery organization identity and scanners verification ###
+#### Use case 1. Delivery organization identity and scanners verification
 
-__Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain 
+__Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain. 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An authorised employee of a delivery company X registers a DID for their organization using the Ecommerce-SSI Bridge
@@ -39,9 +39,9 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * (optionally) The user can acquire the courier scanner device credential (in the form of a QR code) and uses the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery company authorised by her e-commerce operator. This allows to verify authentic deliveries.
 
 
-#### Use case 2. Customer identity and delivery verification ###
+#### Use case 2. Customer identity and delivery verification
 
-__Problem__: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain 
+__Problem__: Proof of Collection: guarantee goods being collected by the right customer; avoid threats and frauds in the distribution chain. 
 
 In the context of ENSURESEC e-commerce ecosystem, the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * A user creates a decentralized identity (DID document) using a mobile application (a standalone credential wallet or an e-commerce shopping app)
@@ -53,8 +53,8 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 
 _The two scenarios above become even more interesting in case of automated (i.e., drones) delivery. And when including also delivery identification._
 
-### Secure ecommerce sales
-#### Use case 1. Customer identity and credential (age) verification ###
+### Secure e-commerce sales
+#### Use case 1. Customer identity and credential (age) verification
 
 __Problem__: Verify customer identity and avoid to collect and store personal information; increasing compliance and reducing liability.
 
@@ -68,16 +68,20 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 * The user provides her credential to the e-commerce website using the Ecommerce-SSI Bridge
 * The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorise the purchase
 
-#### Use case 2. Seller identity verification ### 
+#### Use case 2. Seller identity verification 
 
-__Problem__: Verify sellers identity and product authenticity; reducing small sellers compliance burden.
+__Problem__: Verify sellers identity; reducing small sellers compliance burden.
 
 In the context of ENSURESEC e-commerce the proposed use case will make use of the Ecommerce-SSI Bridge to implement the following workflow:
 * An e-commerce site allows a seller authorised employee to create a decentralized identity (DID document for organization) using the Ecommerce-SSI Bridge
 * The seller requests an Issuer (e.g., its bank) to issue a credential stating its KYC (Know Your Customer) status
 * The seller presents the credentials to the e-commerce site operator using the Ecommerce-SSI Bridge
 * The e-commerce site operator verifies the seller credentials using the Ecommerce-SSI Bridge and allow the seller to trade on its marketplace
-#### 2.1 Product identity and authenticity
+
+#### Use case 3. Product identity and authenticity
+
+__Problem__: Verify product authenticity; reducing counterfeit.
+
 * The e-commerce site allows the seller to create a decentralized identity for each of its products (DID document for product) using the Ecommerce-SSI Bridge
 * The e-commerce site allows the seller to create and sign an authenticity credential associated to a given product identity using the Ecommerce-SSI Bridge
 * A user app allows a customer to obtain the product authenticity credential (scanning a QR from an e-commerce site or directly attached to a purchased product)
@@ -492,12 +496,12 @@ _Response:_
 ## HowTos
 <!-- to replace with an end-to-end tutorial -->
 
-### Create and verify a device DID
+### Create and verify a device identity (DID)
 
 In the following we focus on the secure goods distribution scenario and organization and object identities.
 In order to interact with other identities in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
 
-#### 1. Create the device DID
+#### 1. Create the device identity (DID)
 
 The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which organization the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
 
