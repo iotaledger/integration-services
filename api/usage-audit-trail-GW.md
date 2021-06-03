@@ -20,7 +20,7 @@ The following workflow can be implemented:
 ### 2. _Guaranteeing the immutability of large data sets._ 
 This includes storing and sharing data sets maintained in large data lakes while guaranteeing that the data sets have not being altered over time or when passing across different parties. This requires that Author and writer subscribers of a channel first index the data sets, then hash them and then store on the Audit Trail (using the GW) an index and a hash of the given data sets. Authorised reader subscribers will receive access to the channel, the given data set and its index and will use the index to retrieve and compare the hash stored in the Audit Trail with the one generated from the received data set. An example includes storing on the Audit Trail hashes of data logs collected by e-commerce systems. This allows to perform forensing investigation in case of cyberphysical attacks to e.commerce infrastructure and to avoid altering evidence.
 
-The following workflow should be implemented:
+The following workflow can be implemented:
 * dgdg
 
 
