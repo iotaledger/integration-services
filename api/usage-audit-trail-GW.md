@@ -35,6 +35,7 @@ The list of provided APIs is shown in figure below. Endpoints which are currentl
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
 <!-- update figure name if we decide to call it GW--> 
+<!-- delete information from a channel/not to a channel-->
 
 ### Channel Service 
 __Prefix:__ `/api/v1/channels`
