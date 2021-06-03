@@ -511,27 +511,38 @@ _Response:_
 }
 ```
 
-## HowTos
+## HowTo
 <!-- to replace with an end-to-end tutorial based on a selected use case -->
+In the following we focus on the secure goods distribution scenario. This might require the creation and life-cycle management of organization and object (devices) identities.
 
 ### Create and verify a device identity (DID)
 
-In the following we focus on the secure goods distribution scenario and organization and object identities.
-In order to interact with other identities in a trusted way there are three major calls to be done which are described in the section 1, 2 & 3.
+The first step is to create an (object) identity (in this case for a device) and verify its authenticity. This allows all the interacting parties to trust each involved identity. Furthermore it is possible to add several information about the given entity represented by the identity. Examples can be a name or to which organization the identity (and its owner) belongs to. These attributes are expressed in the form of Verifiable Credentials, statements about the entity linked to the identity (e.g., an individual, an organization, an object). VCs are signed by a third party (using its identity and corresponding private key). 
+
+
+The steps are the following.
 
 #### 1. Create the device identity (DID)
 
-The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, a user creates a public/private key pair. The public key represents the user public identity, represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership that the identity belongs to a specific user. Ownership of the private key allows the user to prove the identity ownership. Furthermore it is possible to add several information (attributes; espressed in forms of Verifiable Credentials, VCs) about a given identity, such as a name or to which organization the user belongs to. This attributes are expressed in the form of Verifiable Credentials, statements about a user, signed by a third party (using its identity and corresponding private key). 
+The creation of an identity is one of the key aspects when interacting with other identities. By creating an identity, the owner of the identity creates a public/private key pair. 
 
-Currently the Ecommerce-SSI Bridge supports five data models: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the types which will be validated and are derived by adapting the data models of https://schema.org. In addition, the implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of a user is defined by the field type; if an unknown type is provided, the API will reject it.
+The public key represents the identity public identifier (DID), represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership of that the identity. 
+
+To specify the identity attributes, currently the Ecommerce-SSI Bridge supports five data models types: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the currently valid type for an identity and are derived by adapting the data models of https://schema.org. In addition, our implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of an identity is defined by the field type; if an unknown type is provided, the API will reject the call.
+
+<!-- to check. In a normal process; I would create first the identity then add attributes. But I might be wrong. Check DID standards for this -->
 
 > The exact data model definition can be found here: https://gist.github.com/dominic22/186f67b759f9694f45d35e9354fa5525
 
-The following snippet demonstrates an example where an identity of a device will be created by a previously registered organization. Since schema.org does not have a data model for devices, the device data model of FIWARE was used.
+The following snippet demonstrates an example where a device identity is created and verified by a previously verified organization. Since schema.org does not have a data model for devices, the device attributes linked to its identity are derived from the FIWARE data model.
+
+<!-- can we have a link? Be sure we use only static properties of a device. Adjust also the example --> 
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/create
 
-The body of the POST request contains the Device type, an organization id, username and a data field which contains detailed information about the device.
+The body of the POST request contains the Device type, the verified organization identity, a username and a data field which contains detailed attributes about the device identity.
+
+<!-- what is the role of the username? --> 
 
 ```
 {
@@ -588,13 +599,15 @@ The request returns the following body:
     "txHash": "eda7001adc5e8c9b9b473ca6586cfe9deab3f19e4ce9fba0bbead09e5b649dce"
 }
 ```
-The `doc`field contains the created identity document of the newly created identity. Furthermore `doc.id` is the unique user-id of the identity.
+The `doc`field contains the created identity document of the newly created identity (also stored onto the IOTA Ledger). The `doc.id` is the unique identifier (DID) of the identity.
 
-The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to authenticate at the API.
+<!-- check if it is stored onto the Tangle -->
 
-The `txHash`contains the transaction hash of the identity creation which can be used to query the identity at a iota explorer.
+The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to control the identity ownership and to authenticate at the APIs Bridge.
+
+The `txHash`contains the transaction hash (i.e., the unique address of the IOTA Ledger) where the identity document is stored. The `txHash`can be used to retrieve the identity information using any Ledger explorer and without the need to access the APIs Bridge. You can test [here](https://explorer.iota.org/mainnet)
 _
-In production environments it is recommended that each organization installs and runs its Bridge locally. In case of centralized Bridge the Bridge implementation should be adapted to only receive the identity public (with private/public key pair generated locally)._
+In production environments it is recommended that each organization installs and runs its Bridge locally. In case of centralized Bridge the Bridge implementation should be adapted to only receive the identity public from a private/public key pair generated locally._
 
 #### 2. Authenticate the device identity (DID) and authorise access to the Bridge
 <!-- should this be split in two parts? -->
