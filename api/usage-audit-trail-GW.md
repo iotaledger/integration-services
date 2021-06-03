@@ -6,7 +6,7 @@ The Ecommerce-Audit Trail Gateway allows users to create immutable data channels
 
 > __Important:__ In order to identify and authorised subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [ecommerce-ssi bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
-In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization systems this dependency will be removed.
+In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization systems this dependency will be removed (implementation will be provided during the project course).
 
 ## Use Cases 
 There are two scenarios in which the Audit Trail can be used in the context of e-commerce and ENSURESEC.
