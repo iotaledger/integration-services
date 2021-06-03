@@ -15,9 +15,11 @@ There are two scenarios in which the Audit Trail can be used in the context of e
 This includes small amount of data that a channel Author and writer subscribers want to share with reader subscribers. All information is contained into the Audit Trail and its source (identity of the writer subscribers) can be verified. An example includes _sharing of threats information_ detected by a sensor on a critical e-commerce infrastructure and shared to alert all other systems connected to the same infrastructure.
 
 The following workflow can be implemented:
-* We assume a Company X identity has been registered and verified (see Ecommerce-SSI Bridge documentation); in addition an identity for employee Y and device (sensor) Z of Company X have also been registered and verified. 
-* In addition a Company A identity has been registered and verified, as well as the identity of an employee B and tool C of Company A have been registered and verified
-* A device Z registe
+* We assume a Company X identity has been registered and verified (see Ecommerce-SSI Bridge documentation); in addition an identity for employee Y and device (sensor) Z of Company X have also been registered and verified;
+* In addition a Company A identity has been registered and verified, as well as the identity of an employee B and tool C of Company A have been registered and verified;
+* The device Z uses the GW APIs to create a channel _a_;
+* The tool C uses the GW APIs to request subscription to the channel _a_;
+*  
 * A sensor (device) identity is registered and verified 
 
 ### 2. _Guaranteeing the immutability of large data sets._ 
