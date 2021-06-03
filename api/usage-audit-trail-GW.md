@@ -21,7 +21,7 @@ The following workflow can be implemented:
 * The tool C uses the GW APIs to search for channel (based on available indexing metadata) and to request subscription to the selected channel _a_;
 * The device Z uses the GW APIs to authorize tool C to access the channel _a_;
 * The device Z uses the GW APIs to add data to a channel _a_;
-* The tool C is automatically notified of new data coming from device Z.
+* The tool C is automatically notified of new data coming from device Z. <!-- not sure about this, I need to check-->
 
 <!-- are we using credentials to check authorization? How do we implement specific access policies -->
 
@@ -37,9 +37,9 @@ A similar workflow can be implemented in the scenario above. The exchange of dat
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
 
 The Audit Trail GW implementation provides the following services:
-* gf
-* gfg
-* fg
+* Channel Service:
+* Channel Info Service:
+* Subscription Service: 
 
 
 > The api currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is able to read and write from/to the channel.
