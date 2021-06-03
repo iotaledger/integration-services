@@ -308,7 +308,7 @@ __TBD!__ _Remove subscription to a channel. The author or subscriber of a channe
 
 ## HowTo: Create a channel, add a subscriber and read + write from it
 
-<!-- adapt to one of the example above -->
+<!-- adapt to one of the example above; present as tutorial -->
 
 The following sequence diagram demonstrates the requests needed to write and read to/from a channel. The sequence diagram indicates two users: Tom which becomes the author and a IoT Device which is the subscriber.
 
