@@ -9,6 +9,10 @@ The Ecommerce-Audit Trail Gateway allows users to create immutable data channels
 In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization systems this dependency will be removed.
 
 ## Use Cases 
+There are two scenarios in which the Audit Trail can be used in the context of e-commerce and ENSURESEC.
+
+1. Item 1 sfsfs
+2. Item 2 fsfs
 
 ## Ecommerce-Audit Trail GW APIs Definition
 
