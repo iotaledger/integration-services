@@ -19,6 +19,8 @@ The following workflow can be implemented:
 * In addition a Company A identity has been registered and verified, as well as the identity of an employee B and tool C of Company A have been registered and verified;
 * The device Z uses the GW APIs to create a channel _a_;
 * The tool C uses the GW APIs to request subscription to the channel _a_;
+* The device Z uses the GW APIs to authorize tool C to access the channel _a_;
+* The device Z uses the GW APIs to 
 *  
 * A sensor (device) identity is registered and verified 
 
