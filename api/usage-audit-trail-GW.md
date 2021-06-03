@@ -11,8 +11,13 @@ In case of the Audit Trail and the GW being deployed in presence of other (centr
 ## Use Cases 
 There are two scenarios in which the Audit Trail can be used in the context of e-commerce and ENSURESEC.
 
-1. Item 1 sfsfs
-2. Item 2 fsfs
+### 1. _Sharing immutable and auditable data._ 
+This includes small amount of data that a channel Author and writer subscribers want to share with reader subscribers. All information is contained into the Audit Trail and its source (identity of the writer subscribers) can be verified. An example includes _sharing of threats information_ detected by a sensor on a critical e-commerce infrastructure with all other systems connected to the same infrastructure.
+
+### 2. _Guarantee the immutability of large data sets._ 
+This includes storing and sharing data sets maintained in large data lakes while guaranteeing that the data sets have not being altered over time. This requires that Author and writer subscribers of a channel first index the data sets, then hash them and then store on the Audit Trail (using the GW) an index and an hash of the given data sets. Reader subscribers will receive access to the channel, the given data set and its index and will use the index to retrieve and compare the hash stored in the Audit Trail. An example includes storing on the Audit Trail hashes of data logs collected by e-commerce systems. This allows to perform forensing investigation in case of cyberphysical attacks to e.commerce infrastructure and to avoid altering evidence. 
+
+<!-- in a second version and for the deliverable; I will write the above as workflow -->
 
 ## Ecommerce-Audit Trail GW APIs Definition
 
