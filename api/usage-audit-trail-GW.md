@@ -79,7 +79,9 @@ _Response:_
 
 `GET /logs/{channel-address}`
 
-Get data from the stream. First entry is the start of the subscription. __Read__ permission is mandatory.
+Get data from the channel. First entry is the start of the subscription. __Read__ permission is mandatory.
+
+<!-- entry is not clear. Need to check -->
 
 _Body:_
 
