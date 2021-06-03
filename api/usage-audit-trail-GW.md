@@ -4,14 +4,14 @@
 
 The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. 
 
-> __Important:__ In order to identify and authorised subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [ecommerce-ssi bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
+> __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
-In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization systems this dependency will be removed (implementation will be provided during the project course).
+In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization (AAA) systems this dependency will be removed (implementation will be provided during the project course).
 
 ## Use Cases 
-There are two scenarios in which the Audit Trail can be used in the context of e-commerce and ENSURESEC.
+There are two scenarios in which the Audit Trail can be used in the context of e-commerce and the ENSURESEC project.
 
-### 1. _Sharing immutable and auditable data._ 
+### 1. _Sharing immutable and auditable data/events._ 
 This includes small amount of data that a channel Author and writer subscribers want to share with reader subscribers. All information is contained into the Audit Trail and its source (identity of the writer subscribers) can be verified. An example includes _sharing of threats information_ detected by a sensor on a critical e-commerce infrastructure and shared to alert all other systems connected to the same infrastructure.
 
 The following workflow can be implemented:
@@ -19,16 +19,18 @@ The following workflow can be implemented:
 * In addition a Company A identity has been registered and verified, as well as the identity of an employee B and tool C of Company A have been registered and verified;
 * The device Z uses the GW APIs to create a channel _a_;
 * The tool C uses the GW APIs to search for channel (based on available indexing metadata) and to request subscription to the selected channel _a_;
-* The device Z uses the GW APIs to authorize tool C to access the channel _a_;
+* The device Z uses the GW APIs to authorize tool C to access the channel _a_ as reader;
 * The device Z uses the GW APIs to add data to a channel _a_;
 * The tool C is automatically notified of new data coming from device Z. <!-- not sure about this, I need to check-->
 
 <!-- are we using credentials to check authorization? How do we implement specific access policies -->
 
 ### 2. _Guaranteeing the immutability of large data sets._ 
-This includes storing and sharing data sets maintained in large data lakes while guaranteeing that the data sets have not being altered over time or when passing across different parties. This requires that Author and writer subscribers of a channel first index the data sets, then hash them and then store on the Audit Trail (using the GW) an index and a hash of the given data sets. Authorised reader subscribers will receive access to the channel, the given data set and its index and will use the index to retrieve and compare the hash stored in the Audit Trail with the one generated from the received data set. An example includes storing on the Audit Trail hashes of data logs collected by e-commerce systems. This allows to perform forensing investigation in case of cyberphysical attacks to e.commerce infrastructure and to avoid altering evidence.
+This includes storing and sharing across organizations data sets maintained in large data lakes while guaranteeing that the data sets have not been altered over time or when passing across different parties. In this case Author and writer subscribers of a channel first index the data sets, then hash them and store the hash in the Audit Trail (using the GW APIs) on a channel registered with the created index and data set metadata. Authorised reader subscribers will receive the given data set and its index/metadata and will use them to retrieve and subscribed to the requested channel. Then they can compare the hash stored in the Audit Trail with the one generated from the received data set. 
 
-A similar workflow can be implemented in the scenario above. The exchange of data sets and the extraction of hash/their comparison shall be implemented by the client using the Audit Trail GW APIs.
+An example of this includes storing on the Audit Trail hashes of data logs collected by e-commerce systems. This allows to perform forensic investigation in case of cyberphysical attacks to e-commerce infrastructure and to detect any tampering with such logs.
+
+A similar workflow in the previous scenario can be implemented here. The exchange of data sets and the extraction of hash/their comparison shall be implemented by the client using the Audit Trail GW APIs.
 
 <!-- in a second version and for the deliverable; I will write the above as workflow -->
 
@@ -41,7 +43,7 @@ The Audit Trail GW implementation provides the following services:
 * Channel Info Service: to register channel metadata to allow indexing and searching;
 * Subscription Service:  to manage subscription and authorization to channels.
 
-> The API currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is always able to read and write from/to a channel.
+> The API currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the channel author is always able to read and write from/to a channel.
 > 
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
