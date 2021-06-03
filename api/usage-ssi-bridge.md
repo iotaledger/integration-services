@@ -93,7 +93,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 
 
 ## Software Architecture and APIs Definition
-The list of provided APIs is shown in figure below.
+The software and services architecture and the list of provided APIs are shown in the figure below.
 
 ![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
