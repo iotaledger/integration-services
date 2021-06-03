@@ -103,7 +103,7 @@ __Prefix:__ `/api/v1/identities`
 
 `GET /search`
 
-Search for identities in the system which returns a list of queried identities in the system. 
+Search for identities in the system and returns a list of existing identities. 
 
 _Body:_
 
@@ -119,7 +119,7 @@ _Response:_
 
 `GET /identity/{identity-id}`
 
-Get information about a specific identity by its identity-id. 
+Get information (including attached credentials) about a specific identity using the identity-id (DID identifier). 
 
 _Body:_
 
@@ -162,7 +162,7 @@ _Response:_
 
 `POST /create`
 
-Create a new decentralized digital identity (DID). It will be signed and published to the Tangle! A digital identity can represent a device, person or even an organization. It is recommended to securely (encrypt) store the privateAuthKey locally, since it won’t be stored on the API side.
+Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
 
 _Body:_
 
@@ -214,7 +214,9 @@ _Response:_
 
 `POST /identity`
 
-Register an existing identity in the system, this can be used if the identity already exists or will be created locally. Registering an identity in the system makes it possible to search for it by for instance the username.
+Register an existing identity into the Bridge. This can be used if the identity already exists or it was only created locally. Registering an identity in the Bridge makes it possible to search for it by using some of the identity attributes, i.e., the username.
+
+<!-- I am not sure we should have this functionalities, it is against the principle of SSI -->
 
 _Body:_
 
@@ -258,6 +260,7 @@ _Response:_
 `PUT /identity`
 
 Update data of a registered identity.
+<!-- still would want to explain how this is done --> 
 
 _Body:_
 
@@ -300,7 +303,9 @@ _Response:_
 
 `DELETE /identity/{identity-id}`
 
-Removes an identity from the system. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity doc won't be removed from the tangle but only at the bridge and so its verifiable credential signed by the bridge. But the identity is still able to interact with other bridges.
+Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
+
+<!-- I understand this are functions that makes easier to search and interact, a sort of index. But we need to be sure we do not store personal data. More we need to be sure we implement standards for identities indexing and search -->
 
 _Body:_
 
