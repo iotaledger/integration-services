@@ -37,12 +37,11 @@ A similar workflow can be implemented in the scenario above. The exchange of dat
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
 
 The Audit Trail GW implementation provides the following services:
-* Channel Service:
-* Channel Info Service:
-* Subscription Service: 
+* Channel Service: to add data to and read from a channel;
+* Channel Info Service: to register channel metadata to allow indexing and searching;
+* Subscription Service:  to manage subscription and authorization to channels.
 
-
-> The api currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is able to read and write from/to the channel.
+> The API currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the author is always able to read and write from/to a channel.
 > 
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
