@@ -25,7 +25,7 @@ Below we provide examples on how the Bridge could be used in the context of e-co
 
 ## Use cases
 ### Secure goods distribution
-#### Use case 1. Delivery organization identity and scanners verification
+#### Use case 1. Delivery company identity and scanners verification
 
 __Problem__: Protection of Delivery: avoid goods being handled by unauthorised carriers; avoid threats and frauds in the distribution chain. 
 
