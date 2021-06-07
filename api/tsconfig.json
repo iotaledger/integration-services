@@ -9,7 +9,8 @@
 		"noUnusedLocals": true,
 		"typeRoots": ["node_modules/@types", "types"],
 		"outDir": "dist",
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"allowJs": true
 	},
 	"include": ["src"]
 }
