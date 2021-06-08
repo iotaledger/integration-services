@@ -18,7 +18,7 @@ describe('test api-key middleware', () => {
 	it('request has not the valid api key!', async () => {
 		const req: any = {
 			query: {
-				apiKey: 'wrong-api-key'
+				'api-key': 'wrong-api-key'
 			}
 		};
 
@@ -32,7 +32,7 @@ describe('test api-key middleware', () => {
 	it('no api key was set by the server so everything is valid', async () => {
 		const req: any = {
 			query: {
-				apiKey: 'any-value-is-ok'
+				'api-key': 'any-value-is-ok'
 			}
 		};
 
@@ -40,10 +40,22 @@ describe('test api-key middleware', () => {
 		expect(nextMock).toHaveBeenCalledWith();
 	});
 
+	it('request has no valid query', async () => {
+		const req: any = {
+			query: undefined
+		};
+
+		hasValidApiKey('valid-api-key')(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no valid api key provided!' });
+		expect(nextMock).not.toHaveBeenCalledWith();
+	});
+
 	it('request has a valid api key!', async () => {
 		const req: any = {
 			query: {
-				apiKey: 'valid-api-key'
+				'api-key': 'valid-api-key'
 			}
 		};
 
