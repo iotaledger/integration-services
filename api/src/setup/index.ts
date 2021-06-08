@@ -67,7 +67,8 @@ export async function setupApi() {
 
 		console.log('Generate key collection...');
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
-		const kc = await verificationService.generateKeyCollection(serverUser.identityId, index);
+		const keyCollectionIndex = verificationService.getKeyCollectionIndex(index);
+		const kc = await verificationService.generateKeyCollection(serverUser.identityId, keyCollectionIndex);
 		const res = await verificationService.saveKeyCollection(kc);
 
 		if (!res?.result.n) {

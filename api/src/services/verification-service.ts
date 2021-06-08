@@ -43,18 +43,28 @@ export class VerificationService {
 		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
 	}
 
-	getKeyCollection(index: number) {
-		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId, this.serverSecret);
-	}
+	getKeyCollection = async (keyCollectionIndex: number) => {
+		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.serverIdentityId, this.serverSecret);
+		if (!keyCollection) {
+			console.log('generate keycollection with index', keyCollectionIndex);
 
-	generateKeyCollection = async (issuerId: string, numberOfVc: number): Promise<KeyCollectionPersistence> => {
-		const keyCollectionIndex = Math.floor(numberOfVc / KEY_COLLECTION_SIZE);
+			keyCollection = await this.generateKeyCollection(this.serverIdentityId, keyCollectionIndex);
+			const res = await this.saveKeyCollection(keyCollection);
+
+			if (!res?.result.n) {
+				throw new Error('could not save keycollection!');
+			}
+		}
+		return keyCollection;
+	};
+
+	generateKeyCollection = async (issuerId: string, keyCollectionIndex: number): Promise<KeyCollectionPersistence> => {
 		const count = KEY_COLLECTION_SIZE;
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
-		const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(issuerIdentity, count);
+		const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(issuerIdentity, count, keyCollectionIndex);
 		await this.updateDatabaseIdentityDoc(docUpdate);
 		return {
 			...keyCollectionJson,
@@ -84,28 +94,35 @@ export class VerificationService {
 			}
 		};
 
-		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
-		// if reached create new keycollection, always get highest index
 		// TODO#80 use memoize for getKeyCollection
-		const index = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
-		const keyCollectionIndex = Math.floor(index / KEY_COLLECTION_SIZE);
+		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
 		const keyCollection = await this.getKeyCollection(keyCollectionIndex);
-		const newIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const keyIndex = nextCredentialIndex % KEY_COLLECTION_SIZE;
 		const keyCollectionJson: KeyCollectionJson = {
 			type: keyCollection.type,
 			keys: keyCollection.keys
 		};
 
+		console.log('keyIndex, keyIndex', keyIndex);
+
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
-		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(issuerIdentity, credential, keyCollectionJson, index);
+		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
+			issuerIdentity,
+			credential,
+			keyCollectionJson,
+			keyIndex,
+			keyCollectionIndex
+		);
 
 		await VerifiableCredentialsDb.addVerifiableCredential(
 			{
 				vc,
-				index: newIndex,
+				index: nextCredentialIndex,
 				initiatorId,
 				isRevoked: false
 			},
@@ -137,7 +154,7 @@ export class VerificationService {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
 
-		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, vcp.index);
+		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, vcp.index, this.getKeyCollectionIndex(vcp.index));
 		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
 		if (res.revoked === true) {
@@ -243,4 +260,5 @@ export class VerificationService {
 		await this.userService.updateUserVerification(vup);
 		await this.userService.addUserVC(vc);
 	};
+	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / KEY_COLLECTION_SIZE);
 }
