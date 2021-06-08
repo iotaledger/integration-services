@@ -84,7 +84,6 @@ describe('test authentication routes', () => {
 		it('is not authorized to revoke the identity since not same request uid as initiatorId', async () => {
 			const identityToRevoke = vcMock.id;
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -120,7 +119,6 @@ describe('test authentication routes', () => {
 		it('is not authorized to revoke the identity since it is an admin user but a device', async () => {
 			const identityToRevoke = vcMock.id;
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -157,7 +155,6 @@ describe('test authentication routes', () => {
 			const identityToRevoke = vcMock.id;
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -200,7 +197,6 @@ describe('test authentication routes', () => {
 			const identityToRevoke = vcToRevoke.id;
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -242,7 +238,6 @@ describe('test authentication routes', () => {
 			const identityToRevoke = vcMock.id;
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -285,7 +280,6 @@ describe('test authentication routes', () => {
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [vcMock] }); // has another valid vc inside
 			const checkVcSpy = spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(true); // has min 1 valid vc
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -326,7 +320,6 @@ describe('test authentication routes', () => {
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [vcMock] }); // has another valid vc inside
 			const checkVcSpy = spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(false); // has further vcs but are invalid
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -369,7 +362,6 @@ describe('test authentication routes', () => {
 			const identityToRevoke = vcMock.id;
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -412,7 +404,6 @@ describe('test authentication routes', () => {
 		it('is authorized to revoke the identity since it is an org admin user but different company', async () => {
 			const identityToRevoke = vcMock.id;
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,
@@ -450,7 +441,6 @@ describe('test authentication routes', () => {
 		it('identity is already revoked', async () => {
 			const identityToRevoke = vcMock.id;
 			const linkedIdentity: VerifiableCredentialPersistence = {
-				keyCollectionIndex: 0,
 				index: 0,
 				initiatorId: 'did:iota:1234',
 				isRevoked: false,

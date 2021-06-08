@@ -9,6 +9,7 @@ import { addTrustedRootId } from '../database/trusted-roots';
 import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
 import { CreateIdentityBody } from '../models/types/identity';
+import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
@@ -65,7 +66,8 @@ export async function setupApi() {
 		await addTrustedRootId(serverUser.identityId);
 
 		console.log('Generate key collection...');
-		const kc = await verificationService.generateKeyCollection(serverUser.identityId);
+		const index = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const kc = await verificationService.generateKeyCollection(serverUser.identityId, index);
 		const res = await verificationService.saveKeyCollection(kc);
 
 		if (!res?.result.n) {

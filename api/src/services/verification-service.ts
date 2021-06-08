@@ -1,4 +1,4 @@
-import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
+import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
 import {
 	CredentialSubject,
@@ -47,8 +47,8 @@ export class VerificationService {
 		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId, this.serverSecret);
 	}
 
-	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
-		const index = KEY_COLLECTION_INDEX;
+	generateKeyCollection = async (issuerId: string, numberOfVc: number): Promise<KeyCollectionPersistence> => {
+		const keyCollectionIndex = Math.floor(numberOfVc / KEY_COLLECTION_SIZE);
 		const count = KEY_COLLECTION_SIZE;
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
@@ -59,7 +59,7 @@ export class VerificationService {
 		return {
 			...keyCollectionJson,
 			count,
-			index
+			index: keyCollectionIndex
 		};
 	};
 
@@ -87,8 +87,10 @@ export class VerificationService {
 		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
 		// if reached create new keycollection, always get highest index
 		// TODO#80 use memoize for getKeyCollection
-		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
-		const index = await VerifiableCredentialsDb.getNextCredentialIndex(KEY_COLLECTION_INDEX, this.serverIdentityId);
+		const index = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const keyCollectionIndex = Math.floor(index / KEY_COLLECTION_SIZE);
+		const keyCollection = await this.getKeyCollection(keyCollectionIndex);
+		const newIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
 		const keyCollectionJson: KeyCollectionJson = {
 			type: keyCollection.type,
 			keys: keyCollection.keys
@@ -103,10 +105,9 @@ export class VerificationService {
 		await VerifiableCredentialsDb.addVerifiableCredential(
 			{
 				vc,
-				index,
+				index: newIndex,
 				initiatorId,
-				isRevoked: false,
-				keyCollectionIndex: KEY_COLLECTION_INDEX
+				isRevoked: false
 			},
 			this.serverIdentityId
 		);

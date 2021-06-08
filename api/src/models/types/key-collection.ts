@@ -13,7 +13,6 @@ export interface SimpleKeyPair {
 }
 
 export interface VerifiableCredentialPersistence {
-	keyCollectionIndex: number;
 	index: number;
 	initiatorId: string;
 	isRevoked: boolean;
