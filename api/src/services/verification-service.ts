@@ -46,8 +46,6 @@ export class VerificationService {
 	getKeyCollection = async (keyCollectionIndex: number) => {
 		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.serverIdentityId, this.serverSecret);
 		if (!keyCollection) {
-			console.log('generate keycollection with index', keyCollectionIndex);
-
 			keyCollection = await this.generateKeyCollection(this.serverIdentityId, keyCollectionIndex);
 			const res = await this.saveKeyCollection(keyCollection);
 
@@ -105,8 +103,6 @@ export class VerificationService {
 			keys: keyCollection.keys
 		};
 
-		console.log('keyIndex, keyIndex', keyIndex);
-
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
@@ -115,8 +111,8 @@ export class VerificationService {
 			issuerIdentity,
 			credential,
 			keyCollectionJson,
-			keyIndex,
-			keyCollectionIndex
+			keyCollectionIndex,
+			keyIndex
 		);
 
 		await VerifiableCredentialsDb.addVerifiableCredential(
@@ -153,8 +149,10 @@ export class VerificationService {
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
+		const keyCollectionIndex = this.getKeyCollectionIndex(vcp.index);
+		const keyIndex = vcp.index % KEY_COLLECTION_SIZE;
 
-		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, vcp.index, this.getKeyCollectionIndex(vcp.index));
+		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
 		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
 		if (res.revoked === true) {

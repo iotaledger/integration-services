@@ -88,12 +88,13 @@ export class SsiService {
 		issuerIdentity: IdentityJson,
 		credential: Credential<T>,
 		keyCollectionJson: KeyCollectionJson,
-		subjectKeyIndex: number,
-		keyCollectionIndex: number
+		keyCollectionIndex: number,
+		subjectKeyIndex: number
 	): Promise<VerifiableCredentialJson> {
 		try {
 			console.log('issuerIdentity', issuerIdentity);
 			console.log('keyCollectionJson', keyCollectionJson);
+			console.log('keyCollectionIndex', keyCollectionIndex);
 			console.log('subjectKeyIndex', subjectKeyIndex);
 
 			const { doc } = this.restoreIdentity(issuerIdentity);
@@ -148,13 +149,16 @@ export class SsiService {
 
 	async revokeVerifiableCredential(
 		issuerIdentity: IdentityJsonUpdate,
-		index: number,
-		keyCollectionIndex: number
+		keyCollectionIndex: number,
+		keyIndex: number
 	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
 		try {
+			console.log('keyCollectionIndex', keyCollectionIndex);
+			console.log('keyIndex', keyIndex);
+
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: issuerIdentity.txHash });
-			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), index);
+			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), keyIndex);
 			newDoc.sign(key);
 			const txHash = await this.publishSignedDoc(newDoc.toJSON());
 
