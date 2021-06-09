@@ -159,7 +159,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
 		});
 
-		fit('should return the jwt for nonce which is verified=true', async () => {
+		it('should return the jwt for nonce which is verified=true', async () => {
 			const verified = true;
 			const userMock: User = validUserMock;
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';

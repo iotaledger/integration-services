@@ -20,13 +20,17 @@ The config should like following: (But please don't use the following values for
 
 > Important: The SERVER_SECRET has to have a length of 32 characters!!
 
+<!-- TODO adjust nodes after #106 is done -->
 ````
 PORT=3000
 API_VERSION=v1
 IOTA_PERMA_NODE=https://nodes.iota.org:443
+IOTA_CHRONICLE_NODE=https://chrysalis-nodes.iota.org:443
+IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
+IOTA_STREAMS_NODE=https://api.lb-0.testnet.chrysalis2.com/
 NETWORK=main
 EXPLORER=https://explorer.iota.org/mainnet/transaction
-DATABASE_NAME=e-commerce-audit-log
+DATABASE_NAME=e-commerce-tools
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
 DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017

@@ -191,6 +191,7 @@ describe('test authentication routes', () => {
 
 		it('should verify for user which has valid vc and different organization but admin user', async () => {
 			const subject = TestUsersMock[1];
+			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
@@ -226,9 +227,8 @@ describe('test authentication routes', () => {
 				keys: KeyCollectionMock.keys
 			};
 			const expectedAddKeyCollectionCall = {
-				index: 0,
+				index: keyIndex,
 				isRevoked: false,
-				keyCollectionIndex,
 				initiatorId: initiatorVC.id,
 				vc: vcMock
 			};
@@ -238,7 +238,13 @@ describe('test authentication routes', () => {
 			expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, ServerIdentityMock.doc.id, serverSecret);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
+			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
+				ServerIdentityMock,
+				expectedCredential,
+				expectedKeyCollection,
+				keyCollectionIndex,
+				keyIndex
+			);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -253,6 +259,7 @@ describe('test authentication routes', () => {
 		it('should verify for user which has valid vc and is in same organization', async () => {
 			const subject = TestUsersMock[0];
 			const keyCollectionIndex = 0;
+			const keyIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(subject);
 			const initiatorVcIsVerified = true;
@@ -290,9 +297,8 @@ describe('test authentication routes', () => {
 				keys: KeyCollectionMock.keys
 			};
 			const expectedAddKeyCollectionCall = {
-				index: 0,
+				index: keyIndex,
 				isRevoked: false,
-				keyCollectionIndex,
 				initiatorId: initiatorVC.id,
 				vc: vcMock
 			};
@@ -303,7 +309,13 @@ describe('test authentication routes', () => {
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, expectedCredential, expectedKeyCollection, keyCollectionIndex);
+			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
+				ServerIdentityMock,
+				expectedCredential,
+				expectedKeyCollection,
+				keyCollectionIndex,
+				keyIndex
+			);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
