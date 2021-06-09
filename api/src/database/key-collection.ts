@@ -42,7 +42,8 @@ export const saveKeyCollection = async (
 
 	const document = {
 		_id: getIndex(encryptedKC.index, serverId),
-		...encryptedKC
+		...encryptedKC,
+		created: new Date()
 	};
 
 	return MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);

@@ -35,7 +35,8 @@ export const saveIdentity = async (identity: IdentityJsonUpdate, secret: string)
 
 	const document = {
 		_id: encryptedIdentity?.doc?.id,
-		...encryptedIdentity
+		...encryptedIdentity,
+		created: new Date()
 	};
 
 	const res = await MongoDbService.insertDocument<IdentityJsonUpdate>(collectionName, document);

@@ -33,10 +33,10 @@ export const getNextCredentialIndex = async (serverId: string): Promise<number> 
 	//return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
-export const getVerifiableCredential = async (did: string, vcHash: string, serverId: string): Promise<VerifiableCredentialPersistence> => {
+export const getVerifiableCredential = async (vcHash: string): Promise<VerifiableCredentialPersistence> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 
-	const query = { 'vc.id': regex(did), 'vc.proof.signatureValue': regex(vcHash), serverId: regex(serverId) };
+	const query = { 'vc.proof.signatureValue': regex(vcHash) };
 	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 
@@ -44,7 +44,8 @@ export const addVerifiableCredential = async (vcp: VerifiableCredentialPersisten
 	const document = {
 		_id: getIndex(serverId, vcp.index),
 		serverId,
-		...vcp
+		...vcp,
+		created: new Date()
 	};
 
 	const res = await MongoDbService.insertDocument<VerifiableCredentialPersistence>(collectionName, document);
