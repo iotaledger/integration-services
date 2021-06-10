@@ -39,38 +39,17 @@ export class VerificationService {
 		this.jwtExpiration = jwtExpiration;
 	}
 
-	async saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
-	}
-
 	getKeyCollection = async (keyCollectionIndex: number) => {
 		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.serverIdentityId, this.serverSecret);
 		if (!keyCollection) {
 			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.serverIdentityId);
-			const res = await this.saveKeyCollection(keyCollection);
+			const res = await KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
 
 			if (!res?.result.n) {
 				throw new Error('could not save keycollection!');
 			}
 		}
 		return keyCollection;
-	};
-
-	generateKeyCollection = async (keyCollectionIndex: number, issuerId: string): Promise<KeyCollectionPersistence> => {
-		const keyCollectionSize = KEY_COLLECTION_SIZE;
-		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
-
-		if (!issuerIdentity) {
-			throw new Error(this.noIssuerFoundErrMessage(issuerId));
-		}
-
-		const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
-		await this.updateDatabaseIdentityDoc(docUpdate);
-		return {
-			...keyCollectionJson,
-			count: keyCollectionSize,
-			index: keyCollectionIndex
-		};
 	};
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
@@ -259,5 +238,23 @@ export class VerificationService {
 		await this.userService.updateUserVerification(vup);
 		await this.userService.addUserVC(vc);
 	};
+
 	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / KEY_COLLECTION_SIZE);
+
+	private generateKeyCollection = async (keyCollectionIndex: number, issuerId: string): Promise<KeyCollectionPersistence> => {
+		const keyCollectionSize = KEY_COLLECTION_SIZE;
+		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+
+		if (!issuerIdentity) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
+
+		const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
+		await this.updateDatabaseIdentityDoc(docUpdate);
+		return {
+			...keyCollectionJson,
+			count: keyCollectionSize,
+			index: keyCollectionIndex
+		};
+	};
 }
