@@ -92,7 +92,6 @@ export class VerificationService {
 			}
 		};
 
-		// TODO#80 use memoize for getKeyCollection
 		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
 		const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
 		const keyCollection = await this.getKeyCollection(keyCollectionIndex);

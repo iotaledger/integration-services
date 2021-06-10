@@ -5,8 +5,6 @@ import { VerifiableCredentialPersistence } from '../models/types/key-collection'
 const collectionName = CollectionNames.verifiableCredentials;
 const getIndex = (serverId: string, index: number) => `${serverId}-${index}`;
 
-// TODO#54 get highest index instead of size. So a complete deleted entry does not break the logic!
-// get highest keyCollectionIndex as well & generate new keycollection dynamically
 export const getNextCredentialIndex = async (serverId: string): Promise<number> => {
 	const docs = await MongoDbService.db
 		.collection(collectionName)
@@ -26,11 +24,8 @@ export const getNextCredentialIndex = async (serverId: string): Promise<number> 
 			}
 		])
 		.toArray();
-	console.log('docs', docs && docs[0] ? docs[0].maxIndex + 1 : 0);
 
 	return docs && docs[0] ? docs[0].maxIndex + 1 : 0;
-	// const query = { serverId };
-	//return MongoDbService.db.collection(collectionName).countDocuments(query);
 };
 
 export const getVerifiableCredential = async (vcHash: string): Promise<VerifiableCredentialPersistence> => {

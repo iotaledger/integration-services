@@ -1,5 +1,5 @@
 import { UserService } from './user-service';
-import { AuthorizationCheck } from '../models/types/authentication';
+import { AuthorizationCheck } from '../models/types/verification';
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {

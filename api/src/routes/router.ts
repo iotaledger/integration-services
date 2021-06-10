@@ -10,7 +10,7 @@ import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { SsiService } from '../services/ssi-service';
-import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/authentication';
+import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/verification-bodies';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
 import { VerifiableCredentialSchema } from '../models/schemas/identity';
@@ -25,7 +25,7 @@ import {
 	CreateChannelBodySchema,
 	ProveOwnershipPostBodySchema,
 	RequestSubscriptionBodySchema
-} from '../models/schemas/request-bodies';
+} from '../models/schemas/channel-bodies';
 import { hasValidApiKey } from '../middlewares/api-key';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
