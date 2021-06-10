@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as AuthDb from '../../database/auth';
 import { User } from '../../models/types/user';
 import * as EncryptionUtils from '../../utils/encryption';
-import { ServerIdentityMock, UserIdentityMock } from '../../test/mocks/identities';
+import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';
 import { IdentityConfig } from '../../models/config';
 
@@ -33,8 +33,7 @@ describe('test authentication routes', () => {
 		userService = new UserService(ssiService, serverSecret);
 		authenticationService = new AuthenticationService(userService, {
 			jwtExpiration: '2 days',
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id
+			serverSecret
 		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
 

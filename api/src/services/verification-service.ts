@@ -11,14 +11,13 @@ import {
 import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
-import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
+import { createNonce } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as AuthDb from '../database/auth';
 import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
-import jwt from 'jsonwebtoken';
-import { AuthenticationServiceConfig } from '../models/config/services';
+import { VerificationServiceConfig } from '../models/config/services';
 import { upperFirst } from 'lodash';
 import { JsonldGenerator } from '../utils/jsonld';
 
@@ -29,16 +28,14 @@ export class VerificationService {
 	private readonly serverSecret: string;
 	private readonly keyCollectionSize: number;
 	private readonly serverIdentityId: string;
-	private readonly jwtExpiration: string;
 
-	constructor(ssiService: SsiService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
-		const { serverSecret, jwtExpiration, serverIdentityId, keyCollectionSize } = authenticationServiceConfig;
+	constructor(ssiService: SsiService, userService: UserService, verificationServiceConfig: VerificationServiceConfig) {
+		const { serverSecret, serverIdentityId, keyCollectionSize } = verificationServiceConfig;
 		this.ssiService = ssiService;
 		this.userService = userService;
 		this.serverSecret = serverSecret;
 		this.keyCollectionSize = keyCollectionSize;
 		this.serverIdentityId = serverIdentityId;
-		this.jwtExpiration = jwtExpiration;
 	}
 
 	getKeyCollection = async (keyCollectionIndex: number) => {
@@ -202,27 +199,6 @@ export class VerificationService {
 		const nonce = createNonce();
 		await AuthDb.upsertNonce(user.identityId, nonce);
 		return nonce;
-	};
-
-	authenticate = async (signedNonce: string, identityId: string) => {
-		const user = await this.userService.getUser(identityId);
-		if (!user) {
-			throw new Error(`no user with id: ${identityId} found!`);
-		}
-		const { nonce } = await AuthDb.getNonce(identityId);
-		const publicKey = getHexEncodedKey(user.publicKey);
-
-		const verified = await verifySignedNonce(publicKey, nonce, signedNonce);
-		if (!verified) {
-			throw new Error('signed nonce is not valid!');
-		}
-
-		if (!this.serverSecret) {
-			throw new Error('no server secret set!');
-		}
-
-		const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: this.jwtExpiration });
-		return signedJwt;
 	};
 
 	setUserVerified = async (identityId: string, issuerId: string, vc: VerifiableCredentialJson) => {

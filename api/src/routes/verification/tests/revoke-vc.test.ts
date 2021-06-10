@@ -40,9 +40,9 @@ describe('test authentication routes', () => {
 		userService = new UserService({} as any, '');
 		const authorizationService = new AuthorizationService(userService);
 		verificationService = new VerificationService(ssiService, userService, {
-			jwtExpiration: '2 days',
 			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id
+			serverIdentityId: ServerIdentityMock.doc.id,
+			keyCollectionSize: 2
 		});
 		verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, config);
 

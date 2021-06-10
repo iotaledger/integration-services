@@ -1,6 +1,9 @@
 export interface AuthenticationServiceConfig {
 	serverSecret: string;
 	jwtExpiration: string;
-	serverIdentityId: string;
+}
+export interface VerificationServiceConfig {
 	keyCollectionSize: number;
+	serverSecret: string;
+	serverIdentityId: string;
 }

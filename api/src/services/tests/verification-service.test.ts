@@ -1,7 +1,7 @@
 import { VerificationService } from '../verification-service';
 import * as KeyCollectionDb from '../../database/key-collection';
 import * as IdentityDocsDb from '../../database/identity-docs';
-import { AuthenticationServiceConfig } from '../../models/config/services';
+import { VerificationServiceConfig } from '../../models/config/services';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
 
@@ -15,10 +15,9 @@ describe('test getKeyCollection', () => {
 		keys: [{ public: 'public-key', secret: 'secret-key' }],
 		type: ''
 	};
-	const cfg: AuthenticationServiceConfig = {
+	const cfg: VerificationServiceConfig = {
 		serverSecret: 'very-secret-secret',
 		serverIdentityId: 'did:iota:123',
-		jwtExpiration: '1 day',
 		keyCollectionSize
 	};
 	beforeEach(() => {
