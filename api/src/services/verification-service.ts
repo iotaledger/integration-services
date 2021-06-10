@@ -27,14 +27,16 @@ export class VerificationService {
 	private readonly ssiService: SsiService;
 	private readonly userService: UserService;
 	private readonly serverSecret: string;
+	private readonly keyCollectionSize: number;
 	private readonly serverIdentityId: string;
 	private readonly jwtExpiration: string;
 
 	constructor(ssiService: SsiService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
-		const { serverSecret, jwtExpiration, serverIdentityId } = authenticationServiceConfig;
+		const { serverSecret, jwtExpiration, serverIdentityId, keyCollectionSize } = authenticationServiceConfig;
 		this.ssiService = ssiService;
 		this.userService = userService;
 		this.serverSecret = serverSecret;
+		this.keyCollectionSize = keyCollectionSize;
 		this.serverIdentityId = serverIdentityId;
 		this.jwtExpiration = jwtExpiration;
 	}
@@ -42,7 +44,7 @@ export class VerificationService {
 	getKeyCollection = async (keyCollectionIndex: number) => {
 		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.serverIdentityId, this.serverSecret);
 		if (!keyCollection) {
-			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.serverIdentityId);
+			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.keyCollectionSize, this.serverIdentityId);
 			const res = await KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
 
 			if (!res?.result.n) {
@@ -241,8 +243,11 @@ export class VerificationService {
 
 	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / KEY_COLLECTION_SIZE);
 
-	private generateKeyCollection = async (keyCollectionIndex: number, issuerId: string): Promise<KeyCollectionPersistence> => {
-		const keyCollectionSize = KEY_COLLECTION_SIZE;
+	private generateKeyCollection = async (
+		keyCollectionIndex: number,
+		keyCollectionSize: number,
+		issuerId: string
+	): Promise<KeyCollectionPersistence> => {
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 
 		if (!issuerIdentity) {

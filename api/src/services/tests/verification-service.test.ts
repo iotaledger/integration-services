@@ -6,9 +6,9 @@ import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
 
 describe('test getKeyCollection', () => {
-	let ssiService: any, userService: any, verificationService: any;
+	let ssiService: SsiService, userService: UserService, verificationService: VerificationService;
 	const keyCollectionIndex = 0;
-	const keyCollectionSize = 2;
+	const keyCollectionSize = 4;
 	const expectedKeyCollection = {
 		count: keyCollectionSize,
 		index: keyCollectionIndex,
@@ -18,7 +18,8 @@ describe('test getKeyCollection', () => {
 	const cfg: AuthenticationServiceConfig = {
 		serverSecret: 'very-secret-secret',
 		serverIdentityId: 'did:iota:123',
-		jwtExpiration: '1 day'
+		jwtExpiration: '1 day',
+		keyCollectionSize
 	};
 	beforeEach(() => {
 		ssiService = SsiService.getInstance({} as any);
