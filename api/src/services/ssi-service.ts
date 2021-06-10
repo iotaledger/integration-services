@@ -27,13 +27,13 @@ export class SsiService {
 	}
 
 	async generateKeyCollection(
-		issuerIdentity: IdentityJsonUpdate,
-		count: number,
-		keyCollectionIndex: number
+		keyCollectionIndex: number,
+		keyCollectionSize: number,
+		issuerIdentity: IdentityJsonUpdate
 	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
-			const keyCollection = new KeyCollection(this.config.keyType, count);
+			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
 			const method = VerificationMethod.createMerkleKey(
 				this.config.hashFunction,
 				doc.id,
