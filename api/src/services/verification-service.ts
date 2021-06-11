@@ -79,7 +79,8 @@ export class VerificationService {
 		const keyIndex = nextCredentialIndex % KEY_COLLECTION_SIZE;
 		const keyCollectionJson: KeyCollectionJson = {
 			type: keyCollection.type,
-			keys: keyCollection.keys
+			keys: keyCollection.keys,
+			publicKeyBase58: keyCollection.publicKeyBase58
 		};
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
@@ -224,18 +225,23 @@ export class VerificationService {
 		keyCollectionSize: number,
 		issuerId: string
 	): Promise<KeyCollectionPersistence> => {
-		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+		try {
+			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 
-		if (!issuerIdentity) {
-			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+			if (!issuerIdentity) {
+				throw new Error(this.noIssuerFoundErrMessage(issuerId));
+			}
+
+			const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
+			await this.updateDatabaseIdentityDoc(docUpdate);
+			return {
+				...keyCollectionJson,
+				count: keyCollectionSize,
+				index: keyCollectionIndex
+			};
+		} catch (e) {
+			console.log('error when generating key collection', e);
+			throw new Error('could not generate key collection');
 		}
-
-		const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
-		await this.updateDatabaseIdentityDoc(docUpdate);
-		return {
-			...keyCollectionJson,
-			count: keyCollectionSize,
-			index: keyCollectionIndex
-		};
 	};
 }

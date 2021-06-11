@@ -34,6 +34,7 @@ export class SsiService {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
 			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
+			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
 			const method = VerificationMethod.createMerkleKey(
 				this.config.hashFunction,
 				doc.id,
@@ -51,9 +52,10 @@ export class SsiService {
 
 			const txHash = await this.publishSignedDoc(newDoc.toJSON());
 			const { keys, type } = keyCollection?.toJSON();
-			const keyCollectionJson = {
+			const keyCollectionJson: KeyCollectionJson = {
 				type,
-				keys
+				keys,
+				publicKeyBase58
 			};
 			return { docUpdate: { doc: newDoc.toJSON(), txHash }, keyCollectionJson };
 		} catch (error) {
