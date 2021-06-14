@@ -2,7 +2,7 @@ import { SubscriptionPool } from '.';
 import * as SubscriptionDb from '../../database/subscription';
 
 describe('test subscription pool', () => {
-	const pool = SubscriptionPool.getInstance('node');
+	const pool = new SubscriptionPool('node');
 	const channelAddress = 'test123';
 	beforeEach(() => {
 		pool.add(channelAddress, { id: 'imanauthor1' } as any, 'iota:did:imanauthor1', true);

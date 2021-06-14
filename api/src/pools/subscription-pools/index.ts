@@ -7,21 +7,12 @@ import { subSeconds } from 'date-fns';
 export class SubscriptionPool {
 	private secondsToLive = 20;
 	private interval: NodeJS.Timeout;
-	private static instance: SubscriptionPool;
 	private authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
 	private subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
 
-	private constructor(private readonly node: string, private readonly maxPoolSize = 65000) {
+	constructor(private readonly node: string, private readonly maxPoolSize = 65000) {
 		this.authors = [];
 		this.subscribers = [];
-		this.startInterval();
-	}
-
-	public static getInstance(node: string): SubscriptionPool {
-		if (!SubscriptionPool.instance) {
-			SubscriptionPool.instance = new SubscriptionPool(node);
-		}
-		return SubscriptionPool.instance;
 	}
 
 	startInterval() {

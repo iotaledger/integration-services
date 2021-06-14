@@ -7,14 +7,15 @@ import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 
 export class SubscriptionService {
 	private password: string;
-	private readonly streamsService: StreamsService;
-	private readonly channelInfoService: ChannelInfoService;
-	private readonly subscriptionPool: SubscriptionPool;
 
-	constructor(streamsService: StreamsService, channelInfoService: ChannelInfoService, config: { statePassword: string; streamsNode: string }) {
+	constructor(
+		private readonly streamsService: StreamsService,
+		private readonly channelInfoService: ChannelInfoService,
+		private readonly subscriptionPool: SubscriptionPool,
+		config: { statePassword: string; streamsNode: string }
+	) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;
-		this.subscriptionPool = SubscriptionPool.getInstance(config.streamsNode);
 		this.password = config.statePassword;
 	}
 

@@ -1,6 +1,7 @@
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
+import * as fetch from 'node-fetch';
 
 streams.set_panic_hook();
 

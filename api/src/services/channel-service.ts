@@ -9,21 +9,17 @@ import { ChannelData, ChannelLog } from '../models/types/channel-data';
 
 export class ChannelService {
 	private readonly password: string;
-	private readonly streamsService: StreamsService;
-	private readonly channelInfoService: ChannelInfoService;
-	private readonly subscriptionService: SubscriptionService;
-	private readonly subscriptionPool: SubscriptionPool;
 
 	constructor(
-		streamsService: StreamsService,
-		channelInfoService: ChannelInfoService,
-		subscriptionService: SubscriptionService,
+		private readonly streamsService: StreamsService,
+		private readonly channelInfoService: ChannelInfoService,
+		private readonly subscriptionService: SubscriptionService,
+		private readonly subscriptionPool: SubscriptionPool,
 		config: { statePassword: string; streamsNode: string }
 	) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;
 		this.subscriptionService = subscriptionService;
-		this.subscriptionPool = SubscriptionPool.getInstance(config.streamsNode);
 		this.password = config.statePassword;
 	}
 
