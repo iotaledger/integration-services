@@ -2,7 +2,7 @@
 
 <!-- I feel better to call this GW but we can go back to Bridge especially if we need to do any refactoring in case we switch to GW. This is something I want to avoid -->
 
-The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. 
+The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> <!-- these are the terms used by iota streams -->By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. 
 
 > __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
@@ -24,7 +24,7 @@ The following workflow can be implemented:
 * The tool C is automatically notified of new data coming from device Z. <!-- not sure about this, I need to check-->
 
 <!-- are we using credentials to check authorization? How do we implement specific access policies -->
-
+<!-- access to a stream will be handled by streams -->
 ### 2. _Guaranteeing the immutability of large data sets._ 
 This includes storing and sharing across organizations data sets maintained in large data lakes while guaranteeing that the data sets have not been altered over time or when passing across different parties. In this case Author and writer subscribers of a channel first index the data sets, then hash them and store the hash in the Audit Trail (using the GW APIs) on a channel registered with the created index and data set metadata. Authorised reader subscribers will receive the given data set and its index/metadata and will use them to retrieve and subscribed to the requested channel. Then they can compare the hash stored in the Audit Trail with the one generated from the received data set. 
 
@@ -84,9 +84,7 @@ _Response:_
 
 `GET /logs/{channel-address}`
 
-Get data from the channel with address _channel address_. First entry is the start of the subscription. __Read__ permission is mandatory.
-
-<!-- entry is not clear. Need to check -->
+Get data from the channel with address _channel address_. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. __Read__ permission is mandatory.
 
 _Body:_
 
@@ -181,7 +179,7 @@ _Response:_
 Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
 
 <!-- isn't the channel also created on the Tangle?-->
-
+<!-- in this case the channel already exists for instance was generated locally and just wants to be added to the bridge so others are able to find it -->
 _Body:_
 
 ```
@@ -264,7 +262,7 @@ __TBD!__ _Get all subscriptions of a channel._
 Request subscription to a channel with address _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
 
 <!-- we need to explain what the seed is used for-->
-
+<!-- seed will hopefully soon be replaced by a public key of an identity. so wouldnt go into detail-->
 _Body:_
 
 ```

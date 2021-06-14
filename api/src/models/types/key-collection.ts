@@ -4,6 +4,7 @@ export interface KeyCollectionPersistence {
 	index: number;
 	count: number;
 	type: string;
+	publicKeyBase58: string;
 	keys: SimpleKeyPair[];
 }
 
@@ -13,7 +14,6 @@ export interface SimpleKeyPair {
 }
 
 export interface VerifiableCredentialPersistence {
-	keyCollectionIndex: number;
 	index: number;
 	initiatorId: string;
 	isRevoked: boolean;
@@ -23,4 +23,5 @@ export interface VerifiableCredentialPersistence {
 export interface KeyCollectionJson {
 	type: string;
 	keys: SimpleKeyPair[];
+	publicKeyBase58: string;
 }

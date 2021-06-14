@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
-import { AuthenticatedRequest } from '../../models/types/authentication';
+import { AuthenticatedRequest } from '../../models/types/verification';
 import * as _ from 'lodash';
 import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-bodies';
 

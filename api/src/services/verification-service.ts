@@ -1,4 +1,4 @@
-import { KEY_COLLECTION_INDEX, KEY_COLLECTION_SIZE } from '../config/identity';
+import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
 import {
 	CredentialSubject,
@@ -11,14 +11,13 @@ import {
 import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
-import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
+import { createNonce } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as AuthDb from '../database/auth';
 import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
-import jwt from 'jsonwebtoken';
-import { AuthenticationServiceConfig } from '../models/config/services';
+import { VerificationServiceConfig } from '../models/config/services';
 import { upperFirst } from 'lodash';
 import { JsonldGenerator } from '../utils/jsonld';
 
@@ -27,40 +26,29 @@ export class VerificationService {
 	private readonly ssiService: SsiService;
 	private readonly userService: UserService;
 	private readonly serverSecret: string;
+	private readonly keyCollectionSize: number;
 	private readonly serverIdentityId: string;
-	private readonly jwtExpiration: string;
 
-	constructor(ssiService: SsiService, userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
-		const { serverSecret, jwtExpiration, serverIdentityId } = authenticationServiceConfig;
+	constructor(ssiService: SsiService, userService: UserService, verificationServiceConfig: VerificationServiceConfig) {
+		const { serverSecret, serverIdentityId, keyCollectionSize } = verificationServiceConfig;
 		this.ssiService = ssiService;
 		this.userService = userService;
 		this.serverSecret = serverSecret;
+		this.keyCollectionSize = keyCollectionSize;
 		this.serverIdentityId = serverIdentityId;
-		this.jwtExpiration = jwtExpiration;
 	}
 
-	saveKeyCollection(keyCollection: KeyCollectionPersistence) {
-		return KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
-	}
+	getKeyCollection = async (keyCollectionIndex: number) => {
+		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.serverIdentityId, this.serverSecret);
+		if (!keyCollection) {
+			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.keyCollectionSize, this.serverIdentityId);
+			const res = await KeyCollectionDb.saveKeyCollection(keyCollection, this.serverIdentityId, this.serverSecret);
 
-	getKeyCollection(index: number) {
-		return KeyCollectionDb.getKeyCollection(index, this.serverIdentityId, this.serverSecret);
-	}
-
-	generateKeyCollection = async (issuerId: string): Promise<KeyCollectionPersistence> => {
-		const index = KEY_COLLECTION_INDEX;
-		const count = KEY_COLLECTION_SIZE;
-		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
-		if (!issuerIdentity) {
-			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+			if (!res?.result.n) {
+				throw new Error('could not save keycollection!');
+			}
 		}
-		const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(issuerIdentity, count);
-		await this.updateDatabaseIdentityDoc(docUpdate);
-		return {
-			...keyCollectionJson,
-			count,
-			index
-		};
+		return keyCollection;
 	};
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
@@ -84,29 +72,35 @@ export class VerificationService {
 			}
 		};
 
-		// TODO#54 dynamic key collection index by querying identities size and max size of key collection
-		// if reached create new keycollection, always get highest index
-		// TODO#80 use memoize for getKeyCollection
-		const keyCollection = await this.getKeyCollection(KEY_COLLECTION_INDEX);
-		const index = await VerifiableCredentialsDb.getNextCredentialIndex(KEY_COLLECTION_INDEX, this.serverIdentityId);
+		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
+		const keyCollection = await this.getKeyCollection(keyCollectionIndex);
+		const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const keyIndex = nextCredentialIndex % KEY_COLLECTION_SIZE;
 		const keyCollectionJson: KeyCollectionJson = {
 			type: keyCollection.type,
-			keys: keyCollection.keys
+			keys: keyCollection.keys,
+			publicKeyBase58: keyCollection.publicKeyBase58
 		};
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
-		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(issuerIdentity, credential, keyCollectionJson, index);
+		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
+			issuerIdentity,
+			credential,
+			keyCollectionJson,
+			keyCollectionIndex,
+			keyIndex
+		);
 
 		await VerifiableCredentialsDb.addVerifiableCredential(
 			{
 				vc,
-				index,
+				index: nextCredentialIndex,
 				initiatorId,
-				isRevoked: false,
-				keyCollectionIndex: KEY_COLLECTION_INDEX
+				isRevoked: false
 			},
 			this.serverIdentityId
 		);
@@ -135,8 +129,10 @@ export class VerificationService {
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
+		const keyCollectionIndex = this.getKeyCollectionIndex(vcp.index);
+		const keyIndex = vcp.index % KEY_COLLECTION_SIZE;
 
-		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, vcp.index);
+		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
 		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
 		if (res.revoked === true) {
@@ -206,27 +202,6 @@ export class VerificationService {
 		return nonce;
 	};
 
-	authenticate = async (signedNonce: string, identityId: string) => {
-		const user = await this.userService.getUser(identityId);
-		if (!user) {
-			throw new Error(`no user with id: ${identityId} found!`);
-		}
-		const { nonce } = await AuthDb.getNonce(identityId);
-		const publicKey = getHexEncodedKey(user.publicKey);
-
-		const verified = await verifySignedNonce(publicKey, nonce, signedNonce);
-		if (!verified) {
-			throw new Error('signed nonce is not valid!');
-		}
-
-		if (!this.serverSecret) {
-			throw new Error('no server secret set!');
-		}
-
-		const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: this.jwtExpiration });
-		return signedJwt;
-	};
-
 	setUserVerified = async (identityId: string, issuerId: string, vc: VerifiableCredentialJson) => {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
@@ -241,5 +216,32 @@ export class VerificationService {
 		};
 		await this.userService.updateUserVerification(vup);
 		await this.userService.addUserVC(vc);
+	};
+
+	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / KEY_COLLECTION_SIZE);
+
+	private generateKeyCollection = async (
+		keyCollectionIndex: number,
+		keyCollectionSize: number,
+		issuerId: string
+	): Promise<KeyCollectionPersistence> => {
+		try {
+			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+
+			if (!issuerIdentity) {
+				throw new Error(this.noIssuerFoundErrMessage(issuerId));
+			}
+
+			const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
+			await this.updateDatabaseIdentityDoc(docUpdate);
+			return {
+				...keyCollectionJson,
+				count: keyCollectionSize,
+				index: keyCollectionIndex
+			};
+		} catch (e) {
+			console.log('error when generating key collection', e);
+			throw new Error('could not generate key collection');
+		}
 	};
 }

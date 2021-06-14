@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as AuthDb from '../../database/auth';
 import { User } from '../../models/types/user';
 import * as EncryptionUtils from '../../utils/encryption';
-import { ServerIdentityMock, UserIdentityMock } from '../../test/mocks/identities';
+import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';
 import { IdentityConfig } from '../../models/config';
 
@@ -33,8 +33,7 @@ describe('test authentication routes', () => {
 		userService = new UserService(ssiService, serverSecret);
 		authenticationService = new AuthenticationService(userService, {
 			jwtExpiration: '2 days',
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id
+			serverSecret
 		});
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
 
@@ -159,7 +158,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
 		});
 
-		fit('should return the jwt for nonce which is verified=true', async () => {
+		it('should return the jwt for nonce which is verified=true', async () => {
 			const verified = true;
 			const userMock: User = validUserMock;
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';

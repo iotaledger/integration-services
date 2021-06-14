@@ -3,7 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
 import { Config } from '../../models/config';
-import { AuthenticatedRequest, AuthorizationCheck, RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/authentication';
+import { RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/request-bodies';
+import { AuthenticatedRequest, AuthorizationCheck } from '../../models/types/verification';
 import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -88,7 +89,7 @@ export class VerificationRoutes {
 			const revokeBody: RevokeVerificationBody = req.body;
 			const requestUser = req.user;
 
-			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.subjectId, revokeBody.signatureValue, this.config.serverIdentityId);
+			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.signatureValue);
 			if (!vcp) {
 				throw new Error('no vc found to revoke the verification!');
 			}

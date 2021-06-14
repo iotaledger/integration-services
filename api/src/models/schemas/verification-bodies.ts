@@ -8,6 +8,5 @@ export const VerifyIdentitySchema = Type.Object({
 });
 
 export const RevokeVerificationSchema = Type.Object({
-	subjectId: Type.String({ minLength: 50, maxLength: 53 }), // did
 	signatureValue: Type.String()
 });

@@ -219,6 +219,7 @@ _Response:_
 Register an existing identity into the Bridge. This can be used if the identity already exists or it was only created locally. Registering an identity in the Bridge makes it possible to search for it by using some of the identity attributes, i.e., the username.
 
 <!-- I am not sure we should have this functionalities, it is against the principle of SSI -->
+<!-- I understand what you mean but every SSI needs to be registered in any way. For instance if someone wants access to your channel you won't give him access with only the DID, you want a verifiable credential or something from the identity to know who is behind it. Having the possibility to store identities also makes it easier if you want to use it to manage your IoT devices for instance. -->
 
 _Body:_
 
@@ -263,7 +264,7 @@ _Response:_
 
 Update data of a registered identity.
 <!-- still would want to explain how this is done --> 
-
+<!-- we need to discuss this for instance shall it revoke the existing credentials if I update my identity? -->
 _Body:_
 
 ```
@@ -308,6 +309,7 @@ _Response:_
 Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the immutable IOTA Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
 
 <!-- I understand this are functions that makes easier to search and interact, a sort of index. But we need to be sure we do not store personal data. More we need to be sure we implement standards for identities indexing and search -->
+<!-- Actually we store personal data and I don't see a problem in it since data is in a database which can be removed. But I could see use cases where this store of identities might not be wanted or are already stored in another system so they don't want it to be stored twice. In this case, I could make the data storage optional or if you prefer we could completely remove it though. -->
 
 _Body:_
 
@@ -400,9 +402,7 @@ _Response:_
 
 `POST /create-credential`
 
-Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to. 
-
-<!-- check if the above is correct--> 
+Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
 
 _Body:_
 
@@ -452,7 +452,6 @@ _Body:_
 
 ```
 {
-   "subjectId": string,
    "signatureValue": string
 }
 ```
@@ -529,21 +528,24 @@ The creation of an identity is one of the key aspects when interacting with othe
 
 The public key represents the identity public identifier (DID), represented by a DID document stored onto the IOTA ledger. The private key is kept secret and used to prove ownership of that the identity. 
 
-To specify the identity attributes, currently the Ecommerce-SSI Bridge supports five data models types: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the currently valid type for an identity and are derived by adapting the data models of https://schema.org.<!-- do we have a better link --> In addition, our implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of an identity is defined by the field type; if an unknown type is provided, the API will reject the call.
+To specify the identity attributes, currently the Ecommerce-SSI Bridge supports five data models types: `Device`, `Person`, `Organization`, `Service` and `Product`. These are the currently valid type for an identity and are derived by adapting the data models of https://schema.org.<!-- do we have a better link --> <!-- i don't have a better, what do you mean by this? --> In addition, our implementation allows to define custom user's types, to fulfil the need of use cases with different data types. The type of an identity is defined by the field type; if an unknown type is provided, the API will reject the call.
 
 <!-- to check. In a normal process; I would create first the identity then add attributes. But I might be wrong. Check DID standards for this -->
+<!-- yes exactly -->
 
 > The exact data model definition can be found here: https://gist.github.com/dominic22/186f67b759f9694f45d35e9354fa5525
 
-The following snippet demonstrates an example where a device identity is created and verified by a previously verified organization. Since schema.org does not have a data model for devices, the device attributes linked to its identity are derived from the FIWARE data model.
+The following snippet demonstrates an example where a device identity is created and verified by a previously verified organization. Since schema.org does not have a data model for devices, the device attributes linked to its identity are derived from the [FIWARE device data model](https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md).
 
-<!-- can we have a link? Be sure we use only static properties of a device. Adjust also the example --> 
+<!-- Be sure we use only static properties of a device. Adjust also the example --> 
+<!-- what do you mean by static properties only?  -->
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/create
 
 The body of the POST request contains the Device type, the verified organization identity, a username and a data field which contains detailed attributes about the device identity.
 
 <!-- what is the role of the username? --> 
+<!-- this was intended to have a easier indexable method to identify idendities instead of their identity id -->
 
 ```
 {
@@ -603,6 +605,7 @@ The request returns the following body:
 The `doc`field contains the created identity document of the newly created identity (also stored onto the IOTA Tangle). The `doc.id` is the unique identifier (DID) of the identity.
 
 <!-- check if it is stored onto the Tangle -->
+<!-- doc is stored on the tangle -->
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to control the identity ownership and to authenticate at the APIs Bridge.
 
@@ -614,6 +617,7 @@ _
 
 #### 2. Authenticate the device identity (DID) and authorise access to the Bridge
 <!-- should this be split in two parts? -->
+<!-- I would keep it as it is and wait for feedback -->
 
 A created identity can be used to authenticatem the user linked to it, to a number of services provided by the Bridge. These services allow to manage the identity itself. For accessing the provided endpoint services the entity is authenticated using the public/private key pair associated to the used identity, which was generated when creating the identity itself. Endpoints which need user authentication for the Ecommerce-SSI bridge are as following:
 
@@ -626,12 +630,14 @@ A created identity can be used to authenticatem the user linked to it, to a numb
 User authentication workflow is described in the following sequence diagram. As an example, the diagram shows the authentication of a user for the purpose of using the Bridge functionalities to verify a registered identity (see section 3 below).
 
 <!-- is the sequence diagram still valid? is the name of APIs still correct or needs update? -->
+<!-- I've already updated the sequence diagram when adjusting the endpoint names -->
 
 ![verify identity sd](./src/assets/diagrams/verify-identity-sd.jpeg)
 
 As described in the sequence diagram the user willing to authenticate with a given identity must request and then sign (with the identity private key) a nonce in order to being able to authenticate at the API. Therefore two scripts must be implemented by the user client. These are `getHexEncodedKey` & `signNonce` which are described in the following.
 
 <!-- we need to add one line describing the snippet -->
+<!-- it is described below and by comments in code -->
 
 ```
 import * as ed from 'noble-ed25519';
@@ -642,7 +648,7 @@ export const getHexEncodedKey = (base58Key: string) => {
 	return bs58.decode(base58Key).toString('hex');
 };
 
-// hash a string
+// Hash a string
 const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
 
 // Sign a nonce using the private key.
@@ -666,15 +672,15 @@ The call returns a json object with the generated nonce:
 
 This nonce must now be signed using the private key of the keypair associated to the identity DID and sent back to the `prove-ownership` endpoint via POST. 
 
-Signing the nonce by the client can be done with the following two function calls.
+Signing the nonce by the client can be done with the following two function calls. The first command changes the encoding of the secret key since for signing it must be hex encoded but the identity sdk returns it as base58 encoding. Then the nonce can be signed with the second command.
 
 ```
 const encodedKey = await getHexEncodedKey(identity.key.secret);
 const signedNonce = await signNonce(encodedKey, nonce);
 ```
 <!-- this depend on how the key are stored locall; we should probably provide an example in the part above --> 
-
-This nonce must then be sent to the following API via POST request:
+<!-- this assumes that the key is stored as it is received from the identity sdk directly so this should fit all who store it without changing the encoding but I've added a description.-->
+This signed nonce must then be sent to the following API via POST request:
 
 https://ensuresec.solutions.iota.org/api/v0.1/authentication/prove-ownership/did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4
 
@@ -724,7 +730,7 @@ This verification can be done by an administrator of the Ecommerce-SSI bridge or
 In this case we verify the previously generated device identity using an already verified Test User with the following identity and verifiable credential:
 
 <!-- I am not sure why we show this here; it might be confusing -->
-
+<!-- because this credential is used to verify the device in the request later-->
 ```
 {
     "@context": "https://www.w3.org/2018/credentials/v1",
@@ -764,10 +770,13 @@ https://ensuresec.solutions.iota.org/api/v0.1/verifcation/create-credential
 The API body must contain the identity DID of the identity which needs to be verified. This is set in the `subjectId` field. 
 
 <!-- is this subjectId standard or shall we rename to identity DID? or similar? -->
+<!-- calling the identity which you want to verify is called subject so I've used this term here, just calling it identityId could be more confusing. -->
 
 In this case we use the DID of the device. Furthermore, if the user requesting the verification is not an administrator, the initiator needs to add a verifiable credential which was generated when verifying itself. With a network of trust approach, an identity verification must be requested by an identity different from the subject. This is always true in case of organizations and objects identities.
 
 <!-- why is that? Is not already authenticated? do we need to know the identity of which is requesting a verification? This is not a general pattern and mainly works for object or organization. For individual a person will ask to verify her own identity not a third party one. Check what I have added -->
+
+<!-- must be requested by an identity different from the subject <- this is true that is why the initiator of a verification must provide its own credential so the api is able to check wether this person is trusted or not who wants to create a credential for someone else. -->
 
 This verifiable credential is stored by the API Bridge and can be requested at the GET `/identities/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. The verifiable credentialof the initiator can be added in the `initiatorVC` field. The request to verifiy identity of the device `subjectId`could look like the one below.
 
@@ -806,10 +815,13 @@ This verifiable credential is stored by the API Bridge and can be requested at t
 
 Upon reception, the API checks if the subjectId exists and belongs to the same organization.
 <!-- this is possible only because of the information we store locally. We need to revise this and check if this is the standard and if this is possible in case no information is stored locally. e.g., how do I check that the identity belong to an organization? Because the credential is signed by somebody in the organization. Can we use a naming convention for DIDs? i.e., did:companyX:... -->
+<!-- yes we could also remove this organization check this was mainly based on the assumption we have one central iota api where clients interact with and I didn't want to let people of other organization verify them but maybe this is no more how we want the api to work. -->
 
-Furthermore it checks if the verifiable credential of the initiator is valid (singed by a valid identity). If both applies, a verifiable credential for the subjectId is created. The credential is stores locally and returned as signed verifiable credential of the device in the API response. An example is provided below.
+
+Furthermore it checks if the verifiable credential of the initiator is valid (signed by a valid identity). If both applies, a verifiable credential for the subjectId is created. The credential is stored by the api and returned as signed verifiable credential of the device in the API response. An example is provided below.
 
 <!-- we need to update the example accordingly. And remove dynamic properties --> 
+<!-- what do you mean by dynamic properties? -->
 
 ```
 {
@@ -1056,11 +1068,10 @@ A verifiable credential can be revoked so it is no more verified. In the example
 
 https://ensuresec.solutions.iota.org/api/v0.1/verification/revoke-credential
 
-The body of the request contains the `subjectId` which is the identityId of the identity which credential shall be revoked, in this case the identityId of the device. Furthermore the signature of the credential must be part as the `signatureValue` field to identify the verifiable credential which needs to be revoked.
+The body of the request contains only one field, the `signatureValue` which contains the signature of the verifiable credential as a string. This signatureValue can be easily extracted by every verifiable credential which needs to be revoked.
 
 ```
 {
-   "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
    "signatureValue": "BPLQaMjNEP5H27U9NmHA8gaAHRrYH2oHB7Qgpaufnm82.1113c6Jy3MFVwQFyDMG7QmbZJ89S72R8DwUHc6eNEwddUQow8rPxYrHzMM7Db5MdRF5JDDSoorHqio6h877HZY2654br4RxBpNd5K4Y6CLLthuxmDrWHz93kAHfr7vcrVyYLDCq5Uc8ENWbTWChSFpZ1AzLXxz2PJu82HqZAZcDZZgPBsRX6y2mS1AGih7Js44eTY9iuCR5nAuuXP4TjXxABWujdmVSXp5MyRLGmSeg5jr3bkmJCmwqvWPBYpRL9mCt7g7xsqgop6epjqqB7e351xbAXfkMsrArkeKvmgAh9YMvhdQgaYVgc9Mp1cvySRWGnj8mQVtzVQicbWuEx9UTRvgm4um16Ne2BnaX4BManN5yarfvqJTsXwtNYGC6HnCuD1GjXhPYtmg2Nr9xUBKMdqnpWojZGAKBgHNsRKU2dK1sDyu7x67Tr2ituVThy9eHPfdE.5kDCcE65y9tNadgQWKdLkYLFPofpP9cZ5e1x746EijMJmXPPL3DTpZ9MNXr6WhJGe9YH4ffMJ31i9P7hMKPJkNTp"
 }
 ```
@@ -1077,6 +1088,7 @@ After the credential is revoked the verifiable credential can be checked again u
 #### 7. Retrieve a specific identity description (DID document)
 
 <!-- does this mean all the other APIs read data stored in the Bridge?--> 
+<!-- yes a lot of data is stored on the bridge for instance the created verifiable credentials and to have indexable identites and channels. since we don't can store personal data on the tangle only the identity doc is stored on tangle -->
 To request the latest identity description from IOTA Tangle (i.e., to check the integrity with a local copy), the Ecommerce-SSI Bridge also offers an endpoint which can be called via GET. The API uses the requested identity DID (i.e., the associated public key).
 
 https://ensuresec.solutions.iota.org/api/v0.1/verification/latest-document/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
@@ -1109,6 +1121,7 @@ The API returns information about the identity document of the device stored on 
 In a decentralized identity management system, identities can only be verified by a previously verified identity. This requires to establish a root of trusted identities and their DID. This is managed using a network of trust that can have one or multiple roots, i.e., already verified identities. In order to enable this, the root DID of such trusted verified identities should be added to the Bridge. For instance in case of an Organization X with DID `did:iota:abc` and Organization Z with DID `did:iota:xyz`, if both organizations decide to trust each others on verifying each others identities, both trust roots should be added to the Bridge.
 
 <!-- how this URI prefix technically called? did domain? -->
+<!-- seems like they are called did methods: https://www.w3.org/TR/did-spec-registries/#did-methods -->
 
 <!-- Does the following belongs here? I do not understand
 
@@ -1119,6 +1132,7 @@ When checking a verifiable credential it checks:
 - Is the issuer id trusted
 
 -->
+<!-- yes exactly -->
 
 To receive the list of all trusted roots, the Bridge offers an endpoint which can be called as the following:
 
@@ -1136,3 +1150,4 @@ The API returns all trusted identity uri which are trusted by the Bridge.
 ```
 
 <!-- OK we are checking what trust roots exist; how do we add them? This is not provided. Are they hardcoded? Shall we add such API? -->
+<!-- currently there is no api for this but yes must possible for administrators to add them -->

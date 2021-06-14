@@ -12,7 +12,7 @@ export const addTrustedRootId = async (identityId: string) => {
 	const document = {
 		_id: identityId,
 		identityId,
-		creationDate: new Date()
+		created: new Date()
 	};
 
 	const res = await MongoDbService.insertDocument(collectionName, document);

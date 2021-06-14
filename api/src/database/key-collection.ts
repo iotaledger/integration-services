@@ -7,11 +7,11 @@ import { decrypt, encrypt } from '../utils/encryption';
 const collectionName = CollectionNames.keyCollection;
 const getIndex = (index: number, id: string) => `${id}-${index}`;
 
-export const getKeyCollection = async (index: number, serverId: string, secret: string): Promise<KeyCollectionPersistence> => {
+export const getKeyCollection = async (index: number, serverId: string, secret: string): Promise<KeyCollectionPersistence | null> => {
 	const query = { _id: getIndex(index, serverId) };
 	const keyCollection = await MongoDbService.getDocument<KeyCollectionPersistence>(collectionName, query);
 	if (!keyCollection) {
-		throw new Error('no keycollection found to sign credentials!');
+		return null;
 	}
 	const decryptedKC: KeyCollectionPersistence = {
 		...keyCollection,
@@ -42,7 +42,8 @@ export const saveKeyCollection = async (
 
 	const document = {
 		_id: getIndex(encryptedKC.index, serverId),
-		...encryptedKC
+		...encryptedKC,
+		created: new Date()
 	};
 
 	return MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);

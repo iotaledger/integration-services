@@ -15,7 +15,6 @@ const { Document, VerifiableCredential, VerificationMethod, KeyCollection } = Id
 export class SsiService {
 	private static instance: SsiService;
 	private readonly config: IdentityConfig;
-
 	private constructor(config: IdentityConfig) {
 		this.config = config;
 	}
@@ -28,13 +27,20 @@ export class SsiService {
 	}
 
 	async generateKeyCollection(
-		issuerIdentity: IdentityJsonUpdate,
-		count: number
+		keyCollectionIndex: number,
+		keyCollectionSize: number,
+		issuerIdentity: IdentityJsonUpdate
 	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
-			const keyCollection = new KeyCollection(this.config.keyType, count);
-			const method = VerificationMethod.createMerkleKey(this.config.hashFunction, doc.id, keyCollection, this.config.keyCollectionTag);
+			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
+			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
+			const method = VerificationMethod.createMerkleKey(
+				this.config.hashFunction,
+				doc.id,
+				keyCollection,
+				this.getKeyCollectionTag(keyCollectionIndex)
+			);
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: issuerIdentity.txHash });
 
 			newDoc.insertMethod(method, `VerificationMethod`);
@@ -46,9 +52,10 @@ export class SsiService {
 
 			const txHash = await this.publishSignedDoc(newDoc.toJSON());
 			const { keys, type } = keyCollection?.toJSON();
-			const keyCollectionJson = {
+			const keyCollectionJson: KeyCollectionJson = {
 				type,
-				keys
+				keys,
+				publicKeyBase58
 			};
 			return { docUpdate: { doc: newDoc.toJSON(), txHash }, keyCollectionJson };
 		} catch (error) {
@@ -83,13 +90,14 @@ export class SsiService {
 		issuerIdentity: IdentityJson,
 		credential: Credential<T>,
 		keyCollectionJson: KeyCollectionJson,
+		keyCollectionIndex: number,
 		subjectKeyIndex: number
 	): Promise<VerifiableCredentialJson> {
 		try {
 			const { doc } = this.restoreIdentity(issuerIdentity);
 			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
 			const digest = this.config.hashFunction;
-			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.config.keyCollectionTag);
+			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.getKeyCollectionTag(keyCollectionIndex));
 
 			const unsignedVc = VerifiableCredential.extend({
 				id: credential?.id,
@@ -136,11 +144,15 @@ export class SsiService {
 		return txHash;
 	}
 
-	async revokeVerifiableCredential(issuerIdentity: IdentityJsonUpdate, index: number): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
+	async revokeVerifiableCredential(
+		issuerIdentity: IdentityJsonUpdate,
+		keyCollectionIndex: number,
+		keyIndex: number
+	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
 		try {
 			const { doc, key } = this.restoreIdentity(issuerIdentity);
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: issuerIdentity.txHash });
-			const result: boolean = newDoc.revokeMerkleKey(this.config.keyCollectionTag, index);
+			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), keyIndex);
 			newDoc.sign(key);
 			const txHash = await this.publishSignedDoc(newDoc.toJSON());
 
@@ -202,6 +214,7 @@ export class SsiService {
 			throw new Error(`could not create identity document from keytype: ${this.config.keyType}`);
 		}
 	}
+	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
 
 	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
 		return Identity.Document.fromJSON({

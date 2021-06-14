@@ -9,6 +9,8 @@ import { addTrustedRootId } from '../database/trusted-roots';
 import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
 import { UserType } from '../models/types/user';
 import { CreateIdentityBody } from '../models/types/identity';
+import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
+import { KEY_COLLECTION_SIZE } from '../config/identity';
 
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
@@ -27,13 +29,13 @@ export async function setupApi() {
 
 	const ssiService = SsiService.getInstance(CONFIG.identityConfig);
 	const userService = new UserService(ssiService, serverSecret);
-	const tmpAuthenticationService = new VerificationService(ssiService, userService, {
-		jwtExpiration: '2 days',
+	const tmpVerificationService = new VerificationService(ssiService, userService, {
 		serverSecret,
-		serverIdentityId
+		serverIdentityId,
+		keyCollectionSize: KEY_COLLECTION_SIZE
 	});
 
-	const serverIdentity = await tmpAuthenticationService.getIdentityFromDb(serverIdentityId);
+	const serverIdentity = await tmpVerificationService.getIdentityFromDb(serverIdentityId);
 
 	if (!serverIdentityId || !serverIdentity) {
 		console.log('Create identity...');
@@ -50,11 +52,11 @@ export async function setupApi() {
 		console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
 		console.log('==================================================================================================');
 
-		// re-create the authentication service with a valid server identity id
+		// re-create the verification service with a valid server identity id
 		const verificationService = new VerificationService(ssiService, userService, {
-			jwtExpiration: '2 days',
 			serverSecret,
-			serverIdentityId: identity.doc.id
+			serverIdentityId: identity.doc.id,
+			keyCollectionSize: KEY_COLLECTION_SIZE
 		});
 
 		const serverUser = await userService.getUser(identity.doc.id);
@@ -65,11 +67,12 @@ export async function setupApi() {
 		await addTrustedRootId(serverUser.identityId);
 
 		console.log('Generate key collection...');
-		const kc = await verificationService.generateKeyCollection(serverUser.identityId);
-		const res = await verificationService.saveKeyCollection(kc);
+		const index = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
+		const keyCollectionIndex = verificationService.getKeyCollectionIndex(index);
+		const kc = await verificationService.getKeyCollection(keyCollectionIndex);
 
-		if (!res?.result.n) {
-			throw new Error('could not save keycollection!');
+		if (!kc) {
+			throw new Error('could not create the keycollection!');
 		}
 
 		console.log('Set server identity as verified...');

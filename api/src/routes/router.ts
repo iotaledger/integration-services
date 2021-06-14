@@ -10,7 +10,7 @@ import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { SsiService } from '../services/ssi-service';
-import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/authentication';
+import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/verification-bodies';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
 import { VerifiableCredentialSchema } from '../models/schemas/identity';
@@ -25,10 +25,11 @@ import {
 	CreateChannelBodySchema,
 	ProveOwnershipPostBodySchema,
 	RequestSubscriptionBodySchema
-} from '../models/schemas/request-bodies';
+} from '../models/schemas/channel-bodies';
 import { hasValidApiKey } from '../middlewares/api-key';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
+import { KEY_COLLECTION_SIZE } from '../config/identity';
 
 const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
 const validator = new Validator({ allErrors: true });
@@ -61,14 +62,18 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
-const authenticationService = new AuthenticationService(userService, { jwtExpiration, serverIdentityId, serverSecret });
+const authenticationService = new AuthenticationService(userService, { jwtExpiration, serverSecret });
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
 const { getNonce, proveOwnership } = authenticationRoutes;
 export const authenticationRouter = Router();
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
 authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
 
-const verificationService = new VerificationService(ssiService, userService, { jwtExpiration, serverIdentityId, serverSecret });
+const verificationService = new VerificationService(ssiService, userService, {
+	serverIdentityId,
+	serverSecret,
+	keyCollectionSize: KEY_COLLECTION_SIZE
+});
 const verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, CONFIG);
 const {
 	createVerifiableCredential,
