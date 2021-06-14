@@ -4,6 +4,11 @@ import { fromBytes, toBytes } from '../utils/text';
 
 streams.set_panic_hook();
 
+global.fetch = fetch as any;
+global.Headers = (fetch as any).Headers;
+global.Request = (fetch as any).Request;
+global.Response = (fetch as any).Response;
+
 export class StreamsService {
 	private readonly node: string;
 
@@ -14,11 +19,12 @@ export class StreamsService {
 	importSubscription = (state: string, isAuthor: boolean, password: string): Author | Subscriber => {
 		try {
 			const options = new streams.SendOptions(1, true, 1);
-
 			const client = new streams.Client(this.node, options.clone());
+
 			if (isAuthor) {
 				return streams.Author.import(client, toBytes(state), password);
 			}
+
 			return streams.Subscriber.import(client, toBytes(state), password);
 		} catch (error) {
 			console.log('Error from streams sdk:', error);
@@ -73,8 +79,6 @@ export class StreamsService {
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			let response: any = null;
-
-			console.log('prev logs: ', prevLogs);
 
 			await subscription.clone().sync_state();
 			response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);

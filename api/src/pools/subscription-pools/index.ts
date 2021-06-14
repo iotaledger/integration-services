@@ -2,18 +2,19 @@ import streams, { Author, Subscriber } from '../../streams-lib/wasm-node/iota_st
 import * as SubscriptionDb from '../../database/subscription';
 import { SubscriptionType } from '../../models/types/subscription';
 import { toBytes } from '../../utils/text';
+import { subSeconds } from 'date-fns';
 
-// TODO#39 use more robust object pool: https://github.com/electricessence/TypeScript.NET/blob/master/source/System/Disposable/ObjectPool.ts
 export class SubscriptionPool {
+	private secondsToLive = 20;
+	private interval: NodeJS.Timeout;
 	private static instance: SubscriptionPool;
-	private readonly node: string;
-	private authors: { identityId: string; channelAddress: string; author: Author }[];
-	private subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber }[];
+	private authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
+	private subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
 
-	private constructor(node: string) {
+	private constructor(private readonly node: string, private readonly maxPoolSize = 65000) {
 		this.authors = [];
 		this.subscribers = [];
-		this.node = node;
+		this.startInterval();
 	}
 
 	public static getInstance(node: string): SubscriptionPool {
@@ -23,12 +24,33 @@ export class SubscriptionPool {
 		return SubscriptionPool.instance;
 	}
 
+	startInterval() {
+		this.interval = setInterval(() => this.clearObsoleteObjects(), this.secondsToLive * 1000);
+	}
+
+	stopInterval() {
+		clearInterval(this.interval);
+	}
+
 	add(channelAddress: string, subscription: Author | Subscriber, identityId: string, isAuthor: boolean) {
 		if (isAuthor) {
-			this.authors = [...this.authors, { author: <Author>subscription, channelAddress, identityId }];
+			if (this.authors.length === this.maxPoolSize) {
+				this.authors.pop();
+			}
+			const newAuthor = { author: <Author>subscription, channelAddress, identityId, created: new Date() };
+			this.authors = [newAuthor, ...this.authors];
 		} else {
-			this.subscribers = [...this.subscribers, { subscriber: <Subscriber>subscription, channelAddress, identityId }];
+			if (this.subscribers.length === this.maxPoolSize) {
+				this.subscribers.pop();
+			}
+			const newSubscriber = { subscriber: <Subscriber>subscription, channelAddress, identityId, created: new Date() };
+			this.subscribers = [newSubscriber, ...this.subscribers];
 		}
+	}
+
+	clearObsoleteObjects() {
+		this.authors = this.authors.filter((author) => author.created > subSeconds(new Date(), this.secondsToLive));
+		this.subscribers = this.subscribers.filter((subscriber) => subscriber.created > subSeconds(new Date(), this.secondsToLive));
 	}
 
 	async restoreSubscription(channelAddress: string, identityId: string, password: string) {
@@ -51,16 +73,25 @@ export class SubscriptionPool {
 	async get(channelAddress: string, identityId: string, isAuthor: boolean, password: string): Promise<Author | Subscriber> {
 		const predicate = (pool: any) => pool.identityId === identityId && pool.channelAddress === channelAddress;
 		let subscription = null;
+
 		if (isAuthor) {
-			subscription = this.authors.filter(predicate)?.[0]?.author;
+			const found = this.authors.filter(predicate)?.[0];
+			if (found) {
+				found.created = new Date(); // update timetolive
+				subscription = found.author;
+			}
 		} else {
-			subscription = this.subscribers.filter(predicate)?.[0]?.subscriber;
+			const found = this.subscribers.filter(predicate)?.[0];
+			if (found) {
+				found.created = new Date(); // update timetolive
+				subscription = found?.subscriber;
+			}
 		}
 		if (!subscription) {
 			// try to restore subscription from state in db
 			subscription = await this.restoreSubscription(channelAddress, identityId, password);
+			this.add(channelAddress, subscription, identityId, isAuthor);
 		}
-
 		return subscription;
 	}
 }
