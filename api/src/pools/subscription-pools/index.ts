@@ -7,8 +7,8 @@ import { subSeconds } from 'date-fns';
 export class SubscriptionPool {
 	private secondsToLive = 20;
 	private interval: NodeJS.Timeout;
-	private authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
-	private subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
+	authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
+	subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
 
 	constructor(private readonly node: string, private readonly maxPoolSize = 65000) {
 		this.authors = [];
@@ -28,20 +28,20 @@ export class SubscriptionPool {
 			if (this.authors.length === this.maxPoolSize) {
 				this.authors.pop();
 			}
-			const newAuthor = { author: <Author>subscription, channelAddress, identityId, created: new Date() };
+			const newAuthor = { author: <Author>subscription, channelAddress, identityId, created: new Date(Date.now()) };
 			this.authors = [newAuthor, ...this.authors];
 		} else {
 			if (this.subscribers.length === this.maxPoolSize) {
 				this.subscribers.pop();
 			}
-			const newSubscriber = { subscriber: <Subscriber>subscription, channelAddress, identityId, created: new Date() };
+			const newSubscriber = { subscriber: <Subscriber>subscription, channelAddress, identityId, created: new Date(Date.now()) };
 			this.subscribers = [newSubscriber, ...this.subscribers];
 		}
 	}
 
 	clearObsoleteObjects() {
-		this.authors = this.authors.filter((author) => author.created > subSeconds(new Date(), this.secondsToLive));
-		this.subscribers = this.subscribers.filter((subscriber) => subscriber.created > subSeconds(new Date(), this.secondsToLive));
+		this.authors = this.authors.filter((author) => author.created > subSeconds(new Date(Date.now()), this.secondsToLive));
+		this.subscribers = this.subscribers.filter((subscriber) => subscriber.created > subSeconds(new Date(Date.now()), this.secondsToLive));
 	}
 
 	async restoreSubscription(channelAddress: string, identityId: string, password: string) {
@@ -68,13 +68,13 @@ export class SubscriptionPool {
 		if (isAuthor) {
 			const found = this.authors.filter(predicate)?.[0];
 			if (found) {
-				found.created = new Date(); // update timetolive
+				found.created = new Date(Date.now()); // update timetolive
 				subscription = found.author;
 			}
 		} else {
 			const found = this.subscribers.filter(predicate)?.[0];
 			if (found) {
-				found.created = new Date(); // update timetolive
+				found.created = new Date(Date.now()); // update timetolive
 				subscription = found?.subscriber;
 			}
 		}
