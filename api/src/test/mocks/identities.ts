@@ -10,7 +10,7 @@ export const TestUsersMock = [
 		type: 'Device',
 		organization: 'IOTA',
 		registrationDate: '2021-03-15T10:29:56+01:00',
-		data: {
+		claim: {
 			id: 'test-device',
 			type: 'Device',
 			category: ['sensor'],
@@ -35,7 +35,7 @@ export const TestUsersMock = [
 		organization: 'University Account',
 		type: 'Person',
 		registrationDate: '2021-03-15T10:29:56+01:00',
-		data: {
+		claim: {
 			familyName: 'Tomson',
 			givenName: 'Brandon'
 		}
@@ -48,7 +48,7 @@ export const TestUsersMock = [
 		organization: 'IOTA',
 		type: 'Person',
 		registrationDate: '2021-03-15T10:29:56+01:00',
-		data: {
+		claim: {
 			familyName: 'Keen',
 			givenName: 'Jon'
 		}
@@ -81,7 +81,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		type: 'Person',
-		data: { firstName: 'Tom', lastName: 'Sonson' },
+		claim: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verification: {
 			verified: true,

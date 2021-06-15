@@ -64,7 +64,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		_id: user.identityId
 	};
 
-	const { username, organization, type, data, verifiableCredentials } = user;
+	const { username, organization, type, claim, verifiableCredentials } = user;
 
 	if (verifiableCredentials?.some((vc) => vc?.id !== user.identityId)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
@@ -78,7 +78,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		username: username || undefined, // username must not be ''
 		type: type || undefined, // type must not be ''
 		organization,
-		data,
+		claim,
 		verifiableCredentials
 	});
 

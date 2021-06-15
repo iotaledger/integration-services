@@ -29,7 +29,7 @@ export const UserIdentity = {
 		type: 'Person',
 		registrationDate: '2021-05-20T10:40:47+02:00',
 		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
-		data: {
+		claim: {
 			name: 'Test User',
 			familyName: 'User',
 			givenName: 'Test',
@@ -78,7 +78,7 @@ export const ServerIdentity = {
 		type: 'Service',
 		registrationDate: '2021-05-20T10:47:16+02:00',
 		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
-		data: {
+		claim: {
 			name: 'Test Service',
 			description: 'Just a test service to verify users.'
 		},
@@ -113,7 +113,7 @@ export const DeviceIdentity = {
 		type: 'Device',
 		registrationDate: '2021-05-20T10:43:02+02:00',
 		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
-		data: {
+		claim: {
 			category: ['sensor'],
 			controlledProperty: ['fillingLevel', 'temperature'],
 			controlledAsset: ['wastecontainer-Osuna-100'],

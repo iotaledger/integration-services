@@ -144,7 +144,7 @@ _Response:_
         "verificationIssuerId": string
     },
     "organization": string,
-    "data": any,
+    "claim": any,
     "verifiableCredentials": {
         "@context": string,
         "id": string,
@@ -173,7 +173,7 @@ _Body:_
   "username"?: string,
   "type": string,
   "organization"?: string,
-  "data": {
+  "claim": {
         "name"?: string,
         "familyName"?: string,
         "givenName"?: string,
@@ -237,7 +237,7 @@ _Body:_
         "verificationIssuerId": string
     },
     "organization": string,
-    "data": any,
+    "claim": any,
     "verifiableCredentials": {
         "@context": string,
         "id": string,
@@ -262,7 +262,7 @@ _Response:_
 
 `PUT /identity`
 
-Update data of a registered identity.
+Update claim of a registered identity.
 <!-- still would want to explain how this is done --> 
 <!-- we need to discuss this for instance shall it revoke the existing credentials if I update my identity? -->
 _Body:_
@@ -281,7 +281,7 @@ _Body:_
         "verificationIssuerId": string
     },
     "organization": string,
-    "data": any,
+    "claim": any,
     "verifiableCredentials": {
         "@context": string,
         "id": string,
@@ -542,7 +542,7 @@ The following snippet demonstrates an example where a device identity is created
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/create
 
-The body of the POST request contains the Device type, the verified organization identity, a username and a data field which contains detailed attributes about the device identity.
+The body of the POST request contains the Device type, the verified organization identity, a username and a claim field which contains detailed attributes about the device identity.
 
 <!-- what is the role of the username? --> 
 <!-- this was intended to have a easier indexable method to identify idendities instead of their identity id -->
@@ -552,7 +552,7 @@ The body of the POST request contains the Device type, the verified organization
   "username": "iota-test-device",
   "type":"Device",
   "organization":"did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
-  "data": {
+  "claim": {
         "category": ["sensor"],
         "controlledProperty": ["fillingLevel","temperature"],
         "controlledAsset":["wastecontainer-Osuna-100"],
@@ -884,7 +884,7 @@ Identity credentials can be requested using the identity DID in the identityId o
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/identity/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
 
-The response contains now all information of the device like for instance its username, data but also the verifiableCredentials of the device.
+The response contains now all information of the device like for instance its username, its claim but also the verifiableCredentials of the device.
 
 <!-- we need to update the example -->
 
@@ -902,7 +902,7 @@ The response contains now all information of the device like for instance its us
         "verificationIssuerId": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG"
     },
     "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
-    "data": {
+    "claim": {
         "category": [
             "sensor"
         ],

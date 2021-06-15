@@ -48,10 +48,10 @@ export class SchemaValidator {
 			return;
 		}
 
-		if (user.data) {
-			const validDetails = <boolean>validate(user.data);
+		if (user.claim) {
+			const validDetails = <boolean>validate(user.claim);
 			if (!validDetails) {
-				throw new Error('no valid user data');
+				throw new Error('no valid identity claim');
 			}
 		}
 	}

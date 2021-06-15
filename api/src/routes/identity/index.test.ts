@@ -90,7 +90,7 @@ describe('test GET user', () => {
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			type: UserType.Person,
-			data: { firstName: 'Tom', lastName: 'Tomson' },
+			claim: { firstName: 'Tom', lastName: 'Tomson' },
 			registrationDate: date,
 			organization: 'IOTA'
 		};
@@ -108,7 +108,7 @@ describe('test GET user', () => {
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			type: 'Person',
-			data: { firstName: 'Tom', lastName: 'Tomson' },
+			claim: { firstName: 'Tom', lastName: 'Tomson' },
 			registrationDate: getDateStringFromDate(date),
 			organization: 'IOTA'
 		});
@@ -138,7 +138,7 @@ describe('test POST user', () => {
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
 		type: UserType.Person,
-		data: { firstName: 'Tom', lastName: 'Sonson' },
+		claim: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
 	};
@@ -316,7 +316,7 @@ describe('test PUT user', () => {
 		publicKey: 'my-public-key-1',
 		username: 'first-user',
 		type: UserType.Person,
-		data: { firstName: 'Tom', lastName: 'Sonson' },
+		claim: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-02-12T14:58:05+01:00',
 		organization: 'IOTA'
 	};

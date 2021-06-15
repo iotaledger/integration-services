@@ -219,7 +219,7 @@ describe('test authentication routes', () => {
 					...credentialSubject,
 					'@context': 'https://schema.org/',
 					type: 'Person',
-					...subject.data
+					...subject.claim
 				}
 			};
 			const expectedKeyCollection = {
@@ -288,7 +288,7 @@ describe('test authentication routes', () => {
 					...credentialSubject,
 					'@context': ['https://smartdatamodels.org/context.jsonld'],
 					type: 'Device',
-					...subject.data,
+					...subject.claim,
 					id: subject.identityId
 				}
 			};

@@ -22,7 +22,7 @@ const UserWithoutIdFields = {
 	organization: Type.Optional(Type.Union([Type.String({ minLength: 2 }), Type.Null()])),
 	verifiableCredentials: Type.Optional(Type.Union([Type.Array(VerifiableCredentialSchema), Type.Null()])),
 	role: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	data: Type.Optional(Type.Union([Type.Any(), Type.Null()]))
+	claim: Type.Optional(Type.Union([Type.Any(), Type.Null()]))
 };
 
 export const UserWithoutIdSchema = Type.Object({

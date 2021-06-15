@@ -16,7 +16,6 @@ import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import { VerificationServiceConfig } from '../models/config/services';
-import { upperFirst } from 'lodash';
 import { JsonldGenerator } from '../utils/jsonld';
 
 export class VerificationService {
@@ -55,13 +54,13 @@ export class VerificationService {
 
 	verifyIdentity = async (subject: User, issuerId: string, initiatorId: string) => {
 		const jsonldGen = new JsonldGenerator();
-		const data = jsonldGen.jsonldUserData(subject.type, subject.data);
+		const claim = jsonldGen.jsonldUserData(subject.type, subject.claim);
 
 		const credential: Credential<CredentialSubject> = {
-			type: `${upperFirst(subject.type)}Credential`,
+			type: subject.type,
 			id: subject.identityId,
 			subject: {
-				...data,
+				...claim,
 				id: subject.identityId,
 				type: subject.type,
 				organization: subject.organization || undefined,
