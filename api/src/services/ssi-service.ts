@@ -174,7 +174,7 @@ export class SsiService {
 
 	async getLatestIdentityDoc(did: string): Promise<Identity.Document> {
 		try {
-			const json = await Identity.resolve(did, this.config);
+			const json = await this.getLatestIdentityJson(did);
 			const doc = Document.fromJSON(json);
 			if (!doc) {
 				throw new Error('could not parse json');

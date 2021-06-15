@@ -11,10 +11,8 @@ import {
 import { User, VerificationUpdatePersistence } from '../models/types/user';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
-import { createNonce } from '../utils/encryption';
 import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
-import * as AuthDb from '../database/auth';
 import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import { VerificationServiceConfig } from '../models/config/services';
@@ -66,8 +64,8 @@ export class VerificationService {
 				...data,
 				id: subject.identityId,
 				type: subject.type,
-				organization: subject.organization,
-				registrationDate: subject.registrationDate,
+				organization: subject.organization || undefined,
+				registrationDate: subject.registrationDate || undefined,
 				initiatorId
 			}
 		};
@@ -189,17 +187,6 @@ export class VerificationService {
 		}
 
 		return trustedRoots.map((root) => root.identityId);
-	};
-
-	getNonce = async (identityId: string) => {
-		const user = await this.userService.getUser(identityId);
-		if (!user) {
-			throw new Error(`no user with id: ${identityId} found!`);
-		}
-
-		const nonce = createNonce();
-		await AuthDb.upsertNonce(user.identityId, nonce);
-		return nonce;
 	};
 
 	setUserVerified = async (identityId: string, issuerId: string, vc: VerifiableCredentialJson) => {
