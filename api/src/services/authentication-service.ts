@@ -24,7 +24,7 @@ export class AuthenticationService {
 
 		if (!user) {
 			const doc = await this.ssiService.getLatestIdentityDoc(identityId);
-			const publicKey = doc?.resolveKey(identityId + '#key')?.toJSON()?.publicKeyBase58;
+			const publicKey = doc?.resolveKey(`${identityId}#key`)?.toJSON()?.publicKeyBase58;
 			if (publicKey) {
 				user = {
 					identityId,
@@ -38,7 +38,6 @@ export class AuthenticationService {
 		if (!user) {
 			throw new Error(`no identity with id: ${identityId} found!`);
 		}
-
 		const { nonce } = await AuthDb.getNonce(identityId);
 		const publicKey = getHexEncodedKey(user.publicKey);
 

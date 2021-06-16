@@ -51,7 +51,7 @@ export class UserService {
 
 	getUser = async (identityId: string): Promise<User | null> => {
 		const userPersistence = await userDb.getUser(identityId);
-		return this.getUserObject(userPersistence);
+		return userPersistence && this.getUserObject(userPersistence);
 	};
 
 	getUsersByIds = async (identityIds: string[]): Promise<User[] | null> => {
@@ -153,7 +153,7 @@ export class UserService {
 
 	private getUserObject = (userPersistence: UserPersistence): User | null => {
 		if (userPersistence == null || isEmpty(userPersistence.identityId)) {
-			console.error(`Error when parsing the body, no user id found on persistence model with username ${userPersistence?.username}`);
+			console.error('Error when parsing the body, no identity id found on persistence');
 			return null;
 		}
 
