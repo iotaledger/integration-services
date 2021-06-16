@@ -213,7 +213,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
-				type: 'PersonCredential',
+				type: 'Person',
 				id: subject.identityId,
 				subject: {
 					...credentialSubject,
@@ -282,7 +282,7 @@ describe('test authentication routes', () => {
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
-				type: 'DeviceCredential',
+				type: 'Device',
 				id: subject.identityId,
 				subject: {
 					...credentialSubject,

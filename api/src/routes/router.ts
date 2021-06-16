@@ -63,7 +63,7 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
-const authenticationService = new AuthenticationService(userService, { jwtExpiration, serverSecret });
+const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret });
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
 const { getNonce, proveOwnership } = authenticationRoutes;
 export const authenticationRouter = Router();

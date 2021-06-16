@@ -3,32 +3,36 @@ import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encry
 import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
+import { SsiService } from './ssi-service';
+import { User, UserRoles, UserType } from '../models/types/user';
 
 export class AuthenticationService {
-	private readonly userService: UserService;
-	private readonly serverSecret: string;
-	private readonly jwtExpiration: string;
-
-	constructor(userService: UserService, authenticationServiceConfig: AuthenticationServiceConfig) {
-		const { serverSecret, jwtExpiration } = authenticationServiceConfig;
-		this.userService = userService;
-		this.serverSecret = serverSecret;
-		this.jwtExpiration = jwtExpiration;
-	}
+	constructor(
+		private readonly userService: UserService,
+		private readonly ssiService: SsiService,
+		private readonly config: AuthenticationServiceConfig
+	) {}
 
 	getNonce = async (identityId: string) => {
-		const user = await this.userService.getUser(identityId);
-		if (!user) {
-			throw new Error(`no user with id: ${identityId} found!`);
-		}
-
 		const nonce = createNonce();
-		await AuthDb.upsertNonce(user.identityId, nonce);
+		await AuthDb.upsertNonce(identityId, nonce);
 		return nonce;
 	};
 
 	authenticate = async (signedNonce: string, identityId: string) => {
-		const user = await this.userService.getUser(identityId);
+		let user: User = await this.userService.getUser(identityId);
+		if (!user) {
+			const doc = await this.ssiService.getLatestIdentityDoc(identityId);
+			const publicKey = doc?.resolveKey(identityId + '#key')?.toJSON()?.publicKeyBase58;
+
+			user = {
+				identityId,
+				publicKey,
+				type: UserType.Unknown,
+				role: UserRoles.User
+			};
+		}
+
 		if (!user) {
 			throw new Error(`no user with id: ${identityId} found!`);
 		}
@@ -40,11 +44,11 @@ export class AuthenticationService {
 			throw new Error('signed nonce is not valid!');
 		}
 
-		if (!this.serverSecret) {
+		if (!this.config?.serverSecret) {
 			throw new Error('no server secret set!');
 		}
 
-		const signedJwt = jwt.sign({ user }, this.serverSecret, { expiresIn: this.jwtExpiration });
+		const signedJwt = jwt.sign({ user }, this.config.serverSecret, { expiresIn: this.config?.jwtExpiration });
 		return signedJwt;
 	};
 }

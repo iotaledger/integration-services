@@ -31,7 +31,7 @@ describe('test authentication routes', () => {
 		};
 		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService(ssiService, serverSecret);
-		authenticationService = new AuthenticationService(userService, {
+		authenticationService = new AuthenticationService(userService,ssiService, {
 			jwtExpiration: '2 days',
 			serverSecret
 		});
