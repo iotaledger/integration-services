@@ -131,8 +131,8 @@ describe('test user routes', () => {
 
 	describe('test POST user', () => {
 		const validBody: User = {
-			identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
-			publicKey: 'my-public-key-1',
+			identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', // must be same as in UserIdentityMock.id
+			publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm', // must be same as in UserIdentityMock publicKeyBase58
 			username: 'first-user',
 			type: UserType.Person,
 			claim: { firstName: 'Tom', lastName: 'Sonson' },
@@ -151,7 +151,8 @@ describe('test user routes', () => {
 		});
 
 		it('should return 404 since no user added', async () => {
-			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 0 } });
+			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 0 } }); // no user added
+			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
 
 			const req: any = {
 				params: {},
@@ -161,10 +162,11 @@ describe('test user routes', () => {
 			await userRoutes.addUser(req, res, nextMock);
 
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
+			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create user identity!'));
 		});
 		it('should add user', async () => {
-			// const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityDoc').and.returnValue(UserIdentityMock);
+			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
 			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 1 } });
 
 			const req: any = {
@@ -175,11 +177,12 @@ describe('test user routes', () => {
 			await userRoutes.addUser(req, res, nextMock);
 
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
-			// expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
+			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(sendStatusMock).toHaveBeenCalledWith(201);
 		});
 
 		it('should call next(err) if an error occurs when adding to db', async () => {
+			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
 			const addUserSpy = spyOn(UserDb, 'addUser').and.callFake(() => {
 				throw new Error('Test error');
 			});
@@ -191,6 +194,7 @@ describe('test user routes', () => {
 			await userRoutes.addUser(req, res, nextMock);
 
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
+			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(sendMock).not.toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
 		});

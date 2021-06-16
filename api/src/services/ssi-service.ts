@@ -184,7 +184,11 @@ export class SsiService {
 	}
 
 	getPublicKey(identityDoc: Identity.Document): string | undefined {
-		return identityDoc && identityDoc.resolveKey(`${identityDoc.id}#key`)?.toJSON()?.publicKeyBase58;
+		if (!identityDoc) {
+			return;
+		}
+		const verificationMethod = identityDoc.resolveKey(`${identityDoc.id}#key`);
+		return verificationMethod?.toJSON()?.publicKeyBase58;
 	}
 
 	restoreIdentity(identity: IdentityJson) {
