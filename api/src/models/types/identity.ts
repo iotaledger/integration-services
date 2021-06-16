@@ -1,7 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { Static } from '@sinclair/typebox';
 import { VerifiableCredentialSchema, VcSubjectSchema } from '../schemas/identity';
-import { UserWithoutId } from './user';
+import { CreateUserBody } from './request-bodies';
 
 export interface Credential<T> {
 	id: string;
@@ -9,7 +9,7 @@ export interface Credential<T> {
 	subject: T;
 }
 
-export interface CreateIdentityBody extends UserWithoutId {
+export interface CreateIdentityBody extends CreateUserBody {
 	storeIdentity?: boolean;
 }
 

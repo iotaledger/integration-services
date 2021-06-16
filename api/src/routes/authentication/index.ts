@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { ProveOwnershipPostBody } from '../../models/types/request-bodies';
 import { AuthenticationService } from '../../services/authentication-service';
 
 export class AuthenticationRoutes {
@@ -26,7 +27,7 @@ export class AuthenticationRoutes {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 			const identityId = req.params && decodeParam(<string>req.params['identityId']);
-			const body = req.body;
+			const body: ProveOwnershipPostBody = req.body;
 			const signedNonce = body?.signedNonce;
 
 			if (!signedNonce || !identityId) {

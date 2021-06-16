@@ -14,7 +14,7 @@ export const VerificationSchema = Type.Object({
 	lastTimeChecked: Type.Optional(Type.String())
 });
 
-const UserWithoutIdFields = {
+export const UserWithoutIdFields = {
 	type: Type.Union([Type.Enum(UserType), Type.String({ minLength: 3 })]),
 	username: Type.Optional(Type.String({ minLength: 3 })),
 	registrationDate: Type.Optional(Type.Union([Type.String(), Type.Null()])),
@@ -25,16 +25,8 @@ const UserWithoutIdFields = {
 	claim: Type.Optional(Type.Union([Type.Any(), Type.Null()]))
 };
 
-export const UserWithoutIdSchema = Type.Object({
-	...UserWithoutIdFields
-});
-
 export const UserSchema = Type.Object({
 	identityId: Type.String({ minLength: 50, maxLength: 53 }), // did
 	publicKey: Type.String({ minLength: 10 }),
 	...UserWithoutIdFields
-});
-
-export const UpdateUserSchema = Type.Object({
-	identityId: Type.String({ minLength: 50, maxLength: 53 }) // did
 });

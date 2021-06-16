@@ -21,7 +21,7 @@ export class VerificationRoutes {
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const verifyIdentityBody: VerifyIdentityBody = req.body;
+			const verifyIdentityBody = req.body as VerifyIdentityBody;
 			const { initiatorVC, subjectId, checkExistingVC } = verifyIdentityBody;
 			const requestUser = req.user;
 			const subject = await this.userService.getUser(subjectId);
@@ -71,7 +71,7 @@ export class VerificationRoutes {
 
 	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const vcBody: VerifiableCredentialJson = req.body;
+			const vcBody = req.body as VerifiableCredentialJson;
 			const isVerified = await this.verificationService.checkVerifiableCredential(vcBody);
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
@@ -81,7 +81,7 @@ export class VerificationRoutes {
 
 	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const revokeBody: RevokeVerificationBody = req.body;
+			const revokeBody = req.body as RevokeVerificationBody;
 			const requestUser = req.user;
 
 			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.signatureValue);

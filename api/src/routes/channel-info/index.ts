@@ -38,7 +38,7 @@ export class ChannelInfoRoutes {
 
 	addChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channelInfo: ChannelInfo = req.body;
+			const channelInfo = req.body as ChannelInfo;
 
 			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
@@ -59,7 +59,7 @@ export class ChannelInfoRoutes {
 
 	updateChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const channelInfoBody: ChannelInfo = req.body;
+			const channelInfoBody = req.body as ChannelInfo;
 
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress);
 			if (!channelInfo) {

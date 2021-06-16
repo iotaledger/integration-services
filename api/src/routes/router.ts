@@ -3,17 +3,20 @@ import { IdentityRoutes } from './identity';
 import { Validator } from 'express-json-validator-middleware';
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../models/schemas/channel-info';
-import { UpdateUserSchema, UserSchema, UserWithoutIdSchema } from '../models/schemas/user';
+import { UserSchema } from '../models/schemas/user';
 import { VerificationRoutes } from './verification';
 import { VerificationService } from '../services/verification-service';
 import { CONFIG } from '../config';
 import { UserService } from '../services/user-service';
 import { ChannelInfoService } from '../services/channel-info-service';
 import { SsiService } from '../services/ssi-service';
-import { RevokeVerificationSchema, VerifyIdentitySchema } from '../models/schemas/verification-bodies';
+import {
+	RevokeVerificationBodySchema,
+	VerifiableCredentialBodySchema,
+	VerifyIdentityBodySchema
+} from '../models/schemas/request-body/verification-bodies';
 import { isAuth } from '../middlewares/authentication';
 import { AuthorizationService } from '../services/authorization-service';
-import { VerifiableCredentialSchema } from '../models/schemas/identity';
 import { ChannelRoutes } from './channel';
 import { StreamsService } from '../services/streams-service';
 import { ChannelService } from '../services/channel-service';
@@ -23,14 +26,15 @@ import {
 	AddChannelLogBodySchema,
 	AuthorizeSubscriptionBodySchema,
 	CreateChannelBodySchema,
-	ProveOwnershipPostBodySchema,
 	RequestSubscriptionBodySchema
-} from '../models/schemas/channel-bodies';
+} from '../models/schemas/request-body/channel-bodies';
 import { hasValidApiKey } from '../middlewares/api-key';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { SubscriptionPool } from '../pools/subscription-pools';
+import { CreateUserBodySchema, UpdateUserBodySchema } from '../models/schemas/request-body/user-bodies';
+import { ProveOwnershipPostBodySchema as ProveOwnershipBodySchema } from '../models/schemas/request-body/authentication-bodies';
 
 const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
 const validator = new Validator({ allErrors: true });
@@ -45,11 +49,11 @@ export const identityRouter = Router();
 const authMiddleWare = isAuth(serverSecret);
 const apiKeyMiddleware = hasValidApiKey(apiKey);
 
-identityRouter.post('/create', apiKeyMiddleware, validate({ body: UserWithoutIdSchema }), createIdentity);
+identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
-identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserSchema }), updateUser);
+identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserBodySchema }), updateUser);
 identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);
 
 const channelInfoService = new ChannelInfoService(userService);
@@ -68,7 +72,7 @@ const authenticationRoutes = new AuthenticationRoutes(authenticationService);
 const { getNonce, proveOwnership } = authenticationRoutes;
 export const authenticationRouter = Router();
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
-authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipBodySchema }), proveOwnership);
 
 const verificationService = new VerificationService(ssiService, userService, {
 	serverIdentityId,
@@ -86,13 +90,19 @@ const {
 export const verificationRouter = Router();
 verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
 verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
-verificationRouter.post('/create-credential', apiKeyMiddleware, authMiddleWare, validate({ body: VerifyIdentitySchema }), createVerifiableCredential);
-verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialSchema }), checkVerifiableCredential);
+verificationRouter.post(
+	'/create-credential',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: VerifyIdentityBodySchema }),
+	createVerifiableCredential
+);
+verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialBodySchema }), checkVerifiableCredential);
 verificationRouter.post(
 	'/revoke-credential',
 	apiKeyMiddleware,
 	authMiddleWare,
-	validate({ body: RevokeVerificationSchema }),
+	validate({ body: RevokeVerificationBodySchema }),
 	revokeVerifiableCredential
 );
 

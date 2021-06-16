@@ -1,10 +1,6 @@
 import { Type } from '@sinclair/typebox';
-import { AccessRights } from '../types/subscription';
-import { TopicSchema } from './channel-info';
-
-export const ProveOwnershipPostBodySchema = Type.Object({
-	signedNonce: Type.String({ minLength: 128, maxLength: 128 })
-});
+import { AccessRights } from '../../types/subscription';
+import { TopicSchema } from '../channel-info';
 
 export const CreateChannelBodySchema = Type.Object({
 	topics: Type.Array(TopicSchema),
