@@ -21,21 +21,24 @@ export class AuthenticationService {
 
 	authenticate = async (signedNonce: string, identityId: string) => {
 		let user: User = await this.userService.getUser(identityId);
+
 		if (!user) {
 			const doc = await this.ssiService.getLatestIdentityDoc(identityId);
 			const publicKey = doc?.resolveKey(identityId + '#key')?.toJSON()?.publicKeyBase58;
-
-			user = {
-				identityId,
-				publicKey,
-				type: UserType.Unknown,
-				role: UserRoles.User
-			};
+			if (publicKey) {
+				user = {
+					identityId,
+					publicKey,
+					type: UserType.Unknown,
+					role: UserRoles.User
+				};
+			}
 		}
 
 		if (!user) {
-			throw new Error(`no user with id: ${identityId} found!`);
+			throw new Error(`no identity with id: ${identityId} found!`);
 		}
+
 		const { nonce } = await AuthDb.getNonce(identityId);
 		const publicKey = getHexEncodedKey(user.publicKey);
 
