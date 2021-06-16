@@ -183,6 +183,10 @@ export class SsiService {
 		}
 	}
 
+	getPublicKey(identityDoc: Identity.Document): string | undefined {
+		return identityDoc && identityDoc.resolveKey(`${identityDoc.id}#key`)?.toJSON()?.publicKeyBase58;
+	}
+
 	restoreIdentity(identity: IdentityJson) {
 		try {
 			const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);

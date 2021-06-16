@@ -68,6 +68,11 @@ export class UserService {
 		const validator = SchemaValidator.getInstance();
 		validator.validateUser(user);
 
+		// const identityDoc = await this.ssiService.getLatestIdentityDoc(user.identityId);
+		// if (!identityDoc || !user.publicKey || this.ssiService.getPublicKey(identityDoc) !== user.publicKey) {
+		// 	throw new Error('wrong identity provided');
+		// }
+
 		const userPersistence = this.getUserPersistence(user);
 		const res = await userDb.addUser(userPersistence);
 		if (!res?.result?.n) {
