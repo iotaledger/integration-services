@@ -2,14 +2,11 @@ import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
-import * as _ from 'lodash';
+import { get as lodashGet } from 'lodash';
 import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-bodies';
 
 export class ChannelRoutes {
-	private readonly channelService: ChannelService;
-	constructor(channelService: ChannelService) {
-		this.channelService = channelService;
-	}
+	constructor(private readonly channelService: ChannelService) {}
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
@@ -29,7 +26,7 @@ export class ChannelRoutes {
 
 	getLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const channelAddress = _.get(req, 'params.channelAddress');
+			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { identityId } = req.user;
 
 			if (!channelAddress || !identityId) {
@@ -51,7 +48,7 @@ export class ChannelRoutes {
 
 	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const channelAddress = _.get(req, 'params.channelAddress');
+			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { identityId } = req.user;
 			const body = req.body as AddChannelLogBody;
 

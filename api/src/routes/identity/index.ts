@@ -9,12 +9,7 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '../../models/types/identity';
 
 export class IdentityRoutes {
-	private readonly userService: UserService;
-	private readonly authorizationService: AuthorizationService;
-	constructor(userService: UserService, authorizationService: AuthorizationService) {
-		this.userService = userService;
-		this.authorizationService = authorizationService;
-	}
+	constructor(private readonly userService: UserService, private readonly authorizationService: AuthorizationService) {}
 
 	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {

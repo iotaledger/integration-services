@@ -64,7 +64,7 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);
 
 const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret });
-const authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
+const authenticationRoutes = new AuthenticationRoutes(authenticationService);
 const { getNonce, proveOwnership } = authenticationRoutes;
 export const authenticationRouter = Router();
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);

@@ -8,12 +8,7 @@ import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 
 export class ChannelInfoRoutes {
-	private readonly channelInfoService: ChannelInfoService;
-	private readonly authorizationService: AuthorizationService;
-	constructor(channelInfoService: ChannelInfoService, authorizationService: AuthorizationService) {
-		this.channelInfoService = channelInfoService;
-		this.authorizationService = authorizationService;
-	}
+	constructor(private readonly channelInfoService: ChannelInfoService, private readonly authorizationService: AuthorizationService) {}
 
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {

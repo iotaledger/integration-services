@@ -11,11 +11,7 @@ global.Request = (fetch as any).Request;
 global.Response = (fetch as any).Response;
 
 export class StreamsService {
-	private readonly node: string;
-
-	constructor(node: string) {
-		this.node = node;
-	}
+	constructor(private readonly node: string) {}
 
 	importSubscription = (state: string, isAuthor: boolean, password: string): Author | Subscriber => {
 		try {

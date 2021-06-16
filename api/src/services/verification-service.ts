@@ -20,16 +20,16 @@ import { JsonldGenerator } from '../utils/jsonld';
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
-	private readonly ssiService: SsiService;
-	private readonly userService: UserService;
 	private readonly serverSecret: string;
 	private readonly keyCollectionSize: number;
 	private readonly serverIdentityId: string;
 
-	constructor(ssiService: SsiService, userService: UserService, verificationServiceConfig: VerificationServiceConfig) {
+	constructor(
+		private readonly ssiService: SsiService,
+		private readonly userService: UserService,
+		verificationServiceConfig: VerificationServiceConfig
+	) {
 		const { serverSecret, serverIdentityId, keyCollectionSize } = verificationServiceConfig;
-		this.ssiService = ssiService;
-		this.userService = userService;
 		this.serverSecret = serverSecret;
 		this.keyCollectionSize = keyCollectionSize;
 		this.serverIdentityId = serverIdentityId;

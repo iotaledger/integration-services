@@ -1,16 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserService } from '../../services/user-service';
 import { AuthenticationService } from '../../services/authentication-service';
 
 export class AuthenticationRoutes {
-	private readonly authenticationService: AuthenticationService;
-	readonly userService: UserService;
-
-	constructor(authenticationService: AuthenticationService, userService: UserService) {
-		this.authenticationService = authenticationService;
-		this.userService = userService;
-	}
+	constructor(private readonly authenticationService: AuthenticationService) {}
 
 	getNonce = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {

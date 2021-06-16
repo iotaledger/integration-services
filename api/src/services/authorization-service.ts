@@ -3,11 +3,7 @@ import { AuthorizationCheck } from '../models/types/verification';
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
-	private readonly userService: UserService;
-
-	constructor(userService: UserService) {
-		this.userService = userService;
-	}
+	constructor(private readonly userService: UserService) {}
 
 	isAuthorized = async (requestUser: User, identityId: string): Promise<AuthorizationCheck> => {
 		const isAuthorizedUser = this.isAuthorizedUser(requestUser.identityId, identityId);

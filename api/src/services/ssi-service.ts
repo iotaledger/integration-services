@@ -14,10 +14,7 @@ const { Document, VerifiableCredential, VerificationMethod, KeyCollection } = Id
 
 export class SsiService {
 	private static instance: SsiService;
-	private readonly config: IdentityConfig;
-	private constructor(config: IdentityConfig) {
-		this.config = config;
-	}
+	private constructor(private readonly config: IdentityConfig) {}
 
 	public static getInstance(config: IdentityConfig): SsiService {
 		if (!SsiService.instance) {

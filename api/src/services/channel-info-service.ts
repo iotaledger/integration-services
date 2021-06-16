@@ -6,10 +6,7 @@ import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {
-	private readonly userService: UserService;
-	constructor(userService: UserService) {
-		this.userService = userService;
-	}
+	constructor(private readonly userService: UserService) {}
 
 	getChannelInfo = async (channelAddress: string): Promise<ChannelInfo | null> => {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);

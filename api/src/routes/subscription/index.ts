@@ -6,10 +6,7 @@ import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-bodies';
 
 export class SubscriptionRoutes {
-	private readonly subscriptionService: SubscriptionService;
-	constructor(subscriptionService: SubscriptionService) {
-		this.subscriptionService = subscriptionService;
-	}
+	constructor(private readonly subscriptionService: SubscriptionService) {}
 
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {

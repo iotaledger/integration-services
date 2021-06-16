@@ -35,7 +35,7 @@ describe('test authentication routes', () => {
 			jwtExpiration: '2 days',
 			serverSecret
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService, userService);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService);
 
 		res = {
 			send: sendMock,
@@ -141,7 +141,7 @@ describe('test authentication routes', () => {
 			);
 			expect(nextMock).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
 		});
-		
+
 		it('should return the jwt for identity not in db but on tangle', async () => {
 			const verified = true;
 			const identityId = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';

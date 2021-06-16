@@ -12,17 +12,12 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 
 export class VerificationRoutes {
-	private readonly verificationService: VerificationService;
-	readonly authorizationService: AuthorizationService;
-	readonly userService: UserService;
-	private readonly config: Config;
-
-	constructor(verificationService: VerificationService, userService: UserService, authorizationService: AuthorizationService, config: Config) {
-		this.verificationService = verificationService;
-		this.authorizationService = authorizationService;
-		this.userService = userService;
-		this.config = config;
-	}
+	constructor(
+		private readonly verificationService: VerificationService,
+		private readonly userService: UserService,
+		private readonly authorizationService: AuthorizationService,
+		private readonly config: Config
+	) {}
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {

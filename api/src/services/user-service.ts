@@ -17,13 +17,7 @@ import * as IdentityDocsDb from '../database/identity-docs';
 import { SsiService } from './ssi-service';
 
 export class UserService {
-	private readonly ssiService: SsiService;
-	private readonly serverSecret: string;
-
-	constructor(ssiService: SsiService, serverSecret: string) {
-		this.ssiService = ssiService;
-		this.serverSecret = serverSecret;
-	}
+	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string) {}
 
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
 		const usersPersistence = await userDb.searchUsers(userSearch);
