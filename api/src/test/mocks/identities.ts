@@ -157,10 +157,31 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: ['VerifiableCredential', 'ApiCredential'],
+				type: ['VerifiableCredential', 'VerifiedIdentityCredential'],
 				credentialSubject: {
 					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-					type: 'Api',
+					type: 'Person',
+					organization: 'IOTA',
+					registrationDate: '2021-03-24T15:38:43+01:00',
+					username: 'api-identity',
+					initiatorId: ''
+				},
+				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+				issuanceDate: '2021-03-24T14:38:45Z',
+				proof: {
+					type: 'MerkleKeySignature2021',
+					verificationMethod: '#key-collection',
+					signatureValue:
+						'8rVDt6KCPoZVhMCGG5AQLZaUjFJ5LLv4iXsaoQjeqQpq.1117uJFpmAB6msQ9GdsSRvxfdSvfTas94EippDqh6foKFTY1diqiCzfAuqYVExhxeJGBYycQiDbxwGev9Chrtz51UYVbwUL1DR8gipj3zuZa4X2SF7UnTbAw74Dv3o2qsqi2FsxtssV.52yNV25JkS9sRw2tSCKw4yQ3hY4fEneEpk82vU9UX2G5vGJsPhvpjSwfX2cxvqJ48E8EvwDCXrFuetyLPLVQ1UGY'
+				}
+			},
+			{
+				'@context': 'https://www.w3.org/2018/credentials/v1',
+				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+				type: ['VerifiableCredential', 'SomeBasicCredential'], // not valid credential to verify others
+				credentialSubject: {
+					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+					type: 'Person',
 					organization: 'IOTA',
 					registrationDate: '2021-03-24T15:38:43+01:00',
 					username: 'api-identity',

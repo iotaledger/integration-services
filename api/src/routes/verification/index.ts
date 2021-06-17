@@ -5,7 +5,6 @@ import { VerificationService } from '../../services/verification-service';
 import { Config } from '../../models/config';
 import { RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/request-bodies';
 import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
-import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
@@ -14,22 +13,15 @@ import { VerifiableCredentialPersistence } from '../../models/types/key-collecti
 export class VerificationRoutes {
 	constructor(
 		private readonly verificationService: VerificationService,
-		private readonly userService: UserService,
 		private readonly authorizationService: AuthorizationService,
 		private readonly config: Config
-	) {
-		console.log('userservice', this.userService);
-	}
+	) {}
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const verifyIdentityBody = req.body as VerifyIdentityBody;
 			const { initiatorVC, subject } = verifyIdentityBody;
 			const requestUser = req.user;
-
-			/*if (!subject && subjectId) {
-				subject = await this.userService.getUser(subjectId);
-			}*/
 
 			if (!subject) {
 				throw new Error('no valid subject!');

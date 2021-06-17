@@ -79,7 +79,7 @@ const verificationService = new VerificationService(ssiService, userService, {
 	serverSecret,
 	keyCollectionSize: KEY_COLLECTION_SIZE
 });
-const verificationRoutes = new VerificationRoutes(verificationService, userService, authorizationService, CONFIG);
+const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, CONFIG);
 const {
 	createVerifiableCredential,
 	checkVerifiableCredential,
