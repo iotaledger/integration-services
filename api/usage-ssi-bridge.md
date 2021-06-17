@@ -408,7 +408,12 @@ _Body:_
 
 ```
 {
-    "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+    "subjectId" ?: string,
+    "subject": {
+        "identityId": string,
+        "type": string,
+        "claim": any, // information about the subject which will become the credentialSubject
+    },
     "initiatorVC": {
         "@context": string,
         "id": string,

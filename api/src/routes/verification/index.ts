@@ -22,20 +22,20 @@ export class VerificationRoutes {
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const verifyIdentityBody = req.body as VerifyIdentityBody;
-			const { initiatorVC, subjectId, checkExistingVC } = verifyIdentityBody;
+			const { initiatorVC, subjectId } = verifyIdentityBody;
+			let { subject } = verifyIdentityBody;
 			const requestUser = req.user;
-			const subject = await this.userService.getUser(subjectId);
+
+			if (!subject && subjectId) {
+				subject = await this.userService.getUser(subjectId);
+			}
+
 			if (!subject) {
-				throw new Error('subject does not exist!');
+				throw new Error('no valid subject!');
 			}
 
 			if (!requestUser.identityId && !initiatorVC?.credentialSubject?.id) {
 				throw new Error('no initiator id could be found!');
-			}
-
-			// check existing vcs and update verification state based on it
-			if (!initiatorVC && checkExistingVC) {
-				return await this.verifyByExistingVCs(res, subject, requestUser.identityId);
 			}
 
 			const { isAuthorized, error } = await this.isAuthorizedToVerify(subject, initiatorVC, requestUser);

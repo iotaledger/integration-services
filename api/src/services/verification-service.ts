@@ -64,7 +64,6 @@ export class VerificationService {
 				id: subject.identityId,
 				type: subject.type,
 				organization: subject.organization || undefined,
-				registrationDate: subject.registrationDate || undefined,
 				initiatorId
 			}
 		};

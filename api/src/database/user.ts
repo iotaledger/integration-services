@@ -110,15 +110,15 @@ export const updateUserVerification = async (vup: VerificationUpdatePersistence)
 
 	const res = await MongoDbService.updateDocument(collectionName, query, update);
 	if (!res?.result?.n) {
-		throw new Error('could not update user verification!');
+		console.log('could not update user verification!');
 	}
 };
 
 export const addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
 	const currentUser = await getUser(vc.id);
-	const currentVCs = currentUser.verifiableCredentials || [];
+	const currentVCs = currentUser?.verifiableCredentials || [];
 
-	if (currentUser.verifiableCredentials?.length >= maxNumberOfVc) {
+	if (currentUser?.verifiableCredentials?.length >= maxNumberOfVc) {
 		throw new Error(`You can't add more than ${maxNumberOfVc} verifiable credentials to a user!`);
 	}
 
@@ -134,7 +134,7 @@ export const addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => 
 		$set: { ...updateObject }
 	};
 
-	const res = await MongoDbService.updateDocument(collectionName, query, update);
+	const res = await MongoDbService.updateDocument(collectionName, query, update, { upsert: true });
 	if (!res?.result?.n) {
 		throw new Error('could not update user verifiable credential!');
 	}
