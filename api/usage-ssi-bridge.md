@@ -137,12 +137,6 @@ _Response:_
     "username": string,
     "type": string,
     "registrationDate": string,
-    "verification": {
-        "verified": boolean,
-        "verificationDate": string,
-        "lastTimeChecked": string,
-        "verificationIssuerId": string
-    },
     "organization": string,
     "claim": any,
     "verifiableCredentials": {
@@ -230,12 +224,6 @@ _Body:_
     "username": string,
     "type": string,
     "registrationDate": string,
-    "verification": {
-        "verified": boolean,
-        "verificationDate": string,
-        "lastTimeChecked": string,
-        "verificationIssuerId": string
-    },
     "organization": string,
     "claim": any,
     "verifiableCredentials": {
@@ -274,12 +262,6 @@ _Body:_
     "username": string,
     "type": string,
     "registrationDate": string,
-    "verification": {
-        "verified": boolean,
-        "verificationDate": string,
-        "lastTimeChecked": string,
-        "verificationIssuerId": string
-    },
     "organization": string,
     "claim": any,
     "verifiableCredentials": {
@@ -900,12 +882,6 @@ The response contains now all information of the device like for instance its us
     "username": "iota-test-device",
     "type": "Device",
     "registrationDate": "2021-05-27T14:55:36+02:00",
-    "verification": {
-        "verified": true,
-        "verificationDate": "2021-05-27T16:45:52+02:00",
-        "lastTimeChecked": "2021-05-27T16:45:52+02:00",
-        "verificationIssuerId": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG"
-    },
     "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
     "claim": {
         "category": [

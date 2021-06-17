@@ -1,12 +1,4 @@
-import {
-	User,
-	UserPersistence,
-	UserRoles,
-	UserSearch,
-	Verification,
-	VerificationPersistence,
-	VerificationUpdatePersistence
-} from '../models/types/user';
+import { User, UserPersistence, UserRoles, UserSearch } from '../models/types/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
@@ -87,10 +79,6 @@ export class UserService {
 		return userDb.updateUser(userPersistence);
 	};
 
-	updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
-		await userDb.updateUserVerification(vup);
-	};
-
 	addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
 		await userDb.addUserVC(vc);
 	};
@@ -107,33 +95,11 @@ export class UserService {
 		return !(!user.publicKey && !user.identityId);
 	};
 
-	private getVerificationPersistence = (verification: Verification): VerificationPersistence | null => {
-		return (
-			verification && {
-				verificationDate: verification.verificationDate && getDateFromString(verification.verificationDate),
-				lastTimeChecked: verification.lastTimeChecked && getDateFromString(verification.lastTimeChecked),
-				verified: verification.verified,
-				verificationIssuerId: verification.verificationIssuerId
-			}
-		);
-	};
-
-	private getVerificationObject = (verificationPersistence: VerificationPersistence): Verification | null => {
-		return (
-			verificationPersistence && {
-				verified: verificationPersistence.verified,
-				verificationDate: getDateStringFromDate(verificationPersistence.verificationDate),
-				lastTimeChecked: getDateStringFromDate(verificationPersistence.lastTimeChecked),
-				verificationIssuerId: verificationPersistence.verificationIssuerId
-			}
-		);
-	};
-
 	private getUserPersistence = (user: User): UserPersistence | null => {
 		if (user == null || isEmpty(user.identityId)) {
 			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
-		const { publicKey, identityId, username, verification, organization, registrationDate, type, claim, verifiableCredentials, role } = user;
+		const { publicKey, identityId, username, organization, registrationDate, type, claim, verifiableCredentials, role } = user;
 
 		const userPersistence: UserPersistence = {
 			identityId,
@@ -142,7 +108,6 @@ export class UserService {
 			type,
 			organization,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
-			verification: this.getVerificationPersistence(verification),
 			claim,
 			verifiableCredentials,
 			role: role && (role as UserRoles)
@@ -157,18 +122,7 @@ export class UserService {
 			return null;
 		}
 
-		const {
-			username,
-			publicKey,
-			identityId,
-			organization,
-			registrationDate,
-			verification,
-			type,
-			claim,
-			verifiableCredentials,
-			role
-		} = userPersistence;
+		const { username, publicKey, identityId, organization, registrationDate, type, claim, verifiableCredentials, role } = userPersistence;
 
 		const user: User = {
 			identityId,
@@ -176,7 +130,6 @@ export class UserService {
 			username,
 			type,
 			registrationDate: getDateStringFromDate(registrationDate),
-			verification: this.getVerificationObject(verification),
 			organization,
 			claim,
 			verifiableCredentials,

@@ -55,20 +55,6 @@ export class VerificationRoutes {
 		}
 	};
 
-	verifyByExistingVCs = async (res: Response, user: User, requestId: string) => {
-		const hasVerifiedVCs = await this.verificationService.hasVerifiedVerifiableCredential(user.verifiableCredentials);
-		const date = new Date();
-		const vup = {
-			identityId: user.identityId,
-			verified: hasVerifiedVCs,
-			lastTimeChecked: date,
-			verificationDate: date,
-			verificationIssuerId: requestId
-		};
-		await this.userService.updateUserVerification(vup);
-		res.status(StatusCodes.OK).send(vup);
-	};
-
 	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const vcBody = req.body as VerifiableCredentialJson;

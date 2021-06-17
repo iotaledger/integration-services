@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence, UserRoles, UserSearch, VerificationPersistence, VerificationUpdatePersistence } from '../models/types/user';
+import { UserPersistence, UserRoles, UserSearch } from '../models/types/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { VerifiableCredentialJson } from '../models/types/identity';
 import { MAX_NUMBER_OF_VC } from '../config/identity';
@@ -43,8 +43,6 @@ export const getUserByUsername = async (username: string): Promise<UserPersisten
 };
 
 export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
-	delete user.verification;
-
 	if (user.verifiableCredentials?.length >= maxNumberOfVc) {
 		throw new Error(`You can't add more than ${maxNumberOfVc} verifiable credentials to a user!`);
 	}
@@ -87,31 +85,6 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 	};
 
 	return MongoDbService.updateDocument(collectionName, query, update);
-};
-
-export const updateUserVerification = async (vup: VerificationUpdatePersistence): Promise<void> => {
-	const query = {
-		_id: vup.identityId
-	};
-	const verification: VerificationPersistence = {
-		verified: vup.verified,
-		verificationDate: vup.verificationDate,
-		lastTimeChecked: vup.lastTimeChecked,
-		verificationIssuerId: vup.verificationIssuerId
-	};
-
-	const updateObject = MongoDbService.getPlainObject({
-		verification: MongoDbService.getPlainObject(verification)
-	});
-
-	const update = {
-		$set: { ...updateObject }
-	};
-
-	const res = await MongoDbService.updateDocument(collectionName, query, update);
-	if (!res?.result?.n) {
-		console.log('could not update user verification!');
-	}
 };
 
 export const addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {

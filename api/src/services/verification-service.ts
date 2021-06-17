@@ -8,7 +8,7 @@ import {
 	VerifiableCredentialJson,
 	Credential
 } from '../models/types/identity';
-import { User, VerificationUpdatePersistence } from '../models/types/user';
+import { User } from '../models/types/user';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
 import * as KeyCollectionDb from '../database/key-collection';
@@ -139,34 +139,9 @@ export class VerificationService {
 		}
 
 		await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.serverIdentityId);
-
-		const updatedUser = await this.userService.removeUserVC(vcp.vc);
-		const hasVerifiedVCs = await this.hasVerifiedVerifiableCredential(updatedUser.verifiableCredentials);
-
-		if (updatedUser.verifiableCredentials.length === 0 || !hasVerifiedVCs) {
-			const vup: VerificationUpdatePersistence = {
-				identityId: subjectId,
-				verified: false,
-				lastTimeChecked: new Date(),
-				verificationDate: undefined,
-				verificationIssuerId: undefined
-			};
-			await this.userService.updateUserVerification(vup);
-		}
+		await this.userService.removeUserVC(vcp.vc);
 
 		return res;
-	};
-
-	hasVerifiedVerifiableCredential = async (vcs: VerifiableCredentialJson[]): Promise<boolean> => {
-		if (!vcs || vcs.length === 0) {
-			return false;
-		}
-		const vcVerifiedArr = await Promise.all(
-			vcs.map(async (vc) => {
-				return this.checkVerifiableCredential(vc);
-			})
-		);
-		return vcVerifiedArr.some((v) => v);
 	};
 
 	private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
@@ -191,15 +166,6 @@ export class VerificationService {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}
-		const date = new Date();
-		const vup: VerificationUpdatePersistence = {
-			identityId,
-			verified: true,
-			lastTimeChecked: date,
-			verificationDate: date,
-			verificationIssuerId: issuerId
-		};
-		await this.userService.updateUserVerification(vup);
 		await this.userService.addUserVC(vc);
 	};
 

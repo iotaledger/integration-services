@@ -52,7 +52,7 @@ describe('test authentication routes', () => {
 	});
 	describe('test verifyIdentity route', () => {
 		let createVerifiableCredentialSpy: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
-		let getNextCredentialIndexSpy: any, addVerifiableCredentialSpy: any, updateUserVerificationSpy: any, addUserVCSpy: any;
+		let getNextCredentialIndexSpy: any, addVerifiableCredentialSpy: any, addUserVCSpy: any;
 		const vcMock = { VCMOCK: 1 };
 		beforeEach(() => {
 			keyCollectionIndex = 0;
@@ -60,7 +60,6 @@ describe('test authentication routes', () => {
 			getKeyCollectionSpy = spyOn(KeyCollectionDB, 'getKeyCollection').and.returnValue(KeyCollectionMock);
 			getNextCredentialIndexSpy = spyOn(KeyCollectionLinksDB, 'getNextCredentialIndex').and.returnValue(keyCollectionIndex);
 			addVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'addVerifiableCredential');
-			updateUserVerificationSpy = spyOn(userService, 'updateUserVerification');
 			addUserVCSpy = spyOn(userService, 'addUserVC');
 		});
 
@@ -209,7 +208,6 @@ describe('test authentication routes', () => {
 				type: subject.type,
 				id: subject.identityId,
 				organization: subject.organization,
-				registrationDate: subject.registrationDate,
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
@@ -246,11 +244,6 @@ describe('test authentication routes', () => {
 				keyIndex
 			);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
-			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
-				expect.objectContaining({
-					verified: true
-				})
-			);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith(vcMock);
@@ -278,7 +271,6 @@ describe('test authentication routes', () => {
 				type: subject.type,
 				id: subject.identityId,
 				organization: subject.organization,
-				registrationDate: subject.registrationDate,
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
@@ -317,11 +309,6 @@ describe('test authentication routes', () => {
 				keyIndex
 			);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
-			expect(updateUserVerificationSpy).toHaveBeenCalledWith(
-				expect.objectContaining({
-					verified: true
-				})
-			);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith(vcMock);
