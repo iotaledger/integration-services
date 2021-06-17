@@ -45,7 +45,6 @@ describe('test user routes', () => {
 				index: 1,
 				limit: 1,
 				username: 'charlie',
-				verified: true,
 				organization: 'IOTA',
 				registrationDate: getDateFromString('2021-02-12T14:58:05+01:00')
 			};
@@ -55,7 +54,6 @@ describe('test user routes', () => {
 				query: {
 					type: 'Person',
 					'registration-date': '2021-02-12T14:58:05+01:00',
-					verified: 'true',
 					limit: '1',
 					index: '1',
 					username: 'charlie',

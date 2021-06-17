@@ -10,14 +10,13 @@ const maxNumberOfVc = MAX_NUMBER_OF_VC;
 
 export const searchUsers = async (userSearch: UserSearch): Promise<UserPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { type, organization, username, verified, index, registrationDate } = userSearch;
+	const { type, organization, username, index, registrationDate } = userSearch;
 	const limit = userSearch.limit != null ? userSearch.limit : 100;
 	const query = {
 		registrationDate: registrationDate && { $gte: registrationDate },
 		type: regex(type),
 		organization: regex(organization),
-		username: regex(username),
-		'verification.verified': verified
+		username: regex(username)
 	};
 
 	const plainQuery = MongoDbService.getPlainObject(query);

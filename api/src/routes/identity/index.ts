@@ -112,9 +112,7 @@ export class IdentityRoutes {
 		const type = decodeParam(<string>req.query.type);
 		const organization = decodeParam(<string>req.query.organization);
 		const username = decodeParam(<string>req.query.username);
-		const verifiedParam = decodeParam(<string>req.query.verified);
 		const registrationDate = decodeParam(<string>req.query['registration-date']);
-		const verified = verifiedParam != null ? Boolean(verifiedParam) && verifiedParam == 'true' : undefined;
 		const limitParam = parseInt(<string>req.query.limit, 10);
 		const indexParam = parseInt(<string>req.query.index, 10);
 		const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
@@ -125,7 +123,6 @@ export class IdentityRoutes {
 			index,
 			limit,
 			organization,
-			verified,
 			username,
 			registrationDate: getDateFromString(registrationDate)
 		};
