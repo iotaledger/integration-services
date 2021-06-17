@@ -28,7 +28,6 @@ export const UserIdentity = {
 		username: 'iota-test',
 		type: 'Person',
 		registrationDate: '2021-05-20T10:40:47+02:00',
-		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
 		claim: {
 			name: 'Test User',
 			familyName: 'User',
@@ -77,7 +76,6 @@ export const ServerIdentity = {
 		username: 'iota-service-test',
 		type: 'Service',
 		registrationDate: '2021-05-20T10:47:16+02:00',
-		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
 		claim: {
 			name: 'Test Service',
 			description: 'Just a test service to verify users.'
@@ -112,7 +110,6 @@ export const DeviceIdentity = {
 		username: 'iota-test-device',
 		type: 'Device',
 		registrationDate: '2021-05-20T10:43:02+02:00',
-		organization: 'did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse',
 		claim: {
 			category: ['sensor'],
 			controlledProperty: ['fillingLevel', 'temperature'],

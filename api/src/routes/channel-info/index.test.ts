@@ -15,7 +15,7 @@ describe('test Search user', () => {
 		nextMock = jest.fn();
 		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 
 		res = {
@@ -69,7 +69,7 @@ describe('test GET channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 		res = {
 			send: sendMock,
@@ -161,7 +161,7 @@ describe('test POST channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 
 		res = {
@@ -262,7 +262,7 @@ describe('test PUT channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 		getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({
 			created: getDateFromString('2021-03-26T16:13:11+01:00'),
@@ -378,7 +378,7 @@ describe('test DELETE channelInfo', () => {
 		nextMock = jest.fn();
 		userService = new UserService({} as any, '');
 		channelInfoService = new ChannelInfoService(userService);
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 
 		res = {

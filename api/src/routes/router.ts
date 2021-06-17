@@ -42,7 +42,7 @@ const validate = validator.validate;
 const ssiService = SsiService.getInstance(CONFIG.identityConfig);
 
 const userService = new UserService(ssiService, serverSecret);
-const authorizationService = new AuthorizationService(userService);
+const authorizationService = new AuthorizationService();
 const identityRoutes = new IdentityRoutes(userService, authorizationService);
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 export const identityRouter = Router();

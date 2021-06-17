@@ -8,7 +8,6 @@ export const TestUsersMock = [
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'Device',
-		organization: 'IOTA',
 		registrationDate: '2021-03-15T10:29:56+01:00',
 		claim: {
 			id: 'test-device',
@@ -32,7 +31,6 @@ export const TestUsersMock = [
 	{
 		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'second-user',
-		organization: 'University Account',
 		type: 'Person',
 		registrationDate: '2021-03-15T10:29:56+01:00',
 		claim: {
@@ -45,7 +43,6 @@ export const TestUsersMock = [
 		username: 'another-iota-user',
 		firstName: 'Jon',
 		lastName: 'Keen',
-		organization: 'IOTA',
 		type: 'Person',
 		registrationDate: '2021-03-15T10:29:56+01:00',
 		claim: {
@@ -83,7 +80,6 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		type: 'Person',
 		claim: { firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
-		organization: 'IOTA',
 		verifiableCredentials: [
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
@@ -92,7 +88,6 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 				credentialSubject: {
 					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 					type: UserType.Person,
-					organization: 'IOTA',
 					registrationDate: '2021-03-16T15:18:49+01:00',
 					username: 'first-user',
 					initiatorId: ''
@@ -152,7 +147,6 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		username: 'api-identity',
 		type: 'Api',
 		registrationDate: '2021-03-24T15:38:43+01:00',
-		organization: 'IOTA',
 		verifiableCredentials: [
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
@@ -161,7 +155,6 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 				credentialSubject: {
 					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 					type: 'Person',
-					organization: 'IOTA',
 					registrationDate: '2021-03-24T15:38:43+01:00',
 					username: 'api-identity',
 					initiatorId: ''
@@ -182,7 +175,6 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 				credentialSubject: {
 					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 					type: 'Person',
-					organization: 'IOTA',
 					registrationDate: '2021-03-24T15:38:43+01:00',
 					username: 'api-identity',
 					initiatorId: ''
@@ -233,7 +225,6 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		username: 'test-device',
 		type: 'Device',
 		registrationDate: '2021-03-24T16:54:38+01:00',
-		organization: 'IOTA',
 		verifiableCredentials: [
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
@@ -242,7 +233,6 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 				credentialSubject: {
 					id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 					type: 'Device',
-					organization: 'IOTA',
 					registrationDate: '2021-03-24T16:54:38+01:00',
 					username: 'test-device',
 					initiatorId: ''

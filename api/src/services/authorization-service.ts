@@ -1,10 +1,7 @@
-import { UserService } from './user-service';
 import { AuthorizationCheck, CredentialTypes } from '../models/types/verification';
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
-	constructor(private readonly userService: UserService) {}
-
 	isAuthorized = async (requestUser: User, identityId: string): Promise<AuthorizationCheck> => {
 		const isAuthorizedUser = this.isAuthorizedUser(requestUser.identityId, identityId);
 		if (!isAuthorizedUser) {
@@ -28,12 +25,6 @@ export class AuthorizationService {
 
 		if (role === UserRoles.Admin) {
 			return true;
-		} else if (role === UserRoles.Manager) {
-			const user = await this.userService.getUser(identityId);
-			const hasSameOrganization = requestUser.organization === user?.organization;
-			if (hasSameOrganization) {
-				return true;
-			}
 		}
 		return false;
 	};

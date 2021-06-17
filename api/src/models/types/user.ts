@@ -26,14 +26,13 @@ export enum UserRoles {
 
 export interface UserSearch {
 	username?: string;
-	organization?: string;
 	registrationDate?: Date;
 	type?: UserType | string;
 	limit?: number;
 	index?: number;
 }
 
-type OmittedUser = Omit<User, 'registrationDate' | 'verification' | 'role'>;
+type OmittedUser = Omit<User, 'registrationDate' | 'role'>;
 
 export interface UserPersistence extends OmittedUser {
 	role?: UserRoles;

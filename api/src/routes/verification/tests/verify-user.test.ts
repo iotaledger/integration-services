@@ -36,7 +36,7 @@ describe('test authentication routes', () => {
 		};
 		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService({} as any, '');
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		verificationService = new VerificationService(ssiService, userService, {
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id,
@@ -176,29 +176,6 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('initiatorVC is not verified!'));
 		});
 
-		/*
-		it('should not verify since initiator is in different organization.', async () => {
-			const subject = TestUsersMock[1];
-			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const req: any = {
-				user: { identityId: initiatorVC.id, type: UserType.Person },
-				params: {},
-				body: {
-					subject: {
-						identityId: subject.identityId,
-						credentialType: 'VerifiedIdentityCredential',
-						claim: { ...subject.claim, type: subject.type }
-					},
-					initiatorVC
-				}
-			};
-			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
-
-			expect(subject.organization).not.toEqual(initiatorVC.credentialSubject.organization);
-			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('user must be in same organization!'));
-		});
-		*/
 		it('should verify for user which has valid vc and different organization but admin user', async () => {
 			const subject = TestUsersMock[1];
 			const keyIndex = 0;

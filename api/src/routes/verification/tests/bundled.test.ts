@@ -30,7 +30,7 @@ describe('test authentication routes', () => {
 		};
 		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService({} as any, '');
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		verificationService = new VerificationService(ssiService, userService, {
 			serverSecret,
 			serverIdentityId: ServerIdentityMock.doc.id,

@@ -3,7 +3,6 @@ import { Type } from '@sinclair/typebox';
 export const VcSubjectSchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }),
 	type: Type.String({ minLength: 1 }),
-	organization: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
 	initiatorId: Type.Optional(Type.String({ minLength: 50, maxLength: 53 }))
 });
 

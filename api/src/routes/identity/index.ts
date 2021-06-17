@@ -110,7 +110,6 @@ export class IdentityRoutes {
 	getUserSearch = (req: Request): UserSearch => {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 		const type = decodeParam(<string>req.query.type);
-		const organization = decodeParam(<string>req.query.organization);
 		const username = decodeParam(<string>req.query.username);
 		const registrationDate = decodeParam(<string>req.query['registration-date']);
 		const limitParam = parseInt(<string>req.query.limit, 10);
@@ -122,7 +121,6 @@ export class IdentityRoutes {
 			type: <UserType>type,
 			index,
 			limit,
-			organization,
 			username,
 			registrationDate: getDateFromString(registrationDate)
 		};

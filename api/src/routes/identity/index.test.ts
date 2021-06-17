@@ -29,7 +29,7 @@ describe('test user routes', () => {
 		};
 		ssiService = SsiService.getInstance(identityConfig);
 		userService = new UserService(ssiService as any, serverSecret);
-		const authorizationService = new AuthorizationService(userService);
+		const authorizationService = new AuthorizationService();
 		userRoutes = new IdentityRoutes(userService, authorizationService);
 
 		res = {
@@ -45,7 +45,6 @@ describe('test user routes', () => {
 				index: 1,
 				limit: 1,
 				username: 'charlie',
-				organization: 'IOTA',
 				registrationDate: getDateFromString('2021-02-12T14:58:05+01:00')
 			};
 			const searchUserSpy = spyOn(UserDb, 'searchUsers').and.returnValue([]);
@@ -57,7 +56,6 @@ describe('test user routes', () => {
 					limit: '1',
 					index: '1',
 					username: 'charlie',
-					organization: 'IOTA',
 					'subscribed-channel-ids': ['test-address', 'test-address2']
 				},
 				body: null
@@ -87,8 +85,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				type: UserType.Person,
 				claim: { firstName: 'Tom', lastName: 'Tomson' },
-				registrationDate: date,
-				organization: 'IOTA'
+				registrationDate: date
 			};
 			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
 			const req: any = {
@@ -105,8 +102,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				type: 'Person',
 				claim: { firstName: 'Tom', lastName: 'Tomson' },
-				registrationDate: getDateStringFromDate(date),
-				organization: 'IOTA'
+				registrationDate: getDateStringFromDate(date)
 			});
 		});
 
@@ -134,8 +130,7 @@ describe('test user routes', () => {
 			username: 'first-user',
 			type: UserType.Person,
 			claim: { firstName: 'Tom', lastName: 'Sonson' },
-			registrationDate: '2021-02-12T14:58:05+01:00',
-			organization: 'IOTA'
+			registrationDate: '2021-02-12T14:58:05+01:00'
 		};
 
 		it('should return bad request if no valid body is given', async () => {
@@ -209,8 +204,7 @@ describe('test user routes', () => {
 					username: 'test-username',
 					type: 'Person',
 					firstName: 'Mister',
-					lastName: 'Subscriber',
-					organization: 'IOTA'
+					lastName: 'Subscriber'
 				}
 			};
 
@@ -218,7 +212,6 @@ describe('test user routes', () => {
 				type: 'Person',
 				firstName: 'Mister',
 				lastName: 'Subscriber',
-				organization: 'IOTA',
 				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
@@ -242,8 +235,7 @@ describe('test user routes', () => {
 					type: 'Person',
 					firstName: 'Mister',
 					lastName: 'Subscriber',
-					storeIdentity: true,
-					organization: 'IOTA'
+					storeIdentity: true
 				}
 			};
 
@@ -252,7 +244,6 @@ describe('test user routes', () => {
 				firstName: 'Mister',
 				lastName: 'Subscriber',
 				storeIdentity: true,
-				organization: 'IOTA',
 				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
@@ -273,8 +264,7 @@ describe('test user routes', () => {
 			username: 'first-user',
 			type: UserType.Person,
 			claim: { firstName: 'Tom', lastName: 'Sonson' },
-			registrationDate: '2021-02-12T14:58:05+01:00',
-			organization: 'IOTA'
+			registrationDate: '2021-02-12T14:58:05+01:00'
 		};
 
 		it('should return bad request if no valid body is given', async () => {

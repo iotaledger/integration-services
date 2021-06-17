@@ -139,13 +139,6 @@ export class VerificationRoutes {
 				return { isAuthorized: false, error: new Error('initiator is not allowed based on its credential type!') };
 			}
 
-			/*if (
-				(initiatorVC.credentialSubject.organization || subject.organization) &&
-				subject.organization !== initiatorVC.credentialSubject.organization
-			) {
-				return { isAuthorized: false, error: new Error('user must be in same organization!') };
-			}*/
-
 			const isInitiatorVerified = await this.verificationService.checkVerifiableCredential(initiatorVC);
 			if (!isInitiatorVerified) {
 				return { isAuthorized: false, error: new Error('initiatorVC is not verified!') };
