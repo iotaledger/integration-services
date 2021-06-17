@@ -1,5 +1,5 @@
 import { UserService } from './user-service';
-import { AuthorizationCheck } from '../models/types/verification';
+import { AuthorizationCheck, CredentialTypes } from '../models/types/verification';
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
@@ -22,7 +22,7 @@ export class AuthorizationService {
 
 	isAuthorizedAdmin = async (requestUser: User, identityId: string): Promise<boolean> => {
 		const role = requestUser.role;
-		if (!this.hasAuthorizationType(requestUser.type)) {
+		if (!this.hasAuthorizedUserType(requestUser.type)) {
 			return false;
 		}
 
@@ -38,7 +38,11 @@ export class AuthorizationService {
 		return false;
 	};
 
-	hasAuthorizationType(type: UserType | string): boolean {
+	hasAuthorizedUserType(type: string): boolean {
 		return type === UserType.Person || type === UserType.Service || type === UserType.Organization;
+	}
+
+	hasVerificationCredentialType(type: string[]): boolean {
+		return type.some((t) => t === CredentialTypes.VerifiedIdentityCredential);
 	}
 }

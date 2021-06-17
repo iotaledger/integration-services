@@ -8,7 +8,6 @@ import {
 	VerifiableCredentialJson,
 	Credential
 } from '../models/types/identity';
-import { User } from '../models/types/user';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
 import * as KeyCollectionDb from '../database/key-collection';
@@ -17,6 +16,7 @@ import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import { VerificationServiceConfig } from '../models/config/services';
 import { JsonldGenerator } from '../utils/jsonld';
+import { Subject } from '../models/types/verification';
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -52,18 +52,17 @@ export class VerificationService {
 		return IdentityDocsDb.getIdentity(did, this.serverSecret);
 	}
 
-	verifyIdentity = async (subject: User, issuerId: string, initiatorId: string) => {
+	verifyIdentity = async (subject: Subject, issuerId: string, initiatorId: string) => {
 		const jsonldGen = new JsonldGenerator();
-		const claim = jsonldGen.jsonldUserData(subject.type, subject.claim);
+		const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
 
 		const credential: Credential<CredentialSubject> = {
-			type: subject.type,
+			type: subject.credentialType,
 			id: subject.identityId,
 			subject: {
 				...claim,
+				type: subject.claim.type,
 				id: subject.identityId,
-				type: subject.type,
-				organization: subject.organization || undefined,
 				initiatorId
 			}
 		};

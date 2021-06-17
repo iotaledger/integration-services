@@ -4,7 +4,7 @@ import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
 import { Config } from '../../models/config';
 import { RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/request-bodies';
-import { AuthenticatedRequest, AuthorizationCheck } from '../../models/types/verification';
+import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { UserService } from '../../services/user-service';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -17,18 +17,19 @@ export class VerificationRoutes {
 		private readonly userService: UserService,
 		private readonly authorizationService: AuthorizationService,
 		private readonly config: Config
-	) {}
+	) {
+		console.log('userservice', this.userService);
+	}
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const verifyIdentityBody = req.body as VerifyIdentityBody;
-			const { initiatorVC, subjectId } = verifyIdentityBody;
-			let { subject } = verifyIdentityBody;
+			const { initiatorVC, subject } = verifyIdentityBody;
 			const requestUser = req.user;
 
-			if (!subject && subjectId) {
+			/*if (!subject && subjectId) {
 				subject = await this.userService.getUser(subjectId);
-			}
+			}*/
 
 			if (!subject) {
 				throw new Error('no valid subject!');
@@ -127,9 +128,9 @@ export class VerificationRoutes {
 		return { isAuthorized: true, error: null };
 	};
 
-	isAuthorizedToVerify = async (subject: User, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
+	isAuthorizedToVerify = async (subject: Subject, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
-		if (!isAdmin || !this.authorizationService.hasAuthorizationType(requestUser.type)) {
+		if (!isAdmin) {
 			if (!initiatorVC || !initiatorVC.credentialSubject) {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
@@ -138,23 +139,24 @@ export class VerificationRoutes {
 				return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
 			}
 
-			if (
-				!this.authorizationService.hasAuthorizationType(initiatorVC.credentialSubject.type) &&
-				!this.authorizationService.hasAuthorizationType(requestUser.type)
-			) {
-				return { isAuthorized: false, error: new Error('initiator is not allowed based on its type!') };
+			if (!this.authorizationService.hasAuthorizedUserType(initiatorVC.credentialSubject.type)) {
+				return { isAuthorized: false, error: new Error('initiator is not allowed based on its identity type!') };
 			}
 
-			if (
+			if (!this.authorizationService.hasVerificationCredentialType(initiatorVC.type)) {
+				return { isAuthorized: false, error: new Error('initiator is not allowed based on its credential type!') };
+			}
+
+			/*if (
 				(initiatorVC.credentialSubject.organization || subject.organization) &&
 				subject.organization !== initiatorVC.credentialSubject.organization
 			) {
 				return { isAuthorized: false, error: new Error('user must be in same organization!') };
-			}
+			}*/
 
 			const isInitiatorVerified = await this.verificationService.checkVerifiableCredential(initiatorVC);
 			if (!isInitiatorVerified) {
-				return { isAuthorized: false, error: new Error('initiator has to be verified!') };
+				return { isAuthorized: false, error: new Error('initiatorVC is not verified!') };
 			}
 		}
 		return { isAuthorized: true, error: null };
