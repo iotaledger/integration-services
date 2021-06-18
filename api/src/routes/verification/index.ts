@@ -111,7 +111,7 @@ export class VerificationRoutes {
 		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.vc.id);
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
-			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser, kci.vc.id);
+			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 			}

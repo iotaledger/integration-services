@@ -5,7 +5,7 @@ export class AuthorizationService {
 	isAuthorized = async (requestUser: User, identityId: string): Promise<AuthorizationCheck> => {
 		const isAuthorizedUser = this.isAuthorizedUser(requestUser.identityId, identityId);
 		if (!isAuthorizedUser) {
-			const isAuthorizedAdmin = await this.isAuthorizedAdmin(requestUser, identityId);
+			const isAuthorizedAdmin = await this.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed!') };
 			}
@@ -17,11 +17,8 @@ export class AuthorizationService {
 		return requestUserId === identityId;
 	};
 
-	isAuthorizedAdmin = async (requestUser: User, identityId: string): Promise<boolean> => {
+	isAuthorizedAdmin = async (requestUser: User): Promise<boolean> => {
 		const role = requestUser.role;
-		if (!this.hasAuthorizedUserType(requestUser.type)) {
-			return false;
-		}
 
 		if (role === UserRoles.Admin) {
 			return true;

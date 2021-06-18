@@ -14,7 +14,7 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
 	const limit = userSearch.limit != null ? userSearch.limit : 100;
 	const query = {
 		registrationDate: registrationDate && { $gte: registrationDate },
-		type: regex(type),
+		'claim.type': regex(type),
 		username: regex(username)
 	};
 
@@ -60,7 +60,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		_id: user.identityId
 	};
 
-	const { username, type, claim, verifiableCredentials } = user;
+	const { username, claim, verifiableCredentials } = user;
 
 	if (verifiableCredentials?.some((vc) => vc?.id !== user.identityId)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
@@ -72,7 +72,6 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 
 	const updateObject = MongoDbService.getPlainObject({
 		username: username || undefined, // username must not be ''
-		type: type || undefined, // type must not be ''
 		claim,
 		verifiableCredentials
 	});

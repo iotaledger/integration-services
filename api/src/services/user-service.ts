@@ -99,13 +99,12 @@ export class UserService {
 		if (user == null || isEmpty(user.identityId)) {
 			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
-		const { publicKey, identityId, username, registrationDate, type, claim, verifiableCredentials, role } = user;
+		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role } = user;
 
 		const userPersistence: UserPersistence = {
 			identityId,
 			publicKey,
 			username,
-			type,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			claim,
 			verifiableCredentials,
@@ -121,13 +120,12 @@ export class UserService {
 			return null;
 		}
 
-		const { username, publicKey, identityId, registrationDate, type, claim, verifiableCredentials, role } = userPersistence;
+		const { username, publicKey, identityId, registrationDate, claim, verifiableCredentials, role } = userPersistence;
 
 		const user: User = {
 			identityId,
 			publicKey,
 			username,
-			type,
 			registrationDate: getDateStringFromDate(registrationDate),
 			claim,
 			verifiableCredentials,

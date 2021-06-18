@@ -137,7 +137,6 @@ _Response:_
     "username": string,
     "type": string,
     "registrationDate": string,
-    "organization": string,
     "claim": any,
     "verifiableCredentials": {
         "@context": string,
@@ -166,7 +165,6 @@ _Body:_
 {
   "username"?: string,
   "type": string,
-  "organization"?: string,
   "claim": {
         "name"?: string,
         "familyName"?: string,
@@ -224,7 +222,6 @@ _Body:_
     "username": string,
     "type": string,
     "registrationDate": string,
-    "organization": string,
     "claim": any,
     "verifiableCredentials": {
         "@context": string,
@@ -262,7 +259,6 @@ _Body:_
     "username": string,
     "type": string,
     "registrationDate": string,
-    "organization": string,
     "claim": any,
     "verifiableCredentials": {
         "@context": string,
@@ -390,7 +386,6 @@ _Body:_
 
 ```
 {
-    "subjectId" ?: string,
     "subject": {
         "identityId": string,
         "type": string,
@@ -522,14 +517,14 @@ To specify the identity attributes, currently the Ecommerce-SSI Bridge supports 
 
 > The exact data model definition can be found here: https://gist.github.com/dominic22/186f67b759f9694f45d35e9354fa5525
 
-The following snippet demonstrates an example where a device identity is created and verified by a previously verified organization. Since schema.org does not have a data model for devices, the device attributes linked to its identity are derived from the [FIWARE device data model](https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md).
+The following snippet demonstrates an example where a device identity is created and verified by a previously verified organization. Since schema.org does not provide a data model for devices, the device attributes linked to its identity are derived from the [FIWARE device data model](https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md).
 
 <!-- Be sure we use only static properties of a device. Adjust also the example --> 
 <!-- what do you mean by static properties only?  -->
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/create
 
-The body of the POST request contains the Device type, the verified organization identity, a username and a claim field which contains detailed attributes about the device identity.
+The body of the POST request contains the Device type, a username and a claim field which contains detailed attributes about the device identity.
 
 <!-- what is the role of the username? --> 
 <!-- this was intended to have a easier indexable method to identify idendities instead of their identity id -->
@@ -538,7 +533,6 @@ The body of the POST request contains the Device type, the verified organization
 {
   "username": "iota-test-device",
   "type":"Device",
-  "organization":"did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
   "claim": {
         "category": ["sensor"],
         "controlledProperty": ["fillingLevel","temperature"],
@@ -589,10 +583,7 @@ The request returns the following body:
     "txHash": "eda7001adc5e8c9b9b473ca6586cfe9deab3f19e4ce9fba0bbead09e5b649dce"
 }
 ```
-The `doc`field contains the created identity document of the newly created identity (also stored onto the IOTA Tangle). The `doc.id` is the unique identifier (DID) of the identity.
-
-<!-- check if it is stored onto the Tangle -->
-<!-- doc is stored on the tangle -->
+The `doc` field contains the created identity document of the newly created identity (also stored onto the IOTA Tangle). The `doc.id` is the unique identifier (DID) of the identity.
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to control the identity ownership and to authenticate at the APIs Bridge.
 

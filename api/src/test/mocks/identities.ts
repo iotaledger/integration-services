@@ -77,8 +77,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
-		type: 'Person',
-		claim: { firstName: 'Tom', lastName: 'Sonson' },
+		claim: { type: 'Person', firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verifiableCredentials: [
 			{
@@ -145,7 +144,6 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		identityId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
-		type: 'Api',
 		registrationDate: '2021-03-24T15:38:43+01:00',
 		verifiableCredentials: [
 			{
@@ -223,7 +221,6 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
-		type: 'Device',
 		registrationDate: '2021-03-24T16:54:38+01:00',
 		verifiableCredentials: [
 			{

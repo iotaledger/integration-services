@@ -4,7 +4,7 @@ import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
 import { SsiService } from './ssi-service';
-import { User, UserRoles, UserType } from '../models/types/user';
+import { User, UserRoles } from '../models/types/user';
 
 export class AuthenticationService {
 	constructor(
@@ -29,7 +29,6 @@ export class AuthenticationService {
 				user = {
 					identityId,
 					publicKey,
-					type: UserType.Unknown,
 					role: UserRoles.User
 				};
 			}

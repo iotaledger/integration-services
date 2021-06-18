@@ -24,7 +24,7 @@ export class SchemaValidator {
 	validateUser(user: User) {
 		let validate: ValidateFunction;
 
-		switch (user.type) {
+		switch (user.claim?.type) {
 			case UserType.Person:
 				validate = this.ajv.getSchema('person');
 				break;
@@ -44,7 +44,7 @@ export class SchemaValidator {
 				break;
 		}
 		if (!validate) {
-			console.log(`no schema found for user type: ${user.type}`);
+			console.log(`no schema found for user type: ${user.claim?.type}`);
 			return;
 		}
 

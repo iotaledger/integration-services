@@ -1,10 +1,11 @@
 import { Type } from '@sinclair/typebox';
+import { UserType } from '../../types/user';
 import { VerifiableCredentialSchema } from '../identity';
 
 export const VerifiableCredentialBodySchema = VerifiableCredentialSchema;
 
 export const ClaimSchema = Type.Object({
-	type: Type.String({ minLength: 1 })
+	type: Type.Union([Type.Enum(UserType), Type.String({ minLength: 3 })])
 });
 export const SubjectBodySchema = Type.Object({
 	identityId: Type.String({ minLength: 50, maxLength: 53 }), // did

@@ -2,7 +2,7 @@ import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
 import * as IdentityDocsDb from '../../database/identity-docs';
 import { IdentityConfig } from '../../models/config';
-import { UserPersistence, UserType, User, UserSearch } from '../../models/types/user';
+import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
@@ -83,8 +83,7 @@ describe('test user routes', () => {
 				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
-				type: UserType.Person,
-				claim: { firstName: 'Tom', lastName: 'Tomson' },
+				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date
 			};
 			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
@@ -100,8 +99,7 @@ describe('test user routes', () => {
 				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
-				type: 'Person',
-				claim: { firstName: 'Tom', lastName: 'Tomson' },
+				claim: { type: 'Person', firstName: 'Tom', lastName: 'Tomson' },
 				registrationDate: getDateStringFromDate(date)
 			});
 		});
@@ -128,8 +126,7 @@ describe('test user routes', () => {
 			identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', // must be same as in UserIdentityMock.id
 			publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm', // must be same as in UserIdentityMock publicKeyBase58
 			username: 'first-user',
-			type: UserType.Person,
-			claim: { firstName: 'Tom', lastName: 'Sonson' },
+			claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Sonson' } as IdentityClaim,
 			registrationDate: '2021-02-12T14:58:05+01:00'
 		};
 
@@ -202,16 +199,12 @@ describe('test user routes', () => {
 				params: {},
 				body: {
 					username: 'test-username',
-					type: 'Person',
-					firstName: 'Mister',
-					lastName: 'Subscriber'
+					claim: { type: 'Person', firstName: 'Mister', lastName: 'Subscriber' }
 				}
 			};
 
 			const exptectedUser = {
-				type: 'Person',
-				firstName: 'Mister',
-				lastName: 'Subscriber',
+				claim: { type: 'Person', firstName: 'Mister', lastName: 'Subscriber' },
 				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
@@ -232,17 +225,13 @@ describe('test user routes', () => {
 				params: {},
 				body: {
 					username: 'test-username',
-					type: 'Person',
-					firstName: 'Mister',
-					lastName: 'Subscriber',
+					claim: { type: 'Person', firstName: 'Mister', lastName: 'Subscriber' },
 					storeIdentity: true
 				}
 			};
 
 			const exptectedUser = {
-				type: 'Person',
-				firstName: 'Mister',
-				lastName: 'Subscriber',
+				claim: { type: 'Person', firstName: 'Mister', lastName: 'Subscriber' },
 				storeIdentity: true,
 				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
@@ -262,8 +251,7 @@ describe('test user routes', () => {
 			identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
-			type: UserType.Person,
-			claim: { firstName: 'Tom', lastName: 'Sonson' },
+			claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Sonson' } as IdentityClaim,
 			registrationDate: '2021-02-12T14:58:05+01:00'
 		};
 
@@ -308,7 +296,7 @@ describe('test user routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
 		});
 
-		it('should return expected user', async () => {
+		it('should update expected user', async () => {
 			const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 			const req: any = {
