@@ -5,44 +5,30 @@ export const Config = {
 // returned from localhost:3000/api/v1/identities/create
 export const UserIdentity = {
 	doc: {
-		id: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
+		id: 'did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY',
 		authentication: [
 			{
-				id: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc#key',
-				controller: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
+				id: 'did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY#key',
+				controller: 'did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY',
 				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X'
+				publicKeyBase58: 'D58X2pvwvSBsYtwC8KCqkpu6EgEUUiiGbrjqsciXFhmW'
 			}
 		],
-		created: '2021-05-20T08:40:42Z',
-		updated: '2021-05-20T08:40:42Z',
+		created: '2021-06-18T11:30:38Z',
+		updated: '2021-06-18T11:30:38Z',
 		proof: {
 			type: 'JcsEd25519Signature2020',
 			verificationMethod: '#key',
-			signatureValue: '3Zy52A4rdLZLqawH86rEsbquhWmVkRwDw8rxNTWZkt8TZFE8kUfwPiXEjRRv1BfLxMoepRs8fabnoZv4TZtppDYr'
+			signatureValue: '2oV3HJDoCzbWqNpp4kQGUiGCTuRCBohf6SoqXHs2DBwXqqByQa5kCstKrXZvUU6ffyuoo24iacpu1kw19riLsXJR'
 		}
-	},
-	userData: {
-		identityId: 'did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc',
-		publicKey: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X',
-		username: 'iota-test',
-		type: 'Person',
-		registrationDate: '2021-05-20T10:40:47+02:00',
-		claim: {
-			name: 'Test User',
-			familyName: 'User',
-			givenName: 'Test',
-			jobTitle: 'Software Engineer'
-		},
-		role: 'User'
 	},
 	key: {
 		type: 'ed25519',
-		public: '3Nr7KTziPR5ZJK5djVvrnNHUdSpdqex5uuLn8LU5zX7X',
-		secret: 'Ch5HptuinwJXQXuCvjpnNeZUBsJrQ9wYZtY3SDPQRh2h',
+		public: 'D58X2pvwvSBsYtwC8KCqkpu6EgEUUiiGbrjqsciXFhmW',
+		secret: 'A97kLy9bhL8EamN43AU2WTGMhKXGyqfxWxTiEnVRBo4w',
 		encoding: 'base58'
 	},
-	txHash: 'fce665229c9156c0fc90ab484417a7405cd2aa241f396c89d128ee26a39d5e5e'
+	txHash: 'acf6b65c8c295677b8e06f1751c5043eb86c276dee4e53da797e0229bfa8ad58'
 };
 
 export const ServerIdentity = {
@@ -87,54 +73,30 @@ export const ServerIdentity = {
 
 export const DeviceIdentity = {
 	doc: {
-		id: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
+		id: 'did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt',
 		authentication: [
 			{
-				id: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW#key',
-				controller: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
+				id: 'did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt#key',
+				controller: 'did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt',
 				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM'
+				publicKeyBase58: '4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR'
 			}
 		],
-		created: '2021-05-20T08:43:01Z',
-		updated: '2021-05-20T08:43:01Z',
+		created: '2021-06-18T11:35:24Z',
+		updated: '2021-06-18T11:35:24Z',
 		proof: {
 			type: 'JcsEd25519Signature2020',
 			verificationMethod: '#key',
-			signatureValue: '4VUKEJ2sbbCf7GWs4phmaZLs8jcGJAPXUQS5zUkbQaUaZwnvcS7jq6sTa5CExhYAKVEJPFsEutPypxBbnUwp4bE'
+			signatureValue: 'QPzT7MPKE2raRycrreyQbrmmMwamfqzNn7sHdhhPbFyswcNBQTiymBxMz2iGPqHo4ELRcgsaJiDCNfunTTnmBav'
 		}
-	},
-	userData: {
-		identityId: 'did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW',
-		publicKey: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM',
-		username: 'iota-test-device',
-		type: 'Device',
-		registrationDate: '2021-05-20T10:43:02+02:00',
-		claim: {
-			category: ['sensor'],
-			controlledProperty: ['fillingLevel', 'temperature'],
-			controlledAsset: ['wastecontainer-Osuna-100'],
-			ipAddress: ['192.14.56.78'],
-			mcc: '214',
-			mnc: '07',
-			batteryLevel: 0.75,
-			serialNumber: '9845A',
-			refDeviceModel: 'myDevice-wastecontainer-sensor-345',
-			rssi: 0.86,
-			value: 'l=0.22;t=21.2',
-			deviceState: 'ok',
-			dateFirstUsed: '2014-09-11T11:00:00Z',
-			owner: ['http://person.org/leon']
-		},
-		role: 'User'
 	},
 	key: {
 		type: 'ed25519',
-		public: '14Wh9W552EnJWAWV5UbtmNM2mEBb9RDgsbnnComZcYPM',
-		secret: 'AsxeJjhBnWaxwNzhKpJrwyXgzEbzmiPDDGLznVcjrvwd',
+		public: '4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR',
+		secret: '9wX7BuNhQFUk9p8hw3dVwMgRUtD9T4gRJgGcmwCQ1PsF',
 		encoding: 'base58'
 	},
-	txHash: '654a1514ea0cc1220ef7e173408fdec4c154a5ee1bcbc194a6a50f62b819664b'
+	txHash: 'da537611d039d5a5a39a17e89cfac1fa393656fefd2afea237ee63af6d539b8d'
 };
 
 export const CLIENT_IDENTITY = DeviceIdentity;

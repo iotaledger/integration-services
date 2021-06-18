@@ -6,7 +6,8 @@ The Ecommerce-SSI Bridge allows users to create Self-Sovereign Identities, linki
 
 The Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then propagate this verification to other entities (organizations, individuals, objects) identity using a network of trust approach (see figure below).
 
-<img width="755" alt="Screenshot 2021-05-21 at 22 21 31" src="https://user-images.githubusercontent.com/1702827/119199456-fdb5d880-ba82-11eb-8983-bec1e36afdab.png">
+![network-of-trust](./src/assets/arch/network-of-trust.jpeg)
+
 
 The Bridge also allows Issuers to issue Verifiable Credentials for selected identity Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires verifying that a credential contains the identifier (DID) of the owner presenting it, and it is signed by an authorised Issuer. This requires accessing the information stored onto a ledger.
 
@@ -135,9 +136,11 @@ _Response:_
     "identityId": string,
     "publicKey": string,
     "username": string,
-    "type": string,
     "registrationDate": string,
-    "claim": any,
+    "claim": {
+        "type": string,
+        // further data about the identity
+    },
     "verifiableCredentials": {
         "@context": string,
         "id": string,
@@ -164,8 +167,9 @@ _Body:_
 ```
 {
   "username"?: string,
-  "type": string,
   "claim": {
+        "type": string,
+        // further data about the identity like the following for a Person
         "name"?: string,
         "familyName"?: string,
         "givenName"?: string,
@@ -257,9 +261,11 @@ _Body:_
     "identityId": string,
     "publicKey": string,
     "username": string,
-    "type": string,
     "registrationDate": string,
-    "claim": any,
+    "claim": {
+        "type": string,
+        // further data about the identity
+    },
     "verifiableCredentials": {
         "@context": string,
         "id": string,
@@ -388,8 +394,11 @@ _Body:_
 {
     "subject": {
         "identityId": string,
-        "type": string,
-        "claim": any, // information about the subject which will become the credentialSubject
+        "credentialType": string,
+        "claim": { // the claim will become the credentialSubject
+            "type": string,
+            // further data about the identity
+        }, 
     },
     "initiatorVC": {
         "@context": string,
@@ -519,9 +528,6 @@ To specify the identity attributes, currently the Ecommerce-SSI Bridge supports 
 
 The following snippet demonstrates an example where a device identity is created and verified by a previously verified organization. Since schema.org does not provide a data model for devices, the device attributes linked to its identity are derived from the [FIWARE device data model](https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md).
 
-<!-- Be sure we use only static properties of a device. Adjust also the example --> 
-<!-- what do you mean by static properties only?  -->
-
 https://ensuresec.solutions.iota.org/api/v0.1/identities/create
 
 The body of the POST request contains the Device type, a username and a claim field which contains detailed attributes about the device identity.
@@ -532,22 +538,17 @@ The body of the POST request contains the Device type, a username and a claim fi
 ```
 {
   "username": "iota-test-device",
-  "type":"Device",
-  "claim": {
+  "data": {
         "category": ["sensor"],
         "controlledProperty": ["fillingLevel","temperature"],
         "controlledAsset":["wastecontainer-Osuna-100"],
         "ipAddress": ["192.14.56.78"],
         "mcc": "214",
         "mnc": "07",
-        "batteryLevel": 0.75,
         "serialNumber": "9845A",
         "refDeviceModel":"myDevice-wastecontainer-sensor-345",
-        "rssi": 0.86,
-        "value": "l=0.22;t=21.2",
-        "deviceState": "ok",
         "dateFirstUsed": "2014-09-11T11:00:00Z",
-        "owner": ["http://person.org/leon"]
+        "owner": ["did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"]
     }
 }
 ```
@@ -557,32 +558,33 @@ The request returns the following body:
 ```
 {
     "doc": {
-        "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+        "id": "did:iota:CM2H6tQo2GuviYBmbUpHkA4Ava1NB6KR5itmNWAhP8bh",
         "authentication": [
             {
-                "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj#key",
-                "controller": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+                "id": "did:iota:CM2H6tQo2GuviYBmbUpHkA4Ava1NB6KR5itmNWAhP8bh#key",
+                "controller": "did:iota:CM2H6tQo2GuviYBmbUpHkA4Ava1NB6KR5itmNWAhP8bh",
                 "type": "Ed25519VerificationKey2018",
-                "publicKeyBase58": "4iGULWnqjbKtf4KxkZYtLvcJHsQvgJY5jndK1esXU1Dv"
+                "publicKeyBase58": "Dw6AinmNy39TZYFtgj7ktLwVaUq3Kd84nT6g4xcfEKk9"
             }
         ],
-        "created": "2021-05-27T12:55:19Z",
-        "updated": "2021-05-27T12:55:19Z",
+        "created": "2021-06-18T11:31:31Z",
+        "updated": "2021-06-18T11:31:31Z",
         "proof": {
             "type": "JcsEd25519Signature2020",
             "verificationMethod": "#key",
-            "signatureValue": "43XkMJjQNFi8z9KeNMNf1Fngy8GK2XXe68poiQzBKmtJcMC8potYzypwtMkBavGNg5bE1RLxHs4io2GipnqsMXNA"
+            "signatureValue": "4mthsbaETSBavC4PWhwBf2U2iSEeB8Dvx8Ai2LdxWan3RmPmPMNykifWr2X37T6A7oEiHMsrBQEtoL1wd34eGNvC"
         }
     },
     "key": {
         "type": "ed25519",
-        "public": "4iGULWnqjbKtf4KxkZYtLvcJHsQvgJY5jndK1esXU1Dv",
-        "secret": "21S97sdJpYBqqfgoEMmonWAQryXanQAoCuqPTcJHSV5V",
+        "public": "Dw6AinmNy39TZYFtgj7ktLwVaUq3Kd84nT6g4xcfEKk9",
+        "secret": "97jJbKiqRT6NvzSHoMCjfghzo293GZYBBChpCFDmn1qc",
         "encoding": "base58"
     },
-    "txHash": "eda7001adc5e8c9b9b473ca6586cfe9deab3f19e4ce9fba0bbead09e5b649dce"
+    "txHash": "533aedf46c927f88afe0c305947c30de8b93b69609d01340f213357f62a5ea3e"
 }
 ```
+
 The `doc` field contains the created identity document of the newly created identity (also stored onto the IOTA Tangle). The `doc.id` is the unique identifier (DID) of the identity.
 
 The `key` field of the body is the essential part which must be stored by the client, since it contains the public/private key pair which is used to control the identity ownership and to authenticate at the APIs Bridge.
@@ -712,31 +714,29 @@ In this case we verify the previously generated device identity using an already
 ```
 {
     "@context": "https://www.w3.org/2018/credentials/v1",
-    "id": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+    "id": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
     "type": [
         "VerifiableCredential",
-        "PersonCredential"
+        "VerifiedIdentityCredential"
     ],
     "credentialSubject": {
-        "id": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+        "id": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
         "@context": "https://schema.org/",
-        "familyName": "User2",
+        "familyName": "Engineer",
         "givenName": "Test",
         "initiatorId": "did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y",
         "jobTitle": "Software Engineer",
-        "name": "Test User2",
-        "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
-        "registrationDate": "2021-05-27T16:34:16+02:00",
+        "name": "Test Engineer",
         "type": "Person"
     },
-    "issuer": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG",
-    "issuanceDate": "2021-05-27T14:34:33Z",
+    "issuer": "did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof",
+    "issuanceDate": "2021-06-18T11:33:59Z",
     "proof": {
         "type": "MerkleKeySignature2021",
-        "verificationMethod": "#key-collection",
-        "signatureValue": "6LLcqhhPitusDrUWZd7gXVoQcX1h2bC5BYAETLySVapF.1113qJALtPxJbo3MzM5fNigaLaDc8SVuac6GJJGP2Fj6Ca5muDaKV9xvco3x5gRXNPuNgKZHJ6u3FUJrrHwScxTL5twHSViUKS7AoAFcYHfQW5ExJnAEzAaUuCek8fk7greu6UtjByW6SBHgasU5rKgoLgvhHzrkwzMyUWdNr5MPT42hboQDcZuGYvVQVjWwFVNqCQPGBc7KQQs3Msh2wYtQaRue6v9YS9ShdUFunzKCFseCEXeUSXR657Ya6XNhBY1wDwWry1MKmZ83jX9YBoieUyKMNmeNwmY3gV3PFvY5jZ8nzr3SaZwTNY5xdbuaPjznca9rjXJ8mcLqtezadEejRu3GBXFpNNkKmveSFr1t7UFeJ8mDLAPJcb2FtBQDoJzmLNc6cboASuhPuzfVemHLMEchUmQbGjq2xruynpWWc676Twsfxr7sVxonwE9imXC8jF2.2jug5Ud38XQjNiV4gvkqAxdKVmneWbf1W3j2ugYFTHZkunMZ1hSNfzHdnEKVemjdaSTj1eoJaodcwLXNvrYx4xdZ"
+        "verificationMethod": "#key-collection-0",
+        "signatureValue": "Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24"
     }
-  }
+}
 ```
 
 The endpoint of this request is the following:
@@ -745,76 +745,90 @@ https://ensuresec.solutions.iota.org/api/v0.1/verifcation/create-credential
 
 > As described in section 2, the request must be authenticated by having a valid Bearer token in the Authorization header otherwise the APIs Bridge will return a "401 Unauthorized" status code.
 
-The API body must contain the identity DID of the identity which needs to be verified. This is set in the `subjectId` field. 
+The API body must contain information about the identity to verify in the `subject` field but also a valid credential of the caller must be added in the `initiatorVC` field.
 
-<!-- is this subjectId standard or shall we rename to identity DID? or similar? -->
-<!-- calling the identity which you want to verify is called subject so I've used this term here, just calling it identityId could be more confusing. -->
-
-In this case we use the DID of the device. Furthermore, if the user requesting the verification is not an administrator, the initiator needs to add a verifiable credential which was generated when verifying itself. With a network of trust approach, an identity verification must be requested by an identity different from the subject. This is always true in case of organizations and objects identities.
+In this case we use the DID of the device as subject to verify. Furthermore, if the user requesting the verification is not an administrator, the initiator needs to add a verifiable credential which was generated when verifying itself. With a network of trust approach, an identity verification must be requested by an identity different from the subject. This is always true in case of organizations and objects identities.
 
 <!-- why is that? Is not already authenticated? do we need to know the identity of which is requesting a verification? This is not a general pattern and mainly works for object or organization. For individual a person will ask to verify her own identity not a third party one. Check what I have added -->
 
 <!-- must be requested by an identity different from the subject <- this is true that is why the initiator of a verification must provide its own credential so the api is able to check wether this person is trusted or not who wants to create a credential for someone else. -->
 
-This verifiable credential is stored by the API Bridge and can be requested at the GET `/identities/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential must be part of the request body, if the verification request is not initiated by an admin. The verifiable credentialof the initiator can be added in the `initiatorVC` field. The request to verifiy identity of the device `subjectId`could look like the one below.
+This verifiable credential is stored by the API Bridge and can be requested at the GET `/identities/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential of the initiator must be part of the request body, if the verification request is not initiated by an admin. The verifiable credentialof the initiator can be added in the `initiatorVC` field. The request must also contain a `subject` field where details about the identity to verify are added, like the `identityId`, the type of the credential in `credentialType` but also the `claim` of the identity which acquires information about the identity.
 
 ```
 {
-  "subjectId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+  "subject": {
+      "identityId":"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt", // id of the device which the credential shall be created for
+      "credentialType": "VerifiedIdentityCredential",
+      "claim": {
+        "type": "Device",
+        "category": [
+            "sensor"
+        ],
+        "controlledProperty": [
+            "fillingLevel",
+            "temperature"
+        ],
+        "controlledAsset": [
+            "wastecontainer-Osuna-100"
+        ],
+        "ipAddress": [
+            "192.14.56.78"
+        ],
+        "mcc": "214",
+        "mnc": "07",
+        "serialNumber": "9845A",
+        "refDeviceModel": "myDevice-wastecontainer-sensor-345",
+        "dateFirstUsed": "2014-09-11T11:00:00Z",
+        "owner": [
+            "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"
+        ]
+    }
+  },
   "initiatorVC": {
     "@context": "https://www.w3.org/2018/credentials/v1",
-    "id": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+    "id": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
     "type": [
         "VerifiableCredential",
-        "PersonCredential"
+        "VerifiedIdentityCredential"
     ],
     "credentialSubject": {
-        "id": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+        "id": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
         "@context": "https://schema.org/",
-        "familyName": "User2",
+        "familyName": "Engineer",
         "givenName": "Test",
         "initiatorId": "did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y",
         "jobTitle": "Software Engineer",
-        "name": "Test User2",
-        "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
-        "registrationDate": "2021-05-27T16:34:16+02:00",
+        "name": "Test Engineer",
         "type": "Person"
     },
-    "issuer": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG",
-    "issuanceDate": "2021-05-27T14:34:33Z",
+    "issuer": "did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof",
+    "issuanceDate": "2021-06-18T11:33:59Z",
     "proof": {
         "type": "MerkleKeySignature2021",
-        "verificationMethod": "#key-collection",
-        "signatureValue": "6LLcqhhPitusDrUWZd7gXVoQcX1h2bC5BYAETLySVapF.1113qJALtPxJbo3MzM5fNigaLaDc8SVuac6GJJGP2Fj6Ca5muDaKV9xvco3x5gRXNPuNgKZHJ6u3FUJrrHwScxTL5twHSViUKS7AoAFcYHfQW5ExJnAEzAaUuCek8fk7greu6UtjByW6SBHgasU5rKgoLgvhHzrkwzMyUWdNr5MPT42hboQDcZuGYvVQVjWwFVNqCQPGBc7KQQs3Msh2wYtQaRue6v9YS9ShdUFunzKCFseCEXeUSXR657Ya6XNhBY1wDwWry1MKmZ83jX9YBoieUyKMNmeNwmY3gV3PFvY5jZ8nzr3SaZwTNY5xdbuaPjznca9rjXJ8mcLqtezadEejRu3GBXFpNNkKmveSFr1t7UFeJ8mDLAPJcb2FtBQDoJzmLNc6cboASuhPuzfVemHLMEchUmQbGjq2xruynpWWc676Twsfxr7sVxonwE9imXC8jF2.2jug5Ud38XQjNiV4gvkqAxdKVmneWbf1W3j2ugYFTHZkunMZ1hSNfzHdnEKVemjdaSTj1eoJaodcwLXNvrYx4xdZ"
+        "verificationMethod": "#key-collection-0",
+        "signatureValue": "Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24"
     }
   }
 }
+
 ```
 
-Upon reception, the API checks if the subjectId exists and belongs to the same organization.
-<!-- this is possible only because of the information we store locally. We need to revise this and check if this is the standard and if this is possible in case no information is stored locally. e.g., how do I check that the identity belong to an organization? Because the credential is signed by somebody in the organization. Can we use a naming convention for DIDs? i.e., did:companyX:... -->
-<!-- yes we could also remove this organization check this was mainly based on the assumption we have one central iota api where clients interact with and I didn't want to let people of other organization verify them but maybe this is no more how we want the api to work. -->
-
-
-Furthermore it checks if the verifiable credential of the initiator is valid (signed by a valid identity). If both applies, a verifiable credential for the subjectId is created. The credential is stored by the api and returned as signed verifiable credential of the device in the API response. An example is provided below.
-
-<!-- we need to update the example accordingly. And remove dynamic properties --> 
-<!-- what do you mean by dynamic properties? -->
+It checks if the verifiable credential of the initiator is valid (signed by a valid identity). If it applies, a verifiable credential for the subject is created. The credential is stored by the api and returned as signed verifiable credential of the device in the API response. An example is provided below.
 
 ```
 {
     "@context": "https://www.w3.org/2018/credentials/v1",
-    "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+    "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
     "type": [
         "VerifiableCredential",
-        "DeviceCredential"
+        "VerifiedIdentityCredential"
     ],
     "credentialSubject": {
-        "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+        "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
         "@context": [
             "https://smartdatamodels.org/context.jsonld"
         ],
-        "batteryLevel": 0.75,
         "category": [
             "sensor"
         ],
@@ -826,55 +840,47 @@ Furthermore it checks if the verifiable credential of the initiator is valid (si
             "temperature"
         ],
         "dateFirstUsed": "2014-09-11T11:00:00Z",
-        "deviceState": "ok",
-        "initiatorId": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+        "initiatorId": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
         "ipAddress": [
             "192.14.56.78"
         ],
         "mcc": "214",
         "mnc": "07",
-        "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
         "owner": [
-            "http://person.org/leon"
+            "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"
         ],
         "refDeviceModel": "myDevice-wastecontainer-sensor-345",
-        "registrationDate": "2021-05-27T14:55:36+02:00",
-        "rssi": 0.86,
         "serialNumber": "9845A",
-        "type": "Device",
-        "value": "l=0.22;t=21.2"
+        "type": "Device"
     },
-    "issuer": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG",
-    "issuanceDate": "2021-05-27T14:45:51Z",
+    "issuer": "did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof",
+    "issuanceDate": "2021-06-18T11:44:04Z",
     "proof": {
         "type": "MerkleKeySignature2021",
-        "verificationMethod": "#key-collection",
-        "signatureValue": "BPLQaMjNEP5H27U9NmHA8gaAHRrYH2oHB7Qgpaufnm82.1113c6Jy3MFVwQFyDMG7QmbZJ89S72R8DwUHc6eNEwddUQow8rPxYrHzMM7Db5MdRF5JDDSoorHqio6h877HZY2654br4RxBpNd5K4Y6CLLthuxmDrWHz93kAHfr7vcrVyYLDCq5Uc8ENWbTWChSFpZ1AzLXxz2PJu82HqZAZcDZZgPBsRX6y2mS1AGih7Js44eTY9iuCR5nAuuXP4TjXxABWujdmVSXp5MyRLGmSeg5jr3bkmJCmwqvWPBYpRL9mCt7g7xsqgop6epjqqB7e351xbAXfkMsrArkeKvmgAh9YMvhdQgaYVgc9Mp1cvySRWGnj8mQVtzVQicbWuEx9UTRvgm4um16Ne2BnaX4BManN5yarfvqJTsXwtNYGC6HnCuD1GjXhPYtmg2Nr9xUBKMdqnpWojZGAKBgHNsRKU2dK1sDyu7x67Tr2ituVThy9eHPfdE.5kDCcE65y9tNadgQWKdLkYLFPofpP9cZ5e1x746EijMJmXPPL3DTpZ9MNXr6WhJGe9YH4ffMJ31i9P7hMKPJkNTp"
+        "verificationMethod": "#key-collection-0",
+        "signatureValue": "2LdZCCWgzFehFLuTSV6fyTzaVBPnn85RpLzcKbCA6zMh.1116NNMEegXdESs8e2bGopuoMGtdkxVenTGgkp3W8oRaT6EcHvyKU9JmiMcUe7EUiTfJbuzfFM3EHpoQZYhUQ1CPX8gCG4SMpqZQQLV9YBZKY4JVZFbzc7mdUdpRaz38eTxKu61a9yTPAVSWkqJUDg9XqSFGAqXpNZxcg2UTvna9E2RPNauAZgJ6YwK2BbvbSCiw1sUnEy9iazLYTGm2EaFRE5Xwij4KBWekxyrTCA7sshVtt5okA93v7WPTtHTapSur7xnjFQgkHqCjtcrYXvMRoSoeMEfnvEibW3YkUYw3751d7UjZ9A33dsFfGDLQUb7sxoypT39nAEtTzuL54yjSSucb3PVe5rMt5xWNrgRAeqZVqxYvGkwgGsPa17QVXy6MnaHznBG93sRFY48FbFbiVs96W1MU1P8YbeEnAAQ1d1t6KXCoqEfMh7KXbyCzAZNp1pjhXee754Jr4JVWhUDoC7fxYxrkvaCPxLhNvBGMUecWvUZcG5L8GGTpnFV73WCPun8KnYYcgCS4siurNTWjyYKafxJ5k.5DhG429KDLQuLohRy6hAT4NtJ5RPqE21jeEokYwKNBWCFnwSzP72jypKNdxC15dqQhKgfg16QtKGHHC4MJ4vJFTJ"
     }
 }
 ```
 
 #### 4. Read credentials (i.e., attributes) of the device identity (DID)
 
-After an identity is verified, in this case a device identity, an authorised user now can request to access information about the identity by using its DID. Among the various attributes, one can request if the identity has been verified. This can be seen by the `verification.verified` field in the local repository at the APIs Bridge and also requesting and checking the dedicated verifiable credentials of the `verifiableCredentials` array attached to the identity. Each verifiable credential stores attributes of the identity, however some of these credentials might have been revoked. To check whether the requested verifiable credential is still valid and not revoked the request in section 5 can be used.
+After an identity is verified, in this case a device identity, an authorised user now can request to access information about the identity by using its DID. Among the various attributes, one can request if the identity has been verified by checking its verifiable credentials of the `verifiableCredentials` array attached to the identity. Each verifiable credential stores attributes of the identity, however some of these credentials might have been revoked. To check whether the requested verifiable credential is still valid and not revoked the request in section 5 can be used.
 
 Identity credentials can be requested using the identity DID in the identityId of a GET request of the following API. 
 
-https://ensuresec.solutions.iota.org/api/v0.1/identities/identity/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
+https://ensuresec.solutions.iota.org/api/v0.1/identities/identity/did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt
 
 The response contains now all information of the device like for instance its username, its claim but also the verifiableCredentials of the device.
 
-<!-- we need to update the example -->
-
 ```
 {
-    "identityId": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
-    "publicKey": "4iGULWnqjbKtf4KxkZYtLvcJHsQvgJY5jndK1esXU1Dv",
+    "identityId": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
+    "publicKey": "4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR",
     "username": "iota-test-device",
-    "type": "Device",
-    "registrationDate": "2021-05-27T14:55:36+02:00",
-    "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
+    "registrationDate": "2021-06-18T13:35:26+02:00",
     "claim": {
+        "type": "Device",
         "category": [
             "sensor"
         ],
@@ -890,31 +896,26 @@ The response contains now all information of the device like for instance its us
         ],
         "mcc": "214",
         "mnc": "07",
-        "batteryLevel": 0.75,
         "serialNumber": "9845A",
         "refDeviceModel": "myDevice-wastecontainer-sensor-345",
-        "rssi": 0.86,
-        "value": "l=0.22;t=21.2",
-        "deviceState": "ok",
         "dateFirstUsed": "2014-09-11T11:00:00Z",
         "owner": [
-            "http://person.org/leon"
+            "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"
         ]
     },
     "verifiableCredentials": [
         {
             "@context": "https://www.w3.org/2018/credentials/v1",
-            "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+            "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
             "type": [
                 "VerifiableCredential",
-                "DeviceCredential"
+                "VerifiedIdentityCredential"
             ],
             "credentialSubject": {
-                "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+                "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
                 "@context": [
                     "https://smartdatamodels.org/context.jsonld"
                 ],
-                "batteryLevel": 0.75,
                 "category": [
                     "sensor"
                 ],
@@ -926,30 +927,25 @@ The response contains now all information of the device like for instance its us
                     "temperature"
                 ],
                 "dateFirstUsed": "2014-09-11T11:00:00Z",
-                "deviceState": "ok",
-                "initiatorId": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+                "initiatorId": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
                 "ipAddress": [
                     "192.14.56.78"
                 ],
                 "mcc": "214",
                 "mnc": "07",
-                "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
                 "owner": [
-                    "http://person.org/leon"
+                    "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"
                 ],
                 "refDeviceModel": "myDevice-wastecontainer-sensor-345",
-                "registrationDate": "2021-05-27T14:55:36+02:00",
-                "rssi": 0.86,
                 "serialNumber": "9845A",
-                "type": "Device",
-                "value": "l=0.22;t=21.2"
+                "type": "Device"
             },
-            "issuer": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG",
-            "issuanceDate": "2021-05-27T14:45:51Z",
+            "issuer": "did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof",
+            "issuanceDate": "2021-06-18T11:44:04Z",
             "proof": {
                 "type": "MerkleKeySignature2021",
-                "verificationMethod": "#key-collection",
-                "signatureValue": "BPLQaMjNEP5H27U9NmHA8gaAHRrYH2oHB7Qgpaufnm82.1113c6Jy3MFVwQFyDMG7QmbZJ89S72R8DwUHc6eNEwddUQow8rPxYrHzMM7Db5MdRF5JDDSoorHqio6h877HZY2654br4RxBpNd5K4Y6CLLthuxmDrWHz93kAHfr7vcrVyYLDCq5Uc8ENWbTWChSFpZ1AzLXxz2PJu82HqZAZcDZZgPBsRX6y2mS1AGih7Js44eTY9iuCR5nAuuXP4TjXxABWujdmVSXp5MyRLGmSeg5jr3bkmJCmwqvWPBYpRL9mCt7g7xsqgop6epjqqB7e351xbAXfkMsrArkeKvmgAh9YMvhdQgaYVgc9Mp1cvySRWGnj8mQVtzVQicbWuEx9UTRvgm4um16Ne2BnaX4BManN5yarfvqJTsXwtNYGC6HnCuD1GjXhPYtmg2Nr9xUBKMdqnpWojZGAKBgHNsRKU2dK1sDyu7x67Tr2ituVThy9eHPfdE.5kDCcE65y9tNadgQWKdLkYLFPofpP9cZ5e1x746EijMJmXPPL3DTpZ9MNXr6WhJGe9YH4ffMJ31i9P7hMKPJkNTp"
+                "verificationMethod": "#key-collection-0",
+                "signatureValue": "2LdZCCWgzFehFLuTSV6fyTzaVBPnn85RpLzcKbCA6zMh.1116NNMEegXdESs8e2bGopuoMGtdkxVenTGgkp3W8oRaT6EcHvyKU9JmiMcUe7EUiTfJbuzfFM3EHpoQZYhUQ1CPX8gCG4SMpqZQQLV9YBZKY4JVZFbzc7mdUdpRaz38eTxKu61a9yTPAVSWkqJUDg9XqSFGAqXpNZxcg2UTvna9E2RPNauAZgJ6YwK2BbvbSCiw1sUnEy9iazLYTGm2EaFRE5Xwij4KBWekxyrTCA7sshVtt5okA93v7WPTtHTapSur7xnjFQgkHqCjtcrYXvMRoSoeMEfnvEibW3YkUYw3751d7UjZ9A33dsFfGDLQUb7sxoypT39nAEtTzuL54yjSSucb3PVe5rMt5xWNrgRAeqZVqxYvGkwgGsPa17QVXy6MnaHznBG93sRFY48FbFbiVs96W1MU1P8YbeEnAAQ1d1t6KXCoqEfMh7KXbyCzAZNp1pjhXee754Jr4JVWhUDoC7fxYxrkvaCPxLhNvBGMUecWvUZcG5L8GGTpnFV73WCPun8KnYYcgCS4siurNTWjyYKafxJ5k.5DhG429KDLQuLohRy6hAT4NtJ5RPqE21jeEokYwKNBWCFnwSzP72jypKNdxC15dqQhKgfg16QtKGHHC4MJ4vJFTJ"
             }
         }
     ],
@@ -968,54 +964,81 @@ Simply insert the verifiable credential one wish to check into the body of the P
 
 ```
 {
-    "@context": "https://www.w3.org/2018/credentials/v1",
-    "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
-    "type": [
-        "VerifiableCredential",
-        "DeviceCredential"
-    ],
-    "credentialSubject": {
-        "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
-        "@context": [
-            "https://smartdatamodels.org/context.jsonld"
-        ],
-        "batteryLevel": 0.75,
+    "identityId": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
+    "publicKey": "4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR",
+    "username": "iota-test-device",
+    "registrationDate": "2021-06-18T13:35:26+02:00",
+    "claim": {
+        "type": "Device",
         "category": [
             "sensor"
-        ],
-        "controlledAsset": [
-            "wastecontainer-Osuna-100"
         ],
         "controlledProperty": [
             "fillingLevel",
             "temperature"
         ],
-        "dateFirstUsed": "2014-09-11T11:00:00Z",
-        "deviceState": "ok",
-        "initiatorId": "did:iota:EVyQGzBQ3Rb71mJDhrRbU8kFDxwG6BE6QM5zafsdm1AF",
+        "controlledAsset": [
+            "wastecontainer-Osuna-100"
+        ],
         "ipAddress": [
             "192.14.56.78"
         ],
         "mcc": "214",
         "mnc": "07",
-        "organization": "did:iota:Hkac4k6xsuDdn7fQms6yMJsySRDDC4fH962MwP9dxWse",
-        "owner": [
-            "http://person.org/leon"
-        ],
-        "refDeviceModel": "myDevice-wastecontainer-sensor-345",
-        "registrationDate": "2021-05-27T14:55:36+02:00",
-        "rssi": 0.86,
         "serialNumber": "9845A",
-        "type": "Device",
-        "value": "l=0.22;t=21.2"
+        "refDeviceModel": "myDevice-wastecontainer-sensor-345",
+        "dateFirstUsed": "2014-09-11T11:00:00Z",
+        "owner": [
+            "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"
+        ]
     },
-    "issuer": "did:iota:9XuKdCzfNUiSCSFsT8DaECkn5sSCvCp485haAi8msCAG",
-    "issuanceDate": "2021-05-27T14:45:51Z",
-    "proof": {
-        "type": "MerkleKeySignature2021",
-        "verificationMethod": "#key-collection",
-        "signatureValue": "BPLQaMjNEP5H27U9NmHA8gaAHRrYH2oHB7Qgpaufnm82.1113c6Jy3MFVwQFyDMG7QmbZJ89S72R8DwUHc6eNEwddUQow8rPxYrHzMM7Db5MdRF5JDDSoorHqio6h877HZY2654br4RxBpNd5K4Y6CLLthuxmDrWHz93kAHfr7vcrVyYLDCq5Uc8ENWbTWChSFpZ1AzLXxz2PJu82HqZAZcDZZgPBsRX6y2mS1AGih7Js44eTY9iuCR5nAuuXP4TjXxABWujdmVSXp5MyRLGmSeg5jr3bkmJCmwqvWPBYpRL9mCt7g7xsqgop6epjqqB7e351xbAXfkMsrArkeKvmgAh9YMvhdQgaYVgc9Mp1cvySRWGnj8mQVtzVQicbWuEx9UTRvgm4um16Ne2BnaX4BManN5yarfvqJTsXwtNYGC6HnCuD1GjXhPYtmg2Nr9xUBKMdqnpWojZGAKBgHNsRKU2dK1sDyu7x67Tr2ituVThy9eHPfdE.5kDCcE65y9tNadgQWKdLkYLFPofpP9cZ5e1x746EijMJmXPPL3DTpZ9MNXr6WhJGe9YH4ffMJ31i9P7hMKPJkNTp"
-    }
+    "verifiableCredentials": [
+        {
+            "@context": "https://www.w3.org/2018/credentials/v1",
+            "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
+            "type": [
+                "VerifiableCredential",
+                "VerifiedIdentityCredential"
+            ],
+            "credentialSubject": {
+                "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
+                "@context": [
+                    "https://smartdatamodels.org/context.jsonld"
+                ],
+                "category": [
+                    "sensor"
+                ],
+                "controlledAsset": [
+                    "wastecontainer-Osuna-100"
+                ],
+                "controlledProperty": [
+                    "fillingLevel",
+                    "temperature"
+                ],
+                "dateFirstUsed": "2014-09-11T11:00:00Z",
+                "initiatorId": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
+                "ipAddress": [
+                    "192.14.56.78"
+                ],
+                "mcc": "214",
+                "mnc": "07",
+                "owner": [
+                    "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"
+                ],
+                "refDeviceModel": "myDevice-wastecontainer-sensor-345",
+                "serialNumber": "9845A",
+                "type": "Device"
+            },
+            "issuer": "did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof",
+            "issuanceDate": "2021-06-18T11:44:04Z",
+            "proof": {
+                "type": "MerkleKeySignature2021",
+                "verificationMethod": "#key-collection-0",
+                "signatureValue": "2LdZCCWgzFehFLuTSV6fyTzaVBPnn85RpLzcKbCA6zMh.1116NNMEegXdESs8e2bGopuoMGtdkxVenTGgkp3W8oRaT6EcHvyKU9JmiMcUe7EUiTfJbuzfFM3EHpoQZYhUQ1CPX8gCG4SMpqZQQLV9YBZKY4JVZFbzc7mdUdpRaz38eTxKu61a9yTPAVSWkqJUDg9XqSFGAqXpNZxcg2UTvna9E2RPNauAZgJ6YwK2BbvbSCiw1sUnEy9iazLYTGm2EaFRE5Xwij4KBWekxyrTCA7sshVtt5okA93v7WPTtHTapSur7xnjFQgkHqCjtcrYXvMRoSoeMEfnvEibW3YkUYw3751d7UjZ9A33dsFfGDLQUb7sxoypT39nAEtTzuL54yjSSucb3PVe5rMt5xWNrgRAeqZVqxYvGkwgGsPa17QVXy6MnaHznBG93sRFY48FbFbiVs96W1MU1P8YbeEnAAQ1d1t6KXCoqEfMh7KXbyCzAZNp1pjhXee754Jr4JVWhUDoC7fxYxrkvaCPxLhNvBGMUecWvUZcG5L8GGTpnFV73WCPun8KnYYcgCS4siurNTWjyYKafxJ5k.5DhG429KDLQuLohRy6hAT4NtJ5RPqE21jeEokYwKNBWCFnwSzP72jypKNdxC15dqQhKgfg16QtKGHHC4MJ4vJFTJ"
+            }
+        }
+    ],
+    "role": "User"
 }
 ```
 
@@ -1063,27 +1086,27 @@ After the credential is revoked the verifiable credential can be checked again u
 <!-- yes a lot of data is stored on the bridge for instance the created verifiable credentials and to have indexable identites and channels. since we don't can store personal data on the tangle only the identity doc is stored on tangle -->
 To request the latest identity description from IOTA Tangle (i.e., to check the integrity with a local copy), the Ecommerce-SSI Bridge also offers an endpoint which can be called via GET. The API uses the requested identity DID (i.e., the associated public key).
 
-https://ensuresec.solutions.iota.org/api/v0.1/verification/latest-document/did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj
+https://ensuresec.solutions.iota.org/api/v0.1/verification/latest-document/did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt
 
 The API returns information about the identity document of the device stored on the IOTA Tangle.
 
 ```
 {
-    "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+    "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
     "authentication": [
         {
-            "id": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj#key",
-            "controller": "did:iota:Bn7kHRVydhZfJDhzErLh1CKFYY8Bhn5GCQwLzbWuZhj",
+            "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt#key",
+            "controller": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
             "type": "Ed25519VerificationKey2018",
-            "publicKeyBase58": "4iGULWnqjbKtf4KxkZYtLvcJHsQvgJY5jndK1esXU1Dv"
+            "publicKeyBase58": "4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR"
         }
     ],
-    "created": "2021-05-27T12:55:19Z",
-    "updated": "2021-05-27T12:55:19Z",
+    "created": "2021-06-18T11:35:24Z",
+    "updated": "2021-06-18T11:35:24Z",
     "proof": {
         "type": "JcsEd25519Signature2020",
         "verificationMethod": "#key",
-        "signatureValue": "43XkMJjQNFi8z9KeNMNf1Fngy8GK2XXe68poiQzBKmtJcMC8potYzypwtMkBavGNg5bE1RLxHs4io2GipnqsMXNA"
+        "signatureValue": "QPzT7MPKE2raRycrreyQbrmmMwamfqzNn7sHdhhPbFyswcNBQTiymBxMz2iGPqHo4ELRcgsaJiDCNfunTTnmBav"
     }
 }
 ```
