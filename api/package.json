@@ -9,7 +9,7 @@
     "create-dist-folder": "mkdir -p ./dist",
     "copy-streams-lib": "cp -R ./src/streams-lib/wasm-node/ ./dist/streams-lib/wasm-node/",
     "build-streams-lib": "npm-run-all create-dist-folder copy-streams-lib",
-    "build": "npm-run-all build-tsc build-lint",
+    "build": "npm-run-all build-tsc build-lint build-streams-lib",
     "test": "jest",
     "test-watch": "npm run test -- --watchAll",
     "start-node": "node dist/index.js",
