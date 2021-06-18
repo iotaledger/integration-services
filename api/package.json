@@ -6,6 +6,9 @@
   "scripts": {
     "build-tsc": "tsc --project ./",
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "create-dist-folder": "mkdir -p ./dist",
+    "copy-streams-lib": "cp -R ./src/streams-lib/wasm-node/ ./dist/streams-lib/wasm-node/",
+    "build-streams-lib": "npm-run-all create-dist-folder copy-streams-lib",
     "build": "npm-run-all build-tsc build-lint",
     "test": "jest",
     "test-watch": "npm run test -- --watchAll",
@@ -13,7 +16,7 @@
     "start": "npm-run-all build start-node",
     "build-watch": "tsc --watch ",
     "serve-nodemon": "nodemon ./dist/index",
-    "serve": "run-p build-watch serve-nodemon"
+    "serve": "run-p build-watch serve-nodemon build-streams-lib"
   },
   "repository": {
     "type": "git",
