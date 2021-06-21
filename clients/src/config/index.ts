@@ -1,7 +1,9 @@
 export const Config = {
-	baseUrl: process.env.BASE_URL
+	baseUrl: process.env.BASE_URL,
+	apiKey: process.env.API_KEY
 };
 
+// example identities with keys pairs - development use only!
 // returned from localhost:3000/api/v1/identities/create
 export const UserIdentity = {
 	doc: {
@@ -98,5 +100,3 @@ export const DeviceIdentity = {
 	},
 	txHash: 'da537611d039d5a5a39a17e89cfac1fa393656fefd2afea237ee63af6d539b8d'
 };
-
-export const CLIENT_IDENTITY = DeviceIdentity;
