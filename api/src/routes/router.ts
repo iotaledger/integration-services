@@ -30,6 +30,7 @@ import { hasValidApiKey } from '../middlewares/api-key';
 import { AuthenticationRoutes } from './authentication';
 import { AuthenticationService } from '../services/authentication-service';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
+import { SubscriptionPool } from '../pools/subscription-pools';
 
 const { serverSecret, jwtExpiration, serverIdentityId, streamsNode, apiKey } = CONFIG;
 const validator = new Validator({ allErrors: true });
@@ -95,10 +96,12 @@ verificationRouter.post(
 	revokeVerifiableCredential
 );
 
+const subscriptionPool = new SubscriptionPool(streamsNode);
+subscriptionPool.startInterval();
 const streamsService = new StreamsService(streamsNode);
 const streamsConfig = { statePassword: serverSecret, streamsNode };
-const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
-const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig);
+const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, streamsConfig);
+const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, streamsConfig);
 
 const channelRoutes = new ChannelRoutes(channelService);
 const { addLogs, createChannel, getLogs } = channelRoutes;
