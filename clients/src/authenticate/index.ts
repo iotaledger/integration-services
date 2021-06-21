@@ -4,8 +4,9 @@ import axios from 'axios';
 
 export const fetchAuth = async (identity: any) => {
 	console.log('requesting nonce to sign...');
+	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
+	const url = `${Config.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`;
 
-	const url = `${Config.baseUrl}/api/v1/authentication/prove-ownership/${identity.doc.id}`;
 	const res = await axios.get(url);
 	if (res.status !== 200) {
 		console.error('didnt receive status 200 on get request for prove-ownership!');
@@ -20,7 +21,7 @@ export const fetchAuth = async (identity: any) => {
 	console.log('signed nonce: ', signedNonce);
 
 	console.log('requesting authentication token using signed nonce...', identity.doc.id);
-	const response = await axios.post(`${Config.baseUrl}/api/v1/authentication/prove-ownership/${identity.doc.id}`, JSON.stringify({ signedNonce }), {
+	const response = await axios.post(`${Config.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`, JSON.stringify({ signedNonce }), {
 		method: 'post',
 		headers: { 'Content-Type': 'application/json' }
 	});

@@ -1,11 +1,23 @@
-import { CLIENT_IDENTITY, Config } from '../config';
+import { Config, UserIdentity } from '../config';
 import { fetchAuth } from '../authenticate';
 import axios from 'axios';
 import { AxiosRequestConfig } from 'axios';
 
-const body: any = CLIENT_IDENTITY.userData;
-const identity = CLIENT_IDENTITY;
-let axiosOptions: AxiosRequestConfig = {
+const identity = UserIdentity;
+const body: any = {
+	identityId: identity.doc.id, // TODO add identityId
+	username: 'homework-test-person-1',
+	registrationDate: '2020-06-21T12:58:13Z',
+	claim: {
+		type: 'Person',
+		name: 'Jon Tomson',
+		familyName: 'Tomson',
+		givenName: 'Jon',
+		birthDate: '1980-06-21'
+	}
+};
+
+const axiosOptions: AxiosRequestConfig = {
 	headers: {
 		'Content-Type': 'application/json'
 	}
@@ -32,8 +44,8 @@ axios.interceptors.response.use((response) => response, errFunc);
 
 export const updateUser = async () => {
 	console.log('requesting update user endpoint...', identity);
-	const res = await axios.put(`${Config.baseUrl}/api/v1/identities/identity`, JSON.stringify(body), axiosOptions);
-
+	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
+	const res = await axios.put(`${Config.baseUrl}/identities/identity${apiKey}`, JSON.stringify(body), axiosOptions);
 	console.log(`received status from update user endpoint: ${res?.status}`);
 
 	if (res?.status === 200) {
