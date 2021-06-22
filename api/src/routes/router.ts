@@ -12,6 +12,7 @@ import { ChannelInfoService } from '../services/channel-info-service';
 import { SsiService } from '../services/ssi-service';
 import {
 	RevokeVerificationBodySchema,
+	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
 	VerifyIdentityBodySchema
 } from '../models/schemas/request-body/verification-bodies';
@@ -91,9 +92,9 @@ const {
 } = verificationRoutes;
 export const verificationRouter = Router();
 verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
-verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, addTrustedRootIdentity);
+verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), addTrustedRootIdentity);
 verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
-verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, removeTrustedRootIdentity);
+verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), removeTrustedRootIdentity);
 verificationRouter.post(
 	'/create-credential',
 	apiKeyMiddleware,

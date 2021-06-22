@@ -22,3 +22,7 @@ export const VerifyIdentityBodySchema = Type.Object({
 export const RevokeVerificationBodySchema = Type.Object({
 	signatureValue: Type.String()
 });
+
+export const TrustedRootBodySchema = Type.Object({
+	trustedRoot: Type.String({ minLength: 50, maxLength: 53 }) // did
+});
