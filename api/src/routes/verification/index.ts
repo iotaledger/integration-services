@@ -98,6 +98,32 @@ export class VerificationRoutes {
 		}
 	};
 
+	addTrustedRootIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
+				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+			}
+			const trustedRoots = await this.verificationService.getTrustedRootIds();
+			return res.status(StatusCodes.OK).send({ trustedRoots });
+		} catch (error) {
+			console.log(error);
+			next(new Error('could not add the trusted root'));
+		}
+	};
+
+	removeTrustedRootIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
+				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+			}
+			const trustedRoots = await this.verificationService.getTrustedRootIds();
+			return res.status(StatusCodes.OK).send({ trustedRoots });
+		} catch (error) {
+			console.log(error);
+			next(new Error('could not remove the trusted root'));
+		}
+	};
+
 	getTrustedRootIdentities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const trustedRoots = await this.verificationService.getTrustedRootIds();
@@ -111,7 +137,7 @@ export class VerificationRoutes {
 		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.vc.id);
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
-			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser);
+			const isAuthorizedAdmin = this.authorizationService.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 			}

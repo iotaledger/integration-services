@@ -2,10 +2,10 @@ import { AuthorizationCheck, CredentialTypes } from '../models/types/verificatio
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
-	isAuthorized = async (requestUser: User, identityId: string): Promise<AuthorizationCheck> => {
+	isAuthorized = (requestUser: User, identityId: string): AuthorizationCheck => {
 		const isAuthorizedUser = this.isAuthorizedUser(requestUser.identityId, identityId);
 		if (!isAuthorizedUser) {
-			const isAuthorizedAdmin = await this.isAuthorizedAdmin(requestUser);
+			const isAuthorizedAdmin = this.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed!') };
 			}
@@ -17,8 +17,8 @@ export class AuthorizationService {
 		return requestUserId === identityId;
 	};
 
-	isAuthorizedAdmin = async (requestUser: User): Promise<boolean> => {
-		const role = requestUser.role;
+	isAuthorizedAdmin = (requestUser: User): boolean => {
+		const role = requestUser?.role;
 
 		if (role === UserRoles.Admin) {
 			return true;

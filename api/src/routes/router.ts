@@ -85,11 +85,15 @@ const {
 	checkVerifiableCredential,
 	revokeVerifiableCredential,
 	getLatestDocument,
-	getTrustedRootIdentities
+	getTrustedRootIdentities,
+	addTrustedRootIdentity,
+	removeTrustedRootIdentity
 } = verificationRoutes;
 export const verificationRouter = Router();
 verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
+verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, addTrustedRootIdentity);
 verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
+verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, removeTrustedRootIdentity);
 verificationRouter.post(
 	'/create-credential',
 	apiKeyMiddleware,
