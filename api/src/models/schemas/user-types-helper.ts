@@ -167,6 +167,17 @@ export const DemandSchema = Type.Object(
 	{ description: schemaDescriptionCreator('Demand') }
 );
 
+export const AggregateOfferSchema = Type.Object(
+	{
+		...ThingObject,
+		highPrice: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		lowPrice: Type.Optional(Type.Union([Type.String(), Type.Number()])),
+		offerCount: Type.Optional(Type.Number()),
+		offers: Type.Optional(Type.Array(Type.Union([OfferSchema, DemandSchema])))
+	},
+	{ description: schemaDescriptionCreator('AggregateOffer') }
+);
+
 export const AggregateRatingSchema = Type.Object(
 	{
 		...ThingObject,
