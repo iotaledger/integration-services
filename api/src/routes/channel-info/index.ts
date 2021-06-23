@@ -40,7 +40,7 @@ export class ChannelInfoRoutes {
 		try {
 			const channelInfo = req.body as ChannelInfo;
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -66,7 +66,7 @@ export class ChannelInfoRoutes {
 				throw new Error('channel does not exist!');
 			}
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -95,7 +95,7 @@ export class ChannelInfoRoutes {
 				throw new Error('channel does not exist!');
 			}
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}

@@ -17,11 +17,14 @@ export const addTrustedRootId = async (identityId: string) => {
 
 	const res = await MongoDbService.insertDocument(collectionName, document);
 	if (!res?.result.n) {
-		throw new Error('could not add the trusted root!');
+		throw new Error('could not add the trusted root from the db');
 	}
 };
 
-export const deleteTrustedRootId = async (identityId: string) => {
+export const removeTrustedRootId = async (identityId: string) => {
 	const query = { _id: identityId };
-	return MongoDbService.removeDocument(collectionName, query);
+	const res = await MongoDbService.removeDocument(collectionName, query);
+	if (!res?.result.n) {
+		throw new Error('could not remove the trusted root from the db');
+	}
 };
