@@ -2,7 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { errorMiddleware } from './middlewares/error';
-import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routes/router';
+import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
