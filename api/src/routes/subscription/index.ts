@@ -17,7 +17,8 @@ export class SubscriptionRoutes {
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 			res.status(StatusCodes.OK).send(subscription);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not get the subscription'));
 		}
 	};
 
@@ -29,7 +30,8 @@ export class SubscriptionRoutes {
 			const channel = await this.subscriptionService.requestSubscription(req.user.identityId, channelAddress, accessRights, seed);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not request the subscription'));
 		}
 	};
 
@@ -50,7 +52,8 @@ export class SubscriptionRoutes {
 			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink, authorId);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not authorize the subscription'));
 		}
 	};
 }

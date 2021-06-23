@@ -44,7 +44,8 @@ export class VerificationRoutes {
 
 			res.status(StatusCodes.OK).send(vc);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not create the verifiable credential'));
 		}
 	};
 
@@ -54,7 +55,8 @@ export class VerificationRoutes {
 			const isVerified = await this.verificationService.checkVerifiableCredential(vcBody);
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not check the verifiable credential'));
 		}
 	};
 
@@ -76,7 +78,8 @@ export class VerificationRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not revoke the verifiable credential'));
 		}
 	};
 
@@ -94,7 +97,8 @@ export class VerificationRoutes {
 
 			res.status(StatusCodes.OK).send(doc);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not get the latest document'));
 		}
 	};
 
@@ -133,7 +137,8 @@ export class VerificationRoutes {
 			const trustedRoots = await this.verificationService.getTrustedRootIds();
 			res.status(StatusCodes.OK).send({ trustedRoots });
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not get the trusted root identities'));
 		}
 	};
 

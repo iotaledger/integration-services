@@ -16,7 +16,8 @@ export class ChannelInfoRoutes {
 			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
 			res.send(channelInfos);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not search for the channel info'));
 		}
 	};
 
@@ -32,7 +33,8 @@ export class ChannelInfoRoutes {
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 			res.send(channelInfo);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not get the channel info'));
 		}
 	};
 
@@ -53,7 +55,8 @@ export class ChannelInfoRoutes {
 
 			res.sendStatus(StatusCodes.CREATED);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not add the channel info'));
 		}
 	};
 
@@ -79,7 +82,8 @@ export class ChannelInfoRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not update the channel info'));
 		}
 	};
 
@@ -103,7 +107,8 @@ export class ChannelInfoRoutes {
 			await this.channelInfoService.deleteChannelInfo(channelAddress);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not delete the channel info'));
 		}
 	};
 

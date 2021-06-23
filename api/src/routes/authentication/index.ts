@@ -19,7 +19,8 @@ export class AuthenticationRoutes {
 			const nonce = await this.authenticationService.getNonce(identityId);
 			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not the create nonce'));
 		}
 	};
 
@@ -38,7 +39,8 @@ export class AuthenticationRoutes {
 			const jwt = await this.authenticationService.authenticate(signedNonce, identityId);
 			res.status(StatusCodes.OK).send({ jwt });
 		} catch (error) {
-			next(error);
+			console.log(error);
+			next(new Error('could not prove the ownership'));
 		}
 	};
 }
