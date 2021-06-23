@@ -161,6 +161,14 @@ export class VerificationService {
 		return trustedRoots.map((root) => root.identityId);
 	};
 
+	addTrustedRootId = async (trustedRoot: string) => {
+		return TrustedRootsDb.addTrustedRootId(trustedRoot);
+	};
+
+	removeTrustedRootId = async (trustedRoot: string) => {
+		return TrustedRootsDb.removeTrustedRootId(trustedRoot);
+	};
+
 	setUserVerified = async (identityId: string, issuerId: string, vc: VerifiableCredentialJson) => {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');

@@ -69,7 +69,7 @@ export class IdentityRoutes {
 		try {
 			const user = req.body;
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, user.identityId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, user.identityId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -95,7 +95,7 @@ export class IdentityRoutes {
 				return;
 			}
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, identityId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, identityId);
 			if (!isAuthorized) {
 				throw error;
 			}

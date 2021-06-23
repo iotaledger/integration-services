@@ -9,7 +9,12 @@ import {
 import { ChannelInfoSchema } from '../schemas/channel-info';
 import { UserSchema } from '../schemas/user';
 import { CreateUserBodySchema } from '../schemas/request-body/user-bodies';
-import { RevokeVerificationBodySchema, VerifiableCredentialBodySchema, VerifyIdentityBodySchema } from '../schemas/request-body/verification-bodies';
+import {
+	RevokeVerificationBodySchema,
+	TrustedRootBodySchema,
+	VerifiableCredentialBodySchema,
+	VerifyIdentityBodySchema
+} from '../schemas/request-body/verification-bodies';
 
 export type ProveOwnershipPostBody = Static<typeof ProveOwnershipPostBodySchema>;
 
@@ -26,3 +31,4 @@ export type RequestSubscriptionBody = Static<typeof RequestSubscriptionBodySchem
 export type VerifiableCredentialBody = Static<typeof VerifiableCredentialBodySchema>;
 export type VerifyIdentityBody = Static<typeof VerifyIdentityBodySchema>;
 export type RevokeVerificationBody = Static<typeof RevokeVerificationBodySchema>;
+export type TrustedRootBody = Static<typeof TrustedRootBodySchema>;
