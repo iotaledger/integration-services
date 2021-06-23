@@ -13,10 +13,10 @@ export const subscriptionPool = new SubscriptionPool(streamsNode);
 subscriptionPool.startInterval();
 export const streamsService = new StreamsService(streamsNode);
 export const streamsConfig = { statePassword: serverSecret, streamsNode };
-
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, streamsConfig);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
 const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
+
 export const subscriptionRouter = Router();
 
 subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);

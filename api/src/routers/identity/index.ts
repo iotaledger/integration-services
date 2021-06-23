@@ -11,8 +11,8 @@ export const userService = new UserService(ssiService, serverSecret);
 
 const identityRoutes = new IdentityRoutes(userService, authorizationService);
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
-export const identityRouter = Router();
 
+export const identityRouter = Router();
 identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);

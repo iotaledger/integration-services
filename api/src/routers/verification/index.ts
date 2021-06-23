@@ -3,6 +3,7 @@ import { CONFIG } from '../../config';
 import { KEY_COLLECTION_SIZE } from '../../config/identity';
 import {
 	RevokeVerificationBodySchema,
+	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
 	VerifyIdentityBodySchema
 } from '../../models/schemas/request-body/verification-bodies';
@@ -12,7 +13,6 @@ import { apiKeyMiddleware, authMiddleWare, authorizationService, ssiService, val
 import { userService } from '../identity';
 
 const { serverSecret, serverIdentityId } = CONFIG;
-
 const verificationService = new VerificationService(ssiService, userService, {
 	serverIdentityId,
 	serverSecret,
@@ -24,12 +24,16 @@ const {
 	checkVerifiableCredential,
 	revokeVerifiableCredential,
 	getLatestDocument,
-	getTrustedRootIdentities
+	getTrustedRootIdentities,
+	addTrustedRootIdentity,
+	removeTrustedRootIdentity
 } = verificationRoutes;
 
 export const verificationRouter = Router();
 verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
+verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), addTrustedRootIdentity);
 verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
+verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), removeTrustedRootIdentity);
 verificationRouter.post(
 	'/create-credential',
 	apiKeyMiddleware,

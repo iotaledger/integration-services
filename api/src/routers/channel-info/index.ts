@@ -8,8 +8,8 @@ import { userService } from '../identity';
 export const channelInfoService = new ChannelInfoService(userService);
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
 const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } = channelInfoRoutes;
-export const channelInfoRouter = Router();
 
+export const channelInfoRouter = Router();
 channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannelInfo);
 channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
 channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
