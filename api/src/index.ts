@@ -7,9 +7,12 @@ import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
 import { setupApi } from './setup';
+import { logger } from './utils/logger';
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
-	console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`));
+	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
+	messages.map((m) => logger.log({ level: 'info', message: m }));
+
 	app.use(prefix, router);
 }
 
@@ -38,7 +41,7 @@ async function startServer() {
 
 	app.use(errorMiddleware);
 	app.listen(port, async () => {
-		console.log(`Started API Server on port ${port}`);
+		logger.log({ level: 'info', message: `Started API Server on port ${port}` });
 		await MongoDbService.connect(dbUrl, dbName);
 	});
 }

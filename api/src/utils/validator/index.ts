@@ -2,6 +2,7 @@ import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceS
 import { User, UserType } from '../../models/types/user';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
+import { logger } from '../logger';
 
 export class SchemaValidator {
 	private static instance: SchemaValidator;
@@ -44,7 +45,7 @@ export class SchemaValidator {
 				break;
 		}
 		if (!validate) {
-			console.log(`no schema found for user type: ${user.claim?.type}`);
+			logger.log({ level: 'info', message: `no schema found for user type: ${user.claim?.type}` });
 			return;
 		}
 

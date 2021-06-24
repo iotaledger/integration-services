@@ -12,6 +12,7 @@ import { CreateIdentityBody } from '../models/types/identity';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { CredentialTypes, Subject } from '../models/types/verification';
+import { logger } from '../utils/logger';
 
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
@@ -19,7 +20,7 @@ const serverSecret = CONFIG.serverSecret;
 const serverIdentityId = CONFIG.serverIdentityId;
 
 export async function setupApi() {
-	console.log(`Setting api please wait...`);
+	logger.info(`Setting api please wait...`);
 	if (!serverSecret) {
 		throw Error('A server secret must be defined to setup the api!');
 	}
@@ -39,7 +40,7 @@ export async function setupApi() {
 	const serverIdentity = await tmpVerificationService.getIdentityFromDb(serverIdentityId);
 
 	if (!serverIdentityId || !serverIdentity) {
-		console.log('Create identity...');
+		logger.info('Create identity...');
 		// TODO#94 make it dynamic
 		const serverData: CreateIdentityBody = {
 			storeIdentity: true,
@@ -52,9 +53,9 @@ export async function setupApi() {
 
 		const identity = await userService.createIdentity(serverData);
 
-		console.log('==================================================================================================');
-		console.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
-		console.log('==================================================================================================');
+		logger.info('==================================================================================================');
+		logger.info(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
+		logger.info('==================================================================================================');
 
 		// re-create the verification service with a valid server identity id
 		const verificationService = new VerificationService(ssiService, userService, {
@@ -67,10 +68,10 @@ export async function setupApi() {
 		if (!serverUser) {
 			throw new Error('server user not found!');
 		}
-		console.log('Add server id as trusted root...');
+		logger.info('Add server id as trusted root...');
 		await addTrustedRootId(serverUser.identityId);
 
-		console.log('Generate key collection...');
+		logger.info('Generate key collection...');
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(this.serverIdentityId);
 		const keyCollectionIndex = verificationService.getKeyCollectionIndex(index);
 		const kc = await verificationService.getKeyCollection(keyCollectionIndex);
@@ -79,31 +80,35 @@ export async function setupApi() {
 			throw new Error('could not create the keycollection!');
 		}
 
-		console.log('Set server identity as verified...');
+		logger.info('Set server identity as verified...');
 		const subject: Subject = {
 			claim: serverUser.claim,
 			credentialType: CredentialTypes.VerifiedIdentityCredential,
 			identityId: serverUser.identityId
 		};
 		await verificationService.verifyIdentity(subject, serverUser.identityId, serverUser.identityId);
-		console.log(`Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.identityId}`);
+		logger.log({
+			level: 'info',
+			message: `Setup Done!\nPlease store the generated server identity as environment variable.\nLike: SERVER_IDENTITY=${serverUser.identityId}`
+		});
+		logger;
 		process.exit(0);
 	} else {
 		// verify if secret key of the server can be used to sign and verify a challenge
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
-		console.log('Check if server has valid keypair...');
+		logger.info('Check if server has valid keypair...');
 		const nonce = createNonce();
 		let verified = false;
 		try {
 			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.key.secret), nonce);
 			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), nonce, signedNonce);
 		} catch (e) {
-			console.error('error when signing or verifying the nonce, the secret key might have changed...');
+			logger.log({ level: 'error', message: 'error when signing or verifying the nonce, the secret key might have changed...' });
 		}
 		if (!verified) {
 			throw new Error('server keys cannot be verified!');
 		}
-		console.log('Api is ready to use!');
+		logger.info('Api is ready to use!');
 	}
 }

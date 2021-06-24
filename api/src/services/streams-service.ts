@@ -2,6 +2,7 @@ import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
 import * as fetch from 'node-fetch';
+import { logger } from '../utils/logger';
 
 streams.set_panic_hook();
 
@@ -24,7 +25,7 @@ export class StreamsService {
 
 			return streams.Subscriber.import(client, toBytes(state), password);
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not import the subscription object');
 		}
 	};
@@ -33,7 +34,7 @@ export class StreamsService {
 		try {
 			return fromBytes(subscription.clone().export(password));
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not export the subscription object');
 		}
 	};
@@ -55,7 +56,7 @@ export class StreamsService {
 				author
 			};
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not create the channel');
 		}
 	};
@@ -87,7 +88,7 @@ export class StreamsService {
 				subscription
 			};
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not add logs to the channel');
 		}
 	};
@@ -125,7 +126,7 @@ export class StreamsService {
 								};
 								return channelData;
 							} catch (e) {
-								console.log('could not parse maskedPayload: ', maskedPayload);
+								logger.log({ level: 'error', message: 'could not parse maskedPayload' });
 								return;
 							}
 						})
@@ -140,7 +141,7 @@ export class StreamsService {
 				latestLink
 			};
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not get logs from the channel');
 		}
 	};
@@ -166,7 +167,7 @@ export class StreamsService {
 			const sub_link = response.get_link();
 			return { seed, subscriptionLink: sub_link.to_string(), subscriber };
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not request the subscription to the channel');
 		}
 	};
@@ -185,7 +186,7 @@ export class StreamsService {
 			const keyload_link = response.get_link();
 			return { keyloadLink: keyload_link.to_string(), author };
 		} catch (error) {
-			console.log('Error from streams sdk:', error);
+			logger.log({ level: 'error', message: `Error from streams sdk: ${error}` });
 			throw new Error('could not authorize the subscription to the channel');
 		}
 	};
