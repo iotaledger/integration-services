@@ -3,13 +3,13 @@ import { CONFIG } from '../../config';
 import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-body/authentication-bodies';
 import { AuthenticationRoutes } from '../../routes/authentication';
 import { AuthenticationService } from '../../services/authentication-service';
-import { apiKeyMiddleware, ssiService, validate } from '../helper';
+import { apiKeyMiddleware, logger, ssiService, validate } from '../helper';
 import { userService } from '../identity';
 
 const { serverSecret, jwtExpiration } = CONFIG;
 
 export const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret });
-const authenticationRoutes = new AuthenticationRoutes(authenticationService);
+const authenticationRoutes = new AuthenticationRoutes(authenticationService, logger);
 const { getNonce, proveOwnership } = authenticationRoutes;
 
 export const authenticationRouter = Router();

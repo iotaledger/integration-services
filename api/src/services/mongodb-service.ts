@@ -15,7 +15,7 @@ import {
 	FindOneOptions,
 	CommonOptions
 } from 'mongodb';
-import { logger } from '../utils/logger';
+import { logger } from '../routers/helper';
 
 type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
 // type WithProjection<T extends { projection?: any }> = T & { projection: NonNullable<T['projection']> };
@@ -32,7 +32,7 @@ export class MongoDbService {
 
 	private static getCollection(collectionName: string): Collection | null {
 		if (!MongoDbService.db) {
-			logger.log({ level: 'error', message: 'Database not found!' });
+			logger.error('Database not found!');
 			return null;
 		}
 		return MongoDbService.db.collection(collectionName);
@@ -119,11 +119,11 @@ export class MongoDbService {
 
 			MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
 				if (err != null) {
-					logger.log({ level: 'error', message: 'could not connect to mongodb' });
+					logger.log('could not connect to mongodb');
 					reject(err);
 					return;
 				}
-				logger.log({ level: 'info', message: 'Successfully connected to mongodb' });
+				logger.log('Successfully connected to mongodb');
 				MongoDbService.client = client;
 				MongoDbService.db = client.db(dbName);
 

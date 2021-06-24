@@ -4,12 +4,12 @@ import { CreateUserBodySchema, UpdateUserBodySchema } from '../../models/schemas
 import { UserSchema } from '../../models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
 import { UserService } from '../../services/user-service';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, ssiService, validate } from '../helper';
+import { apiKeyMiddleware, authMiddleWare, authorizationService, logger, ssiService, validate } from '../helper';
 
 const { serverSecret } = CONFIG;
-export const userService = new UserService(ssiService, serverSecret);
+export const userService = new UserService(ssiService, serverSecret, logger);
 
-const identityRoutes = new IdentityRoutes(userService, authorizationService);
+const identityRoutes = new IdentityRoutes(userService, authorizationService, logger);
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();

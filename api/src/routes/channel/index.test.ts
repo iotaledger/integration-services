@@ -8,6 +8,7 @@ import { ChannelService } from '../../services/channel-service';
 import { StreamsService } from '../../services/streams-service';
 import { SubscriptionService } from '../../services/subscription-service';
 import { UserService } from '../../services/user-service';
+import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test channel routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -22,13 +23,13 @@ describe('test channel routes', () => {
 			streamsNode: '',
 			statePassword: 'test123'
 		};
-		userService = new UserService({} as any, '');
-		streamsService = new StreamsService(config.streamsNode);
+		userService = new UserService({} as any, '', LoggerMock);
+		streamsService = new StreamsService(config.streamsNode, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const subscriptionPool = new SubscriptionPool(config.streamsNode);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
-		channelRoutes = new ChannelRoutes(channelService);
+		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
 			send: sendMock,

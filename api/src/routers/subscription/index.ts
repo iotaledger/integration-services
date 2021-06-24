@@ -6,15 +6,15 @@ import { SubscriptionRoutes } from '../../routes/subscription';
 import { StreamsService } from '../../services/streams-service';
 import { SubscriptionService } from '../../services/subscription-service';
 import { channelInfoService } from '../channel-info';
-import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
+import { apiKeyMiddleware, authMiddleWare, logger, validate } from '../helper';
 
 const { serverSecret, streamsNode } = CONFIG;
 export const subscriptionPool = new SubscriptionPool(streamsNode);
 subscriptionPool.startInterval();
-export const streamsService = new StreamsService(streamsNode);
+export const streamsService = new StreamsService(streamsNode, logger);
 export const streamsConfig = { statePassword: serverSecret, streamsNode };
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, streamsConfig);
-const subscriptionRoutes = new SubscriptionRoutes(subscriptionService);
+const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, logger);
 const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();

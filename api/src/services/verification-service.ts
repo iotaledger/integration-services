@@ -17,7 +17,7 @@ import * as TrustedRootsDb from '../database/trusted-roots';
 import { VerificationServiceConfig } from '../models/config/services';
 import { JsonldGenerator } from '../utils/jsonld';
 import { Subject } from '../models/types/verification';
-import { logger } from '../utils/logger';
+import { ILogger } from '../utils/logger';
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -28,7 +28,8 @@ export class VerificationService {
 	constructor(
 		private readonly ssiService: SsiService,
 		private readonly userService: UserService,
-		verificationServiceConfig: VerificationServiceConfig
+		verificationServiceConfig: VerificationServiceConfig,
+		private readonly logger: ILogger
 	) {
 		const { serverSecret, serverIdentityId, keyCollectionSize } = verificationServiceConfig;
 		this.serverSecret = serverSecret;
@@ -132,7 +133,7 @@ export class VerificationService {
 		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
 		if (res.revoked !== true) {
-			logger.log({ level: 'error', message: `could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!` });
+			this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
 			return;
 		}
 
@@ -197,7 +198,7 @@ export class VerificationService {
 				index: keyCollectionIndex
 			};
 		} catch (e) {
-			logger.log({ level: 'error', message: `error when generating key collection ${e}` });
+			this.logger.error(`error when generating key collection ${e}`);
 			throw new Error('could not generate key collection');
 		}
 	};

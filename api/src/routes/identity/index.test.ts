@@ -9,6 +9,7 @@ import { UserService } from '../../services/user-service';
 import { UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
+import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -27,10 +28,10 @@ describe('test user routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService(ssiService as any, serverSecret);
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
 		const authorizationService = new AuthorizationService();
-		userRoutes = new IdentityRoutes(userService, authorizationService);
+		userRoutes = new IdentityRoutes(userService, authorizationService, LoggerMock);
 
 		res = {
 			send: sendMock,

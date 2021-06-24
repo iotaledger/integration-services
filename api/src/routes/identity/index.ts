@@ -8,10 +8,14 @@ import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '../../models/types/identity';
 import { UserSchemaBody } from '../../models/types/request-bodies';
-import { logger } from '../../utils/logger';
+import { ILogger } from '../../utils/logger';
 
 export class IdentityRoutes {
-	constructor(private readonly userService: UserService, private readonly authorizationService: AuthorizationService) {}
+	constructor(
+		private readonly userService: UserService,
+		private readonly authorizationService: AuthorizationService,
+		private readonly logger: ILogger
+	) {}
 
 	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
@@ -20,7 +24,7 @@ export class IdentityRoutes {
 
 			res.status(StatusCodes.CREATED).send(identity);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not create the identity'));
 		}
 	};
@@ -31,7 +35,7 @@ export class IdentityRoutes {
 			const users = await this.userService.searchUsers(userSearch);
 			res.send(users);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not search for the identity'));
 		}
 	};
@@ -48,7 +52,7 @@ export class IdentityRoutes {
 			const user = await this.userService.getUser(identityId);
 			res.send(user);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not get the identity'));
 		}
 	};
@@ -65,7 +69,7 @@ export class IdentityRoutes {
 
 			res.sendStatus(StatusCodes.CREATED);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not add the identity'));
 		}
 	};
@@ -88,7 +92,7 @@ export class IdentityRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not update the identity'));
 		}
 	};
@@ -109,7 +113,7 @@ export class IdentityRoutes {
 			await this.userService.deleteUser(identityId);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not delete the identity'));
 		}
 	};

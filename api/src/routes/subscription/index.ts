@@ -4,10 +4,10 @@ import * as _ from 'lodash';
 import { SubscriptionService } from '../../services/subscription-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-bodies';
-import { logger } from '../../utils/logger';
+import { ILogger } from '../../utils/logger';
 
 export class SubscriptionRoutes {
-	constructor(private readonly subscriptionService: SubscriptionService) {}
+	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
 
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
@@ -18,7 +18,7 @@ export class SubscriptionRoutes {
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 			res.status(StatusCodes.OK).send(subscription);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not get the subscription'));
 		}
 	};
@@ -31,7 +31,7 @@ export class SubscriptionRoutes {
 			const channel = await this.subscriptionService.requestSubscription(req.user.identityId, channelAddress, accessRights, seed);
 			res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not request the subscription'));
 		}
 	};
@@ -53,7 +53,7 @@ export class SubscriptionRoutes {
 			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink, authorId);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not authorize the subscription'));
 		}
 	};

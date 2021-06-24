@@ -9,13 +9,14 @@ import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
-import { logger } from '../../utils/logger';
+import { ILogger } from '../../utils/logger';
 
 export class VerificationRoutes {
 	constructor(
 		private readonly verificationService: VerificationService,
 		private readonly authorizationService: AuthorizationService,
-		private readonly config: Config
+		private readonly config: Config,
+		private readonly logger: ILogger
 	) {}
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -45,7 +46,7 @@ export class VerificationRoutes {
 
 			res.status(StatusCodes.OK).send(vc);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not create the verifiable credential'));
 		}
 	};
@@ -56,7 +57,7 @@ export class VerificationRoutes {
 			const isVerified = await this.verificationService.checkVerifiableCredential(vcBody);
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not check the verifiable credential'));
 		}
 	};
@@ -79,7 +80,7 @@ export class VerificationRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not revoke the verifiable credential'));
 		}
 	};
@@ -98,7 +99,7 @@ export class VerificationRoutes {
 
 			res.status(StatusCodes.OK).send(doc);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not get the latest document'));
 		}
 	};
@@ -113,7 +114,7 @@ export class VerificationRoutes {
 			await this.verificationService.addTrustedRootId(trustedRoot);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not add the trusted root'));
 		}
 	};
@@ -128,7 +129,7 @@ export class VerificationRoutes {
 			await this.verificationService.removeTrustedRootId(trustedRoot);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not remove the trusted root'));
 		}
 	};
@@ -138,7 +139,7 @@ export class VerificationRoutes {
 			const trustedRoots = await this.verificationService.getTrustedRootIds();
 			res.status(StatusCodes.OK).send({ trustedRoots });
 		} catch (error) {
-			logger.log({ level: 'error', message: error });
+			this.logger.log(error);
 			next(new Error('could not get the trusted root identities'));
 		}
 	};

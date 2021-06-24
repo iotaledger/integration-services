@@ -12,6 +12,7 @@ import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserType, UserRoles } from '../../../models/types/user';
+import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -34,15 +35,20 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService({} as any, '');
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(ssiService, userService, {
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id,
-			keyCollectionSize: 2
-		});
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config);
+		verificationService = new VerificationService(
+			ssiService,
+			userService,
+			{
+				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
+				keyCollectionSize: 2
+			},
+			LoggerMock
+		);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
 
 		res = {
 			send: sendMock,

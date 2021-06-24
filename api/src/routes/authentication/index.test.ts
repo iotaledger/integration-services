@@ -8,6 +8,7 @@ import * as EncryptionUtils from '../../utils/encryption';
 import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';
 import { IdentityConfig } from '../../models/config';
+import { LoggerMock } from '../../test/mocks/logger';
 
 const validUserMock = UserIdentityMock.userData;
 
@@ -29,13 +30,13 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService(ssiService, serverSecret);
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService(ssiService, serverSecret, LoggerMock);
 		authenticationService = new AuthenticationService(userService, ssiService, {
 			jwtExpiration: '2 days',
 			serverSecret
 		});
-		authenticationRoutes = new AuthenticationRoutes(authenticationService);
+		authenticationRoutes = new AuthenticationRoutes(authenticationService, LoggerMock);
 
 		res = {
 			send: sendMock,

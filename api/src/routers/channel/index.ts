@@ -3,11 +3,11 @@ import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/s
 import { ChannelRoutes } from '../../routes/channel';
 import { ChannelService } from '../../services/channel-service';
 import { channelInfoService } from '../channel-info';
-import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
+import { apiKeyMiddleware, authMiddleWare, logger, validate } from '../helper';
 import { streamsConfig, streamsService, subscriptionPool, subscriptionService } from '../subscription';
 
 export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, streamsConfig);
-const channelRoutes = new ChannelRoutes(channelService);
+const channelRoutes = new ChannelRoutes(channelService, logger);
 const { addLogs, createChannel, getLogs } = channelRoutes;
 
 export const channelRouter = Router();

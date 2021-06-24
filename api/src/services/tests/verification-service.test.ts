@@ -4,6 +4,7 @@ import * as IdentityDocsDb from '../../database/identity-docs';
 import { VerificationServiceConfig } from '../../models/config/services';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
+import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test getKeyCollection', () => {
 	let ssiService: SsiService, userService: UserService, verificationService: VerificationService;
@@ -21,9 +22,9 @@ describe('test getKeyCollection', () => {
 		keyCollectionSize
 	};
 	beforeEach(() => {
-		ssiService = SsiService.getInstance({} as any);
-		userService = new UserService(ssiService, 'very-secret-secret');
-		verificationService = new VerificationService(ssiService, userService, cfg);
+		ssiService = SsiService.getInstance({} as any, LoggerMock);
+		userService = new UserService(ssiService, 'very-secret-secret', LoggerMock);
+		verificationService = new VerificationService(ssiService, userService, cfg, LoggerMock);
 	});
 
 	it('should generate a new keycollection since index not found', async () => {
