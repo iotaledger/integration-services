@@ -40,6 +40,7 @@ describe('test channel routes', () => {
 
 	describe('test create channel route', () => {
 		it('should call nextMock if no body is provided', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const req: any = {
 				params: {},
 				user: { identityId: undefined },
@@ -47,7 +48,8 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.createChannel(req, res, nextMock);
-			expect(nextMock).toHaveBeenCalledWith(new Error("Cannot read property 'topics' of undefined"));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'topics' of undefined"));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the channel'));
 		});
 
 		it('should bad request if no identityId is provided', async () => {

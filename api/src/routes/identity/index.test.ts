@@ -106,6 +106,7 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when reading from db', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const getUserSpy = spyOn(UserDb, 'getUser').and.callFake(() => {
 				throw new Error('Test error');
 			});
@@ -118,7 +119,8 @@ describe('test user routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledTimes(1);
 			expect(sendMock).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not get the identity'));
 		});
 	});
 
@@ -142,6 +144,7 @@ describe('test user routes', () => {
 		});
 
 		it('should return 404 since no user added', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 0 } }); // no user added
 			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
 
@@ -154,7 +157,8 @@ describe('test user routes', () => {
 
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
 			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
-			expect(nextMock).toHaveBeenCalledWith(new Error('could not create user identity!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('could not create user identity!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not add the identity'));
 		});
 		it('should add user', async () => {
 			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
@@ -173,6 +177,7 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when adding to db', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
 			const addUserSpy = spyOn(UserDb, 'addUser').and.callFake(() => {
 				throw new Error('Test error');
@@ -187,7 +192,8 @@ describe('test user routes', () => {
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
 			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(sendMock).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not add the identity'));
 		});
 	});
 
@@ -283,6 +289,7 @@ describe('test user routes', () => {
 		});
 
 		it('is not authorized to update the user', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
 
 			const req: any = {
@@ -294,7 +301,8 @@ describe('test user routes', () => {
 			await userRoutes.updateUser(req, res, nextMock);
 
 			expect(updateUserSpy).toHaveBeenCalledTimes(0);
-			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
 		});
 
 		it('should update expected user', async () => {
@@ -313,6 +321,7 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when updating the db', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const updateUserSpy = spyOn(UserDb, 'updateUser').and.callFake(() => {
 				throw new Error('Test error');
 			});
@@ -326,7 +335,8 @@ describe('test user routes', () => {
 
 			expect(updateUserSpy).toHaveBeenCalledTimes(1);
 			expect(sendMock).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
 		});
 	});
 
@@ -342,6 +352,7 @@ describe('test user routes', () => {
 		});
 
 		it('is not authorized to delete different user', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
 
 			const req: any = {
@@ -353,7 +364,8 @@ describe('test user routes', () => {
 			await userRoutes.deleteUser(req, res, nextMock);
 
 			expect(deleteUserSpy).toHaveBeenCalledTimes(0);
-			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the identity'));
 		});
 
 		it('should delete expected user', async () => {
@@ -372,6 +384,7 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when removing from db', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const deleteUserSpy = spyOn(UserDb, 'deleteUser').and.callFake(() => {
 				throw new Error('Test error');
 			});
@@ -384,7 +397,8 @@ describe('test user routes', () => {
 
 			expect(deleteUserSpy).toHaveBeenCalledTimes(1);
 			expect(sendMock).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the identity'));
 		});
 	});
 });

@@ -102,6 +102,7 @@ describe('test authentication routes', () => {
 		});
 
 		it('should throw error since no user found', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const userMock: User = null;
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(userMock);
@@ -115,10 +116,12 @@ describe('test authentication routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledWith(identityId);
 			expect(getLatestIdentitySpy).toHaveBeenCalledWith(identityId);
-			expect(nextMock).toHaveBeenCalledWith(new Error(`no identity with id: ${identityId} found!`));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error(`no identity with id: ${identityId} found!`));
+			expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
 		});
 
 		it('should throw error for a nonce which is verified=false', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const verified = false;
 			const userMock: User = validUserMock;
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
@@ -140,7 +143,8 @@ describe('test authentication routes', () => {
 				'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
 				'SIGNED_NONCE'
 			);
-			expect(nextMock).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
+			expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
 		});
 
 		it('should return the jwt for identity not in db but on tangle', async () => {
