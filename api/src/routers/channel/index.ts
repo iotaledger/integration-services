@@ -2,12 +2,13 @@ import { Router } from 'express';
 import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/schemas/request-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { ChannelService } from '../../services/channel-service';
+import { Logger } from '../../utils/logger';
 import { channelInfoService } from '../channel-info';
-import { apiKeyMiddleware, authMiddleWare, logger, validate } from '../helper';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
 import { streamsConfig, streamsService, subscriptionPool, subscriptionService } from '../subscription';
 
 export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, streamsConfig);
-const channelRoutes = new ChannelRoutes(channelService, logger);
+const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
 const { addLogs, createChannel, getLogs } = channelRoutes;
 
 export const channelRouter = Router();

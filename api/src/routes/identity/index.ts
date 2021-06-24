@@ -24,7 +24,7 @@ export class IdentityRoutes {
 
 			res.status(StatusCodes.CREATED).send(identity);
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not create the identity'));
 		}
 	};
@@ -35,7 +35,7 @@ export class IdentityRoutes {
 			const users = await this.userService.searchUsers(userSearch);
 			res.send(users);
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not search for the identity'));
 		}
 	};
@@ -52,7 +52,7 @@ export class IdentityRoutes {
 			const user = await this.userService.getUser(identityId);
 			res.send(user);
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not get the identity'));
 		}
 	};
@@ -69,7 +69,7 @@ export class IdentityRoutes {
 
 			res.sendStatus(StatusCodes.CREATED);
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not add the identity'));
 		}
 	};
@@ -92,7 +92,7 @@ export class IdentityRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not update the identity'));
 		}
 	};
@@ -113,7 +113,7 @@ export class IdentityRoutes {
 			await this.userService.deleteUser(identityId);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not delete the identity'));
 		}
 	};

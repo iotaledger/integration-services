@@ -9,7 +9,8 @@ import {
 } from '../../models/schemas/request-body/verification-bodies';
 import { VerificationRoutes } from '../../routes/verification';
 import { VerificationService } from '../../services/verification-service';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, logger, ssiService, validate } from '../helper';
+import { Logger } from '../../utils/logger';
+import { apiKeyMiddleware, authMiddleWare, authorizationService, ssiService, validate } from '../helper';
 import { userService } from '../identity';
 
 const { serverSecret, serverIdentityId } = CONFIG;
@@ -21,9 +22,9 @@ const verificationService = new VerificationService(
 		serverSecret,
 		keyCollectionSize: KEY_COLLECTION_SIZE
 	},
-	logger
+	Logger.getInstance()
 );
-const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, CONFIG, logger);
+const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, CONFIG, Logger.getInstance());
 const {
 	createVerifiableCredential,
 	checkVerifiableCredential,

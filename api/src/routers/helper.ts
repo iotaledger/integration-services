@@ -8,10 +8,9 @@ import { Logger } from '../utils/logger';
 
 const { serverSecret, identityConfig, apiKey } = CONFIG;
 
-export const logger = new Logger();
 export const validator = new Validator({ allErrors: true });
 export const validate = validator.validate;
-export const ssiService = SsiService.getInstance(identityConfig, logger);
+export const ssiService = SsiService.getInstance(identityConfig, Logger.getInstance());
 export const authorizationService = new AuthorizationService();
 export const authMiddleWare = isAuth(serverSecret);
 export const apiKeyMiddleware = hasValidApiKey(apiKey);

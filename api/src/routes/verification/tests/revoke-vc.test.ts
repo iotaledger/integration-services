@@ -3,7 +3,7 @@ import * as IdentityDocsDb from '../../../database/identity-docs';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
-import { IdentityConfig } from '../../../models/config';
+import { Config, IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { VerificationRoutes } from '../index';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
@@ -12,6 +12,7 @@ import { VerifiableCredentialPersistence } from '../../../models/types/key-colle
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserType, UserRoles } from '../../../models/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
+import { ConfigMock } from '../../../test/mocks/config';
 
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -25,18 +26,8 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config: any = {
-			serverIdentityId: ServerIdentityMock.doc.id
-		};
-		const identityConfig: IdentityConfig = {
-			keyCollectionTag: 'key-collection',
-			explorer: '',
-			network: 'test',
-			node: '',
-			keyType: 0,
-			hashFunction: 0,
-			hashEncoding: 'base58'
-		};
+		const config: Config = ConfigMock;
+		const identityConfig: IdentityConfig = ConfigMock.identityConfig;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();

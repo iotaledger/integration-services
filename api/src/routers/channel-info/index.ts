@@ -2,11 +2,12 @@ import { Router } from 'express';
 import { ChannelInfoSchema } from '../../models/schemas/channel-info';
 import { ChannelInfoRoutes } from '../../routes/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, logger, validate } from '../helper';
+import { Logger } from '../../utils/logger';
+import { apiKeyMiddleware, authMiddleWare, authorizationService, validate } from '../helper';
 import { userService } from '../identity';
 
 export const channelInfoService = new ChannelInfoService(userService);
-const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, logger);
+const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, Logger.getInstance());
 const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } = channelInfoRoutes;
 
 export const channelInfoRouter = Router();

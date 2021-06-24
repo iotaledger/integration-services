@@ -15,8 +15,9 @@ import {
 	FindOneOptions,
 	CommonOptions
 } from 'mongodb';
-import { logger } from '../routers/helper';
+import { Logger } from '../utils/logger';
 
+const logger = Logger.getInstance();
 type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
 // type WithProjection<T extends { projection?: any }> = T & { projection: NonNullable<T['projection']> };
 
@@ -119,7 +120,7 @@ export class MongoDbService {
 
 			MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
 				if (err != null) {
-					logger.log('could not connect to mongodb');
+					logger.error('could not connect to mongodb');
 					reject(err);
 					return;
 				}

@@ -20,7 +20,7 @@ export class AuthenticationRoutes {
 			const nonce = await this.authenticationService.getNonce(identityId);
 			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
-			this.logger.log(error);
+			this.logger.error(error);
 			next(new Error('could not the create nonce'));
 		}
 	};

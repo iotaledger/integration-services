@@ -12,8 +12,9 @@ import { CreateIdentityBody } from '../models/types/identity';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { CredentialTypes, Subject } from '../models/types/verification';
-import { logger } from '../routers/helper';
+import { Logger } from '../utils/logger';
 
+const logger = Logger.getInstance();
 const dbUrl = CONFIG.databaseUrl;
 const dbName = CONFIG.databaseName;
 const serverSecret = CONFIG.serverSecret;
