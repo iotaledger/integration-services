@@ -6,9 +6,14 @@ import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
+import { ILogger } from '../../utils/logger';
 
 export class ChannelInfoRoutes {
-	constructor(private readonly channelInfoService: ChannelInfoService, private readonly authorizationService: AuthorizationService) {}
+	constructor(
+		private readonly channelInfoService: ChannelInfoService,
+		private readonly authorizationService: AuthorizationService,
+		private readonly logger: ILogger
+	) {}
 
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
@@ -16,7 +21,8 @@ export class ChannelInfoRoutes {
 			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
 			res.send(channelInfos);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not search for the channel info'));
 		}
 	};
 
@@ -32,7 +38,8 @@ export class ChannelInfoRoutes {
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 			res.send(channelInfo);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not get the channel info'));
 		}
 	};
 
@@ -40,7 +47,7 @@ export class ChannelInfoRoutes {
 		try {
 			const channelInfo = req.body as ChannelInfo;
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -53,7 +60,8 @@ export class ChannelInfoRoutes {
 
 			res.sendStatus(StatusCodes.CREATED);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not add the channel info'));
 		}
 	};
 
@@ -66,7 +74,7 @@ export class ChannelInfoRoutes {
 				throw new Error('channel does not exist!');
 			}
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -79,7 +87,8 @@ export class ChannelInfoRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not update the channel info'));
 		}
 	};
 
@@ -95,7 +104,7 @@ export class ChannelInfoRoutes {
 				throw new Error('channel does not exist!');
 			}
 
-			const { isAuthorized, error } = await this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -103,7 +112,8 @@ export class ChannelInfoRoutes {
 			await this.channelInfoService.deleteChannelInfo(channelAddress);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not delete the channel info'));
 		}
 	};
 

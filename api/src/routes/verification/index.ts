@@ -3,18 +3,20 @@ import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
 import { Config } from '../../models/config';
-import { RevokeVerificationBody, VerifyIdentityBody } from '../../models/types/request-bodies';
+import { RevokeVerificationBody, TrustedRootBody, VerifyIdentityBody } from '../../models/types/request-bodies';
 import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
+import { ILogger } from '../../utils/logger';
 
 export class VerificationRoutes {
 	constructor(
 		private readonly verificationService: VerificationService,
 		private readonly authorizationService: AuthorizationService,
-		private readonly config: Config
+		private readonly config: Config,
+		private readonly logger: ILogger
 	) {}
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -44,7 +46,8 @@ export class VerificationRoutes {
 
 			res.status(StatusCodes.OK).send(vc);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not create the verifiable credential'));
 		}
 	};
 
@@ -54,7 +57,8 @@ export class VerificationRoutes {
 			const isVerified = await this.verificationService.checkVerifiableCredential(vcBody);
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not check the verifiable credential'));
 		}
 	};
 
@@ -76,7 +80,8 @@ export class VerificationRoutes {
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not revoke the verifiable credential'));
 		}
 	};
 
@@ -94,7 +99,38 @@ export class VerificationRoutes {
 
 			res.status(StatusCodes.OK).send(doc);
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not get the latest document'));
+		}
+	};
+
+	addTrustedRootIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const { trustedRoot } = req.body as TrustedRootBody;
+			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
+				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+			}
+
+			await this.verificationService.addTrustedRootId(trustedRoot);
+			return res.sendStatus(StatusCodes.OK);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not add the trusted root'));
+		}
+	};
+
+	removeTrustedRootIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const { trustedRoot } = req.body as TrustedRootBody;
+			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
+				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+			}
+
+			await this.verificationService.removeTrustedRootId(trustedRoot);
+			return res.sendStatus(StatusCodes.OK);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not remove the trusted root'));
 		}
 	};
 
@@ -103,7 +139,8 @@ export class VerificationRoutes {
 			const trustedRoots = await this.verificationService.getTrustedRootIds();
 			res.status(StatusCodes.OK).send({ trustedRoots });
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not get the trusted root identities'));
 		}
 	};
 
@@ -111,7 +148,7 @@ export class VerificationRoutes {
 		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.vc.id);
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
-			const isAuthorizedAdmin = await this.authorizationService.isAuthorizedAdmin(requestUser);
+			const isAuthorizedAdmin = this.authorizationService.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
 				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 			}

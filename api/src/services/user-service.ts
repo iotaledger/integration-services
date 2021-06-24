@@ -7,9 +7,10 @@ import { CreateIdentityBody, IdentityJsonUpdate, VerifiableCredentialJson } from
 import { SchemaValidator } from '../utils/validator';
 import * as IdentityDocsDb from '../database/identity-docs';
 import { SsiService } from './ssi-service';
+import { ILogger } from '../utils/logger';
 
 export class UserService {
-	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string) {}
+	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
 
 	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
 		const usersPersistence = await userDb.searchUsers(userSearch);
@@ -57,7 +58,7 @@ export class UserService {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
 		}
-		const validator = SchemaValidator.getInstance();
+		const validator = SchemaValidator.getInstance(this.logger);
 		validator.validateUser(user);
 
 		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.identityId);

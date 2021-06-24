@@ -8,6 +8,7 @@ import { ChannelService } from '../../services/channel-service';
 import { StreamsService } from '../../services/streams-service';
 import { SubscriptionService } from '../../services/subscription-service';
 import { UserService } from '../../services/user-service';
+import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test channel routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -22,13 +23,13 @@ describe('test channel routes', () => {
 			streamsNode: '',
 			statePassword: 'test123'
 		};
-		userService = new UserService({} as any, '');
-		streamsService = new StreamsService(config.streamsNode);
+		userService = new UserService({} as any, '', LoggerMock);
+		streamsService = new StreamsService(config.streamsNode, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const subscriptionPool = new SubscriptionPool(config.streamsNode);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
-		channelRoutes = new ChannelRoutes(channelService);
+		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -39,6 +40,7 @@ describe('test channel routes', () => {
 
 	describe('test create channel route', () => {
 		it('should call nextMock if no body is provided', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const req: any = {
 				params: {},
 				user: { identityId: undefined },
@@ -46,7 +48,8 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.createChannel(req, res, nextMock);
-			expect(nextMock).toHaveBeenCalledWith(new Error("Cannot read property 'topics' of undefined"));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'topics' of undefined"));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the channel'));
 		});
 
 		it('should bad request if no identityId is provided', async () => {

@@ -1,5 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import {
+	AggregateOfferSchema,
 	AggregateRatingSchema,
 	BrandSchema,
 	DemandSchema,
@@ -73,7 +74,7 @@ export const ProductSchema = Type.Object(
 		model: Type.Optional(Type.String()),
 		mpn: Type.Optional(Type.String()),
 		nsn: Type.Optional(Type.String()),
-		offers: Type.Optional(Type.Union([OfferSchema, DemandSchema])),
+		offers: Type.Optional(Type.Union([OfferSchema, DemandSchema, AggregateOfferSchema])),
 		pattern: Type.Optional(Type.String()),
 		productID: Type.Optional(Type.String()),
 		productionDate: Type.Optional(Type.String({ format: 'date-time' })),

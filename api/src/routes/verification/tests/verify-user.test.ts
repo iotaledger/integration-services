@@ -12,6 +12,7 @@ import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserType, UserRoles } from '../../../models/types/user';
+import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -34,15 +35,20 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService({} as any, '');
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(ssiService, userService, {
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id,
-			keyCollectionSize: 2
-		});
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config);
+		verificationService = new VerificationService(
+			ssiService,
+			userService,
+			{
+				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
+				keyCollectionSize: 2
+			},
+			LoggerMock
+		);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -65,6 +71,7 @@ describe('test authentication routes', () => {
 
 		it('should not verify since different identityId in request', async () => {
 			const subject = TestUsersMock[0];
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
 				user: { identityId: 'WRONGUSERID' },
@@ -81,11 +88,13 @@ describe('test authentication routes', () => {
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('user id of request does not concur with the initiatorVC user id!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('user id of request does not concur with the initiatorVC user id!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
 		it('should not verify since no valid credentialSubject!', async () => {
 			const subject = TestUsersMock[0];
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
 				user: { identityId: initiatorVC.id },
@@ -105,11 +114,13 @@ describe('test authentication routes', () => {
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('no valid verfiable credential!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('no valid verfiable credential!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
 		it('should not verify since initiator is not allowed to authorize others!', async () => {
 			const subject = TestUsersMock[0];
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
 				user: { identityId: initiatorVC.id },
@@ -126,11 +137,13 @@ describe('test authentication routes', () => {
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is not allowed based on its identity type!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiator is not allowed based on its identity type!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
 		it('should not verify for user which has valid vc but credential is not from type VerifiedIdentityCredential', async () => {
 			const subject = TestUsersMock[0];
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[1]; // this credential is from type SomeBasicCredential
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
@@ -148,11 +161,13 @@ describe('test authentication routes', () => {
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('initiator is not allowed based on its credential type!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiator is not allowed based on its credential type!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
 		it('should not verify since vc of initiator is not verified (initiatorVcIsVerified=false).', async () => {
 			const subject = TestUsersMock[0];
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const initiatorVcIsVerified = false;
 
@@ -173,7 +188,8 @@ describe('test authentication routes', () => {
 
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getKeyCollectionSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(nextMock).toHaveBeenCalledWith(new Error('initiatorVC is not verified!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiatorVC is not verified!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
 		it('should verify for user which has valid vc and different organization but admin user', async () => {

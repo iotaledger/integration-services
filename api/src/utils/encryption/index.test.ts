@@ -30,7 +30,6 @@ describe('test encryption', () => {
 
 		const nonce = createNonce();
 		const signed = 'tooshortsignature';
-		console.log('signed', signed.length);
 
 		await expect(verifySignedNonce(pubKey, nonce, signed)).rejects.toThrow('wrong length of nonce or signature!');
 	});

@@ -11,14 +11,15 @@ import {
 } from '../models/types/identity';
 import { KeyCollectionJson } from '../models/types/key-collection';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
+import { ILogger } from '../utils/logger';
 
 export class SsiService {
 	private static instance: SsiService;
-	private constructor(private readonly config: IdentityConfig) {}
+	private constructor(private readonly config: IdentityConfig, private readonly logger: ILogger) {}
 
-	public static getInstance(config: IdentityConfig): SsiService {
+	public static getInstance(config: IdentityConfig, logger: ILogger): SsiService {
 		if (!SsiService.instance) {
-			SsiService.instance = new SsiService(config);
+			SsiService.instance = new SsiService(config, logger);
 		}
 		return SsiService.instance;
 	}
@@ -56,7 +57,7 @@ export class SsiService {
 			};
 			return { docUpdate: { doc: newDoc.toJSON(), txHash }, keyCollectionJson };
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not generate the key collection');
 		}
 	}
@@ -78,7 +79,7 @@ export class SsiService {
 				txHash
 			};
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the identity');
 		}
 	}
@@ -120,7 +121,7 @@ export class SsiService {
 
 			return validatedCredential.credential;
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the verifiable credential');
 		}
 	}
@@ -134,7 +135,7 @@ export class SsiService {
 			const verified = issuerDoc.verify() && credentialVerified && subjectIsVerified;
 			return verified;
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not check the verifiable credential');
 		}
 	}
@@ -160,7 +161,7 @@ export class SsiService {
 
 			return { docUpdate: { doc: newDoc.toJSON(), txHash }, revoked: result };
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not revoke the verifiable credential');
 		}
 	}
@@ -172,7 +173,7 @@ export class SsiService {
 			const client = Client.fromConfig(config);
 			return await client.resolve(did);
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not get the latest identity');
 		}
 	}
@@ -186,7 +187,7 @@ export class SsiService {
 			}
 			return doc;
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not get the latest identity');
 		}
 	}
@@ -209,7 +210,7 @@ export class SsiService {
 				key
 			};
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not parse key or doc of the identity');
 		}
 	}
@@ -223,7 +224,7 @@ export class SsiService {
 				key
 			};
 		} catch (error) {
-			console.log('Error from identity sdk:', error);
+			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error(`could not create identity document from keytype: ${this.config.keyType}`);
 		}
 	}

@@ -2,21 +2,22 @@ import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceS
 import { User, UserType } from '../../models/types/user';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
+import { ILogger } from '../logger';
 
 export class SchemaValidator {
 	private static instance: SchemaValidator;
 	private ajv: Ajv;
 
-	private constructor() {
+	private constructor(private readonly logger: ILogger) {
 		this.ajv = new Ajv({ strict: false });
 		addFormats(this.ajv);
 
 		this.addSchemas();
 	}
 
-	public static getInstance(): SchemaValidator {
+	public static getInstance(logger: ILogger): SchemaValidator {
 		if (!SchemaValidator.instance) {
-			SchemaValidator.instance = new SchemaValidator();
+			SchemaValidator.instance = new SchemaValidator(logger);
 		}
 		return SchemaValidator.instance;
 	}
@@ -44,7 +45,7 @@ export class SchemaValidator {
 				break;
 		}
 		if (!validate) {
-			console.log(`no schema found for user type: ${user.claim?.type}`);
+			this.logger.log(`no schema found for user type: ${user.claim?.type}`);
 			return;
 		}
 
