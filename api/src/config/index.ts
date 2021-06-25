@@ -1,10 +1,17 @@
-import { Config, IdentityConfig } from '../models/config';
+import { Config, IdentityConfig, StreamsConfig } from '../models/config';
 import isEmpty from 'lodash/isEmpty';
 import * as Identity from '@iota/identity-wasm/node';
 
+const StreamsConfig: StreamsConfig = {
+	node: process.env.IOTA_HORNET_NODE,
+	permaNode: process.env.IOTA_PERMA_NODE,
+	statePassword: process.env.SERVER_SECRET
+};
+
 const IdentityConfig: IdentityConfig = {
 	network: process.env.NETWORK,
-	node: process.env.IOTA_PERMA_NODE,
+	node: process.env.IOTA_HORNET_NODE,
+	permaNode: process.env.IOTA_PERMA_NODE,
 	explorer: process.env.EXPLORER,
 	keyType: Identity.KeyType.Ed25519,
 	hashFunction: Identity.Digest.Sha256,
@@ -18,10 +25,12 @@ export const CONFIG: Config = {
 	databaseUrl: process.env.DATABASE_URL,
 	databaseName: process.env.DATABASE_NAME,
 	serverIdentityId: process.env.SERVER_IDENTITY,
-	streamsNode: process.env.IOTA_STREAMS_NODE,
 	serverSecret: process.env.SERVER_SECRET,
+	hornetNode: process.env.IOTA_HORNET_NODE,
+	permaNode: process.env.IOTA_PERMA_NODE,
 	apiKey: process.env.API_KEY,
 	identityConfig: IdentityConfig,
+	streamsConfig: StreamsConfig,
 	jwtExpiration: '2 days'
 };
 

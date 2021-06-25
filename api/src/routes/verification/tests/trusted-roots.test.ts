@@ -9,6 +9,7 @@ import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserRoles } from '../../../models/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
+import { IdentityConfigMock } from '../../../test/mocks/config';
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -22,15 +23,7 @@ describe('test authentication routes', () => {
 		const config: any = {
 			serverIdentityId: ServerIdentityMock.doc.id
 		};
-		const identityConfig: IdentityConfig = {
-			keyCollectionTag: 'key-collection',
-			explorer: '',
-			network: 'test',
-			node: '',
-			keyType: 0,
-			hashFunction: 0,
-			hashEncoding: 'base58'
-		};
+		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();

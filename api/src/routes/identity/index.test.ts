@@ -10,6 +10,7 @@ import { UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
+import { IdentityConfigMock } from '../../test/mocks/config';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -19,15 +20,7 @@ describe('test user routes', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 
-		const identityConfig: IdentityConfig = {
-			keyCollectionTag: 'key-collection',
-			explorer: '',
-			network: 'test',
-			node: '',
-			keyType: 0,
-			hashFunction: 0,
-			hashEncoding: 'base58'
-		};
+		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
 		const authorizationService = new AuthorizationService();

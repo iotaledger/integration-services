@@ -169,7 +169,8 @@ export class SsiService {
 	async getLatestIdentityJson(did: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
 		try {
 			const config = Identity.Config.fromNetwork(Identity.Network.mainnet());
-			//config.setPrimaryNode('https://chrysalis-chronicle.iota.org:443');
+			config.setPermanode('https://chrysalis-chronicle.iota.org/api/mainnet/');
+			config.setNode(Identity.Network.mainnet().defaultNodeURL);
 			const client = Client.fromConfig(config);
 			return await client.resolve(did);
 		} catch (error) {
