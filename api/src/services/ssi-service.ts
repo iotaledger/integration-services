@@ -226,7 +226,7 @@ export class SsiService {
 	}
 	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
 
-	private getIdentityClient(usePermaNode: boolean = false) {
+	private getIdentityClient(usePermaNode?: boolean) {
 		const cfg = Identity.Config.fromNetwork(Identity.Network.mainnet());
 		if (usePermaNode) {
 			cfg.setPermanode(this.config.permaNode);
