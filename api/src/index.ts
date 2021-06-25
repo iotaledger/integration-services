@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import swaggerUi from "swagger-ui-express";
 import { errorMiddleware } from './middlewares/error';
-import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routes/router';
+import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
@@ -11,9 +11,14 @@ import { setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
 import './routes/authentication/index'
 import './routes/authentication/usersController'
+import { Logger } from './utils/logger';
+
+const logger = Logger.getInstance();
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
-	console.log(router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`));
+	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
+	messages.map((m) => logger.log(m));
+
 	app.use(prefix, router);
 }
 
@@ -64,7 +69,7 @@ async function startServer() {
 
 	app.use(errorMiddleware);
 	app.listen(port, async () => {
-		console.log(`Started API Server on port ${port}`);
+		logger.log(`Started API Server on port ${port}`);
 		await MongoDbService.connect(dbUrl, dbName);
 	});
 }

@@ -8,3 +8,4 @@ dist
 coverage
 # streams wasm files
 wasm-node
+**/mocks
