@@ -9,8 +9,6 @@ import { CONFIG } from './config';
 import morgan from 'morgan';
 import { setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
-import './routes/authentication/index'
-import './routes/authentication/usersController'
 import { Logger } from './utils/logger';
 
 const logger = Logger.getInstance();
@@ -36,22 +34,25 @@ async function startServer() {
 
 	const options = {
 		definition: {
-		  openapi: '3.0.0',
-		  info: {
-			title: 'Hello World',
-			version: '1.0.0',
-		  },
-		  servers: [
-			  {
-				"url": `/api/${version}`,
-				"description": "Local Dev" 
-			  }
-		  ]
+			openapi: '3.0.0',
+			info: {
+				title: 'Ecommerce-SSI Bridge',
+				version: '1.0.0',
+				description: `The Ecommerce-SSI Bridge allows users to create Self-Sovereign Identities, linking Decentralized Identifiers (DIDs) to their specification (DID Documents). DIDs are public/private key pairs and can be created for organizations, individuals and objects. Each identity is represented by a unique public key immutably stored onto the ledger (in our case the IOTA Tangle).
+				 Identities and public keys are used to anchor off-chain Verifiable Credentials (VCs), certificates containing identity attributes and signed by an Issuer identity (using its private key). The Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then propagate this verification 
+				 to other entities (organizations, individuals, objects) identity using a network of trust approach`
+			},
+			servers: [
+				{
+					"url": `/api/${version}`,
+					"description": "Local Dev"
+				}
+			]
 		},
-		apis: ['./src/routes/**/*.ts'], // files containing annotations as above
-	  };
-	
-	  const openapiSpecification = swaggerJsdoc(options);
+		apis: ['./src/routers/**/*.ts', './src/models/openapi.yaml'], // files containing annotations as above
+	};
+
+	const openapiSpecification = swaggerJsdoc(options);
 
 	app.use(express.json({ limit: '10mb' }));
 	app.use(express.urlencoded({ limit: '10mb', extended: true }));

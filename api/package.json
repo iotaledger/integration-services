@@ -16,9 +16,7 @@
     "start": "npm-run-all build start-node",
     "build-watch": "tsc --watch ",
     "serve-nodemon": "nodemon ./dist/index",
-    "serve": "run-p build-watch serve-nodemon build-streams-lib",
-    "tsoa-routes": "tsoa routes",
-    "tsoa-spec": "tsoa spec"
+    "serve": "run-p build-watch serve-nodemon build-streams-lib"
   },
   "repository": {
     "type": "git",

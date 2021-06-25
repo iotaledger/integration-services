@@ -14,7 +14,51 @@ const identityRoutes = new IdentityRoutes(userService, authorizationService, Log
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();
+/**
+ * @openapi
+ * /identities/create:
+ *   post:
+ *     description: Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
+ *     parameters:
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *     requestBody:
+ *       content: 
+ *         application/json:
+ *           schema: 
+ *             $ref: "#/components/schemas/CreateIdentityBody"
+ *     responses:
+ *       201:
+ *         description: Returns the created identity
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/IdentityJsonUpdate"            
+ */
 identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
+/**
+ * @openapi
+ * /identities/search:
+ *   get:
+ *     description: Search for identities in the system and returns a list of existing identities.
+ *     responses:
+ *       201:
+ *         description: List of existing entities.
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               AnyValue: {}
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string             
+ */
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
