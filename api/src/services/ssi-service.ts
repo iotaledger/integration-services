@@ -111,8 +111,7 @@ export class SsiService {
 				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
 			});
 
-			const config = Identity.Config.fromNetwork(Identity.Network.mainnet());
-			const client = Client.fromConfig(config);
+			const client = this.getIdentityClient();
 			const validatedCredential = await client.checkCredential(signedVc.toString());
 
 			if (!validatedCredential?.verified || !doc.verify(signedVc)) {
@@ -141,8 +140,7 @@ export class SsiService {
 	}
 
 	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
-		const config = Identity.Config.fromNetwork(Identity.Network.mainnet());
-		const client = Client.fromConfig(config);
+		const client = this.getIdentityClient();
 		const txHash = await client.publishDocument(newDoc);
 		return txHash;
 	}
@@ -168,10 +166,7 @@ export class SsiService {
 
 	async getLatestIdentityJson(did: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
 		try {
-			const config = Identity.Config.fromNetwork(Identity.Network.mainnet());
-			config.setPermanode('https://chrysalis-chronicle.iota.org/api/mainnet/');
-			config.setNode(Identity.Network.mainnet().defaultNodeURL);
-			const client = Client.fromConfig(config);
+			const client = this.getIdentityClient(true);
 			return await client.resolve(did);
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -230,6 +225,15 @@ export class SsiService {
 		}
 	}
 	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
+
+	private getIdentityClient(usePermaNode: boolean = false) {
+		const cfg = Identity.Config.fromNetwork(Identity.Network.mainnet());
+		if (usePermaNode) {
+			cfg.setPermanode(this.config.permaNode);
+		}
+		cfg.setNode(this.config.node);
+		return Client.fromConfig(cfg);
+	}
 
 	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
 		return Identity.Document.fromJSON({
