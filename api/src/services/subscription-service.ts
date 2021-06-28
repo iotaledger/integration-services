@@ -4,6 +4,7 @@ import { AccessRights, Subscription, SubscriptionType } from '../models/types/su
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
+import { StreamsConfig } from '../models/config';
 
 export class SubscriptionService {
 	private password: string;
@@ -12,7 +13,7 @@ export class SubscriptionService {
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionPool: SubscriptionPool,
-		config: { statePassword: string; streamsNode: string }
+		config: StreamsConfig
 	) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;

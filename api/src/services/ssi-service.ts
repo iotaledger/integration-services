@@ -10,8 +10,8 @@ import {
 	Credential
 } from '../models/types/identity';
 import { KeyCollectionJson } from '../models/types/key-collection';
+const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
 import { ILogger } from '../utils/logger';
-const { Document, VerifiableCredential, VerificationMethod, KeyCollection } = Identity;
 
 export class SsiService {
 	private static instance: SsiService;
@@ -110,7 +110,9 @@ export class SsiService {
 				secret: issuerKeys.secret(subjectKeyIndex),
 				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
 			});
-			const validatedCredential = await Identity.checkCredential(signedVc.toString(), this.config);
+
+			const client = this.getIdentityClient();
+			const validatedCredential = await client.checkCredential(signedVc.toString());
 
 			if (!validatedCredential?.verified || !doc.verify(signedVc)) {
 				throw new Error('could not verify identity, please try it again.');
@@ -138,7 +140,8 @@ export class SsiService {
 	}
 
 	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
-		const txHash = await Identity.publish(newDoc, this.config);
+		const client = this.getIdentityClient();
+		const txHash = await client.publishDocument(newDoc);
 		return txHash;
 	}
 
@@ -161,9 +164,10 @@ export class SsiService {
 		}
 	}
 
-	async getLatestIdentityJson(did: string): Promise<IdentityDocumentJson> {
+	async getLatestIdentityJson(did: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
 		try {
-			return await Identity.resolve(did, this.config);
+			const client = this.getIdentityClient(true);
+			return await client.resolve(did);
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not get the latest identity');
@@ -172,8 +176,8 @@ export class SsiService {
 
 	async getLatestIdentityDoc(did: string): Promise<Identity.Document> {
 		try {
-			const json = await this.getLatestIdentityJson(did);
-			const doc = Document.fromJSON(json);
+			const { document } = await this.getLatestIdentityJson(did);
+			const doc = Document.fromJSON(document);
 			if (!doc) {
 				throw new Error('could not parse json');
 			}
@@ -209,7 +213,7 @@ export class SsiService {
 
 	generateIdentity() {
 		try {
-			const { doc, key } = new Document(this.config.keyType) as IdentityDocument;
+			const { doc, key } = new Document(this.config.keyType, Identity.Network.mainnet().toString()) as IdentityDocument;
 
 			return {
 				doc,
@@ -221,6 +225,15 @@ export class SsiService {
 		}
 	}
 	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
+
+	private getIdentityClient(usePermaNode?: boolean) {
+		const cfg = Identity.Config.fromNetwork(Identity.Network.mainnet());
+		if (usePermaNode) {
+			cfg.setPermanode(this.config.permaNode);
+		}
+		cfg.setNode(this.config.node);
+		return Client.fromConfig(cfg);
+	}
 
 	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
 		return Identity.Document.fromJSON({

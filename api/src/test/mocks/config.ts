@@ -1,10 +1,17 @@
-import { Config, IdentityConfig } from '../../models/config';
+import { Config, IdentityConfig, StreamsConfig } from '../../models/config';
+
+export const StreamsConfigMock: StreamsConfig = {
+	node: '',
+	permaNode: '',
+	statePassword: 'veryvery-very-very-server-secret'
+};
 
 export const IdentityConfigMock: IdentityConfig = {
 	keyCollectionTag: 'key-collection',
 	explorer: '',
 	network: 'test',
 	node: '',
+	permaNode: '',
 	keyType: 0,
 	hashFunction: 0,
 	hashEncoding: 'base58'
@@ -20,5 +27,7 @@ export const ConfigMock: Config = {
 	apiVersion: '0.1',
 	port: 3000,
 	serverIdentityId: 'did:iota:1234',
-	streamsNode: ''
+	permaNode: '',
+	hornetNode: '',
+	streamsConfig: StreamsConfigMock
 };

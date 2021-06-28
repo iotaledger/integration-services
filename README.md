@@ -20,14 +20,11 @@ The config should like following: (But please don't use the following values for
 
 > Important: The SERVER_SECRET has to have a length of 32 characters!!
 
-<!-- TODO adjust nodes after #106 is done -->
 ````
 PORT=3000
 API_VERSION=v1
-IOTA_PERMA_NODE=https://nodes.iota.org:443
-IOTA_CHRONICLE_NODE=https://chrysalis-nodes.iota.org:443
+IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
 IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
-IOTA_STREAMS_NODE=https://chrysalis-nodes.iota.org:443
 NETWORK=main
 EXPLORER=https://explorer.iota.org/mainnet/transaction
 DATABASE_NAME=e-commerce-tools
@@ -135,4 +132,16 @@ There should be now 2 docker container available check it using: `docker ps``
 CONTAINER ID   IMAGE               COMMAND                  CREATED         STATUS         PORTS                      NAMES
 086e1549bdb3   api_ensuresec_api   "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3000->3000/tcp     api_ensuresec_api_1
 0bd35f3d5fc5   mongo:latest        "docker-entrypoint.s…"   7 seconds ago   Up 6 seconds   0.0.0.0:27017->27017/tcp   api_mongodb_container_1
+```
+
+## 4. API Key
+
+The api supports an optional api-key which can be used to filter requests which do not know about the right key. If the key is not added or is set as an empty string the api-key won't be considered by the api. To force a check for the api-key it can be added by adding the env variable `API_KEY` to the .env file, like for instance:
+```
+API_KEY=SAMPLE-API-KEY
+```
+In this case all request must have the specified api-key as `?api-key=SAMPLE-API-KEY` query parameter like:
+
+```
+localhost:3000/api/v1/verification/latest-document/did:iota:2k7Spwr9yFfCTgGPArucUg3h89W6kidjqBBMMKMW4C9r?api-key=SAMPLE-API-KEY
 ```

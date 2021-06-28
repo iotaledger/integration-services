@@ -8,6 +8,7 @@ import { ChannelService } from '../../services/channel-service';
 import { StreamsService } from '../../services/streams-service';
 import { SubscriptionService } from '../../services/subscription-service';
 import { UserService } from '../../services/user-service';
+import { StreamsConfigMock } from '../../test/mocks/config';
 import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test channel routes', () => {
@@ -19,14 +20,11 @@ describe('test channel routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config = {
-			streamsNode: '',
-			statePassword: 'test123'
-		};
+		const config = StreamsConfigMock;
 		userService = new UserService({} as any, '', LoggerMock);
-		streamsService = new StreamsService(config.streamsNode, LoggerMock);
+		streamsService = new StreamsService(config.node, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		const subscriptionPool = new SubscriptionPool(config.streamsNode);
+		const subscriptionPool = new SubscriptionPool(config.node);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
@@ -96,7 +94,7 @@ describe('test channel routes', () => {
 			await channelRoutes.createChannel(req, res, nextMock);
 
 			expect(createSpy).toHaveBeenCalledWith('verysecretseed');
-			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, 'test123');
+			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
