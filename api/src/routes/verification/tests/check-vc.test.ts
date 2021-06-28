@@ -8,6 +8,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as TrustedRootsDb from '../../../database/trusted-roots';
 import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
+import { LoggerMock } from '../../../test/mocks/logger';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -32,15 +33,20 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService({} as any, '');
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(ssiService, userService, {
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id,
-			keyCollectionSize: 2
-		});
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config);
+		verificationService = new VerificationService(
+			ssiService,
+			userService,
+			{
+				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
+				keyCollectionSize: 2
+			},
+			LoggerMock
+		);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -52,6 +58,7 @@ describe('test authentication routes', () => {
 	describe('test checkVerifiableCredential route', () => {
 		it('should throw an error since no server identity is found with the id!', async () => {
 			const isVerified = true;
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
 			// no server identity found
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(null);
@@ -64,7 +71,8 @@ describe('test authentication routes', () => {
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('no valid server identity to check the credential.'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('no valid server identity to check the credential.'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not check the verifiable credential'));
 		});
 
 		it('should throw error since no trusted roots found!', async () => {
@@ -72,6 +80,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
 			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([]);
+			const loggerSpy = spyOn(LoggerMock, 'error');
 
 			const req: any = {
 				params: {},
@@ -83,7 +92,8 @@ describe('test authentication routes', () => {
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
-			expect(nextMock).toHaveBeenCalledWith(new Error('no trusted roots found!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('no trusted roots found!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not check the verifiable credential'));
 		});
 
 		it('should return false since since root is not trusted', async () => {

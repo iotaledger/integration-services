@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ProveOwnershipPostBody } from '../../models/types/request-bodies';
 import { AuthenticationService } from '../../services/authentication-service';
+import { ILogger } from '../../utils/logger';
 
 export class AuthenticationRoutes {
-	constructor(private readonly authenticationService: AuthenticationService) {}
+	constructor(private readonly authenticationService: AuthenticationService, private readonly logger: ILogger) {}
 
 	getNonce = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
@@ -19,7 +20,8 @@ export class AuthenticationRoutes {
 			const nonce = await this.authenticationService.getNonce(identityId);
 			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not the create nonce'));
 		}
 	};
 
@@ -38,7 +40,8 @@ export class AuthenticationRoutes {
 			const jwt = await this.authenticationService.authenticate(signedNonce, identityId);
 			res.status(StatusCodes.OK).send({ jwt });
 		} catch (error) {
-			next(error);
+			this.logger.error(error);
+			next(new Error('could not prove the ownership'));
 		}
 	};
 }

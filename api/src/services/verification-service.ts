@@ -17,6 +17,7 @@ import * as TrustedRootsDb from '../database/trusted-roots';
 import { VerificationServiceConfig } from '../models/config/services';
 import { JsonldGenerator } from '../utils/jsonld';
 import { Subject } from '../models/types/verification';
+import { ILogger } from '../utils/logger';
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identiity found for issuerId: ${issuerId}`;
@@ -27,7 +28,8 @@ export class VerificationService {
 	constructor(
 		private readonly ssiService: SsiService,
 		private readonly userService: UserService,
-		verificationServiceConfig: VerificationServiceConfig
+		verificationServiceConfig: VerificationServiceConfig,
+		private readonly logger: ILogger
 	) {
 		const { serverSecret, serverIdentityId, keyCollectionSize } = verificationServiceConfig;
 		this.serverSecret = serverSecret;
@@ -130,10 +132,8 @@ export class VerificationService {
 		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
 		await this.updateDatabaseIdentityDoc(res.docUpdate);
 
-		if (res.revoked === true) {
-			console.log('successfully revoked!');
-		} else {
-			console.log(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
+		if (res.revoked !== true) {
+			this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
 			return;
 		}
 
@@ -198,7 +198,7 @@ export class VerificationService {
 				index: keyCollectionIndex
 			};
 		} catch (e) {
-			console.log('error when generating key collection', e);
+			this.logger.error(`error when generating key collection ${e}`);
 			throw new Error('could not generate key collection');
 		}
 	};

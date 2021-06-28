@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ValidationError } from 'express-json-validator-middleware';
+import { Logger } from '../utils/logger';
 
 /**
  * Error middleware to log and return the error to the client.
@@ -17,7 +18,7 @@ export const errorMiddleware = (err: Error, _req: Request, res: Response, _next:
 		res.send({ error: 'No valid body provided!' });
 		return;
 	}
-	console.error(err);
+	Logger.getInstance().error(err.message);
 	res.status(StatusCodes.INTERNAL_SERVER_ERROR);
 	res.send({ error: err.message });
 };

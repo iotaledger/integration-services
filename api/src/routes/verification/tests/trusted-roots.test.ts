@@ -8,6 +8,7 @@ import * as TrustedRootsDb from '../../../database/trusted-roots';
 import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserRoles } from '../../../models/types/user';
+import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -30,15 +31,20 @@ describe('test authentication routes', () => {
 			hashFunction: 0,
 			hashEncoding: 'base58'
 		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService({} as any, '');
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(ssiService, userService, {
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id,
-			keyCollectionSize: 2
-		});
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config);
+		verificationService = new VerificationService(
+			ssiService,
+			userService,
+			{
+				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
+				keyCollectionSize: 2
+			},
+			LoggerMock
+		);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -79,6 +85,7 @@ describe('test authentication routes', () => {
 		});
 		it('should not add trusted root since db throws an error!', async () => {
 			const addTrustedRootIdSpy = spyOn(TrustedRootsDb, 'addTrustedRootId').and.throwError('db error');
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const req: any = {
 				params: {},
 				user: {
@@ -90,6 +97,7 @@ describe('test authentication routes', () => {
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
 
 			expect(addTrustedRootIdSpy).toHaveBeenCalledWith('did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9');
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('db error'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not add the trusted root'));
 		});
 		it('should add trusted root to the identity!', async () => {
@@ -122,6 +130,7 @@ describe('test authentication routes', () => {
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		});
 		it('should not delete trusted root since db throws an error!', async () => {
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const removeTrustedRootIdSpy = spyOn(TrustedRootsDb, 'removeTrustedRootId').and.throwError('db error');
 			const req: any = {
 				params: {},
@@ -134,6 +143,7 @@ describe('test authentication routes', () => {
 			await verificationRoutes.removeTrustedRootIdentity(req, res, nextMock);
 
 			expect(removeTrustedRootIdSpy).toHaveBeenCalledWith('did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9');
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('db error'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not remove the trusted root'));
 		});
 		it('should delete trusted root!', async () => {

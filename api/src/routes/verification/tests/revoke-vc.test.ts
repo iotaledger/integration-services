@@ -3,7 +3,7 @@ import * as IdentityDocsDb from '../../../database/identity-docs';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
-import { IdentityConfig } from '../../../models/config';
+import { Config, IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { VerificationRoutes } from '../index';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
@@ -11,6 +11,8 @@ import * as UserDb from '../../../database/user';
 import { VerifiableCredentialPersistence } from '../../../models/types/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { UserType, UserRoles } from '../../../models/types/user';
+import { LoggerMock } from '../../../test/mocks/logger';
+import { ConfigMock } from '../../../test/mocks/config';
 
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -24,27 +26,22 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config: any = {
-			serverIdentityId: ServerIdentityMock.doc.id
-		};
-		const identityConfig: IdentityConfig = {
-			keyCollectionTag: 'key-collection',
-			explorer: '',
-			network: 'test',
-			node: '',
-			keyType: 0,
-			hashFunction: 0,
-			hashEncoding: 'base58'
-		};
-		ssiService = SsiService.getInstance(identityConfig);
-		userService = new UserService({} as any, '');
+		const config: Config = { ...ConfigMock, serverIdentityId: ServerIdentityMock.doc.id };
+		const identityConfig: IdentityConfig = ConfigMock.identityConfig;
+		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
+		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(ssiService, userService, {
-			serverSecret,
-			serverIdentityId: ServerIdentityMock.doc.id,
-			keyCollectionSize: 2
-		});
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config);
+		verificationService = new VerificationService(
+			ssiService,
+			userService,
+			{
+				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
+				keyCollectionSize: 2
+			},
+			LoggerMock
+		);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -57,6 +54,7 @@ describe('test authentication routes', () => {
 		it('should throw an error since no verfiable credential is found to revoke!', async () => {
 			const identityToRevoke = vcMock.id;
 			// since we won't have a linkedIdentity for it won't go further
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const linkedIdentity: any = null;
 			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
 			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity');
@@ -76,11 +74,13 @@ describe('test authentication routes', () => {
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('no vc found to revoke the verification!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('no vc found to revoke the verification!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
 		});
 
 		it('is not authorized to revoke the identity since not same request uid as initiatorId', async () => {
 			const identityToRevoke = vcMock.id;
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -109,7 +109,8 @@ describe('test authentication routes', () => {
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
 		});
 
 		it('is authorized to revoke the identity since same request uid as initiatorId', async () => {
@@ -295,6 +296,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an org admin user', async () => {
 			const identityToRevoke = vcMock.id;
+			const loggerSpy = spyOn(LoggerMock, 'error');
 			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
@@ -323,7 +325,8 @@ describe('test authentication routes', () => {
 			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(removeUserVcSpy).not.toHaveBeenCalled();
-			expect(nextMock).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
 		});
 
 		it('identity is already revoked', async () => {

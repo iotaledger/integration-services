@@ -5,6 +5,7 @@ import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
+import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -13,10 +14,10 @@ describe('test Search user', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService({} as any, '');
+		userService = new UserService({} as any, '', LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService();
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -67,10 +68,10 @@ describe('test GET channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService({} as any, '');
+		userService = new UserService({} as any, '', LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService();
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 		res = {
 			send: sendMock,
 			sendStatus: sendStatusMock
@@ -125,6 +126,7 @@ describe('test GET channelInfo', () => {
 	});
 
 	it('should call next(err) if an error occurs', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.callFake(() => {
 			throw new Error('Test error');
 		});
@@ -137,7 +139,8 @@ describe('test GET channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
-		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not get the channel info'));
 	});
 });
 
@@ -159,10 +162,10 @@ describe('test POST channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService({} as any, '');
+		userService = new UserService({} as any, '', LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService();
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -197,6 +200,7 @@ describe('test POST channelInfo', () => {
 	});
 
 	it('should not add channel info since request identityid does not match', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
@@ -208,7 +212,8 @@ describe('test POST channelInfo', () => {
 		await channelInfoRoutes.addChannelInfo(req, res, nextMock);
 
 		expect(addChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed!'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not add the channel info'));
 	});
 
 	it('should add channel info since request identityid does match', async () => {
@@ -226,6 +231,7 @@ describe('test POST channelInfo', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(201);
 	});
 	it('should call next(err) if an error occurs', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.callFake(() => {
 			throw new Error('Test error');
 		});
@@ -238,7 +244,8 @@ describe('test POST channelInfo', () => {
 
 		expect(addChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
-		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not add the channel info'));
 	});
 });
 
@@ -260,10 +267,10 @@ describe('test PUT channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService({} as any, '');
+		userService = new UserService({} as any, '', LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService();
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 		getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({
 			created: getDateFromString('2021-03-26T16:13:11+01:00'),
 			authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
@@ -326,6 +333,7 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should not update expected channel info since not allowed', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
 
 		const req: any = {
@@ -337,10 +345,12 @@ describe('test PUT channelInfo', () => {
 		await channelInfoRoutes.updateChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalled();
 		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(0);
-		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed!'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not update the channel info'));
 	});
 
 	it('should call next(err) if an error occurs', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.callFake(() => {
 			throw new Error('Test error');
 		});
@@ -353,7 +363,8 @@ describe('test PUT channelInfo', () => {
 
 		expect(updateChannelTopicSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
-		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not update the channel info'));
 	});
 });
 
@@ -376,10 +387,10 @@ describe('test DELETE channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService({} as any, '');
+		userService = new UserService({} as any, '', LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService();
-		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService);
+		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -399,6 +410,7 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should not be able to parse the channel since it is no valid channel', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({}); // no valid channel
 
@@ -412,10 +424,12 @@ describe('test DELETE channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(nextMock).toHaveBeenCalledWith(new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
 
 	it('should return error since channel is not found', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
 		const getChannelInfoSpy = spyOn(channelInfoService, 'getChannelInfo').and.returnValue(null); // channel is null
 
@@ -429,10 +443,12 @@ describe('test DELETE channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(nextMock).toHaveBeenCalledWith(new Error('channel does not exist!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('channel does not exist!'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
 
 	it('should not delete the expected channel info since he is not authorized', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 
@@ -446,7 +462,8 @@ describe('test DELETE channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(nextMock).toHaveBeenCalledWith(new Error('not allowed!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed!'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
 
 	it('should delete the expected channel info since he is authorized', async () => {
@@ -467,6 +484,7 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should call next(err) if an error occurs', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
 		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
 		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo').and.callFake(() => {
 			throw new Error('Test error');
@@ -481,6 +499,7 @@ describe('test DELETE channelInfo', () => {
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).not.toHaveBeenCalled();
-		expect(nextMock).toHaveBeenCalledWith(new Error('Test error'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
 });
