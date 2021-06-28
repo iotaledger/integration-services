@@ -10,6 +10,7 @@ import { UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
+import { IdentityConfigMock } from '../../test/mocks/config';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -19,15 +20,7 @@ describe('test user routes', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 
-		const identityConfig: IdentityConfig = {
-			keyCollectionTag: 'key-collection',
-			explorer: '',
-			network: 'test',
-			node: '',
-			keyType: 0,
-			hashFunction: 0,
-			hashEncoding: 'base58'
-		};
+		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
 		const authorizationService = new AuthorizationService();
@@ -146,7 +139,7 @@ describe('test user routes', () => {
 		it('should return 404 since no user added', async () => {
 			const loggerSpy = spyOn(LoggerMock, 'error');
 			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 0 } }); // no user added
-			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
+			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
 
 			const req: any = {
 				params: {},
@@ -161,7 +154,7 @@ describe('test user routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not add the identity'));
 		});
 		it('should add user', async () => {
-			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
+			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
 			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 1 } });
 
 			const req: any = {
@@ -178,7 +171,7 @@ describe('test user routes', () => {
 
 		it('should call next(err) if an error occurs when adding to db', async () => {
 			const loggerSpy = spyOn(LoggerMock, 'error');
-			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
+			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
 			const addUserSpy = spyOn(UserDb, 'addUser').and.callFake(() => {
 				throw new Error('Test error');
 			});
