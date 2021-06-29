@@ -1,10 +1,26 @@
 components:
   schemas:
-    CreateIdentityBody:
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserWithoutIdFields'
+        - type: object
+          properties:
+            identityId: 
+              type: string
+              minLength: 50
+              maxLength: 53
+            publicKey:
+              type: string
+              minLength: 10
+          required:
+            - identityId
+            - publicKey
+
+
+    UserWithoutIdFields:
       type: object
       properties:
-        storeIdentity:
-          type: boolean
         username:
           type: string
           minLength: 3
@@ -24,6 +40,17 @@ components:
           $ref: '#/components/schemas/Claim'
           nullable: true
 
+    CreateUserBody:
+      allOf:
+        - $ref: '#/components/schemas/UserWithoutIdFields'
+      
+    CreateIdentityBody:
+      allOf:
+        - $ref: '#/components/schemas/CreateUserBody'
+        - type: object
+          properties:
+            storeIdentity:
+              type: boolean
 
     VerifiableCredential:
       type: object
@@ -99,16 +126,27 @@ components:
       required:
         - id
         - type
-    
-    IdentityJsonUpdate:
+
+    IdentityJson:
       type: object
       properties:
         doc: 
           $ref: '#/components/schemas/IdentityDocumentJson'
-        hex:
+        key:
           $ref: '#/components/schemas/IdentityKeyPairJson'
-        txHash:
-          type: string
+      required:
+        - doc
+        - key
+    
+    IdentityJsonUpdate:
+      allOf:
+        - $ref: '#/components/schemas/IdentityJson'
+        - type: object
+          properties:   
+            txHash:
+              type: string
+          required:
+            - txHash
       
     IdentityDocumentJson:
       type: object

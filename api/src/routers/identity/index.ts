@@ -19,15 +19,13 @@ export const identityRouter = Router();
  * /identities/create:
  *   post:
  *     description: Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
- *     parameters:
- *     - name: identityId
- *       in: path
- *       required: true
+ *     tags:
+ *     - identity
  *     requestBody:
  *       content: 
  *         application/json:
  *           schema: 
- *             $ref: "#/components/schemas/CreateIdentityBody"
+ *             $ref: "#/components/schemas/CreateIdentityBodySchema"
  *     responses:
  *       201:
  *         description: Returns the created identity
@@ -37,11 +35,14 @@ export const identityRouter = Router();
  *               $ref: "#/components/schemas/IdentityJsonUpdate"            
  */
 identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
+
 /**
  * @openapi
  * /identities/search:
  *   get:
  *     description: Search for identities in the system and returns a list of existing identities.
+ *     tags:
+ *     - identity
  *     responses:
  *       201:
  *         description: List of existing entities.
@@ -60,6 +61,31 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *                   type: string             
  */
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
+
+/**
+ * @openapi
+ * /identities/identity/{identityId}:
+ *   get:
+ *     description: Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
+ *     tags:
+ *     - identity
+ *     parameters:
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *     responses:
+ *       200:
+ *         description: List of existing entities.
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:  
+ *                  type: $ref: "#/components/schemas/User"  
+ *                  nullable: true 
+ * 
+ */
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
 identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserBodySchema }), updateUser);

@@ -49,15 +49,19 @@ async function startServer() {
 				}
 			]
 		},
-		apis: ['./src/routers/**/*.ts', './src/models/openapi.yaml'], // files containing annotations as above
+		apis: ['./src/routers/**/*.ts', './src/models/open-api-schemas.yaml'], // files containing annotations as above
 	};
+
+	const swaggerUiOptions = {
+		explorer: true
+	}
 
 	const openapiSpecification = swaggerJsdoc(options);
 
 	app.use(express.json({ limit: '10mb' }));
 	app.use(express.urlencoded({ limit: '10mb', extended: true }));
 	app.use(loggerMiddleware);
-	app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+	app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification, swaggerUiOptions));
 
 	const prefix = `/api/${version}`;
 	useRouter(app, prefix + '/channel-info', channelInfoRouter);

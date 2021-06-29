@@ -19,6 +19,8 @@ export const authenticationRouter = Router();
  * /authentication/prove-ownership/{identityId}:
  *   get:
  *     description: Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
+ *     tags:
+ *     - authentication
  *     parameters:
  *     - name: identityId
  *       in: path
@@ -41,7 +43,9 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  * /authentication/prove-ownership/{identityId}:
  *   post:
  *     description: Get an authentication token by signing a nonce using the private key. If signature is verified, a JWT string will be returned in the response. The nonce can be received from GET /prove-ownership/{identity-id} endpoint. The JWT is used for any future API interaction.
-  *     parameters:
+ *     tags:
+ *     - authentication
+ *     parameters:
  *     - name: identityId
  *       in: path
  *       required: true
@@ -49,12 +53,7 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *       content: 
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               signedNonce:
- *                 type: string
- *                 minLength: 128
- *                 maxLength: 128
+ *             $ref: '#/components/schemas/ProveOwnershipPostBodySchema'
  *     responses:
  *       200:
  *         description: Returns a JSON Web Token (JWT).
