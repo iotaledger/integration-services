@@ -3,6 +3,7 @@ import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/i
 import { fromBytes, toBytes } from '../utils/text';
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
+import { StreamsConfig } from '../models/config';
 
 streams.set_panic_hook();
 
@@ -12,13 +13,12 @@ global.Request = (fetch as any).Request;
 global.Response = (fetch as any).Response;
 
 export class StreamsService {
-	constructor(private readonly node: string, private readonly logger: ILogger) {}
+	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
-	importSubscription = (state: string, isAuthor: boolean, password: string): Author | Subscriber => {
+	importSubscription = (state: string, isAuthor: boolean): Author | Subscriber => {
 		try {
-			const options = new streams.SendOptions(1, true, 1);
-			const client = new streams.Client(this.node, options.clone());
-
+			const password = this.config.statePassword;
+			const client = this.getClient(this.config.node);
 			if (isAuthor) {
 				return streams.Author.import(client, toBytes(state), password);
 			}
@@ -41,12 +41,11 @@ export class StreamsService {
 
 	create = async (seed?: string): Promise<{ seed: string; channelAddress: string; author: Author }> => {
 		try {
-			const options = new streams.SendOptions(1, true, 1);
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
-			const author = new streams.Author(this.node, seed, options, false);
-
+			const client = this.getClient(this.config.node);
+			const author = streams.Author.from_client(client, seed, true);
 			const response = await author.clone().send_announce();
 			const ann_link = response.get_link();
 
@@ -152,13 +151,13 @@ export class StreamsService {
 	): Promise<{ seed: string; subscriptionLink: string; subscriber: Subscriber }> => {
 		try {
 			const annAddress = streams.Address.from_string(announcementLink);
-			const options = new streams.SendOptions(1, true, 1);
 
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
+			const client = this.getClient(this.config.node);
+			const subscriber = streams.Subscriber.from_client(client, seed);
 
-			const subscriber = new streams.Subscriber(this.node, seed, options);
 			let ann_link_copy = annAddress.copy();
 			await subscriber.clone().receive_announcement(ann_link_copy);
 
@@ -198,5 +197,10 @@ export class StreamsService {
 			seed += alphabet[Math.floor(Math.random() * alphabet.length)];
 		}
 		return seed;
+	}
+
+	private getClient(node: string): streams.Client {
+		const options = new streams.SendOptions(node, 9, true, 1);
+		return new streams.Client(node, options.clone());
 	}
 }

@@ -1,8 +1,11 @@
 import { SubscriptionPool } from '.';
 import * as SubscriptionDb from '../../database/subscription';
+import { StreamsService } from '../../services/streams-service';
+import { StreamsConfigMock } from '../../test/mocks/config';
+import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test subscription pool', () => {
-	const pool = new SubscriptionPool('node');
+	const pool = new SubscriptionPool(new StreamsService(StreamsConfigMock, LoggerMock));
 	let dateNowSpy: any;
 	const channelAddress = 'test123';
 	beforeEach(() => {
@@ -16,18 +19,17 @@ describe('test subscription pool', () => {
 	});
 	describe('check if expected subscriptions will be returned', () => {
 		it('should return expected subscriptions', async () => {
-			const pw = 'verysecretpassword';
 			const getSubscriptionSpy = spyOn(SubscriptionDb, 'getSubscription').and.returnValue(undefined); // not found!
 
 			// objects from array in pool
-			expect(await pool.get(channelAddress, 'iota:did:imanauthor1', true, pw)).toEqual({ id: 'imanauthor1' });
-			expect(await pool.get(channelAddress, 'iota:did:imasubscriber1', false, pw)).toEqual({ id: 'imasubscriber1' }); // object from array in pool
+			expect(await pool.get(channelAddress, 'iota:did:imanauthor1', true)).toEqual({ id: 'imanauthor1' });
+			expect(await pool.get(channelAddress, 'iota:did:imasubscriber1', false)).toEqual({ id: 'imasubscriber1' }); // object from array in pool
 
 			// called from database but not found
-			await expect(pool.get(channelAddress, 'iota:did:authornotfoundinpool', false, pw)).rejects.toThrow(
+			await expect(pool.get(channelAddress, 'iota:did:authornotfoundinpool', false)).rejects.toThrow(
 				'no subscription found for channelAddress: test123 and identityId: iota:did:authornotfoundinpool'
 			);
-			await expect(pool.get(channelAddress, 'iota:did:subscribernotfoundinpool', true, pw)).rejects.toThrow(
+			await expect(pool.get(channelAddress, 'iota:did:subscribernotfoundinpool', true)).rejects.toThrow(
 				'no subscription found for channelAddress: test123 and identityId: iota:did:subscribernotfoundinpool'
 			);
 			expect(getSubscriptionSpy).toHaveBeenCalledTimes(2);

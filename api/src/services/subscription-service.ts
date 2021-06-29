@@ -69,7 +69,7 @@ export class SubscriptionService {
 	};
 
 	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string): Promise<{ keyloadLink: string }> => {
-		const author = await this.subscriptionPool.get(channelAddress, authorId, true, this.password);
+		const author = await this.subscriptionPool.get(channelAddress, authorId, true);
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorId}`);
 		}

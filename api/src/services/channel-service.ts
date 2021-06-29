@@ -61,7 +61,7 @@ export class ChannelService {
 		}
 
 		const isAuth = subscription.type === SubscriptionType.Author;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth, this.password);
+		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
@@ -92,7 +92,7 @@ export class ChannelService {
 		const isAuth = channelInfo.authorId === identityId;
 		// TODO encrypt/decrypt seed
 		const latestLink = channelInfo.latestLink;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth, this.password);
+		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}

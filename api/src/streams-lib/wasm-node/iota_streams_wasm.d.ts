@@ -42,12 +42,11 @@ export class Address {
 export class Author {
   free(): void;
 /**
-* @param {string} node
 * @param {string} seed
 * @param {SendOptions} options
 * @param {boolean} multi_branching
 */
-  constructor(node: string, seed: string, options: SendOptions, multi_branching: boolean);
+  constructor(seed: string, options: SendOptions, multi_branching: boolean);
 /**
 * @param {Client} client
 * @param {string} seed
@@ -247,11 +246,12 @@ export class PublicKeys {
 export class SendOptions {
   free(): void;
 /**
+* @param {string} url
 * @param {number} depth
 * @param {boolean} local_pow
 * @param {number} threads
 */
-  constructor(depth: number, local_pow: boolean, threads: number);
+  constructor(url: string, depth: number, local_pow: boolean, threads: number);
 /**
 * @returns {SendOptions}
 */
@@ -268,17 +268,20 @@ export class SendOptions {
 * @returns {number}
 */
   threads: number;
+/**
+* @returns {string}
+*/
+  url: string;
 }
 /**
 */
 export class Subscriber {
   free(): void;
 /**
-* @param {string} node
 * @param {string} seed
 * @param {SendOptions} options
 */
-  constructor(node: string, seed: string, options: SendOptions);
+  constructor(seed: string, options: SendOptions);
 /**
 * @param {Client} client
 * @param {string} seed
