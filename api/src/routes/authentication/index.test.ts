@@ -9,6 +9,7 @@ import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';
 import { IdentityConfig } from '../../models/config';
 import { LoggerMock } from '../../test/mocks/logger';
+import { IdentityConfigMock } from '../../test/mocks/config';
 
 const validUserMock = UserIdentityMock.userData;
 
@@ -21,15 +22,7 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const identityConfig: IdentityConfig = {
-			keyCollectionTag: 'key-collection',
-			explorer: '',
-			network: 'test',
-			node: '',
-			keyType: 0,
-			hashFunction: 0,
-			hashEncoding: 'base58'
-		};
+		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService, serverSecret, LoggerMock);
 		authenticationService = new AuthenticationService(userService, ssiService, {
@@ -151,7 +144,7 @@ describe('test authentication routes', () => {
 			const verified = true;
 			const identityId = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
 			const getUserSpy = spyOn(userService, 'getUser').and.returnValue(null); // not found in db
-			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock.doc);
+			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
 			const getNonceSpy = spyOn(AuthDb, 'getNonce').and.returnValue({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' });
 			const verifySignedNonceSpy = spyOn(EncryptionUtils, 'verifySignedNonce').and.returnValue(verified);
 			const req: any = {

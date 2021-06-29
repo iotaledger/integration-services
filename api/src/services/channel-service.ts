@@ -6,6 +6,7 @@ import { SubscriptionService } from './subscription-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
+import { StreamsConfig } from '../models/config';
 
 export class ChannelService {
 	private readonly password: string;
@@ -15,7 +16,7 @@ export class ChannelService {
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionService: SubscriptionService,
 		private readonly subscriptionPool: SubscriptionPool,
-		config: { statePassword: string; streamsNode: string }
+		config: StreamsConfig
 	) {
 		this.streamsService = streamsService;
 		this.channelInfoService = channelInfoService;

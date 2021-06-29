@@ -9,12 +9,12 @@ import { Logger } from '../../utils/logger';
 import { channelInfoService } from '../channel-info';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
 
-const { serverSecret, streamsNode } = CONFIG;
-export const subscriptionPool = new SubscriptionPool(streamsNode);
+const config = CONFIG.streamsConfig;
+export const subscriptionPool = new SubscriptionPool(config.node);
 subscriptionPool.startInterval();
-export const streamsService = new StreamsService(streamsNode, Logger.getInstance());
-export const streamsConfig = { statePassword: serverSecret, streamsNode };
-export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, streamsConfig);
+
+export const streamsService = new StreamsService(config.node, Logger.getInstance());
+export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
 const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 
