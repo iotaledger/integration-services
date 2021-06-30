@@ -76,7 +76,8 @@ describe('test channel routes', () => {
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
-				identityId: 'did:iota:1234'
+				identityId: 'did:iota:1234',
+				publicKey: ''
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',

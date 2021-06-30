@@ -24,6 +24,10 @@ export class SubscriptionService {
 		return subscriptionDb.getSubscription(channelAddress, identityId);
 	};
 
+	getSubscriptionByLink = async (subscriptionLink: string) => {
+		return subscriptionDb.getSubscriptionByLink(subscriptionLink);
+	};
+
 	addSubscription = async (subscription: Subscription) => {
 		return subscriptionDb.addSubscription(subscription);
 	};
@@ -42,12 +46,7 @@ export class SubscriptionService {
 		return res;
 	};
 
-	requestSubscription = async (
-		subscriberId: string,
-		channelAddress: string,
-		accessRights?: AccessRights,
-		seed?: string
-	): Promise<{ seed: string; subscriptionLink: string }> => {
+	requestSubscription = async (subscriberId: string, channelAddress: string, accessRights?: AccessRights, seed?: string) => {
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
@@ -57,7 +56,8 @@ export class SubscriptionService {
 			subscriptionLink: res.subscriptionLink,
 			accessRights: accessRights || AccessRights.ReadAndWrite,
 			isAuthorized: false,
-			state: this.streamsService.exportSubscription(res.subscriber, this.password)
+			state: this.streamsService.exportSubscription(res.subscriber, this.password),
+			publicKey: res.publicKey
 		};
 
 		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
@@ -68,12 +68,17 @@ export class SubscriptionService {
 		return res;
 	};
 
-	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string): Promise<{ keyloadLink: string }> => {
+	authorizeSubscription = async (
+		channelAddress: string,
+		subscriptionLink: string,
+		publicKey: string,
+		authorId: string
+	): Promise<{ keyloadLink: string }> => {
 		const author = await this.subscriptionPool.get(channelAddress, authorId, true);
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorId}`);
 		}
-		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, <Author>author);
+		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, publicKey, <Author>author);
 		if (!authSub?.keyloadLink) {
 			throw new Error('could not authorize the subscription!');
 		}

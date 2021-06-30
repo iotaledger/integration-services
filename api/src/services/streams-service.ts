@@ -67,7 +67,9 @@ export class StreamsService {
 	): Promise<{ link: string; subscription: Author | Subscriber; prevLogs: ChannelData[] | undefined }> => {
 		try {
 			// fetch prev logs before writing new data to the channel
+			this.logger.log('heeey1' + latestLink);
 			const prevLogs = await this.getLogs(subscription);
+			this.logger.log('heeey2');
 			let link = latestLink;
 			if (prevLogs?.latestLink) {
 				link = prevLogs.latestLink;
@@ -77,8 +79,10 @@ export class StreamsService {
 
 			let response: any = null;
 
+			this.logger.log('heeey syyyync');
 			await subscription.clone().sync_state();
-			response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
+			this.logger.log('heeey synced');
+			response = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response.get_link();
 
 			return {
@@ -118,6 +122,8 @@ export class StreamsService {
 							const link = userResponse?.get_link()?.to_string();
 							const message = userResponse.get_message();
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
+							console.log('MASKED PAYLOAD', maskedPayload);
+
 							try {
 								const channelData: ChannelData = {
 									link,
@@ -134,6 +140,8 @@ export class StreamsService {
 				}
 			}
 
+			console.log('LATEST link', latestLink);
+
 			return {
 				channelData,
 				subscription,
@@ -148,7 +156,7 @@ export class StreamsService {
 	requestSubscription = async (
 		announcementLink: string,
 		seed?: string
-	): Promise<{ seed: string; subscriptionLink: string; subscriber: Subscriber }> => {
+	): Promise<{ seed: string; subscriptionLink: string; subscriber: Subscriber; publicKey: string }> => {
 		try {
 			const annAddress = streams.Address.from_string(announcementLink);
 
@@ -164,7 +172,7 @@ export class StreamsService {
 			ann_link_copy = annAddress.copy();
 			const response = await subscriber.clone().send_subscribe(ann_link_copy);
 			const sub_link = response.get_link();
-			return { seed, subscriptionLink: sub_link.to_string(), subscriber };
+			return { seed, subscriptionLink: sub_link.to_string(), subscriber, publicKey: subscriber.get_public_key() };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not request the subscription to the channel');
@@ -174,16 +182,26 @@ export class StreamsService {
 	authorizeSubscription = async (
 		channelAddress: string,
 		subscriptionLink: string,
+		publicKey: string,
 		author: Author
-	): Promise<{ keyloadLink: string; author: Author }> => {
+	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> => {
 		try {
 			const announcementAddress = streams.Address.from_string(channelAddress);
 			const subscriptionAddress = streams.Address.from_string(subscriptionLink);
 			await author.clone().receive_subscribe(subscriptionAddress);
 
-			const response = await author.clone().send_keyload_for_everyone(announcementAddress);
-			const keyload_link = response.get_link();
-			return { keyloadLink: keyload_link.to_string(), author };
+			const keys = streams.PublicKeys.new();
+			keys.add(publicKey);
+			const ids = streams.PskIds.new();
+			const res = await author.clone().send_keyload(announcementAddress, ids, keys);
+			const keyloadLink = res?.get_link()?.to_string();
+			const sequenceLink = res?.get_seq_link()?.to_string();
+
+			if (!keyloadLink) {
+				throw new Error('could not send the keyload');
+			}
+
+			return { keyloadLink, sequenceLink, author };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not authorize the subscription to the channel');
@@ -200,7 +218,7 @@ export class StreamsService {
 	}
 
 	private getClient(node: string): streams.Client {
-		const options = new streams.SendOptions(node, 9, true, 1);
+		const options = new streams.SendOptions(node, 3, true, 1);
 		return new streams.Client(node, options.clone());
 	}
 }

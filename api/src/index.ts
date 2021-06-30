@@ -42,9 +42,10 @@ async function startServer() {
 	useRouter(app, prefix + '/verification', verificationRouter);
 
 	app.use(errorMiddleware);
-	app.listen(port, async () => {
+	const server = app.listen(port, async () => {
 		logger.log(`Started API Server on port ${port}`);
 		await MongoDbService.connect(dbUrl, dbName);
 	});
+	server.setTimeout(50000);
 }
 startServer();

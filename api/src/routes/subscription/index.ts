@@ -41,16 +41,26 @@ export class SubscriptionRoutes {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const body = req.body as AuthorizeSubscriptionBody;
 			let { subscriptionLink } = body;
+			let publicKey;
 			const { identityId } = body;
 			const authorId = req.user.identityId;
+
 			if (!subscriptionLink && identityId) {
 				const sub = await this.subscriptionService.getSubscription(channelAddress, identityId);
 				subscriptionLink = sub?.subscriptionLink;
+				publicKey = sub?.publicKey;
+			} else {
+				const sub = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
+				subscriptionLink = sub?.subscriptionLink;
+				publicKey = sub?.publicKey;
 			}
-			if (!subscriptionLink) {
-				throw new Error('no subscription link found or provided!');
+			if (!subscriptionLink || !publicKey) {
+				throw new Error('no subscription found!');
 			}
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink, authorId);
+
+			this.logger.log('subscriptionLink,' + subscriptionLink + ' publicKey' + publicKey);
+
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink, publicKey, authorId);
 			res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

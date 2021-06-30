@@ -38,7 +38,8 @@ export class ChannelService {
 			subscriptionLink: res.channelAddress,
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
-			isAuthorized: true
+			isAuthorized: true,
+			publicKey: null
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
@@ -88,27 +89,31 @@ export class ChannelService {
 	};
 
 	addLogs = async (channelAddress: string, identityId: string, channelLog: ChannelLog) => {
-		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-		const isAuth = channelInfo.authorId === identityId;
-		// TODO encrypt/decrypt seed
-		const latestLink = channelInfo.latestLink;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
-		if (!sub) {
-			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
-		}
-		const res = await this.streamsService.addLogs(latestLink, sub, channelLog);
+		try {
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+			const isAuth = channelInfo.authorId === identityId;
+			// TODO encrypt/decrypt seed
+			const latestLink = channelInfo.latestLink;
+			const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
+			if (!sub) {
+				throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+			}
+			const res = await this.streamsService.addLogs(latestLink, sub, channelLog);
 
-		// store prev logs in db, they are not fetchable again after writing to a channel
-		if (res?.prevLogs && res?.prevLogs.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, identityId, res.prevLogs);
-		}
+			// store prev logs in db, they are not fetchable again after writing to a channel
+			if (res?.prevLogs && res?.prevLogs.length > 0) {
+				await ChannelDataDb.addChannelData(channelAddress, identityId, res.prevLogs);
+			}
 
-		await this.subscriptionService.updateSubscriptionState(
-			channelAddress,
-			identityId,
-			this.streamsService.exportSubscription(res.subscription, this.password)
-		);
-		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
-		return res;
+			await this.subscriptionService.updateSubscriptionState(
+				channelAddress,
+				identityId,
+				this.streamsService.exportSubscription(res.subscription, this.password)
+			);
+			await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
+			return res;
+		} catch (e) {
+			console.log('AAAAAAAAAAH', e);
+		}
 	};
 }
