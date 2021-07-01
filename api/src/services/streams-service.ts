@@ -45,7 +45,7 @@ export class StreamsService {
 				seed = this.makeSeed(81);
 			}
 			const client = this.getClient(this.config.node);
-			const author = streams.Author.from_client(client, seed, true);
+			const author = streams.Author.from_client(client, seed, streams.ChannelType.MultiBranch);
 			const response = await author.clone().send_announce();
 			const ann_link = response.get_link();
 
@@ -66,7 +66,8 @@ export class StreamsService {
 		// Create the Transport Client
 		let client = this.getClient(this.config.node);
 		// Generate an Author
-		const author = streams.Author.from_client(client, seed, true);
+
+		const author = streams.Author.from_client(client, seed, streams.ChannelType.MultiBranch);
 		// Create the channel with an announcement message. Make sure to save the resulting link somewhere,
 		const response = await author.clone().send_announce();
 		const ann_link = response.get_link();
@@ -334,13 +335,13 @@ export class StreamsService {
 	}
 
 	private getClient(node: string): streams.Client {
-		const options = new streams.SendOptions(node, 9, true, 1);
+		const options = new streams.SendOptions(node, true);
 		return new streams.Client(node, options.clone());
 	}
 }
-//const config: StreamsConfig = {
-//	node: 'https://chrysalis-nodes.iota.org',
-//	permaNode: 'https://chrysalis-nodes.iota.org',
-//	statePassword: 'test123'
-//};
-//new StreamsService(config, Logger.getInstance()).runExample();
+// const config: StreamsConfig = {
+// 	node: 'https://chrysalis-nodes.iota.org',
+// 	permaNode: 'https://chrysalis-nodes.iota.org',
+// 	statePassword: 'test123'
+// };
+// new StreamsService(config, Logger.getInstance()).runExample();

@@ -5,11 +5,15 @@
 export function set_panic_hook(): void;
 /**
 */
-export class Address {
-  free(): void;
+export enum ChannelType {
+  SingleBranch,
+  MultiBranch,
+  SingleDepth,
+}
 /**
 */
-  constructor();
+export class Address {
+  free(): void;
 /**
 * @param {string} link
 * @returns {Address}
@@ -23,11 +27,6 @@ export class Address {
 * @returns {Address}
 */
   copy(): Address;
-/**
-* @param {Address} addr
-* @returns {boolean}
-*/
-  eq(addr: Address): boolean;
 /**
 * @returns {string}
 */
@@ -44,16 +43,16 @@ export class Author {
 /**
 * @param {string} seed
 * @param {SendOptions} options
-* @param {boolean} multi_branching
+* @param {number} implementation
 */
-  constructor(seed: string, options: SendOptions, multi_branching: boolean);
+  constructor(seed: string, options: SendOptions, implementation: number);
 /**
 * @param {Client} client
 * @param {string} seed
-* @param {boolean} multi_branching
+* @param {number} implementation
 * @returns {Author}
 */
-  static from_client(client: Client, seed: string, multi_branching: boolean): Author;
+  static from_client(client: Client, seed: string, implementation: number): Author;
 /**
 * @param {Client} client
 * @param {Uint8Array} bytes
@@ -145,6 +144,17 @@ export class Author {
 * @returns {any}
 */
   fetch_next_msgs(): any;
+/**
+* @param {Address} link
+* @returns {any}
+*/
+  fetch_prev_msg(link: Address): any;
+/**
+* @param {Address} link
+* @param {number} num_msgs
+* @returns {any}
+*/
+  fetch_prev_msgs(link: Address, num_msgs: number): any;
 /**
 * @returns {any}
 */
@@ -247,27 +257,17 @@ export class SendOptions {
   free(): void;
 /**
 * @param {string} url
-* @param {number} depth
 * @param {boolean} local_pow
-* @param {number} threads
 */
-  constructor(url: string, depth: number, local_pow: boolean, threads: number);
+  constructor(url: string, local_pow: boolean);
 /**
 * @returns {SendOptions}
 */
   clone(): SendOptions;
 /**
-* @returns {number}
-*/
-  depth: number;
-/**
 * @returns {boolean}
 */
   local_pow: boolean;
-/**
-* @returns {number}
-*/
-  threads: number;
 /**
 * @returns {string}
 */
@@ -380,6 +380,17 @@ export class Subscriber {
 * @returns {any}
 */
   fetch_next_msgs(): any;
+/**
+* @param {Address} link
+* @returns {any}
+*/
+  fetch_prev_msg(link: Address): any;
+/**
+* @param {Address} link
+* @param {number} num_msgs
+* @returns {any}
+*/
+  fetch_prev_msgs(link: Address, num_msgs: number): any;
 }
 /**
 */
