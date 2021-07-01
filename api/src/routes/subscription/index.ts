@@ -29,13 +29,18 @@ export class SubscriptionRoutes {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { seed, accessRights } = req.body as RequestSubscriptionBody;
 			const identityId = req.user.identityId;
+
+			if (!identityId) {
+				return res.sendStatus(StatusCodes.BAD_REQUEST);
+			}
+
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 
 			if (subscription) {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
 			}
 
-			const channel = await this.subscriptionService.requestSubscription(req.user.identityId, channelAddress, accessRights, seed);
+			const channel = await this.subscriptionService.requestSubscription(identityId, channelAddress, accessRights, seed);
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);
