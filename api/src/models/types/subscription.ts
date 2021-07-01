@@ -18,4 +18,5 @@ export interface Subscription {
 	subscriptionLink: string;
 	accessRights: AccessRights;
 	publicKey: string | null;
+	keyloadLink?: string;
 }

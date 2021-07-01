@@ -36,10 +36,10 @@ export class SubscriptionService {
 		return subscriptionDb.updateSubscriptionState(channelAddress, identityId, state);
 	};
 
-	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string) => {
+	setSubscriptionAuthorized = async (channelAddress: string, subscriptionLink: string, keyloadLink: string) => {
 		const errMsg = 'could not authorize the subscription!';
 		const isAuthorized = true;
-		const res = await subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized);
+		const res = await subscriptionDb.setSubscriptionAuthorization(channelAddress, subscriptionLink, isAuthorized, keyloadLink);
 		if (!res?.result?.n) {
 			throw Error(errMsg);
 		}
@@ -82,7 +82,7 @@ export class SubscriptionService {
 		if (!authSub?.keyloadLink) {
 			throw new Error('could not authorize the subscription!');
 		}
-		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink);
+		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink, authSub.keyloadLink);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
 
 		return { keyloadLink: authSub.keyloadLink };
