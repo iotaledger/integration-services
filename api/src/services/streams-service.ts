@@ -2,7 +2,7 @@ import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { fromBytes, toBytes } from '../utils/text';
 import * as fetch from 'node-fetch';
-import { ILogger, Logger } from '../utils/logger';
+import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 
 streams.set_panic_hook();
@@ -41,24 +41,18 @@ export class StreamsService {
 
 	create = async (seed?: string): Promise<{ seed: string; channelAddress: string; author: Author }> => {
 		try {
-			// if (!seed) {
-			// 	seed = this.makeSeed(81);
-			// }
-			// const client = this.getClient(this.config.node);
-			// const author = streams.Author.from_client(client, seed, true);
-			// const response = await author.clone().send_announce();
-			// const ann_link = response.get_link();
+			if (!seed) {
+				seed = this.makeSeed(81);
+			}
+			const client = this.getClient(this.config.node);
+			const author = streams.Author.from_client(client, seed, true);
+			const response = await author.clone().send_announce();
+			const ann_link = response.get_link();
 
-			// return {
-			// 	seed,
-			// 	channelAddress: ann_link.to_string(),
-			// 	author: author.clone()
-			// };
-			this.runExample();
 			return {
-				author: null,
-				channelAddress: '',
-				seed: ''
+				seed,
+				channelAddress: ann_link.to_string(),
+				author: author.clone()
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);

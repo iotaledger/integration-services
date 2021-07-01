@@ -5,63 +5,74 @@ import { SubscriptionService } from '../../services/subscription-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-bodies';
 import { ILogger } from '../../utils/logger';
+import { Subscription } from '../../models/types/subscription';
 
 export class SubscriptionRoutes {
 	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
 
-	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { identityId } = req.body; // TODO#26 don't use body use query param!
 
 			// TODO#26 also provide possibility to get all subscriptions
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
-			res.status(StatusCodes.OK).send(subscription);
+			return res.status(StatusCodes.OK).send(subscription);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not get the subscription'));
 		}
 	};
 
-	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { seed, accessRights } = req.body as RequestSubscriptionBody;
-			// TODO#25 validate
+			const identityId = req.user.identityId;
+			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+
+			if (subscription) {
+				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
+			}
+
 			const channel = await this.subscriptionService.requestSubscription(req.user.identityId, channelAddress, accessRights, seed);
-			res.status(StatusCodes.CREATED).send(channel);
+			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not request the subscription'));
 		}
 	};
 
-	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const body = req.body as AuthorizeSubscriptionBody;
 			let { subscriptionLink } = body;
-			let publicKey;
 			const { identityId } = body;
 			const authorId = req.user.identityId;
+			let subscription: Subscription = undefined;
 
 			if (!subscriptionLink && identityId) {
-				const sub = await this.subscriptionService.getSubscription(channelAddress, identityId);
-				subscriptionLink = sub?.subscriptionLink;
-				publicKey = sub?.publicKey;
+				subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 			} else {
-				const sub = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
-				subscriptionLink = sub?.subscriptionLink;
-				publicKey = sub?.publicKey;
+				subscription = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
 			}
-			if (!subscriptionLink || !publicKey) {
+
+			if (!subscription || !subscription.subscriptionLink || !subscription.publicKey) {
 				throw new Error('no subscription found!');
 			}
 
-			this.logger.log('subscriptionLink,' + subscriptionLink + ' publicKey' + publicKey);
+			if (subscription.isAuthorized) {
+				return res.status(StatusCodes.BAD_REQUEST).send('subscription already authorized');
+			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscriptionLink, publicKey, authorId);
-			res.status(StatusCodes.OK).send(channel);
+			const channel = await this.subscriptionService.authorizeSubscription(
+				channelAddress,
+				subscription.subscriptionLink,
+				subscription.publicKey,
+				authorId
+			);
+			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not authorize the subscription'));
