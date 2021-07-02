@@ -16,7 +16,8 @@
     "start": "npm-run-all build start-node",
     "build-watch": "tsc --watch ",
     "serve-nodemon": "nodemon ./dist/index",
-    "serve": "run-p build-watch serve-nodemon build-streams-lib"
+    "serve": "run-p build-watch serve-nodemon build-streams-lib",
+    "generate-openapi-schemas": "ts-node ./src/tools/open-api-creator/index.ts"
   },
   "repository": {
     "type": "git",

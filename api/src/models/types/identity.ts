@@ -1,6 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { Static } from '@sinclair/typebox';
-import { VerifiableCredentialSchema, VcSubjectSchema } from '../schemas/identity';
+import { VerifiableCredentialSchema, VcSubjectSchema, IdentityDocumentJsonSchema, IdentityKeyPairJsonSchema, DocumentJsonUpdateSchema, IdentityJsonSchema, IdentityJsonUpdateSchema, LatestIdentityJsonSchema } from '../schemas/identity';
 import { CreateIdentityBodySchema } from '../schemas/request-body/user-bodies';
 
 export interface Credential<T> {
@@ -9,58 +9,20 @@ export interface Credential<T> {
 	subject: T;
 }
 
-export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>
-
-export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
-export type CredentialSubject = Static<typeof VcSubjectSchema>;
-
 export interface IdentityDocument extends Identity.Document {
 	doc: Identity.Document;
 	key: Identity.KeyPair;
 }
 
-export interface IdentityDocumentJson {
-	id: string;
-	verificationMethod?: {
-		id: string;
-		controller: string;
-		type: string;
-		publicKeyBase58: string;
-	}[];
-	previousMessageId?: string;
-	authentication: {
-		id: string;
-		controller: string;
-		type: string;
-		publicKeyBase58: string;
-	}[];
-	created: string;
-	updated: string;
-	immutable: boolean;
-	proof: {
-		type: string;
-		verificationMethod: string;
-		signatureValue: string;
-	};
-}
+export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>
 
-export interface IdentityKeyPairJson {
-	type: string;
-	public: string;
-	secret: string;
-	encoding: 'base16' | 'base58' | 'base64';
-}
+export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
+export type CredentialSubject = Static<typeof VcSubjectSchema>;
 
-export interface DocumentJsonUpdate {
-	doc: IdentityDocumentJson;
-	txHash: string;
-}
 
-export interface IdentityJson {
-	doc: IdentityDocumentJson;
-	key: IdentityKeyPairJson;
-}
-
-export interface IdentityJsonUpdate extends IdentityJson {
-	txHash: string;
-}
+export type IdentityDocumentJson = Static<typeof IdentityDocumentJsonSchema>;
+export type LatestIdentityJson = Static<typeof LatestIdentityJsonSchema>;
+export type IdentityKeyPairJson = Static<typeof IdentityKeyPairJsonSchema>;
+export type DocumentJsonUpdate = Static<typeof DocumentJsonUpdateSchema>;
+export type IdentityJson = Static<typeof IdentityJsonSchema>;
+export type IdentityJsonUpdate = Static<typeof IdentityJsonUpdateSchema>;

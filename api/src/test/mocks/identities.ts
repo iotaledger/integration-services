@@ -1,3 +1,4 @@
+import { Encoding } from '../../models/schemas/identity';
 import { IdentityJsonUpdate } from '../../models/types/identity';
 import { User, UserType } from '../../models/types/user';
 
@@ -106,7 +107,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		type: 'ed25519',
 		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
-		encoding: 'base58'
+		encoding: Encoding.base58
 	},
 	txHash: 'OGNVRNPA9LQKPEUQJEECRZRVMRAQA99RVTVUPIYQQGYVVFYBDRIHZGFVQQVKQHAPVGCZKMGUTZXAZ9999'
 };
@@ -192,7 +193,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		type: 'ed25519',
 		public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
-		encoding: 'base58'
+		encoding: Encoding.base16
 	},
 	txHash: 'LCHPWELIWGXUSHX9YACHICTLRHVGTFHXBEQILQBCCTDDRLJTBLYHTGRT9HKOLQZQHENEHPEGYMZD99999'
 };
@@ -249,7 +250,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		type: 'ed25519',
 		public: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR',
-		encoding: 'base58'
+		encoding: Encoding.base58
 	},
 	txHash: 'CETPVHOIBPNGCWQQCQALVKQQOD9B9MLMU9ZMNFZHBPEAOTMWFTVDRRBMFYIETHDWXA9GLGYWAFQRA9999'
 };

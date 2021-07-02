@@ -32,7 +32,25 @@ export const identityRouter = Router();
  *         content: 
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/IdentityJsonUpdate"            
+ *               $ref: "#/components/schemas/IdentityJsonUpdate"
+ *       401:
+ *         description: No valid api key provided
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string    
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string             
  */
 identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
 
@@ -51,14 +69,23 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *             schema:
  *               AnyValue: {}
  *       401:
- *         description: Not authenticated
+ *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
  *             schema:         
  *               type: object
  *               properties:
  *                 error:  
- *                   type: string             
+ *                   type: string    
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string          
  */
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 
@@ -79,14 +106,140 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *         content: 
  *           application/json:
  *             schema:
+ *               $ref: "#/components/schemas/UserSchema"  
+ *       401:
+ *         description: No valid api key
+ *         content:
+ *           application/json:
+ *             schema:         
  *               type: object
  *               properties:
- *                 user:  
- *                  type: $ref: "#/components/schemas/User"  
- *                  nullable: true 
+ *                 error:  
+ *                   type: string   
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string 
  * 
  */
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
+
+/**
+ * @openapi
+ * /identities/identity:
+ *   post:
+ *     description: Register an existing identity into the Bridge. This can be used if the identity already exists or it was only created locally. Registering an identity in the Bridge makes it possible to search for it by using some of the identity attributes, i.e., the username.
+ *     tags:
+ *     - identity
+ *     requestBody:
+ *       content: 
+ *         application/json:
+ *           schema: 
+ *             $ref: "#/components/schemas/UserSchema"
+ *     responses:
+ *       200:
+ *         description: The registered entity.
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserSchema"  
+ *       401:
+ *         description: No valid api key
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string   
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string 
+ */
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
+
+/**
+ * @openapi
+ * /identities/identity:
+ *   put:
+ *     description: Update claim of a registered identity.
+ *     tags:
+ *     - identity
+ *     requestBody:
+ *       content: 
+ *         application/json:
+ *           schema: 
+ *             $ref: "#/components/schemas/UserSchema"
+ *     responses:
+ *       200:
+ *         description: The registered entity.
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserSchema"  
+ *       401:
+ *         description: No valid api key provided / Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string   
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string 
+ */
 identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserBodySchema }), updateUser);
+
+/**
+ * @openapi
+ * /identities/identity/{identityId}:
+ *   delete:
+ *     description: Update claim of a registered identity.
+ *     tags:
+ *     - identity
+ *     parameters:
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *     responses:
+ *       200:
+ *         description: Deleted Identity.
+ *       401:
+ *         description: No valid api key provided / Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string   
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string 
+ */
 identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);

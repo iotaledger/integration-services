@@ -4,7 +4,7 @@ import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-body/
 import { CreateChannelBodySchema, AddChannelLogBodySchema, AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-body/channel-bodies';
 import { ClaimSchema, RevokeVerificationBodySchema, VerifyIdentityBodySchema, VerifiableCredentialBodySchema, TrustedRootBodySchema, SubjectBodySchema } from '../../models/schemas/request-body/verification-bodies';
 import { ChannelInfoSchema, TopicSchema } from '../../models/schemas/channel-info';
-import { VcSubjectSchema, VerifiableCredentialSchema } from '../../models/schemas/identity';
+import { VcSubjectSchema, VerifiableCredentialSchema, IdentityJsonSchema, DocumentJsonUpdateSchema, IdentityDocumentJsonSchema, IdentityJsonUpdateSchema, IdentityKeyPairJsonSchema, LatestIdentityJsonSchema } from '../../models/schemas/identity';
 import { CreateUserBodySchema, CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-body/user-bodies';
 import {
     AggregateOfferSchema, AggregateRatingSchema, BrandSchema, DemandSchema, DistanceSchema, OfferSchema, PostalAddressSchema,
@@ -12,6 +12,7 @@ import {
 } from '../../models/schemas/user-types-helper';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
 import { UserSchema, LocationSchema, UserWithoutIdFields } from '../../models/schemas/user';
+
 
 const schemas = {
     "definitions": {
@@ -30,6 +31,12 @@ const schemas = {
         "TopicSchema": TopicSchema,
         "VcSubjectSchema": VcSubjectSchema,
         "VerifiableCredentialSchema": VerifiableCredentialSchema,
+        "IdentityJsonSchema": IdentityJsonSchema,
+        "IdentityJsonUpdateSchema": IdentityJsonUpdateSchema,
+        "IdentityKeyPairJsonSchema": IdentityKeyPairJsonSchema,
+        "IdentityDocumentJsonSchema": IdentityDocumentJsonSchema,
+        "LatestIdentityJsonSchema": LatestIdentityJsonSchema,
+        "DocumentJsonUpdateSchema": DocumentJsonUpdateSchema,
         "CreateUserBodySchema": CreateUserBodySchema,
         "CreateIdentityBodySchema": CreateIdentityBodySchema,
         "UpdateUserBodySchema": UpdateUserBodySchema,
@@ -57,12 +64,32 @@ const schemas = {
     }
 }
 
+
 const converter = async () => {
     const reader = getJsonSchemaReader();
     const writer = getOpenApiWriter({ format: 'yaml', title: 'SSI-Bridge', version: 'v1', schemaVersion: '3.0.0' });
 
-    const { convert } = makeConverter(reader, writer);
-    await convert({ 'data': JSON.stringify(schemas) }, { filename: '../../models/open-api-schemas.yaml' })
+    const { convert } = makeConverter(reader, writer, { simplify: true });
+    await convert({ 'data': JSON.stringify(schemas) }, { filename: './src/models/open-api-schemas.yaml' })
 }
 
 converter()
+
+// import { Type } from '@sinclair/typebox';
+
+// const testType = Type.Object({
+//     name: Type.String({minLength: 5, maxLength: 10}),
+//     creationDate: Type.String({format: 'date-time'})
+// })
+
+
+// const converter = async () => {
+//     console.log({testType})
+//     const reader = getJsonSchemaReader();
+//     const writer = getOpenApiWriter({ format: 'yaml', title: 'SSI-Bridge', version: 'v1', schemaVersion: '3.0.0' });
+
+//     const { convert } = makeConverter(reader, writer);
+//     await convert({ 'data': JSON.stringify(testType) }, { filename: './src/models/test.yaml' })
+// }
+
+// converter()

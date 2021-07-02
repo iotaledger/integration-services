@@ -34,7 +34,25 @@ export const authenticationRouter = Router();
  *               type: object
  *               properties:
  *                 nounce:  
- *                   type: string                
+ *                   type: string
+ *       401:
+ *         description: No valid api key provided
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string  
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string                 
  */
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
 
@@ -73,7 +91,7 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *               properties:
  *                 error:  
  *                   type: string
-*       500:
+ *       500:
  *         description: No valid signedNonce provided
  *         content: 
  *           application/json:
@@ -82,6 +100,23 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *               properties:
  *                 error:  
  *                   type: string
- * 
+ *       401:
+ *         description: No valid api key provided
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string  
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string 
  */
 authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
