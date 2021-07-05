@@ -1,4 +1,4 @@
-import { getJsonSchemaReader, getOpenApiWriter, makeConverter } from 'typeconv'
+// import { getJsonSchemaReader, getOpenApiWriter, makeConverter } from 'typeconv'
 
 import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-body/authentication-bodies';
 import { CreateChannelBodySchema, AddChannelLogBodySchema, AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema, CreateChannelBodyResponseSchema, ChannelDataSchema } from '../../models/schemas/request-body/channel-bodies';
@@ -14,88 +14,81 @@ import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceS
 import { UserSchema, LocationSchema, UserWithoutIdFields } from '../../models/schemas/user';
 import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../../models/schemas/request-body/subscription-bodies';
 
+import fs from 'fs'
 
 const schemas = {
-    "definitions": {
-        "ProveOwnershipPostBodySchema": ProveOwnershipPostBodySchema,
-        "CreateChannelBodySchema": CreateChannelBodySchema,
-        "CreateChannelBodyResponseSchema": CreateChannelBodyResponseSchema,
-        "AddChannelLogBodySchema": AddChannelLogBodySchema,
-        "ChannelDataSchema": ChannelDataSchema,
-        "ChannelInfoSearchSchema": ChannelInfoSearchSchema,
-        "AuthorizeSubscriptionBodySchema": AuthorizeSubscriptionBodySchema,
-        "AuthorizeSubscriptionBodyResponseSchema": AuthorizeSubscriptionBodyResponseSchema,
-        "RequestSubscriptionBodySchema": RequestSubscriptionBodySchema,
-        "RequestSubscriptionBodyResponseSchema": RequestSubscriptionBodyResponseSchema,
-        "ClaimSchema": ClaimSchema,
-        "RevokeVerificationBodySchema": RevokeVerificationBodySchema,
-        "VerifyIdentityBodySchema": VerifyIdentityBodySchema,
-        "VerifiableCredentialBodySchema": VerifiableCredentialBodySchema,
-        "TrustedRootBodySchema": TrustedRootBodySchema,
-        "SubjectBodySchema": SubjectBodySchema,
-        "ChannelInfoSchema": ChannelInfoSchema,
-        "TopicSchema": TopicSchema,
-        "VcSubjectSchema": VcSubjectSchema,
-        "VerifiableCredentialSchema": VerifiableCredentialSchema,
-        "IdentityJsonSchema": IdentityJsonSchema,
-        "IdentityJsonUpdateSchema": IdentityJsonUpdateSchema,
-        "IdentityKeyPairJsonSchema": IdentityKeyPairJsonSchema,
-        "IdentityDocumentJsonSchema": IdentityDocumentJsonSchema,
-        "LatestIdentityJsonSchema": LatestIdentityJsonSchema,
-        "DocumentJsonUpdateSchema": DocumentJsonUpdateSchema,
-        "CreateUserBodySchema": CreateUserBodySchema,
-        "CreateIdentityBodySchema": CreateIdentityBodySchema,
-        "UpdateUserBodySchema": UpdateUserBodySchema,
-        "AggregateOfferSchema": AggregateOfferSchema,
-        "AggregateRatingSchema": AggregateRatingSchema,
-        "BrandSchema": BrandSchema,
-        "DemandSchema": DemandSchema,
-        "DistanceSchema": DistanceSchema,
-        "OfferSchema": OfferSchema,
-        "PostalAddressSchema": PostalAddressSchema,
-        "QuantitativeValueSchema": QuantitativeValueSchema,
-        "ReviewRatingSchema": ReviewRatingSchema,
-        "ReviewSchema": ReviewSchema,
-        "ServiceChannelSchema": ServiceChannelSchema,
-        "StructuredValueSchema": StructuredValueSchema,
-        "ThingSchema": ThingSchema,
-        "DeviceSchema": DeviceSchema,
-        "OrganizationSchema": OrganizationSchema,
-        "PersonSchema": PersonSchema,
-        "ProductSchema": ProductSchema,
-        "ServiceSchema": ServiceSchema,
-        "UserSchema": UserSchema,
-        "LocationSchema": LocationSchema,
-        "UserWithoutIdFields": UserWithoutIdFields
-    }
+    ProveOwnershipPostBodySchema,
+    CreateChannelBodySchema,
+    CreateChannelBodyResponseSchema,
+    "AddChannelLogBodySchema": AddChannelLogBodySchema,
+    "ChannelDataSchema": ChannelDataSchema,
+    "ChannelInfoSearchSchema": ChannelInfoSearchSchema,
+    "AuthorizeSubscriptionBodySchema": AuthorizeSubscriptionBodySchema,
+    "AuthorizeSubscriptionBodyResponseSchema": AuthorizeSubscriptionBodyResponseSchema,
+    "RequestSubscriptionBodySchema": RequestSubscriptionBodySchema,
+    "RequestSubscriptionBodyResponseSchema": RequestSubscriptionBodyResponseSchema,
+    "ClaimSchema": ClaimSchema,
+    "RevokeVerificationBodySchema": RevokeVerificationBodySchema,
+    "VerifyIdentityBodySchema": VerifyIdentityBodySchema,
+    "VerifiableCredentialBodySchema": VerifiableCredentialBodySchema,
+    "TrustedRootBodySchema": TrustedRootBodySchema,
+    "SubjectBodySchema": SubjectBodySchema,
+    "ChannelInfoSchema": ChannelInfoSchema,
+    "TopicSchema": TopicSchema,
+    "VcSubjectSchema": VcSubjectSchema,
+    "VerifiableCredentialSchema": VerifiableCredentialSchema,
+    "IdentityJsonSchema": IdentityJsonSchema,
+    "IdentityJsonUpdateSchema": IdentityJsonUpdateSchema,
+    "IdentityKeyPairJsonSchema": IdentityKeyPairJsonSchema,
+    "IdentityDocumentJsonSchema": IdentityDocumentJsonSchema,
+    "LatestIdentityJsonSchema": LatestIdentityJsonSchema,
+    "DocumentJsonUpdateSchema": DocumentJsonUpdateSchema,
+    "CreateUserBodySchema": CreateUserBodySchema,
+    "CreateIdentityBodySchema": CreateIdentityBodySchema,
+    "UpdateUserBodySchema": UpdateUserBodySchema,
+    "AggregateOfferSchema": AggregateOfferSchema,
+    "AggregateRatingSchema": AggregateRatingSchema,
+    "BrandSchema": BrandSchema,
+    "DemandSchema": DemandSchema,
+    "DistanceSchema": DistanceSchema,
+    "OfferSchema": OfferSchema,
+    "PostalAddressSchema": PostalAddressSchema,
+    "QuantitativeValueSchema": QuantitativeValueSchema,
+    "ReviewRatingSchema": ReviewRatingSchema,
+    "ReviewSchema": ReviewSchema,
+    "ServiceChannelSchema": ServiceChannelSchema,
+    "StructuredValueSchema": StructuredValueSchema,
+    "ThingSchema": ThingSchema,
+    "DeviceSchema": DeviceSchema,
+    "OrganizationSchema": OrganizationSchema,
+    "PersonSchema": PersonSchema,
+    "ProductSchema": ProductSchema,
+    "ServiceSchema": ServiceSchema,
+    "UserSchema": UserSchema,
+    "LocationSchema": LocationSchema,
+    "UserWithoutIdFields": UserWithoutIdFields
+
 }
 
+const openApiDoc = {
+    "components": {
+        "schemas": {}
+    }
+};
 
-const converter = async () => {
-    const reader = getJsonSchemaReader();
-    const writer = getOpenApiWriter({ format: 'yaml', title: 'SSI-Bridge', version: 'v1', schemaVersion: '3.0.0' });
-
-    const { convert } = makeConverter(reader, writer, { simplify: true });
-    await convert({ 'data': JSON.stringify(schemas) }, { filename: './src/models/open-api-schemas.yaml' })
+const converter = () => {
+    const schemasCollection: any = {};
+    for (const [key, value] of Object.entries(schemas)) {
+        schemasCollection[key] = value
+    }
+    openApiDoc.components.schemas = schemasCollection
+    fs.writeFile('./src/models/open-api-schema.yaml', JSON.stringify(openApiDoc), (err) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log('Successfully converted JSON schema.')
+        }
+    })
 }
 
 converter()
-
-// import { Type } from '@sinclair/typebox';
-
-// const testType = Type.Object({
-//     name: Type.String({minLength: 5, maxLength: 10}),
-//     creationDate: Type.String({format: 'date-time'})
-// })
-
-
-// const converter = async () => {
-//     console.log({testType})
-//     const reader = getJsonSchemaReader();
-//     const writer = getOpenApiWriter({ format: 'yaml', title: 'SSI-Bridge', version: 'v1', schemaVersion: '3.0.0' });
-
-//     const { convert } = makeConverter(reader, writer);
-//     await convert({ 'data': JSON.stringify(testType) }, { filename: './src/models/test.yaml' })
-// }
-
-// converter()

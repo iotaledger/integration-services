@@ -49,7 +49,7 @@ async function startServer() {
 				}
 			]
 		},
-		apis: ['./src/routers/**/*.ts', './src/models/open-api-schemas.yaml'], // files containing annotations as above
+		apis: ['./src/routers/**/*.ts', './src/models/open-api-schema.yaml'], // files containing annotations as above
 	};
 
 	const swaggerUiOptions = {

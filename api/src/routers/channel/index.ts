@@ -119,7 +119,9 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *         content: 
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/ChannelDataSchema"
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/ChannelDataSchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:

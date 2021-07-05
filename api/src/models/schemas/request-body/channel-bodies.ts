@@ -30,9 +30,9 @@ export const RequestSubscriptionBodySchema = Type.Object({
 	accessRights: Type.Optional(Type.Union([Type.Enum(AccessRights), Type.Null()]))
 });
 
-export const ChannelDataSchema = Type.Array(Type.Object({
+export const ChannelDataSchema = Type.Object({
 	link: Type.String(),
 	channelLog: AddChannelLogBodySchema
-}));
+});
 	
 
