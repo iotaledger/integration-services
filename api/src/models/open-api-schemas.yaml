@@ -40,6 +40,16 @@ components:
         - topics
         - encrypted
       type: object
+    CreateChannelBodyResponseSchema:
+      properties:
+        seed:
+          nullable: true
+          type: string
+        channelAddress:
+          type: string
+      required:
+        - channelAddress
+      type: object
     AddChannelLogBodySchema:
       properties:
         type:
@@ -52,7 +62,48 @@ components:
         - type
         - payload
       type: object
-    AauthorizeSubscriptionBodySchema:
+    ChannelDataSchema:
+      items:
+        properties:
+          link:
+            type: string
+          channelLog:
+            properties:
+              type:
+                type: string
+              creationDate:
+                type: string
+              metadata: {}
+              payload: {}
+            required:
+              - type
+              - payload
+            type: object
+        required:
+          - link
+          - channelLog
+        type: object
+      type: array
+    ChannelInfoSearchSchema:
+      properties:
+        authorId:
+          type: string
+        author:
+          type: string
+        topicType:
+          type: string
+        topicSource:
+          type: string
+        created:
+          type: string
+        latestMessage:
+          type: string
+        limit:
+          type: number
+        index:
+          type: number
+      type: object
+    AuthorizeSubscriptionBodySchema:
       properties:
         subscriptionLink:
           nullable: true
@@ -60,6 +111,13 @@ components:
         identityId:
           nullable: true
           type: string
+      type: object
+    AuthorizeSubscriptionBodyResponseSchema:
+      properties:
+        keyloadLink:
+          type: string
+      required:
+        - keyloadLink
       type: object
     RequestSubscriptionBodySchema:
       properties:
@@ -73,6 +131,17 @@ components:
                 - Write
                 - ReadAndWrite
             - nullable: true
+      type: object
+    RequestSubscriptionBodyResponseSchema:
+      properties:
+        seed:
+          nullable: true
+          type: string
+        subscriptionLink:
+          type: string
+      required:
+        - seed
+        - subscriptionLink
       type: object
     ClaimSchema:
       properties:

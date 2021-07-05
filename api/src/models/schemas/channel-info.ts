@@ -15,3 +15,14 @@ export const ChannelInfoSchema = Type.Object({
 	created: Type.Optional(Type.String()),
 	latestMessage: Type.Optional(Type.String())
 });
+
+export const ChannelInfoSearchSchema = Type.Object({
+	authorId: Type.Optional(Type.String()),
+	author: Type.Optional(Type.String()),
+	topicType: Type.Optional(Type.String()),
+	topicSource: Type.Optional(Type.String()),
+	created: Type.Optional(Type.String({format: 'date-time'})),
+	latestMessage: Type.Optional(Type.String({format: 'date-time'})),
+	limit: Type.Optional(Type.Number()),
+	index: Type.Optional(Type.Number())
+})

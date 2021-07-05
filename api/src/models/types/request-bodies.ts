@@ -15,6 +15,8 @@ import {
 	VerifiableCredentialBodySchema,
 	VerifyIdentityBodySchema
 } from '../schemas/request-body/verification-bodies';
+import { CreateChannelBodyResponseSchema } from '../schemas/request-body/channel-bodies';
+import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../schemas/request-body/subscription-bodies';
 
 export type ProveOwnershipPostBody = Static<typeof ProveOwnershipPostBodySchema>;
 
@@ -24,9 +26,12 @@ export type CreateUserBody = Static<typeof CreateUserBodySchema>;
 export type UserSchemaBody = Static<typeof UserSchema>;
 
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>;
+export type CreateChannelBodyResponse = Static<typeof CreateChannelBodyResponseSchema>;
 export type AddChannelLogBody = Static<typeof AddChannelLogBodySchema>;
 export type AuthorizeSubscriptionBody = Static<typeof AuthorizeSubscriptionBodySchema>;
 export type RequestSubscriptionBody = Static<typeof RequestSubscriptionBodySchema>;
+export type RequestSubscriptionBodyResponse = Static<typeof RequestSubscriptionBodyResponseSchema>;
+export type AuthorizeSubscriptionBodyResponse = Static<typeof AuthorizeSubscriptionBodyResponseSchema>;
 
 export type VerifiableCredentialBody = Static<typeof VerifiableCredentialBodySchema>;
 export type VerifyIdentityBody = Static<typeof VerifyIdentityBodySchema>;

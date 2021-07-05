@@ -21,6 +21,50 @@ const { getSubscriptions, requestSubscription, authorizeSubscription } = subscri
 export const subscriptionRouter = Router();
 
 subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
+
+/**
+ * @openapi
+ * /subscriptions/request/{channelAddress}:
+ *   post:
+ *     description: Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *     requestBody:
+ *       content: 
+ *         application/json:
+ *           schema: 
+ *             $ref: "#/components/schemas/RequestSubscriptionBodySchema"
+ *     responses:
+ *       201:
+ *         description: Link to requested subscription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/AuthorizeSubscriptionBodySchema"
+ * 
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string    
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string             
+ */
 subscriptionRouter.post(
 	'/request/:channelAddress',
 	apiKeyMiddleware,
@@ -29,6 +73,49 @@ subscriptionRouter.post(
 	requestSubscription
 );
 
+/**
+ * @openapi
+ * /subscriptions/authorize/{channelAddress}:
+ *   post:
+ *     description: Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *     requestBody:
+ *       content: 
+ *         application/json:
+ *           schema: 
+ *             $ref: "#/components/schemas/RequestSubscriptionBodySchema"
+ *     responses:
+ *       200:
+ *         description: Link to requested subscription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/AuthorizeSubscriptionBodyResponse"
+ * 
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string    
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:         
+ *               type: object
+ *               properties:
+ *                 error:  
+ *                   type: string             
+ */
 subscriptionRouter.post(
 	'/authorize/:channelAddress',
 	apiKeyMiddleware,

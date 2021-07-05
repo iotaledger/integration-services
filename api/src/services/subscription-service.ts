@@ -5,6 +5,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
+import { AuthorizeSubscriptionBody, AuthorizeSubscriptionBodyResponse } from '../models/types/request-bodies';
 
 export class SubscriptionService {
 	private password: string;
@@ -47,7 +48,7 @@ export class SubscriptionService {
 		channelAddress: string,
 		accessRights?: AccessRights,
 		seed?: string
-	): Promise<{ seed: string; subscriptionLink: string }> => {
+	): Promise<AuthorizeSubscriptionBody> => {
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
@@ -68,7 +69,7 @@ export class SubscriptionService {
 		return res;
 	};
 
-	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string): Promise<{ keyloadLink: string }> => {
+	authorizeSubscription = async (channelAddress: string, subscriptionLink: string, authorId: string): Promise<AuthorizeSubscriptionBodyResponse> => {
 		const author = await this.subscriptionPool.get(channelAddress, authorId, true, this.password);
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorId}`);

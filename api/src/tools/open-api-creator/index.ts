@@ -1,9 +1,9 @@
 import { getJsonSchemaReader, getOpenApiWriter, makeConverter } from 'typeconv'
 
 import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-body/authentication-bodies';
-import { CreateChannelBodySchema, AddChannelLogBodySchema, AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-body/channel-bodies';
+import { CreateChannelBodySchema, AddChannelLogBodySchema, AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema, CreateChannelBodyResponseSchema, ChannelDataSchema } from '../../models/schemas/request-body/channel-bodies';
 import { ClaimSchema, RevokeVerificationBodySchema, VerifyIdentityBodySchema, VerifiableCredentialBodySchema, TrustedRootBodySchema, SubjectBodySchema } from '../../models/schemas/request-body/verification-bodies';
-import { ChannelInfoSchema, TopicSchema } from '../../models/schemas/channel-info';
+import { ChannelInfoSchema, ChannelInfoSearchSchema, TopicSchema } from '../../models/schemas/channel-info';
 import { VcSubjectSchema, VerifiableCredentialSchema, IdentityJsonSchema, DocumentJsonUpdateSchema, IdentityDocumentJsonSchema, IdentityJsonUpdateSchema, IdentityKeyPairJsonSchema, LatestIdentityJsonSchema } from '../../models/schemas/identity';
 import { CreateUserBodySchema, CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-body/user-bodies';
 import {
@@ -12,15 +12,21 @@ import {
 } from '../../models/schemas/user-types-helper';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
 import { UserSchema, LocationSchema, UserWithoutIdFields } from '../../models/schemas/user';
+import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../../models/schemas/request-body/subscription-bodies';
 
 
 const schemas = {
     "definitions": {
         "ProveOwnershipPostBodySchema": ProveOwnershipPostBodySchema,
         "CreateChannelBodySchema": CreateChannelBodySchema,
+        "CreateChannelBodyResponseSchema": CreateChannelBodyResponseSchema,
         "AddChannelLogBodySchema": AddChannelLogBodySchema,
-        "AauthorizeSubscriptionBodySchema": AuthorizeSubscriptionBodySchema,
+        "ChannelDataSchema": ChannelDataSchema,
+        "ChannelInfoSearchSchema": ChannelInfoSearchSchema,
+        "AuthorizeSubscriptionBodySchema": AuthorizeSubscriptionBodySchema,
+        "AuthorizeSubscriptionBodyResponseSchema": AuthorizeSubscriptionBodyResponseSchema,
         "RequestSubscriptionBodySchema": RequestSubscriptionBodySchema,
+        "RequestSubscriptionBodyResponseSchema": RequestSubscriptionBodyResponseSchema,
         "ClaimSchema": ClaimSchema,
         "RevokeVerificationBodySchema": RevokeVerificationBodySchema,
         "VerifyIdentityBodySchema": VerifyIdentityBodySchema,
