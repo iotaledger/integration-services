@@ -19,9 +19,12 @@ export const channelRouter = Router();
  * @openapi
  * /channels/create:
  *   post:
+ *     summary: Create a new channel
  *     description: Create a new channel. An author can create a new channel with specific topics where other clients can subscribe to.
  *     tags:
  *     - channels
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -59,6 +62,7 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  * @openapi
  * /channels/logs/{channelAddress}:
  *   post:
+ *     summary: Write data to a channel
  *     description: Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
  *     tags:
  *     - channels
@@ -106,6 +110,7 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  * @openapi
  * /channels/logs/{channelAddress}:
  *   get:
+ *     summary: Get data from the channel
  *     description: Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
  *     tags:
  *     - channels

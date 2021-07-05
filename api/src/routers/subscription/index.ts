@@ -26,6 +26,7 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  * @openapi
  * /subscriptions/request/{channelAddress}:
  *   post:
+ *     summary: Request subscription to a channel
  *     description: Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
  *     tags:
  *     - subscriptions
@@ -77,6 +78,7 @@ subscriptionRouter.post(
  * @openapi
  * /subscriptions/authorize/{channelAddress}:
  *   post:
+ *     summary: Authorize a subscription to a channel
  *     description: Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
  *     tags:
  *     - subscriptions

@@ -41,6 +41,7 @@ export const verificationRouter = Router();
  * @openapi
  * /verification/latest-document/{identityId}:
  *   get:
+ *     summary: Get the latest version of an identity document (DID)
  *     description: Get the latest version of an identity document (DID) from the IOTA Tangle.
  *     tags:
  *     - verification
@@ -80,6 +81,7 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  * @openapi
  * /verification/trusted-roots:
  *   post:
+ *     summary: Adds Trusted Root identity identifiers (DIDs)
  *     description: Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
  *     tags:
  *     - verification
@@ -116,6 +118,7 @@ verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, vali
  * @openapi
  * /verification/trusted-roots:
  *   get:
+ *     summary: Returns a list of Trusted Root identity identifiers (DIDs)
  *     description: Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
  *     tags:
  *     - verification
@@ -156,6 +159,7 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  * @openapi
  * /verification/trusted-roots:
  *   delete:
+ *     summary: Remove Trusted Root identity identifiers (DIDs)
  *     description: Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
  *     tags:
  *     - verification
@@ -192,6 +196,7 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  * @openapi
  * /verification/create-credential:
  *   post:
+ *     summary: Verify the authenticity of an identity and issue a credential
  *     description: Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
  *     tags:
  *     - verification
@@ -238,6 +243,7 @@ verificationRouter.post(
  * @openapi
  * /verification/check-credential:
  *   post:
+ *     summary: Check the verifiable credential of an identity
  *     description: Check the verifiable credential of an identity. Validates the signed verifiable credential against the Issuer information stored onto the IOTA Tangle and checks if the issuer identity (DID) contained in the credential is from a trusted root.
  *     tags:
  *     - verification
@@ -281,6 +287,7 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  * @openapi
  * /verification/revoke-credential:
  *   post:
+ *     summary: Revoke one specific verifiable credential of an identity
  *     description: Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins (with verified identities) or the identity owner itself can do that.
  *     tags:
  *     - verification

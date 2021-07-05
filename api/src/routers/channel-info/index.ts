@@ -16,6 +16,7 @@ export const channelInfoRouter = Router();
  * @openapi
  * /channel-info/search:
  *   get:
+ *     summary: Search for a channel
  *     description: Search for a channel. A client can search for a channel which it is interested in.
  *     tags:
  *     - channel-info
@@ -59,6 +60,7 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  * @openapi
  * /channel-info/channel/{channelAddress}:
  *   get:
+ *     summary: Get information about a channel
  *     description: Get information about a channel with address channel-address.
  *     tags:
  *     - channel-info
@@ -98,6 +100,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  * @openapi
  * /channel-info/channel:
  *   post:
+ *     summary: Add an existing channel into the database
  *     description: Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
  *     tags:
  *     - channel-info
@@ -142,6 +145,7 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  * @openapi
  * /channel-info/channel:
  *   put:
+ *     summary: Update channel information
  *     description: Update channel information. The author of a channel can update topics of a channel.
  *     tags:
  *     - channel-info
@@ -186,6 +190,7 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
  * @openapi
  * /channel-info/channel/{channelAddress}:
  *   delete:
+ *     summary: Delete information of a channel
  *     description: Delete information of a channel with address channel-address. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
  *     tags:
  *     - channel-info

@@ -36,18 +36,56 @@ async function startServer() {
 		definition: {
 			openapi: '3.0.0',
 			info: {
-				title: 'Ecommerce-SSI Bridge',
+				title: 'E-Commerce Tools API Documentation',
 				version: '1.0.0',
-				description: `The Ecommerce-SSI Bridge allows users to create Self-Sovereign Identities, linking Decentralized Identifiers (DIDs) to their specification (DID Documents). DIDs are public/private key pairs and can be created for organizations, individuals and objects. Each identity is represented by a unique public key immutably stored onto the ledger (in our case the IOTA Tangle).
-				 Identities and public keys are used to anchor off-chain Verifiable Credentials (VCs), certificates containing identity attributes and signed by an Issuer identity (using its private key). The Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then propagate this verification 
-				 to other entities (organizations, individuals, objects) identity using a network of trust approach`
+				description: `This is the API documentation for the ENSURESEC E-Commerce Tools. Have a look at the repository for examples at [Github](https://github.com/iotaledger/e-commerce-tools).
+				For further information on the Audit Trail GW API have a look at [Audit Trail API](https://github.com/iotaledger/e-commerce-tools/blob/master/api/usage-audit-trail-GW.md) and head to
+				[SSI Bridge](https://github.com/iotaledger/e-commerce-tools/blob/master/api/usage-ssi-bridge.md) for information about the SSI Bridge.
+				`,
 			},
+			tags: [
+				{
+					"name": "authentication",
+					"description": "Authenticate and authorize identities to the Bridge",
+				},
+				{
+					"name": "channel-info",
+					"description": "Get information about a channel ",
+				},
+				{
+					"name": "channels",
+					"description": "Create, read from, write to channels",
+				},
+				{
+					"name": "identity",
+					"description": "Manage decentralized identities",
+				},
+				{
+					"name": "subscriptions",
+					"description": "Manage and authorize subscriptions",
+				}
+				,
+				{
+					"name": "verification",
+					"description": "Create and verifiy credentials",
+				}
+			],
 			servers: [
 				{
 					"url": `/api/${version}`,
 					"description": "Local Dev"
 				}
-			]
+			],
+			components: {
+				securitySchemes: {
+					BearerAuth: {
+						type: 'http',
+						scheme: 'bearer',
+						bearerFormat: 'JWT'
+					}
+				}
+				
+			}
 		},
 		apis: ['./src/routers/**/*.ts', './src/models/open-api-schema.yaml'], // files containing annotations as above
 	};
