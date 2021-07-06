@@ -108,7 +108,7 @@ export class VerificationRoutes {
 		try {
 			const { trustedRoot } = req.body as TrustedRootBody;
 			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
-				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized!' });
 			}
 
 			await this.verificationService.addTrustedRootId(trustedRoot);
@@ -123,7 +123,7 @@ export class VerificationRoutes {
 		try {
 			const { trustedRoot } = req.body as TrustedRootBody;
 			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
-				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized!' });
 			}
 
 			await this.verificationService.removeTrustedRootId(trustedRoot);

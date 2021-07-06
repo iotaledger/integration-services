@@ -96,7 +96,7 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *       200:
  *         description: Successful added trusted Root identity identifier.
  *       401:
- *         description: No valid api key provided / Not authenticated
+ *         description: No valid api key provided / Not authenticated / Not authorized
  *         content:
  *           application/json:
  *             schema:         
@@ -164,7 +164,7 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *       200:
  *         description: Successful removed trusted Root identity identifier.
  *       401:
- *         description: No valid api key provided / Not authenticated
+ *         description: No valid api key provided / Not authenticated / Not authorized
  *         content:
  *           application/json:
  *             schema:         

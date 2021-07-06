@@ -74,8 +74,8 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *     security:
  *       - BearerAuth: []
  *     responses:
- *       201:
- *         description: List of existing entities.
+ *       200:
+ *         description: Return list of existing entities.
  *         content: 
  *           application/json:
  *             schema:
@@ -115,7 +115,7 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *           summary: Example identity id (DID identifier)
  *     responses:
  *       200:
- *         description: List of existing entities.
+ *         description: Return a specific identity / none if no identity exits with given identity-id
  *         content: 
  *           application/json:
  *             schema:
