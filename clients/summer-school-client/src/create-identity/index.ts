@@ -6,9 +6,8 @@ import { AxiosRequestConfig } from 'axios';
 import * as fs from 'fs';
 
 // TODO add your details here
-const authorBody: any = {
+const studentBody = {
 	username: 'summer-school-student',
-	registrationDate: '2020-06-21T12:58:13Z',
 	claim: {
 		type: 'Person',
 		name: 'Jon Tomson',
@@ -42,7 +41,7 @@ export const createUser = async (name, body) => {
 
 async function run() {
 	try {
-		await createUser('Student', authorBody);
+		await createUser('Student', studentBody);
 	} catch (e) {
 		console.log(e);
 	}
