@@ -10,8 +10,12 @@
         "build": "npm-run-all build-tsc build-lint",
         "test": "jest",
         "test-watch": "npm run test -- --watchAll",
-        "start": "npm-run-all build start1",
-        "start1": "node dist/index.js"
+        "run-identity": "node dist/create-identity/index.js",
+        "create-identity": "npm-run-all build run-identity",
+        "run-credentials": "node dist/create-credentials/index.js",
+        "create-credentials": "npm-run-all build run-credentials",
+        "run-check": "node dist/check-credentials/index.js",
+        "check-credentials": "npm-run-all build run-check"
     },
     "repository": {
         "type": "git",
@@ -30,7 +34,7 @@
         "axios": "^0.21.1",
         "bs58": "^4.0.1",
         "dotenv": "^8.2.0",
-        "noble-ed25519": "^1.0.3"
+        "noble-ed25519": "^1.2.5"
     },
     "jest": {
         "testEnvironment": "node"
