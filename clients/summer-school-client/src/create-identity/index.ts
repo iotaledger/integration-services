@@ -5,7 +5,7 @@ import axios from 'axios';
 import { AxiosRequestConfig } from 'axios';
 import * as fs from 'fs';
 
-// TODO add your details here
+// TODO 1.1 add your details here
 const studentBody = {
 	username: 'summer-school-student',
 	claim: {

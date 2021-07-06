@@ -10,7 +10,7 @@ const axiosOptions: AxiosRequestConfig = {
 	}
 };
 
-// TODO add your BasicIdentityCredential here like following:
+// 3.1. TODO add your BasicIdentityCredential here like following:
 // if you adjust your name or anything below after your credential was issued it is no more valid when checking it
 const identityCredential = {
 	'@context': 'https://www.w3.org/2018/credentials/v1',
@@ -35,7 +35,7 @@ const identityCredential = {
 	}
 };
 
-// TODO add your ExamRatingCredential here like following
+// TODO 3.2. add your ExamRatingCredential here like following
 // if you adjust your grade or anything below after your credential was issued it is no more valid when checking it
 const examCredential = {
 	'@context': 'https://www.w3.org/2018/credentials/v1',

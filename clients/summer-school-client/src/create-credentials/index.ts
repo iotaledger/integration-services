@@ -67,10 +67,10 @@ const initiatorVC = {
 	}
 };
 
-// TODO add your identity here
+// TODO 2.1. add your identity here
 const identityId = 'did:iota:Hdrd2WEUzcMqHpMG9fReQbgpRjysCL2vTain345PpNCY';
 
-// TODO add your claim about your person here
+// TODO 2.2. add your claim about your person here
 const identityClaim = {
 	type: 'Person',
 	name: 'Sandra Buffet',
@@ -82,7 +82,7 @@ const identityClaim = {
 const examClaim = {
 	type: 'ExamRating',
 	professor: 'did:iota:123',
-	grade: 1.5, // TODO you can adjust your grade before creating the credential
+	grade: 1.5, // TODO 2.3. you can adjust your grade before creating the credential
 	subject: 'Mathematic',
 	topic: 'Probability Calculation'
 };
