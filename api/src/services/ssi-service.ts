@@ -111,7 +111,7 @@ export class SsiService {
 				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
 			});
 
-			const client = this.getIdentityClient();
+			const client = this.getIdentityClient(true);
 			const validatedCredential = await client.checkCredential(signedVc.toString());
 
 			if (!validatedCredential?.verified || !doc.verify(signedVc)) {
