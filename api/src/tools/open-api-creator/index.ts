@@ -1,5 +1,3 @@
-// import { getJsonSchemaReader, getOpenApiWriter, makeConverter } from 'typeconv'
-
 import { ProveOwnershipPostBodySchema, NounceSchema } from '../../models/schemas/request-response-body/authentication-bodies';
 import { CreateChannelBodySchema, AddChannelLogBodySchema, AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema, CreateChannelBodyResponseSchema, ChannelDataSchema } from '../../models/schemas/request-response-body/channel-bodies';
 import { ClaimSchema, RevokeVerificationBodySchema, VerifyIdentityBodySchema, VerifiableCredentialBodySchema, TrustedRootBodySchema, SubjectBodySchema } from '../../models/schemas/request-response-body/verification-bodies';

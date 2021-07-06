@@ -9,7 +9,6 @@
 		"noUnusedLocals": true,
 		"typeRoots": ["node_modules/@types", "types"],
 		"outDir": "dist",
-		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"allowJs": true
 	},

@@ -193,7 +193,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		type: 'ed25519',
 		public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
-		encoding: Encoding.base16
+		encoding: Encoding.base58
 	},
 	txHash: 'LCHPWELIWGXUSHX9YACHICTLRHVGTFHXBEQILQBCCTDDRLJTBLYHTGRT9HKOLQZQHENEHPEGYMZD99999'
 };
