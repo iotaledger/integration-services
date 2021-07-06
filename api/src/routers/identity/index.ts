@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { CreateUserBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-body/user-bodies';
+import { CreateUserBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
 import { UserSchema } from '../../models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
 import { UserService } from '../../services/user-service';
@@ -53,19 +53,13 @@ export const identityRouter = Router();
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string    
+ *               $ref: '#/components/schemas/ErrorResponseSchema'  
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string             
+ *               $ref: '#/components/schemas/ErrorResponseSchema'          
  */
 identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
 
@@ -77,6 +71,8 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *     description: Search for identities in the system and returns a list of existing identities.
  *     tags:
  *     - identity
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       201:
  *         description: List of existing entities.
@@ -89,19 +85,13 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string    
+ *               $ref: '#/components/schemas/ErrorResponseSchema'  
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string          
+ *               $ref: '#/components/schemas/ErrorResponseSchema'        
  */
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 
@@ -117,6 +107,12 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *     - name: identityId
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           summary: Example identity id (DID identifier)
  *     responses:
  *       200:
  *         description: List of existing entities.
@@ -129,19 +125,13 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string   
+ *               $ref: '#/components/schemas/ErrorResponseSchema' 
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  * 
  */
 identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
@@ -171,19 +161,13 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string   
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
 
@@ -195,6 +179,8 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *     description: Update claim of a registered identity.
  *     tags:
  *     - identity
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -212,19 +198,13 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string   
+ *               $ref: '#/components/schemas/ErrorResponseSchema' 
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserBodySchema }), updateUser);
 
@@ -240,6 +220,14 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *     - name: identityId
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           summary: Example identity id (DID identifier)
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Deleted Identity.
@@ -248,18 +236,12 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string   
+ *               $ref: '#/components/schemas/ErrorResponseSchema'  
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);

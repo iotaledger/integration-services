@@ -1,24 +1,25 @@
 import { Static } from '@sinclair/typebox';
-import { ProveOwnershipPostBodySchema } from '../schemas/request-body/authentication-bodies';
+import { NounceSchema, ProveOwnershipPostBodySchema } from '../schemas/request-response-body/authentication-bodies';
 import {
 	AddChannelLogBodySchema,
 	AuthorizeSubscriptionBodySchema,
 	CreateChannelBodySchema,
 	RequestSubscriptionBodySchema
-} from '../schemas/request-body/channel-bodies';
+} from '../schemas/request-response-body/channel-bodies';
 import { ChannelInfoSchema } from '../schemas/channel-info';
 import { UserSchema } from '../schemas/user';
-import { CreateUserBodySchema } from '../schemas/request-body/user-bodies';
+import { CreateUserBodySchema } from '../schemas/request-response-body/user-bodies';
 import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
 	VerifyIdentityBodySchema
-} from '../schemas/request-body/verification-bodies';
-import { CreateChannelBodyResponseSchema } from '../schemas/request-body/channel-bodies';
-import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../schemas/request-body/subscription-bodies';
+} from '../schemas/request-response-body/verification-bodies';
+import { CreateChannelBodyResponseSchema } from '../schemas/request-response-body/channel-bodies';
+import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../schemas/request-response-body/subscription-bodies';
 
 export type ProveOwnershipPostBody = Static<typeof ProveOwnershipPostBodySchema>;
+export type Nounce = Static<typeof NounceSchema>
 
 export type ChannelInfoBody = Static<typeof ChannelInfoSchema>;
 

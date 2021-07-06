@@ -12,5 +12,5 @@ export interface ChannelInfoPersistence extends OmitedChannelInfo {
 	latestMessage?: Date;
 }
 
-export type ChannelInfoSearchString = Static<typeof ChannelInfoSearchSchema>;
-export type ChannelInfoSearch = Omit<ChannelInfoSearchString, 'created' | 'latestMessage'> & { created: Date, latestMessage: Date }
+type ChannelInfoSearchDate = Static<typeof ChannelInfoSearchSchema>;
+export type ChannelInfoSearch = Omit<ChannelInfoSearchDate, 'created' | 'latestMessage'> & { created: Date, latestMessage: Date }

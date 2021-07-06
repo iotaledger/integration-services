@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-body/channel-bodies';
+import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
 import { SubscriptionPool } from '../../pools/subscription-pools';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { StreamsService } from '../../services/streams-service';
@@ -24,6 +24,36 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
 
 /**
  * @openapi
+ * /subscriptions/subscriptions/{channelAddress}:
+ *   get:
+ *     summary: TBD!
+ *     description: Get all subscriptions of a channel.
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
+ * /subscriptions/remove/{channelAddress}:
+ *   post:
+ *     summary: TBD!
+ *     description: Remove subscription to a channel. The author or subscriber of a channel can remove a subscription from a channel. (A subscriber can only remove its own subscription)
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
  * /subscriptions/request/{channelAddress}:
  *   post:
  *     summary: Request subscription to a channel
@@ -34,6 +64,14 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address  
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -52,19 +90,13 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string    
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string             
+ *               $ref: '#/components/schemas/ErrorResponseSchema'          
  */
 subscriptionRouter.post(
 	'/request/:channelAddress',
@@ -86,6 +118,14 @@ subscriptionRouter.post(
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address  
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -104,19 +144,13 @@ subscriptionRouter.post(
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string    
+ *               $ref: '#/components/schemas/ErrorResponseSchema'  
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string             
+ *               $ref: '#/components/schemas/ErrorResponseSchema'           
  */
 subscriptionRouter.post(
 	'/authorize/:channelAddress',

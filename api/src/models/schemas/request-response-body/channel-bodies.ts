@@ -15,7 +15,7 @@ export const CreateChannelBodyResponseSchema = Type.Object({
 
 export const AddChannelLogBodySchema = Type.Object({
 	type: Type.String({ minLength: 1 }),
-	creationDate: Type.Optional(Type.String()),
+	creationDate: Type.Optional(Type.String({format: 'date-time'})),
 	metadata: Type.Optional(Type.Any()),
 	payload: Type.Any()
 });

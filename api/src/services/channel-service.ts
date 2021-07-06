@@ -7,7 +7,7 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
-import { CreateChannelBodyResponse } from '../models/types/request-bodies';
+import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
 
 export class ChannelService {
 	private readonly password: string;

@@ -6,7 +6,7 @@ import {
 	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
 	VerifyIdentityBodySchema
-} from '../../models/schemas/request-body/verification-bodies';
+} from '../../models/schemas/request-response-body/verification-bodies';
 import { VerificationRoutes } from '../../routes/verification';
 import { VerificationService } from '../../services/verification-service';
 import { Logger } from '../../utils/logger';
@@ -49,6 +49,12 @@ export const verificationRouter = Router();
  *     - name: identityId
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           summary: Example identity id (DID identifier)
  *     responses:
  *       200:
  *         description: Latest Identity document (DID)
@@ -61,19 +67,13 @@ export const verificationRouter = Router();
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
 
@@ -85,6 +85,8 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *     description: Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
  *     tags:
  *     - verification
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -98,19 +100,13 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), addTrustedRootIdentity);
 
@@ -139,19 +135,13 @@ verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, vali
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema' 
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
 
@@ -163,6 +153,8 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *     description: Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
  *     tags:
  *     - verification
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -176,19 +168,13 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), removeTrustedRootIdentity);
 
@@ -200,6 +186,8 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  *     description: Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
  *     tags:
  *     - verification
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -217,19 +205,13 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post(
 	'/create-credential',
@@ -267,19 +249,13 @@ verificationRouter.post(
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialBodySchema }), checkVerifiableCredential);
 
@@ -291,6 +267,8 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  *     description: Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins (with verified identities) or the identity owner itself can do that.
  *     tags:
  *     - verification
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -304,19 +282,13 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post(
 	'/revoke-credential',

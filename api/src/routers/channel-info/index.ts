@@ -14,6 +14,28 @@ export const channelInfoRouter = Router();
 
 /**
  * @openapi
+ * /channel-info/validate:
+ *   post:
+ *     summary: TBD!
+ *     description: Validates data of a channel.
+ *     tags:
+ *     - channel-info
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
+ * /channel-info/re-import:
+ *   post:
+ *     summary: TBD!
+ *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
+ *     tags:
+ *     - channel-info
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
  * /channel-info/search:
  *   get:
  *     summary: Search for a channel
@@ -26,6 +48,8 @@ export const channelInfoRouter = Router();
  *       required: false
  *       schema: 
  *         $ref: "#/components/schemas/ChannelInfoSearchSchema"
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Returns information about searched channels
@@ -68,6 +92,12 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address  
  *     responses:
  *       200:
  *         description: Returns information about the channel
@@ -104,6 +134,8 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *     description: Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
  *     tags:
  *     - channel-info
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -149,6 +181,8 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *     description: Update channel information. The author of a channel can update topics of a channel.
  *     tags:
  *     - channel-info
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -198,6 +232,14 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address  
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Channel successfully deleted
@@ -206,18 +248,12 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string    
+ *               $ref: '#/components/schemas/ErrorResponseSchema' 
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string             
+ *               $ref: '#/components/schemas/ErrorResponseSchema'         
  */
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);

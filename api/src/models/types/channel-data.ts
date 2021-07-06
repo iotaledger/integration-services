@@ -1,6 +1,6 @@
 import { Static } from '@sinclair/typebox';
-import { ChannelDataSchema } from '../schemas/request-body/channel-bodies';
-import { AddChannelLogBody } from './request-bodies';
+import { ChannelDataSchema } from '../schemas/request-response-body/channel-bodies';
+import { AddChannelLogBody } from './request-response-bodies';
 
 export type ChannelLog = AddChannelLogBody;
 

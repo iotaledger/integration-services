@@ -5,7 +5,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
-import { AuthorizeSubscriptionBody, AuthorizeSubscriptionBodyResponse } from '../models/types/request-bodies';
+import { AuthorizeSubscriptionBody, AuthorizeSubscriptionBodyResponse } from '../models/types/request-response-bodies';
 
 export class SubscriptionService {
 	private password: string;

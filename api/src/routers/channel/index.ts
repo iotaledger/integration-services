@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/schemas/request-body/channel-bodies';
+import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { ChannelService } from '../../services/channel-service';
 import { Logger } from '../../utils/logger';
@@ -14,6 +14,21 @@ const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
 const { addLogs, createChannel, getLogs } = channelRoutes;
 
 export const channelRouter = Router();
+
+/**
+ * @openapi
+ * /channels/history/{channelAddress}:
+ *   get:
+ *     summary: TBD!
+ *     description: Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory.
+ *     tags:
+ *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *     deprecated: true
+ */
 
 /**
  * @openapi
@@ -70,6 +85,14 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address     
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       content: 
  *         application/json:
@@ -118,6 +141,14 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address  
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Returns data from the channel
@@ -132,18 +163,12 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string    
+ *               $ref: '#/components/schemas/ErrorResponseSchema'  
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string             
+ *               $ref: '#/components/schemas/ErrorResponseSchema'          
  */
 channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, getLogs);

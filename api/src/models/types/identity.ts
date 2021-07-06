@@ -1,7 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { Static } from '@sinclair/typebox';
 import { VerifiableCredentialSchema, VcSubjectSchema, IdentityDocumentJsonSchema, IdentityKeyPairJsonSchema, DocumentJsonUpdateSchema, IdentityJsonSchema, IdentityJsonUpdateSchema, LatestIdentityJsonSchema } from '../schemas/identity';
-import { CreateIdentityBodySchema } from '../schemas/request-body/user-bodies';
+import { CreateIdentityBodySchema } from '../schemas/request-response-body/user-bodies';
 
 export interface Credential<T> {
 	id: string;

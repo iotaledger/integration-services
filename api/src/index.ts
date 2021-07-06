@@ -74,6 +74,10 @@ async function startServer() {
 				{
 					"url": `/api/${version}`,
 					"description": "Local Dev"
+				},
+				{
+					"url": `https://ensuresec.solutions.iota.org/api/v0.1`,
+					"description": "Deployed Dev"
 				}
 			],
 			components: {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-body/authentication-bodies';
+import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-response-body/authentication-bodies';
 import { AuthenticationRoutes } from '../../routes/authentication';
 import { AuthenticationService } from '../../services/authentication-service';
 import { Logger } from '../../utils/logger';
@@ -26,34 +26,31 @@ export const authenticationRouter = Router();
  *     - name: identityId
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           summary: Example identity id (DID identifier)
  *     responses:
  *       200:
  *         description: Returns a nouce.
  *         content: 
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 nounce:  
- *                   type: string
+ *               $ref: '#/components/schemas/NounceSchema'
  *       401:
  *         description: No valid api key provided
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
  *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string                 
+ *               $ref: '#/components/schemas/ErrorResponseSchema'              
  */
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
 
@@ -69,6 +66,12 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *     - name: identityId
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           summary: Example identity id (DID identifier)
  *     requestBody:
  *       content: 
  *         application/json:
@@ -89,36 +92,24 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *         content: 
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       500:
  *         description: No valid signedNonce provided
  *         content: 
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       401:
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string  
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               type: object
- *               properties:
- *                 error:  
- *                   type: string 
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
