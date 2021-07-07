@@ -1,8 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { Config } from '../config';
-import axios from 'axios';
-import { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import * as fs from 'fs';
 import { errFunc } from '../error';
 
