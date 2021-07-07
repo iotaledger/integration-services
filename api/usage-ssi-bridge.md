@@ -633,7 +633,7 @@ export const getHexEncodedKey = (base58Key: string) => {
 };
 
 // Hash a string
-const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
+const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString('hex');
 
 // Sign a nonce using the private key.
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
