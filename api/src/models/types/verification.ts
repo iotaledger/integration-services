@@ -1,6 +1,6 @@
 import { Static } from '@sinclair/typebox';
 import Express from 'express';
-import { SubjectBodySchema } from '../schemas/request-body/verification-bodies';
+import { SubjectBodySchema } from '../schemas/request-response-body/verification-bodies';
 import { User } from './user';
 
 export enum CredentialTypes {

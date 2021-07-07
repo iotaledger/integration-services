@@ -1,5 +1,5 @@
 import { Static } from '@sinclair/typebox';
-import { ClaimSchema } from '../schemas/request-body/verification-bodies';
+import { ClaimSchema } from '../schemas/request-response-body/verification-bodies';
 import { UserSchema } from '../schemas/user';
 import { OrganizationSchema, ServiceSchema, PersonSchema, ProductSchema, DeviceSchema } from '../schemas/user-types';
 

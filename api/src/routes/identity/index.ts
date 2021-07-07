@@ -7,7 +7,7 @@ import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '../../models/types/identity';
-import { UserSchemaBody } from '../../models/types/request-bodies';
+import { UserSchemaBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
 export class IdentityRoutes {

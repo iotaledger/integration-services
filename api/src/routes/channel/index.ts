@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { get as lodashGet } from 'lodash';
-import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-bodies';
+import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
 export class ChannelRoutes {

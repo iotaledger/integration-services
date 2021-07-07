@@ -7,6 +7,7 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
+import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
 
 export class ChannelService {
 	private readonly password: string;
@@ -24,7 +25,7 @@ export class ChannelService {
 		this.password = config.statePassword;
 	}
 
-	create = async (identityId: string, topics: Topic[], encrypted: boolean, seed?: string): Promise<{ seed: string; channelAddress: string }> => {
+	create = async (identityId: string, topics: Topic[], encrypted: boolean, seed?: string): Promise<CreateChannelBodyResponse> => {
 		const res = await this.streamsService.create(seed);
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');

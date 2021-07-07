@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { VerifiableCredentialSchema } from './identity';
-import { ClaimSchema } from './request-body/verification-bodies';
+import { ClaimSchema } from './request-response-body/verification-bodies';
 
 export const LocationSchema = Type.Object({
 	latitude: Type.Number(),

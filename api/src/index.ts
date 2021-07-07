@@ -1,13 +1,16 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
+import swaggerUi from 'swagger-ui-express';
 import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import morgan from 'morgan';
 import { setupApi } from './setup';
+import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
+import { openApiDefinition } from './routers/swagger';
 
 const logger = Logger.getInstance();
 
@@ -28,10 +31,12 @@ async function startServer() {
 	const dbName = CONFIG.databaseName;
 	const version = CONFIG.apiVersion;
 	const loggerMiddleware = morgan('combined');
+	const openapiSpecification = swaggerJsdoc(openApiDefinition);
 
 	app.use(express.json({ limit: '10mb' }));
 	app.use(express.urlencoded({ limit: '10mb', extended: true }));
 	app.use(loggerMiddleware);
+	app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
 	const prefix = `/api/${version}`;
 	useRouter(app, prefix + '/channel-info', channelInfoRouter);
