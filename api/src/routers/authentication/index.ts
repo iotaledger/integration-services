@@ -35,22 +35,22 @@ export const authenticationRouter = Router();
  *     responses:
  *       200:
  *         description: Returns a nouce.
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/NounceSchema'
+ *               $ref: '#/components/schemas/NonceSchema'
  *       401:
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'              
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
 
@@ -73,29 +73,29 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *           summary: Example identity id (DID identifier)
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/ProveOwnershipPostBodySchema'
  *     responses:
  *       200:
  *         description: Returns a JSON Web Token (JWT).
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 jwt:  
+ *                 jwt:
  *                   type: string
  *       400:
  *         description: No valid body provided
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       500:
  *         description: No valid signedNonce provided
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'

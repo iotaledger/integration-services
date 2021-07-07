@@ -1,5 +1,5 @@
 import { Static } from '@sinclair/typebox';
-import { NounceSchema, ProveOwnershipPostBodySchema } from '../schemas/request-response-body/authentication-bodies';
+import { NonceSchema, ProveOwnershipPostBodySchema } from '../schemas/request-response-body/authentication-bodies';
 import {
 	AddChannelLogBodySchema,
 	AuthorizeSubscriptionBodySchema,
@@ -19,7 +19,7 @@ import { CreateChannelBodyResponseSchema } from '../schemas/request-response-bod
 import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../schemas/request-response-body/subscription-bodies';
 
 export type ProveOwnershipPostBody = Static<typeof ProveOwnershipPostBodySchema>;
-export type Nounce = Static<typeof NounceSchema>
+export type Nonce = Static<typeof NonceSchema>;
 
 export type ChannelInfoBody = Static<typeof ChannelInfoSchema>;
 
