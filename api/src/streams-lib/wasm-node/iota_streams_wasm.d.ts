@@ -5,15 +5,11 @@
 export function set_panic_hook(): void;
 /**
 */
-export enum ChannelType {
-  SingleBranch,
-  MultiBranch,
-  SingleDepth,
-}
-/**
-*/
 export class Address {
   free(): void;
+/**
+*/
+  constructor();
 /**
 * @param {string} link
 * @returns {Address}
@@ -28,6 +24,11 @@ export class Address {
 */
   copy(): Address;
 /**
+* @param {Address} addr
+* @returns {boolean}
+*/
+  eq(addr: Address): boolean;
+/**
 * @returns {string}
 */
   addr_id: string;
@@ -41,18 +42,19 @@ export class Address {
 export class Author {
   free(): void;
 /**
+* @param {string} node
 * @param {string} seed
 * @param {SendOptions} options
-* @param {number} implementation
+* @param {boolean} multi_branching
 */
-  constructor(seed: string, options: SendOptions, implementation: number);
+  constructor(node: string, seed: string, options: SendOptions, multi_branching: boolean);
 /**
 * @param {Client} client
 * @param {string} seed
-* @param {number} implementation
+* @param {boolean} multi_branching
 * @returns {Author}
 */
-  static from_client(client: Client, seed: string, implementation: number): Author;
+  static from_client(client: Client, seed: string, multi_branching: boolean): Author;
 /**
 * @param {Client} client
 * @param {Uint8Array} bytes
@@ -144,17 +146,6 @@ export class Author {
 * @returns {any}
 */
   fetch_next_msgs(): any;
-/**
-* @param {Address} link
-* @returns {any}
-*/
-  fetch_prev_msg(link: Address): any;
-/**
-* @param {Address} link
-* @param {number} num_msgs
-* @returns {any}
-*/
-  fetch_prev_msgs(link: Address, num_msgs: number): any;
 /**
 * @returns {any}
 */
@@ -256,32 +247,38 @@ export class PublicKeys {
 export class SendOptions {
   free(): void;
 /**
-* @param {string} url
+* @param {number} depth
 * @param {boolean} local_pow
+* @param {number} threads
 */
-  constructor(url: string, local_pow: boolean);
+  constructor(depth: number, local_pow: boolean, threads: number);
 /**
 * @returns {SendOptions}
 */
   clone(): SendOptions;
 /**
+* @returns {number}
+*/
+  depth: number;
+/**
 * @returns {boolean}
 */
   local_pow: boolean;
 /**
-* @returns {string}
+* @returns {number}
 */
-  url: string;
+  threads: number;
 }
 /**
 */
 export class Subscriber {
   free(): void;
 /**
+* @param {string} node
 * @param {string} seed
 * @param {SendOptions} options
 */
-  constructor(seed: string, options: SendOptions);
+  constructor(node: string, seed: string, options: SendOptions);
 /**
 * @param {Client} client
 * @param {string} seed
@@ -380,17 +377,6 @@ export class Subscriber {
 * @returns {any}
 */
   fetch_next_msgs(): any;
-/**
-* @param {Address} link
-* @returns {any}
-*/
-  fetch_prev_msg(link: Address): any;
-/**
-* @param {Address} link
-* @param {number} num_msgs
-* @returns {any}
-*/
-  fetch_prev_msgs(link: Address, num_msgs: number): any;
 }
 /**
 */

@@ -44,7 +44,7 @@ export class StreamsService {
 				seed = this.makeSeed(81);
 			}
 			const client = this.getClient(this.config.node);
-			const author = streams.Author.from_client(client, seed, streams.ChannelType.SingleBranch);
+			const author = streams.Author.from_client(client, seed, false);
 			const response = await author.clone().send_announce();
 			const ann_link = response.get_link();
 
@@ -230,7 +230,7 @@ export class StreamsService {
 	}
 
 	private getClient(node: string): streams.Client {
-		const options = new streams.SendOptions(node, true);
+		const options = new streams.SendOptions(9, true, 1);
 		return new streams.Client(node, options.clone());
 	}
 }
