@@ -74,7 +74,8 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
 
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+			expect(res.send).toHaveBeenCalledWith({ error: 'not authorized!' });
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		});
 		it('should not add trusted root since db throws an error!', async () => {
 			const addTrustedRootIdSpy = spyOn(TrustedRootsDb, 'addTrustedRootId').and.throwError('db error');
@@ -120,7 +121,8 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
 
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+			expect(res.send).toHaveBeenCalledWith({ error: 'not authorized!' });
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		});
 		it('should not delete trusted root since db throws an error!', async () => {
 			const loggerSpy = spyOn(LoggerMock, 'error');
