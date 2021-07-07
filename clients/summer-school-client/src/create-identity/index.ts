@@ -6,14 +6,7 @@ import * as fs from 'fs';
 
 // TODO 1.1 add your details here
 const studentBody = {
-	username: 'summer-school-student',
-	claim: {
-		type: 'Person',
-		name: 'Jon Tomson',
-		familyName: 'Tomson',
-		givenName: 'Jon',
-		birthDate: '1980-06-21'
-	}
+	username: 'summer-school-student-' + Math.ceil(Math.random() * 1000)
 };
 
 const axiosOptions: AxiosRequestConfig = {
