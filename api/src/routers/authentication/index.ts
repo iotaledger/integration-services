@@ -34,7 +34,7 @@ export const authenticationRouter = Router();
  *           summary: Example identity id (DID identifier)
  *     responses:
  *       200:
- *         description: Returns a nouce.
+ *         description: Returns a nonce.
  *         content:
  *           application/json:
  *             schema:
