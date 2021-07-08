@@ -30,7 +30,7 @@ export class SubscriptionRoutes {
 			const { seed, accessRights } = req.body as RequestSubscriptionBody;
 			const identityId = req.user.identityId;
 
-			if (!identityId) {
+			if (!identityId || !channelAddress) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 

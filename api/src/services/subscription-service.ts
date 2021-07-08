@@ -59,7 +59,7 @@ export class SubscriptionService {
 		};
 
 		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
-		await subscriptionDb.addSubscription(subscription);
+		await this.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
 
