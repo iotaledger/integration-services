@@ -78,7 +78,7 @@ export class SubscriptionService {
 		}
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, publicKey, <Author>author);
 		if (!authSub?.keyloadLink) {
-			throw new Error('could not authorize the subscription!');
+			throw new Error('no keyload link found when authorizing the subscription');
 		}
 		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink, authSub.keyloadLink);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);

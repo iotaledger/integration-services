@@ -53,8 +53,12 @@ export class SubscriptionRoutes {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const body = req.body as AuthorizeSubscriptionBody;
 			const { subscriptionLink, identityId } = body;
-			const authorId = req.user.identityId;
+			const authorId = req.user?.identityId;
 			let subscription: Subscription = undefined;
+
+			if (!authorId) {
+				return res.sendStatus(StatusCodes.BAD_REQUEST);
+			}
 
 			if (!subscriptionLink && identityId) {
 				subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
