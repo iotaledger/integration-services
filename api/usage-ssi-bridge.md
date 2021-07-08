@@ -538,15 +538,19 @@ The body of the POST request contains the Device type, a username and a claim fi
 ```
 {
   "username": "iota-test-device",
-  "data": {
+  "claim": {
+        "type": "Device",
         "category": ["sensor"],
-        "controlledProperty": ["fillingLevel","temperature"],
-        "controlledAsset":["wastecontainer-Osuna-100"],
+        "controlledProperty": [
+            "fillingLevel",
+            "temperature"
+        ],
+        "controlledAsset": ["wastecontainer-Osuna-100"],
         "ipAddress": ["192.14.56.78"],
         "mcc": "214",
         "mnc": "07",
         "serialNumber": "9845A",
-        "refDeviceModel":"myDevice-wastecontainer-sensor-345",
+        "refDeviceModel": "myDevice-wastecontainer-sensor-345",
         "dateFirstUsed": "2014-09-11T11:00:00Z",
         "owner": ["did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY"]
     }
@@ -629,7 +633,7 @@ export const getHexEncodedKey = (base58Key: string) => {
 };
 
 // Hash a string
-const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString();
+const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).digest().toString('hex');
 
 // Sign a nonce using the private key.
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {

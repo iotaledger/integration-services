@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ProveOwnershipPostBody } from '../../models/types/request-bodies';
+import { ProveOwnershipPostBody } from '../../models/types/request-response-bodies';
 import { AuthenticationService } from '../../services/authentication-service';
 import { ILogger } from '../../utils/logger';
 

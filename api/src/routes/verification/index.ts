@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
 import { Config } from '../../models/config';
-import { RevokeVerificationBody, TrustedRootBody, VerifyIdentityBody } from '../../models/types/request-bodies';
+import { RevokeVerificationBody, TrustedRootBody, VerifyIdentityBody } from '../../models/types/request-response-bodies';
 import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -108,7 +108,7 @@ export class VerificationRoutes {
 		try {
 			const { trustedRoot } = req.body as TrustedRootBody;
 			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
-				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized!' });
 			}
 
 			await this.verificationService.addTrustedRootId(trustedRoot);
@@ -123,7 +123,7 @@ export class VerificationRoutes {
 		try {
 			const { trustedRoot } = req.body as TrustedRootBody;
 			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
-				return res.sendStatus(StatusCodes.UNAUTHORIZED);
+				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized!' });
 			}
 
 			await this.verificationService.removeTrustedRootId(trustedRoot);
