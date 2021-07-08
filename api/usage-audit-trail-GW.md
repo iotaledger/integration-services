@@ -47,6 +47,8 @@ The Audit Trail GW implementation provides the following services:
 > 
 ![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
+> __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
+
 <!-- update figure name if we decide to call it GW--> 
 <!-- delete information from a channel/not to a channel-->
 

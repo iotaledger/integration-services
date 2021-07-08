@@ -99,6 +99,9 @@ The software and services architecture and the list of provided APIs are shown i
 
 ![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
+> __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
+
+
 ### Identity Service 
 The service allows to create decentralized identity onto the IOTA Tangle and to locally manage information for their indexing and search. This service is provided centrally for ease of use but in production ready scenario it is recommended to be installed locally.
 
