@@ -6,7 +6,7 @@ import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
-import morgan from 'morgan';
+import * as expressWinston from 'express-winston';
 import { setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
@@ -30,12 +30,12 @@ async function startServer() {
 	const dbUrl = CONFIG.databaseUrl;
 	const dbName = CONFIG.databaseName;
 	const version = CONFIG.apiVersion;
-	const loggerMiddleware = morgan('combined');
 	const openapiSpecification = swaggerJsdoc(openApiDefinition);
 
 	app.use(express.json({ limit: '10mb' }));
 	app.use(express.urlencoded({ limit: '10mb', extended: true }));
-	app.use(loggerMiddleware);
+	app.use(expressWinston.logger(Logger.getInstance().options));
+
 	app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
 	const prefix = `/api/${version}`;

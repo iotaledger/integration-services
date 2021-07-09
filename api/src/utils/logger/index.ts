@@ -6,6 +6,25 @@ export interface ILogger {
 }
 
 export class Logger implements ILogger {
+	readonly options = {
+		level: 'info',
+		format: winston.format.json(),
+		defaultMeta: { service: 'user-service' },
+		transports: [
+			new winston.transports.Console({
+				format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
+			}),
+			new winston.transports.File({
+				filename: `./logs/error-${new Date().getMonth() + 1}-${new Date().getFullYear()}.log`,
+				level: 'error',
+				format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
+			}),
+			new winston.transports.File({
+				filename: `./logs/combined-${new Date().getMonth() + 1}-${new Date().getFullYear()}.log`
+			})
+		]
+	};
+
 	private static instance: Logger;
 	logger: winston.Logger;
 	private constructor() {
@@ -28,21 +47,7 @@ export class Logger implements ILogger {
 	}
 
 	private createLogger() {
-		return winston.createLogger({
-			level: 'info',
-			format: winston.format.json(),
-			defaultMeta: { service: 'user-service' },
-			transports: [
-				new winston.transports.Console({
-					format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
-				}),
-				new winston.transports.File({
-					filename: `./logs/error-${new Date().getMonth() + 1}-${new Date().getFullYear()}.log`,
-					level: 'error'
-				}),
-				new winston.transports.File({ filename: `./logs/combined-${new Date().getMonth() + 1}-${new Date().getFullYear()}.log` })
-			]
-		});
+		return winston.createLogger(this.options);
 	}
 
 	private alignColorsAndTime() {
