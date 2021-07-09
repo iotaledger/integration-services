@@ -17,4 +17,6 @@ export interface Subscription {
 	isAuthorized: boolean;
 	subscriptionLink: string;
 	accessRights: AccessRights;
+	publicKey: string | null;
+	keyloadLink?: string;
 }

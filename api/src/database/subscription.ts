@@ -13,11 +13,16 @@ export const getSubscription = async (channelAddress: string, identityId: string
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
+export const getSubscriptionByLink = async (subscriptionLink: string): Promise<Subscription | null> => {
+	const query = { subscriptionLink };
+	return MongoDbService.getDocument<Subscription>(collectionName, query);
+};
+
 export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const document = {
 		_id: getIndex(subscription.identityId, subscription.channelAddress),
 		...subscription,
-		creationDate: new Date()
+		created: new Date()
 	};
 
 	return MongoDbService.insertDocument(collectionName, document);
@@ -40,7 +45,8 @@ export const updateSubscriptionState = async (channelAddress: string, identityId
 export const setSubscriptionAuthorization = async (
 	channelAddress: string,
 	subscriptionLink: string,
-	isAuthorized: boolean
+	isAuthorized: boolean,
+	keyloadLink?: string
 ): Promise<UpdateWriteOpResult> => {
 	const query = {
 		channelAddress,
@@ -49,6 +55,7 @@ export const setSubscriptionAuthorization = async (
 	const update = {
 		$set: {
 			isAuthorized,
+			keyloadLink,
 			lastModified: new Date()
 		}
 	};

@@ -39,7 +39,8 @@ export class ChannelService {
 			subscriptionLink: res.channelAddress,
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
-			isAuthorized: true
+			isAuthorized: true,
+			publicKey: null
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
@@ -62,7 +63,7 @@ export class ChannelService {
 		}
 
 		const isAuth = subscription.type === SubscriptionType.Author;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth, this.password);
+		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
@@ -93,7 +94,7 @@ export class ChannelService {
 		const isAuth = channelInfo.authorId === identityId;
 		// TODO encrypt/decrypt seed
 		const latestLink = channelInfo.latestLink;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth, this.password);
+		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}

@@ -22,9 +22,9 @@ describe('test channel routes', () => {
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
 		userService = new UserService({} as any, '', LoggerMock);
-		streamsService = new StreamsService(config.node, LoggerMock);
+		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		const subscriptionPool = new SubscriptionPool(config.node);
+		const subscriptionPool = new SubscriptionPool(streamsService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
@@ -76,7 +76,8 @@ describe('test channel routes', () => {
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
-				identityId: 'did:iota:1234'
+				identityId: 'did:iota:1234',
+				publicKey: null
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
