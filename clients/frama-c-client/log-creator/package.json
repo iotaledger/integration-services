@@ -1,0 +1,43 @@
+{
+  "name": "log-auditor",
+  "version": "1.0.0",
+  "description": "A client which creates logs",
+  "main": "index.ts",
+  "scripts": {
+    "build-tsc": "tsc --project ./",
+    "build-lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+    "build-prettier": "npx prettier --write ./src",
+    "build": "npm-run-all build-tsc build-lint build-prettier",
+    "start": "npm run build",
+    "poststart": "node dist/index.js",
+
+    "create-identity": "tsc --project ./",
+    "postcreate-identity": "node dist/create-identity/index.js",
+    "create-stream-channel": "tsc --project ./",
+    "postcreate-stream-channel": "node dist/create-stream-channel/index.js",
+    "authorize-subscription": "tsc --project ./",
+    "postauthorize-subscription": "node dist/authorize-subscription/index.js",
+    "write-stream-channel": "tsc --project ./",
+    "postwrite-stream-channel": "node dist/write-stream-channel/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bs58": "^4.0.1",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.30.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  }
+}
