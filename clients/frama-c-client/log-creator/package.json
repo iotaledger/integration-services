@@ -10,7 +10,6 @@
     "build": "npm-run-all build-tsc build-lint build-prettier",
     "start": "npm run build",
     "poststart": "node dist/index.js",
-
     "create-identity": "tsc --project ./",
     "postcreate-identity": "node dist/create-identity/index.js",
     "create-stream-channel": "tsc --project ./",
@@ -25,9 +24,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bs58": "^4.0.1",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "noble-ed25519": "^1.0.3"
   },
   "devDependencies": {
+    "@types/bs58": "^4.0.1",
+    "@types/jest": "^26.0.24",
     "@types/node": "^16.3.1",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
