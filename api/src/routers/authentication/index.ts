@@ -77,6 +77,8 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/ProveOwnershipPostBodySchema'
+ *           example:
+ *             signedNonce: fbba5d1ae6f6d0ccb761ce42dc4b82ee767be6a7fc049002e6e2d603419a128fe752ce2e1797137ca6d324c92e2703effd5f60f71154a09ba2c7967d87a85d00
  *     responses:
  *       200:
  *         description: Returns a JSON Web Token (JWT).

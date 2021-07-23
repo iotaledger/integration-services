@@ -77,6 +77,9 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/RequestSubscriptionBodySchema"
+ *           example:
+ *             seed: qoekxjyzswfibbdgtvcxiigreptpnppzijkdyyeskftrqycqauengfyjobteluiudiqaucnh
+ *             accessRights: Read
  *     responses:
  *       201:
  *         description: Link to requested subscription
@@ -84,7 +87,12 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/AuthorizeSubscriptionBodySchema"
- * 
+ *       400:
+ *         description: Subscription already requested
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       401:
  *         description: No valid api key provided/ Not authenticated
  *         content:
@@ -131,6 +139,8 @@ subscriptionRouter.post(
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/AuthorizeSubscriptionBodySchema"
+ *           example:
+ *             subscriptionLink: 2742f37b457ca6f63b4de3a30b4a5073af5e964eeb76b46eddd1272dd4482a360000000000000000:2d054c5c0be6215bd8fffbfb
  *     responses:
  *       200:
  *         description: Link to requested subscription

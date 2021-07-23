@@ -47,7 +47,31 @@ export const channelInfoRouter = Router();
  *       in: query
  *       required: false
  *       schema: 
- *         $ref: "#/components/schemas/ChannelInfoSearchSchema"
+ *         type: object
+ *         properties:
+ *           author:
+ *             type: string
+ *           'topic-type':
+ *             type: string
+ *           'topic-source':
+ *             type: string
+ *           created:
+ *             type: string
+ *             format: date-time
+ *           'latest-message':
+ *             type: string
+ *           limit:
+ *             type: number
+ *           index:
+ *             type: number
+ *         example:
+ *           author: null
+ *           'topic-type': example-channel-data
+ *           'topic-source': null
+ *           created: null
+ *           'latest-message': null
+ *           limit: null
+ *           index: null
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -141,6 +165,19 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/ChannelInfoSchema"
+ *           example:
+ *             channelAddress: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e
+ *             authorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             subscriberIds:
+ *             - did:iota:D2hAY4ETPv2YFjyXQpeijgNp1bb1MijmXtiBJNNKx1NE
+ *             - did:iota:9aJBqphbRMpdgAunuSE7iLKpEhu991ZQLUQutF6HWDpJ
+ *             latestLink: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:8ff362973ecc2cfd62831acb
+ *             encrypted: false
+ *             topics:
+ *             - type: example-channel-data
+ *               source: channel-creator
+ *             created: 2021-07-23T13:45:30.680Z
+ *             latestMessage: 2021-07-23T13:45:30.680Z           
  *     responses:
  *       201:
  *         description: Channel successfully added
@@ -188,6 +225,19 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/ChannelInfoSchema"
+ *           example:
+ *             channelAddress: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e
+ *             authorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             subscriberIds:
+ *             - did:iota:D2hAY4ETPv2YFjyXQpeijgNp1bb1MijmXtiBJNNKx1NE
+ *             - did:iota:9aJBqphbRMpdgAunuSE7iLKpEhu991ZQLUQutF6HWDpJ
+ *             latestLink: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:8ff362973ecc2cfd62831acb
+ *             encrypted: false
+ *             topics:
+ *             - type: example-channel-data
+ *               source: channel-creator
+ *             created: 2021-07-23T13:45:30.680Z
+ *             latestMessage: 2021-07-23T13:45:30.680Z  
  *     responses:
  *       200:
  *         description: Channel successfully added

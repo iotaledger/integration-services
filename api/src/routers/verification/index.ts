@@ -92,6 +92,8 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/TrustedRootBodySchema"
+ *           example:
+ *             trustedRoot: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *     responses:
  *       200:
  *         description: Successful added trusted Root identity identifier.
@@ -160,6 +162,8 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/TrustedRootBodySchema"
+ *           example:
+ *             trustedRoot: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *     responses:
  *       200:
  *         description: Successful removed trusted Root identity identifier.
@@ -193,6 +197,28 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/VerifyIdentityBodySchema"
+ *           example:
+ *             subject:
+ *               identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               credentialType: VerifiableCredential
+ *               claim:
+ *                 type: Service
+ *             initiatorVC:
+ *               '@context': https://www.w3.org/2018/credentials/v1
+ *               id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
+ *               type:
+ *               - VerifiableCredential
+ *               - VerifiedIdentityCredential
+ *               credentialSubject:
+ *                 id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
+ *                 type: Person
+ *                 initiatorId: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
+ *               issuer: did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof
+ *               issuanceDate: 2021-06-18T11:33:59Z
+ *               proof:
+ *                 type: MerkleKeySignature2021
+ *                 verificationMethod: #key-collection-0
+ *                 signatureValue: example-key
  *     responses:
  *       200:
  *         description: The created credential.
@@ -234,6 +260,22 @@ verificationRouter.post(
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/VerifiableCredentialSchema"
+ *           example:
+ *             '@context': https://www.w3.org/2018/credentials/v1
+ *             id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
+ *             type:
+ *             - VerifiableCredential
+ *             - VerifiedIdentityCredential
+ *             credentialSubject:
+ *               id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
+ *               type: Person
+ *               initiatorId: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
+ *             issuer: did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof
+ *             issuanceDate: 2021-06-18T11:33:59Z
+ *             proof:
+ *               type: MerkleKeySignature2021
+ *               verificationMethod: #key-collection-0
+ *               signatureValue: example-key
  *     responses:
  *       200:
  *         description: The registered entity.
@@ -274,6 +316,8 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/RevokeVerificationBodySchema"
+ *           example: 
+ *             signatureValue: example-key
  *     responses:
  *       200:
  *         description: Revoke successful
