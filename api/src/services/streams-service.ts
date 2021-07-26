@@ -3,6 +3,7 @@ import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/i
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
+import { fromBytes, toBytes } from '../utils/text';
 
 streams.set_panic_hook();
 
@@ -19,10 +20,10 @@ export class StreamsService {
 			const password = this.config.statePassword;
 			const client = this.getClient(this.config.node);
 			if (isAuthor) {
-				return streams.Author.import(client, this.toBytes(state), password);
+				return streams.Author.import(client, toBytes(state), password);
 			}
 
-			return streams.Subscriber.import(client, this.toBytes(state), password);
+			return streams.Subscriber.import(client, toBytes(state), password);
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not import the subscription object');
@@ -31,7 +32,7 @@ export class StreamsService {
 
 	exportSubscription = (subscription: Author | Subscriber, password: string): string => {
 		try {
-			return this.fromBytes(subscription.clone().export(password));
+			return fromBytes(subscription.clone().export(password));
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not export the subscription object');
@@ -72,10 +73,10 @@ export class StreamsService {
 				link = prevLogs.latestLink;
 			}
 			const latestAddress = Address.from_string(link);
-			const mPayload = this.toBytes(JSON.stringify(channelLog));
+			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			await subscription.clone().sync_state();
-			const response = await subscription.clone().send_tagged_packet(latestAddress, this.toBytes(''), mPayload);
+			const response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response?.get_link();
 			if (!tag_link) {
 				throw new Error('could not send tagged packet');
@@ -117,7 +118,7 @@ export class StreamsService {
 						.map((userResponse: any) => {
 							const link = userResponse?.get_link()?.to_string();
 							const message = userResponse.get_message();
-							const maskedPayload = message && this.fromBytes(message.get_masked_payload());
+							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
 								const channelData: ChannelData = {
@@ -127,7 +128,7 @@ export class StreamsService {
 								return channelData;
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
-								// return;
+								return;
 							}
 						})
 						.filter((c: ChannelData | undefined) => c);
@@ -211,22 +212,6 @@ export class StreamsService {
 			seed += alphabet[Math.floor(Math.random() * alphabet.length)];
 		}
 		return seed;
-	}
-
-	toBytes(str: string): Uint8Array {
-		const bytes = new Uint8Array(str.length);
-		for (let i = 0; i < str.length; ++i) {
-			bytes[i] = str.charCodeAt(i);
-		}
-		return bytes;
-	}
-
-	fromBytes(bytes: any): string {
-		let str = '';
-		for (let i = 0; i < bytes.length; ++i) {
-			str += String.fromCharCode(bytes[i]);
-		}
-		return str;
 	}
 
 	private getClient(node: string): streams.Client {
