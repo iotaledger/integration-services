@@ -66,18 +66,18 @@ export class SubscriptionRoutes {
 				subscription = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
 			}
 
-			if (!subscription || !subscription.subscriptionLink) {
+			if (!subscription || !subscription?.subscriptionLink) {
 				throw new Error('no subscription found!');
 			}
 
-			if (subscription.isAuthorized) {
+			if (subscription?.isAuthorized) {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already authorized');
 			}
 
 			const channel = await this.subscriptionService.authorizeSubscription(
 				channelAddress,
-				subscription.subscriptionLink,
-				subscription.publicKey,
+				subscription?.subscriptionLink,
+				subscription?.publicKey,
 				authorId
 			);
 			return res.status(StatusCodes.OK).send(channel);
