@@ -1,8 +1,8 @@
-import streams, { Author, Subscriber } from '../../streams-lib/wasm-node/iota_streams_wasm';
+import { Author, Subscriber } from '../../streams-lib/wasm-node/iota_streams_wasm';
 import * as SubscriptionDb from '../../database/subscription';
 import { SubscriptionType } from '../../models/types/subscription';
-import { toBytes } from '../../utils/text';
 import { subSeconds } from 'date-fns';
+import { StreamsService } from '../../services/streams-service';
 
 export class SubscriptionPool {
 	private secondsToLive = 20;
@@ -10,7 +10,7 @@ export class SubscriptionPool {
 	authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
 	subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
 
-	constructor(private readonly node: string, private readonly maxPoolSize = 65000) {
+	constructor(private readonly streamsService: StreamsService, private readonly maxPoolSize = 65000) {
 		this.authors = [];
 		this.subscribers = [];
 	}
@@ -44,24 +44,17 @@ export class SubscriptionPool {
 		this.subscribers = this.subscribers.filter((subscriber) => subscriber.created > subSeconds(new Date(Date.now()), this.secondsToLive));
 	}
 
-	async restoreSubscription(channelAddress: string, identityId: string, password: string) {
+	async restoreSubscription(channelAddress: string, identityId: string) {
 		const sub = await SubscriptionDb.getSubscription(channelAddress, identityId);
 		if (!sub?.state) {
 			throw new Error(`no subscription found for channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
 
 		const isAuthor = sub.type === SubscriptionType.Author;
-		const options = new streams.SendOptions(9, true, 1);
-		const client = new streams.Client(this.node, options.clone());
-
-		if (isAuthor) {
-			return Author.import(client, toBytes(sub.state), password);
-		} else {
-			return Subscriber.import(client, toBytes(sub.state), password);
-		}
+		return this.streamsService.importSubscription(sub.state, isAuthor);
 	}
 
-	async get(channelAddress: string, identityId: string, isAuthor: boolean, password: string): Promise<Author | Subscriber> {
+	async get(channelAddress: string, identityId: string, isAuthor: boolean): Promise<Author | Subscriber> {
 		const predicate = (pool: any) => pool.identityId === identityId && pool.channelAddress === channelAddress;
 		let subscription = null;
 
@@ -80,7 +73,7 @@ export class SubscriptionPool {
 		}
 		if (!subscription) {
 			// try to restore subscription from state in db
-			subscription = await this.restoreSubscription(channelAddress, identityId, password);
+			subscription = await this.restoreSubscription(channelAddress, identityId);
 			this.add(channelAddress, subscription, identityId, isAuthor);
 		}
 		return subscription;
