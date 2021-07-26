@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { errFunc } from '../error';
-import { Config, ChannelAddress } from '../config';
+import { Config } from '../config';
 
 const axiosOptions: AxiosRequestConfig = {
 	headers: {
@@ -13,7 +13,7 @@ const axiosOptions: AxiosRequestConfig = {
 
 axios.interceptors.response.use((response) => response, errFunc());
 
-const requestSubscription = async (channelAddress: string) => {
+export const requestSubscription = async (channelAddress: string): Promise<string | undefined> => {
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
 	const body = {
@@ -26,12 +26,8 @@ const requestSubscription = async (channelAddress: string) => {
 		console.log('successfully requested subscription!');
 		console.log('###########################');
 		console.log(`Subscription link: ${res.data.subscriptionLink}`);
+
+		return res.data.subscriptionLink
 	}
 };
 
-const run = () => {
-	const channelAddress = ChannelAddress;
-	requestSubscription(channelAddress);
-};
-
-run();

@@ -14,7 +14,7 @@ const axiosOptions: AxiosRequestConfig = {
 
 axios.interceptors.response.use((response) => response, errFunc());
 
-const createStreamChannel = async () => {
+export const createStreamChannel = async (): Promise<string | undefined> => {
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
 	const res = await axios.post(`${Config.baseUrl}/channels/create${apiKey}`, JSON.stringify(ChannelConfig), axiosOptions);
@@ -24,11 +24,8 @@ const createStreamChannel = async () => {
 		console.log('#####################');
 		console.log(`Channel address: ${res.data.channelAddress}`);
 		fs.writeFileSync('./src/config/Channel.json', JSON.stringify(res.data));
+		return res.data.channelAddress
 	}
 };
 
-const run = () => {
-	createStreamChannel();
-};
 
-run();

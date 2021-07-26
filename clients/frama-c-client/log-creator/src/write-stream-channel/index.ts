@@ -30,7 +30,7 @@ const loadAndHashFiles = async (): Promise<any> => {
 
 axios.interceptors.response.use((response) => response, errFunc());
 
-const writeStream = async (channelAddress: string) => {
+export const writeStream = async (channelAddress: string): Promise<void> => {
 	console.log('Writing logs to stream...')
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 	const hashedFiles = await loadAndHashFiles();
@@ -53,11 +53,3 @@ const writeStream = async (channelAddress: string) => {
 	}
 };
 
-const run = () => {
-	const channelBuffer = fs.readFileSync('./src/config/Channel.json');
-	const channel = JSON.parse(channelBuffer.toString());
-	const channelAddress = channel.channelAddress;
-	writeStream(channelAddress);
-};
-
-run();

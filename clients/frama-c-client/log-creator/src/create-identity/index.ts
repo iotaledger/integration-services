@@ -11,22 +11,19 @@ const axiosOptions: AxiosRequestConfig = {
 	}
 };
 
-const createIdentity = async () => {
+export const createIdentity = async (): Promise<string | undefined> => {
 	console.log('Creating the identity...');
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
 	const res = await axios.post(`${Config.baseUrl}/identities/create${apiKey}`, JSON.stringify(CreatorIdentity), axiosOptions);
 
 	if (res?.status === 201) {
-		console.log('successfully created identity!');
+		console.log('successfully created log-creator identity!');
 		console.log('###########################');
 		fs.writeFileSync('./src/config/LogCreatorIdentity.json', JSON.stringify(res.data));
+
+		return res.data.doc.id
 	}
 
 };
 
-const run = () => {
-	createIdentity();
-};
-
-run();

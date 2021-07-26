@@ -1,9 +1,8 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import axios, { AxiosRequestConfig } from 'axios';
-import fs from 'fs';
 
-import { Config, SubscriptionLink } from '../config';
+import { Config } from '../config';
 import { errFunc } from '../error';
 
 const axiosOptions: AxiosRequestConfig = {
@@ -14,7 +13,7 @@ const axiosOptions: AxiosRequestConfig = {
 
 axios.interceptors.response.use((response) => response, errFunc());
 
-const authorizeSubscription = async (channelAddress: string, subsciptionLink: string) => {
+export const authorizeSubscription = async (channelAddress: string, subsciptionLink: string): Promise<void> => {
 	console.log('Authorizing subscription...');
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
@@ -30,12 +29,4 @@ const authorizeSubscription = async (channelAddress: string, subsciptionLink: st
 	}
 };
 
-const run = () => {
-	const channelBuffer = fs.readFileSync('./src/config/Channel.json');
-	const channel = JSON.parse(channelBuffer.toString());
-	const channelAddress = channel.channelAddress;
-	const subsciptionLink = SubscriptionLink;
-	authorizeSubscription(channelAddress, subsciptionLink);
-};
 
-run();

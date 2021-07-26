@@ -15,7 +15,7 @@ const axiosOptions: AxiosRequestConfig = {
 
 axios.interceptors.response.use((response) => response, errFunc());
 
-const getChannelData = async (channelAddress: string) => {
+export const getChannelData = async (channelAddress: string): Promise<void> => {
     const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
     const res = await axios.get(`${Config.baseUrl}/channels/logs/${channelAddress}${apiKey}`, axiosOptions);
@@ -69,9 +69,3 @@ const loadAndHashFiles = async (): Promise<any> => {
     return hashedFiles;
 };
 
-const run = () => {
-    const channelAddress = ChannelAddress;
-    getChannelData(channelAddress);
-};
-
-run();
