@@ -218,7 +218,7 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  *               proof:
  *                 type: MerkleKeySignature2021
  *                 verificationMethod: #key-collection-0
- *                 signatureValue: example-key
+ *                 signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
  *     responses:
  *       200:
  *         description: The created credential.
@@ -275,7 +275,7 @@ verificationRouter.post(
  *             proof:
  *               type: MerkleKeySignature2021
  *               verificationMethod: #key-collection-0
- *               signatureValue: example-key
+ *               signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
  *     responses:
  *       200:
  *         description: The registered entity.
@@ -317,7 +317,7 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  *           schema: 
  *             $ref: "#/components/schemas/RevokeVerificationBodySchema"
  *           example: 
- *             signatureValue: example-key
+ *             signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
  *     responses:
  *       200:
  *         description: Revoke successful

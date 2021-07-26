@@ -78,7 +78,6 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *           schema: 
  *             $ref: "#/components/schemas/RequestSubscriptionBodySchema"
  *           example:
- *             seed: qoekxjyzswfibbdgtvcxiigreptpnppzijkdyyeskftrqycqauengfyjobteluiudiqaucnh
  *             accessRights: Read
  *     responses:
  *       201:
