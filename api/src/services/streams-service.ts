@@ -1,5 +1,5 @@
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
-import streams, { Address, Author, Subscriber } from '../streams-lib/wasm-node/iota_streams_wasm';
+import streams, { Address, Author, Subscriber, ChannelType } from '../streams-lib/wasm-node/iota_streams_wasm';
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
@@ -45,7 +45,7 @@ export class StreamsService {
 				seed = this.makeSeed(81);
 			}
 			const client = this.getClient(this.config.node);
-			const author = streams.Author.from_client(client, seed, false);
+			const author = streams.Author.from_client(client, seed, ChannelType.MultiBranch);
 			const response = await author.clone().send_announce();
 			const ann_link = response.get_link();
 
@@ -215,7 +215,7 @@ export class StreamsService {
 	}
 
 	private getClient(node: string): streams.Client {
-		const options = new streams.SendOptions(9, true, 1);
+		const options = new streams.SendOptions(this.config.node, true);
 		return new streams.Client(node, options.clone());
 	}
 }
