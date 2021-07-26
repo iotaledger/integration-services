@@ -111,7 +111,7 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
  *         identityId:
- *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *           summary: Example identity id (DID identifier)
  *     responses:
  *       200:
@@ -149,6 +149,30 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/UserSchema"
+ *           example:
+ *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
+ *             username: root-identity
+ *             registrationDate: 2021-06-21T10:40:12+02:00
+ *             verifiableCredentials:
+ *             - '@context': https://www.w3.org/2018/credentials/v1
+ *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               type: 
+ *               - VerifiableCredential
+ *               - VerifiedIdentityCredential
+ *               credentialSubject:
+ *                 id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *                 type: Service
+ *                 initiatorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               issuer: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               issuanceDate: 2021-06-21T08:05:26Z
+ *               proof:
+ *                 type: MerkleKeySignature2021
+ *                 verificationMethod: #key-collection-0
+ *                 signatureValue: example-key
+ *             role: User
+ *             claim:
+ *               type: Device
  *     responses:
  *       200:
  *         description: The registered entity.
@@ -186,6 +210,30 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/UserSchema"
+ *           example:
+ *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
+ *             username: root-identity
+ *             registrationDate: 2021-06-21T10:40:12+02:00
+ *             verifiableCredentials:
+ *             - '@context': https://www.w3.org/2018/credentials/v1
+ *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               type: 
+ *               - VerifiableCredential
+ *               - VerifiedIdentityCredential
+ *               credentialSubject:
+ *                 id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *                 type: Service
+ *                 initiatorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               issuer: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               issuanceDate: 2021-06-21T08:05:26Z
+ *               proof:
+ *                 type: MerkleKeySignature2021
+ *                 verificationMethod: #key-collection-0
+ *                 signatureValue: example-key
+ *             role: User
+ *             claim:
+ *               type: Device
  *     responses:
  *       200:
  *         description: The registered entity.
