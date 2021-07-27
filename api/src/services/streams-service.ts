@@ -61,22 +61,20 @@ export class StreamsService {
 	};
 
 	addLogs = async (
-		latestLink: string,
+		keyloadLink: string,
 		subscription: Author | Subscriber,
 		channelLog: ChannelLog
 	): Promise<{ link: string; subscription: Author | Subscriber; prevLogs: ChannelData[] | undefined }> => {
 		try {
 			// fetch prev logs before writing new data to the channel
+			// TODO if read only just sync state instead of getting logs
 			const prevLogs = await this.getLogs(subscription.clone());
-			let link = latestLink;
-			if (prevLogs?.latestLink) {
-				link = prevLogs.latestLink;
-			}
+			let link = keyloadLink;
 			const latestAddress = Address.from_string(link);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			await subscription.clone().sync_state();
-			const response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
+			const response = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response?.get_link();
 			if (!tag_link) {
 				throw new Error('could not send tagged packet');
@@ -94,13 +92,10 @@ export class StreamsService {
 	};
 
 	// TODO consider if channel is encrypted or not when getting adding data to channel
-	getLogs = async (
-		subscription: Author | Subscriber
-	): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber; latestLink: string }> => {
+	getLogs = async (subscription: Author | Subscriber): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber }> => {
 		try {
 			let foundNewMessage = true;
 			let channelData: ChannelData[] = [];
-			let latestLink = '';
 
 			while (foundNewMessage) {
 				let next_msgs: any = [];
@@ -109,8 +104,6 @@ export class StreamsService {
 
 				if (next_msgs.length === 0) {
 					foundNewMessage = false;
-				} else {
-					latestLink = next_msgs[next_msgs.length - 1]?.get_link()?.to_string();
 				}
 
 				if (next_msgs && next_msgs.length > 0) {
@@ -128,7 +121,6 @@ export class StreamsService {
 								return channelData;
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
-								return;
 							}
 						})
 						.filter((c: ChannelData | undefined) => c);
@@ -138,8 +130,7 @@ export class StreamsService {
 
 			return {
 				channelData,
-				subscription,
-				latestLink
+				subscription
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -176,7 +167,7 @@ export class StreamsService {
 	authorizeSubscription = async (
 		channelAddress: string,
 		subscriptionLink: string,
-		_publicKey: string,
+		publicKey: string,
 		author: Author
 	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> => {
 		try {
@@ -184,13 +175,11 @@ export class StreamsService {
 			const subscriptionAddress = streams.Address.from_string(subscriptionLink);
 			await author.clone().receive_subscribe(subscriptionAddress);
 
-			// TODO#https://github.com/iotaledger/streams/issues/105 this will be used for multi branching
-			// const keys = streams.PublicKeys.new();
-			// keys.add(publicKey);
-			// const ids = streams.PskIds.new();
-			// const res = await author.clone().send_keyload(announcementAddress, ids, keys);
+			const keys = streams.PublicKeys.new();
+			keys.add(publicKey);
+			const ids = streams.PskIds.new();
+			const res = await author.clone().send_keyload(announcementAddress, ids, keys);
 
-			const res = await author.clone().send_keyload_for_everyone(announcementAddress);
 			const keyloadLink = res?.get_link()?.to_string();
 			const sequenceLink = res?.get_seq_link()?.to_string();
 

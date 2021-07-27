@@ -90,15 +90,19 @@ export class ChannelService {
 	};
 
 	addLogs = async (channelAddress: string, identityId: string, channelLog: ChannelLog) => {
-		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-		const isAuth = channelInfo.authorId === identityId;
+		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+		if (!subscription || !subscription?.keyloadLink) {
+			throw new Error('no subscription found!');
+		}
+
+		const isAuthor = subscription.type === SubscriptionType.Author;
 		// TODO encrypt/decrypt seed
-		const latestLink = channelInfo.latestLink;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
+		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
-		const res = await this.streamsService.addLogs(latestLink, sub, channelLog);
+
+		const res = await this.streamsService.addLogs(subscription.keyloadLink, sub, channelLog);
 
 		// store prev logs in db, they are not fetchable again after writing to a channel
 		if (res?.prevLogs && res?.prevLogs.length > 0) {
