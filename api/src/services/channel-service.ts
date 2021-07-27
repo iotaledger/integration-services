@@ -102,7 +102,7 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
 
-		const res = await this.streamsService.addLogs(subscription.keyloadLink, sub, channelLog);
+		const res = await this.streamsService.addLogs(subscription.keyloadLink, sub, channelLog, subscription.accessRights);
 
 		// store prev logs in db, they are not fetchable again after writing to a channel
 		if (res?.prevLogs && res?.prevLogs.length > 0) {

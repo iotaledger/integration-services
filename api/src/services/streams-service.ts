@@ -4,6 +4,7 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
+import { AccessRights } from '../models/types/subscription';
 
 streams.set_panic_hook();
 
@@ -63,17 +64,26 @@ export class StreamsService {
 	addLogs = async (
 		keyloadLink: string,
 		subscription: Author | Subscriber,
-		channelLog: ChannelLog
+		channelLog: ChannelLog,
+		accessRights: AccessRights,
+		_isPrivate?: boolean
 	): Promise<{ link: string; subscription: Author | Subscriber; prevLogs: ChannelData[] | undefined }> => {
 		try {
-			// fetch prev logs before writing new data to the channel
-			// TODO if read only just sync state instead of getting logs
-			const prevLogs = await this.getLogs(subscription.clone());
+			let prevLogs = undefined;
+
+			if (accessRights === AccessRights.Read) {
+				throw new Error('not allowed to add logs to the channel');
+			} else if (accessRights === AccessRights.Write) {
+				await subscription.clone().sync_state();
+			} else {
+				// fetch prev logs before writing new data to the channel
+				prevLogs = await this.getLogs(subscription.clone());
+			}
+
 			let link = keyloadLink;
 			const latestAddress = Address.from_string(link);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
-			await subscription.clone().sync_state();
 			const response = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response?.get_link();
 			if (!tag_link) {
@@ -151,13 +161,11 @@ export class StreamsService {
 			const client = this.getClient(this.config.node);
 			const subscriber = streams.Subscriber.from_client(client, seed);
 
-			let ann_link_copy = annAddress.copy();
-			await subscriber.clone().receive_announcement(ann_link_copy);
+			await subscriber.clone().receive_announcement(annAddress.copy());
 
-			ann_link_copy = annAddress.copy();
-			const response = await subscriber.clone().send_subscribe(ann_link_copy);
-			const sub_link = response.get_link();
-			return { seed, subscriptionLink: sub_link.to_string(), subscriber: subscriber.clone(), publicKey: subscriber.clone().get_public_key() };
+			const response = await subscriber.clone().send_subscribe(annAddress.copy());
+			const subscriptionLink = response.get_link();
+			return { seed, subscriptionLink: subscriptionLink.to_string(), subscriber: subscriber.clone(), publicKey: subscriber.clone().get_public_key() };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not request the subscription to the channel');
