@@ -212,7 +212,7 @@ export class StreamsService {
 	}
 
 	private getClient(node: string): streams.Client {
-		const options = new streams.SendOptions(this.config.node, true);
+		const options = new streams.SendOptions(node, true);
 		return new streams.Client(node, options.clone());
 	}
 }
