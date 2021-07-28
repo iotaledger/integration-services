@@ -107,6 +107,10 @@ export class ChannelService {
 			await ChannelDataDb.addChannelData(channelAddress, identityId, res.prevLogs);
 		}
 
+		// store newly added log
+		const newLog: ChannelData = { link: res.link, channelLog };
+		await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog]);
+
 		await this.subscriptionService.updateSubscriptionState(
 			channelAddress,
 			identityId,

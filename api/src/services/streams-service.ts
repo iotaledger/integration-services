@@ -25,12 +25,6 @@ export class StreamsService {
 			const author = streams.Author.from_client(client, seed, ChannelType.MultiBranch);
 			const announceResponse = await author.clone().send_announce();
 			const announcementAddress = announceResponse.get_link();
-			/* const sendResponse = await author.clone().send_signed_packet(announcementAddress.copy(), toBytes(''), toBytes('')); // send empty message
-
-			const messageLink = sendResponse?.get_link();
-			if (!messageLink) {
-				throw new Error('could not send signed packet');
-			} */
 
 			return {
 				seed,
@@ -170,13 +164,6 @@ export class StreamsService {
 			keys.add(publicKey);
 			const ids = streams.PskIds.new();
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
-			/* const sendResponse = await author.clone().send_signed_packet(announcementAddress.copy(), toBytes(''), toBytes('')); // send empty message
-
-			const messageLink = sendResponse?.get_link();
-			if (!messageLink) {
-				throw new Error('could not send signed packet');
-			} */
-
 			const keyloadLink = res?.get_link()?.to_string();
 			const sequenceLink = res?.get_seq_link()?.to_string();
 
