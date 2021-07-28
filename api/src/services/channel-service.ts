@@ -87,7 +87,7 @@ export class ChannelService {
 		return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
 	};
 
-	addLogs = async (channelAddress: string, identityId: string, channelLog: ChannelLog) => {
+	addLogs = async (channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> => {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription || !subscription?.keyloadLink) {
 			throw new Error('no subscription found!');
@@ -117,6 +117,6 @@ export class ChannelService {
 			this.streamsService.exportSubscription(res.subscription, this.password)
 		);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
-		return res;
+		return { link: res.link };
 	};
 }

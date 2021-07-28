@@ -5,6 +5,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
+import { AuthorizeSubscriptionBodyResponse, RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
 
 export class SubscriptionService {
 	private password: string;
@@ -44,7 +45,12 @@ export class SubscriptionService {
 		return res;
 	};
 
-	requestSubscription = async (subscriberId: string, channelAddress: string, accessRights?: AccessRights, seed?: string) => {
+	requestSubscription = async (
+		subscriberId: string,
+		channelAddress: string,
+		accessRights?: AccessRights,
+		seed?: string
+	): Promise<RequestSubscriptionBodyResponse> => {
 		const res = await this.streamsService.requestSubscription(channelAddress, seed);
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
@@ -63,7 +69,7 @@ export class SubscriptionService {
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
 
-		return res;
+		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	};
 
 	authorizeSubscription = async (
@@ -71,7 +77,7 @@ export class SubscriptionService {
 		subscriptionLink: string,
 		publicKey: string,
 		authorId: string
-	): Promise<{ keyloadLink: string }> => {
+	): Promise<AuthorizeSubscriptionBodyResponse> => {
 		const author = await this.subscriptionPool.get(channelAddress, authorId, true);
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorId}`);
