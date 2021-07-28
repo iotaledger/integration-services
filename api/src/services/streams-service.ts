@@ -23,12 +23,18 @@ export class StreamsService {
 			}
 			const client = this.getClient(this.config.node);
 			const author = streams.Author.from_client(client, seed, ChannelType.MultiBranch);
-			const response = await author.clone().send_announce();
-			const ann_link = response.get_link();
+			const announceResponse = await author.clone().send_announce();
+			const announcementAddress = announceResponse.get_link();
+			/* const sendResponse = await author.clone().send_signed_packet(announcementAddress.copy(), toBytes(''), toBytes('')); // send empty message
+
+			const messageLink = sendResponse?.get_link();
+			if (!messageLink) {
+				throw new Error('could not send signed packet');
+			} */
 
 			return {
 				seed,
-				channelAddress: ann_link.to_string(),
+				channelAddress: announcementAddress.copy().to_string(),
 				author: author.clone()
 			};
 		} catch (error) {
@@ -55,18 +61,19 @@ export class StreamsService {
 				// fetch prev logs before writing new data to the channel
 				prevLogs = await this.getLogs(subscription.clone());
 			}
+
 			let link = keyloadLink;
 			const latestAddress = Address.from_string(link);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
-			const response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
-			const tag_link = response?.get_link();
-			if (!tag_link) {
-				throw new Error('could not send tagged packet');
+			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
+			const messageLink = sendResponse?.get_link();
+			if (!messageLink) {
+				throw new Error('could not send signed packet');
 			}
 
 			return {
-				link: tag_link?.to_string(),
+				link: messageLink?.to_string(),
 				prevLogs: prevLogs?.channelData,
 				subscription
 			};
@@ -83,18 +90,19 @@ export class StreamsService {
 			let channelData: ChannelData[] = [];
 
 			while (foundNewMessage) {
-				let next_msgs: any = [];
+				let nextMessages: any = [];
 
-				next_msgs = await subscription.clone().fetch_next_msgs();
+				nextMessages = await subscription.clone().fetch_next_msgs();
 
-				if (!next_msgs || next_msgs.length === 0) {
+				if (!nextMessages || nextMessages.length === 0) {
 					foundNewMessage = false;
 				}
-				if (next_msgs && next_msgs.length > 0) {
-					const cData: ChannelData[] = next_msgs
-						.map((userResponse: any) => {
-							const link = userResponse?.get_link()?.to_string();
-							const message = userResponse.get_message();
+
+				if (nextMessages && nextMessages.length > 0) {
+					const cData: ChannelData[] = nextMessages
+						.map((messageResponse: any) => {
+							const link = messageResponse?.get_link()?.to_string();
+							const message = messageResponse.get_message();
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
@@ -161,7 +169,13 @@ export class StreamsService {
 			const keys = streams.PublicKeys.new();
 			keys.add(publicKey);
 			const ids = streams.PskIds.new();
-			const res = await author.clone().send_keyload(announcementAddress, ids, keys);
+			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
+			/* const sendResponse = await author.clone().send_signed_packet(announcementAddress.copy(), toBytes(''), toBytes('')); // send empty message
+
+			const messageLink = sendResponse?.get_link();
+			if (!messageLink) {
+				throw new Error('could not send signed packet');
+			} */
 
 			const keyloadLink = res?.get_link()?.to_string();
 			const sequenceLink = res?.get_seq_link()?.to_string();
