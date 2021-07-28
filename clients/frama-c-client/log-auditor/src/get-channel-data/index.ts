@@ -1,24 +1,15 @@
-import axios, { AxiosRequestConfig } from 'axios';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import fs from 'fs';
 
-import { errFunc } from '../error';
-import { Config, ChannelAddress } from '../config';
+import { logAuditorClient } from '../error/index';
+import { Config } from '../config';
 import { hashNonce } from '../utils/encryption';
-
-const axiosOptions: AxiosRequestConfig = {
-    headers: {
-        'Content-Type': 'application/json'
-    }
-};
-
-axios.interceptors.response.use((response) => response, errFunc());
 
 export const getChannelData = async (channelAddress: string): Promise<void> => {
     const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
-    const res = await axios.get(`${Config.baseUrl}/channels/logs/${channelAddress}${apiKey}`, axiosOptions);
+    const res = await logAuditorClient.get(`${Config.baseUrl}/channels/logs/${channelAddress}${apiKey}`);
 
     if (res?.status === 200) {
         console.log('successfully read channel data');

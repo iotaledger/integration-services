@@ -13,11 +13,9 @@ const run = async () => {
     const channelAddress = await createStreamChannel() as string;
     await createAuditorIdentity();
     const subscriptionLink = await requestSubscription(channelAddress) as string;
-    console.log(`Subscription link: ${subscriptionLink}`)
     await authorizeSubscription(channelAddress, subscriptionLink);
     await writeStream(channelAddress);
     await getChannelData(channelAddress);
 }
-
 
 run();

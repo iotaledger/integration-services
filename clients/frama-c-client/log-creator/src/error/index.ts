@@ -1,20 +1,32 @@
 import axios from 'axios';
 import { fetchAuth } from '../authenticate';
 
-export const errFunc = () => (error: any) => {
-	if (error?.response?.status !== 401) {
-		console.log(`received status from endpoint: ${error.response?.status}`);
-	}
-
-	const originalRequest = error.config;
-	if (error?.response?.status === 401 && !originalRequest._retry) {
-		originalRequest._retry = true;
-		return fetchAuth().then((res) => {
-			if (res.status === 200) {
-				const bearerToken = 'Bearer ' + res.data?.jwt;
-				axios.defaults.headers.common['Authorization'] = bearerToken;
-				return axios(originalRequest);
-			}
-		});
+const getBearerToken = async () => {
+	const response = await fetchAuth();
+	if (response.status === 200) {
+		const bearerToken = 'Bearer ' + response.data?.jwt;
+		return bearerToken
 	}
 };
+
+const errFunc = async (error: any) => {
+	// console.log('ERRRROR', error)
+	const originalRequest = error.config;
+	if (error?.response?.status === 401 && !originalRequest._retry) {
+		console.log("Retrying Request")
+		originalRequest._retry = true;
+		const token = await getBearerToken();
+		logCreatorClient.defaults.headers.common['Authorization'] = token
+		originalRequest.headers['Authorization'] = token
+		return axios(originalRequest);
+	}
+};
+
+
+export const logCreatorClient = axios.create({
+	headers: {
+		'Content-Type': 'application/json'
+	},
+});
+
+logCreatorClient.interceptors.response.use(response => response, error => errFunc(error))
