@@ -16,30 +16,6 @@ global.Response = (fetch as any).Response;
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
-	importSubscription = (state: string, isAuthor: boolean): Author | Subscriber => {
-		try {
-			const password = this.config.statePassword;
-			const client = this.getClient(this.config.node);
-			if (isAuthor) {
-				return streams.Author.import(client, toBytes(state), password);
-			}
-
-			return streams.Subscriber.import(client, toBytes(state), password);
-		} catch (error) {
-			this.logger.error(`Error from streams sdk: ${error}`);
-			throw new Error('could not import the subscription object');
-		}
-	};
-
-	exportSubscription = (subscription: Author | Subscriber, password: string): string => {
-		try {
-			return fromBytes(subscription.clone().export(password));
-		} catch (error) {
-			this.logger.error(`Error from streams sdk: ${error}`);
-			throw new Error('could not export the subscription object');
-		}
-	};
-
 	create = async (seed?: string): Promise<{ seed: string; channelAddress: string; author: Author }> => {
 		try {
 			if (!seed) {
@@ -79,12 +55,11 @@ export class StreamsService {
 				// fetch prev logs before writing new data to the channel
 				prevLogs = await this.getLogs(subscription.clone());
 			}
-
 			let link = keyloadLink;
 			const latestAddress = Address.from_string(link);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
-			const response = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
+			const response = await subscription.clone().send_tagged_packet(latestAddress, toBytes(''), mPayload);
 			const tag_link = response?.get_link();
 			if (!tag_link) {
 				throw new Error('could not send tagged packet');
@@ -112,10 +87,9 @@ export class StreamsService {
 
 				next_msgs = await subscription.clone().fetch_next_msgs();
 
-				if (next_msgs.length === 0) {
+				if (!next_msgs || next_msgs.length === 0) {
 					foundNewMessage = false;
 				}
-
 				if (next_msgs && next_msgs.length > 0) {
 					const cData: ChannelData[] = next_msgs
 						.map((userResponse: any) => {
@@ -165,6 +139,7 @@ export class StreamsService {
 
 			const response = await subscriber.clone().send_subscribe(annAddress.copy());
 			const subscriptionLink = response.get_link();
+
 			return { seed, subscriptionLink: subscriptionLink.to_string(), subscriber: subscriber.clone(), publicKey: subscriber.clone().get_public_key() };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -210,6 +185,30 @@ export class StreamsService {
 		}
 		return seed;
 	}
+
+	importSubscription = (state: string, isAuthor: boolean): Author | Subscriber => {
+		try {
+			const password = this.config.statePassword;
+			const client = this.getClient(this.config.node);
+			if (isAuthor) {
+				return streams.Author.import(client, toBytes(state), password);
+			}
+
+			return streams.Subscriber.import(client, toBytes(state), password);
+		} catch (error) {
+			this.logger.error(`Error from streams sdk: ${error}`);
+			throw new Error('could not import the subscription object');
+		}
+	};
+
+	exportSubscription = (subscription: Author | Subscriber, password: string): string => {
+		try {
+			return fromBytes(subscription.clone().export(password));
+		} catch (error) {
+			this.logger.error(`Error from streams sdk: ${error}`);
+			throw new Error('could not export the subscription object');
+		}
+	};
 
 	private getClient(node: string): streams.Client {
 		const options = new streams.SendOptions(node, true);

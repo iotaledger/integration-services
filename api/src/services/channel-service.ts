@@ -40,7 +40,8 @@ export class ChannelService {
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
-			publicKey: null
+			publicKey: null,
+			keyloadLink: res.channelAddress
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
