@@ -19,9 +19,6 @@ export class ChannelService {
 		private readonly subscriptionPool: SubscriptionPool,
 		config: StreamsConfig
 	) {
-		this.streamsService = streamsService;
-		this.channelInfoService = channelInfoService;
-		this.subscriptionService = subscriptionService;
 		this.password = config.statePassword;
 	}
 

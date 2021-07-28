@@ -82,7 +82,7 @@ export class SubscriptionService {
 		}
 		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink, authSub.keyloadLink);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
-
+		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
 		return { keyloadLink: authSub.keyloadLink };
 	};
 }
