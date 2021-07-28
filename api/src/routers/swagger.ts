@@ -53,9 +53,19 @@ export const openApiDefinition = {
 					type: 'http',
 					scheme: 'bearer',
 					bearerFormat: 'JWT'
+				},
+				ApiKey: {
+					type: 'apiKey',
+					in: 'query',
+					name: 'api-key'
 				}
 			}
-		}
+		},
+		security: [
+			{
+				ApiKey: [] as any[]
+			}
+		]
 	},
 	apis: ['./src/routers/**/*.ts', './src/models/open-api-schema.yaml'] // files containing annotations as above
 };

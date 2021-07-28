@@ -45,6 +45,11 @@ export const channelRouter = Router();
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/CreateChannelBodySchema"
+ *           example:
+ *             topics: 
+ *             - type: example-channel-data
+ *               source: channel-creator
+ *             encrypted: false
  *     responses:
  *       201:
  *         description: Returns the created channel
@@ -98,6 +103,12 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  *         application/json:
  *           schema: 
  *             $ref: "#/components/schemas/AddChannelLogBodySchema"
+ *           example: 
+ *             type: example-channel-data
+ *             creationDate: 2021-07-23T05:25:42.325Z
+ *             metadata: example-meta-data
+ *             payload: 
+ *               example: 1
  *     responses:
  *       200:
  *         description: Returns a link to the written data

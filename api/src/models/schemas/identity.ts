@@ -18,7 +18,7 @@ export const VerifiableCredentialSchema = Type.Object({
 	type: Type.Array(Type.String({ minLength: 1 })),
 	credentialSubject: VcSubjectSchema,
 	issuer: Type.String({ minLength: 50, maxLength: 53 }),
-	issuanceDate: Type.String({ minLength: 1 }),
+	issuanceDate: Type.String({ minLength: 1, format: 'date-time' }),
 	proof: Type.Object({
 		type: Type.String({ minLength: 1 }),
 		verificationMethod: Type.String({ minLength: 1 }),
