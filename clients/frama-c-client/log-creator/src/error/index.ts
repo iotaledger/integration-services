@@ -10,10 +10,8 @@ const getBearerToken = async () => {
 };
 
 const errFunc = async (error: any) => {
-	// console.log('ERRRROR', error)
 	const originalRequest = error.config;
 	if (error?.response?.status === 401 && !originalRequest._retry) {
-		console.log("Retrying Request")
 		originalRequest._retry = true;
 		const token = await getBearerToken();
 		logCreatorClient.defaults.headers.common['Authorization'] = token
