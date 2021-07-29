@@ -6,7 +6,7 @@ import { Config, AuditorIdentity } from '../config';
 import fs from 'fs';
 
 export const createIdentity = async (): Promise<string | undefined> => {
-	console.log('Creating the identity...');
+	console.log('Creating the log-auditor identity...');
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
 	const res = await logAuditorClient.post(`${Config.baseUrl}/identities/create${apiKey}`, JSON.stringify(AuditorIdentity));

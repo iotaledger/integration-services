@@ -7,7 +7,7 @@ import { Config, CreatorIdentity } from '../config';
 
 
 export const createIdentity = async (): Promise<string | undefined> => {
-	console.log('Creating the identity...');
+	console.log('Creating the log-creator identity...');
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
 	const res = await logCreatorClient.post(`${Config.baseUrl}/identities/create${apiKey}`, JSON.stringify(CreatorIdentity));

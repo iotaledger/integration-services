@@ -15,9 +15,9 @@
     "create-stream-channel": "tsc --project ./",
     "postcreate-stream-channel": "node dist/create-stream-channel/run.js",
     "authorize-subscription": "tsc --project ./",
-    "postauthorize-subscription": "node dist/authorize-subscription/index.js",
+    "postauthorize-subscription": "node dist/authorize-subscription/run.js",
     "write-stream-channel": "tsc --project ./",
-    "postwrite-stream-channel": "node dist/write-stream-channel/index.js"
+    "postwrite-stream-channel": "node dist/write-stream-channel/run.js"
   },
   "author": "",
   "license": "ISC",

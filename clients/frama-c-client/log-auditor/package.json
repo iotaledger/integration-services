@@ -12,11 +12,11 @@
     "poststart": "node dist/index.js",
     
     "create-identity": "tsc --project ./",
-    "postcreate-identity": "node dist/create-identity/index.js",
+    "postcreate-identity": "node dist/create-identity/run.js",
     "request-subscription": "tsc --project ./",
-    "postrequest-subscription": "node dist/request-subscription/index.js",
+    "postrequest-subscription": "node dist/request-subscription/run.js",
     "get-channel-data": "tsc --project ./",
-    "postget-channel-data": "node dist/get-channel-data/index.js"
+    "postget-channel-data": "node dist/get-channel-data/run.js"
   },
   "author": "",
   "license": "ISC",
