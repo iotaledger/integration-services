@@ -11,4 +11,4 @@ Adjust the BASE_URL to the url the client shall connect to and adjust the API_KE
 4. If you choose to run the API locally, do not forget to start it!
 
 ## Usage
-1. Run the script: `npm run example`
+1. Run the script: `npm run start`

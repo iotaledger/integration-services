@@ -9,13 +9,13 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 const run = async () => {
-    await createCreatorIdentity();
-    const channelAddress = await createStreamChannel() as string;
-    await createAuditorIdentity();
-    const subscriptionLink = await requestSubscription(channelAddress) as string;
-    await authorizeSubscription(channelAddress, subscriptionLink);
-    await writeStream(channelAddress);
-    await getChannelData(channelAddress);
-}
+	await createCreatorIdentity();
+	const channelAddress = (await createStreamChannel()) as string;
+	await createAuditorIdentity();
+	const subscriptionLink = (await requestSubscription(channelAddress)) as string;
+	await authorizeSubscription(channelAddress, subscriptionLink);
+	await writeStream(channelAddress);
+	await getChannelData(channelAddress);
+};
 
 run();
