@@ -13,8 +13,8 @@
     "postcreate-identity": "node dist/create-identity/run.js",
     "request-subscription": "tsc --project ./",
     "postrequest-subscription": "node dist/request-subscription/run.js",
-    "get-channel-data": "tsc --project ./",
-    "postget-channel-data": "node dist/get-channel-data/run.js"
+    "audit-channel-data": "tsc --project ./",
+    "postaudit-channel-data": "node dist/audit-channel-data/run.js"
   },
   "author": "",
   "license": "ISC",

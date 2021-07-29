@@ -1,0 +1,262 @@
+{
+    "$schema": "https://github.com/oasis-tcs/sarif-spec/blob/master/Documents/CommitteeSpecificationDrafts/v2.1.0-CSD.1/sarif-schema-2.1.0.json",
+    "version": "2.1.0",
+    "runs": [
+        {
+            "tool": {
+                "driver": {
+                    "name": "frama-c",
+                    "fullName": "frama-c-0+omitted-for-deterministic-output",
+                    "version": "0+omitted-for-deterministic-output",
+                    "downloadUri": "https://frama-c.com/download.html",
+                    "informationUri": "https://frama-c.com"
+                }
+            },
+            "invocations": [
+                {
+                    "commandLine": "frama-c -eva cwe125.c -then -mdr-out here.sarif -mdr-gen sarif -mdr-no-print-libc -mdr-sarif-deterministic",
+                    "arguments": [
+                        "-eva",
+                        "cwe125.c",
+                        "-then",
+                        "-mdr-out",
+                        "here.sarif",
+                        "-mdr-gen",
+                        "sarif",
+                        "-mdr-no-print-libc",
+                        "-mdr-sarif-deterministic"
+                    ],
+                    "exitCode": 0,
+                    "executionSuccessful": true
+                }
+            ],
+            "originalUriBaseIds": {
+                "FRAMAC_SHARE": {
+                    "uri": "file:///omitted-for-deterministic-output/"
+                },
+                "FRAMAC_LIB": {
+                    "uri": "file:///omitted-for-deterministic-output/"
+                },
+                "FRAMAC_PLUGIN": {
+                    "uri": "file:///omitted-for-deterministic-output/"
+                },
+                "PWD": {
+                    "uri": "file:///omitted-for-deterministic-output/"
+                }
+            },
+            "artifacts": [
+                {
+                    "location": {
+                        "uri": "cwe125.c",
+                        "uriBaseId": "PWD"
+                    },
+                    "roles": [
+                        "analysisTarget"
+                    ],
+                    "mimeType": "text/x-csrc"
+                }
+            ],
+            "results": [
+                {
+                    "ruleId": "mem_access",
+                    "kind": "open",
+                    "level": "none",
+                    "message": {
+                        "text": "mem_access.",
+                        "markdown": "mem_access:\n\n```acsl\nassert mem_access: \\valid_read(array + index);\n```\n\n\n\nThis alarm represents a potential Invalid pointer dereferencing."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 7,
+                                    "startColumn": 12,
+                                    "endLine": 7,
+                                    "endColumn": 24,
+                                    "byteLength": 12
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ruleId": "mem_access",
+                    "level": "error",
+                    "message": {
+                        "text": "mem_access.",
+                        "markdown": "mem_access:\n\n```acsl\nassert mem_access: \\valid_read(array + index);\n```\n\n\n\nThis alarm represents a potential Invalid pointer dereferencing."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 10,
+                                    "startColumn": 4,
+                                    "endLine": 10,
+                                    "endColumn": 42,
+                                    "byteLength": 38
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ruleId": "user-spec",
+                    "kind": "pass",
+                    "level": "none",
+                    "message": {
+                        "text": "reachability of stmt line 10 in getValueFromArray."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 10,
+                                    "startColumn": 4,
+                                    "endLine": 10,
+                                    "endColumn": 42,
+                                    "byteLength": 38
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ruleId": "user-spec",
+                    "kind": "pass",
+                    "level": "none",
+                    "message": {
+                        "text": "specialization of order at stmt 10."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 19,
+                                    "startColumn": 13,
+                                    "endLine": 19,
+                                    "endColumn": 37,
+                                    "byteLength": 24
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ruleId": "user-spec",
+                    "kind": "pass",
+                    "level": "none",
+                    "message": {
+                        "text": "behavior default! in function printf."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 10,
+                                    "startColumn": 4,
+                                    "endLine": 10,
+                                    "endColumn": 10,
+                                    "byteLength": 6
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ruleId": "user-spec",
+                    "kind": "pass",
+                    "level": "none",
+                    "message": {
+                        "text": "assigns clause in function printf."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 10,
+                                    "startColumn": 4,
+                                    "endLine": 10,
+                                    "endColumn": 10,
+                                    "byteLength": 6
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "ruleId": "user-spec",
+                    "kind": "pass",
+                    "level": "none",
+                    "message": {
+                        "text": "from clause of term \\result in function printf."
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uri": "cwe125.c",
+                                    "uriBaseId": "PWD"
+                                },
+                                "region": {
+                                    "startLine": 10,
+                                    "startColumn": 4,
+                                    "endLine": 10,
+                                    "endColumn": 10,
+                                    "byteLength": 6
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "defaultSourceLanguage": "C",
+            "taxonomies": [
+                {
+                    "name": "frama-c",
+                    "rules": [
+                        {
+                            "id": "user-spec",
+                            "shortDescription": {
+                                "text": "User-written ACSL specification."
+                            }
+                        },
+                        {
+                            "id": "mem_access",
+                            "shortDescription": {
+                                "text": "Invalid pointer dereferencing."
+                            }
+                        }
+                    ],
+                    "contents": [
+                        "nonLocalizedData"
+                    ]
+                }
+            ]
+        }
+    ]
+}

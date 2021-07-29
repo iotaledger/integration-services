@@ -1,9 +1,9 @@
-import { getChannelData } from '.';
+import { auditChannelData } from '.';
 import { ChannelAddress } from '../config';
 
 const run = () => {
 	const channelAddress = ChannelAddress;
-	getChannelData(channelAddress);
+	auditChannelData(channelAddress);
 };
 
 run();
