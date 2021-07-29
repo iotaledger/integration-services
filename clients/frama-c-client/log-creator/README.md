@@ -11,7 +11,7 @@ Adjust the BASE_URL to the url the client shall connect to and adjust the API_KE
 4. If you choose to run the API locally, do not forget to start it!
 
 ## Usage
-1. Create an identity for the Log Creator: `npm run create-identity `
+1. Create an identity for the Log Creator: `npm run create-identity`
 2. Create a channel for the logs to be written on: `npm run create-stream-channel`
 3. Copy the channel address from console and continue with step 2 at the Log Auditor
 4. Insert the copied subscription link in the subscriptionLink variable at `src/config/index.ts`.

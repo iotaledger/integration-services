@@ -1,5 +1,5 @@
 # Log Creator / Auditor Client Example
-This scripts creates logs withe the log-creator and audits them afterwards with the log-auditor
+This scripts creates logs with the log-creator and audits them afterwards with the log-auditor. Place files to be audited in the log-files folder.
 
 ## Prerequisite
 Node.js 8, or Node.js 10 or higher. We recommend the latest [LTS](https://nodejs.org/en/download/).

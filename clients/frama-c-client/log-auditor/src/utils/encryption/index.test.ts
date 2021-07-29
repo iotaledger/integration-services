@@ -31,7 +31,7 @@ describe('test encryption', () => {
 		expect(prvKey).toBe('bd0e5f2291ba549f162b3b692738bf711d3d4fd582dcbba1473bab0df81cce64');
 		expect(pubKey).toBe('f93d13cee076a3660d5bd212719654a3c50c9575ae8f19de2c9a0155f3891fea');
 
-		const nonce = 'not a valid nonce since it is too long somaybe host tried to inject a message';
+		const nonce = 'not a valid nonce since it is too long, maybe host tried to inject a message';
 		await expect(signNonce(prvKey, nonce)).rejects.toThrow('nonce does not match length of 40 characters!');
 	});
 

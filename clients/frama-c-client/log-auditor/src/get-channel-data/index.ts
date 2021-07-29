@@ -36,7 +36,7 @@ const auditChannelData = async (channelData: any[]) => {
                 console.log('~~~~~~~Log is invalid!~~~~~~~');
             }
         } else {
-            console.log('The log creator seems to have differnt logs than the auditor.');
+            console.log('The log-creator seems to have different files than the log-auditor.');
         }
     }
     if (Object.keys(hashedFiles).length === validDocuments) {
