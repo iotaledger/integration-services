@@ -8,6 +8,11 @@ const collectionName = CollectionNames.subscriptions;
 
 const getIndex = (id: string, address: string) => `${id}-${address}`;
 
+export const getSubscriptions = async (channelAddress: string): Promise<Subscription[] | null> => {
+	const query = { channelAddress };
+	return MongoDbService.getDocuments<Subscription>(collectionName, query);
+};
+
 export const getSubscription = async (channelAddress: string, identityId: string): Promise<Subscription | null> => {
 	const query = { _id: getIndex(identityId, channelAddress) };
 	return MongoDbService.getDocument<Subscription>(collectionName, query);

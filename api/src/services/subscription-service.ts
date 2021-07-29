@@ -82,13 +82,22 @@ export class SubscriptionService {
 		if (!author) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorId}`);
 		}
-		const authSub = await this.streamsService.authorizeSubscription(channelAddress, subscriptionLink, publicKey, <Author>author);
+		const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
+		const subs = subscriptions.filter((s) => s.type === SubscriptionType.Subscriber && s.isAuthorized === true);
+		const existingSubscriptionKeys = subs.map((s) => s.publicKey);
+
+		// authorize new subscription
+		await this.streamsService.receiveSubscribe(subscriptionLink, <Author>author);
+		const authSub = await this.streamsService.authorizeSubscription(channelAddress, [publicKey, ...existingSubscriptionKeys], <Author>author);
 		if (!authSub?.keyloadLink) {
 			throw new Error('no keyload link found when authorizing the subscription');
 		}
 		await this.setSubscriptionAuthorized(channelAddress, subscriptionLink, authSub.keyloadLink);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
+
+		// TODO authorize new subscription to existing branches
+
 		return { keyloadLink: authSub.keyloadLink };
 	};
 }

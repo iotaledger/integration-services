@@ -149,21 +149,26 @@ export class StreamsService {
 		}
 	};
 
+	async receiveSubscribe(subscriptionLink: string, author: Author) {
+		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
+		await author.clone().receive_subscribe(subscriptionAddress);
+	}
+
 	authorizeSubscription = async (
-		channelAddress: string,
-		subscriptionLink: string,
-		publicKey: string,
+		anchorLink: string,
+		publicKeys: string[],
 		author: Author
 	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> => {
 		try {
-			const announcementAddress = streams.Address.from_string(channelAddress);
-			const subscriptionAddress = streams.Address.from_string(subscriptionLink);
-			await author.clone().receive_subscribe(subscriptionAddress);
+			const anchorAddress = streams.Address.from_string(anchorLink);
 
 			const keys = streams.PublicKeys.new();
-			keys.add(publicKey);
+			publicKeys.forEach((publicKey) => {
+				keys.add(publicKey);
+			});
+
 			const ids = streams.PskIds.new();
-			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
+			const res = await author.clone().send_keyload(anchorAddress.copy(), ids, keys);
 			const keyloadLink = res?.get_link()?.to_string();
 			const sequenceLink = res?.get_seq_link()?.to_string();
 
