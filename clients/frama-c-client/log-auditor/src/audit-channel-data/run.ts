@@ -1,9 +1,10 @@
+import fs from 'fs';
 import { auditChannelData } from '.';
-import { ChannelAddress } from '../config';
 
 const run = () => {
-	const channelAddress = ChannelAddress;
-	auditChannelData(channelAddress);
+	const channelDataBuffer = fs.readFileSync('./src/config/ChannelData.json');
+	const channelData = JSON.parse(channelDataBuffer.toString());
+	auditChannelData(channelData);
 };
 
 run();

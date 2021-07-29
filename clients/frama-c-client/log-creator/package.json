@@ -8,7 +8,6 @@
     "build-lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "build-prettier": "npx prettier --write ./src",
     "build": "npm-run-all build-tsc build-lint build-prettier",
-
     "create-identity": "tsc --project ./",
     "postcreate-identity": "node dist/create-identity/run.js",
     "create-stream-channel": "tsc --project ./",
@@ -33,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",

@@ -4,6 +4,7 @@ import { createIdentity as createAuditorIdentity } from '../../log-auditor/src/c
 import { requestSubscription } from '../../log-auditor/src/request-subscription';
 import { authorizeSubscription } from '../../log-creator/src/authorize-subscription';
 import { writeStream } from '../../log-creator/src/write-stream-channel';
+import { getChannelData } from '../../log-auditor/src/get-channel-data';
 import { auditChannelData } from '../../log-auditor/src/audit-channel-data';
 import * as dotenv from 'dotenv';
 
@@ -15,7 +16,8 @@ const run = async () => {
 	const subscriptionLink = (await requestSubscription(channelAddress)) as string;
 	await authorizeSubscription(channelAddress, subscriptionLink);
 	await writeStream(channelAddress);
-	await auditChannelData(channelAddress);
+	const channelData = await getChannelData(channelAddress);
+	await auditChannelData(channelData);
 };
 
 run();

@@ -16,6 +16,7 @@ Adjust the BASE_URL to the url the client shall connect to and adjust the API_KE
 3. Create an identity for the Log Auditor: `npm run create-identity`
 4. Request a subscription to the channel created by the Log Creator: `npm run request-subscription`
 5. Copy the subscriber link from console and continue with step 4 at the Log Creator
-6. Read and validate logs from the channel: `npm run get-channel-data`
-7. All documents should be valid.
-8. (Optional) Edit one of the documents and run `npm run get-channel-data` again. Now you should receive an **Log is invalid!** in the console.
+6. Read the logs from the channel: `npm run get-channel-data`
+7. Audit the logs: `npm run audit-channel-data`
+8. The document should be valid.
+9. (Optional) Edit one of the documents and run `npm run audit-channel-data` again. Now you should receive an **Log is invalid!** in the console.
