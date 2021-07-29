@@ -1,4 +1,4 @@
-import { createStreamChannel } from ".";
+import { createStreamChannel } from '.';
 
 const run = () => {
 	createStreamChannel();

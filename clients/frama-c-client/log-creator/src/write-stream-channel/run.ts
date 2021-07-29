@@ -1,4 +1,4 @@
-import { writeStream } from ".";
+import { writeStream } from '.';
 import fs from 'fs';
 
 const run = () => {

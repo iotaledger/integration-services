@@ -5,7 +5,7 @@ const getBearerToken = async () => {
 	const response = await fetchAuth();
 	if (response.status === 200) {
 		const bearerToken = 'Bearer ' + response.data?.jwt;
-		return bearerToken
+		return bearerToken;
 	}
 };
 
@@ -14,17 +14,19 @@ const errFunc = async (error: any) => {
 	if (error?.response?.status === 401 && !originalRequest._retry) {
 		originalRequest._retry = true;
 		const token = await getBearerToken();
-		logCreatorClient.defaults.headers.common['Authorization'] = token
-		originalRequest.headers['Authorization'] = token
+		logCreatorClient.defaults.headers.common['Authorization'] = token;
+		originalRequest.headers['Authorization'] = token;
 		return axios(originalRequest);
 	}
 };
 
-
 export const logCreatorClient = axios.create({
 	headers: {
 		'Content-Type': 'application/json'
-	},
+	}
 });
 
-logCreatorClient.interceptors.response.use(response => response, error => errFunc(error))
+logCreatorClient.interceptors.response.use(
+	(response) => response,
+	(error) => errFunc(error)
+);

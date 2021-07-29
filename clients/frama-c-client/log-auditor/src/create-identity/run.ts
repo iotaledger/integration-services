@@ -1,4 +1,4 @@
-import { createIdentity } from ".";
+import { createIdentity } from '.';
 
 const run = () => {
 	createIdentity();

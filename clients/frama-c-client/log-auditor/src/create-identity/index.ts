@@ -16,7 +16,6 @@ export const createIdentity = async (): Promise<string | undefined> => {
 		console.log('###########################');
 		fs.writeFileSync('./src/config/LogAuditorIdentity.json', JSON.stringify(res.data));
 
-		return res.data.doc.id
+		return res.data.doc.id;
 	}
 };
-

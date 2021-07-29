@@ -13,8 +13,6 @@ export const createStreamChannel = async (): Promise<string | undefined> => {
 		console.log('#####################');
 		console.log(`Channel address: ${res.data.channelAddress}`);
 		fs.writeFileSync('./src/config/Channel.json', JSON.stringify(res.data));
-		return res.data.channelAddress
+		return res.data.channelAddress;
 	}
 };
-
-

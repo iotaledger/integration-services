@@ -8,8 +8,6 @@
     "build-lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "build-prettier": "npx prettier --write ./src",
     "build": "npm-run-all build-tsc build-lint build-prettier",
-    "start": "npm run build",
-    "poststart": "node dist/index.js",
     
     "create-identity": "tsc --project ./",
     "postcreate-identity": "node dist/create-identity/run.js",

@@ -6,7 +6,6 @@ import { Config } from '../config';
 import { hashNonce } from '../utils/encryption/index';
 import { logCreatorClient } from '../error/index';
 
-
 const folder = './log-files/';
 
 const loadAndHashFiles = async (): Promise<any> => {
@@ -22,9 +21,8 @@ const loadAndHashFiles = async (): Promise<any> => {
 	return hashedFiles;
 };
 
-
 export const writeStream = async (channelAddress: string): Promise<void> => {
-	console.log('Writing logs to stream...')
+	console.log('Writing logs to stream...');
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 	const hashedFiles = await loadAndHashFiles();
 
@@ -41,8 +39,7 @@ export const writeStream = async (channelAddress: string): Promise<void> => {
 		requests.push(request);
 	}
 
-	if (requests.every(request => request.status == 200)) {
+	if (requests.every((request) => request.status == 200)) {
 		console.log(`Data successfully written to channel: ${channelAddress}`);
 	}
 };
-

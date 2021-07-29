@@ -1,5 +1,5 @@
-import { requestSubscription } from ".";
-import { ChannelAddress } from "../config";
+import { requestSubscription } from '.';
+import { ChannelAddress } from '../config';
 
 const run = () => {
 	const channelAddress = ChannelAddress;

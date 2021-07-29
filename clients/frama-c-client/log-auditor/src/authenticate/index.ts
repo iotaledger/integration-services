@@ -20,10 +20,14 @@ export const fetchAuth = async (): Promise<any> => {
 	const encodedKey = await getHexEncodedKey(identity.key.secret);
 	const signedNonce = await signNonce(encodedKey, nonce);
 
-	const response = await logAuditorClient.post(`${Config.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`, JSON.stringify({ signedNonce }), {
-		method: 'post',
-		headers: { 'Content-Type': 'application/json' }
-	});
+	const response = await logAuditorClient.post(
+		`${Config.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`,
+		JSON.stringify({ signedNonce }),
+		{
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' }
+		}
+	);
 	if (response?.status === 200) {
 		console.log('successfully authenticated!');
 	}

@@ -19,5 +19,3 @@ export const authorizeSubscription = async (channelAddress: string, subsciptionL
 		console.log('###########################');
 	}
 };
-
-

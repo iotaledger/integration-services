@@ -5,7 +5,6 @@ import { logCreatorClient } from '../error/index';
 
 import { Config, CreatorIdentity } from '../config';
 
-
 export const createIdentity = async (): Promise<string | undefined> => {
 	console.log('Creating the log-creator identity...');
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
@@ -17,8 +16,6 @@ export const createIdentity = async (): Promise<string | undefined> => {
 		console.log('###########################');
 		fs.writeFileSync('./src/config/LogCreatorIdentity.json', JSON.stringify(res.data));
 
-		return res.data.doc.id
+		return res.data.doc.id;
 	}
-
 };
-

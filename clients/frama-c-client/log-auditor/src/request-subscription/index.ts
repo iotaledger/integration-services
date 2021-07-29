@@ -10,7 +10,7 @@ export const requestSubscription = async (channelAddress: string): Promise<strin
 	const body = {
 		accessRights: 'Read'
 	};
-	
+
 	const res = await logAuditorClient.post(`${Config.baseUrl}/subscriptions/request/${channelAddress}${apiKey}`, JSON.stringify(body));
 
 	if (res?.status === 201) {
@@ -18,7 +18,6 @@ export const requestSubscription = async (channelAddress: string): Promise<strin
 		console.log('###########################');
 		console.log(`Subscription link: ${res.data.subscriptionLink}`);
 
-		return res.data.subscriptionLink
+		return res.data.subscriptionLink;
 	}
 };
-
