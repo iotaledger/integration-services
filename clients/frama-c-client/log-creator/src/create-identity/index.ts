@@ -14,7 +14,9 @@ export const createIdentity = async (): Promise<string | undefined> => {
 	if (res?.status === 201) {
 		console.log('successfully created log-creator identity!');
 		console.log('###########################');
-		fs.writeFileSync('./src/config/LogCreatorIdentity.json', JSON.stringify(res.data));
+		const dir = './src/config/';
+		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+		fs.writeFileSync(`${dir}LogCreatorIdentity.json`, JSON.stringify(res.data));
 
 		return res.data.doc.id;
 	}
