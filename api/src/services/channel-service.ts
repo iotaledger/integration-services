@@ -83,6 +83,14 @@ export class ChannelService {
 	};
 
 	getLogs = async (channelAddress: string, identityId: string, options?: { limit: number; index: number }) => {
+		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+		if (!subscription || !subscription?.keyloadLink) {
+			throw new Error('no subscription found!');
+		}
+		if (subscription.accessRights === AccessRights.Write) {
+			throw new Error('not allowed to get logs from the channel');
+		}
+
 		await this.fetchLogsFromTangle(channelAddress, identityId);
 		return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
 	};
@@ -99,13 +107,18 @@ export class ChannelService {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
+		const { accessRights, keyloadLink } = subscription;
 
-		const res = await this.streamsService.addLogs(subscription.keyloadLink, sub, channelLog, subscription.accessRights);
-
-		// store prev logs in db, they are not fetchable again after writing to a channel
-		if (res?.prevLogs && res?.prevLogs.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, identityId, res.prevLogs);
+		if (subscription.accessRights === AccessRights.Read) {
+			throw new Error('not allowed to add logs to the channel');
+		} else if (accessRights === AccessRights.Write) {
+			await sub.clone().sync_state();
+		} else {
+			// fetch prev logs before writing new data to the channel
+			await this.fetchLogsFromTangle(channelAddress, identityId);
 		}
+
+		const res = await this.streamsService.addLogs(keyloadLink, sub, channelLog);
 
 		// store newly added log
 		const newLog: ChannelData = { link: res.link, channelLog };

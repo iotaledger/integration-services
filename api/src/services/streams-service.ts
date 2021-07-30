@@ -41,21 +41,9 @@ export class StreamsService {
 		keyloadLink: string,
 		subscription: Author | Subscriber,
 		channelLog: ChannelLog,
-		accessRights: AccessRights,
 		_isPrivate?: boolean
-	): Promise<{ link: string; subscription: Author | Subscriber; prevLogs: ChannelData[] | undefined }> => {
+	): Promise<{ link: string; subscription: Author | Subscriber }> => {
 		try {
-			let prevLogs = undefined;
-
-			if (accessRights === AccessRights.Read) {
-				throw new Error('not allowed to add logs to the channel');
-			} else if (accessRights === AccessRights.Write) {
-				await subscription.clone().sync_state();
-			} else {
-				// fetch prev logs before writing new data to the channel
-				prevLogs = await this.getLogs(subscription.clone());
-			}
-
 			let link = keyloadLink;
 			const latestAddress = Address.from_string(link);
 			const mPayload = toBytes(JSON.stringify(channelLog));
@@ -68,7 +56,6 @@ export class StreamsService {
 
 			return {
 				link: messageLink?.to_string(),
-				prevLogs: prevLogs?.channelData,
 				subscription
 			};
 		} catch (error) {
