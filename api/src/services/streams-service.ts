@@ -4,7 +4,6 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
-import { AccessRights } from '../models/types/subscription';
 
 streams.set_panic_hook();
 

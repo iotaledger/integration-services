@@ -6,7 +6,7 @@ export function toBytes(str: string): Uint8Array {
 	return bytes;
 }
 
-export function fromBytes(bytes: any): string {
+export function fromBytes(bytes: Uint8Array): string {
 	let str = '';
 	for (let i = 0; i < bytes.length; ++i) {
 		str += String.fromCharCode(bytes[i]);
