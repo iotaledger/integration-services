@@ -86,7 +86,8 @@ export class SubscriptionService {
 		const existingSubscriptions = subscriptions.filter((s) => s.type === SubscriptionType.Subscriber && s.isAuthorized === true);
 		const existingSubscriptionKeys = existingSubscriptions.map((s) => s.publicKey);
 
-		// TODO fetch prev logs
+		// fetch prev logs
+		// await this.channelService.fetchLogsFromTangle(channelAddress, authorId);
 
 		// authorize new subscription and add existing public keys to the branch
 		await this.streamsService.receiveSubscribe(subscriptionLink, <Author>author);

@@ -8,6 +8,7 @@ import { SubscriptionService } from '../../../services/subscription-service';
 import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
+import * as subscriptionDb from '../../../database/subscription';
 
 describe('test authorize subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -127,22 +128,26 @@ describe('test authorize subscription route', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
 
-	it('should throw an error since the authroization has no keyloadLink', async () => {
+	it('should throw an error since the authorization has no keyloadLink', async () => {
 		const authorId = 'did:iota:1234';
 		const loggerSpy = spyOn(LoggerMock, 'error');
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(subscriptionMock);
-		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue({}); // author found
+		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
+		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
+		const authorMock = { sync_state: jest.fn() };
+		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue(authorMock); // author found
 		const authorizeSubscriptionSpy = spyOn(streamsService, 'authorizeSubscription').and.returnValue({ keyloadLink: '' });
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			body: { accessRights: AccessRights.ReadAndWrite, identityId: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
 		expect(getAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
-		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', 'testlink', 'testpublickey', {});
+		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
+		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey'], authorMock);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no keyload link found when authorizing the subscription'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
@@ -150,8 +155,16 @@ describe('test authorize subscription route', () => {
 	it('should return keyloadLink for authorized subscription', async () => {
 		const authorId = 'did:iota:1234';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(subscriptionMock);
-		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue({}); // author found
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'authorizeSubscription').and.returnValue({ keyloadLink: 'testkeyloadlink' }); // keyloadLink got created
+		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
+		const authorMock = { sync_state: jest.fn() };
+		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
+		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue(authorMock); // author found
+		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
+		const authorizeSubscriptionSpy = spyOn(streamsService, 'authorizeSubscription').and.returnValue({
+			keyloadLink: 'testkeyloadlink',
+			author: authorMock
+		}); // keyloadLink got created
+		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
 		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
 		const updateLatestChannelLinkSpy = spyOn(channelInfoService, 'updateLatestChannelLink');
 		const req: any = {
@@ -163,9 +176,12 @@ describe('test authorize subscription route', () => {
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
 		expect(getAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
-		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', 'testlink', 'testpublickey', {});
+		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
+		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey'], authorMock);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', 'testlink', 'testkeyloadlink');
 		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testkeyloadlink');
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
+		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234', 'new-state');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink' });
 	});
