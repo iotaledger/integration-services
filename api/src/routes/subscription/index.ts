@@ -8,9 +8,43 @@ import { ILogger } from '../../utils/logger';
 import { Subscription } from '../../models/types/subscription';
 
 export class SubscriptionRoutes {
-	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
+	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) { }
 
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const isAuthorized = _.get(req, 'query.is-authorized') == 'true';
+
+			if (!channelAddress) {
+				return res.sendStatus(StatusCodes.BAD_REQUEST).send('Channel address is missing!');
+			}
+
+			const subscriptions = await this.subscriptionService.getSubscriptions(channelAddress, isAuthorized);
+			return res.status(StatusCodes.OK).send(subscriptions);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not get the subscriptions'));
+		}
+	};
+
+	getSubscriptionByIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const identityId = _.get(req, 'params.identityId');
+			console.log(identityId)
+			if (!channelAddress || !identityId) {
+				return res.sendStatus(StatusCodes.BAD_REQUEST).send('Channel address or identity id is missing!');
+			}
+
+			const subscriptions = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			return res.status(StatusCodes.OK).send(subscriptions);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not get the subscription'));
+		}
+	}
+
+	getSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { identityId } = req.body; // TODO#26 don't use body use query param!

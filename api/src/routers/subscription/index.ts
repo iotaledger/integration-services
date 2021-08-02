@@ -16,26 +16,112 @@ export const subscriptionPool = new SubscriptionPool(streamsService);
 subscriptionPool.startInterval();
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
-const { getSubscriptions, requestSubscription, authorizeSubscription } = subscriptionRoutes;
+const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
 
-subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
 
 /**
  * @openapi
- * /subscriptions/subscriptions/{channelAddress}:
+ * /subscriptions/{channelAddress}:
  *   get:
- *     summary: TBD!
- *     description: Get all subscriptions of a channel.
+ *     summary: Get all subscriptions of a channel.
+ *     description: Get all subscriptions of a channel. Use the is-authorized query parameter to filter for authorized subscriptions.
  *     tags:
  *     - subscriptions
  *     parameters:
  *     - name: channelAddress
  *       in: path
  *       required: true
- *     deprecated: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: 'is-authenticated'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: boolean
+ *       example: true   
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subscriptions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/SubscriptionSchema"
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
+ subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
+
+ /**
+ * @openapi
+ * /subscriptions/{channelAddress}/{identityId}:
+ *   get:
+ *     summary: Get a subscription by identity id.
+ *     description: Get a subscription of a channel by identity id.
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *           summary: Example identity id (DID identifier)
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subscriptions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/SubscriptionSchema"
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
+
 
 /**
  * @openapi

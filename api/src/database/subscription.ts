@@ -13,6 +13,17 @@ export const getSubscriptions = async (channelAddress: string): Promise<Subscrip
 	return MongoDbService.getDocuments<Subscription>(collectionName, query);
 };
 
+export const getSubscriptionsByAuthorization = async(channelAddress: string, isAuthorized: boolean): Promise<Subscription[] | null> => {
+	const query = { channelAddress, isAuthorized };
+	return MongoDbService.getDocuments<Subscription>(collectionName, query);
+}
+
+export const getSubscriptionByIdentity = async(channelAddress: string, identityId: string): Promise<Subscription | null> => {
+	const query = { channelAddress, identityId };
+	console.log(query)
+	return MongoDbService.getDocument<Subscription>(collectionName, query);
+}
+
 export const getSubscription = async (channelAddress: string, identityId: string): Promise<Subscription | null> => {
 	const query = { _id: getIndex(identityId, channelAddress) };
 	return MongoDbService.getDocument<Subscription>(collectionName, query);

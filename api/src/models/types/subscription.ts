@@ -1,22 +1,4 @@
-export enum SubscriptionType {
-	Author = 'Author',
-	Subscriber = 'Subscriber'
-}
+import { Static } from "@sinclair/typebox";
+import { SubscriptionSchema } from "../schemas/subscription";
 
-export enum AccessRights {
-	Read = 'Read',
-	Write = 'Write',
-	ReadAndWrite = 'ReadAndWrite'
-}
-export interface Subscription {
-	type: SubscriptionType;
-	seed: string;
-	channelAddress: string;
-	identityId: string;
-	state: string;
-	isAuthorized: boolean;
-	subscriptionLink: string;
-	accessRights: AccessRights;
-	publicKey: string | null;
-	keyloadLink?: string;
-}
+export type Subscription  = Static<typeof SubscriptionSchema>
