@@ -11,7 +11,8 @@ export const getChannelData = async (channelAddress: string): Promise<any> => {
 	const res = await logAuditorClient.get(`${Config.baseUrl}/channels/logs/${channelAddress}${apiKey}`);
 
 	if (res?.status === 200) {
-		console.log('successfully read channel data');
+		console.log('successfully read channel data:');
+		console.log(JSON.stringify(res.data));
 		console.log('###########################');
 		fs.writeFileSync('./src/config/ChannelData.json', JSON.stringify(res.data));
 		return res.data;

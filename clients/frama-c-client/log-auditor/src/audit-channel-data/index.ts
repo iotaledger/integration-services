@@ -2,6 +2,7 @@ import fs from 'fs';
 import { hashNonce } from '../utils/encryption';
 
 export const auditChannelData = async (channelData: any[]) => {
+	console.log('Auditing channel data...');
 	if (channelData.length === 0) {
 		return console.log('Data stream is empty');
 	}

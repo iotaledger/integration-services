@@ -10,7 +10,7 @@ export const createStreamChannel = async (): Promise<string | undefined> => {
 	const res = await logCreatorClient.post(`${Config.baseUrl}/channels/create${apiKey}`, JSON.stringify(ChannelConfig));
 	if (res?.status === 201) {
 		console.log('successfully created channel!');
-		console.log('#####################');
+		console.log('###########################');
 		console.log(`Channel address: ${res.data.channelAddress}`);
 		fs.writeFileSync('./src/config/Channel.json', JSON.stringify(res.data));
 		return res.data.channelAddress;
