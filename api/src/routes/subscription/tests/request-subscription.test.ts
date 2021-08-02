@@ -123,6 +123,6 @@ describe('test request subscription route', () => {
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testlink');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-		expect(res.send).toHaveBeenCalledWith({ publicKey: 'testpublickey', seed: 'testseed', subscriber: null, subscriptionLink: 'testlink' });
+		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
 });
