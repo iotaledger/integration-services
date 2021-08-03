@@ -43,8 +43,7 @@ export class StreamsService {
 		_isPrivate?: boolean
 	): Promise<{ link: string; subscription: Author | Subscriber }> => {
 		try {
-			let link = keyloadLink;
-			const latestAddress = Address.from_string(link);
+			const latestAddress = Address.from_string(keyloadLink);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
