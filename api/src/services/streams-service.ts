@@ -85,16 +85,20 @@ export class StreamsService {
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
-								const channelData: ChannelData = {
+								if (!maskedPayload) {
+									return null;
+								}
+
+								return {
 									link,
 									channelLog: JSON.parse(maskedPayload)
 								};
-								return channelData;
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
+								return null;
 							}
 						})
-						.filter((c: ChannelData | undefined) => c);
+						.filter((c: ChannelData | null) => c);
 					channelData = [...channelData, ...cData];
 				}
 			}
