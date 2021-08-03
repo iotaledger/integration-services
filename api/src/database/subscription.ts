@@ -20,7 +20,6 @@ export const getSubscriptionsByAuthorization = async(channelAddress: string, isA
 
 export const getSubscriptionByIdentity = async(channelAddress: string, identityId: string): Promise<Subscription | null> => {
 	const query = { channelAddress, identityId };
-	console.log(query)
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 }
 
