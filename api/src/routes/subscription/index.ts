@@ -8,7 +8,7 @@ import { ILogger } from '../../utils/logger';
 import { Subscription } from '../../models/types/subscription';
 
 export class SubscriptionRoutes {
-	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) { }
+	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
 
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
@@ -45,7 +45,7 @@ export class SubscriptionRoutes {
 			this.logger.error(error);
 			next(new Error('could not get the subscription'));
 		}
-	}
+	};
 
 	getSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
