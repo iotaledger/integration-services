@@ -13,10 +13,14 @@ export class SubscriptionRoutes {
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const isAuthorized = _.get(req, 'query.is-authorized') == 'true';
+			let isAuthorized = _.get(req, 'query.is-authorized');
+
+			if (isAuthorized) {
+				isAuthorized = isAuthorized === 'true';
+			}
 
 			if (!channelAddress) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST).send('Channel address is missing!');
+				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
 			const subscriptions = await this.subscriptionService.getSubscriptions(channelAddress, isAuthorized);
@@ -31,9 +35,8 @@ export class SubscriptionRoutes {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const identityId = _.get(req, 'params.identityId');
-			console.log(identityId)
 			if (!channelAddress || !identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST).send('Channel address or identity id is missing!');
+				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
 			const subscriptions = await this.subscriptionService.getSubscription(channelAddress, identityId);
