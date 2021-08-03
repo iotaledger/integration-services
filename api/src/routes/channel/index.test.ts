@@ -72,6 +72,7 @@ describe('test channel routes', () => {
 			const expectedSubscription: Subscription = {
 				accessRights: AccessRights.ReadAndWrite,
 				channelAddress: '1234234234',
+				keyloadLink: '1234234234',
 				isAuthorized: true,
 				seed: 'verysecretseed',
 				state: 'uint8array string of subscription state',
