@@ -19,5 +19,7 @@ export const requestSubscription = async (channelAddress: string): Promise<strin
 		console.log(`Subscription link: ${res.data.subscriptionLink}`);
 
 		return res.data.subscriptionLink;
+	} else {
+		throw new Error('could not request the subscription');
 	}
 };

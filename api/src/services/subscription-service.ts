@@ -1,4 +1,5 @@
 import { StreamsService } from './streams-service';
+import * as ChannelDataDb from '../database/channel-data';
 import * as subscriptionDb from '../database/subscription';
 import { Subscription } from '../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
@@ -95,11 +96,11 @@ export class SubscriptionService {
 		const existingSubscriptions = subscriptions.filter((s) => s.type === SubscriptionType.Subscriber && s.isAuthorized === true);
 		const existingSubscriptionKeys = existingSubscriptions.map((s) => s.publicKey);
 
-		// fetch prev logs
-		// await this.channelService.fetchLogsFromTangle(channelAddress, authorId);
+		// fetch prev logs before syncing state
+		await this.fetchLogs(channelAddress, author, authorId);
 
 		// authorize new subscription and add existing public keys to the branch
-		await this.streamsService.receiveSubscribe(subscriptionLink, <Author>author);
+		await this.streamsService.receiveSubscribe(subscriptionLink, author);
 		const keyloadLink = await this.authSub(channelAddress, [publicKey, ...existingSubscriptionKeys], author, authorId, subscriptionLink);
 
 		// create new branches including the newly added subscription public key
@@ -113,7 +114,7 @@ export class SubscriptionService {
 	}
 
 	private async authSub(channelAddress: string, publicKeys: string[], author: Author, authorId: string, subscriptionLink: string): Promise<string> {
-		await author.sync_state();
+		await author.clone().sync_state();
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, publicKeys, <Author>author);
 		if (!authSub?.keyloadLink) {
 			throw new Error('no keyload link found when authorizing the subscription');
@@ -123,5 +124,19 @@ export class SubscriptionService {
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(authSub.author, this.password));
 		return authSub.keyloadLink;
+	}
+
+	fetchLogs = async (channelAddress: string, author: Author, authorId: string): Promise<void> => {
+		const logs = await this.streamsService.getLogs(author);
+		if (!logs?.channelData || logs?.channelData.length === 0) {
+			return;
+		}
+		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
+		await ChannelDataDb.addChannelData(channelAddress, authorId, logs.channelData);
+	};
+
+	async isAuthor(channelAddress: string, authorId: string): Promise<boolean> {
+		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+		return channelInfo.authorId == authorId;
 	}
 }

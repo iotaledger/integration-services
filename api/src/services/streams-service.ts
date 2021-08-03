@@ -43,8 +43,7 @@ export class StreamsService {
 		_isPrivate?: boolean
 	): Promise<{ link: string; subscription: Author | Subscriber }> => {
 		try {
-			let link = keyloadLink;
-			const latestAddress = Address.from_string(link);
+			const latestAddress = Address.from_string(keyloadLink);
 			const mPayload = toBytes(JSON.stringify(channelLog));
 
 			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
@@ -86,16 +85,20 @@ export class StreamsService {
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
-								const channelData: ChannelData = {
+								if (!maskedPayload) {
+									return null;
+								}
+
+								return {
 									link,
 									channelLog: JSON.parse(maskedPayload)
 								};
-								return channelData;
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
+								return null;
 							}
 						})
-						.filter((c: ChannelData | undefined) => c);
+						.filter((c: ChannelData | null) => c);
 					channelData = [...channelData, ...cData];
 				}
 			}
