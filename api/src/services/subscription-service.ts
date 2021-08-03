@@ -20,7 +20,7 @@ export class SubscriptionService {
 		this.password = config.statePassword;
 	}
 
-	async getSubscriptions(channelAddress: string, isAuthorized: boolean) {
+	async getSubscriptions(channelAddress: string, isAuthorized?: boolean) {
 		return subscriptionDb.getSubscriptionsByAuthorization(channelAddress, isAuthorized);
 	}
 
