@@ -2,7 +2,7 @@
 
 <!-- I feel better to call this GW but we can go back to Bridge especially if we need to do any refactoring in case we switch to GW. This is something I want to avoid -->
 
-The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> <!-- these are the terms used by iota streams -->By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. 
+The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> <!-- these are the terms used by iota streams -->By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. In addition to subscribers, the author can always read and write messages in the channel.
 
 > __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
@@ -37,15 +37,23 @@ A similar workflow in the previous scenario can be implemented here. The exchang
 ## Ecommerce-Audit Trail GW APIs Definition
 
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
+ 
+![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
 The Audit Trail GW implementation provides the following services:
-* Channel Service: to add data to and read from a channel;
-* Channel Info Service: to register channel metadata to allow indexing and searching;
-* Subscription Service:  to manage subscription and authorization to channels.
 
-> The API currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the channel author is always able to read and write from/to a channel.
-> 
-![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
+__Channel Service__
+
+The service allows to create new channels in the tangle. The identity creating the channel becomes the author of it and is able to read all messages and write data into the channel. Reading and writing from/to a channel is also offered by this service but subscribers need to be authorized before they are able to do so (see Subscription Service).
+
+__Channel Info Service__
+
+The service allows to search for one or more channels stored by the api. For instance the service could be used to query all channels created by a specific identity or with a specific topic. Furthermore it enables to maintain the channel in the database and also remove it. When removing the channel from the database the data won’t be removed from the ledger since the data is immutable but it is no more indexable at the api.
+
+__Subscription Service__
+
+The service allows to manage subscriptions to a specific channel. Identities can subscribe to a specific channel identified by a unique channel address. The author of the channel can then decide whether to authorize the identity to read or write from/to the channel. Authorized subscribers can also be revoked access to the channel afterwards. In addition this service can be used to list all active subscriptions to a channel.
+
 
 > __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
 
