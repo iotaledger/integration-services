@@ -2,9 +2,11 @@
 
 <!-- I feel better to call this GW but we can go back to Bridge especially if we need to do any refactoring in case we switch to GW. This is something I want to avoid -->
 
-The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> <!-- these are the terms used by iota streams -->By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. 
+The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> <!-- these are the terms used by iota streams -->By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. In addition to subscribers, the author can always read and write messages in the channel.
 
-> __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
+> __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools.
+ 
+![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
 In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization (AAA) systems this dependency will be removed (implementation will be provided during the project course).
 
@@ -37,15 +39,23 @@ A similar workflow in the previous scenario can be implemented here. The exchang
 ## Ecommerce-Audit Trail GW APIs Definition
 
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
+ 
+![ecommerce-audit-trail-bridge](./assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
 The Audit Trail GW implementation provides the following services:
-* Channel Service: to add data to and read from a channel;
-* Channel Info Service: to register channel metadata to allow indexing and searching;
-* Subscription Service:  to manage subscription and authorization to channels.
 
-> The API currently allows only one subscriber to a channel which is able to read and write from/to the channel. Also the channel author is always able to read and write from/to a channel.
-> 
-![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
+__Channel Service__
+
+The service allows to create new channels in the tangle. The identity creating the channel becomes the author of it and is able to read all messages and write data into the channel. Reading and writing from/to a channel is also offered by this service but subscribers need to be authorized before they are able to do so (see Subscription Service).
+
+__Channel Info Service__
+
+The service allows to search for one or more channels stored by the api. For instance the service could be used to query all channels created by a specific identity or with a specific topic. Furthermore it enables to maintain the channel in the database and also remove it. When removing the channel from the database the data won’t be removed from the ledger since the data is immutable but it is no more indexable at the api.
+
+__Subscription Service__
+
+The service allows to manage subscriptions to a specific channel. Identities can subscribe to a specific channel identified by a unique channel address. The author of the channel can then decide whether to authorize the identity to read or write from/to the channel. Authorized subscribers can also be revoked access to the channel afterwards. In addition this service can be used to list all authorized subscriptions to a channel.
+
 
 > __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
 
@@ -86,7 +96,7 @@ _Response:_
 
 `GET /logs/{channel-address}`
 
-Get data from the channel with address _channel address_. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. __Read__ permission is mandatory.
+Get data from the channel by using the _channel-address_. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. __Read__ permission is mandatory.
 
 _Body:_
 
@@ -110,7 +120,7 @@ _Response:_
 
 `POST /logs/{channel-address}`
 
-Write data to a channel with address _channel address_. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
+Write data to a channel by using the _channel-address_. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
 
 _Body:_
 
@@ -152,7 +162,7 @@ __TBD!__ _Re imports data into the database from the IOTA Tangle. The user can d
 
 `GET /channel/{channel-address}`
 
-Get information about a channel with address _channel-address_.
+Get information about a channel by using the _channel-address_.
 
 _Body:_
 
@@ -234,7 +244,7 @@ _Response:_
 
 `DELETE /channel/{channel-address}`
 
-Delete information of a channel with address _channel-address_. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
+Delete information of a channel by using the _channel-address_. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
 
 _Body:_
 
@@ -261,7 +271,7 @@ __TBD!__ _Get all subscriptions of a channel._
 
 `POST /request/{channel-address}`
 
-Request subscription to a channel with address _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
+Request subscription to a channel by using the _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
 
 <!-- we need to explain what the seed is used for-->
 <!-- seed will hopefully soon be replaced by a public key of an identity. so wouldnt go into detail-->
@@ -284,7 +294,7 @@ _Response:_
 
 `POST /authorize/{channel-address}`
 
-Authorize a subscription to a channel with address _channel-address_. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
+Authorize a subscription to a channel by using the _channel-address_. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
 
 _Body:_
 
@@ -312,7 +322,7 @@ __TBD!__ _Remove subscription to a channel. The author or subscriber of a channe
 
 The following sequence diagram demonstrates the requests needed to write and read to/from a channel. The sequence diagram indicates two users: Tom which becomes the author and a IoT Device which is the subscriber.
 
-![create channel sd](./src/assets/diagrams/write-logs-to-channel-sd.jpeg)
+![create channel sd](./assets/diagrams/write-logs-to-channel-sd.jpeg)
 
 1. Each of the users trying to write or read from a channel needs to create an identity using the Ecommerce-SSI Bridge
 2. Each of the identity must authenticate at the APIs in order to authenticate the requests are legit
