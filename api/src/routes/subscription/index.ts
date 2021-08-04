@@ -71,7 +71,12 @@ export class SubscriptionRoutes {
 			}
 
 			if (subscription?.isAuthorized) {
-				return res.status(StatusCodes.BAD_REQUEST).send('subscription already authorized');
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already authorized' });
+			}
+
+			const isAuthor = await this.subscriptionService.isAuthor(channelAddress, authorId);
+			if (!isAuthor) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
 			const channel = await this.subscriptionService.authorizeSubscription(

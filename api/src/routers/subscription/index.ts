@@ -69,13 +69,13 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *       examples:
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address  
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/RequestSubscriptionBodySchema"
  *           example:
  *             accessRights: Read
@@ -85,7 +85,7 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/AuthorizeSubscriptionBodySchema"
+ *               $ref: "#/components/schemas/RequestSubscriptionBodyResponseSchema"
  *       400:
  *         description: Subscription already requested
  *         content:
@@ -96,14 +96,14 @@ subscriptionRouter.get('/subscription/:channelAddress', apiKeyMiddleware, authMi
  *         description: No valid api key provided/ Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'          
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 subscriptionRouter.post(
 	'/request/:channelAddress',
@@ -130,13 +130,13 @@ subscriptionRouter.post(
  *       examples:
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address  
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/AuthorizeSubscriptionBodySchema"
  *           example:
  *             subscriptionLink: 2742f37b457ca6f63b4de3a30b4a5073af5e964eeb76b46eddd1272dd4482a360000000000000000:2d054c5c0be6215bd8fffbfb
@@ -147,19 +147,19 @@ subscriptionRouter.post(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/AuthorizeSubscriptionBodyResponseSchema"
- * 
+ *
  *       401:
  *         description: No valid api key provided/ Not authenticated
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'  
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'           
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 subscriptionRouter.post(
 	'/authorize/:channelAddress',

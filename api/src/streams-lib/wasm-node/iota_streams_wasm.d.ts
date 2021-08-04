@@ -5,11 +5,22 @@
 export function set_panic_hook(): void;
 /**
 */
-export class Address {
-  free(): void;
+export enum ChannelType {
+  SingleBranch,
+  MultiBranch,
+  SingleDepth,
+}
 /**
 */
-  constructor();
+export enum LedgerInclusionState {
+  Conflicting,
+  Included,
+  NoTransaction,
+}
+/**
+*/
+export class Address {
+  free(): void;
 /**
 * @param {string} link
 * @returns {Address}
@@ -24,11 +35,6 @@ export class Address {
 */
   copy(): Address;
 /**
-* @param {Address} addr
-* @returns {boolean}
-*/
-  eq(addr: Address): boolean;
-/**
 * @returns {string}
 */
   addr_id: string;
@@ -42,19 +48,18 @@ export class Address {
 export class Author {
   free(): void;
 /**
-* @param {string} node
 * @param {string} seed
 * @param {SendOptions} options
-* @param {boolean} multi_branching
+* @param {number} implementation
 */
-  constructor(node: string, seed: string, options: SendOptions, multi_branching: boolean);
+  constructor(seed: string, options: SendOptions, implementation: number);
 /**
 * @param {Client} client
 * @param {string} seed
-* @param {boolean} multi_branching
+* @param {number} implementation
 * @returns {Author}
 */
-  static from_client(client: Client, seed: string, multi_branching: boolean): Author;
+  static from_client(client: Client, seed: string, implementation: number): Author;
 /**
 * @param {Client} client
 * @param {Uint8Array} bytes
@@ -79,6 +84,15 @@ export class Author {
 * @returns {boolean}
 */
   is_multi_branching(): boolean;
+/**
+* @returns {Client}
+*/
+  get_client(): Client;
+/**
+* @param {string} psk_seed_str
+* @returns {string}
+*/
+  store_psk(psk_seed_str: string): string;
 /**
 * @returns {string}
 */
@@ -147,6 +161,17 @@ export class Author {
 */
   fetch_next_msgs(): any;
 /**
+* @param {Address} link
+* @returns {any}
+*/
+  fetch_prev_msg(link: Address): any;
+/**
+* @param {Address} link
+* @param {number} num_msgs
+* @returns {any}
+*/
+  fetch_prev_msgs(link: Address, num_msgs: number): any;
+/**
 * @returns {any}
 */
   gen_next_msg_ids(): any;
@@ -160,6 +185,24 @@ export class Client {
 * @param {SendOptions} options
 */
   constructor(node: string, options: SendOptions);
+/**
+* @param {Address} link
+* @returns {any}
+*/
+  get_link_details(link: Address): any;
+}
+/**
+*/
+export class Details {
+  free(): void;
+/**
+* @returns {MessageMetadata}
+*/
+  get_metadata(): MessageMetadata;
+/**
+* @returns {MilestoneResponse | undefined}
+*/
+  get_milestone(): MilestoneResponse | undefined;
 }
 /**
 */
@@ -188,6 +231,66 @@ export class Message {
 * @returns {Array<any>}
 */
   get_masked_payload(): Array<any>;
+}
+/**
+*/
+export class MessageMetadata {
+  free(): void;
+/**
+* @returns {number | undefined}
+*/
+  conflict_reason?: number;
+/**
+* @returns {Array<any>}
+*/
+  readonly get_parent_message_ids: Array<any>;
+/**
+* @returns {boolean}
+*/
+  is_solid: boolean;
+/**
+* @returns {number | undefined}
+*/
+  ledger_inclusion_state?: number;
+/**
+* @returns {string}
+*/
+  readonly message_id: string;
+/**
+* @returns {number | undefined}
+*/
+  milestone_index?: number;
+/**
+* @returns {number | undefined}
+*/
+  referenced_by_milestone_index?: number;
+/**
+* @returns {boolean | undefined}
+*/
+  should_promote?: boolean;
+/**
+* @returns {boolean | undefined}
+*/
+  should_reattach?: boolean;
+}
+/**
+*/
+export class MilestoneResponse {
+  free(): void;
+/**
+* Milestone index.
+* @returns {number}
+*/
+  index: number;
+/**
+* @returns {string}
+*/
+  readonly message_id: string;
+/**
+* Milestone timestamp.
+* @returns {BigInt}
+*/
+  timestamp: BigInt;
 }
 /**
 */
@@ -247,38 +350,32 @@ export class PublicKeys {
 export class SendOptions {
   free(): void;
 /**
-* @param {number} depth
+* @param {string} url
 * @param {boolean} local_pow
-* @param {number} threads
 */
-  constructor(depth: number, local_pow: boolean, threads: number);
+  constructor(url: string, local_pow: boolean);
 /**
 * @returns {SendOptions}
 */
   clone(): SendOptions;
 /**
-* @returns {number}
-*/
-  depth: number;
-/**
 * @returns {boolean}
 */
   local_pow: boolean;
 /**
-* @returns {number}
+* @returns {string}
 */
-  threads: number;
+  url: string;
 }
 /**
 */
 export class Subscriber {
   free(): void;
 /**
-* @param {string} node
 * @param {string} seed
 * @param {SendOptions} options
 */
-  constructor(node: string, seed: string, options: SendOptions);
+  constructor(seed: string, options: SendOptions);
 /**
 * @param {Client} client
 * @param {string} seed
@@ -301,9 +398,18 @@ export class Subscriber {
 */
   channel_address(): string;
 /**
+* @returns {Client}
+*/
+  get_client(): Client;
+/**
 * @returns {boolean}
 */
   is_multi_branching(): boolean;
+/**
+* @param {string} psk_seed_str
+* @returns {string}
+*/
+  store_psk(psk_seed_str: string): string;
 /**
 * @returns {string}
 */
@@ -377,6 +483,17 @@ export class Subscriber {
 * @returns {any}
 */
   fetch_next_msgs(): any;
+/**
+* @param {Address} link
+* @returns {any}
+*/
+  fetch_prev_msg(link: Address): any;
+/**
+* @param {Address} link
+* @param {number} num_msgs
+* @returns {any}
+*/
+  fetch_prev_msgs(link: Address, num_msgs: number): any;
 }
 /**
 */
