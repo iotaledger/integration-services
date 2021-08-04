@@ -4,7 +4,9 @@
 
 The Ecommerce-Audit Trail Gateway allows users to create immutable data channels and share them with others. Channels data are stored onto the IOTA Tangle. A channels is implemented as IOTA Stream and can handle different Subscribers. <!-- really we call everything subscriber? --> <!-- these are the terms used by iota streams -->By requesting a subscription to a channel a so called subscriber can request `Read`, `Write`, `ReadAndWrite` access to the channel. This request must then be authorized by the creator (Author) of the channel. After a subscriber is authorized, it is then able to write/read to/from the channel. In addition to subscribers, the author can always read and write messages in the channel.
 
-> __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools. ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
+> __Important:__ In order to identify and authorise subscribers (being these individuals, organizations or objects), the Audit Trail GW currently integrates with the [Ecommerce-SSI bridge](./usage-ssi-bridge.md). __This means, everyone interacting with the audit trail needs to create its own identity before.__ See the corresponding documentation. The figure below shows a logic architecure with the integration of both IOTA e-commerce tools.
+ 
+![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
 In case of the Audit Trail and the GW being deployed in presence of other (centralized) Accounting, Athentication and Authorization (AAA) systems this dependency will be removed (implementation will be provided during the project course).
 
@@ -38,7 +40,7 @@ A similar workflow in the previous scenario can be implemented here. The exchang
 
 The list of provided APIs is shown in figure below. Endpoints which are currently not available are marked in grey.
  
-![ecommerce-audit-trail-bridge](./src/assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
+![ecommerce-audit-trail-bridge](./assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
 The Audit Trail GW implementation provides the following services:
 
@@ -320,7 +322,7 @@ __TBD!__ _Remove subscription to a channel. The author or subscriber of a channe
 
 The following sequence diagram demonstrates the requests needed to write and read to/from a channel. The sequence diagram indicates two users: Tom which becomes the author and a IoT Device which is the subscriber.
 
-![create channel sd](./src/assets/diagrams/write-logs-to-channel-sd.jpeg)
+![create channel sd](./assets/diagrams/write-logs-to-channel-sd.jpeg)
 
 1. Each of the users trying to write or read from a channel needs to create an identity using the Ecommerce-SSI Bridge
 2. Each of the identity must authenticate at the APIs in order to authenticate the requests are legit

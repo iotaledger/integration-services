@@ -6,7 +6,7 @@ The Ecommerce-SSI Bridge allows users to create Self-Sovereign Identities, linki
 
 The Issuer itself is an entity with its own decentralized identity. The Bridge allows an identified trust root to verify users identity. Verified identities can then propagate this verification to other entities (organizations, individuals, objects) identity using a network of trust approach (see figure below).
 
-![network-of-trust](./src/assets/arch/network-of-trust.jpeg)
+![network-of-trust](./assets/arch/network-of-trust.jpeg)
 
 
 The Bridge also allows Issuers to issue Verifiable Credentials for selected identity Owners (identified by a decentralized identity) and Owners to present them to Verifiers. Verifiers can use the Ecommerce-SSI Bridge APIs to verify credentials authenticity. This requires verifying that a credential contains the identifier (DID) of the owner presenting it, and it is signed by an authorised Issuer. This requires accessing the information stored onto a ledger.
@@ -97,7 +97,7 @@ In the context of ENSURESEC e-commerce ecosystem, the proposed use case will mak
 ## Software Architecture and APIs Definition
 The software and services architecture and the list of provided APIs are shown in the figure below.
 
-![ecommerce-ssi-bridge](./src/assets/diagrams/ecommerce-ssi-bridge.jpeg)
+![ecommerce-ssi-bridge](./assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
 > __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
 
@@ -619,7 +619,7 @@ User authentication workflow is described in the following sequence diagram. As 
 <!-- is the sequence diagram still valid? is the name of APIs still correct or needs update? -->
 <!-- I've already updated the sequence diagram when adjusting the endpoint names -->
 
-![verify identity sd](./src/assets/diagrams/verify-identity-sd.jpeg)
+![verify identity sd](./assets/diagrams/verify-identity-sd.jpeg)
 
 As described in the sequence diagram the user willing to authenticate with a given identity must request and then sign (with the identity private key) a nonce in order to being able to authenticate at the API. Therefore two scripts must be implemented by the user client. These are `getHexEncodedKey` & `signNonce` which are described in the following.
 
