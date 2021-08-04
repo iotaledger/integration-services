@@ -54,7 +54,7 @@ The service allows to search for one or more channels stored by the api. For ins
 
 __Subscription Service__
 
-The service allows to manage subscriptions to a specific channel. Identities can subscribe to a specific channel identified by a unique channel address. The author of the channel can then decide whether to authorize the identity to read or write from/to the channel. Authorized subscribers can also be revoked access to the channel afterwards. In addition this service can be used to list all active subscriptions to a channel.
+The service allows to manage subscriptions to a specific channel. Identities can subscribe to a specific channel identified by a unique channel address. The author of the channel can then decide whether to authorize the identity to read or write from/to the channel. Authorized subscribers can also be revoked access to the channel afterwards. In addition this service can be used to list all authorized subscriptions to a channel.
 
 
 > __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
