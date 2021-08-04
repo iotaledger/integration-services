@@ -1,7 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '.';
 import { ChannelInfo } from '../../models/types/channel-info';
-import { AccessRights, Subscription, SubscriptionType } from '../../models/types/subscription';
+import { Subscription } from '../../models/types/subscription';
+import { AccessRights, SubscriptionType } from '../../models/schemas/subscription';
 import { SubscriptionPool } from '../../pools/subscription-pools';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { ChannelService } from '../../services/channel-service';

@@ -1,5 +1,5 @@
 import { Type } from '@sinclair/typebox';
-import { AccessRights } from '../../types/subscription';
+import { AccessRights } from '../subscription'
 import { TopicSchema } from '../channel-info';
 
 export const CreateChannelBodySchema = Type.Object({

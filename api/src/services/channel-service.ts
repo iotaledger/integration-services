@@ -1,5 +1,6 @@
 import { StreamsService } from './streams-service';
-import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
+import { Subscription } from '../models/types/subscription';
+import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';

@@ -1,6 +1,7 @@
+
 import { Author, Subscriber } from '../../streams-lib/wasm-node/iota_streams_wasm';
 import * as SubscriptionDb from '../../database/subscription';
-import { SubscriptionType } from '../../models/types/subscription';
+import { SubscriptionType } from '../../models/schemas/subscription';
 import { subSeconds } from 'date-fns';
 import { StreamsService } from '../../services/streams-service';
 

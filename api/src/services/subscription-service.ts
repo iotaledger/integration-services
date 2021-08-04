@@ -1,7 +1,8 @@
 import { StreamsService } from './streams-service';
 import * as ChannelDataDb from '../database/channel-data';
 import * as subscriptionDb from '../database/subscription';
-import { AccessRights, Subscription, SubscriptionType } from '../models/types/subscription';
+import { Subscription } from '../models/types/subscription';
+import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
@@ -18,6 +19,10 @@ export class SubscriptionService {
 		config: StreamsConfig
 	) {
 		this.password = config.statePassword;
+	}
+
+	async getSubscriptions(channelAddress: string, isAuthorized?: boolean) {
+		return subscriptionDb.getSubscriptionsByAuthorization(channelAddress, isAuthorized);
 	}
 
 	async getSubscription(channelAddress: string, identityId: string) {
