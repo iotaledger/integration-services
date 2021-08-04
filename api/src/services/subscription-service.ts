@@ -25,10 +25,6 @@ export class SubscriptionService {
 		return subscriptionDb.getSubscriptionsByAuthorization(channelAddress, isAuthorized);
 	}
 
-	async getSubscriptionByIdentity(channelAddress: string, identityId: string) {
-		return subscriptionDb.getSubscriptionByIdentity(channelAddress, identityId);
-	}
-
 	async getSubscription(channelAddress: string, identityId: string) {
 		return subscriptionDb.getSubscription(channelAddress, identityId);
 	}
