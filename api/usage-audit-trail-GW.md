@@ -96,7 +96,7 @@ _Response:_
 
 `GET /logs/{channel-address}`
 
-Get data from the channel with address _channel address_. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. __Read__ permission is mandatory.
+Get data from the channel by using the _channel-address_. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. __Read__ permission is mandatory.
 
 _Body:_
 
@@ -120,7 +120,7 @@ _Response:_
 
 `POST /logs/{channel-address}`
 
-Write data to a channel with address _channel address_. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
+Write data to a channel by using the _channel-address_. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
 
 _Body:_
 
@@ -162,7 +162,7 @@ __TBD!__ _Re imports data into the database from the IOTA Tangle. The user can d
 
 `GET /channel/{channel-address}`
 
-Get information about a channel with address _channel-address_.
+Get information about a channel by using the _channel-address_.
 
 _Body:_
 
@@ -244,7 +244,7 @@ _Response:_
 
 `DELETE /channel/{channel-address}`
 
-Delete information of a channel with address _channel-address_. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
+Delete information of a channel by using the _channel-address_. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
 
 _Body:_
 
@@ -271,7 +271,7 @@ __TBD!__ _Get all subscriptions of a channel._
 
 `POST /request/{channel-address}`
 
-Request subscription to a channel with address _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
+Request subscription to a channel by using the _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
 
 <!-- we need to explain what the seed is used for-->
 <!-- seed will hopefully soon be replaced by a public key of an identity. so wouldnt go into detail-->
@@ -294,7 +294,7 @@ _Response:_
 
 `POST /authorize/{channel-address}`
 
-Authorize a subscription to a channel with address _channel-address_. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
+Authorize a subscription to a channel by using the _channel-address_. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
 
 _Body:_
 
