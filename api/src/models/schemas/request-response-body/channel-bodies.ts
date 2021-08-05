@@ -2,9 +2,12 @@ import { Type } from '@sinclair/typebox';
 import { TopicSchema } from '../channel-info';
 
 export const CreateChannelBodySchema = Type.Object({
-	topics: Type.Array(TopicSchema),
+	subscriptionPassword: Type.Optional(Type.String({ minLength: 8 })), // TODO#156 use to decrypt/encrypt data and state
 	encrypted: Type.Boolean(),
-	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
+	topics: Type.Array(TopicSchema),
+	hasPresharedKey: Type.Boolean(),
+	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
+	presharedKey: Type.Optional(Type.String({ minLength: 16, maxLength: 16 }))
 });
 
 export const CreateChannelBodyResponseSchema = Type.Object({

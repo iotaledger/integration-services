@@ -2,11 +2,11 @@ import { Type } from '@sinclair/typebox';
 
 export enum SubscriptionType {
 	Author = 'Author',
-	Subscriber = 'Subscriber',
-	Auditor = 'Auditor'
+	Subscriber = 'Subscriber'
 }
 
 export enum AccessRights {
+	Audit = 'Audit',
 	Read = 'Read',
 	Write = 'Write',
 	ReadAndWrite = 'ReadAndWrite'

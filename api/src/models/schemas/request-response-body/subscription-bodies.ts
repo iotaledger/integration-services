@@ -7,8 +7,10 @@ export const AuthorizeSubscriptionBodySchema = Type.Object({
 });
 
 export const RequestSubscriptionBodySchema = Type.Object({
+	subscriptionPassword: Type.Optional(Type.String({ minLength: 8 })), // TODO#156 use to decrypt/encrypt data and state
 	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
-	accessRights: Type.Optional(Type.Union([Type.Enum(AccessRights), Type.Null()]))
+	accessRights: Type.Optional(Type.Union([Type.Enum(AccessRights), Type.Null()])),
+	presharedKey: Type.Optional(Type.String({ maxLength: 16, minLength: 16 }))
 });
 
 export const RequestSubscriptionBodyResponseSchema = Type.Object({
