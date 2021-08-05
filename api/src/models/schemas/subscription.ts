@@ -1,8 +1,9 @@
-import { Type } from "@sinclair/typebox";
+import { Type } from '@sinclair/typebox';
 
 export enum SubscriptionType {
 	Author = 'Author',
-	Subscriber = 'Subscriber'
+	Subscriber = 'Subscriber',
+	Auditor = 'Auditor'
 }
 
 export enum AccessRights {
@@ -12,14 +13,14 @@ export enum AccessRights {
 }
 
 export const SubscriptionSchema = Type.Object({
-    type: Type.String(SubscriptionType),
-    seed: Type.String(),
-    channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
-    identityId: Type.String({ minLength: 50, maxLength: 53 }),
-    state: Type.String(),
-    subscriptionLink: Type.String(),
-    isAuthorized: Type.Boolean(),
-    accessRights: Type.String(AccessRights),
-    publicKey: Type.Optional(Type.String()),
-    keyloadLink: Type.Optional(Type.String())
-})
+	type: Type.String(SubscriptionType),
+	seed: Type.String(),
+	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
+	identityId: Type.String({ minLength: 50, maxLength: 53 }),
+	state: Type.String(),
+	subscriptionLink: Type.String(),
+	isAuthorized: Type.Boolean(),
+	accessRights: Type.String(AccessRights),
+	publicKey: Type.Optional(Type.String()),
+	keyloadLink: Type.Optional(Type.String())
+});

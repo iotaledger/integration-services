@@ -2,8 +2,6 @@ import { ProveOwnershipPostBodySchema, NonceSchema } from '../../models/schemas/
 import {
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
-	AuthorizeSubscriptionBodySchema,
-	RequestSubscriptionBodySchema,
 	CreateChannelBodyResponseSchema,
 	ChannelDataSchema
 } from '../../models/schemas/request-response-body/channel-bodies';
@@ -46,7 +44,9 @@ import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceS
 import { UserSchema, LocationSchema, UserWithoutIdFields } from '../../models/schemas/user';
 import {
 	AuthorizeSubscriptionBodyResponseSchema,
-	RequestSubscriptionBodyResponseSchema
+	AuthorizeSubscriptionBodySchema,
+	RequestSubscriptionBodyResponseSchema,
+	RequestSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
 

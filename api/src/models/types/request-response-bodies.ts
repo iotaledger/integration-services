@@ -1,11 +1,6 @@
 import { Static } from '@sinclair/typebox';
 import { NonceSchema, ProveOwnershipPostBodySchema } from '../schemas/request-response-body/authentication-bodies';
-import {
-	AddChannelLogBodySchema,
-	AuthorizeSubscriptionBodySchema,
-	CreateChannelBodySchema,
-	RequestSubscriptionBodySchema
-} from '../schemas/request-response-body/channel-bodies';
+import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../schemas/request-response-body/channel-bodies';
 import { ChannelInfoSchema } from '../schemas/channel-info';
 import { UserSchema } from '../schemas/user';
 import { CreateUserBodySchema } from '../schemas/request-response-body/user-bodies';
@@ -16,7 +11,12 @@ import {
 	VerifyIdentityBodySchema
 } from '../schemas/request-response-body/verification-bodies';
 import { CreateChannelBodyResponseSchema } from '../schemas/request-response-body/channel-bodies';
-import { AuthorizeSubscriptionBodyResponseSchema, RequestSubscriptionBodyResponseSchema } from '../schemas/request-response-body/subscription-bodies';
+import {
+	AuthorizeSubscriptionBodyResponseSchema,
+	AuthorizeSubscriptionBodySchema,
+	RequestSubscriptionBodyResponseSchema,
+	RequestSubscriptionBodySchema
+} from '../schemas/request-response-body/subscription-bodies';
 
 export type ProveOwnershipPostBody = Static<typeof ProveOwnershipPostBodySchema>;
 export type Nonce = Static<typeof NonceSchema>;
