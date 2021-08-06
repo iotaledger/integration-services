@@ -53,7 +53,8 @@ export class ChannelService {
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
 			publicKey: null,
-			keyloadLink: res.channelAddress
+			keyloadLink: res.channelAddress,
+			presharedKey: res.presharedKey
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
@@ -66,7 +67,11 @@ export class ChannelService {
 			latestLink: res.channelAddress
 		});
 
-		return res;
+		return {
+			channelAddress: res.channelAddress,
+			presharedKey: res.presharedKey,
+			seed: res.seed
+		};
 	};
 
 	fetchLogsFromTangle = async (channelAddress: string, identityId: string): Promise<ChannelData[]> => {

@@ -15,7 +15,7 @@ global.Response = (fetch as any).Response;
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
-	create = async (seed?: string, presharedKey?: string): Promise<{ seed: string; channelAddress: string; author: Author }> => {
+	create = async (seed?: string, presharedKey?: string): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string }> => {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -34,7 +34,8 @@ export class StreamsService {
 			return {
 				seed,
 				channelAddress: announcementAddress.copy().to_string(),
-				author: author.clone()
+				author: author.clone(),
+				presharedKey
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);

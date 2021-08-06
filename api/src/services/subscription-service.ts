@@ -70,7 +70,8 @@ export class SubscriptionService {
 			isAuthorized: presharedKey != null && presharedKey != '', // if there is a presharedKey the subscription is already authorized
 			state: this.streamsService.exportSubscription(res.subscriber, this.password),
 			publicKey: res.publicKey,
-			presharedKey: presharedKey
+			presharedKey: presharedKey,
+			keyloadLink: presharedKey != null && presharedKey != '' ? channelAddress : undefined
 		};
 
 		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
@@ -81,6 +82,7 @@ export class SubscriptionService {
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}
 
+	// TODO also add presharedKey here so auditor is able to read from branches
 	async authorizeSubscription(
 		channelAddress: string,
 		subscriptionLink: string,
