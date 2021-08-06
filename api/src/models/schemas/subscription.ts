@@ -18,9 +18,10 @@ export const SubscriptionSchema = Type.Object({
 	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
 	identityId: Type.String({ minLength: 50, maxLength: 53 }),
 	state: Type.String(),
-	subscriptionLink: Type.String(),
+	subscriptionLink: Type.Optional(Type.String()),
 	isAuthorized: Type.Boolean(),
 	accessRights: Type.String(AccessRights),
 	publicKey: Type.Optional(Type.String()),
-	keyloadLink: Type.Optional(Type.String())
+	keyloadLink: Type.Optional(Type.String()),
+	presharedKey: Type.Optional(Type.String())
 });

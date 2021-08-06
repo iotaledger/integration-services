@@ -9,6 +9,7 @@ import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
 import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
+import { randomBytes } from 'crypto';
 
 export class ChannelService {
 	private readonly password: string;
@@ -23,8 +24,21 @@ export class ChannelService {
 		this.password = config.statePassword;
 	}
 
-	create = async (identityId: string, topics: Topic[], encrypted: boolean, seed?: string): Promise<CreateChannelBodyResponse> => {
-		const res = await this.streamsService.create(seed);
+	create = async (
+		identityId: string,
+		topics: Topic[],
+		encrypted: boolean,
+		hasPresharedKey: boolean,
+		seed?: string,
+		presharedKey?: string,
+		_subscriptionPassword?: string
+	): Promise<CreateChannelBodyResponse> => {
+		if (hasPresharedKey && !presharedKey) {
+			presharedKey = randomBytes(16).toString('hex');
+		}
+
+		const res = await this.streamsService.create(seed, presharedKey);
+
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');
 		}

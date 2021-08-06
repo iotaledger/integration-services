@@ -64,7 +64,7 @@ export class SubscriptionRoutes {
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const { seed, accessRights } = req.body as RequestSubscriptionBody;
+			const { seed, accessRights, presharedKey } = req.body as RequestSubscriptionBody;
 			const identityId = req.user.identityId;
 
 			if (!identityId || !channelAddress) {
@@ -77,7 +77,7 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
 			}
 
-			const channel = await this.subscriptionService.requestSubscription(identityId, channelAddress, accessRights, seed);
+			const channel = await this.subscriptionService.requestSubscription(identityId, channelAddress, accessRights, seed, presharedKey);
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);

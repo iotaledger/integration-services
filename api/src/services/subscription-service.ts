@@ -55,9 +55,11 @@ export class SubscriptionService {
 		subscriberId: string,
 		channelAddress: string,
 		accessRights?: AccessRights,
-		seed?: string
+		seed?: string,
+		presharedKey?: string
 	): Promise<RequestSubscriptionBodyResponse> {
-		const res = await this.streamsService.requestSubscription(channelAddress, seed);
+		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
 			identityId: subscriberId,
@@ -65,9 +67,10 @@ export class SubscriptionService {
 			seed: res.seed,
 			subscriptionLink: res.subscriptionLink,
 			accessRights: accessRights || AccessRights.ReadAndWrite,
-			isAuthorized: false,
+			isAuthorized: presharedKey != null && presharedKey != '', // if there is a presharedKey the subscription is already authorized
 			state: this.streamsService.exportSubscription(res.subscriber, this.password),
-			publicKey: res.publicKey
+			publicKey: res.publicKey,
+			presharedKey: presharedKey
 		};
 
 		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);

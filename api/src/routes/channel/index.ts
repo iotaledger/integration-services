@@ -11,14 +11,14 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { topics, seed, encrypted } = req.body as CreateChannelBody;
+			const { topics, seed, encrypted, hasPresharedKey, presharedKey, subscriptionPassword } = req.body as CreateChannelBody;
 			const { identityId } = req.user;
 
 			if (!identityId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.create(identityId, topics, encrypted, seed);
+			const channel = await this.channelService.create(identityId, topics, encrypted, hasPresharedKey, seed, subscriptionPassword, presharedKey);
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);

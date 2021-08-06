@@ -15,14 +15,20 @@ global.Response = (fetch as any).Response;
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
-	create = async (seed?: string): Promise<{ seed: string; channelAddress: string; author: Author }> => {
+	create = async (seed?: string, presharedKey?: string): Promise<{ seed: string; channelAddress: string; author: Author }> => {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
+
 			const client = this.getClient(this.config.node);
 			const author = streams.Author.from_client(client, seed, ChannelType.MultiBranch);
 			const announceResponse = await author.clone().send_announce();
+
+			if (presharedKey) {
+				author.clone().store_psk(presharedKey);
+			}
+
 			const announcementAddress = announceResponse.get_link();
 
 			return {
@@ -115,22 +121,31 @@ export class StreamsService {
 
 	requestSubscription = async (
 		announcementLink: string,
-		seed?: string
-	): Promise<{ seed: string; subscriptionLink: string; subscriber: Subscriber; publicKey: string }> => {
+		seed?: string,
+		presharedKey?: string
+	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string }> => {
 		try {
 			const annAddress = streams.Address.from_string(announcementLink);
 
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
+
 			const client = this.getClient(this.config.node);
 			const subscriber = streams.Subscriber.from_client(client, seed);
-
 			await subscriber.clone().receive_announcement(annAddress.copy());
+
+			if (presharedKey) {
+				// subscriber stores psk
+				await subscriber.clone().store_psk(presharedKey);
+				return {
+					seed,
+					subscriber
+				};
+			}
 
 			const response = await subscriber.clone().send_subscribe(annAddress.copy());
 			const subscriptionLink = response.get_link();
-
 			return { seed, subscriptionLink: subscriptionLink.to_string(), subscriber: subscriber.clone(), publicKey: subscriber.clone().get_public_key() };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -146,7 +161,8 @@ export class StreamsService {
 	authorizeSubscription = async (
 		anchorLink: string,
 		publicKeys: string[],
-		author: Author
+		author: Author,
+		presharedKey?: string
 	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> => {
 		try {
 			const anchorAddress = streams.Address.from_string(anchorLink);
@@ -157,6 +173,11 @@ export class StreamsService {
 			});
 
 			const ids = streams.PskIds.new();
+
+			if (presharedKey) {
+				ids.add(presharedKey);
+			}
+
 			const res = await author.clone().send_keyload(anchorAddress.copy(), ids, keys);
 			const keyloadLink = res?.get_link()?.to_string();
 			const sequenceLink = res?.get_seq_link()?.to_string();
