@@ -96,13 +96,63 @@ describe('test channel routes', () => {
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
-			expect(createSpy).toHaveBeenCalledWith('verysecretseed');
+			const presharedKey: string = undefined;
+			expect(createSpy).toHaveBeenCalledWith('verysecretseed', presharedKey);
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			// TODO#105 author should be the exported string not object
-			expect(res.send).toHaveBeenCalledWith({ author: {}, channelAddress: '1234234234', seed: 'verysecretseed' });
+			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
+		});
+		it('should create and return a channel for the user using a preshared key', async () => {
+			const presharedKey = 'd57921c36648c411db5048b652ec11b8';
+			const req: any = {
+				params: {},
+				user: { identityId: 'did:iota:1234' },
+				body: { topics: [], seed: 'verysecretseed', encrypted: true, presharedKey, hasPresharedKey: true }
+			};
+
+			const expectedSubscription: Subscription = {
+				accessRights: AccessRights.ReadAndWrite,
+				channelAddress: '1234234234',
+				keyloadLink: '1234234234',
+				isAuthorized: true,
+				seed: 'verysecretseed',
+				state: 'uint8array string of subscription state',
+				subscriptionLink: '1234234234',
+				type: SubscriptionType.Author,
+				identityId: 'did:iota:1234',
+				publicKey: null,
+				presharedKey
+			};
+			const expectedChannelInfo: ChannelInfo = {
+				authorId: 'did:iota:1234',
+				channelAddress: '1234234234',
+				latestLink: '1234234234',
+				topics: [],
+				encrypted: true
+			};
+
+			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
+			const createSpy = spyOn(streamsService, 'create').and.returnValue({
+				seed: 'verysecretseed',
+				author: {},
+				channelAddress: '1234234234',
+				presharedKey
+			});
+			const addSubscriptionSpy = spyOn(subscriptionService, 'addSubscription');
+			const addChannelInfoSpy = spyOn(channelInfoService, 'addChannelInfo');
+
+			await channelRoutes.createChannel(req, res, nextMock);
+
+			expect(createSpy).toHaveBeenCalledWith('verysecretseed', 'd57921c36648c411db5048b652ec11b8');
+			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
+			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
+			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
+			// TODO#105 author should be the exported string not object
+			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
 		});
 	});
 
