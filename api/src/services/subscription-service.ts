@@ -91,7 +91,7 @@ export class SubscriptionService {
 		const presharedKey = authorSub.presharedKey;
 		const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;
 		if (!streamsAuthor) {
-			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub}`);
+			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
 		}
 		const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions = subscriptions.filter((s) => s.type === SubscriptionType.Subscriber && s.isAuthorized === true && s.publicKey);
