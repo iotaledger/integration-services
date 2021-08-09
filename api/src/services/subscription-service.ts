@@ -8,6 +8,7 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
 import { AuthorizeSubscriptionBodyResponse, RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
+import { isEmpty } from 'lodash';
 
 export class SubscriptionService {
 	private password: string;
@@ -66,12 +67,12 @@ export class SubscriptionService {
 			channelAddress: channelAddress,
 			seed: res.seed,
 			subscriptionLink: res.subscriptionLink,
-			accessRights: accessRights || AccessRights.ReadAndWrite,
-			isAuthorized: presharedKey != null && presharedKey != '', // if there is a presharedKey the subscription is already authorized
+			accessRights: !isEmpty(presharedKey) ? AccessRights.Audit : accessRights, // always use audit for presharedKey
+			isAuthorized: !isEmpty(presharedKey), // if there is a presharedKey the subscription is already authorized
 			state: this.streamsService.exportSubscription(res.subscriber, this.password),
 			publicKey: res.publicKey,
 			presharedKey: presharedKey,
-			keyloadLink: presharedKey != null && presharedKey != '' ? channelAddress : undefined
+			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
 		};
 
 		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
