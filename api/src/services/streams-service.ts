@@ -15,7 +15,7 @@ global.Response = (fetch as any).Response;
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
-	create = async (seed?: string, presharedKey?: string): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string }> => {
+	async create(seed?: string, presharedKey?: string): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string }> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -41,14 +41,14 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not create the channel');
 		}
-	};
+	}
 
-	addLogs = async (
+	async addLogs(
 		keyloadLink: string,
 		subscription: Author | Subscriber,
 		channelLog: ChannelLog,
 		_isPrivate?: boolean
-	): Promise<{ link: string; subscription: Author | Subscriber }> => {
+	): Promise<{ link: string; subscription: Author | Subscriber }> {
 		try {
 			const latestAddress = Address.from_string(keyloadLink);
 			const mPayload = toBytes(JSON.stringify(channelLog));
@@ -67,10 +67,10 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not add logs to the channel');
 		}
-	};
+	}
 
 	// TODO consider if channel is encrypted or not when getting adding data to channel
-	getLogs = async (subscription: Author | Subscriber): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber }> => {
+	async getLogs(subscription: Author | Subscriber): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber }> {
 		try {
 			let foundNewMessage = true;
 			let channelData: ChannelData[] = [];
@@ -118,13 +118,13 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not get logs from the channel');
 		}
-	};
+	}
 
-	requestSubscription = async (
+	async requestSubscription(
 		announcementLink: string,
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string }> => {
+	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string }> {
 		try {
 			const annAddress = streams.Address.from_string(announcementLink);
 
@@ -152,19 +152,19 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not request the subscription to the channel');
 		}
-	};
+	}
 
 	async receiveSubscribe(subscriptionLink: string, author: Author) {
 		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
 		await author.clone().receive_subscribe(subscriptionAddress);
 	}
 
-	authorizeSubscription = async (
+	async authorizeSubscription(
 		anchorLink: string,
 		publicKeys: string[],
 		author: Author,
 		presharedKey?: string
-	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> => {
+	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> {
 		try {
 			const anchorAddress = streams.Address.from_string(anchorLink);
 
@@ -192,7 +192,7 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not authorize the subscription to the channel');
 		}
-	};
+	}
 
 	makeSeed(size: number) {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
@@ -203,7 +203,7 @@ export class StreamsService {
 		return seed;
 	}
 
-	importSubscription = (state: string, isAuthor: boolean): Author | Subscriber => {
+	importSubscription(state: string, isAuthor: boolean): Author | Subscriber {
 		try {
 			const password = this.config.statePassword;
 			const client = this.getClient(this.config.node);
@@ -216,16 +216,16 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not import the subscription object');
 		}
-	};
+	}
 
-	exportSubscription = (subscription: Author | Subscriber, password: string): string => {
+	exportSubscription(subscription: Author | Subscriber, password: string): string {
 		try {
 			return fromBytes(subscription.clone().export(password));
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not export the subscription object');
 		}
-	};
+	}
 
 	private getClient(node: string): streams.Client {
 		const options = new streams.SendOptions(node, true);

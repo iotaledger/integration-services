@@ -24,7 +24,7 @@ export class ChannelService {
 		this.password = config.statePassword;
 	}
 
-	create = async (
+	async create(
 		identityId: string,
 		topics: Topic[],
 		encrypted: boolean,
@@ -32,7 +32,7 @@ export class ChannelService {
 		seed?: string,
 		presharedKey?: string,
 		_subscriptionPassword?: string
-	): Promise<CreateChannelBodyResponse> => {
+	): Promise<CreateChannelBodyResponse> {
 		if (hasPresharedKey && !presharedKey) {
 			presharedKey = randomBytes(16).toString('hex');
 		}
@@ -72,9 +72,9 @@ export class ChannelService {
 			presharedKey: res.presharedKey,
 			seed: res.seed
 		};
-	};
+	}
 
-	fetchLogsFromTangle = async (channelAddress: string, identityId: string): Promise<ChannelData[]> => {
+	private async fetchLogsFromTangle(channelAddress: string, identityId: string): Promise<ChannelData[]> {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription) {
 			throw new Error('no subscription found!');
@@ -100,9 +100,9 @@ export class ChannelService {
 			await ChannelDataDb.addChannelData(channelAddress, identityId, logs.channelData);
 		}
 		return logs.channelData;
-	};
+	}
 
-	getLogs = async (channelAddress: string, identityId: string, options?: { limit: number; index: number }) => {
+	async getLogs(channelAddress: string, identityId: string, options?: { limit: number; index: number }) {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription || !subscription?.keyloadLink) {
 			throw new Error('no subscription found!');
@@ -113,9 +113,9 @@ export class ChannelService {
 
 		await this.fetchLogsFromTangle(channelAddress, identityId);
 		return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
-	};
+	}
 
-	addLogs = async (channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> => {
+	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription || !subscription?.keyloadLink) {
 			throw new Error('no subscription found!');
@@ -129,7 +129,7 @@ export class ChannelService {
 		}
 		const { accessRights, keyloadLink } = subscription;
 
-		if (subscription.accessRights === AccessRights.Read) {
+		if (subscription.accessRights === AccessRights.Read || subscription.accessRights === AccessRights.Audit) {
 			throw new Error('not allowed to add logs to the channel');
 		} else if (accessRights === AccessRights.Write) {
 			await sub.clone().sync_state();
@@ -151,5 +151,5 @@ export class ChannelService {
 		);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
 		return { link: res.link };
-	};
+	}
 }
