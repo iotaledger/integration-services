@@ -131,7 +131,7 @@ describe('test request subscription route', () => {
 
 	it('should create a subscription using a preshared key', async () => {
 		const seed: string = undefined;
-		const presharedKey: string = 'd57921c36648c411db5048b652ec11b8';
+		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
 		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
@@ -180,7 +180,7 @@ describe('test request subscription route', () => {
 
 	it('should create a subscription using a preshared key but not having ReadAndWrite rights', async () => {
 		const seed: string = undefined;
-		const presharedKey: string = 'd57921c36648c411db5048b652ec11b8';
+		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
 		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
