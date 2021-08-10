@@ -30,7 +30,7 @@ export class ChannelInfoService {
 		} else {
 			channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
 		}
-		return channelInfoPersistence.map((c) => this.getChannelInfoObject(c));
+		return channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
 	};
 
 	addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
@@ -81,8 +81,8 @@ export class ChannelInfoService {
 	};
 
 	getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
-		if (cip == null || isEmpty(cip.channelAddress) || !cip.authorId) {
-			throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
+		if (cip == null || isEmpty(cip.channelAddress)) {
+			return null;
 		}
 
 		const channelInfo: ChannelInfo = {
