@@ -49,11 +49,7 @@ export class IdentityRoutes {
 				return;
 			}
 
-			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, identityId);
-			if (!isAuthorized) {
-				throw error;
-			}
-
+			const { isAuthorized } = this.authorizationService.isAuthorized(req.user, identityId);
 			const user = await this.userService.getUser(identityId, isAuthorized);
 			res.send(user);
 		} catch (error) {
