@@ -424,7 +424,7 @@ describe('test DELETE channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(loggerSpy).toHaveBeenCalledWith(new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('channel does not exist!'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
 
