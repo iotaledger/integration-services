@@ -1,7 +1,5 @@
 import { Config } from '../models/config.model';
 
-console.log(process.env.BASE_URL);
-
 export const CONFIG: Config = {
 	baseUrl: process.env.BASE_URL,
 	apiKey: process.env.API_KEY
