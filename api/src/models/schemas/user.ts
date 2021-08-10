@@ -9,10 +9,11 @@ export const LocationSchema = Type.Object({
 
 export const UserWithoutIdFields = {
 	username: Type.Optional(Type.String({ minLength: 3 })),
-	registrationDate: Type.Optional(Type.Union([Type.String({format: 'date-time'}), Type.Null()])),
+	registrationDate: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
 	verifiableCredentials: Type.Optional(Type.Union([Type.Array(VerifiableCredentialSchema), Type.Null()])),
 	role: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-	claim: Type.Optional(ClaimSchema)
+	claim: Type.Optional(ClaimSchema),
+	isPrivate: Type.Optional(Type.Boolean())
 };
 
 export const UserSchema = Type.Object({
