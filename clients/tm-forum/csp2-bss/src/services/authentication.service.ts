@@ -1,14 +1,14 @@
 import fs from 'fs';
 import { CONFIG } from '../config/config';
 import { getHexEncodedKey, signNonce } from '../utils/encryption';
-import { csp1Client } from '../utils/client';
+import { csp2Client } from '../utils/client';
 
 export const fetchAuth = async (): Promise<any> => {
-	const identityBuffer = fs.readFileSync('./src/config/Csp1Identity.json');
+	const identityBuffer = fs.readFileSync('./src/config/Csp2Identity.json');
 	const identity = JSON.parse(identityBuffer.toString());
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
-	const res = await csp1Client.get(`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`);
+	const res = await csp2Client.get(`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`);
 	if (res.status !== 200) {
 		console.error('didnt receive status 200 on get request for prove-ownership!');
 		return;
@@ -18,7 +18,7 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const encodedKey = await getHexEncodedKey(identity.key.secret);
 	const signedNonce = await signNonce(encodedKey, nonce);
-	const response = await csp1Client.post(
+	const response = await csp2Client.post(
 		`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`,
 		JSON.stringify({ signedNonce }),
 		{

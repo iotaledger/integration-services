@@ -1,21 +1,25 @@
 import { Config } from '../models/config.model';
 
+console.log(process.env.BASE_URL);
+
 export const CONFIG: Config = {
 	baseUrl: process.env.BASE_URL,
-	apiKey: process.env.API_KEY,
-	port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-	apiVersion: process.env.API_VERSION,
-	mavenirApi: process.env.MAVENIR_API
+	apiKey: process.env.API_KEY
 };
 
-export const Csp1Identity = {
-	username: 'Csp1Identity',
+export const Csp2Identity = {
+	username: 'Csp2Identity',
 	claim: {
 		type: 'Service',
-		name: 'TMForum Csp1Identity',
-		category: 'proxy',
-		description: 'proxies requests to TMForum API'
+		name: 'TMForum Csp2Identity',
+		category: 'sla violation writer',
+		description: 'writes sla violations'
 	}
+};
+
+export const SlaViolation = {
+	id: 'test-violation',
+	href: 'test-ref'
 };
 
 export const getChannelAddress = () => {

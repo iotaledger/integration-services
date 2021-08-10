@@ -14,21 +14,21 @@ const errFunc = async (error: any) => {
 	if (error?.response?.status === 401 && !originalRequest._retry) {
 		originalRequest._retry = true;
 		const token = await getBearerToken();
-		csp1Client.defaults.headers.common['Authorization'] = token;
+		csp2Client.defaults.headers.common['Authorization'] = token;
 		originalRequest.headers['Authorization'] = token;
 		return axios(originalRequest);
 	} else {
-		console.log(`ERROR: ${error?.response?.status}`, error);
+		console.log(`ERROR: ${error?.response}`, error);
 	}
 };
 
-export const csp1Client = axios.create({
+export const csp2Client = axios.create({
 	headers: {
 		'Content-Type': 'application/json'
 	}
 });
 
-csp1Client.interceptors.response.use(
+csp2Client.interceptors.response.use(
 	(response) => response,
 	(error) => errFunc(error)
 );
