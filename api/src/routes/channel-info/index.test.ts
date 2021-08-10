@@ -37,7 +37,7 @@ describe('test Search user', () => {
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-		const getUserSpy = spyOn(userService, 'getUserByUsername').and.returnValue({ identityId: '1234-5678-9' });
+		const getUserSpy = spyOn(userService, 'getIdentityId').and.returnValue('1234-5678-9');
 
 		const req: any = {
 			params: {},
