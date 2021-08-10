@@ -64,17 +64,10 @@ export class UserService {
 		};
 	};
 
-	getUsersByIds = async (identityIds: string[]): Promise<User[] | null> => {
-		const usersPersistence = await userDb.getUsersByIds(identityIds);
-		if (!usersPersistence) {
-			return null;
-		}
-		return usersPersistence.map((userP: UserPersistence) => this.getUserObject(userP));
-	};
-
-	getUserByUsername = async (username: string): Promise<User> => {
+	getIdentityId = async (username: string): Promise<string> => {
 		const userPersistence = await userDb.getUserByUsername(username);
-		return this.getUserObject(userPersistence);
+		const user = this.getUserObject(userPersistence);
+		return user?.identityId;
 	};
 
 	addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
