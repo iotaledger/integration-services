@@ -8,12 +8,12 @@ import isEmpty from 'lodash/isEmpty';
 export class ChannelInfoService {
 	constructor(private readonly userService: UserService) {}
 
-	getChannelInfo = async (channelAddress: string): Promise<ChannelInfo | null> => {
+	async getChannelInfo(channelAddress: string): Promise<ChannelInfo | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
 		return channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
-	};
+	}
 
-	searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> => {
+	async searchChannelInfo(channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> {
 		let channelInfoPersistence: ChannelInfoPersistence[] = [];
 
 		if (channelInfoSearch.author && !channelInfoSearch.authorId) {
@@ -31,19 +31,19 @@ export class ChannelInfoService {
 			channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
 		}
 		return channelInfoPersistence.map((c) => this.getChannelInfoObject(c));
-	};
+	}
 
-	addChannelInfo = async (channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+	async addChannelInfo(channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
-	};
+	}
 
-	updateChannelTopic = async (channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> => {
+	async updateChannelTopic(channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
 		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
-	};
+	}
 
-	updateLatestChannelLink = async (channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> => {
+	async updateLatestChannelLink(channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> {
 		const errMsg = 'could not update the latest channel link!';
 
 		const updateResult = await ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
@@ -51,17 +51,17 @@ export class ChannelInfoService {
 			throw Error(errMsg);
 		}
 		return updateResult;
-	};
+	}
 
-	addChannelSubscriberId = async (channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> => {
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
-	};
+	}
 
-	deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
+	async deleteChannelInfo(channelAddress: string): Promise<DeleteWriteOpResultObject> {
 		return ChannelInfoDb.deleteChannelInfo(channelAddress);
-	};
+	}
 
-	getChannelInfoPersistence = (ci: ChannelInfo): ChannelInfoPersistence | null => {
+	getChannelInfoPersistence(ci: ChannelInfo): ChannelInfoPersistence | null {
 		if (ci == null || isEmpty(ci.channelAddress) || isEmpty(ci.topics) || !ci.authorId) {
 			throw new Error('Error when parsing the body: channelAddress, topic and author must be provided!');
 		}
@@ -78,9 +78,9 @@ export class ChannelInfoService {
 		};
 
 		return channelInfoPersistence;
-	};
+	}
 
-	getChannelInfoObject = (cip: ChannelInfoPersistence): ChannelInfo | null => {
+	getChannelInfoObject(cip: ChannelInfoPersistence): ChannelInfo | null {
 		if (cip == null || isEmpty(cip.channelAddress) || !cip.authorId) {
 			throw new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!');
 		}
@@ -96,5 +96,5 @@ export class ChannelInfoService {
 			channelAddress: cip.channelAddress
 		};
 		return channelInfo;
-	};
+	}
 }
