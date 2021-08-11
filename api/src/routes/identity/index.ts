@@ -40,7 +40,7 @@ export class IdentityRoutes {
 		}
 	};
 
-	getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const identityId = _.get(req, 'params.identityId');
 
@@ -49,7 +49,8 @@ export class IdentityRoutes {
 				return;
 			}
 
-			const user = await this.userService.getUser(identityId);
+			const { isAuthorized } = this.authorizationService.isAuthorized(req.user, identityId);
+			const user = await this.userService.getUser(identityId, isAuthorized);
 			res.send(user);
 		} catch (error) {
 			this.logger.error(error);

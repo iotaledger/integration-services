@@ -9,9 +9,10 @@ const collectionName = CollectionNames.users;
 const maxNumberOfVc = MAX_NUMBER_OF_VC;
 
 export const searchUsers = async (userSearch: UserSearch): Promise<UserPersistence[]> => {
+	const searchMaximum = 100;
 	const regex = (text: string) => text && new RegExp(text, 'i');
 	const { type, username, index, registrationDate } = userSearch;
-	const limit = userSearch.limit != null ? userSearch.limit : 100;
+	const limit = userSearch.limit != null ? userSearch.limit : searchMaximum;
 	const query = {
 		registrationDate: registrationDate && { $gte: registrationDate },
 		'claim.type': regex(type),
@@ -60,7 +61,7 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 		_id: user.identityId
 	};
 
-	const { username, claim, verifiableCredentials } = user;
+	const { username, claim, verifiableCredentials, isPrivate } = user;
 
 	if (verifiableCredentials?.some((vc) => vc?.id !== user.identityId)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
@@ -73,7 +74,8 @@ export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpRe
 	const updateObject = MongoDbService.getPlainObject({
 		username: username || undefined, // username must not be ''
 		claim,
-		verifiableCredentials
+		verifiableCredentials,
+		isPrivate
 	});
 
 	const update = {
