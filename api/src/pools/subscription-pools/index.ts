@@ -1,4 +1,3 @@
-
 import { Author, Subscriber } from '../../streams-lib/wasm-node/iota_streams_wasm';
 import * as SubscriptionDb from '../../database/subscription';
 import { SubscriptionType } from '../../models/schemas/subscription';

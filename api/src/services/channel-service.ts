@@ -9,6 +9,7 @@ import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
 import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
+import { randomBytes } from 'crypto';
 
 export class ChannelService {
 	private readonly password: string;
@@ -23,8 +24,23 @@ export class ChannelService {
 		this.password = config.statePassword;
 	}
 
-	create = async (identityId: string, topics: Topic[], encrypted: boolean, seed?: string): Promise<CreateChannelBodyResponse> => {
-		const res = await this.streamsService.create(seed);
+	async create(params: {
+		identityId: string;
+		topics: Topic[];
+		encrypted: boolean;
+		hasPresharedKey: boolean;
+		seed?: string;
+		presharedKey?: string;
+		subscriptionPassword?: string;
+	}): Promise<CreateChannelBodyResponse> {
+		const { presharedKey, seed, encrypted, hasPresharedKey, identityId, topics } = params;
+		let key = presharedKey;
+		if (hasPresharedKey && !key) {
+			key = randomBytes(16).toString('hex');
+		}
+
+		const res = await this.streamsService.create(seed, key);
+
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');
 		}
@@ -39,7 +55,8 @@ export class ChannelService {
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
 			publicKey: null,
-			keyloadLink: res.channelAddress
+			keyloadLink: res.channelAddress,
+			presharedKey: res.presharedKey
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
@@ -52,10 +69,14 @@ export class ChannelService {
 			latestLink: res.channelAddress
 		});
 
-		return res;
-	};
+		return {
+			channelAddress: res.channelAddress,
+			presharedKey: res.presharedKey,
+			seed: res.seed
+		};
+	}
 
-	fetchLogsFromTangle = async (channelAddress: string, identityId: string): Promise<ChannelData[]> => {
+	private async fetchLogsFromTangle(channelAddress: string, identityId: string): Promise<ChannelData[]> {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription) {
 			throw new Error('no subscription found!');
@@ -81,9 +102,9 @@ export class ChannelService {
 			await ChannelDataDb.addChannelData(channelAddress, identityId, logs.channelData);
 		}
 		return logs.channelData;
-	};
+	}
 
-	getLogs = async (channelAddress: string, identityId: string, options?: { limit: number; index: number }) => {
+	async getLogs(channelAddress: string, identityId: string, options?: { limit: number; index: number }) {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription || !subscription?.keyloadLink) {
 			throw new Error('no subscription found!');
@@ -94,9 +115,9 @@ export class ChannelService {
 
 		await this.fetchLogsFromTangle(channelAddress, identityId);
 		return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
-	};
+	}
 
-	addLogs = async (channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> => {
+	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> {
 		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 		if (!subscription || !subscription?.keyloadLink) {
 			throw new Error('no subscription found!');
@@ -110,7 +131,7 @@ export class ChannelService {
 		}
 		const { accessRights, keyloadLink } = subscription;
 
-		if (subscription.accessRights === AccessRights.Read) {
+		if (subscription.accessRights === AccessRights.Read || subscription.accessRights === AccessRights.Audit) {
 			throw new Error('not allowed to add logs to the channel');
 		} else if (accessRights === AccessRights.Write) {
 			await sub.clone().sync_state();
@@ -132,5 +153,5 @@ export class ChannelService {
 		);
 		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
 		return { link: res.link };
-	};
+	}
 }

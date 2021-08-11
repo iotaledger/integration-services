@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
+import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/subscription-bodies';
 import { SubscriptionPool } from '../../pools/subscription-pools';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { StreamsService } from '../../services/streams-service';
@@ -19,7 +19,6 @@ const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.ge
 const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
-
 
 /**
  * @openapi
@@ -44,7 +43,7 @@ export const subscriptionRouter = Router();
  *       required: false
  *       schema:
  *         type: boolean
- *       example: true   
+ *       example: true
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -69,9 +68,9 @@ export const subscriptionRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
- subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
+subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
 
- /**
+/**
  * @openapi
  * /subscriptions/{channelAddress}/{identityId}:
  *   get:
@@ -120,8 +119,7 @@ export const subscriptionRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
- subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
-
+subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
 
 /**
  * @openapi
