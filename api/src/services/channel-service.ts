@@ -82,8 +82,8 @@ export class ChannelService {
 			throw new Error('no subscription found!');
 		}
 
-		const isAuth = subscription.type === SubscriptionType.Author;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuth);
+		const isAuthor = subscription.type === SubscriptionType.Author;
+		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}

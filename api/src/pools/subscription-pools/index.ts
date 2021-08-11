@@ -44,16 +44,6 @@ export class SubscriptionPool {
 		this.subscribers = this.subscribers.filter((subscriber) => subscriber.created > subSeconds(new Date(Date.now()), this.secondsToLive));
 	}
 
-	async restoreSubscription(channelAddress: string, identityId: string) {
-		const sub = await SubscriptionDb.getSubscription(channelAddress, identityId);
-		if (!sub?.state) {
-			throw new Error(`no subscription found for channelAddress: ${channelAddress} and identityId: ${identityId}`);
-		}
-
-		const isAuthor = sub.type === SubscriptionType.Author;
-		return this.streamsService.importSubscription(sub.state, isAuthor);
-	}
-
 	async get(channelAddress: string, identityId: string, isAuthor: boolean): Promise<Author | Subscriber> {
 		const predicate = (pool: any) => pool.identityId === identityId && pool.channelAddress === channelAddress;
 		let subscription = null;
@@ -77,5 +67,15 @@ export class SubscriptionPool {
 			this.add(channelAddress, subscription, identityId, isAuthor);
 		}
 		return subscription;
+	}
+
+	private async restoreSubscription(channelAddress: string, identityId: string) {
+		const sub = await SubscriptionDb.getSubscription(channelAddress, identityId);
+		if (!sub?.state) {
+			throw new Error(`no subscription found for channelAddress: ${channelAddress} and identityId: ${identityId}`);
+		}
+
+		const isAuthor = sub.type === SubscriptionType.Author;
+		return this.streamsService.importSubscription(sub.state, isAuthor);
 	}
 }
