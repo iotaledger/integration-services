@@ -14,7 +14,19 @@ export class UserService {
 
 	async searchUsers(userSearch: UserSearch): Promise<User[]> {
 		const usersPersistence = await userDb.searchUsers(userSearch);
-		return usersPersistence.map((user) => this.getUserObject(user));
+		return usersPersistence
+			.map((user) => {
+				const userObj = this.getUserObject(user);
+				if (!userObj) {
+					return null;
+				}
+				return {
+					...userObj,
+					verifiableCredentials: undefined,
+					claim: !userObj.isPrivate ? userObj.claim : undefined
+				};
+			})
+			.filter((u) => u);
 	}
 
 	async createIdentity(createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> {
@@ -36,22 +48,26 @@ export class UserService {
 		};
 	}
 
-	async getUser(identityId: string): Promise<User | null> {
+	async getUser(identityId: string, isAuthorizedUser?: boolean): Promise<User | null> {
 		const userPersistence = await userDb.getUser(identityId);
-		return userPersistence && this.getUserObject(userPersistence);
-	}
+		const user = userPersistence && this.getUserObject(userPersistence);
+		const privateUserInfo: boolean = user?.isPrivate && !isAuthorizedUser;
 
-	async getUsersByIds(identityIds: string[]): Promise<User[] | null> {
-		const usersPersistence = await userDb.getUsersByIds(identityIds);
-		if (!usersPersistence) {
+		if (!user) {
 			return null;
 		}
-		return usersPersistence.map((userP: UserPersistence) => this.getUserObject(userP));
+
+		return {
+			...user,
+			claim: !privateUserInfo ? user.claim : undefined,
+			verifiableCredentials: !privateUserInfo ? user.verifiableCredentials : undefined
+		};
 	}
 
-	async getUserByUsername(username: string): Promise<User> {
+	async getIdentityId(username: string): Promise<string> {
 		const userPersistence = await userDb.getUserByUsername(username);
-		return this.getUserObject(userPersistence);
+		const user = this.getUserObject(userPersistence);
+		return user?.identityId;
 	}
 
 	async addUser(user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
@@ -100,7 +116,7 @@ export class UserService {
 		if (user == null || isEmpty(user.identityId)) {
 			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
-		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role } = user;
+		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role, isPrivate } = user;
 
 		const userPersistence: UserPersistence = {
 			identityId,
@@ -109,7 +125,8 @@ export class UserService {
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			claim,
 			verifiableCredentials,
-			role: role && (role as UserRoles)
+			role: role && (role as UserRoles),
+			isPrivate
 		};
 
 		return userPersistence;
@@ -117,11 +134,10 @@ export class UserService {
 
 	private getUserObject(userPersistence: UserPersistence): User | null {
 		if (userPersistence == null || isEmpty(userPersistence.identityId)) {
-			console.error('Error when parsing the body, no identity id found on persistence');
 			return null;
 		}
 
-		const { username, publicKey, identityId, registrationDate, claim, verifiableCredentials, role } = userPersistence;
+		const { username, publicKey, identityId, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
 
 		const user: User = {
 			identityId,
@@ -130,7 +146,8 @@ export class UserService {
 			registrationDate: getDateStringFromDate(registrationDate),
 			claim,
 			verifiableCredentials,
-			role: role && (role as UserRoles)
+			role: role && (role as UserRoles),
+			isPrivate
 		};
 		return user;
 	}

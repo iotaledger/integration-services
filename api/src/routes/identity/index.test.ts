@@ -6,7 +6,7 @@ import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../.
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
-import { UserIdentityMock } from '../../test/mocks/identities';
+import { TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
@@ -83,7 +83,8 @@ describe('test user routes', () => {
 			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
 			const req: any = {
 				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-				body: null
+				body: null,
+				user: TestUsersMock[0]
 			};
 
 			await userRoutes.getUser(req, res, nextMock);
@@ -98,6 +99,70 @@ describe('test user routes', () => {
 			});
 		});
 
+		it('should not return private claim but public fields', async () => {
+			const requestUser = TestUsersMock[0];
+			const date = getDateFromString('2021-02-12T14:58:05+01:00');
+			const user: UserPersistence = {
+				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+				publicKey: 'my-public-key-1',
+				username: 'first-user',
+				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
+				registrationDate: date,
+				isPrivate: true
+			};
+			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
+			const req: any = {
+				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				body: null,
+				user: requestUser
+			};
+
+			const expectedResponse: User = {
+				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+				publicKey: 'my-public-key-1',
+				username: 'first-user',
+				claim: undefined, // claim is undefined since user id and requester is different
+				registrationDate: getDateStringFromDate(date),
+				isPrivate: true
+			};
+			await userRoutes.getUser(req, res, nextMock);
+
+			expect(getUserSpy).toHaveBeenCalledTimes(1);
+			expect(sendMock).toHaveBeenCalledWith(expectedResponse);
+		});
+
+		it('should also return private claims since requestUser is same user as requested user', async () => {
+			const requestUser = TestUsersMock[0];
+			const date = getDateFromString('2021-02-12T14:58:05+01:00');
+			const user: UserPersistence = {
+				identityId: requestUser.identityId,
+				publicKey: 'my-public-key-1',
+				username: 'first-user',
+				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
+				registrationDate: date,
+				isPrivate: true
+			};
+			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
+			const req: any = {
+				params: { identityId: requestUser.identityId }, // same identityId as requestUser
+				body: null,
+				user: requestUser
+			};
+
+			const expectedResponse: User = {
+				identityId: requestUser.identityId,
+				publicKey: 'my-public-key-1',
+				username: 'first-user',
+				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim, // claim is not undefined since is the same user
+				registrationDate: getDateStringFromDate(date),
+				isPrivate: true
+			};
+			await userRoutes.getUser(req, res, nextMock);
+
+			expect(getUserSpy).toHaveBeenCalledTimes(1);
+			expect(sendMock).toHaveBeenCalledWith(expectedResponse);
+		});
+
 		it('should call next(err) if an error occurs when reading from db', async () => {
 			const loggerSpy = spyOn(LoggerMock, 'error');
 			const getUserSpy = spyOn(UserDb, 'getUser').and.callFake(() => {
@@ -105,7 +170,8 @@ describe('test user routes', () => {
 			});
 			const req: any = {
 				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-				body: null
+				body: null,
+				user: TestUsersMock[0]
 			};
 
 			await userRoutes.getUser(req, res, nextMock);
