@@ -52,13 +52,14 @@ export class SubscriptionService {
 		return res;
 	}
 
-	async requestSubscription(
-		subscriberId: string,
-		channelAddress: string,
-		accessRights?: AccessRights,
-		seed?: string,
-		presharedKey?: string
-	): Promise<RequestSubscriptionBodyResponse> {
+	async requestSubscription(params: {
+		subscriberId: string;
+		channelAddress: string;
+		accessRights?: AccessRights;
+		seed?: string;
+		presharedKey?: string;
+	}): Promise<RequestSubscriptionBodyResponse> {
+		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
 		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
 
 		const subscription: Subscription = {
@@ -103,40 +104,41 @@ export class SubscriptionService {
 
 		// authorize new subscription and add existing public keys to the branch
 		await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
-		const keyloadLink = await this.authSub(
+		const keyloadLink = await this.authSub({
 			channelAddress,
-			[publicKey, ...existingSubscriptionKeys],
+			publicKeys: [publicKey, ...existingSubscriptionKeys],
 			streamsAuthor,
-			authorSub.identityId,
+			authorId: authorSub.identityId,
 			subscriptionLink,
 			presharedKey
-		);
+		});
 
 		// create new branches including the newly added subscription public key
 		await Promise.all(
 			existingSubscriptions.map(async (sub) => {
-				return await this.authSub(
+				return await this.authSub({
 					channelAddress,
-					[...existingSubscriptionKeys, publicKey],
+					publicKeys: [...existingSubscriptionKeys, publicKey],
 					streamsAuthor,
-					authorSub.identityId,
-					sub.subscriptionLink,
+					authorId: authorSub.identityId,
+					subscriptionLink: sub.subscriptionLink,
 					presharedKey
-				);
+				});
 			})
 		);
 
 		return { keyloadLink };
 	}
 
-	private async authSub(
-		channelAddress: string,
-		publicKeys: string[],
-		streamsAuthor: Author,
-		authorId: string,
-		subscriptionLink: string,
-		presharedKey?: string
-	): Promise<string> {
+	private async authSub(params: {
+		channelAddress: string;
+		publicKeys: string[];
+		streamsAuthor: Author;
+		authorId: string;
+		subscriptionLink: string;
+		presharedKey?: string;
+	}): Promise<string> {
+		const { presharedKey, channelAddress, authorId, publicKeys, streamsAuthor, subscriptionLink } = params;
 		await streamsAuthor.clone().sync_state();
 		const authSub = await this.streamsService.authorizeSubscription(channelAddress, publicKeys, <Author>streamsAuthor, presharedKey);
 		if (!authSub?.keyloadLink) {
