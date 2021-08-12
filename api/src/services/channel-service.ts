@@ -11,6 +11,7 @@ import { StreamsConfig } from '../models/config';
 import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
+import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 
 export class ChannelService {
 	private readonly password: string;
@@ -79,15 +80,7 @@ export class ChannelService {
 		};
 	}
 
-	private async fetchLogsFromTangle(channelAddress: string, identityId: string): Promise<ChannelData[]> {
-		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
-		if (!subscription) {
-			throw new Error('no subscription found!');
-		}
-
-		const isAuthor = subscription.type === SubscriptionType.Author;
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
-
+	private async fetchLogs(channelAddress: string, identityId: string, sub: Author | Subscriber): Promise<ChannelData[]> {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
@@ -121,7 +114,10 @@ export class ChannelService {
 					throw new Error('not allowed to get logs from the channel');
 				}
 
-				await this.fetchLogsFromTangle(channelAddress, identityId);
+				const isAuthor = subscription.type === SubscriptionType.Author;
+				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+
+				await this.fetchLogs(channelAddress, identityId, sub);
 				return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
 			} catch (e) {
 			} finally {
@@ -158,7 +154,7 @@ export class ChannelService {
 					}
 				} else {
 					// fetch prev logs before writing new data to the channel
-					await this.fetchLogsFromTangle(channelAddress, identityId);
+					await this.fetchLogs(channelAddress, identityId, sub);
 				}
 
 				const res = await this.streamsService.addLogs(keyloadLink, sub, channelLog);
