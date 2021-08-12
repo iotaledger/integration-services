@@ -12,7 +12,7 @@ import { ILogger } from '../utils/logger';
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
 
-	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
+	async searchUsers(userSearch: UserSearch): Promise<User[]> {
 		const usersPersistence = await userDb.searchUsers(userSearch);
 		return usersPersistence
 			.map((user) => {
@@ -27,9 +27,9 @@ export class UserService {
 				};
 			})
 			.filter((u) => u);
-	};
+	}
 
-	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
+	async createIdentity(createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> {
 		const identity = await this.ssiService.createIdentity();
 		const user: User = {
 			...createIdentityBody,
@@ -46,9 +46,9 @@ export class UserService {
 		return {
 			...identity
 		};
-	};
+	}
 
-	getUser = async (identityId: string, isAuthorizedUser?: boolean): Promise<User | null> => {
+	async getUser(identityId: string, isAuthorizedUser?: boolean): Promise<User | null> {
 		const userPersistence = await userDb.getUser(identityId);
 		const user = userPersistence && this.getUserObject(userPersistence);
 		const privateUserInfo: boolean = user?.isPrivate && !isAuthorizedUser;
@@ -62,15 +62,15 @@ export class UserService {
 			claim: !privateUserInfo ? user.claim : undefined,
 			verifiableCredentials: !privateUserInfo ? user.verifiableCredentials : undefined
 		};
-	};
+	}
 
-	getIdentityId = async (username: string): Promise<string> => {
+	async getIdentityId(username: string): Promise<string> {
 		const userPersistence = await userDb.getUserByUsername(username);
 		const user = this.getUserObject(userPersistence);
 		return user?.identityId;
-	};
+	}
 
-	addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+	async addUser(user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
 		}
@@ -89,30 +89,30 @@ export class UserService {
 			throw new Error('could not create user identity!');
 		}
 		return res;
-	};
+	}
 
-	updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
+	async updateUser(user: User): Promise<UpdateWriteOpResult> {
 		const userPersistence = this.getUserPersistence(user);
 		return userDb.updateUser(userPersistence);
-	};
+	}
 
-	addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
+	async addUserVC(vc: VerifiableCredentialJson): Promise<void> {
 		await userDb.addUserVC(vc);
-	};
+	}
 
-	removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPersistence> => {
+	async removeUserVC(vc: VerifiableCredentialJson): Promise<UserPersistence> {
 		return userDb.removeUserVC(vc);
-	};
+	}
 
-	deleteUser = async (identityId: string): Promise<DeleteWriteOpResultObject> => {
+	async deleteUser(identityId: string): Promise<DeleteWriteOpResultObject> {
 		return userDb.deleteUser(identityId);
-	};
+	}
 
-	private hasValidFields = (user: User): boolean => {
+	private hasValidFields(user: User): boolean {
 		return !(!user.publicKey && !user.identityId);
-	};
+	}
 
-	private getUserPersistence = (user: User): UserPersistence | null => {
+	private getUserPersistence(user: User): UserPersistence | null {
 		if (user == null || isEmpty(user.identityId)) {
 			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
@@ -130,9 +130,9 @@ export class UserService {
 		};
 
 		return userPersistence;
-	};
+	}
 
-	private getUserObject = (userPersistence: UserPersistence): User | null => {
+	private getUserObject(userPersistence: UserPersistence): User | null {
 		if (userPersistence == null || isEmpty(userPersistence.identityId)) {
 			return null;
 		}
@@ -150,5 +150,5 @@ export class UserService {
 			isPrivate
 		};
 		return user;
-	};
+	}
 }

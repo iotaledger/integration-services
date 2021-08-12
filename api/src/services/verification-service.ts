@@ -37,7 +37,7 @@ export class VerificationService {
 		this.serverIdentityId = serverIdentityId;
 	}
 
-	getKeyCollection = async (keyCollectionIndex: number) => {
+	async getKeyCollection(keyCollectionIndex: number) {
 		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.serverIdentityId, this.serverSecret);
 		if (!keyCollection) {
 			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.keyCollectionSize, this.serverIdentityId);
@@ -48,13 +48,13 @@ export class VerificationService {
 			}
 		}
 		return keyCollection;
-	};
+	}
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
 		return IdentityDocsDb.getIdentity(did, this.serverSecret);
 	}
 
-	verifyIdentity = async (subject: Subject, issuerId: string, initiatorId: string) => {
+	async verifyIdentity(subject: Subject, issuerId: string, initiatorId: string) {
 		const jsonldGen = new JsonldGenerator();
 		const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
 
@@ -104,9 +104,9 @@ export class VerificationService {
 
 		await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
 		return vc;
-	};
+	}
 
-	checkVerifiableCredential = async (vc: VerifiableCredentialJson): Promise<boolean> => {
+	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
 		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentity(this.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
@@ -117,9 +117,9 @@ export class VerificationService {
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
 		return isVerified;
-	};
+	}
 
-	revokeVerifiableCredential = async (vcp: VerifiableCredentialPersistence, issuerId: string) => {
+	async revokeVerifiableCredential(vcp: VerifiableCredentialPersistence, issuerId: string) {
 		const subjectId = vcp.vc.id;
 
 		const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
@@ -141,17 +141,17 @@ export class VerificationService {
 		await this.userService.removeUserVC(vcp.vc);
 
 		return res;
-	};
+	}
 
-	private updateDatabaseIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
+	private async updateDatabaseIdentityDoc(docUpdate: DocumentJsonUpdate) {
 		await IdentityDocsDb.updateIdentityDoc(docUpdate);
-	};
+	}
 
-	getLatestDocument = async (did: string) => {
+	async getLatestDocument(did: string) {
 		return await this.ssiService.getLatestIdentityJson(did);
-	};
+	}
 
-	getTrustedRootIds = async () => {
+	async getTrustedRootIds() {
 		const trustedRoots = await TrustedRootsDb.getTrustedRootIds();
 
 		if (!trustedRoots || trustedRoots.length === 0) {
@@ -159,30 +159,26 @@ export class VerificationService {
 		}
 
 		return trustedRoots.map((root) => root.identityId);
-	};
+	}
 
-	addTrustedRootId = async (trustedRoot: string) => {
+	async addTrustedRootId(trustedRoot: string) {
 		return TrustedRootsDb.addTrustedRootId(trustedRoot);
-	};
+	}
 
-	removeTrustedRootId = async (trustedRoot: string) => {
+	async removeTrustedRootId(trustedRoot: string) {
 		return TrustedRootsDb.removeTrustedRootId(trustedRoot);
-	};
+	}
 
-	setUserVerified = async (identityId: string, issuerId: string, vc: VerifiableCredentialJson) => {
+	async setUserVerified(identityId: string, issuerId: string, vc: VerifiableCredentialJson) {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}
 		await this.userService.addUserVC(vc);
-	};
+	}
 
 	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / KEY_COLLECTION_SIZE);
 
-	private generateKeyCollection = async (
-		keyCollectionIndex: number,
-		keyCollectionSize: number,
-		issuerId: string
-	): Promise<KeyCollectionPersistence> => {
+	private async generateKeyCollection(keyCollectionIndex: number, keyCollectionSize: number, issuerId: string): Promise<KeyCollectionPersistence> {
 		try {
 			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 
@@ -201,5 +197,5 @@ export class VerificationService {
 			this.logger.error(`error when generating key collection ${e}`);
 			throw new Error('could not generate key collection');
 		}
-	};
+	}
 }
