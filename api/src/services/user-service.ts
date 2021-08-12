@@ -23,7 +23,7 @@ export class UserService {
 				return {
 					...userObj,
 					verifiableCredentials: undefined,
-					claim: userObj.isPrivate ? undefined : userObj.claim
+					claim: !userObj.isPrivate ? userObj.claim : undefined
 				};
 			})
 			.filter((u) => u);
