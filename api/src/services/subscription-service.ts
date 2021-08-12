@@ -136,6 +136,7 @@ export class SubscriptionService {
 
 				return { keyloadLink };
 			} catch (e) {
+				throw e;
 			} finally {
 				release();
 			}

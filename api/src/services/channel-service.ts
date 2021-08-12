@@ -120,6 +120,7 @@ export class ChannelService {
 				await this.fetchLogs(channelAddress, identityId, sub);
 				return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
 			} catch (e) {
+				throw e;
 			} finally {
 				release();
 			}
@@ -171,6 +172,7 @@ export class ChannelService {
 				await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
 				return { link: res.link };
 			} catch (e) {
+				throw e;
 			} finally {
 				release();
 			}
