@@ -10,10 +10,11 @@ import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
 import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
+import { Mutex, MutexInterface } from 'async-mutex';
 
 export class ChannelService {
 	private readonly password: string;
-
+	private locks: Map<string, MutexInterface>;
 	constructor(
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
@@ -21,6 +22,7 @@ export class ChannelService {
 		private readonly subscriptionPool: SubscriptionPool,
 		config: StreamsConfig
 	) {
+		this.locks = new Map();
 		this.password = config.statePassword;
 	}
 
@@ -84,6 +86,7 @@ export class ChannelService {
 
 		const isAuthor = subscription.type === SubscriptionType.Author;
 		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
@@ -105,53 +108,88 @@ export class ChannelService {
 	}
 
 	async getLogs(channelAddress: string, identityId: string, options?: { limit: number; index: number }) {
-		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
-		if (!subscription || !subscription?.keyloadLink) {
-			throw new Error('no subscription found!');
-		}
-		if (subscription.accessRights === AccessRights.Write) {
-			throw new Error('not allowed to get logs from the channel');
+		const lockKey = channelAddress + identityId;
+		if (!this.locks.has(channelAddress + identityId)) {
+			this.locks.set(lockKey, new Mutex());
 		}
 
-		await this.fetchLogsFromTangle(channelAddress, identityId);
-		return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
+		return this.locks
+			.get(lockKey)
+			.acquire()
+			.then(async (release) => {
+				try {
+					const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+					if (!subscription || !subscription?.keyloadLink) {
+						throw new Error('no subscription found!');
+					}
+					if (subscription.accessRights === AccessRights.Write) {
+						throw new Error('not allowed to get logs from the channel');
+					}
+
+					await this.fetchLogsFromTangle(channelAddress, identityId);
+					return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
+				} catch (e) {
+				} finally {
+					release();
+				}
+			});
 	}
 
 	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> {
-		const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
-		if (!subscription || !subscription?.keyloadLink) {
-			throw new Error('no subscription found!');
+		const lockKey = channelAddress + identityId;
+		if (!this.locks.has(channelAddress + identityId)) {
+			this.locks.set(lockKey, new Mutex());
 		}
 
-		const isAuthor = subscription.type === SubscriptionType.Author;
-		// TODO encrypt/decrypt seed
-		const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
-		if (!sub) {
-			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
-		}
-		const { accessRights, keyloadLink } = subscription;
+		return this.locks
+			.get(lockKey)
+			.acquire()
+			.then(async (release) => {
+				try {
+					const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+					if (!subscription || !subscription?.keyloadLink) {
+						throw new Error('no subscription found!');
+					}
 
-		if (subscription.accessRights === AccessRights.Read || subscription.accessRights === AccessRights.Audit) {
-			throw new Error('not allowed to add logs to the channel');
-		} else if (accessRights === AccessRights.Write) {
-			await sub.clone().sync_state();
-		} else {
-			// fetch prev logs before writing new data to the channel
-			await this.fetchLogsFromTangle(channelAddress, identityId);
-		}
+					const isAuthor = subscription.type === SubscriptionType.Author;
+					// TODO encrypt/decrypt seed
 
-		const res = await this.streamsService.addLogs(keyloadLink, sub, channelLog);
+					const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 
-		// store newly added log
-		const newLog: ChannelData = { link: res.link, channelLog };
-		await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog]);
+					// const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+					if (!sub) {
+						throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+					}
+					const { accessRights, keyloadLink } = subscription;
 
-		await this.subscriptionService.updateSubscriptionState(
-			channelAddress,
-			identityId,
-			this.streamsService.exportSubscription(res.subscription, this.password)
-		);
-		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
-		return { link: res.link };
+					if (subscription.accessRights === AccessRights.Read || subscription.accessRights === AccessRights.Audit) {
+						throw new Error('not allowed to add logs to the channel');
+					} else if (accessRights === AccessRights.Write) {
+						if (sub) {
+							await sub.clone().sync_state();
+						}
+					} else {
+						// fetch prev logs before writing new data to the channel
+						await this.fetchLogsFromTangle(channelAddress, identityId);
+					}
+
+					const res = await this.streamsService.addLogs(keyloadLink, sub, channelLog);
+
+					// store newly added log
+					const newLog: ChannelData = { link: res.link, channelLog };
+					await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog]);
+
+					await this.subscriptionService.updateSubscriptionState(
+						channelAddress,
+						identityId,
+						this.streamsService.exportSubscription(res.subscription, this.password)
+					);
+					await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
+					return { link: res.link };
+				} catch (e) {
+				} finally {
+					release();
+				}
+			});
 	}
 }
