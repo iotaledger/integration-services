@@ -24,20 +24,22 @@ export class ChannelService {
 		this.password = config.statePassword;
 	}
 
-	async create(
-		identityId: string,
-		topics: Topic[],
-		encrypted: boolean,
-		hasPresharedKey: boolean,
-		seed?: string,
-		presharedKey?: string,
-		_subscriptionPassword?: string
-	): Promise<CreateChannelBodyResponse> {
-		if (hasPresharedKey && !presharedKey) {
-			presharedKey = randomBytes(16).toString('hex');
+	async create(params: {
+		identityId: string;
+		topics: Topic[];
+		encrypted: boolean;
+		hasPresharedKey: boolean;
+		seed?: string;
+		presharedKey?: string;
+		subscriptionPassword?: string;
+	}): Promise<CreateChannelBodyResponse> {
+		const { presharedKey, seed, encrypted, hasPresharedKey, identityId, topics } = params;
+		let key = presharedKey;
+		if (hasPresharedKey && !key) {
+			key = randomBytes(16).toString('hex');
 		}
 
-		const res = await this.streamsService.create(seed, presharedKey);
+		const res = await this.streamsService.create(seed, key);
 
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');

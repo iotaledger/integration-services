@@ -18,7 +18,7 @@ export class ChannelRoutes {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
 			}
 
-			const channel = await this.channelService.create(identityId, topics, encrypted, hasPresharedKey, seed, presharedKey, subscriptionPassword);
+			const channel = await this.channelService.create({ identityId, topics, encrypted, hasPresharedKey, seed, presharedKey, subscriptionPassword });
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);
