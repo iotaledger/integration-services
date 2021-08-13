@@ -183,7 +183,7 @@ describe('test authorize subscription route', () => {
 		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
 		const authorMock = { clone: () => authorMock, sync_state: jest.fn() };
 		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue(authorMock); // author found
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'authorizeSubscription').and.returnValue({ keyloadLink: '' });
+		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({ keyloadLink: '' });
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
@@ -218,7 +218,7 @@ describe('test authorize subscription route', () => {
 		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
 		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue(authorMock); // author found
 		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'authorizeSubscription').and.returnValue({
+		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
 			keyloadLink: 'testkeyloadlink',
 			author: authorMock
 		}); // keyloadLink got created
@@ -261,7 +261,7 @@ describe('test authorize subscription route', () => {
 		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
 		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue(authorMock); // author found
 		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'authorizeSubscription').and.returnValue({
+		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
 			keyloadLink: 'testkeyloadlink',
 			author: authorMock
 		}); // keyloadLink got created

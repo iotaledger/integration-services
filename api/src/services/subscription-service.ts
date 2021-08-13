@@ -124,16 +124,10 @@ export class SubscriptionService {
 					presharedKey
 				});
 
-				console.log('[...existingSubscriptionKeys, authorPubKey, publicKey]', [...existingSubscriptionKeys, authorPubKey, publicKey]);
-
 				// create new branches for existing subscriptions including the newly added subscription public key
 				await Promise.all(
 					existingSubscriptions.map(async (sub) => {
-						console.log('create new keyload for');
-
-						console.log('sub.identityId', sub.identityId);
-
-						const keyload = await this.authSub({
+						await this.authSub({
 							channelAddress,
 							publicKeys: [...existingSubscriptionKeys, authorPubKey, publicKey],
 							streamsAuthor,
@@ -141,7 +135,6 @@ export class SubscriptionService {
 							identityId: sub.identityId,
 							presharedKey
 						});
-						console.log('keyload ', keyload);
 					})
 				);
 
@@ -166,8 +159,8 @@ export class SubscriptionService {
 		identityId: string;
 		presharedKey?: string;
 	}): Promise<string> {
-		const lock = Lock.getInstance();
-		return await lock.acquire('authlock' + params.channelAddress + params.authorId).then(async (release) => {
+		const key = 'auth-sub-' + params.channelAddress + params.authorId;
+		return await this.lock.acquire(key).then(async (release) => {
 			try {
 				const { presharedKey, channelAddress, publicKeys, streamsAuthor, identityId } = params;
 				await streamsAuthor.clone().sync_state();

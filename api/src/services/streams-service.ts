@@ -29,16 +29,17 @@ export class StreamsService {
 			const announceResponse = await author.clone().send_announce();
 			const announcementAddress = announceResponse.get_link();
 			const announcementLink = announcementAddress.copy().to_string();
-			let keyloadLink = announcementLink;
+			const keys = streams.PublicKeys.new();
+			const ids = streams.PskIds.new();
+
 			if (presharedKey) {
 				const id = author.clone().store_psk(presharedKey);
-				const keys = streams.PublicKeys.new();
-				const ids = streams.PskIds.new();
 				ids.add(id);
-				const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
-				const keyloadAddress = res?.get_link();
-				keyloadLink = keyloadAddress.copy().to_string();
 			}
+
+			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
+			const keyloadAddress = res?.get_link();
+			const keyloadLink = keyloadAddress.copy().to_string();
 
 			return {
 				seed,
