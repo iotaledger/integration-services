@@ -105,10 +105,12 @@ export class SubscriptionService {
 
 				const authorPubKey = streamsAuthor.clone().get_public_key();
 				const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
-				const existingSubscriptions = subscriptions.filter(
-					(s) => s.isAuthorized === true && (s.accessRights === AccessRights.ReadAndWrite || s.accessRights === AccessRights.Read)
-				);
-				const existingSubscriptionKeys = existingSubscriptions.map((s) => s.publicKey).filter((pubkey) => pubkey);
+				const existingSubscriptions = subscriptions
+					? subscriptions.filter(
+							(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+					  )
+					: [];
+				const existingSubscriptionKeys = existingSubscriptions.map((s) => s?.publicKey).filter((pubkey) => pubkey);
 
 				// fetch prev logs before syncing state
 				await this.fetchLogs(channelAddress, streamsAuthor, authorSub.identityId);
