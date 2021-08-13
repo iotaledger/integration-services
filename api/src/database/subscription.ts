@@ -57,13 +57,13 @@ export const updateSubscriptionState = async (channelAddress: string, identityId
 
 export const setSubscriptionAuthorization = async (
 	channelAddress: string,
-	subscriptionLink: string,
+	identityId: string,
 	isAuthorized: boolean,
 	keyloadLink?: string
 ): Promise<UpdateWriteOpResult> => {
 	const query = {
 		channelAddress,
-		subscriptionLink
+		identityId
 	};
 	const update = {
 		$set: {

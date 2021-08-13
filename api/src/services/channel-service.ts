@@ -59,7 +59,7 @@ export class ChannelService {
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
 			publicKey: null,
-			keyloadLink: res.channelAddress,
+			keyloadLink: res.keyloadLink,
 			presharedKey: res.presharedKey
 		};
 

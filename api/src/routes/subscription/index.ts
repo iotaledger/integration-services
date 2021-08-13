@@ -123,12 +123,7 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(
-				channelAddress,
-				subscription?.subscriptionLink,
-				subscription?.publicKey,
-				author
-			);
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, author);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

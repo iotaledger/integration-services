@@ -15,7 +15,10 @@ global.Response = (fetch as any).Response;
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
-	async create(seed?: string, presharedKey?: string): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string }> {
+	async create(
+		seed?: string,
+		presharedKey?: string
+	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string }> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -24,18 +27,25 @@ export class StreamsService {
 			const client = this.getClient(this.config.node);
 			const author = streams.Author.from_client(client, seed, ChannelType.MultiBranch);
 			const announceResponse = await author.clone().send_announce();
-
-			if (presharedKey) {
-				author.clone().store_psk(presharedKey);
-			}
-
 			const announcementAddress = announceResponse.get_link();
+			const announcementLink = announcementAddress.copy().to_string();
+			let keyloadLink = announcementLink;
+			if (presharedKey) {
+				const id = author.clone().store_psk(presharedKey);
+				const keys = streams.PublicKeys.new();
+				const ids = streams.PskIds.new();
+				ids.add(id);
+				const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
+				const keyloadAddress = res?.get_link();
+				keyloadLink = keyloadAddress.copy().to_string();
+			}
 
 			return {
 				seed,
-				channelAddress: announcementAddress.copy().to_string(),
+				channelAddress: announcementLink,
 				author: author.clone(),
-				presharedKey
+				presharedKey,
+				keyloadLink
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -159,7 +169,7 @@ export class StreamsService {
 		await author.clone().receive_subscribe(subscriptionAddress);
 	}
 
-	async authorizeSubscription(
+	async sendKeyload(
 		anchorLink: string,
 		publicKeys: string[],
 		author: Author,
@@ -176,7 +186,8 @@ export class StreamsService {
 			const ids = streams.PskIds.new();
 
 			if (presharedKey) {
-				ids.add(presharedKey);
+				const id = author.clone().store_psk(presharedKey);
+				ids.add(id);
 			}
 
 			const res = await author.clone().send_keyload(anchorAddress.copy(), ids, keys);
