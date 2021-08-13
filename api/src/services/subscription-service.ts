@@ -9,9 +9,11 @@ import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
 import { AuthorizeSubscriptionBodyResponse, RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
 import { isEmpty } from 'lodash';
+import { ILock, Lock } from '../utils/lock';
 
 export class SubscriptionService {
 	private password: string;
+	private lock: ILock;
 
 	constructor(
 		private readonly streamsService: StreamsService,
@@ -19,6 +21,7 @@ export class SubscriptionService {
 		private readonly subscriptionPool: SubscriptionPool,
 		config: StreamsConfig
 	) {
+		this.lock = Lock.getInstance();
 		this.password = config.statePassword;
 	}
 
@@ -90,44 +93,52 @@ export class SubscriptionService {
 		publicKey: string,
 		authorSub: Subscription
 	): Promise<AuthorizeSubscriptionBodyResponse> {
-		const presharedKey = authorSub.presharedKey;
-		const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;
-		if (!streamsAuthor) {
-			throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
-		}
-		const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
-		const existingSubscriptions = subscriptions.filter((s) => s.type === SubscriptionType.Subscriber && s.isAuthorized === true && s.publicKey);
-		const existingSubscriptionKeys = existingSubscriptions.map((s) => s.publicKey);
+		const lockKey = channelAddress + authorSub.identityId;
 
-		// fetch prev logs before syncing state
-		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.identityId);
+		return this.lock.acquire(lockKey).then(async (release) => {
+			try {
+				const presharedKey = authorSub.presharedKey;
+				const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;
+				if (!streamsAuthor) {
+					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
+				}
+				const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
+				const existingSubscriptions = subscriptions.filter((s) => s.type === SubscriptionType.Subscriber && s.isAuthorized === true && s.publicKey);
+				const existingSubscriptionKeys = existingSubscriptions.map((s) => s.publicKey);
 
-		// authorize new subscription and add existing public keys to the branch
-		await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
-		const keyloadLink = await this.authSub({
-			channelAddress,
-			publicKeys: [publicKey, ...existingSubscriptionKeys],
-			streamsAuthor,
-			authorId: authorSub.identityId,
-			subscriptionLink,
-			presharedKey
-		});
+				// fetch prev logs before syncing state
+				await this.fetchLogs(channelAddress, streamsAuthor, authorSub.identityId);
 
-		// create new branches including the newly added subscription public key
-		await Promise.all(
-			existingSubscriptions.map(async (sub) => {
-				return await this.authSub({
+				// authorize new subscription and add existing public keys to the branch
+				await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
+				const keyloadLink = await this.authSub({
 					channelAddress,
-					publicKeys: [...existingSubscriptionKeys, publicKey],
+					publicKeys: [publicKey, ...existingSubscriptionKeys],
 					streamsAuthor,
 					authorId: authorSub.identityId,
-					subscriptionLink: sub.subscriptionLink,
+					subscriptionLink,
 					presharedKey
 				});
-			})
-		);
 
-		return { keyloadLink };
+				// create new branches including the newly added subscription public key
+				await Promise.all(
+					existingSubscriptions.map(async (sub) => {
+						return await this.authSub({
+							channelAddress,
+							publicKeys: [...existingSubscriptionKeys, publicKey],
+							streamsAuthor,
+							authorId: authorSub.identityId,
+							subscriptionLink: sub.subscriptionLink,
+							presharedKey
+						});
+					})
+				);
+
+				return { keyloadLink };
+			} finally {
+				release();
+			}
+		});
 	}
 
 	private async authSub(params: {
