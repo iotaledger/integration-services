@@ -48,20 +48,6 @@ export class SubscriptionRoutes {
 		}
 	};
 
-	getSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-		try {
-			const channelAddress = _.get(req, 'params.channelAddress');
-			const { identityId } = req.body; // TODO#26 don't use body use query param!
-
-			// TODO#26 also provide possibility to get all subscriptions
-			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
-			return res.status(StatusCodes.OK).send(subscription);
-		} catch (error) {
-			this.logger.error(error);
-			next(new Error('could not get the subscription'));
-		}
-	};
-
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');

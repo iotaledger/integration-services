@@ -5,10 +5,10 @@ export const TopicSchema = Type.Object({
 	source: Type.String()
 });
 
-export const ChannelAddressSchema = Type.String({ minLength: 10 }); // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
+export const ChannelAddressSchema = Type.String({ minLength: 105, maxLength: 105 });
 
 export const ChannelInfoSchema = Type.Object({
-	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
+	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	authorId: Type.String({ minLength: 50, maxLength: 53 }),
 	subscriberIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
 	encrypted: Type.Boolean(),

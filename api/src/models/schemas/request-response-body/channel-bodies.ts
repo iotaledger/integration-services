@@ -29,7 +29,7 @@ export const CreateChannelBodySchema = Type.Object({
 
 export const CreateChannelBodyResponseSchema = Type.Object({
 	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
-	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
+	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	presharedKey: Type.Optional(
 		Type.String({
 			minLength: 32,

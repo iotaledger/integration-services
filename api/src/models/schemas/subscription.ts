@@ -15,7 +15,7 @@ export enum AccessRights {
 export const SubscriptionSchema = Type.Object({
 	type: Type.String(SubscriptionType),
 	seed: Type.String(),
-	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
+	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	identityId: Type.String({ minLength: 50, maxLength: 53 }),
 	state: Type.String(),
 	subscriptionLink: Type.Optional(Type.String()),

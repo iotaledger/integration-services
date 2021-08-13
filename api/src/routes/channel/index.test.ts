@@ -107,7 +107,6 @@ describe('test channel routes', () => {
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			// TODO#105 author should be the exported string not object
 			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
 		});
 		it('should create and return a channel for the user using a preshared key', async () => {
@@ -156,7 +155,6 @@ describe('test channel routes', () => {
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-			// TODO#105 author should be the exported string not object
 			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
 		});
 	});
