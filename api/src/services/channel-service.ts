@@ -69,8 +69,7 @@ export class ChannelService {
 			topics,
 			authorId: identityId,
 			encrypted,
-			channelAddress: res.channelAddress,
-			latestLink: res.channelAddress
+			channelAddress: res.channelAddress
 		});
 
 		return {
@@ -167,7 +166,6 @@ export class ChannelService {
 					identityId,
 					this.streamsService.exportSubscription(res.subscription, this.password)
 				);
-				await this.channelInfoService.updateLatestChannelLink(channelAddress, res.link);
 				return { link: res.link };
 			} finally {
 				release();

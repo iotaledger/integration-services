@@ -82,7 +82,6 @@ export class SubscriptionService {
 		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
 		await this.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
-		await this.channelInfoService.updateLatestChannelLink(channelAddress, res.subscriptionLink);
 
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}
@@ -103,12 +102,11 @@ export class SubscriptionService {
 				if (!streamsAuthor) {
 					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
 				}
+
 				const authorPubKey = streamsAuthor.clone().get_public_key();
 				const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
 				const existingSubscriptions = subscriptions.filter(
-					(s) =>
-						// s.type === SubscriptionType.Subscriber &&
-						s.isAuthorized === true && (s.accessRights === AccessRights.ReadAndWrite || s.accessRights === AccessRights.Read)
+					(s) => s.isAuthorized === true && (s.accessRights === AccessRights.ReadAndWrite || s.accessRights === AccessRights.Read)
 				);
 				const existingSubscriptionKeys = existingSubscriptions.map((s) => s.publicKey).filter((pubkey) => pubkey);
 
@@ -179,8 +177,6 @@ export class SubscriptionService {
 				}
 
 				await this.setSubscriptionAuthorized(channelAddress, identityId, authSub.keyloadLink);
-				// await this.channelInfoService.updateLatestChannelLink(channelAddress, authSub.keyloadLink);
-				// await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(authSub.author, this.password));
 				return authSub.keyloadLink;
 			} finally {
 				release();

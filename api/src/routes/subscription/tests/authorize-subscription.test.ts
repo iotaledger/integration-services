@@ -224,7 +224,6 @@ describe('test authorize subscription route', () => {
 		}); // keyloadLink got created
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
 		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
-		const updateLatestChannelLinkSpy = spyOn(channelInfoService, 'updateLatestChannelLink');
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
@@ -237,7 +236,6 @@ describe('test authorize subscription route', () => {
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey'], authorMock, presharedKey);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', 'testlink', 'testkeyloadlink');
-		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testkeyloadlink');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234', 'new-state');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
@@ -269,7 +267,6 @@ describe('test authorize subscription route', () => {
 		}); // keyloadLink got created
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
 		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
-		const updateLatestChannelLinkSpy = spyOn(channelInfoService, 'updateLatestChannelLink');
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
@@ -282,7 +279,6 @@ describe('test authorize subscription route', () => {
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey'], authorMock, presharedKey);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', 'testlink', 'testkeyloadlink');
-		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testkeyloadlink');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234', 'new-state');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);

@@ -11,7 +11,6 @@ export const ChannelInfoSchema = Type.Object({
 	channelAddress: Type.String({ minLength: 10 }), // TODO clarify exact length of channelAddresse to validate them in the schema when starting with the streams integration!
 	authorId: Type.String({ minLength: 50, maxLength: 53 }),
 	subscriberIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
-	latestLink: Type.String(),
 	encrypted: Type.Boolean(),
 	topics: Type.Array(TopicSchema),
 	created: Type.Optional(Type.String({ format: 'date-time' })),
@@ -27,4 +26,4 @@ export const ChannelInfoSearchSchema = Type.Object({
 	latestMessage: Type.Optional(Type.String({ format: 'date-time' })),
 	limit: Type.Optional(Type.Number()),
 	index: Type.Optional(Type.Number())
-})
+});
