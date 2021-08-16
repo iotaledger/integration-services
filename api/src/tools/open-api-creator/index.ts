@@ -24,7 +24,7 @@ import {
 	IdentityKeyPairJsonSchema,
 	LatestIdentityJsonSchema
 } from '../../models/schemas/identity';
-import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/user-bodies';
+import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
 import {
 	AggregateOfferSchema,
 	AggregateRatingSchema,
