@@ -3,7 +3,6 @@ import { NonceSchema, ProveOwnershipPostBodySchema } from '../schemas/request-re
 import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../schemas/request-response-body/channel-bodies';
 import { ChannelInfoSchema } from '../schemas/channel-info';
 import { UserSchema } from '../schemas/user';
-import { CreateUserBodySchema } from '../schemas/request-response-body/user-bodies';
 import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
@@ -23,7 +22,6 @@ export type Nonce = Static<typeof NonceSchema>;
 
 export type ChannelInfoBody = Static<typeof ChannelInfoSchema>;
 
-export type CreateUserBody = Static<typeof CreateUserBodySchema>;
 export type UserSchemaBody = Static<typeof UserSchema>;
 
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>;

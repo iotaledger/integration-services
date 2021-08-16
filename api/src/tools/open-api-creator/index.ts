@@ -24,7 +24,7 @@ import {
 	IdentityKeyPairJsonSchema,
 	LatestIdentityJsonSchema
 } from '../../models/schemas/identity';
-import { CreateUserBodySchema, CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
+import { CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
 import {
 	AggregateOfferSchema,
 	AggregateRatingSchema,
@@ -85,7 +85,6 @@ const schemas = {
 	IdentityDocumentJsonSchema,
 	LatestIdentityJsonSchema,
 	DocumentJsonUpdateSchema,
-	CreateUserBodySchema,
 	CreateIdentityBodySchema,
 	UpdateUserBodySchema,
 	AggregateOfferSchema,

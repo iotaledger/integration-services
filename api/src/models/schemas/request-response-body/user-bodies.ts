@@ -1,10 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { UserWithoutIdFields } from '../user';
 
-export const CreateUserBodySchema = Type.Object({
-	...UserWithoutIdFields
-});
-
 export const CreateIdentityBodySchema = Type.Object({
 	storeIdentity: Type.Optional(Type.Boolean()),
 	...UserWithoutIdFields

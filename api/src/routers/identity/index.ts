@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { CreateUserBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
+import { CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
 import { UserSchema } from '../../models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
 import { UserService } from '../../services/user-service';
@@ -61,7 +61,7 @@ export const identityRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
+identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentityBodySchema }), createIdentity);
 
 /**
  * @openapi
