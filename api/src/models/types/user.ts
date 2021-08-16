@@ -1,10 +1,10 @@
 import { Static } from '@sinclair/typebox';
 import { ClaimSchema } from '../schemas/request-response-body/verification-bodies';
-import { UserSchema } from '../schemas/user';
+import { IdentitySchema } from '../schemas/user';
 import { OrganizationSchema, ServiceSchema, PersonSchema, ProductSchema, DeviceSchema } from '../schemas/user-types';
 
 export type IdentityClaim = Static<typeof ClaimSchema>;
-export type User = Static<typeof UserSchema>;
+export type User = Static<typeof IdentitySchema>;
 export type Organization = Static<typeof OrganizationSchema>;
 export type Service = Static<typeof ServiceSchema>;
 export type Person = Static<typeof PersonSchema>;

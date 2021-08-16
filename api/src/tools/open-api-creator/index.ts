@@ -24,7 +24,7 @@ import {
 	IdentityKeyPairJsonSchema,
 	LatestIdentityJsonSchema
 } from '../../models/schemas/identity';
-import { CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
+import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/user-bodies';
 import {
 	AggregateOfferSchema,
 	AggregateRatingSchema,
@@ -41,7 +41,7 @@ import {
 	ThingSchema
 } from '../../models/schemas/user-types-helper';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
-import { UserSchema, LocationSchema, UserWithoutIdFields } from '../../models/schemas/user';
+import { IdentitySchema, LocationSchema, IdentityWithoutIdFields } from '../../models/schemas/user';
 import {
 	AuthorizeSubscriptionBodyResponseSchema,
 	AuthorizeSubscriptionBodySchema,
@@ -86,7 +86,7 @@ const schemas = {
 	LatestIdentityJsonSchema,
 	DocumentJsonUpdateSchema,
 	CreateIdentityBodySchema,
-	UpdateUserBodySchema,
+	UpdateIdentityBodySchema,
 	AggregateOfferSchema,
 	AggregateRatingSchema,
 	BrandSchema,
@@ -105,9 +105,9 @@ const schemas = {
 	PersonSchema,
 	ProductSchema,
 	ServiceSchema,
-	UserSchema,
+	IdentitySchema,
 	LocationSchema,
-	UserWithoutIdFields,
+	IdentityWithoutIdFields,
 	ErrorResponseSchema,
 	IdentityIdSchema,
 	NonceSchema,

@@ -2,7 +2,7 @@ import { Static } from '@sinclair/typebox';
 import { NonceSchema, ProveOwnershipPostBodySchema } from '../schemas/request-response-body/authentication-bodies';
 import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../schemas/request-response-body/channel-bodies';
 import { ChannelInfoSchema } from '../schemas/channel-info';
-import { UserSchema } from '../schemas/user';
+import { IdentitySchema } from '../schemas/user';
 import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
@@ -22,7 +22,7 @@ export type Nonce = Static<typeof NonceSchema>;
 
 export type ChannelInfoBody = Static<typeof ChannelInfoSchema>;
 
-export type UserSchemaBody = Static<typeof UserSchema>;
+export type UserSchemaBody = Static<typeof IdentitySchema>;
 
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>;
 export type CreateChannelBodyResponse = Static<typeof CreateChannelBodyResponseSchema>;
