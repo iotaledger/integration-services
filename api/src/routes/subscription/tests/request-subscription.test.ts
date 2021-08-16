@@ -91,7 +91,6 @@ describe('test request subscription route', () => {
 		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
-		const updateLatestChannelLinkSpy = spyOn(channelInfoService, 'updateLatestChannelLink');
 
 		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
 			subscriber: null,
@@ -124,7 +123,6 @@ describe('test request subscription route', () => {
 		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testlink');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
@@ -137,7 +135,6 @@ describe('test request subscription route', () => {
 		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
-		const updateLatestChannelLinkSpy = spyOn(channelInfoService, 'updateLatestChannelLink');
 
 		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
 			subscriber: null,
@@ -173,7 +170,6 @@ describe('test request subscription route', () => {
 		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testlink');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
@@ -186,7 +182,6 @@ describe('test request subscription route', () => {
 		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
-		const updateLatestChannelLinkSpy = spyOn(channelInfoService, 'updateLatestChannelLink');
 
 		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
 			subscriber: null,
@@ -222,7 +217,6 @@ describe('test request subscription route', () => {
 		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(updateLatestChannelLinkSpy).toHaveBeenCalledWith('testaddress', 'testlink');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
