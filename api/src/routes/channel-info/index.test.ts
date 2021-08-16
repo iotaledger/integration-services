@@ -93,7 +93,6 @@ describe('test GET channelInfo', () => {
 		const channelInfo: ChannelInfoPersistence = {
 			created: date,
 			authorId: 'test-author2',
-			latestLink: '',
 			topics: [
 				{
 					source: 'test',
@@ -115,7 +114,6 @@ describe('test GET channelInfo', () => {
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).toHaveBeenCalledWith({
 			authorId: 'test-author2',
-			latestLink: '',
 			channelAddress: 'test-address3',
 			created: getDateStringFromDate(date),
 			latestMessage: null,
@@ -153,7 +151,6 @@ describe('test POST channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		latestLink: '',
 		topics: [{ source: 'test', type: 'test-type' }],
 		encrypted: true
 	};
@@ -255,7 +252,6 @@ describe('test PUT channelInfo', () => {
 
 	const validBody: ChannelInfo = {
 		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		latestLink: '',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
