@@ -1,0 +1,8 @@
+{
+    "storeIdentity": true,
+    "username": "root-identity",
+    "claim": {
+        "type": "Service",
+        "name": "Identity Service"
+    }
+}

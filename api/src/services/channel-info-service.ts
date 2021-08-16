@@ -43,16 +43,6 @@ export class ChannelInfoService {
 		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
 	}
 
-	async updateLatestChannelLink(channelAddress: string, latestLink: string): Promise<UpdateWriteOpResult> {
-		const errMsg = 'could not update the latest channel link!';
-
-		const updateResult = await ChannelInfoDb.updateLatestChannelLink(channelAddress, latestLink);
-		if (!updateResult?.result?.n) {
-			throw Error(errMsg);
-		}
-		return updateResult;
-	}
-
 	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
@@ -72,7 +62,6 @@ export class ChannelInfoService {
 			subscriberIds: ci.subscriberIds || [],
 			topics: ci.topics,
 			encrypted: ci.encrypted,
-			latestLink: ci.latestLink,
 			channelAddress: ci.channelAddress,
 			latestMessage: ci.latestMessage && getDateFromString(ci.created)
 		};
@@ -91,7 +80,6 @@ export class ChannelInfoService {
 			subscriberIds: cip.subscriberIds || [],
 			topics: cip.topics,
 			encrypted: cip.encrypted,
-			latestLink: cip.latestLink,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress
 		};

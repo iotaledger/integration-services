@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { CreateUserBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
-import { UserSchema } from '../../models/schemas/user';
+import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
+import { IdentitySchema } from '../../models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
 import { UserService } from '../../services/user-service';
 import { Logger } from '../../utils/logger';
@@ -61,7 +61,7 @@ export const identityRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
+identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentityBodySchema }), createIdentity);
 
 /**
  * @openapi
@@ -193,7 +193,7 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, ge
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
+identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySchema }), addUser);
 
 /**
  * @openapi
@@ -254,7 +254,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserBodySchema }), updateUser);
+identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateIdentityBodySchema }), updateUser);
 
 /**
  * @openapi

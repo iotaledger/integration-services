@@ -48,20 +48,6 @@ export class SubscriptionRoutes {
 		}
 	};
 
-	getSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-		try {
-			const channelAddress = _.get(req, 'params.channelAddress');
-			const { identityId } = req.body; // TODO#26 don't use body use query param!
-
-			// TODO#26 also provide possibility to get all subscriptions
-			const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
-			return res.status(StatusCodes.OK).send(subscription);
-		} catch (error) {
-			this.logger.error(error);
-			next(new Error('could not get the subscription'));
-		}
-	};
-
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
@@ -123,12 +109,7 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(
-				channelAddress,
-				subscription?.subscriptionLink,
-				subscription?.publicKey,
-				author
-			);
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, author);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
