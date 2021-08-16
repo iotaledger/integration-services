@@ -2,7 +2,7 @@ import * as Identity from '@iota/identity-wasm/node';
 import { Static } from '@sinclair/typebox';
 import {
 	VerifiableCredentialSchema,
-	VcSubjectSchema,
+	VerifiableCredentialSubjectSchema,
 	IdentityDocumentJsonSchema,
 	IdentityKeyPairJsonSchema,
 	DocumentJsonUpdateSchema,
@@ -26,7 +26,7 @@ export interface IdentityDocument extends Identity.Document {
 export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>;
 
 export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
-export type CredentialSubject = Static<typeof VcSubjectSchema>;
+export type CredentialSubject = Static<typeof VerifiableCredentialSubjectSchema>;
 
 export type IdentityDocumentJson = Static<typeof IdentityDocumentJsonSchema>;
 export type LatestIdentityJson = Static<typeof LatestIdentityJsonSchema>;

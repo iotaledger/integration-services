@@ -15,7 +15,7 @@ import {
 } from '../../models/schemas/request-response-body/verification-bodies';
 import { ChannelInfoSchema, ChannelInfoSearchSchema, TopicSchema, ChannelAddressSchema } from '../../models/schemas/channel-info';
 import {
-	VcSubjectSchema,
+	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
 	DocumentJsonUpdateSchema,
@@ -41,7 +41,7 @@ import {
 	ThingSchema
 } from '../../models/schemas/user-types-helper';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
-import { IdentitySchema, LocationSchema, IdentityWithoutIdFields } from '../../models/schemas/user';
+import { IdentitySchema, IdentityWithoutIdFields } from '../../models/schemas/user';
 import {
 	AuthorizeSubscriptionBodyResponseSchema,
 	AuthorizeSubscriptionBodySchema,
@@ -77,7 +77,7 @@ const schemas = {
 	SubjectBodySchema,
 	ChannelInfoSchema,
 	TopicSchema,
-	VcSubjectSchema,
+	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
 	IdentityJsonUpdateSchema,
@@ -106,7 +106,6 @@ const schemas = {
 	ProductSchema,
 	ServiceSchema,
 	IdentitySchema,
-	LocationSchema,
 	IdentityWithoutIdFields,
 	ErrorResponseSchema,
 	IdentityIdSchema,

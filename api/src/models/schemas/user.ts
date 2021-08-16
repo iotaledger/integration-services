@@ -2,11 +2,6 @@ import { Type } from '@sinclair/typebox';
 import { VerifiableCredentialSchema } from './identity';
 import { ClaimSchema } from './request-response-body/verification-bodies';
 
-export const LocationSchema = Type.Object({
-	latitude: Type.Number(),
-	longitude: Type.Number()
-});
-
 export const IdentityWithoutIdFields = {
 	username: Type.Optional(Type.String({ minLength: 3 })),
 	registrationDate: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
