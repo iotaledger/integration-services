@@ -9,7 +9,6 @@ export const CreateChannelBodySchema = Type.Object({
 				'If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service.'
 		})
 	), // TODO#156 use to decrypt/encrypt data and state
-	encrypted: Type.Boolean(),
 	topics: Type.Array(TopicSchema),
 	hasPresharedKey: Type.Optional(
 		Type.Boolean({

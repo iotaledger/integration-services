@@ -32,13 +32,12 @@ export class ChannelService {
 	async create(params: {
 		identityId: string;
 		topics: Topic[];
-		encrypted: boolean;
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
 		subscriptionPassword?: string;
 	}): Promise<CreateChannelBodyResponse> {
-		const { presharedKey, seed, encrypted, hasPresharedKey, identityId, topics } = params;
+		const { presharedKey, seed, hasPresharedKey, identityId, topics } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -69,7 +68,6 @@ export class ChannelService {
 		await this.channelInfoService.addChannelInfo({
 			topics,
 			authorId: identityId,
-			encrypted,
 			channelAddress: res.channelAddress
 		});
 

@@ -103,7 +103,6 @@ describe('test GET channelInfo', () => {
 					type: 'test-type'
 				}
 			],
-			encrypted: true,
 			latestMessage: null,
 			channelAddress: 'test-address3'
 		};
@@ -155,8 +154,7 @@ describe('test POST channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		topics: [{ source: 'test', type: 'test-type' }],
-		encrypted: true
+		topics: [{ source: 'test', type: 'test-type' }]
 	};
 
 	beforeEach(() => {
@@ -259,8 +257,7 @@ describe('test PUT channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		topics: [{ source: 'test', type: 'test-type' }],
-		encrypted: true
+		topics: [{ source: 'test', type: 'test-type' }]
 	};
 
 	beforeEach(() => {

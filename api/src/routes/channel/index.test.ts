@@ -86,8 +86,7 @@ describe('test channel routes', () => {
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
 				channelAddress: '1234234234',
-				topics: [],
-				encrypted: true
+				topics: []
 			};
 
 			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
@@ -134,8 +133,7 @@ describe('test channel routes', () => {
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
 				channelAddress: '1234234234',
-				topics: [],
-				encrypted: true
+				topics: []
 			};
 
 			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
