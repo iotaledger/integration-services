@@ -124,7 +124,7 @@ export class ChannelService {
 		});
 	}
 
-	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> {
+	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string; messageId: string }> {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
@@ -166,7 +166,7 @@ export class ChannelService {
 					identityId,
 					this.streamsService.exportSubscription(res.subscription, this.password)
 				);
-				return { link: res.link };
+				return { link: res.link, messageId: res.messageId };
 			} finally {
 				release();
 			}

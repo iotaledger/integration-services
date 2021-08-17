@@ -4,6 +4,7 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
+import { isEmpty } from 'lodash';
 
 streams.set_panic_hook();
 
@@ -11,6 +12,13 @@ global.fetch = fetch as any;
 global.Headers = (fetch as any).Headers;
 global.Request = (fetch as any).Request;
 global.Response = (fetch as any).Response;
+
+export interface IPayload {
+	payload?: any;
+	metadata?: any;
+	creationDate?: any;
+	type?: string;
+}
 
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
@@ -59,18 +67,22 @@ export class StreamsService {
 		subscription: Author | Subscriber,
 		channelLog: ChannelLog,
 		_isPrivate?: boolean
-	): Promise<{ link: string; subscription: Author | Subscriber }> {
+	): Promise<{ link: string; messageId: string; subscription: Author | Subscriber }> {
 		try {
 			const latestAddress = Address.from_string(keyloadLink);
-			const mPayload = toBytes(JSON.stringify(channelLog));
+			const { encryptedData, publicData } = this.getPayloads(channelLog);
+			const pubPayload = toBytes(JSON.stringify(publicData));
+			const mPayload = toBytes(JSON.stringify(encryptedData));
 
-			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
+			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, pubPayload, mPayload);
 			const messageLink = sendResponse?.get_link();
 			if (!messageLink) {
 				throw new Error('could not send signed packet');
 			}
-
+			const linkDetails = await this.getClient(this.config.node)?.get_link_details(messageLink.copy());
+			const messageId = linkDetails?.get_metadata()?.message_id;
 			return {
+				messageId,
 				link: messageLink?.to_string(),
 				subscription
 			};
@@ -80,7 +92,6 @@ export class StreamsService {
 		}
 	}
 
-	// TODO consider if channel is encrypted or not when getting adding data to channel
 	async getLogs(subscription: Author | Subscriber): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber }> {
 		try {
 			let foundNewMessage = true;
@@ -100,6 +111,7 @@ export class StreamsService {
 						.map((messageResponse: any) => {
 							const link = messageResponse?.get_link()?.to_string();
 							const message = messageResponse.get_message();
+							const publicPayload = message && fromBytes(message.get_public_payload());
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
@@ -107,9 +119,11 @@ export class StreamsService {
 									return null;
 								}
 
+								const channelLog = this.getChannelLog(JSON.parse(publicPayload), JSON.parse(maskedPayload));
+
 								return {
 									link,
-									channelLog: JSON.parse(maskedPayload)
+									channelLog
 								};
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
@@ -237,6 +251,43 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not export the subscription object');
 		}
+	}
+
+	private getChannelLog(publicPayload: IPayload, encryptedPayload: IPayload): ChannelLog {
+		const hasPublicPayload = !isEmpty(publicPayload.payload);
+		return {
+			type: hasPublicPayload ? publicPayload.type : encryptedPayload.type,
+			metadata: publicPayload.metadata,
+			creationDate: hasPublicPayload ? publicPayload.creationDate : encryptedPayload.creationDate,
+			payload: encryptedPayload.payload,
+			publicPayload: publicPayload.payload
+		};
+	}
+
+	private getPayloads(channelLog: ChannelLog) {
+		let encryptedData: IPayload = {
+			payload: channelLog.payload
+		};
+		let publicData: IPayload = {
+			metadata: channelLog.metadata
+		};
+
+		if (channelLog.publicPayload) {
+			publicData = {
+				...publicData,
+				payload: channelLog.publicPayload,
+				type: channelLog.type
+			};
+		} else {
+			encryptedData = {
+				...encryptedData,
+				type: channelLog.type
+			};
+		}
+		return {
+			encryptedData,
+			publicData
+		};
 	}
 
 	private getClient(node: string): streams.Client {
