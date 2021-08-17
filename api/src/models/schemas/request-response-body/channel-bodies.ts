@@ -39,14 +39,15 @@ export const CreateChannelBodyResponseSchema = Type.Object({
 });
 
 export const AddChannelLogBodySchema = Type.Object({
-	type: Type.String({ minLength: 1 }),
+	type: Type.Optional(Type.String({ minLength: 1 })),
 	creationDate: Type.Optional(Type.String({ format: 'date-time' })),
-	metadata: Type.Optional(Type.Any()),
-	publicPayload: Type.Optional(Type.Any()),
-	payload: Type.Optional(Type.Any())
+	metadata: Type.Optional(Type.Any({ description: 'Public available metadata.' })),
+	publicPayload: Type.Optional(Type.Any({ description: 'Public available payload.' })),
+	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' }))
 });
 
 export const ChannelDataSchema = Type.Object({
 	link: Type.String(),
+	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
 	channelLog: AddChannelLogBodySchema
 });

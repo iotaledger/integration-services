@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
-import { get as lodashGet } from 'lodash';
+import { get as lodashGet, isEmpty } from 'lodash';
 import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
@@ -57,6 +57,10 @@ export class ChannelRoutes {
 
 			if (!channelAddress || !identityId) {
 				return res.sendStatus(StatusCodes.BAD_REQUEST);
+			}
+
+			if (isEmpty(body)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
 			}
 
 			const channel = await this.channelService.addLogs(channelAddress, identityId, body);

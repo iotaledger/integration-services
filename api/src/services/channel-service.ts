@@ -12,6 +12,7 @@ import { CreateChannelBodyResponse } from '../models/types/request-response-bodi
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
+import { getDateStringFromDate } from '../utils/date';
 
 export class ChannelService {
 	private readonly password: string;
@@ -124,11 +125,12 @@ export class ChannelService {
 		});
 	}
 
-	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string; messageId: string }> {
+	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<ChannelData> {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const log = { creationDate: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -155,10 +157,10 @@ export class ChannelService {
 					await this.fetchLogs(channelAddress, identityId, sub);
 				}
 
-				const res = await this.streamsService.addLogs(keyloadLink, sub, channelLog);
+				const res = await this.streamsService.addLogs(keyloadLink, sub, log);
 
 				// store newly added log
-				const newLog: ChannelData = { link: res.link, channelLog };
+				const newLog: ChannelData = { link: res.link, messageId: res.messageId, channelLog: log };
 				await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog]);
 
 				await this.subscriptionService.updateSubscriptionState(
@@ -166,7 +168,7 @@ export class ChannelService {
 					identityId,
 					this.streamsService.exportSubscription(res.subscription, this.password)
 				);
-				return { link: res.link, messageId: res.messageId };
+				return newLog;
 			} finally {
 				release();
 			}

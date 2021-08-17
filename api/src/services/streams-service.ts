@@ -79,8 +79,10 @@ export class StreamsService {
 			if (!messageLink) {
 				throw new Error('could not send signed packet');
 			}
+
 			const linkDetails = await this.getClient(this.config.node)?.get_link_details(messageLink.copy());
 			const messageId = linkDetails?.get_metadata()?.message_id;
+
 			return {
 				messageId,
 				link: messageLink?.to_string(),
