@@ -6,6 +6,7 @@ import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';
+import { StatusCodes } from 'http-status-codes';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -21,7 +22,8 @@ describe('test Search user', () => {
 
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
 		};
 	});
 
@@ -74,7 +76,8 @@ describe('test GET channelInfo', () => {
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
 		};
 	});
 
@@ -85,7 +88,8 @@ describe('test GET channelInfo', () => {
 		};
 
 		await channelInfoRoutes.getChannelInfo(req, res, nextMock);
-		expect(sendStatusMock).toHaveBeenCalledWith(400);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
 	});
 
 	it('should return expected channel info', async () => {
@@ -390,7 +394,8 @@ describe('test DELETE channelInfo', () => {
 
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
 		};
 	});
 
@@ -402,7 +407,8 @@ describe('test DELETE channelInfo', () => {
 		};
 		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(sendStatusMock).toHaveBeenCalledWith(400);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
 	});
 
 	it('should not be able to parse the channel since it is no valid channel', async () => {

@@ -15,7 +15,7 @@ export class ChannelRoutes {
 			const { identityId } = req.user;
 
 			if (!identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
 
 			const channel = await this.channelService.create({ identityId, topics, encrypted, hasPresharedKey, seed, presharedKey, subscriptionPassword });
@@ -32,7 +32,7 @@ export class ChannelRoutes {
 			const { identityId } = req.user;
 
 			if (!channelAddress || !identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
 
 			const limitParam = parseInt(<string>req.query.limit, 10);
@@ -56,7 +56,7 @@ export class ChannelRoutes {
 			const body = req.body as AddChannelLogBody;
 
 			if (!channelAddress || !identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
 
 			if (isEmpty(body)) {

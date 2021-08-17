@@ -15,7 +15,7 @@ export class ChannelInfoRoutes {
 		private readonly logger: ILogger
 	) {}
 
-	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelInfoSearch = this.getChannelInfoSearch(req);
 			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
@@ -26,13 +26,12 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 
 			if (_.isEmpty(channelAddress)) {
-				res.sendStatus(StatusCodes.BAD_REQUEST);
-				return;
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
@@ -43,7 +42,7 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	addChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	addChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelInfo = req.body as ChannelInfo;
 
@@ -53,9 +52,9 @@ export class ChannelInfoRoutes {
 			}
 
 			const result = await this.channelInfoService.addChannelInfo(channelInfo);
+
 			if (!result?.result?.n) {
-				res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add channel info' });
-				return;
+				return res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add channel info' });
 			}
 
 			res.sendStatus(StatusCodes.CREATED);
@@ -92,12 +91,11 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	deleteChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	deleteChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			if (_.isEmpty(channelAddress)) {
-				res.sendStatus(StatusCodes.BAD_REQUEST);
-				return;
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 			if (!channelInfo) {
