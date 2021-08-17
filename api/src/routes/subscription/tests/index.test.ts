@@ -34,7 +34,7 @@ describe('test other subscription routes', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService);
+		subscriptionPool = new SubscriptionPool(streamsService, 20);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 

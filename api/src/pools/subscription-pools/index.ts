@@ -10,9 +10,15 @@ export class SubscriptionPool {
 	authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
 	subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
 
-	constructor(private readonly streamsService: StreamsService, private readonly maxPoolSize = 65000) {
+	constructor(private readonly streamsService: StreamsService, subscriptionExpiration: number, private readonly maxPoolSize = 65000) {
 		this.authors = [];
 		this.subscribers = [];
+		// subscriptions should not live longer than one day
+		if (subscriptionExpiration > 86400) {
+			this.secondsToLive = 86400;
+		} else {
+			this.secondsToLive = subscriptionExpiration;
+		}
 	}
 
 	startInterval() {

@@ -38,7 +38,7 @@ describe('test authorize subscription route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		spyOn(streamsService, 'getLogs').and.returnValue([]);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService);
+		subscriptionPool = new SubscriptionPool(streamsService, 20);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 		spyOn(channelDataDb, 'addChannelData');

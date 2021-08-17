@@ -12,7 +12,7 @@ import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
 const config = CONFIG.streamsConfig;
 
 export const streamsService = new StreamsService(config, Logger.getInstance());
-export const subscriptionPool = new SubscriptionPool(streamsService);
+export const subscriptionPool = new SubscriptionPool(streamsService, config.subscriptionExpiration);
 subscriptionPool.startInterval();
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());

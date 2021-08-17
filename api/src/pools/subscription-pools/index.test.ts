@@ -5,7 +5,7 @@ import { StreamsConfigMock } from '../../test/mocks/config';
 import { LoggerMock } from '../../test/mocks/logger';
 
 describe('test subscription pool', () => {
-	const pool = new SubscriptionPool(new StreamsService(StreamsConfigMock, LoggerMock));
+	const pool = new SubscriptionPool(new StreamsService(StreamsConfigMock, LoggerMock), 20);
 	let dateNowSpy: any;
 	const channelAddress = 'test123';
 	beforeEach(() => {
