@@ -87,13 +87,9 @@ export class ChannelService {
 		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(
-			channelAddress,
-			identityId,
-			this.streamsService.exportSubscription(messages.subscription, this.password)
-		);
+		await this.subscriptionService.updateSubscriptionState(channelAddress, identityId, this.streamsService.exportSubscription(sub, this.password));
 
-		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsData(messages.data);
+		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
 		if (channelData?.length > 0) {
 			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
@@ -158,8 +154,8 @@ export class ChannelService {
 					await this.fetchLogs(channelAddress, identityId, sub);
 				}
 
-				const { encryptedData, publicData } = ChannelLogTransformer.getPayloads(channelLog);
-				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicData, encryptedData);
+				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(channelLog);
+				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicPayload, maskedPayload);
 
 				// store newly added log
 				const newLog: ChannelData = { link: res.link, messageId: res.messageId, channelLog: log };

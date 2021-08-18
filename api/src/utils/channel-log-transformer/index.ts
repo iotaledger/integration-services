@@ -1,16 +1,16 @@
 import { isEmpty } from 'lodash';
 import { ChannelData, ChannelLog } from '../../models/types/channel-data';
-import { StreamsData } from '../../services/streams-service';
+import { StreamsMessage } from '../../services/streams-service';
 
 export interface IPayload {
-	payload?: any;
+	data?: any;
 	metadata?: any;
 	creationDate?: any;
 	type?: string;
 }
 
 export class ChannelLogTransformer {
-	static transformStreamsData(data: StreamsData[]): ChannelData[] {
+	static transformStreamsMessages(data: StreamsMessage[]): ChannelData[] {
 		return data.map((data) => {
 			return {
 				link: data.link,
@@ -21,39 +21,41 @@ export class ChannelLogTransformer {
 	}
 
 	static getChannelLog(publicPayload: IPayload, encryptedPayload: IPayload): ChannelLog {
-		const hasPublicPayload = !isEmpty(publicPayload.payload);
+		const hasPublicPayload = !isEmpty(publicPayload.data);
 		return {
 			type: hasPublicPayload ? publicPayload.type : encryptedPayload.type,
 			metadata: publicPayload.metadata,
 			creationDate: hasPublicPayload ? publicPayload.creationDate : encryptedPayload.creationDate,
-			payload: encryptedPayload.payload,
-			publicPayload: publicPayload.payload
+			payload: encryptedPayload.data,
+			publicPayload: publicPayload.data
 		};
 	}
 
-	static getPayloads(channelLog: ChannelLog) {
-		let encryptedData: IPayload = {
-			payload: channelLog.payload
+	static getPayloads(channelLog: ChannelLog): { publicPayload: IPayload; maskedPayload: IPayload } {
+		let maskedPayload: IPayload = {
+			data: channelLog.payload
 		};
-		let publicData: IPayload = {
+		let publicPayload: IPayload = {
 			metadata: channelLog.metadata
 		};
 
 		if (channelLog.publicPayload) {
-			publicData = {
-				...publicData,
-				payload: channelLog.publicPayload,
-				type: channelLog.type
+			publicPayload = {
+				...publicPayload,
+				data: channelLog.publicPayload,
+				type: channelLog.type,
+				creationDate: channelLog.creationDate
 			};
 		} else {
-			encryptedData = {
-				...encryptedData,
-				type: channelLog.type
+			maskedPayload = {
+				...maskedPayload,
+				type: channelLog.type,
+				creationDate: channelLog.creationDate
 			};
 		}
 		return {
-			encryptedData,
-			publicData
+			maskedPayload,
+			publicPayload
 		};
 	}
 }

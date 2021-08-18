@@ -45,8 +45,10 @@ export const AddChannelLogBodySchema = Type.Object({
 	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' }))
 });
 
+export const ChannelLogSchema = AddChannelLogBodySchema;
+
 export const ChannelDataSchema = Type.Object({
 	link: Type.String(),
 	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
-	channelLog: AddChannelLogBodySchema
+	channelLog: ChannelLogSchema
 });

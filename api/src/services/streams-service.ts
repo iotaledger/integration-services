@@ -12,7 +12,7 @@ global.Headers = (fetch as any).Headers;
 global.Request = (fetch as any).Request;
 global.Response = (fetch as any).Response;
 
-export interface StreamsData {
+export interface StreamsMessage {
 	link: string;
 	messageId: string;
 	publicPayload: unknown;
@@ -92,10 +92,10 @@ export class StreamsService {
 		}
 	}
 
-	async getMessages(subscription: Author | Subscriber): Promise<{ data: StreamsData[]; subscription: Author | Subscriber }> {
+	async getMessages(subscription: Author | Subscriber): Promise<StreamsMessage[]> {
 		try {
 			let foundNewMessage = true;
-			let channelData: StreamsData[] = [];
+			let streamsMessages: StreamsMessage[] = [];
 
 			while (foundNewMessage) {
 				let nextMessages: any = [];
@@ -107,7 +107,7 @@ export class StreamsService {
 				}
 
 				if (nextMessages && nextMessages.length > 0) {
-					const cData: StreamsData[] = nextMessages
+					const cData: StreamsMessage[] = nextMessages
 						.map((messageResponse: any) => {
 							const link = messageResponse?.get_link()?.to_string();
 							const message = messageResponse.get_message();
@@ -130,14 +130,11 @@ export class StreamsService {
 							}
 						})
 						.filter((c: ChannelData | null) => c);
-					channelData = [...channelData, ...cData];
+					streamsMessages = [...streamsMessages, ...cData];
 				}
 			}
 
-			return {
-				data: channelData,
-				subscription
-			};
+			return streamsMessages;
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not get logs from the channel');
