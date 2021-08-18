@@ -61,7 +61,7 @@ export class StreamsService {
 		}
 	}
 
-	async addLogs(
+	async publishMessage(
 		keyloadLink: string,
 		subscription: Author | Subscriber,
 		publicPayload: unknown,
@@ -92,7 +92,7 @@ export class StreamsService {
 		}
 	}
 
-	async getLogs(subscription: Author | Subscriber): Promise<{ data: StreamsData[]; subscription: Author | Subscriber }> {
+	async getMessages(subscription: Author | Subscriber): Promise<{ data: StreamsData[]; subscription: Author | Subscriber }> {
 		try {
 			let foundNewMessage = true;
 			let channelData: StreamsData[] = [];

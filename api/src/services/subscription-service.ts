@@ -182,13 +182,13 @@ export class SubscriptionService {
 	}
 
 	private async fetchLogs(channelAddress: string, author: Author, authorId: string): Promise<void> {
-		const logs = await this.streamsService.getLogs(author);
-		if (!logs?.data || logs?.data.length === 0) {
+		const streamsMessages = await this.streamsService.getMessages(author);
+		if (!streamsMessages?.data || streamsMessages?.data.length === 0) {
 			return;
 		}
 
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
-		const channelData: ChannelData[] = LogTransformer.transformStreamsData(logs.data);
+		const channelData: ChannelData[] = LogTransformer.transformStreamsData(streamsMessages.data);
 		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData);
 	}
 }

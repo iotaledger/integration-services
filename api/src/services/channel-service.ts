@@ -84,17 +84,17 @@ export class ChannelService {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
-		const logs = await this.streamsService.getLogs(sub);
-		if (!logs) {
+		const messages = await this.streamsService.getMessages(sub);
+		if (!messages) {
 			return [];
 		}
 		await this.subscriptionService.updateSubscriptionState(
 			channelAddress,
 			identityId,
-			this.streamsService.exportSubscription(logs.subscription, this.password)
+			this.streamsService.exportSubscription(messages.subscription, this.password)
 		);
 
-		const channelData: ChannelData[] = LogTransformer.transformStreamsData(logs.data);
+		const channelData: ChannelData[] = LogTransformer.transformStreamsData(messages.data);
 		// store logs in database
 		if (channelData?.length > 0) {
 			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
@@ -160,7 +160,7 @@ export class ChannelService {
 				}
 
 				const { encryptedData, publicData } = LogTransformer.getPayloads(channelLog);
-				const res = await this.streamsService.addLogs(keyloadLink, sub, publicData, encryptedData);
+				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicData, encryptedData);
 
 				// store newly added log
 				const newLog: ChannelData = { link: res.link, messageId: res.messageId, channelLog: log };
