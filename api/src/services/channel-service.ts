@@ -164,7 +164,7 @@ export class ChannelService {
 				await this.subscriptionService.updateSubscriptionState(
 					channelAddress,
 					identityId,
-					this.streamsService.exportSubscription(res.subscription, this.password)
+					this.streamsService.exportSubscription(sub, this.password)
 				);
 				return newLog;
 			} finally {

@@ -66,7 +66,7 @@ export class StreamsService {
 		subscription: Author | Subscriber,
 		publicPayload: unknown,
 		maskedPayload: unknown
-	): Promise<{ link: string; messageId: string; subscription: Author | Subscriber }> {
+	): Promise<{ link: string; messageId: string }> {
 		try {
 			const latestAddress = Address.from_string(keyloadLink);
 			const pubPayload = toBytes(JSON.stringify(publicPayload));
@@ -83,8 +83,7 @@ export class StreamsService {
 
 			return {
 				messageId,
-				link: messageLink?.to_string(),
-				subscription
+				link: messageLink?.to_string()
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -162,7 +161,7 @@ export class StreamsService {
 				await subscriber.clone().store_psk(presharedKey);
 				return {
 					seed,
-					subscriber
+					subscriber: subscriber.clone()
 				};
 			}
 
@@ -185,7 +184,7 @@ export class StreamsService {
 		publicKeys: string[],
 		author: Author,
 		presharedKey?: string
-	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> {
+	): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		try {
 			const anchorAddress = streams.Address.from_string(anchorLink);
 
@@ -209,7 +208,7 @@ export class StreamsService {
 				throw new Error('could not send the keyload');
 			}
 
-			return { keyloadLink, sequenceLink, author };
+			return { keyloadLink, sequenceLink };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not authorize the subscription to the channel');
