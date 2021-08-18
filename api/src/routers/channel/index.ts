@@ -105,7 +105,7 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  *             $ref: "#/components/schemas/AddChannelLogBodySchema"
  *           example:
  *             type: example-channel-data
- *             creationDate: 2021-07-23T05:25:42.325Z
+ *             created: 2021-07-23T05:25:42.325Z
  *             metadata: example-meta-data
  *             payload:
  *               example: 1

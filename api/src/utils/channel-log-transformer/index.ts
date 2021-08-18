@@ -1,11 +1,10 @@
-import { isEmpty } from 'lodash';
 import { ChannelData, ChannelLog } from '../../models/types/channel-data';
 import { StreamsMessage } from '../../services/streams-service';
 
 export interface IPayload {
 	data?: any;
 	metadata?: any;
-	creationDate?: any;
+	created?: any;
 	type?: string;
 }
 
@@ -21,38 +20,26 @@ export class ChannelLogTransformer {
 	}
 
 	static getChannelLog(publicPayload: IPayload, encryptedPayload: IPayload): ChannelLog {
-		const hasPublicPayload = !isEmpty(publicPayload.data);
 		return {
-			type: hasPublicPayload ? publicPayload.type : encryptedPayload.type,
+			type: publicPayload.type,
 			metadata: publicPayload.metadata,
-			creationDate: hasPublicPayload ? publicPayload.creationDate : encryptedPayload.creationDate,
+			created: publicPayload.created,
 			payload: encryptedPayload.data,
 			publicPayload: publicPayload.data
 		};
 	}
 
 	static getPayloads(channelLog: ChannelLog): { publicPayload: IPayload; maskedPayload: IPayload } {
-		let maskedPayload: IPayload = {
+		const maskedPayload: IPayload = {
 			data: channelLog.payload
 		};
-		let publicPayload: IPayload = {
-			metadata: channelLog.metadata
+		const publicPayload: IPayload = {
+			metadata: channelLog.metadata,
+			type: channelLog.type,
+			data: channelLog.publicPayload,
+			created: channelLog.created
 		};
 
-		if (channelLog.publicPayload) {
-			publicPayload = {
-				...publicPayload,
-				data: channelLog.publicPayload,
-				type: channelLog.type,
-				creationDate: channelLog.creationDate
-			};
-		} else {
-			maskedPayload = {
-				...maskedPayload,
-				type: channelLog.type,
-				creationDate: channelLog.creationDate
-			};
-		}
 		return {
 			maskedPayload,
 			publicPayload

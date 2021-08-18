@@ -38,8 +38,8 @@ export const CreateChannelBodyResponseSchema = Type.Object({
 });
 
 export const AddChannelLogBodySchema = Type.Object({
-	type: Type.Optional(Type.String({ minLength: 1 })),
-	creationDate: Type.Optional(Type.String({ format: 'date-time' })),
+	type: Type.Optional(Type.String({ minLength: 1, description: 'Public available type.' })),
+	created: Type.Optional(Type.String({ format: 'date-time', description: 'Public available date.' })),
 	metadata: Type.Optional(Type.Any({ description: 'Public available metadata.' })),
 	publicPayload: Type.Optional(Type.Any({ description: 'Public available payload.' })),
 	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' }))
