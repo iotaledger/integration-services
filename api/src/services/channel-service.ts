@@ -13,8 +13,7 @@ import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { getDateStringFromDate } from '../utils/date';
-import { isEmpty } from 'lodash';
-import { LogTransformer } from '../utils/log-transformer';
+import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 
 export class ChannelService {
 	private readonly password: string;
@@ -94,7 +93,7 @@ export class ChannelService {
 			this.streamsService.exportSubscription(messages.subscription, this.password)
 		);
 
-		const channelData: ChannelData[] = LogTransformer.transformStreamsData(messages.data);
+		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsData(messages.data);
 		// store logs in database
 		if (channelData?.length > 0) {
 			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
@@ -159,7 +158,7 @@ export class ChannelService {
 					await this.fetchLogs(channelAddress, identityId, sub);
 				}
 
-				const { encryptedData, publicData } = LogTransformer.getPayloads(channelLog);
+				const { encryptedData, publicData } = ChannelLogTransformer.getPayloads(channelLog);
 				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicData, encryptedData);
 
 				// store newly added log

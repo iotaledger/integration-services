@@ -121,8 +121,7 @@ describe('test GET channelInfo', () => {
 			created: getDateStringFromDate(date),
 			latestMessage: null,
 			subscriberIds: [],
-			topics: [{ source: 'test', type: 'test-type' }],
-			encrypted: true
+			topics: [{ source: 'test', type: 'test-type' }]
 		});
 	});
 

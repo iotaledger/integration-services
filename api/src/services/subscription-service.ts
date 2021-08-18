@@ -11,7 +11,7 @@ import { AuthorizeSubscriptionBodyResponse, RequestSubscriptionBodyResponse } fr
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelData } from '../models/types/channel-data';
-import { LogTransformer } from '../utils/log-transformer';
+import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 
 export class SubscriptionService {
 	private password: string;
@@ -188,7 +188,7 @@ export class SubscriptionService {
 		}
 
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
-		const channelData: ChannelData[] = LogTransformer.transformStreamsData(streamsMessages.data);
+		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsData(streamsMessages.data);
 		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData);
 	}
 }

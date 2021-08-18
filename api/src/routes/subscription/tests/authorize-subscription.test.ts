@@ -36,7 +36,7 @@ describe('test authorize subscription route', () => {
 		const config = StreamsConfigMock;
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
-		spyOn(streamsService, 'getLogs').and.returnValue([]);
+		spyOn(streamsService, 'getMessages').and.returnValue([]);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionPool = new SubscriptionPool(streamsService, 20);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);

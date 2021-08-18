@@ -9,13 +9,13 @@ export interface IPayload {
 	type?: string;
 }
 
-export class LogTransformer {
+export class ChannelLogTransformer {
 	static transformStreamsData(data: StreamsData[]): ChannelData[] {
 		return data.map((data) => {
 			return {
 				link: data.link,
 				messageId: data.messageId,
-				channelLog: LogTransformer.getChannelLog(data.publicPayload, data.maskedPayload)
+				channelLog: ChannelLogTransformer.getChannelLog(data.publicPayload, data.maskedPayload)
 			};
 		});
 	}
