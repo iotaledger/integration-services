@@ -39,7 +39,8 @@ export class ChannelRoutes {
 			const indexParam = parseInt(<string>req.query.index, 10);
 			const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 			const index = isNaN(indexParam) ? undefined : indexParam;
-			const options = limit !== undefined && index !== undefined && { limit, index };
+			const ascending: boolean = <string>req.query.asc === 'true';
+			const options = limit !== undefined && index !== undefined ? { limit, index, ascending } : { ascending };
 
 			const channel = await this.channelService.getLogs(channelAddress, identityId, options);
 			return res.status(StatusCodes.OK).send(channel);

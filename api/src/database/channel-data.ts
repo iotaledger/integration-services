@@ -5,12 +5,19 @@ import { ChannelData } from '../models/types/channel-data';
 const collectionName = CollectionNames.channelData;
 const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
 
-export const getChannelData = async (channelAddress: string, identityId: string, limit?: number, index?: number): Promise<ChannelData[]> => {
+export const getChannelData = async (
+	channelAddress: string,
+	identityId: string,
+	options: { limit?: number; index?: number; ascending: boolean }
+): Promise<ChannelData[]> => {
+	const { ascending, index, limit } = options;
+
 	const query = { channelAddress, identityId };
 	const skip = index > 0 ? index * limit : 0;
-	const options = limit != null ? { limit, skip, sort: { created: 1 } } : undefined;
+	const sort = { 'channelLog.created': ascending ? 1 : -1 };
+	const opt = limit != null ? { limit, skip, sort } : { sort };
 
-	const channelDataArr = await MongoDbService.getDocuments<ChannelData>(collectionName, query, options);
+	const channelDataArr = await MongoDbService.getDocuments<ChannelData>(collectionName, query, opt);
 	return channelDataArr.map(({ link, channelLog, messageId }) => ({ link, channelLog, messageId }));
 };
 

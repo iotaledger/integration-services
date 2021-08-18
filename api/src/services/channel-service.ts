@@ -98,7 +98,7 @@ export class ChannelService {
 		return channelData;
 	}
 
-	async getLogs(channelAddress: string, identityId: string, options?: { limit: number; index: number }) {
+	async getLogs(channelAddress: string, identityId: string, options: { limit?: number; index?: number; ascending: boolean }) {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
@@ -115,7 +115,7 @@ export class ChannelService {
 				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 
 				await this.fetchLogs(channelAddress, identityId, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
+				return await ChannelDataDb.getChannelData(channelAddress, identityId, options);
 			} finally {
 				release();
 			}
