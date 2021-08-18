@@ -10,6 +10,8 @@ import { StreamsConfig } from '../models/config';
 import { AuthorizeSubscriptionBodyResponse, RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
+import { ChannelData } from '../models/types/channel-data';
+import { LogTransformer } from '../utils/log-transformer';
 
 export class SubscriptionService {
 	private password: string;
@@ -181,10 +183,12 @@ export class SubscriptionService {
 
 	private async fetchLogs(channelAddress: string, author: Author, authorId: string): Promise<void> {
 		const logs = await this.streamsService.getLogs(author);
-		if (!logs?.channelData || logs?.channelData.length === 0) {
+		if (!logs?.data || logs?.data.length === 0) {
 			return;
 		}
+
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
-		await ChannelDataDb.addChannelData(channelAddress, authorId, logs.channelData);
+		const channelData: ChannelData[] = LogTransformer.transformStreamsData(logs.data);
+		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData);
 	}
 }

@@ -1,10 +1,9 @@
-import { ChannelData, ChannelLog } from '../models/types/channel-data';
+import { ChannelData } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber, ChannelType } from '../streams-lib/wasm-node/iota_streams_wasm';
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
-import { isEmpty } from 'lodash';
 
 streams.set_panic_hook();
 
@@ -13,11 +12,11 @@ global.Headers = (fetch as any).Headers;
 global.Request = (fetch as any).Request;
 global.Response = (fetch as any).Response;
 
-export interface IPayload {
-	payload?: any;
-	metadata?: any;
-	creationDate?: any;
-	type?: string;
+export interface StreamsData {
+	link: string;
+	messageId: string;
+	publicPayload: unknown;
+	maskedPayload: unknown;
 }
 
 export class StreamsService {
@@ -65,14 +64,13 @@ export class StreamsService {
 	async addLogs(
 		keyloadLink: string,
 		subscription: Author | Subscriber,
-		channelLog: ChannelLog,
-		_isPrivate?: boolean
+		publicPayload: unknown,
+		maskedPayload: unknown
 	): Promise<{ link: string; messageId: string; subscription: Author | Subscriber }> {
 		try {
 			const latestAddress = Address.from_string(keyloadLink);
-			const { encryptedData, publicData } = this.getPayloads(channelLog);
-			const pubPayload = toBytes(JSON.stringify(publicData));
-			const mPayload = toBytes(JSON.stringify(encryptedData));
+			const pubPayload = toBytes(JSON.stringify(publicPayload));
+			const mPayload = toBytes(JSON.stringify(maskedPayload));
 
 			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, pubPayload, mPayload);
 			const messageLink = sendResponse?.get_link();
@@ -94,10 +92,10 @@ export class StreamsService {
 		}
 	}
 
-	async getLogs(subscription: Author | Subscriber): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber }> {
+	async getLogs(subscription: Author | Subscriber): Promise<{ data: StreamsData[]; subscription: Author | Subscriber }> {
 		try {
 			let foundNewMessage = true;
-			let channelData: ChannelData[] = [];
+			let channelData: StreamsData[] = [];
 
 			while (foundNewMessage) {
 				let nextMessages: any = [];
@@ -109,7 +107,7 @@ export class StreamsService {
 				}
 
 				if (nextMessages && nextMessages.length > 0) {
-					const cData: ChannelData[] = nextMessages
+					const cData: StreamsData[] = nextMessages
 						.map((messageResponse: any) => {
 							const link = messageResponse?.get_link()?.to_string();
 							const message = messageResponse.get_message();
@@ -117,15 +115,14 @@ export class StreamsService {
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
-								if (!maskedPayload) {
+								if (!publicPayload && !maskedPayload) {
 									return null;
 								}
 
-								const channelLog = this.getChannelLog(JSON.parse(publicPayload), JSON.parse(maskedPayload));
-
 								return {
 									link,
-									channelLog
+									publicPayload: publicPayload && JSON.parse(publicPayload),
+									maskedPayload: maskedPayload && JSON.parse(maskedPayload)
 								};
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
@@ -138,7 +135,7 @@ export class StreamsService {
 			}
 
 			return {
-				channelData,
+				data: channelData,
 				subscription
 			};
 		} catch (error) {
@@ -253,43 +250,6 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not export the subscription object');
 		}
-	}
-
-	private getChannelLog(publicPayload: IPayload, encryptedPayload: IPayload): ChannelLog {
-		const hasPublicPayload = !isEmpty(publicPayload.payload);
-		return {
-			type: hasPublicPayload ? publicPayload.type : encryptedPayload.type,
-			metadata: publicPayload.metadata,
-			creationDate: hasPublicPayload ? publicPayload.creationDate : encryptedPayload.creationDate,
-			payload: encryptedPayload.payload,
-			publicPayload: publicPayload.payload
-		};
-	}
-
-	private getPayloads(channelLog: ChannelLog) {
-		let encryptedData: IPayload = {
-			payload: channelLog.payload
-		};
-		let publicData: IPayload = {
-			metadata: channelLog.metadata
-		};
-
-		if (channelLog.publicPayload) {
-			publicData = {
-				...publicData,
-				payload: channelLog.publicPayload,
-				type: channelLog.type
-			};
-		} else {
-			encryptedData = {
-				...encryptedData,
-				type: channelLog.type
-			};
-		}
-		return {
-			encryptedData,
-			publicData
-		};
 	}
 
 	private getClient(node: string): streams.Client {
