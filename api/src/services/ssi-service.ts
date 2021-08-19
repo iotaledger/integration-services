@@ -141,8 +141,8 @@ export class SsiService {
 
 	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
 		const client = this.getIdentityClient();
-		const txHash = await client.publishDocument(newDoc);
-		return txHash;
+		const tx = await client.publishDocument(newDoc);
+		return tx?.messageId;
 	}
 
 	async revokeVerifiableCredential(
