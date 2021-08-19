@@ -9,35 +9,38 @@ export interface IPayload {
 }
 
 export class ChannelLogTransformer {
-	static transformStreamsMessages(data: StreamsMessage[]): ChannelData[] {
-		return data.map((data) => {
+	static transformStreamsMessages(messages: StreamsMessage[]): ChannelData[] {
+		if (!messages || messages.length === 0) {
+			return [];
+		}
+		return messages.map((message) => {
 			return {
-				link: data.link,
-				messageId: data.messageId,
-				channelLog: ChannelLogTransformer.getChannelLog(data.publicPayload, data.maskedPayload)
+				link: message?.link,
+				messageId: message?.messageId,
+				channelLog: ChannelLogTransformer.getChannelLog(message?.publicPayload, message?.maskedPayload)
 			};
 		});
 	}
 
 	static getChannelLog(publicPayload: IPayload, encryptedPayload: IPayload): ChannelLog {
 		return {
-			type: publicPayload.type,
-			metadata: publicPayload.metadata,
-			created: publicPayload.created,
-			payload: encryptedPayload.data,
-			publicPayload: publicPayload.data
+			type: publicPayload?.type,
+			metadata: publicPayload?.metadata,
+			created: publicPayload?.created,
+			payload: encryptedPayload?.data,
+			publicPayload: publicPayload?.data
 		};
 	}
 
 	static getPayloads(channelLog: ChannelLog): { publicPayload: IPayload; maskedPayload: IPayload } {
 		const maskedPayload: IPayload = {
-			data: channelLog.payload
+			data: channelLog?.payload
 		};
 		const publicPayload: IPayload = {
-			metadata: channelLog.metadata,
-			type: channelLog.type,
-			data: channelLog.publicPayload,
-			created: channelLog.created
+			metadata: channelLog?.metadata,
+			type: channelLog?.type,
+			data: channelLog?.publicPayload,
+			created: channelLog?.created
 		};
 
 		return {
