@@ -119,6 +119,30 @@ export class VerificationService {
 		return isVerified;
 	}
 
+	async revokeVerifiableCredentials(identityId: string) {
+		const credentials = await VerifiableCredentialsDb.getVerifiableCredentials(identityId);
+
+		// await Promise.all(
+		// 	credentials
+		// 		.filter((c) => !c.isRevoked)
+		// 		.map(async (credential: VerifiableCredentialPersistence) => {
+		// 			return this.revokeVerifiableCredential(credential, credential?.vc?.issuer);
+		// 		})
+		// );
+
+		await Promise.all(
+			credentials
+				.filter((c) => !c.isRevoked)
+				.map(async (credential: VerifiableCredentialPersistence) => {
+					try {
+						return await this.revokeVerifiableCredential(credential, credential?.vc?.issuer);
+					} catch (e) {
+						this.logger.error('could not revoke credential: ' + credential?.vc?.proof?.signatureValue);
+					}
+				})
+		);
+	}
+
 	async revokeVerifiableCredential(vcp: VerifiableCredentialPersistence, issuerId: string) {
 		const subjectId = vcp.vc.id;
 
