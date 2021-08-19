@@ -1,20 +1,10 @@
 import { Router } from 'express';
-import { CONFIG } from '../../config';
 import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/subscription-bodies';
-import { SubscriptionPool } from '../../pools/subscription-pools';
 import { SubscriptionRoutes } from '../../routes/subscription';
-import { StreamsService } from '../../services/streams-service';
-import { SubscriptionService } from '../../services/subscription-service';
 import { Logger } from '../../utils/logger';
-import { channelInfoService } from '../channel-info';
-import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
+import { subscriptionService } from '../services';
 
-const config = CONFIG.streamsConfig;
-
-export const streamsService = new StreamsService(config, Logger.getInstance());
-export const subscriptionPool = new SubscriptionPool(streamsService, config.subscriptionExpiration);
-subscriptionPool.startInterval();
-export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
 const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 

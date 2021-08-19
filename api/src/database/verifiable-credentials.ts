@@ -35,6 +35,13 @@ export const getVerifiableCredential = async (vcHash: string): Promise<Verifiabl
 	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 
+export const getVerifiableCredentials = async (identityId: string): Promise<VerifiableCredentialPersistence[]> => {
+	const regex = (text: string) => text && new RegExp(text, 'i');
+
+	const query = { 'vc.id': regex(identityId) };
+	return await MongoDbService.getDocuments<VerifiableCredentialPersistence>(collectionName, query);
+};
+
 export const addVerifiableCredential = async (vcp: VerifiableCredentialPersistence, serverId: string): Promise<void> => {
 	const document = {
 		_id: getIndex(serverId, vcp.index),
@@ -56,7 +63,8 @@ export const revokeVerifiableCredential = async (vcp: VerifiableCredentialPersis
 
 	const update: any = {
 		$set: {
-			isRevoked: true
+			isRevoked: true,
+			'vc.credentialSubject': undefined
 		}
 	};
 

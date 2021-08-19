@@ -9,11 +9,13 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '../../models/types/identity';
 import { UserSchemaBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
+import { VerificationService } from '../../services/verification-service';
 
 export class IdentityRoutes {
 	constructor(
 		private readonly userService: UserService,
 		private readonly authorizationService: AuthorizationService,
+		private readonly verificationService: VerificationService,
 		private readonly logger: ILogger
 	) {}
 
@@ -98,6 +100,8 @@ export class IdentityRoutes {
 	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const identityId = _.get(req, 'params.identityId');
+			const revokeCredentials: boolean = <string>req.query['revoke-credentials'] === 'true';
+
 			if (_.isEmpty(identityId)) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
@@ -107,7 +111,13 @@ export class IdentityRoutes {
 				throw error;
 			}
 
-			await this.userService.deleteUser(identityId);
+			if (revokeCredentials) {
+				// TODO revoke all credentials of the user!
+				await this.verificationService.revokeVerifiableCredentials(identityId);
+			}
+
+			// TODO UNCOMMENT
+			//await this.userService.deleteUser(identityId);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);

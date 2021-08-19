@@ -1,16 +1,12 @@
 import { Router } from 'express';
-import { CONFIG } from '../../config';
 import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
 import { IdentitySchema } from '../../models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
-import { UserService } from '../../services/user-service';
 import { Logger } from '../../utils/logger';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, ssiService, validate } from '../helper';
+import { authorizationService, userService, verificationService } from '../services';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
-const { serverSecret } = CONFIG;
-export const userService = new UserService(ssiService, serverSecret, Logger.getInstance());
-
-const identityRoutes = new IdentityRoutes(userService, authorizationService, Logger.getInstance());
+const identityRoutes = new IdentityRoutes(userService, authorizationService, verificationService, Logger.getInstance());
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();
