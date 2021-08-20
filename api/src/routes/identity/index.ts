@@ -100,7 +100,7 @@ export class IdentityRoutes {
 	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const identityId = _.get(req, 'params.identityId');
-			const revokeCredentials: boolean = <string>req.query['revoke-credentials'] === 'true';
+			const revokeCredentials: boolean = <string>req?.query?.['revoke-credentials'] === 'true';
 
 			if (_.isEmpty(identityId)) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });

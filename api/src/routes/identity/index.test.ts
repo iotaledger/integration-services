@@ -450,6 +450,7 @@ describe('test user routes', () => {
 
 		it('should delete expected user', async () => {
 			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
+			const revokeVerifiableCredentialsSpy = spyOn(verificationService, 'revokeVerifiableCredentials');
 
 			const req: any = {
 				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
@@ -460,6 +461,25 @@ describe('test user routes', () => {
 			await userRoutes.deleteUser(req, res, nextMock);
 
 			expect(deleteUserSpy).toHaveBeenCalledTimes(1);
+			expect(revokeVerifiableCredentialsSpy).toHaveBeenCalledTimes(0);
+			expect(sendStatusMock).toHaveBeenCalledWith(200);
+		});
+
+		it('should delete expected user and revoke all credentials', async () => {
+			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
+			const revokeVerifiableCredentialsSpy = spyOn(verificationService, 'revokeVerifiableCredentials');
+
+			const req: any = {
+				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				query: { 'revoke-credentials': 'true' }, // revoke-credentials is true so it should be called
+				body: null
+			};
+
+			await userRoutes.deleteUser(req, res, nextMock);
+
+			expect(deleteUserSpy).toHaveBeenCalledTimes(1);
+			expect(revokeVerifiableCredentialsSpy).toHaveBeenCalledTimes(1);
 			expect(sendStatusMock).toHaveBeenCalledWith(200);
 		});
 
