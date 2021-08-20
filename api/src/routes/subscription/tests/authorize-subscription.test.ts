@@ -36,7 +36,7 @@ describe('test authorize subscription route', () => {
 		const config = StreamsConfigMock;
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
-		spyOn(streamsService, 'getLogs').and.returnValue([]);
+		spyOn(streamsService, 'getMessages').and.returnValue([]);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionPool = new SubscriptionPool(streamsService, 20);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
@@ -70,7 +70,8 @@ describe('test authorize subscription route', () => {
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
-		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 	});
 
 	it('should return error if no subscription using the link is found to authorize', async () => {

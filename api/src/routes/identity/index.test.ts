@@ -69,7 +69,8 @@ describe('test user routes', () => {
 			};
 
 			await userRoutes.getUser(req, res, nextMock);
-			expect(sendStatusMock).toHaveBeenCalledWith(400);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 		});
 		it('should return expected user', async () => {
 			const date = getDateFromString('2021-02-12T14:58:05+01:00');
@@ -407,7 +408,8 @@ describe('test user routes', () => {
 			};
 
 			await userRoutes.deleteUser(req, res, nextMock);
-			expect(sendStatusMock).toHaveBeenCalledWith(400);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 		});
 
 		it('is not authorized to delete different user', async () => {

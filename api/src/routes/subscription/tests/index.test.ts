@@ -52,7 +52,8 @@ describe('test other subscription routes', () => {
 			body: {}
 		};
 		await subscriptionRoutes.getSubscriptions(req, res, nextMock);
-		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
 	});
 
 	it('should return ok with subscription', async () => {
@@ -108,7 +109,8 @@ describe('test other subscription routes', () => {
 			body: undefined
 		};
 		await subscriptionRoutes.getSubscriptionByIdentity(req, res, nextMock);
-		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 	});
 
 	it('should return bad request since params are missing', async () => {

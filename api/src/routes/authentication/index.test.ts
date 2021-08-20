@@ -54,7 +54,7 @@ describe('test authentication routes', () => {
 			expect(getUserSpy).not.toHaveBeenCalled();
 			expect(upsertNonceSpy).not.toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'A identityId must be provided to the request path!' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 		});
 
 		it('should return a valid nonce to solve', async () => {
@@ -82,7 +82,8 @@ describe('test authentication routes', () => {
 
 			await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no signedNonce or identityId provided' });
 		});
 		it('should return bad request because no signedNonce is provided in the body.', async () => {
 			const req: any = {
@@ -91,7 +92,8 @@ describe('test authentication routes', () => {
 			};
 
 			await authenticationRoutes.proveOwnership(req, res, nextMock);
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no signedNonce or identityId provided' });
 		});
 
 		it('should throw error since no user found', async () => {

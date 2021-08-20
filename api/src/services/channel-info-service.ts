@@ -61,7 +61,6 @@ export class ChannelInfoService {
 			authorId: ci.authorId,
 			subscriberIds: ci.subscriberIds || [],
 			topics: ci.topics,
-			encrypted: ci.encrypted,
 			channelAddress: ci.channelAddress,
 			latestMessage: ci.latestMessage && getDateFromString(ci.created)
 		};
@@ -79,7 +78,6 @@ export class ChannelInfoService {
 			authorId: cip.authorId,
 			subscriberIds: cip.subscriberIds || [],
 			topics: cip.topics,
-			encrypted: cip.encrypted,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress
 		};

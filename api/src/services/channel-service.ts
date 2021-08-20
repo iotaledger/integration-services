@@ -12,6 +12,8 @@ import { CreateChannelBodyResponse } from '../models/types/request-response-bodi
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
+import { getDateStringFromDate } from '../utils/date';
+import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 
 export class ChannelService {
 	private readonly password: string;
@@ -31,13 +33,12 @@ export class ChannelService {
 	async create(params: {
 		identityId: string;
 		topics: Topic[];
-		encrypted: boolean;
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
 		subscriptionPassword?: string;
 	}): Promise<CreateChannelBodyResponse> {
-		const { presharedKey, seed, encrypted, hasPresharedKey, identityId, topics } = params;
+		const { presharedKey, seed, hasPresharedKey, identityId, topics } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -68,7 +69,6 @@ export class ChannelService {
 		await this.channelInfoService.addChannelInfo({
 			topics,
 			authorId: identityId,
-			encrypted,
 			channelAddress: res.channelAddress
 		});
 
@@ -83,24 +83,22 @@ export class ChannelService {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
-		const logs = await this.streamsService.getLogs(sub);
-		if (!logs) {
+		const messages = await this.streamsService.getMessages(sub);
+		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(
-			channelAddress,
-			identityId,
-			this.streamsService.exportSubscription(logs.subscription, this.password)
-		);
+		await this.subscriptionService.updateSubscriptionState(channelAddress, identityId, this.streamsService.exportSubscription(sub, this.password));
 
+		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
-		if (logs.channelData?.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, identityId, logs.channelData);
+		if (channelData?.length > 0) {
+			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
 		}
-		return logs.channelData;
+
+		return channelData;
 	}
 
-	async getLogs(channelAddress: string, identityId: string, options?: { limit: number; index: number }) {
+	async getLogs(channelAddress: string, identityId: string, options: { limit?: number; index?: number; ascending: boolean }) {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
@@ -117,26 +115,26 @@ export class ChannelService {
 				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 
 				await this.fetchLogs(channelAddress, identityId, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, identityId, options?.limit, options?.index);
+				return await ChannelDataDb.getChannelData(channelAddress, identityId, options);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<{ link: string }> {
+	async addLogs(channelAddress: string, identityId: string, log: ChannelLog): Promise<ChannelData> {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const channelLog: ChannelLog = { created: getDateStringFromDate(new Date()), ...log };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				// TODO encrypt/decrypt seed
-
 				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 
 				if (!sub) {
@@ -144,6 +142,7 @@ export class ChannelService {
 				}
 				const { accessRights, keyloadLink } = subscription;
 
+				// check access rights
 				if (subscription.accessRights === AccessRights.Read || subscription.accessRights === AccessRights.Audit) {
 					throw new Error('not allowed to add logs to the channel');
 				} else if (accessRights === AccessRights.Write) {
@@ -155,18 +154,19 @@ export class ChannelService {
 					await this.fetchLogs(channelAddress, identityId, sub);
 				}
 
-				const res = await this.streamsService.addLogs(keyloadLink, sub, channelLog);
+				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(channelLog);
+				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicPayload, maskedPayload);
 
 				// store newly added log
-				const newLog: ChannelData = { link: res.link, channelLog };
+				const newLog: ChannelData = { link: res.link, messageId: res.messageId, channelLog };
 				await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog]);
 
 				await this.subscriptionService.updateSubscriptionState(
 					channelAddress,
 					identityId,
-					this.streamsService.exportSubscription(res.subscription, this.password)
+					this.streamsService.exportSubscription(sub, this.password)
 				);
-				return { link: res.link };
+				return newLog;
 			} finally {
 				release();
 			}

@@ -1,4 +1,4 @@
-import { ChannelData, ChannelLog } from '../models/types/channel-data';
+import { ChannelData } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber, ChannelType } from '../streams-lib/wasm-node/iota_streams_wasm';
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
@@ -11,6 +11,13 @@ global.fetch = fetch as any;
 global.Headers = (fetch as any).Headers;
 global.Request = (fetch as any).Request;
 global.Response = (fetch as any).Response;
+
+export interface StreamsMessage {
+	link: string;
+	messageId: string;
+	publicPayload: unknown;
+	maskedPayload: unknown;
+}
 
 export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
@@ -54,25 +61,29 @@ export class StreamsService {
 		}
 	}
 
-	async addLogs(
+	async publishMessage(
 		keyloadLink: string,
 		subscription: Author | Subscriber,
-		channelLog: ChannelLog,
-		_isPrivate?: boolean
-	): Promise<{ link: string; subscription: Author | Subscriber }> {
+		publicPayload: unknown,
+		maskedPayload: unknown
+	): Promise<{ link: string; messageId: string }> {
 		try {
 			const latestAddress = Address.from_string(keyloadLink);
-			const mPayload = toBytes(JSON.stringify(channelLog));
+			const pubPayload = toBytes(JSON.stringify(publicPayload));
+			const mPayload = toBytes(JSON.stringify(maskedPayload));
 
-			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, toBytes(''), mPayload);
+			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, pubPayload, mPayload);
 			const messageLink = sendResponse?.get_link();
 			if (!messageLink) {
 				throw new Error('could not send signed packet');
 			}
 
+			const linkDetails = await this.getClient(this.config.node)?.get_link_details(messageLink.copy());
+			const messageId = linkDetails?.get_metadata()?.message_id;
+
 			return {
-				link: messageLink?.to_string(),
-				subscription
+				messageId,
+				link: messageLink?.to_string()
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -80,11 +91,10 @@ export class StreamsService {
 		}
 	}
 
-	// TODO consider if channel is encrypted or not when getting adding data to channel
-	async getLogs(subscription: Author | Subscriber): Promise<{ channelData: ChannelData[]; subscription: Author | Subscriber }> {
+	async getMessages(subscription: Author | Subscriber): Promise<StreamsMessage[]> {
 		try {
 			let foundNewMessage = true;
-			let channelData: ChannelData[] = [];
+			let streamsMessages: StreamsMessage[] = [];
 
 			while (foundNewMessage) {
 				let nextMessages: any = [];
@@ -96,20 +106,22 @@ export class StreamsService {
 				}
 
 				if (nextMessages && nextMessages.length > 0) {
-					const cData: ChannelData[] = nextMessages
+					const cData: StreamsMessage[] = nextMessages
 						.map((messageResponse: any) => {
 							const link = messageResponse?.get_link()?.to_string();
 							const message = messageResponse.get_message();
+							const publicPayload = message && fromBytes(message.get_public_payload());
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
 							try {
-								if (!maskedPayload) {
+								if (!publicPayload && !maskedPayload) {
 									return null;
 								}
 
 								return {
 									link,
-									channelLog: JSON.parse(maskedPayload)
+									publicPayload: publicPayload && JSON.parse(publicPayload),
+									maskedPayload: maskedPayload && JSON.parse(maskedPayload)
 								};
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
@@ -117,14 +129,11 @@ export class StreamsService {
 							}
 						})
 						.filter((c: ChannelData | null) => c);
-					channelData = [...channelData, ...cData];
+					streamsMessages = [...streamsMessages, ...cData];
 				}
 			}
 
-			return {
-				channelData,
-				subscription
-			};
+			return streamsMessages;
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not get logs from the channel');
@@ -152,7 +161,7 @@ export class StreamsService {
 				await subscriber.clone().store_psk(presharedKey);
 				return {
 					seed,
-					subscriber
+					subscriber: subscriber.clone()
 				};
 			}
 
@@ -175,7 +184,7 @@ export class StreamsService {
 		publicKeys: string[],
 		author: Author,
 		presharedKey?: string
-	): Promise<{ keyloadLink: string; sequenceLink: string; author: Author }> {
+	): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		try {
 			const anchorAddress = streams.Address.from_string(anchorLink);
 
@@ -199,7 +208,7 @@ export class StreamsService {
 				throw new Error('could not send the keyload');
 			}
 
-			return { keyloadLink, sequenceLink, author };
+			return { keyloadLink, sequenceLink };
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not authorize the subscription to the channel');

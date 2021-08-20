@@ -9,7 +9,6 @@ export const CreateChannelBodySchema = Type.Object({
 				'If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service.'
 		})
 	), // TODO#156 use to decrypt/encrypt data and state
-	encrypted: Type.Boolean(),
 	topics: Type.Array(TopicSchema),
 	hasPresharedKey: Type.Optional(
 		Type.Boolean({
@@ -39,13 +38,17 @@ export const CreateChannelBodyResponseSchema = Type.Object({
 });
 
 export const AddChannelLogBodySchema = Type.Object({
-	type: Type.String({ minLength: 1 }),
-	creationDate: Type.Optional(Type.String({ format: 'date-time' })),
-	metadata: Type.Optional(Type.Any()),
-	payload: Type.Any()
+	type: Type.Optional(Type.String({ minLength: 1, description: 'Public available type.' })),
+	created: Type.Optional(Type.String({ format: 'date-time', description: 'Public available date.' })),
+	metadata: Type.Optional(Type.Any({ description: 'Public available metadata.' })),
+	publicPayload: Type.Optional(Type.Any({ description: 'Public available payload.' })),
+	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' }))
 });
+
+export const ChannelLogSchema = AddChannelLogBodySchema;
 
 export const ChannelDataSchema = Type.Object({
 	link: Type.String(),
-	channelLog: AddChannelLogBodySchema
+	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
+	channelLog: ChannelLogSchema
 });

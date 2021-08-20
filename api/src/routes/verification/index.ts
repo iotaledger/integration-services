@@ -85,14 +85,13 @@ export class VerificationRoutes {
 		}
 	};
 
-	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 			const did = req.params && decodeParam(<string>req.params['identityId']);
 
 			if (!did) {
-				res.sendStatus(StatusCodes.BAD_REQUEST);
-				return;
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
 
 			const doc = await this.verificationService.getLatestDocument(did);

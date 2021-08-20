@@ -99,7 +99,7 @@ The software and services architecture and the list of provided APIs are shown i
 
 ![ecommerce-ssi-bridge](./assets/diagrams/ecommerce-ssi-bridge.jpeg)
 
-> __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
+> ### An interactive swagger documentation of the API can be found [here](https://ensuresec.solutions.iota.org/docs/).
 
 
 ### Identity Service 

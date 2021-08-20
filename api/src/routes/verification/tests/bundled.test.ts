@@ -55,7 +55,8 @@ describe('test authentication routes', () => {
 			await verificationRoutes.getLatestDocument(req, res, nextMock);
 
 			expect(getLatestIdentitySpy).not.toHaveBeenCalled();
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 		});
 
 		it('should return the document of the id', async () => {

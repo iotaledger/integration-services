@@ -60,7 +60,8 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.createChannel(req, res, nextMock);
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 		});
 
 		it('should create and return a channel for the user', async () => {
@@ -85,8 +86,7 @@ describe('test channel routes', () => {
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
 				channelAddress: '1234234234',
-				topics: [],
-				encrypted: true
+				topics: []
 			};
 
 			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
@@ -133,8 +133,7 @@ describe('test channel routes', () => {
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
 				channelAddress: '1234234234',
-				topics: [],
-				encrypted: true
+				topics: []
 			};
 
 			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
@@ -168,7 +167,8 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.getLogs(req, res, nextMock);
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 		});
 
 		it('should bad request if no identityId is provided', async () => {
@@ -179,7 +179,8 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.getLogs(req, res, nextMock);
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 		});
 	});
 });

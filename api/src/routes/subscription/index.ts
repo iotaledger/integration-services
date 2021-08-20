@@ -21,7 +21,7 @@ export class SubscriptionRoutes {
 			}
 
 			if (!channelAddress) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
 			const subscriptions = await this.subscriptionService.getSubscriptions(channelAddress, isAuthorized);
@@ -37,7 +37,7 @@ export class SubscriptionRoutes {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const identityId = _.get(req, 'params.identityId');
 			if (!channelAddress || !identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
 
 			const subscriptions = await this.subscriptionService.getSubscription(channelAddress, identityId);
@@ -55,7 +55,7 @@ export class SubscriptionRoutes {
 			const subscriberId = req.user.identityId;
 
 			if (!subscriberId || !channelAddress) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
 
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, subscriberId);
@@ -87,7 +87,7 @@ export class SubscriptionRoutes {
 			let subscription: Subscription = undefined;
 
 			if (!authorId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
 
 			if (!subscriptionLink && identityId) {
