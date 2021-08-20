@@ -112,12 +112,10 @@ export class IdentityRoutes {
 			}
 
 			if (revokeCredentials) {
-				// TODO revoke all credentials of the user!
 				await this.verificationService.revokeVerifiableCredentials(identityId);
 			}
 
-			// TODO UNCOMMENT
-			//await this.userService.deleteUser(identityId);
+			await this.userService.deleteUser(identityId);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);
