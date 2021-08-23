@@ -1,4 +1,3 @@
-import { ChannelData } from '../models/types/channel-data';
 import streams, { Address, Author, Subscriber, ChannelType } from '../streams-lib/wasm-node/iota_streams_wasm';
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
@@ -106,9 +105,10 @@ export class StreamsService {
 				}
 
 				if (nextMessages && nextMessages.length > 0) {
-					const cData: StreamsMessage[] = nextMessages
-						.map((messageResponse: any) => {
-							const link = messageResponse?.get_link()?.to_string();
+					const cData: StreamsMessage[] = await Promise.all(
+						nextMessages.map(async (messageResponse: any) => {
+							const address = messageResponse?.get_link();
+							const link = address?.copy()?.to_string();
 							const message = messageResponse.get_message();
 							const publicPayload = message && fromBytes(message.get_public_payload());
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
@@ -117,9 +117,12 @@ export class StreamsService {
 								if (!publicPayload && !maskedPayload) {
 									return null;
 								}
+								const linkDetails = await this.getClient(this.config.node)?.get_link_details(address?.copy());
+								const messageId = linkDetails?.get_metadata()?.message_id;
 
 								return {
 									link,
+									messageId,
 									publicPayload: publicPayload && JSON.parse(publicPayload),
 									maskedPayload: maskedPayload && JSON.parse(maskedPayload)
 								};
@@ -128,12 +131,12 @@ export class StreamsService {
 								return null;
 							}
 						})
-						.filter((c: ChannelData | null) => c);
+					);
 					streamsMessages = [...streamsMessages, ...cData];
 				}
 			}
 
-			return streamsMessages;
+			return streamsMessages.filter((m) => m);
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not get logs from the channel');
