@@ -53,10 +53,10 @@ export class ChannelRoutes {
 	getHistory = async (req: Request, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
-			const presharedKey = <string>req.query['preshared-key'];
+			const presharedKey = <string>req.query?.['preshared-key'];
 
 			if (!channelAddress) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
 			if (!presharedKey) {
