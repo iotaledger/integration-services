@@ -6,15 +6,24 @@ import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../.
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
-import { TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
+import { ServerIdentityMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
 import { IdentityConfigMock } from '../../test/mocks/config';
+import { VerificationService } from '../../services/verification-service';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any, userService: UserService, userRoutes: IdentityRoutes, ssiService: SsiService;
+	let sendMock: any,
+		sendStatusMock: any,
+		nextMock: any,
+		res: any,
+		userService: UserService,
+		userRoutes: IdentityRoutes,
+		ssiService: SsiService,
+		verificationService: VerificationService;
+
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
@@ -23,8 +32,18 @@ describe('test user routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
+		verificationService = new VerificationService(
+			ssiService,
+			userService,
+			{
+				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
+				keyCollectionSize: 2
+			},
+			LoggerMock
+		);
 		const authorizationService = new AuthorizationService();
-		userRoutes = new IdentityRoutes(userService, authorizationService, LoggerMock);
+		userRoutes = new IdentityRoutes(userService, authorizationService, verificationService, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -431,6 +450,7 @@ describe('test user routes', () => {
 
 		it('should delete expected user', async () => {
 			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
+			const revokeVerifiableCredentialsSpy = spyOn(verificationService, 'revokeVerifiableCredentials');
 
 			const req: any = {
 				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
@@ -441,6 +461,25 @@ describe('test user routes', () => {
 			await userRoutes.deleteUser(req, res, nextMock);
 
 			expect(deleteUserSpy).toHaveBeenCalledTimes(1);
+			expect(revokeVerifiableCredentialsSpy).toHaveBeenCalledTimes(0);
+			expect(sendStatusMock).toHaveBeenCalledWith(200);
+		});
+
+		it('should delete expected user and revoke all credentials', async () => {
+			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
+			const revokeVerifiableCredentialsSpy = spyOn(verificationService, 'revokeVerifiableCredentials');
+
+			const req: any = {
+				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				query: { 'revoke-credentials': 'true' }, // revoke-credentials is true so it should be called
+				body: null
+			};
+
+			await userRoutes.deleteUser(req, res, nextMock);
+
+			expect(deleteUserSpy).toHaveBeenCalledTimes(1);
+			expect(revokeVerifiableCredentialsSpy).toHaveBeenCalledTimes(1);
 			expect(sendStatusMock).toHaveBeenCalledWith(200);
 		});
 
