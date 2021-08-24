@@ -12,22 +12,6 @@ export const channelRouter = Router();
 
 /**
  * @openapi
- * /channels/history/{channelAddress}:
- *   get:
- *     summary: TBD!
- *     description: Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory.
- *     tags:
- *     - channels
- *     parameters:
- *     - name: channelAddress
- *       in: path
- *       required: true
- *     deprecated: true
- */
-channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
-
-/**
- * @openapi
  * /channels/create:
  *   post:
  *     summary: Create a new channel
@@ -176,3 +160,40 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, getLogs);
+
+/**
+ * @openapi
+ * /channels/history/{channelAddress}:
+ *   get:
+ *     summary: Get history of a channel.
+ *     description: Get all data of a channel using a preshared key. Mainly used by auditors to validate a log stream.
+ *     tags:
+ *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ */
+channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
+
+/**
+ * @openapi
+ * /channel-info/validate:
+ *   post:
+ *     summary: TBD!
+ *     description: Validates data of a channel.
+ *     tags:
+ *     - channels
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
+ * /channel-info/re-import:
+ *   post:
+ *     summary: TBD!
+ *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
+ *     tags:
+ *     - channels
+ *     deprecated: true
+ */

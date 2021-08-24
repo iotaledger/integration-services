@@ -12,28 +12,6 @@ export const channelInfoRouter = Router();
 
 /**
  * @openapi
- * /channel-info/validate:
- *   post:
- *     summary: TBD!
- *     description: Validates data of a channel.
- *     tags:
- *     - channel-info
- *     deprecated: true
- */
-
-/**
- * @openapi
- * /channel-info/re-import:
- *   post:
- *     summary: TBD!
- *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
- *     tags:
- *     - channel-info
- *     deprecated: true
- */
-
-/**
- * @openapi
  * /channel-info/search:
  *   get:
  *     summary: Search for a channel
