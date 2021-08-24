@@ -1,7 +1,7 @@
 # CSP1 TMForum Proxy
 This server proxies the TMForum API and writes intercepted payload to the tangle.
 
-## Ussage
+## Usage
 1. Create a channel and copy the channel address in the csp1-bbs and csp2-bss .env files
 2. Run each Csp by executing: ```npm run serve``` or ```npm run start``` in their root directory, they will automaticaly create an identity and request a subscription to the channel
 3. Authorize both clients by the subscriptionLink from the console

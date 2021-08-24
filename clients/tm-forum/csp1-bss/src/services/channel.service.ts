@@ -18,12 +18,13 @@ export const writeChannel = async (payload: any, type: string) => {
 		}
 		return response;
 	} catch (error) {
+		console.log('Could not write channel');
 		console.log(error);
 	}
 };
 
 const forwardedViolations: any = [];
-export const poolChannel = async (poolingDelay = 10000): Promise<any> => {
+export const poolChannel = async (poolingDelay = 30000): Promise<any[]> => {
 	return new Promise((resolve, reject) => {
 		try {
 			const interval = setInterval(async () => {

@@ -2,13 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { hashNonce } from '../utils/encryption';
 import { writeChannel } from '../services/channel.service';
-
 export class ServiceOrderRoutes {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	forwardServiceOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-		res.sendStatus(StatusCodes.NOT_IMPLEMENTED);
-	};
-
+	/**
+	 * Writes received serviceOrderCreateEvent to the tangle
+	 * @param req with serviceOrderCreateEvent on body
+	 * @param res return OK (200)
+	 */
 	writeServiceOrderCreateEvent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			const serviceOrderCreateEvent = req.body;

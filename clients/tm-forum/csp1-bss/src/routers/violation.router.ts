@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import { ViolationRoutes } from '../routes/violation.route';
 
-const { writeViolation } = new ViolationRoutes();
-export const ViolationRouter = Router();
+const { writeSlaViolationCreateEvent } = new ViolationRoutes();
+export const violationRouter = Router();
 
-ViolationRouter.post('/SLAViolationCreateNotification', writeViolation);
+violationRouter.post('/listener/slaViolationCreateEvent', writeSlaViolationCreateEvent);

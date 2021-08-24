@@ -1,13 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { writeViolations } from '../services/violation.service';
-
+import { writeChannel } from '../services/channel.service';
 export class ViolationRoutes {
-	writeViolation = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+	/**
+	 * Listens for SLAViolationCreateEvent
+	 * @param req with SLAViolationCreateEvent in body
+	 * @param res returns OK (200)
+	 * @param next
+	 * @returns
+	 */
+	writeSlaViolationCreateEvent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			console.log('Writting violations...');
-			const violations = req.body;
-			await writeViolations(violations);
+			const slaViolationCreateEvent = req.body;
+			await writeChannel(slaViolationCreateEvent, 'violationResponse');
 			return res.status(StatusCodes.OK).send();
 		} catch (error) {
 			console.log(error);

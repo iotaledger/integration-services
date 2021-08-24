@@ -1,14 +1,14 @@
 import fs from 'fs';
 import { CONFIG } from '../config/config';
 import { getHexEncodedKey, signNonce } from '../utils/encryption';
-import { csp2Client } from '../utils/client';
+import { leadCspClient } from '../utils/client';
 
 export const fetchAuth = async (): Promise<any> => {
-	const identityBuffer = fs.readFileSync('./src/config/Csp2Identity.json');
+	const identityBuffer = fs.readFileSync('./src/config/LeadCspIdentity.json');
 	const identity = JSON.parse(identityBuffer.toString());
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
-	const res = await csp2Client.get(`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`);
+	const res = await leadCspClient.get(`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`);
 	if (res.status !== 200) {
 		console.error('didnt receive status 200 on get request for prove-ownership!');
 		return;
@@ -18,7 +18,7 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const encodedKey = await getHexEncodedKey(identity.key.secret);
 	const signedNonce = await signNonce(encodedKey, nonce);
-	const response = await csp2Client.post(
+	const response = await leadCspClient.post(
 		`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`,
 		JSON.stringify({ signedNonce }),
 		{
@@ -28,7 +28,7 @@ export const fetchAuth = async (): Promise<any> => {
 	);
 	if (response?.status === 200) {
 		console.log('successfully authenticated!');
-		// console.log('JWT: ', response.data.jwt);
+		console.log('JWT: ', response.data.jwt);
 	}
 
 	return response;

@@ -28,7 +28,7 @@ export const requestSubscription = async () => {
 		const body = {
 			accessRights: 'ReadAndWrite'
 		};
-		console.log('Requesting subscription...')
+		console.log('Requesting subscription...');
 		const res = await csp2Client.post(`${CONFIG.baseUrl}/subscriptions/request/${channelAddress}${apiKey}`, JSON.stringify(body));
 		if (res?.status === 201) {
 			console.log('Successfully requested subscription, authorize subscription to write violations to the channe!');
@@ -37,6 +37,6 @@ export const requestSubscription = async () => {
 			process.exit();
 		}
 	} catch (error) {
-		console.log(error.response.data)
+		console.log(error.response.data);
 	}
 };
