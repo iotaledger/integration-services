@@ -70,6 +70,7 @@ export class ChannelRoutes {
 			next(new Error('could not get the history'));
 		}
 	};
+
 	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
@@ -84,6 +85,28 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
 			}
 
+			const channel = await this.channelService.addLogs(channelAddress, identityId, body);
+			return res.status(StatusCodes.OK).send(channel);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not add the logs'));
+		}
+	};
+
+	reimport = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+		try {
+			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const { identityId } = req.user;
+			const body = req.body as AddChannelLogBody;
+
+			if (!channelAddress || !identityId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			if (isEmpty(body)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
+			}
+			// TODO call reimport
 			const channel = await this.channelService.addLogs(channelAddress, identityId, body);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {

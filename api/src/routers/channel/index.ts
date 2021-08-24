@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
+import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { Logger } from '../../utils/logger';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs, getHistory } = channelRoutes;
+const { addLogs, createChannel, getLogs, getHistory, reimport } = channelRoutes;
 
 export const channelRouter = Router();
 
@@ -189,11 +189,11 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 
 /**
  * @openapi
- * /channel-info/re-import:
+ * /channel-info/re-import/{channelAddress}:
  *   post:
- *     summary: TBD!
- *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
+ *     summary: Re import the data from the tangle into the database.
+ *     description: The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
  *     tags:
  *     - channels
- *     deprecated: true
  */
+channelRouter.get('/re-import/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ReimportBodySchema }), reimport);
