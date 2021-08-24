@@ -6,7 +6,7 @@ import { AccessRights, SubscriptionType } from '../../models/schemas/subscriptio
 import { SubscriptionPool } from '../../pools/subscription-pools';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { ChannelService } from '../../services/channel-service';
-import { StreamsService } from '../../services/streams-service';
+import { StreamsMessage, StreamsService } from '../../services/streams-service';
 import { SubscriptionService } from '../../services/subscription-service';
 import { UserService } from '../../services/user-service';
 import { StreamsConfigMock } from '../../test/mocks/config';
@@ -159,7 +159,7 @@ describe('test channel routes', () => {
 	});
 
 	describe('test getLogs channel route', () => {
-		it('should bad request if no channelAddress is provided', async () => {
+		it('should return bad request if no channelAddress is provided', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
 				user: { identityId: undefined }, //no identityId,
@@ -171,7 +171,7 @@ describe('test channel routes', () => {
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 		});
 
-		it('should bad request if no identityId is provided', async () => {
+		it('should return bad request if no identityId is provided', async () => {
 			const req: any = {
 				params: {}, // no channelAddress
 				user: { identityId: 'did:iota:1234' },
@@ -181,6 +181,54 @@ describe('test channel routes', () => {
 			await channelRoutes.getLogs(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		});
+	});
+
+	describe('test getHistory channel route', () => {
+		it('should return bad request if no channelAddress is provided', async () => {
+			const req: any = {
+				params: {},
+				body: {}
+			};
+
+			await channelRoutes.getHistory(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
+		});
+
+		it('should bad request if no presharedKey is provided', async () => {
+			const req: any = {
+				params: { channelAddress: '12345' },
+				query: {}, // no preshared-key provided
+				body: {}
+			};
+
+			await channelRoutes.getHistory(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'no preshared-key provided' });
+		});
+
+		it('should return the data if both is is provided', async () => {
+			const req: any = {
+				params: { channelAddress: '12345' },
+				query: { 'preshared-key': 'eaifooaeenagr' },
+				body: {}
+			};
+			const messages: StreamsMessage[] = [{ link: '12313:00', maskedPayload: undefined, messageId: '123', publicPayload: { data: { a: 124 } } }];
+			const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({ subscriber: {} });
+			const getMessagesSpy = spyOn(streamsService, 'getMessages').and.returnValue(messages);
+
+			await channelRoutes.getHistory(req, res, nextMock);
+			expect(requestSubscriptionSpy).toHaveBeenCalledWith('12345', undefined, 'eaifooaeenagr');
+			expect(getMessagesSpy).toHaveBeenCalledWith({});
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith([
+				{
+					channelLog: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
+					link: '12313:00',
+					messageId: '123'
+				}
+			]);
 		});
 	});
 });

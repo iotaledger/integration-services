@@ -6,7 +6,7 @@ import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs } = channelRoutes;
+const { addLogs, createChannel, getLogs, getHistory } = channelRoutes;
 
 export const channelRouter = Router();
 
@@ -24,6 +24,7 @@ export const channelRouter = Router();
  *       required: true
  *     deprecated: true
  */
+channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 
 /**
  * @openapi

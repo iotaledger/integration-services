@@ -98,6 +98,13 @@ export class ChannelService {
 		return channelData;
 	}
 
+	async getHistory(channelAddress: string, presharedKey: string): Promise<ChannelData[]> {
+		const seed: string = undefined;
+		const { subscriber } = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+		const messages = await this.streamsService.getMessages(subscriber);
+		return ChannelLogTransformer.transformStreamsMessages(messages);
+	}
+
 	async getLogs(channelAddress: string, identityId: string, options: { limit?: number; index?: number; ascending: boolean }) {
 		const lockKey = channelAddress + identityId;
 

@@ -1,4 +1,4 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
@@ -50,6 +50,26 @@ export class ChannelRoutes {
 		}
 	};
 
+	getHistory = async (req: Request, res: Response, next: NextFunction): Promise<Response<any>> => {
+		try {
+			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const presharedKey = <string>req.query?.['preshared-key'];
+
+			if (!channelAddress) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
+			}
+
+			if (!presharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no preshared-key provided' });
+			}
+
+			const history = await this.channelService.getHistory(channelAddress, presharedKey);
+			return res.status(StatusCodes.OK).send(history);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not get the history'));
+		}
+	};
 	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
