@@ -13,13 +13,13 @@ export class AuthenticationService {
 		private readonly config: AuthenticationServiceConfig
 	) {}
 
-	getNonce = async (identityId: string) => {
+	async getNonce(identityId: string) {
 		const nonce = createNonce();
 		await AuthDb.upsertNonce(identityId, nonce);
 		return nonce;
-	};
+	}
 
-	authenticate = async (signedNonce: string, identityId: string) => {
+	async authenticate(signedNonce: string, identityId: string) {
 		let user: User = await this.userService.getUser(identityId);
 
 		if (!user) {
@@ -51,5 +51,5 @@ export class AuthenticationService {
 
 		const signedJwt = jwt.sign({ user }, this.config.serverSecret, { expiresIn: this.config?.jwtExpiration });
 		return signedJwt;
-	};
+	}
 }

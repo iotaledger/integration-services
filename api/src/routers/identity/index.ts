@@ -1,16 +1,12 @@
 import { Router } from 'express';
-import { CONFIG } from '../../config';
-import { CreateUserBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
-import { UserSchema } from '../../models/schemas/user';
+import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
+import { IdentitySchema } from '../../models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
-import { UserService } from '../../services/user-service';
 import { Logger } from '../../utils/logger';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, ssiService, validate } from '../helper';
+import { authorizationService, userService, verificationService } from '../services';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
-const { serverSecret } = CONFIG;
-export const userService = new UserService(ssiService, serverSecret, Logger.getInstance());
-
-const identityRoutes = new IdentityRoutes(userService, authorizationService, Logger.getInstance());
+const identityRoutes = new IdentityRoutes(userService, authorizationService, verificationService, Logger.getInstance());
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();
@@ -23,9 +19,9 @@ export const identityRouter = Router();
  *     tags:
  *     - identity
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/CreateIdentityBodySchema"
  *           example:
  *             username: iota-test-device
@@ -44,7 +40,7 @@ export const identityRouter = Router();
  *     responses:
  *       201:
  *         description: Returns the created identity
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/IdentityJsonUpdateSchema"
@@ -52,16 +48,16 @@ export const identityRouter = Router();
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'  
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'          
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBodySchema }), createIdentity);
+identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentityBodySchema }), createIdentity);
 
 /**
  * @openapi
@@ -76,7 +72,7 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *     responses:
  *       200:
  *         description: Return list of existing entities.
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               AnyValue: {}
@@ -84,14 +80,14 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateUserBody
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'  
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'        
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 
@@ -116,25 +112,25 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *     responses:
  *       200:
  *         description: Return a specific identity / none if no identity exits with given identity-id
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserSchema"  
+ *               $ref: "#/components/schemas/UserSchema"
  *       401:
  *         description: No valid api key
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema' 
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
- * 
+ *
  */
-identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
+identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, getUser);
 
 /**
  * @openapi
@@ -145,9 +141,9 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
  *     tags:
  *     - identity
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/UserSchema"
  *           example:
  *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
@@ -157,7 +153,7 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
  *             verifiableCredentials:
  *             - '@context': https://www.w3.org/2018/credentials/v1
  *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               type: 
+ *               type:
  *               - VerifiableCredential
  *               - VerifiedIdentityCredential
  *               credentialSubject:
@@ -176,24 +172,24 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, getUser);
  *     responses:
  *       200:
  *         description: The registered entity.
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserSchema"  
+ *               $ref: "#/components/schemas/UserSchema"
  *       401:
  *         description: No valid api key
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }), addUser);
+identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySchema }), addUser);
 
 /**
  * @openapi
@@ -206,9 +202,9 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/UserSchema"
  *           example:
  *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
@@ -218,7 +214,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *             verifiableCredentials:
  *             - '@context': https://www.w3.org/2018/credentials/v1
  *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               type: 
+ *               type:
  *               - VerifiableCredential
  *               - VerifiedIdentityCredential
  *               credentialSubject:
@@ -237,24 +233,24 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: UserSchema }
  *     responses:
  *       200:
  *         description: The registered entity.
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserSchema"  
+ *               $ref: "#/components/schemas/UserSchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema' 
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateUserBodySchema }), updateUser);
+identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateIdentityBodySchema }), updateUser);
 
 /**
  * @openapi
@@ -283,13 +279,13 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'  
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);

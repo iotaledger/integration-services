@@ -6,6 +6,7 @@ import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';
+import { StatusCodes } from 'http-status-codes';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -21,7 +22,8 @@ describe('test Search user', () => {
 
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
 		};
 	});
 
@@ -37,7 +39,7 @@ describe('test Search user', () => {
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-		const getUserSpy = spyOn(userService, 'getUserByUsername').and.returnValue({ identityId: '1234-5678-9' });
+		const getUserSpy = spyOn(userService, 'getIdentityId').and.returnValue('1234-5678-9');
 
 		const req: any = {
 			params: {},
@@ -74,7 +76,8 @@ describe('test GET channelInfo', () => {
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
 		};
 	});
 
@@ -85,7 +88,8 @@ describe('test GET channelInfo', () => {
 		};
 
 		await channelInfoRoutes.getChannelInfo(req, res, nextMock);
-		expect(sendStatusMock).toHaveBeenCalledWith(400);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
 	});
 
 	it('should return expected channel info', async () => {
@@ -93,14 +97,12 @@ describe('test GET channelInfo', () => {
 		const channelInfo: ChannelInfoPersistence = {
 			created: date,
 			authorId: 'test-author2',
-			latestLink: '',
 			topics: [
 				{
 					source: 'test',
 					type: 'test-type'
 				}
 			],
-			encrypted: true,
 			latestMessage: null,
 			channelAddress: 'test-address3'
 		};
@@ -115,13 +117,11 @@ describe('test GET channelInfo', () => {
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).toHaveBeenCalledWith({
 			authorId: 'test-author2',
-			latestLink: '',
 			channelAddress: 'test-address3',
 			created: getDateStringFromDate(date),
 			latestMessage: null,
 			subscriberIds: [],
-			topics: [{ source: 'test', type: 'test-type' }],
-			encrypted: true
+			topics: [{ source: 'test', type: 'test-type' }]
 		});
 	});
 
@@ -153,9 +153,7 @@ describe('test POST channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		latestLink: '',
-		topics: [{ source: 'test', type: 'test-type' }],
-		encrypted: true
+		topics: [{ source: 'test', type: 'test-type' }]
 	};
 
 	beforeEach(() => {
@@ -255,12 +253,10 @@ describe('test PUT channelInfo', () => {
 
 	const validBody: ChannelInfo = {
 		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		latestLink: '',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		topics: [{ source: 'test', type: 'test-type' }],
-		encrypted: true
+		topics: [{ source: 'test', type: 'test-type' }]
 	};
 
 	beforeEach(() => {
@@ -394,7 +390,8 @@ describe('test DELETE channelInfo', () => {
 
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
 		};
 	});
 
@@ -406,7 +403,8 @@ describe('test DELETE channelInfo', () => {
 		};
 		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(sendStatusMock).toHaveBeenCalledWith(400);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
 	});
 
 	it('should not be able to parse the channel since it is no valid channel', async () => {
@@ -424,7 +422,7 @@ describe('test DELETE channelInfo', () => {
 
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(deleteChannelInfoSpy).toHaveBeenCalledTimes(0);
-		expect(loggerSpy).toHaveBeenCalledWith(new Error('Error when parsing the channelInfo, no channelAddress and/or author was found!'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('channel does not exist!'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
 

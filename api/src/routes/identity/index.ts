@@ -9,11 +9,13 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '../../models/types/identity';
 import { UserSchemaBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
+import { VerificationService } from '../../services/verification-service';
 
 export class IdentityRoutes {
 	constructor(
 		private readonly userService: UserService,
 		private readonly authorizationService: AuthorizationService,
+		private readonly verificationService: VerificationService,
 		private readonly logger: ILogger
 	) {}
 
@@ -40,16 +42,16 @@ export class IdentityRoutes {
 		}
 	};
 
-	getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	getUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const identityId = _.get(req, 'params.identityId');
 
 			if (_.isEmpty(identityId)) {
-				res.sendStatus(StatusCodes.BAD_REQUEST);
-				return;
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
 
-			const user = await this.userService.getUser(identityId);
+			const { isAuthorized } = this.authorizationService.isAuthorized(req.user, identityId);
+			const user = await this.userService.getUser(identityId, isAuthorized);
 			res.send(user);
 		} catch (error) {
 			this.logger.error(error);
@@ -57,14 +59,13 @@ export class IdentityRoutes {
 		}
 	};
 
-	addUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	addUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const user = req.body as UserSchemaBody;
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {
-				res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add user!' });
-				return;
+				return res.status(StatusCodes.NOT_FOUND).send({ error: 'could not add user!' });
 			}
 
 			res.sendStatus(StatusCodes.CREATED);
@@ -74,7 +75,7 @@ export class IdentityRoutes {
 		}
 	};
 
-	updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	updateUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const user = req.body;
 
@@ -86,8 +87,7 @@ export class IdentityRoutes {
 			const result = await this.userService.updateUser(user);
 
 			if (!result?.result?.n) {
-				res.status(StatusCodes.NOT_FOUND).send({ error: 'No user found to update!' });
-				return;
+				return res.status(StatusCodes.NOT_FOUND).send({ error: 'No user found to update!' });
 			}
 
 			res.sendStatus(StatusCodes.OK);
@@ -97,17 +97,22 @@ export class IdentityRoutes {
 		}
 	};
 
-	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const identityId = _.get(req, 'params.identityId');
+			const revokeCredentials: boolean = <string>req?.query?.['revoke-credentials'] === 'true';
+
 			if (_.isEmpty(identityId)) {
-				res.sendStatus(StatusCodes.BAD_REQUEST);
-				return;
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
 
 			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, identityId);
 			if (!isAuthorized) {
 				throw error;
+			}
+
+			if (revokeCredentials) {
+				await this.verificationService.revokeVerifiableCredentials(identityId);
 			}
 
 			await this.userService.deleteUser(identityId);

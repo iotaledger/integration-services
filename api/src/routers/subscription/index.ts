@@ -1,25 +1,14 @@
 import { Router } from 'express';
-import { CONFIG } from '../../config';
-import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
-import { SubscriptionPool } from '../../pools/subscription-pools';
+import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/subscription-bodies';
 import { SubscriptionRoutes } from '../../routes/subscription';
-import { StreamsService } from '../../services/streams-service';
-import { SubscriptionService } from '../../services/subscription-service';
 import { Logger } from '../../utils/logger';
-import { channelInfoService } from '../channel-info';
-import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
+import { subscriptionService } from '../services';
 
-const config = CONFIG.streamsConfig;
-
-export const streamsService = new StreamsService(config, Logger.getInstance());
-export const subscriptionPool = new SubscriptionPool(streamsService);
-subscriptionPool.startInterval();
-export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
 const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
-
 
 /**
  * @openapi
@@ -44,7 +33,7 @@ export const subscriptionRouter = Router();
  *       required: false
  *       schema:
  *         type: boolean
- *       example: true   
+ *       example: true
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -69,9 +58,9 @@ export const subscriptionRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
- subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
+subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptions);
 
- /**
+/**
  * @openapi
  * /subscriptions/{channelAddress}/{identityId}:
  *   get:
@@ -120,8 +109,7 @@ export const subscriptionRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
- subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
-
+subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
 
 /**
  * @openapi

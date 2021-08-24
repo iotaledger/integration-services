@@ -42,6 +42,8 @@ The list of provided APIs is shown in figure below. Endpoints which are currentl
  
 ![ecommerce-audit-trail-bridge](./assets/diagrams/ecommerce-audit-trail-bridge.jpeg)
 
+> ### An interactive swagger documentation of the API can be found [here](https://ensuresec.solutions.iota.org/docs/).
+> 
 The Audit Trail GW implementation provides the following services:
 
 __Channel Service__
@@ -57,7 +59,6 @@ __Subscription Service__
 The service allows to manage subscriptions to a specific channel. Identities can subscribe to a specific channel identified by a unique channel address. The author of the channel can then decide whether to authorize the identity to read or write from/to the channel. Authorized subscribers can also be revoked access to the channel afterwards. In addition this service can be used to list all authorized subscriptions to a channel.
 
 
-> __An interactive swagger documentation of the deployed api can be found [here](https://ensuresec.solutions.iota.org/docs/).__
 
 <!-- update figure name if we decide to call it GW--> 
 <!-- delete information from a channel/not to a channel-->
@@ -72,85 +73,21 @@ __Prefix:__ `/api/v1/channels`
 
 Create a new channel. An author can create a new channel with specific topics where other clients can subscribe to.
 
-_Body:_
-
-```
-{
-	topics: {
-        type: string,
-        source: string
-    }[],
-	encrypted: boolean,
-	seed?: string
-}
-```
-
-_Response:_
-```
-{
-    "seed": string,
-    "channelAddress": string
-}
-```
-
-
 `GET /logs/{channel-address}`
 
 Get data from the channel by using the _channel-address_. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. __Read__ permission is mandatory.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-[
-    {
-        "link": string,
-        "channelLog": {
-            "type": string,
-            "payload": any,
-            "metadata"?: any
-        }
-    }
-]
-```
 
 `POST /logs/{channel-address}`
 
 Write data to a channel by using the _channel-address_. __Write__ permission is mandatory. The `type` and `metadata` fields are not encrypted to have a possibility to search for events. The `payload` is stored encrypted for encrypted channels. 
 
-_Body:_
-
-```
-{
-    "type": string,
-    "payload": any,
-    "metadata"?: any
-}
-```
-
-_Response:_
-```
-{
-    "link": string
-}
-```
-
-
 `GET /history/{channel-address}`
 
-__TBD!__ _Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory._
-
-
-### Channel Info Service 
-__Prefix:__ `/api/v1/channel-info`
+Get all data of a channel using a preshared-key. Mainly used by auditors to evaluate a log stream.
 
 `POST /validate`
 
-__TBD!__ _Validates data of a channel. Verifies data of the database against data on the IOTA Tangle. If the data is verified the status field will be set to verified. Other data states are: synchronizing, outdated, malicious. If the client does not want to verify the data and trusts the status of the server it can tell the API that it only wants to receive the status._
+__TBD!__ _Validates data of a channel. Verifies payload against data on the IOTA Tangle._
 
 >__Note:__ To increase speed of retrieving data from a channel, data are replicated in a local database, this prevents from fetching them directly from the ledger. However _validate_ allows to verify that a local database has the same copy of data.
 
@@ -160,107 +97,29 @@ __TBD!__ _Validates data of a channel. Verifies data of the database against dat
 
 __TBD!__ _Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data._
 
+
+### Channel Info Service 
+__Prefix:__ `/api/v1/channel-info`
+
 `GET /channel/{channel-address}`
 
 Get information about a channel by using the _channel-address_.
-
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
-{
-    "created": string,
-    "authorId": string,
-    "subscriberIds": string[],
-    "topics": {
-        type: string,
-        source: string
-    }[],
-    "encrypted": boolean,
-    "latestLink": string,
-    "channelAddress": string
-}
-```
 
 `POST /channel`
 
 Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
 
-<!-- isn't the channel also created on the Tangle?-->
-<!-- in this case the channel already exists for instance was generated locally and just wants to be added to the bridge so others are able to find it -->
-_Body:_
-
-```
-{
-    "created": string,
-    "authorId": string,
-    "subscriberIds": string[],
-    "topics": {
-        type: string,
-        source: string
-    }[],
-    "encrypted": boolean,
-    "latestLink": string,
-    "channelAddress": string
-}
-```
-
-_Response:_
-```
--
-```
-
-
 `PUT /channel`
 
 Update channel information. The author of a channel can update topics of a channel.
-
-_Body:_
-
-```
-{
-    "created": string,
-    "authorId": string,
-    "subscriberIds": string[],
-    "topics": {
-        type: string,
-        source: string
-    }[],
-    "encrypted": boolean,
-    "latestLink": string,
-    "channelAddress": string
-}
-```
-
-_Response:_
-```
--
-```
-
 
 `DELETE /channel/{channel-address}`
 
 Delete information of a channel by using the _channel-address_. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
 
-_Body:_
-
-```
--
-```
-
-_Response:_
-```
--
-```
-
 `GET /search`
 
 Search for a channel. A client can search for a channel which it is interested in.
-
 
 ### Subscription Service 
 __Prefix:__ `/api/v1/subscription`
@@ -273,43 +132,9 @@ __TBD!__ _Get all subscriptions of a channel._
 
 Request subscription to a channel by using the _channel-address_. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
 
-<!-- we need to explain what the seed is used for-->
-<!-- seed will hopefully soon be replaced by a public key of an identity. so wouldnt go into detail-->
-_Body:_
-
-```
-{
-    "accessRights": "ReadAndWrite" | "Read" | "Write",
-    "seed"?: string
-}
-```
-
-_Response:_
-```
-{
-    "seed": string,
-    "subscriptionLink": string,
-}
-```
-
 `POST /authorize/{channel-address}`
 
 Authorize a subscription to a channel by using the _channel-address_. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
-
-_Body:_
-
-```
-{
-    "identityId": string
-}
-```
-
-_Response:_
-```
-{
-    "keyloadLink": string,
-}
-```
 
 `POST /remove/{channel-address}`
 

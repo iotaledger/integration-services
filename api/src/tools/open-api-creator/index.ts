@@ -2,8 +2,6 @@ import { ProveOwnershipPostBodySchema, NonceSchema } from '../../models/schemas/
 import {
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
-	AuthorizeSubscriptionBodySchema,
-	RequestSubscriptionBodySchema,
 	CreateChannelBodyResponseSchema,
 	ChannelDataSchema
 } from '../../models/schemas/request-response-body/channel-bodies';
@@ -17,7 +15,7 @@ import {
 } from '../../models/schemas/request-response-body/verification-bodies';
 import { ChannelInfoSchema, ChannelInfoSearchSchema, TopicSchema, ChannelAddressSchema } from '../../models/schemas/channel-info';
 import {
-	VcSubjectSchema,
+	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
 	DocumentJsonUpdateSchema,
@@ -26,7 +24,7 @@ import {
 	IdentityKeyPairJsonSchema,
 	LatestIdentityJsonSchema
 } from '../../models/schemas/identity';
-import { CreateUserBodySchema, CreateIdentityBodySchema, UpdateUserBodySchema } from '../../models/schemas/request-response-body/user-bodies';
+import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
 import {
 	AggregateOfferSchema,
 	AggregateRatingSchema,
@@ -43,10 +41,12 @@ import {
 	ThingSchema
 } from '../../models/schemas/user-types-helper';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
-import { UserSchema, LocationSchema, UserWithoutIdFields } from '../../models/schemas/user';
+import { IdentitySchema, IdentityWithoutIdFields } from '../../models/schemas/user';
 import {
 	AuthorizeSubscriptionBodyResponseSchema,
-	RequestSubscriptionBodyResponseSchema
+	AuthorizeSubscriptionBodySchema,
+	RequestSubscriptionBodyResponseSchema,
+	RequestSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
 
@@ -77,7 +77,7 @@ const schemas = {
 	SubjectBodySchema,
 	ChannelInfoSchema,
 	TopicSchema,
-	VcSubjectSchema,
+	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
 	IdentityJsonUpdateSchema,
@@ -85,9 +85,8 @@ const schemas = {
 	IdentityDocumentJsonSchema,
 	LatestIdentityJsonSchema,
 	DocumentJsonUpdateSchema,
-	CreateUserBodySchema,
 	CreateIdentityBodySchema,
-	UpdateUserBodySchema,
+	UpdateIdentityBodySchema,
 	AggregateOfferSchema,
 	AggregateRatingSchema,
 	BrandSchema,
@@ -106,9 +105,8 @@ const schemas = {
 	PersonSchema,
 	ProductSchema,
 	ServiceSchema,
-	UserSchema,
-	LocationSchema,
-	UserWithoutIdFields,
+	IdentitySchema,
+	IdentityWithoutIdFields,
 	ErrorResponseSchema,
 	IdentityIdSchema,
 	NonceSchema,

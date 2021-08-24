@@ -1,7 +1,16 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { Static } from '@sinclair/typebox';
-import { VerifiableCredentialSchema, VcSubjectSchema, IdentityDocumentJsonSchema, IdentityKeyPairJsonSchema, DocumentJsonUpdateSchema, IdentityJsonSchema, IdentityJsonUpdateSchema, LatestIdentityJsonSchema } from '../schemas/identity';
-import { CreateIdentityBodySchema } from '../schemas/request-response-body/user-bodies';
+import {
+	VerifiableCredentialSchema,
+	VerifiableCredentialSubjectSchema,
+	IdentityDocumentJsonSchema,
+	IdentityKeyPairJsonSchema,
+	DocumentJsonUpdateSchema,
+	IdentityJsonSchema,
+	IdentityJsonUpdateSchema,
+	LatestIdentityJsonSchema
+} from '../schemas/identity';
+import { CreateIdentityBodySchema } from '../schemas/request-response-body/identity-bodies';
 
 export interface Credential<T> {
 	id: string;
@@ -14,11 +23,10 @@ export interface IdentityDocument extends Identity.Document {
 	key: Identity.KeyPair;
 }
 
-export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>
+export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>;
 
 export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
-export type CredentialSubject = Static<typeof VcSubjectSchema>;
-
+export type CredentialSubject = Static<typeof VerifiableCredentialSubjectSchema>;
 
 export type IdentityDocumentJson = Static<typeof IdentityDocumentJsonSchema>;
 export type LatestIdentityJson = Static<typeof LatestIdentityJsonSchema>;

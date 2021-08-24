@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { CONFIG } from '../../config';
-import { KEY_COLLECTION_SIZE } from '../../config/identity';
 import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
@@ -8,22 +7,10 @@ import {
 	VerifyIdentityBodySchema
 } from '../../models/schemas/request-response-body/verification-bodies';
 import { VerificationRoutes } from '../../routes/verification';
-import { VerificationService } from '../../services/verification-service';
 import { Logger } from '../../utils/logger';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, ssiService, validate } from '../helper';
-import { userService } from '../identity';
+import { authorizationService, verificationService } from '../services';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
-const { serverSecret, serverIdentityId } = CONFIG;
-const verificationService = new VerificationService(
-	ssiService,
-	userService,
-	{
-		serverIdentityId,
-		serverSecret,
-		keyCollectionSize: KEY_COLLECTION_SIZE
-	},
-	Logger.getInstance()
-);
 const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, CONFIG, Logger.getInstance());
 const {
 	createVerifiableCredential,
@@ -60,19 +47,19 @@ export const verificationRouter = Router();
  *         description: Latest Identity document (DID)
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: "#/components/schemas/LatestIdentityJsonSchema"
  *       401:
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
@@ -88,9 +75,9 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/TrustedRootBodySchema"
  *           example:
  *             trustedRoot: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
@@ -101,13 +88,13 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *         description: No valid api key provided / Not authenticated / Not authorized
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), addTrustedRootIdentity);
@@ -125,7 +112,7 @@ verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, vali
  *         description: List of Trusted Root identity identifiers (DIDs).
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
  *                 trustedRoots:
@@ -136,13 +123,13 @@ verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, vali
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema' 
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentities);
@@ -158,9 +145,9 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/TrustedRootBodySchema"
  *           example:
  *             trustedRoot: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
@@ -171,13 +158,13 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *         description: No valid api key provided / Not authenticated / Not authorized
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), removeTrustedRootIdentity);
@@ -193,9 +180,9 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/VerifyIdentityBodySchema"
  *           example:
  *             subject:
@@ -224,19 +211,19 @@ verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, va
  *         description: The created credential.
  *         content:
  *           application/json:
- *             schema: 
+ *             schema:
  *               $ref: "#/components/schemas/VerifiableCredentialSchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post(
@@ -256,9 +243,9 @@ verificationRouter.post(
  *     tags:
  *     - verification
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/VerifiableCredentialSchema"
  *           example:
  *             '@context': https://www.w3.org/2018/credentials/v1
@@ -281,22 +268,22 @@ verificationRouter.post(
  *         description: The registered entity.
  *         content:
  *           application/json:
- *             schema: 
+ *             schema:
  *               type: object
  *               properties:
  *                 isVerified:
- *                   type: boolean 
+ *                   type: boolean
  *       401:
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialBodySchema }), checkVerifiableCredential);
@@ -312,11 +299,11 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/RevokeVerificationBodySchema"
- *           example: 
+ *           example:
  *             signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
  *     responses:
  *       200:
@@ -325,13 +312,13 @@ verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: 
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 verificationRouter.post(

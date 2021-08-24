@@ -1,4 +1,3 @@
-
 import { Author, Subscriber } from '../../streams-lib/wasm-node/iota_streams_wasm';
 import * as SubscriptionDb from '../../database/subscription';
 import { SubscriptionType } from '../../models/schemas/subscription';
@@ -11,9 +10,15 @@ export class SubscriptionPool {
 	authors: { identityId: string; channelAddress: string; author: Author; created: Date }[];
 	subscribers: { identityId: string; channelAddress: string; subscriber: Subscriber; created: Date }[];
 
-	constructor(private readonly streamsService: StreamsService, private readonly maxPoolSize = 65000) {
+	constructor(private readonly streamsService: StreamsService, subscriptionExpiration: number, private readonly maxPoolSize = 65000) {
 		this.authors = [];
 		this.subscribers = [];
+		// subscriptions should not live longer than one day
+		if (subscriptionExpiration > 86400) {
+			this.secondsToLive = 86400;
+		} else {
+			this.secondsToLive = subscriptionExpiration;
+		}
 	}
 
 	startInterval() {
@@ -45,16 +50,6 @@ export class SubscriptionPool {
 		this.subscribers = this.subscribers.filter((subscriber) => subscriber.created > subSeconds(new Date(Date.now()), this.secondsToLive));
 	}
 
-	async restoreSubscription(channelAddress: string, identityId: string) {
-		const sub = await SubscriptionDb.getSubscription(channelAddress, identityId);
-		if (!sub?.state) {
-			throw new Error(`no subscription found for channelAddress: ${channelAddress} and identityId: ${identityId}`);
-		}
-
-		const isAuthor = sub.type === SubscriptionType.Author;
-		return this.streamsService.importSubscription(sub.state, isAuthor);
-	}
-
 	async get(channelAddress: string, identityId: string, isAuthor: boolean): Promise<Author | Subscriber> {
 		const predicate = (pool: any) => pool.identityId === identityId && pool.channelAddress === channelAddress;
 		let subscription = null;
@@ -78,5 +73,15 @@ export class SubscriptionPool {
 			this.add(channelAddress, subscription, identityId, isAuthor);
 		}
 		return subscription;
+	}
+
+	private async restoreSubscription(channelAddress: string, identityId: string) {
+		const sub = await SubscriptionDb.getSubscription(channelAddress, identityId);
+		if (!sub?.state) {
+			throw new Error(`no subscription found for channelAddress: ${channelAddress} and identityId: ${identityId}`);
+		}
+
+		const isAuthor = sub.type === SubscriptionType.Author;
+		return this.streamsService.importSubscription(sub.state, isAuthor);
 	}
 }

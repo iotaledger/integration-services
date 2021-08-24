@@ -7,12 +7,12 @@ import { SsiService } from '../services/ssi-service';
 import { VerificationService } from '../services/verification-service';
 import { addTrustedRootId } from '../database/trusted-roots';
 import { createNonce, getHexEncodedKey, signNonce, verifySignedNonce } from '../utils/encryption';
-import { IdentityClaim, UserType } from '../models/types/user';
 import { CreateIdentityBody } from '../models/types/identity';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { CredentialTypes, Subject } from '../models/types/verification';
 import { Logger } from '../utils/logger';
+import * as serverIdentityJson from '../config/server-identity.json';
 
 const logger = Logger.getInstance();
 const dbUrl = CONFIG.databaseUrl;
@@ -47,16 +47,8 @@ export async function setupApi() {
 
 	if (!serverIdentityId || !serverIdentity) {
 		logger.log('Create identity...');
-		// TODO#94 make it dynamic
-		const serverData: CreateIdentityBody = {
-			storeIdentity: true,
-			username: 'root-identity',
-			claim: {
-				type: UserType.Service,
-				name: 'Identity Service'
-			} as IdentityClaim
-		};
 
+		const serverData: CreateIdentityBody = serverIdentityJson;
 		const identity = await userService.createIdentity(serverData);
 
 		logger.log('==================================================================================================');

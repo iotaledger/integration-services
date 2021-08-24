@@ -1,34 +1,14 @@
 import { Router } from 'express';
-import { CONFIG } from '../../config';
 import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
-import { ChannelService } from '../../services/channel-service';
 import { Logger } from '../../utils/logger';
-import { channelInfoService } from '../channel-info';
-import { apiKeyMiddleware, authMiddleWare, validate } from '../helper';
-import { streamsService, subscriptionPool, subscriptionService } from '../subscription';
+import { channelService } from '../services';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
-const config = CONFIG.streamsConfig;
-export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs } = channelRoutes;
+const { addLogs, createChannel, getLogs, getHistory } = channelRoutes;
 
 export const channelRouter = Router();
-
-/**
- * @openapi
- * /channels/history/{channelAddress}:
- *   get:
- *     summary: TBD!
- *     description: Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory.
- *     tags:
- *     - channels
- *     parameters:
- *     - name: channelAddress
- *       in: path
- *       required: true
- *     deprecated: true
- */
 
 /**
  * @openapi
@@ -41,19 +21,19 @@ export const channelRouter = Router();
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/CreateChannelBodySchema"
  *           example:
- *             topics: 
+ *             topics:
  *             - type: example-channel-data
  *               source: channel-creator
  *             encrypted: false
  *     responses:
  *       201:
  *         description: Returns the created channel
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/CreateChannelBodyResponseSchema"
@@ -61,20 +41,20 @@ export const channelRouter = Router();
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string    
+ *                 error:
+ *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string             
+ *                 error:
+ *                   type: string
  */
 channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
 
@@ -95,48 +75,45 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  *       examples:
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address     
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/AddChannelLogBodySchema"
- *           example: 
+ *           example:
  *             type: example-channel-data
- *             creationDate: 2021-07-23T05:25:42.325Z
+ *             created: 2021-07-23T05:25:42.325Z
  *             metadata: example-meta-data
- *             payload: 
+ *             payload:
  *               example: 1
  *     responses:
  *       200:
  *         description: Returns a link to the written data
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 link:
- *                   type: string
+ *               $ref: "#/components/schemas/ChannelDataSchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string    
+ *                 error:
+ *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string             
+ *                 error:
+ *                   type: string
  */
 channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: AddChannelLogBodySchema }), addLogs);
 
@@ -157,13 +134,13 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *       examples:
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address  
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Returns data from the channel
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               type: array
@@ -173,13 +150,50 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'  
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'          
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, getLogs);
+
+/**
+ * @openapi
+ * /channels/history/{channelAddress}:
+ *   get:
+ *     summary: Get history of a channel.
+ *     description: Get all data of a channel using a preshared key. Mainly used by auditors to validate a log stream.
+ *     tags:
+ *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ */
+channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
+
+/**
+ * @openapi
+ * /channel-info/validate:
+ *   post:
+ *     summary: TBD!
+ *     description: Validates data of a channel.
+ *     tags:
+ *     - channels
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
+ * /channel-info/re-import:
+ *   post:
+ *     summary: TBD!
+ *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
+ *     tags:
+ *     - channels
+ *     deprecated: true
+ */

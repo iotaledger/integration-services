@@ -12,12 +12,24 @@ import { ILogger } from '../utils/logger';
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
 
-	searchUsers = async (userSearch: UserSearch): Promise<User[]> => {
+	async searchUsers(userSearch: UserSearch): Promise<User[]> {
 		const usersPersistence = await userDb.searchUsers(userSearch);
-		return usersPersistence.map((user) => this.getUserObject(user));
-	};
+		return usersPersistence
+			.map((user) => {
+				const userObj = this.getUserObject(user);
+				if (!userObj) {
+					return null;
+				}
+				return {
+					...userObj,
+					verifiableCredentials: undefined,
+					claim: !userObj.isPrivate ? userObj.claim : undefined
+				};
+			})
+			.filter((u) => u);
+	}
 
-	createIdentity = async (createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> => {
+	async createIdentity(createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> {
 		const identity = await this.ssiService.createIdentity();
 		const user: User = {
 			...createIdentityBody,
@@ -34,27 +46,31 @@ export class UserService {
 		return {
 			...identity
 		};
-	};
+	}
 
-	getUser = async (identityId: string): Promise<User | null> => {
+	async getUser(identityId: string, isAuthorizedUser?: boolean): Promise<User | null> {
 		const userPersistence = await userDb.getUser(identityId);
-		return userPersistence && this.getUserObject(userPersistence);
-	};
+		const user = userPersistence && this.getUserObject(userPersistence);
+		const privateUserInfo: boolean = user?.isPrivate && !isAuthorizedUser;
 
-	getUsersByIds = async (identityIds: string[]): Promise<User[] | null> => {
-		const usersPersistence = await userDb.getUsersByIds(identityIds);
-		if (!usersPersistence) {
+		if (!user) {
 			return null;
 		}
-		return usersPersistence.map((userP: UserPersistence) => this.getUserObject(userP));
-	};
 
-	getUserByUsername = async (username: string): Promise<User> => {
+		return {
+			...user,
+			claim: !privateUserInfo ? user.claim : undefined,
+			verifiableCredentials: !privateUserInfo ? user.verifiableCredentials : undefined
+		};
+	}
+
+	async getIdentityId(username: string): Promise<string> {
 		const userPersistence = await userDb.getUserByUsername(username);
-		return this.getUserObject(userPersistence);
-	};
+		const user = this.getUserObject(userPersistence);
+		return user?.identityId;
+	}
 
-	addUser = async (user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+	async addUser(user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
 		}
@@ -73,34 +89,34 @@ export class UserService {
 			throw new Error('could not create user identity!');
 		}
 		return res;
-	};
+	}
 
-	updateUser = async (user: User): Promise<UpdateWriteOpResult> => {
+	async updateUser(user: User): Promise<UpdateWriteOpResult> {
 		const userPersistence = this.getUserPersistence(user);
 		return userDb.updateUser(userPersistence);
-	};
+	}
 
-	addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
+	async addUserVC(vc: VerifiableCredentialJson): Promise<void> {
 		await userDb.addUserVC(vc);
-	};
+	}
 
-	removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPersistence> => {
+	async removeUserVC(vc: VerifiableCredentialJson): Promise<UserPersistence> {
 		return userDb.removeUserVC(vc);
-	};
+	}
 
-	deleteUser = async (identityId: string): Promise<DeleteWriteOpResultObject> => {
+	async deleteUser(identityId: string): Promise<DeleteWriteOpResultObject> {
 		return userDb.deleteUser(identityId);
-	};
+	}
 
-	private hasValidFields = (user: User): boolean => {
+	private hasValidFields(user: User): boolean {
 		return !(!user.publicKey && !user.identityId);
-	};
+	}
 
-	private getUserPersistence = (user: User): UserPersistence | null => {
+	private getUserPersistence(user: User): UserPersistence | null {
 		if (user == null || isEmpty(user.identityId)) {
 			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
-		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role } = user;
+		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role, isPrivate } = user;
 
 		const userPersistence: UserPersistence = {
 			identityId,
@@ -109,19 +125,19 @@ export class UserService {
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			claim,
 			verifiableCredentials,
-			role: role && (role as UserRoles)
+			role: role && (role as UserRoles),
+			isPrivate
 		};
 
 		return userPersistence;
-	};
+	}
 
-	private getUserObject = (userPersistence: UserPersistence): User | null => {
+	private getUserObject(userPersistence: UserPersistence): User | null {
 		if (userPersistence == null || isEmpty(userPersistence.identityId)) {
-			console.error('Error when parsing the body, no identity id found on persistence');
 			return null;
 		}
 
-		const { username, publicKey, identityId, registrationDate, claim, verifiableCredentials, role } = userPersistence;
+		const { username, publicKey, identityId, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
 
 		const user: User = {
 			identityId,
@@ -130,8 +146,9 @@ export class UserService {
 			registrationDate: getDateStringFromDate(registrationDate),
 			claim,
 			verifiableCredentials,
-			role: role && (role as UserRoles)
+			role: role && (role as UserRoles),
+			isPrivate
 		};
 		return user;
-	};
+	}
 }

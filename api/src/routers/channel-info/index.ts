@@ -1,38 +1,14 @@
 import { Router } from 'express';
 import { ChannelInfoSchema } from '../../models/schemas/channel-info';
 import { ChannelInfoRoutes } from '../../routes/channel-info';
-import { ChannelInfoService } from '../../services/channel-info-service';
 import { Logger } from '../../utils/logger';
-import { apiKeyMiddleware, authMiddleWare, authorizationService, validate } from '../helper';
-import { userService } from '../identity';
+import { authorizationService, channelInfoService } from '../services';
+import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
-export const channelInfoService = new ChannelInfoService(userService);
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, Logger.getInstance());
 const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } = channelInfoRoutes;
 
 export const channelInfoRouter = Router();
-
-/**
- * @openapi
- * /channel-info/validate:
- *   post:
- *     summary: TBD!
- *     description: Validates data of a channel.
- *     tags:
- *     - channel-info
- *     deprecated: true
- */
-
-/**
- * @openapi
- * /channel-info/re-import:
- *   post:
- *     summary: TBD!
- *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
- *     tags:
- *     - channel-info
- *     deprecated: true
- */
 
 /**
  * @openapi
@@ -46,7 +22,7 @@ export const channelInfoRouter = Router();
  *     - name: query
  *       in: query
  *       required: false
- *       schema: 
+ *       schema:
  *         type: object
  *         properties:
  *           author:
@@ -77,7 +53,7 @@ export const channelInfoRouter = Router();
  *     responses:
  *       200:
  *         description: Returns information about searched channels
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               type: array
@@ -87,20 +63,20 @@ export const channelInfoRouter = Router();
  *         description: No valid api key provided / Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string    
+ *                 error:
+ *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string             
+ *                 error:
+ *                   type: string
  */
 channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannelInfo);
 
@@ -121,11 +97,11 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  *       examples:
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address  
+ *           summary: Example channel address
  *     responses:
  *       200:
  *         description: Returns information about the channel
- *         content: 
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ChannelInfoSchema"
@@ -133,20 +109,20 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  *         description: No valid api key provided
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string    
+ *                 error:
+ *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string             
+ *                 error:
+ *                   type: string
  */
 channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
 
@@ -161,9 +137,9 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/ChannelInfoSchema"
  *           example:
  *             channelAddress: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e
@@ -177,7 +153,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *             - type: example-channel-data
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
- *             latestMessage: 2021-07-23T13:45:30.680Z           
+ *             latestMessage: 2021-07-23T13:45:30.680Z
  *     responses:
  *       201:
  *         description: Channel successfully added
@@ -185,28 +161,28 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *         description: No valid api key provided/ Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string 
+ *                 error:
+ *                   type: string
  *       404:
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string       
+ *                 error:
+ *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string             
+ *                 error:
+ *                   type: string
  */
 channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
 
@@ -221,9 +197,9 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/ChannelInfoSchema"
  *           example:
  *             channelAddress: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:24268d0b046f16be9c169c3e
@@ -237,7 +213,7 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *             - type: example-channel-data
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
- *             latestMessage: 2021-07-23T13:45:30.680Z  
+ *             latestMessage: 2021-07-23T13:45:30.680Z
  *     responses:
  *       200:
  *         description: Channel successfully added
@@ -245,28 +221,28 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *         description: No valid api key provided/ Not authenticated
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string 
+ *                 error:
+ *                   type: string
  *       404:
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string       
+ *                 error:
+ *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
+ *             schema:
  *               type: object
  *               properties:
- *                 error:  
- *                   type: string             
+ *                 error:
+ *                   type: string
  */
 channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
 
@@ -287,7 +263,7 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
  *       examples:
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address  
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -297,13 +273,13 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
  *         description: No valid api key provided/ Not authenticated
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema' 
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  *       5XX:
  *         description: Unexpected error
  *         content:
  *           application/json:
- *             schema:         
- *               $ref: '#/components/schemas/ErrorResponseSchema'         
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 channelInfoRouter.delete('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, deleteChannelInfo);

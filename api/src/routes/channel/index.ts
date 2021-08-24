@@ -1,8 +1,8 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
-import { get as lodashGet } from 'lodash';
+import { get as lodashGet, isEmpty } from 'lodash';
 import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
@@ -11,14 +11,14 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { topics, seed, encrypted } = req.body as CreateChannelBody;
+			const { topics, seed, hasPresharedKey, presharedKey, subscriptionPassword } = req.body as CreateChannelBody;
 			const { identityId } = req.user;
 
 			if (!identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
 			}
 
-			const channel = await this.channelService.create(identityId, topics, encrypted, seed);
+			const channel = await this.channelService.create({ identityId, topics, hasPresharedKey, seed, presharedKey, subscriptionPassword });
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);
@@ -32,14 +32,15 @@ export class ChannelRoutes {
 			const { identityId } = req.user;
 
 			if (!channelAddress || !identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
 
 			const limitParam = parseInt(<string>req.query.limit, 10);
 			const indexParam = parseInt(<string>req.query.index, 10);
 			const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 			const index = isNaN(indexParam) ? undefined : indexParam;
-			const options = limit !== undefined && index !== undefined && { limit, index };
+			const ascending: boolean = <string>req.query.asc === 'true';
+			const options = limit !== undefined && index !== undefined ? { limit, index, ascending } : { ascending };
 
 			const channel = await this.channelService.getLogs(channelAddress, identityId, options);
 			return res.status(StatusCodes.OK).send(channel);
@@ -49,6 +50,26 @@ export class ChannelRoutes {
 		}
 	};
 
+	getHistory = async (req: Request, res: Response, next: NextFunction): Promise<Response<any>> => {
+		try {
+			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const presharedKey = <string>req.query?.['preshared-key'];
+
+			if (!channelAddress) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
+			}
+
+			if (!presharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no preshared-key provided' });
+			}
+
+			const history = await this.channelService.getHistory(channelAddress, presharedKey);
+			return res.status(StatusCodes.OK).send(history);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not get the history'));
+		}
+	};
 	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
@@ -56,7 +77,11 @@ export class ChannelRoutes {
 			const body = req.body as AddChannelLogBody;
 
 			if (!channelAddress || !identityId) {
-				return res.sendStatus(StatusCodes.BAD_REQUEST);
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			if (isEmpty(body)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
 			}
 
 			const channel = await this.channelService.addLogs(channelAddress, identityId, body);
