@@ -18,7 +18,11 @@ const errFunc = async (error: any) => {
 		originalRequest.headers['Authorization'] = token;
 		return axios(originalRequest);
 	} else {
-		console.log(`ERROR:`, error.response.data);
+		if (error.response?.data) {
+			console.log('Error:', error.response.data);
+		} else {
+			console.log('Error:', error)
+		}
 	}
 };
 

@@ -1,5 +1,5 @@
 export interface Config {
-	baseUrl: string,
+	baseUrl: string;
 	csp1Url: string;
 	apiKey: string;
 }

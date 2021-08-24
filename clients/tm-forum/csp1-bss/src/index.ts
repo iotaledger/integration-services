@@ -37,10 +37,10 @@ const startServer = async () => {
 		console.log(`API running on port ${port}`);
 		// eslint-disable-next-line no-constant-condition
 		// while (true) {
-		const newViolations = await poolChannel();
-		newViolations.forEach(async (newViolation: any) => {
-			await forwardSlaViolation(newViolation);
-		});
+			const newViolations = await poolChannel();
+			for (const newViolation of newViolations) {
+				await forwardSlaViolation(newViolation);
+			}
 		// }
 	});
 };

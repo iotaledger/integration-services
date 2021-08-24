@@ -17,26 +17,8 @@ export const writeChannel = async (payload: any, type: string) => {
 		}
 		return response;
 	} catch (error) {
-		console.log(error.data);
+		console.log(error);
 	}
 };
 
-export const requestSubscription = async () => {
-	try {
-		const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
-		const channelAddress = getChannelAddress();
-		const body = {
-			accessRights: 'ReadAndWrite'
-		};
-		console.log('Requesting subscription...');
-		const res = await csp2Client.post(`${CONFIG.baseUrl}/subscriptions/request/${channelAddress}${apiKey}`, JSON.stringify(body));
-		if (res?.status === 201) {
-			console.log('Successfully requested subscription, authorize subscription to write violations to the channe!');
-			console.log('###########################');
-			console.log(`Subscription link: ${res.data.subscriptionLink}`);
-			process.exit();
-		}
-	} catch (error) {
-		console.log(error.response.data);
-	}
-};
+
