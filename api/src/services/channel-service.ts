@@ -198,23 +198,15 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
 				const newSub = await this.streamsService.resetState(channelAddress, seed, isAuthor);
+				const newPublicKey = newSub.clone().get_public_key();
 
-				// TODO check if it is the same public key!!
+				if (newPublicKey !== subscription.publicKey) {
+					throw new Error('wrong seed inserted');
+				}
 
+				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
 				await this.fetchLogs(channelAddress, identityId, newSub);
-
-				// const messages = await this.streamsService.getMessages(newSub);
-				// const channelData = ChannelLogTransformer.transformStreamsMessages(messages);
-				// await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
-				// update subscription state using
-				// await this.subscriptionService.updateSubscriptionState(
-				// 	channelAddress,
-				// 	identityId,
-				// 	this.streamsService.exportSubscription(sub, this.password)
-				// );
-				return;
 			} finally {
 				release();
 			}

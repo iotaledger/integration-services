@@ -23,13 +23,14 @@ export const getChannelData = async (
 };
 
 export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[]): Promise<void> => {
+	const imported = getDateStringFromDate(new Date());
 	const documents = channelData.map((data) => {
 		return {
+			...data,
 			_id: getIndex(data.link, identityId),
 			channelAddress,
 			identityId,
-			imported: getDateStringFromDate(new Date()),
-			...data
+			imported
 		};
 	});
 
