@@ -127,6 +127,9 @@ describe('test authorize subscription route', () => {
 			seed: '',
 			state: ''
 		};
+		const isAuthor = false;
+		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
+
 		const sub = { ...subscriptionMock, isAuthorized: false };
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(sub, notanauthor);
 		const req: any = {
@@ -151,6 +154,8 @@ describe('test authorize subscription route', () => {
 			seed: '',
 			state: ''
 		};
+		const isAuthor = true;
+		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
 		const loggerSpy = spyOn(LoggerMock, 'error');
 		const getAuthorSpy = spyOn(subscriptionPool, 'get').and.returnValue(null); // no author found
@@ -179,6 +184,8 @@ describe('test authorize subscription route', () => {
 			state: '',
 			presharedKey
 		};
+		const isAuthor = true;
+		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
 		const loggerSpy = spyOn(LoggerMock, 'error');
 		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
@@ -214,6 +221,8 @@ describe('test authorize subscription route', () => {
 			state: '',
 			presharedKey // presharedKey is undefined
 		};
+		const isAuthor = true;
+		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
 		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
 		const authorMock = AuthorMock;
@@ -257,6 +266,8 @@ describe('test authorize subscription route', () => {
 			state: '',
 			presharedKey
 		};
+		const isAuthor = true;
+		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
 		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
 		const authorMock = AuthorMock;
