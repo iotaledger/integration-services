@@ -84,6 +84,8 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
 		const messages = await this.streamsService.getMessages(sub);
+		console.log('MESSAAGES', messages);
+
 		if (!messages) {
 			return [];
 		}
@@ -194,9 +196,13 @@ export class ChannelService {
 				if (subscription.accessRights === AccessRights.Write) {
 					throw new Error('not allowed to reimport the logs from the channel');
 				}
+
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
 				const newSub = await this.streamsService.resetState(channelAddress, seed, isAuthor);
+
+				// TODO check if it is the same public key!!
+
 				await this.fetchLogs(channelAddress, identityId, newSub);
 
 				// const messages = await this.streamsService.getMessages(newSub);

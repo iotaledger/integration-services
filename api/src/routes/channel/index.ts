@@ -111,7 +111,7 @@ export class ChannelRoutes {
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
-			next(new Error('could not add the logs'));
+			next(new Error('could not reimport channel data'));
 		}
 	};
 }

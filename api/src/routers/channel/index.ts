@@ -178,7 +178,7 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 
 /**
  * @openapi
- * /channel-info/validate:
+ * /channels/validate/{channelAddress}:
  *   post:
  *     summary: TBD!
  *     description: Validates data of a channel.
@@ -189,11 +189,52 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 
 /**
  * @openapi
- * /channel-info/re-import/{channelAddress}:
+ * /channels/re-import/{channelAddress}:
  *   post:
  *     summary: Re import the data from the tangle into the database.
  *     description: The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
  *     tags:
  *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/ReimportBodySchema"
+ *           example:
+ *             seed: string
+ *             subscriptionPassword: string
+ *     responses:
+ *       200:
+ *         description: Reimport successful.
+ *       401:
+ *         description: No valid api key provided / Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
-channelRouter.get('/re-import/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ReimportBodySchema }), reimport);
+channelRouter.post('/re-import/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ReimportBodySchema }), reimport);

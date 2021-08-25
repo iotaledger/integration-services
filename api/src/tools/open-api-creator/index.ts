@@ -3,7 +3,8 @@ import {
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
 	CreateChannelBodyResponseSchema,
-	ChannelDataSchema
+	ChannelDataSchema,
+	ReimportBodySchema
 } from '../../models/schemas/request-response-body/channel-bodies';
 import {
 	ClaimSchema,
@@ -110,6 +111,7 @@ const schemas = {
 	ErrorResponseSchema,
 	IdentityIdSchema,
 	NonceSchema,
+	ReimportBodySchema,
 	ChannelAddressSchema
 };
 
