@@ -179,4 +179,39 @@ export class ChannelService {
 			}
 		});
 	}
+
+	async reimport(channelAddress: string, identityId: string, seed: string, _subscriptionPassword?: string): Promise<void> {
+		const lockKey = channelAddress + identityId;
+
+		return this.lock.acquire(lockKey).then(async (release) => {
+			try {
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+
+				if (!subscription || !subscription?.keyloadLink) {
+					throw new Error('no subscription found!');
+				}
+
+				if (subscription.accessRights === AccessRights.Write) {
+					throw new Error('not allowed to reimport the logs from the channel');
+				}
+				const isAuthor = subscription.type === SubscriptionType.Author;
+				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
+				const newSub = await this.streamsService.resetState(channelAddress, seed, isAuthor);
+				await this.fetchLogs(channelAddress, identityId, newSub);
+
+				// const messages = await this.streamsService.getMessages(newSub);
+				// const channelData = ChannelLogTransformer.transformStreamsMessages(messages);
+				// await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
+				// update subscription state using
+				// await this.subscriptionService.updateSubscriptionState(
+				// 	channelAddress,
+				// 	identityId,
+				// 	this.streamsService.exportSubscription(sub, this.password)
+				// );
+				return;
+			} finally {
+				release();
+			}
+		});
+	}
 }

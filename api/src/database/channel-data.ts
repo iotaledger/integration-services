@@ -18,7 +18,7 @@ export const getChannelData = async (
 	const opt = limit != null ? { limit, skip, sort } : { sort };
 
 	const channelDataArr = await MongoDbService.getDocuments<ChannelData>(collectionName, query, opt);
-	return channelDataArr.map(({ link, channelLog, messageId }) => ({ link, channelLog, messageId }));
+	return channelDataArr.map(({ link, channelLog, messageId, imported }) => ({ link, channelLog, messageId, imported }));
 };
 
 export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[]): Promise<void> => {
@@ -27,6 +27,7 @@ export const addChannelData = async (channelAddress: string, identityId: string,
 			_id: getIndex(data.link, identityId),
 			channelAddress,
 			identityId,
+			imported: new Date(),
 			...data
 		};
 	});
@@ -34,5 +35,14 @@ export const addChannelData = async (channelAddress: string, identityId: string,
 	const res = await MongoDbService.insertDocuments(collectionName, documents);
 	if (!res?.result?.n) {
 		throw new Error('could not add channel data!');
+	}
+};
+
+export const deleteChannelData = async (channelAddress: string, identityId: string): Promise<void> => {
+	const query = { channelAddress, identityId };
+
+	const res = await MongoDbService.removeDocuments(collectionName, query);
+	if (!res?.result?.n) {
+		throw new Error('could not remove channel data!');
 	}
 };

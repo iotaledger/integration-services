@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { get as lodashGet, isEmpty } from 'lodash';
-import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-response-bodies';
+import { AddChannelLogBody, CreateChannelBody, ReimportBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
 export class ChannelRoutes {
@@ -97,17 +97,17 @@ export class ChannelRoutes {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { identityId } = req.user;
-			const body = req.body as AddChannelLogBody;
-
+			const body = req.body as ReimportBody;
+			const { seed, subscriptionPassword } = body;
 			if (!channelAddress || !identityId) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
 
-			if (isEmpty(body)) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
+			if (!seed) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no seed provided' });
 			}
-			// TODO call reimport
-			const channel = await this.channelService.addLogs(channelAddress, identityId, body);
+
+			const channel = await this.channelService.reimport(channelAddress, identityId, seed, subscriptionPassword);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

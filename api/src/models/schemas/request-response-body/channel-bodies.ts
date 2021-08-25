@@ -68,6 +68,7 @@ export const ChannelLogSchema = AddChannelLogBodySchema;
 
 export const ChannelDataSchema = Type.Object({
 	link: Type.String(),
+	imported: Type.Optional(Type.Any()),
 	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
 	channelLog: ChannelLogSchema
 });
