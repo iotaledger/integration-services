@@ -99,6 +99,7 @@ export class ChannelRoutes {
 			const { identityId } = req.user;
 			const body = req.body as ReimportBody;
 			const { seed, subscriptionPassword } = body;
+
 			if (!channelAddress || !identityId) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}

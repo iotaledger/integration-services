@@ -189,7 +189,7 @@ export class ChannelService {
 			try {
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 
-				if (!subscription || !subscription?.keyloadLink) {
+				if (!subscription || !subscription?.keyloadLink || !subscription.publicKey) {
 					throw new Error('no subscription found!');
 				}
 
