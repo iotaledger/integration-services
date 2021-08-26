@@ -108,8 +108,8 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no seed provided' });
 			}
 
-			const channel = await this.channelService.reimport(channelAddress, identityId, seed, subscriptionPassword);
-			return res.status(StatusCodes.OK).send(channel);
+			await this.channelService.reimport(channelAddress, identityId, seed, subscriptionPassword);
+			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not reimport channel data'));
