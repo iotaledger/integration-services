@@ -4,9 +4,9 @@ export const CONFIG: Config = {
 	baseUrl: process.env.BASE_URL,
 	apiKey: process.env.API_KEY,
 	port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-	tmf622Verion: process.env.TMF622_VERSION,
-	tmf641Verion: process.env.TMF641_VERSION,
-	tmf623Verion: process.env.TMF623_VERSION,
+	tmf622Version: process.env.TMF622_VERSION,
+	tmf641Version: process.env.TMF641_VERSION,
+	tmf623Version: process.env.TMF623_VERSION,
 	mavenirApi: process.env.MAVENIR_API
 };
 

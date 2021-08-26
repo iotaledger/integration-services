@@ -10,15 +10,17 @@ export class ProductOrderRoutes {
 	 * @param req with productOrderCreate in body
 	 * @param res return Created (201) with static ProductOrder
 	 */
-	forwardProductOrder = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+	forwardProductOrder = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
-			const productOrderCreate = req.body;
-			console.log(`Product order: ${JSON.stringify(productOrderCreate)}`);
-			await axios.post(`${CONFIG.mavenirApi}/tmf-api/serviceOrdering/v4/serviceOrder`, ServiceOrderCreate);
-			const hashedData = hashNonce(JSON.stringify(ServiceOrder));
-			const payload = { time: new Date(), hashedData };
-			await writeChannel(payload, 'productOrder');
-			return res.status(StatusCodes.CREATED).send(ProductOrder);
+			return new Promise(async (resolve) => {
+				const productOrderCreate = req.body;
+				console.log(`Received product order: ${JSON.stringify(productOrderCreate)}`);
+				await axios.post(`${CONFIG.mavenirApi}/tmf-api/serviceOrdering/v4/serviceOrder`, ServiceOrderCreate);
+				const hashedData = hashNonce(JSON.stringify(ServiceOrder));
+				const payload = { time: new Date(), hashedData };
+				await writeChannel(payload, 'productOrder');
+				resolve(res.status(StatusCodes.CREATED).send(ProductOrder));
+			});
 		} catch (error) {
 			console.log(error);
 			next(new Error('could not forward product order'));

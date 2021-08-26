@@ -16,21 +16,20 @@ const authorizeSubscription = async (channelAddress: string, subsciptionLink: st
 	}
 };
 
-export const checkSubscriptionState = async (channelAddress: string, subsciptionLink: string) => {
+export const checkSubscriptionState = async (channelAddress: string, subscriptionLink: string) => {
 	console.log('Checking subscription state...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
 	const res = await leadCspClient.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}${apiKey}`);
-    if (res.status === 200) {
-        const subscriptions = res.data
-        const subscription = subscriptions.find((subscription: any) => subscription.subscriptionLink === subsciptionLink);
-        console.log(subsciptionLink);
-        console.log(subscription);
-        if (subscription && !subscription.isAuthorized) {
-            await authorizeSubscription(channelAddress, subsciptionLink);
-        } else {
-            console.log('Channel has no subscriptions or the subscription is already authorized.')
-        }
-    }
-	
+	if (res.status === 200) {
+		const subscriptions = res.data;
+		const subscription = subscriptions.find((subscription: any) => subscription.subscriptionLink === subscriptionLink);
+		if (subscription && !subscription.isAuthorized) {
+			await authorizeSubscription(channelAddress, subscriptionLink);
+		} else if (!subscription) {
+			console.log(`No requested subscription found for subscription link: ${subscriptionLink}`);
+		} else {
+			console.log('Channel has no subscriptions or the subscription is already authorized.');
+		}
+	}
 };

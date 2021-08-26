@@ -6,6 +6,7 @@ import { csp2Client } from '../utils/client';
 export const createIdentity = async (): Promise<string | undefined> => {
 	console.log('Creating the Csp2 identity...');
 	if (fs.existsSync('./src/config/Csp2Identity.json')) {
+		console.log('Identity already created!');
 		const identityBuffer = fs.readFileSync('./src/config/Csp2Identity.json');
 		const identity = JSON.parse(identityBuffer.toString());
 		return identity.doc.id;
