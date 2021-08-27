@@ -20,7 +20,6 @@ export class ServiceOrderRoutes {
 			await writeChannel(payload, 'serviceOrderCreateEvent');
 			res.status(StatusCodes.OK).send();
 
-			// TODO here we then create the SLA which will be stored in the tangle and then sent to POST /tmf-api/slaManagement/v1/sla
 			console.log('Creating sla violation rules...');
 			const slaViolationRules = ViolationRules;
 			await forwardSlaViolation(slaViolationRules);
