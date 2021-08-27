@@ -67,6 +67,35 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *     description: Search for identities in the system and returns a list of existing identities.
  *     tags:
  *     - identity
+ *     parameters:
+ *     - name: type
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - name: username
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - name: 'registration-date'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *     - name: limit
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: 5
+ *     - name: index
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: null
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -270,6 +299,20 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *         identityId:
  *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *           summary: Example identity id (DID identifier)
+ *     - name: 'revoke-credentials'
+ *       in: query
+ *       required: false
+ *       description: If true all credentials will be revoked and deleted.
+ *       schema:
+ *         type: boolean
+ *         example: false
+ *     - name: 'revoke-subscriptions'
+ *       in: query
+ *       required: false
+ *       description: If true all subscriptions will be revoked and deleted.
+ *       schema:
+ *         type: boolean
+ *         example: false
  *     security:
  *       - BearerAuth: []
  *     responses:

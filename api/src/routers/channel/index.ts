@@ -135,6 +135,24 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
+ *     - name: limit
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: 5
+ *     - name: index
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: null
+ *     - name: asc
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: boolean
+ *         example: true
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -165,14 +183,26 @@ channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  * @openapi
  * /channels/history/{channelAddress}:
  *   get:
- *     summary: Get history of a channel.
- *     description: Get all data of a channel using a preshared key. Mainly used by auditors to validate a log stream.
+ *     summary: Get the history of a channel.
+ *     description: Get the history of a channel using a preshared key.
  *     tags:
  *     - channels
  *     parameters:
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: 'preshared-key'
+ *       in: query
+ *       required: true
+ *       description: Preshared key defined by the author to encrypt/decrypt data.
+ *       schema:
+ *         type: string
  */
 channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 

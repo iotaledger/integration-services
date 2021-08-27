@@ -19,35 +19,50 @@ export const channelInfoRouter = Router();
  *     tags:
  *     - channel-info
  *     parameters:
- *     - name: query
- *       in: query
+ *     - in: query
+ *       name: author
  *       required: false
  *       schema:
- *         type: object
- *         properties:
- *           author:
- *             type: string
- *           'topic-type':
- *             type: string
- *           'topic-source':
- *             type: string
- *           created:
- *             type: string
- *             format: date-time
- *           'latest-message':
- *             type: string
- *           limit:
- *             type: number
- *           index:
- *             type: number
- *         example:
- *           author: null
- *           'topic-type': example-channel-data
- *           'topic-source': null
- *           created: null
- *           'latest-message': null
- *           limit: null
- *           index: null
+ *         type: string
+ *         example: null
+ *     - in: query
+ *       name: 'topic-type'
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: example-channel-data
+ *     - in: query
+ *       name: 'topic-source'
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: null
+ *     - in: query
+ *       name: created
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *         example: null
+ *     - in: query
+ *       name: 'latest-message'
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *         example: null
+ *     - in: query
+ *       name: limit
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: 5
+ *     - in: query
+ *       name: index
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: null
  *     security:
  *       - BearerAuth: []
  *     responses:
