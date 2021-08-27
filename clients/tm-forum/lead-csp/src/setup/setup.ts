@@ -17,11 +17,11 @@ export const setup = async () => {
 		await createChannel();
 		process.exit(0);
 	}
-	const { csp1SubscriptionLink, csp2SubscriptionLink } = getSubscriptionLinks();
+
+	const { csp1SubscriptionLink } = getSubscriptionLinks();
 	const isCsp1Authorized = await checkSubscriptionState(channelAddress, csp1SubscriptionLink);
-	const isCsp2Authorized = await checkSubscriptionState(channelAddress, csp2SubscriptionLink);
-	if (!isCsp1Authorized || !isCsp2Authorized) {
-		console.log('minimum one subscription is not authorized!');
+	if (!isCsp1Authorized) {
+		console.log('subscription is not authorized!');
 
 		process.exit(0);
 	}

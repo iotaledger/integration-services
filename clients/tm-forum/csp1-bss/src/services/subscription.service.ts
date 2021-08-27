@@ -17,6 +17,8 @@ export const checkSubscriptionState = async (channelAddress: string, identityId:
 				} else if (res.data.isAuthorized) {
 					clearInterval(interval);
 					console.log('Subscription authorized!');
+					console.log('--------------------------------------------------------');
+					console.log('--------------------------------------------------------');
 					resolve(null);
 				}
 			}

@@ -31,17 +31,11 @@ export const ProductOrderCreate = {
 	]
 };
 
-export const getSubscriptionLinks = (): { csp1SubscriptionLink: string; csp2SubscriptionLink: string } => {
+export const getSubscriptionLinks = (): { csp1SubscriptionLink: string } => {
 	const csp1SubscriptionLink = process.env.CSP1_SUBSCRIPTION_LINK;
-	const csp2SubscriptionLink = process.env.CSP2_SUBSCRIPTION_LINK;
-	if (
-		csp1SubscriptionLink === '<INSERT_CSP1_SUBSCRIPTION_LINK>' ||
-		csp2SubscriptionLink === '<INSERT_CSP2_SUBSCRIPTION_LINK>' ||
-		!csp1SubscriptionLink ||
-		!csp2SubscriptionLink
-	) {
+	if (csp1SubscriptionLink === '<INSERT_CSP1_SUBSCRIPTION_LINK>' || !csp1SubscriptionLink) {
 		console.error('Please insert csp1 and csp2 subscription links in .env !');
 		process.exit();
 	}
-	return { csp1SubscriptionLink, csp2SubscriptionLink };
+	return { csp1SubscriptionLink };
 };

@@ -57,33 +57,33 @@ export const ViolationRules = {
 }
 
 export const SlaViolation = {
-	id: '37b8596c-6b36-938c-ecb7-f23c5b03f3f5',
+	id: "37b8596c-6b36-938c-ecb7-f23c5b03f3f5",
 	sla: {
-		href: 'https://www.example.com/tmf-api/slaManagement/v1/sla/123444',
-		description: 'High Speed Data SLA'
+		href: "https://www.example.com/tmf-api/slaManagement/v1/sla/123444",
+		description: "High Speed Data SLA"
 	},
 	relatedParty: {
-		id: '2802',
-		href: 'https://www.example.com/tmf-api/partyManagement/v1/party/2802',
-		name: 'NNNN',
-		role: 'SLAConsumer'
+		id: "2802",
+		href: "https://www.example.com/tmf-api/partyManagement/v1/party/2802",
+		name: "NNNN",
+		role: "SLAConsumer"
 	},
 	violation: {
 		rule: {
-			href: 'https://www.example.com/tmf-api/slaManagement/v1/sla/123444/rules/availability',
-			description: 'Availability rule'
+			href: "https://www.example.com/tmf-api/slaManagement/v1/sla/123444/rules/availability",
+			description: "Availability rule"
 		},
-		unit: 'string',
-		referenceValue: 'availability',
-		operator: '.ge',
-		actualValue: 'availability',
-		tolerance: '0.5',
-		violationAverage: '0.1',
-		comment: 'Comment',
-		consequence: 'http://www.example.com/contract/clause/42',
+		unit: "string",
+		referenceValue: "availability",
+		operator: ".ge",
+		actualValue: "availability",
+		tolerance: "0.5",
+		violationAverage: "0.1",
+		comment: "Comment",
+		consequence: "http://www.example.com/contract/clause/42",
 		attachment: {
-			href: 'http://foo.bar/screenshot.552',
-			description: 'screenshot'
+			href: "http://foo.bar/screenshot.552",
+			description: "screenshot"
 		}
 	}
 };
