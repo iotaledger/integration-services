@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CONFIG, ProductOrder, ServiceOrder, ServiceOrderCreate } from '../config/config';
+import { CONFIG,  ProductOrder, ServiceOrderCreate } from '../config/config';
 import { hashNonce } from '../utils/encryption';
 import { writeChannel } from '../services/channel.service';
 export class ProductOrderRoutes {
@@ -15,9 +15,11 @@ export class ProductOrderRoutes {
 			return new Promise(async (resolve) => {
 				const productOrderCreate = req.body;
 				console.log(`Received product order: ${JSON.stringify(productOrderCreate)}`);
+
+				// here the csp1 would normally look in a product table to define the service order
 				await axios.post(`${CONFIG.mavenirApi}/tmf-api/serviceOrdering/v4/serviceOrder`, ServiceOrderCreate);
-				const hashedData = hashNonce(JSON.stringify(ServiceOrder));
-				const payload = { time: new Date(), hashedData };
+				const hashedData = hashNonce(JSON.stringify(ProductOrder));
+				const payload = { hashedData };
 				await writeChannel(payload, 'productOrder');
 				resolve(res.status(StatusCodes.CREATED).send(ProductOrder));
 			});

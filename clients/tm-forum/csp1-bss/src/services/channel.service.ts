@@ -7,7 +7,7 @@ export const writeChannel = async (payload: any, type: string) => {
 	try {
 		return new Promise(async (resolve) => {
 			lock = 0;
-			console.log('Writing to channel...');
+			console.log('Writing to dlt...');
 			const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 			const channelAddress = getChannelAddress();
 			const body = {
