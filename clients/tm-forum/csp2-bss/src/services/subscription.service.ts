@@ -4,23 +4,20 @@ import { csp2Client } from '../utils/client';
 export const checkSubscriptionState = async (channelAddress: string, identityId: string) => {
 	console.log('Checking subscription state...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
-	return new Promise((resolve) => {
-		const interval = setInterval(async () => {
-			const res = await csp2Client.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}/${identityId}${apiKey}`);
-			if (res?.status === 200) {
-				if (res.data === '') {
-					const subscriptionLink = await requestSubscription(channelAddress);
-					console.log(`Subscription requested. Please authorize subscription link: ${subscriptionLink}`);
-				} else if (!res.data.isAuthorized) {
-					console.log(`Subscription already requested. Please authorize subscription link: ${res.data.subscriptionLink}`);
-				} else {
-					clearInterval(interval);
-					console.log('Subscription authorized!');
-					resolve(null);
-				}
-			}
-		}, 10000);
-	});
+	const res = await csp2Client.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}/${identityId}${apiKey}`);
+	if (res?.status === 200) {
+		if (res.data === '') {
+			const subscriptionLink = await requestSubscription(channelAddress);
+			console.log(`Subscription requested. Please authorize subscription link: ${subscriptionLink}`);
+			return false;
+		} else if (!res.data.isAuthorized) {
+			console.log(`Subscription already requested. Please authorize subscription link: ${res.data.subscriptionLink}`);
+			return false;
+		} else {
+			console.log('Subscription authorized!');
+			return true;
+		}
+	}
 };
 
 export const requestSubscription = async (channelAddress: string) => {

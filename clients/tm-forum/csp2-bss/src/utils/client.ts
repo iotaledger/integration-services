@@ -19,9 +19,8 @@ const errFunc = async (error: any) => {
 		return axios(originalRequest);
 	} else {
 		if (error?.response?.data?.error) {
-			console.log(`ERROR: ${error.response.data.error}`)
-		}
-		else if (error?.response?.status) {
+			console.log(`ERROR: ${error.response.data.error}`);
+		} else if (error?.response?.status) {
 			console.log(`ERROR: ${error?.response?.status}`, error);
 		} else {
 			console.log(`ERROR:`, error);

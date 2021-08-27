@@ -28,7 +28,6 @@ export const fetchAuth = async (): Promise<any> => {
 	);
 	if (response?.status === 200) {
 		console.log('successfully authenticated!');
-		console.log('JWT: ', response.data.jwt);
 	}
 
 	return response;

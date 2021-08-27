@@ -20,5 +20,3 @@ export const writeChannel = async (payload: any, type: string) => {
 		console.log(error);
 	}
 };
-
-

@@ -18,7 +18,7 @@ export const LeadCspIdentity = {
 
 export const ChannelConfig = {
 	topics: [{ type: 'tm-forum', source: 'lead-csp' }],
-	encrypted: false
+	hasPresharedKey: true
 };
 
 export const ProductOrderCreate = {

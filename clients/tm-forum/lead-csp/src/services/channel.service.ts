@@ -4,12 +4,6 @@ import { ChannelConfig, CONFIG } from '../config/config';
 import { leadCspClient } from '../utils/client';
 
 export const createChannel = async (): Promise<string> => {
-	if (fs.existsSync('./src/config/Channel.json')) {
-		const channelBuffer = fs.readFileSync('./src/config/Channel.json');
-		const channel = JSON.parse(channelBuffer.toString());
-		console.log(`Channel already created, channel address: ${channel.channelAddress}`);
-		return channel.channelAddress;
-	}
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 	const res = await leadCspClient.post(`${CONFIG.baseUrl}/channels/create${apiKey}`, JSON.stringify(ChannelConfig));
 	if (res?.status === 201) {

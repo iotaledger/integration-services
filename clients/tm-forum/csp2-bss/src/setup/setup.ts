@@ -1,10 +1,9 @@
-
 import { getChannelAddress } from '../config/config';
 import { createIdentity } from '../services/identity.serivce';
 import { checkSubscriptionState } from '../services/subscription.service';
 
-export const setup = async () => {
+export const setup = async (): Promise<boolean> => {
 	const identityId = await createIdentity();
 	const channelAddress = getChannelAddress();
-	await checkSubscriptionState(channelAddress, identityId);
+	return await checkSubscriptionState(channelAddress, identityId);
 };

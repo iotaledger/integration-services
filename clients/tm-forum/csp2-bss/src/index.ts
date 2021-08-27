@@ -5,8 +5,10 @@ import { writeChannel } from './services/channel.service';
 import { setup } from './setup/setup';
 
 const app = async () => {
-	await setup();
-	await writeChannel(SlaViolation, 'slaViolation');
+	const isAuthorized = await setup();
+	if (isAuthorized) {
+		await writeChannel(SlaViolation, 'slaViolation');
+	}
 };
 
 app();
