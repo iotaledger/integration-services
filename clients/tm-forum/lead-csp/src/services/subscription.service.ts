@@ -27,7 +27,7 @@ export const checkSubscriptionState = async (channelAddress: string, subscriptio
 
 		if (subscription && !subscription.isAuthorized) {
 			await authorizeSubscription(channelAddress, subscriptionLink);
-			return true
+			return true;
 		} else if (!subscription) {
 			console.log(`No requested subscription found for subscription link: ${subscriptionLink}`);
 			return false;

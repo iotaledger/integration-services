@@ -30,6 +30,7 @@ export const ProductOrderCreate = {
 		}
 	]
 };
+
 export const getSubscriptionLinks = (): { csp1SubscriptionLink: string; csp2SubscriptionLink: string } => {
 	const csp1SubscriptionLink = process.env.CSP1_SUBSCRIPTION_LINK;
 	const csp2SubscriptionLink = process.env.CSP2_SUBSCRIPTION_LINK;

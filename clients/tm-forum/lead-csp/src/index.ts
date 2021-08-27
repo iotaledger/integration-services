@@ -15,7 +15,7 @@ const app = async () => {
 			JSON.stringify(ProductOrderCreate)
 		);
 		if (response?.status === 201) {
-			console.log('successfully send product order!');
+			console.log('successfully sent product order!');
 			console.log(`Response product order: ${JSON.stringify(response?.data)}`);
 		}
 	} catch (error) {
