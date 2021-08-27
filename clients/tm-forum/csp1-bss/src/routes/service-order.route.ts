@@ -24,9 +24,8 @@ export class ServiceOrderRoutes {
 			console.log('Creating sla violation rules...');
 			const slaViolationRules = ViolationRules;
 			await forwardSlaViolation(slaViolationRules);
-			await writeChannel(ViolationRules, 'createSlaViolationRules');
 
-			return			
+			return
 		} catch (error) {
 			console.log(error);
 			next(new Error('Could not write service order create event'));
