@@ -24,7 +24,6 @@ export const channelInfoRouter = Router();
  *       required: false
  *       schema:
  *         type: string
- *         example: null
  *     - in: query
  *       name: 'topic-type'
  *       required: false
@@ -36,21 +35,18 @@ export const channelInfoRouter = Router();
  *       required: false
  *       schema:
  *         type: string
- *         example: null
  *     - in: query
  *       name: created
  *       required: false
  *       schema:
  *         type: string
  *         format: date-time
- *         example: null
  *     - in: query
  *       name: 'latest-message'
  *       required: false
  *       schema:
  *         type: string
  *         format: date-time
- *         example: null
  *     - in: query
  *       name: limit
  *       required: false
@@ -62,7 +58,6 @@ export const channelInfoRouter = Router();
  *       required: false
  *       schema:
  *         type: number
- *         example: null
  *     security:
  *       - BearerAuth: []
  *     responses:

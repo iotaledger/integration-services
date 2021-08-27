@@ -146,7 +146,6 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *       required: false
  *       schema:
  *         type: number
- *         example: null
  *     - name: asc
  *       in: query
  *       required: false
