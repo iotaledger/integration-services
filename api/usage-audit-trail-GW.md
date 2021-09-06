@@ -83,14 +83,11 @@ Write data to a channel by using the _channel-address_. __Write__ permission is 
 
 `GET /history/{channel-address}`
 
-__TBD!__ _Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory._
-
-### Channel Info Service 
-__Prefix:__ `/api/v1/channel-info`
+Get all data of a channel using a preshared-key. Mainly used by auditors to evaluate a log stream.
 
 `POST /validate`
 
-__TBD!__ _Validates data of a channel. Verifies data of the database against data on the IOTA Tangle. If the data is verified the status field will be set to verified. Other data states are: synchronizing, outdated, malicious. If the client does not want to verify the data and trusts the status of the server it can tell the API that it only wants to receive the status._
+__TBD!__ _Validates data of a channel. Verifies payload against data on the IOTA Tangle._
 
 >__Note:__ To increase speed of retrieving data from a channel, data are replicated in a local database, this prevents from fetching them directly from the ledger. However _validate_ allows to verify that a local database has the same copy of data.
 
@@ -99,6 +96,10 @@ __TBD!__ _Validates data of a channel. Verifies data of the database against dat
 `POST /re-import`
 
 __TBD!__ _Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data._
+
+
+### Channel Info Service 
+__Prefix:__ `/api/v1/channel-info`
 
 `GET /channel/{channel-address}`
 

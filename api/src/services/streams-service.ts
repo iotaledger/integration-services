@@ -218,6 +218,17 @@ export class StreamsService {
 		}
 	}
 
+	async resetState(channelLink: string, seed: string, isAuthor: boolean): Promise<Subscriber> {
+		const client = this.getClient(this.config.node);
+		if (isAuthor) {
+			throw new Error('not supported for authors');
+		}
+		const sub = Subscriber.from_client(client, seed);
+		const channelAddress = Address.from_string(channelLink);
+		await sub.clone().receive_announcement(channelAddress);
+		return sub;
+	}
+
 	makeSeed(size: number) {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		let seed = '';

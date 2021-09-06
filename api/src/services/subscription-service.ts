@@ -47,6 +47,11 @@ export class SubscriptionService {
 		return subscriptionDb.updateSubscriptionState(channelAddress, identityId, state);
 	}
 
+	async isAuthor(channelAddress: string, authorId: string): Promise<boolean> {
+		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+		return channelInfo.authorId == authorId;
+	}
+
 	async setSubscriptionAuthorized(channelAddress: string, identityId: string, keyloadLink: string) {
 		const errMsg = 'could not authorize the subscription!';
 		const isAuthorized = true;
@@ -88,15 +93,12 @@ export class SubscriptionService {
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}
 
-	async authorizeSubscription(
-		channelAddress: string,
-		subscription: Subscription,
-		authorSub: Subscription
-	): Promise<AuthorizeSubscriptionBodyResponse> {
-		const lockKey = channelAddress + authorSub.identityId;
+	async authorizeSubscription(channelAddress: string, subscription: Subscription, authorId: string): Promise<AuthorizeSubscriptionBodyResponse> {
+		const lockKey = channelAddress + authorId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const authorSub = await this.getSubscription(channelAddress, authorId);
 				const { publicKey, subscriptionLink, identityId } = subscription;
 				const presharedKey = authorSub.presharedKey;
 				const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;

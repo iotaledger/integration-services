@@ -1,6 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { ChannelData } from '../models/types/channel-data';
+import { getDateStringFromDate } from '../utils/date';
 
 const collectionName = CollectionNames.channelData;
 const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
@@ -18,16 +19,18 @@ export const getChannelData = async (
 	const opt = limit != null ? { limit, skip, sort } : { sort };
 
 	const channelDataArr = await MongoDbService.getDocuments<ChannelData>(collectionName, query, opt);
-	return channelDataArr.map(({ link, channelLog, messageId }) => ({ link, channelLog, messageId }));
+	return channelDataArr.map(({ link, channelLog, messageId, imported }) => ({ link, channelLog, messageId, imported }));
 };
 
 export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[]): Promise<void> => {
+	const imported = getDateStringFromDate(new Date());
 	const documents = channelData.map((data) => {
 		return {
+			...data,
 			_id: getIndex(data.link, identityId),
 			channelAddress,
 			identityId,
-			...data
+			imported
 		};
 	});
 
@@ -35,4 +38,9 @@ export const addChannelData = async (channelAddress: string, identityId: string,
 	if (!res?.result?.n) {
 		throw new Error('could not add channel data!');
 	}
+};
+
+export const deleteChannelData = async (channelAddress: string, identityId: string): Promise<void> => {
+	const query = { channelAddress, identityId };
+	await MongoDbService.removeDocuments(collectionName, query);
 };
