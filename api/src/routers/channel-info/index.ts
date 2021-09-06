@@ -12,28 +12,6 @@ export const channelInfoRouter = Router();
 
 /**
  * @openapi
- * /channel-info/validate:
- *   post:
- *     summary: TBD!
- *     description: Validates data of a channel.
- *     tags:
- *     - channel-info
- *     deprecated: true
- */
-
-/**
- * @openapi
- * /channel-info/re-import:
- *   post:
- *     summary: TBD!
- *     description: Re imports data into the database from the IOTA Tangle. The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
- *     tags:
- *     - channel-info
- *     deprecated: true
- */
-
-/**
- * @openapi
  * /channel-info/search:
  *   get:
  *     summary: Search for a channel
@@ -41,35 +19,45 @@ export const channelInfoRouter = Router();
  *     tags:
  *     - channel-info
  *     parameters:
- *     - name: query
- *       in: query
+ *     - in: query
+ *       name: author
  *       required: false
  *       schema:
- *         type: object
- *         properties:
- *           author:
- *             type: string
- *           'topic-type':
- *             type: string
- *           'topic-source':
- *             type: string
- *           created:
- *             type: string
- *             format: date-time
- *           'latest-message':
- *             type: string
- *           limit:
- *             type: number
- *           index:
- *             type: number
- *         example:
- *           author: null
- *           'topic-type': example-channel-data
- *           'topic-source': null
- *           created: null
- *           'latest-message': null
- *           limit: null
- *           index: null
+ *         type: string
+ *     - in: query
+ *       name: 'topic-type'
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: example-channel-data
+ *     - in: query
+ *       name: 'topic-source'
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
+ *       name: created
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *     - in: query
+ *       name: 'latest-message'
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *     - in: query
+ *       name: limit
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: 5
+ *     - in: query
+ *       name: index
+ *       required: false
+ *       schema:
+ *         type: number
  *     security:
  *       - BearerAuth: []
  *     responses:

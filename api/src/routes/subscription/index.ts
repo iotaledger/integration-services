@@ -6,7 +6,6 @@ import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { Subscription } from '../../models/types/subscription';
-import { SubscriptionType } from '../../models/schemas/subscription';
 
 export class SubscriptionRoutes {
 	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
@@ -104,12 +103,12 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already authorized' });
 			}
 
-			const author = await this.subscriptionService.getSubscription(channelAddress, authorId);
-			if (author?.type !== SubscriptionType.Author) {
+			const isAuthor = await this.subscriptionService.isAuthor(channelAddress, authorId);
+			if (!isAuthor) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, author);
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

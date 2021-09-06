@@ -1,29 +1,14 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
+import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { Logger } from '../../utils/logger';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs } = channelRoutes;
+const { addLogs, createChannel, getLogs, getHistory, reimport } = channelRoutes;
 
 export const channelRouter = Router();
-
-/**
- * @openapi
- * /channels/history/{channelAddress}:
- *   get:
- *     summary: TBD!
- *     description: Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream. Read permissions are mandatory.
- *     tags:
- *     - channels
- *     parameters:
- *     - name: channelAddress
- *       in: path
- *       required: true
- *     deprecated: true
- */
 
 /**
  * @openapi
@@ -150,6 +135,23 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
+ *     - name: limit
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: number
+ *         example: 5
+ *     - name: index
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: number
+ *     - name: asc
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: boolean
+ *         example: true
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -175,3 +177,93 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, getLogs);
+
+/**
+ * @openapi
+ * /channels/history/{channelAddress}:
+ *   get:
+ *     summary: Get the history of a channel.
+ *     description: Get the history of a channel using a preshared key.
+ *     tags:
+ *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: 'preshared-key'
+ *       in: query
+ *       required: true
+ *       description: Preshared key defined by the author to encrypt/decrypt data.
+ *       schema:
+ *         type: string
+ */
+channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
+
+/**
+ * @openapi
+ * /channels/validate/{channelAddress}:
+ *   post:
+ *     summary: TBD!
+ *     description: Validates data of a channel.
+ *     tags:
+ *     - channels
+ *     deprecated: true
+ */
+
+/**
+ * @openapi
+ * /channels/re-import/{channelAddress}:
+ *   post:
+ *     summary: Re import the data from the tangle into the database.
+ *     description: The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
+ *     tags:
+ *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/ReimportBodySchema"
+ *           example:
+ *             seed: string
+ *             subscriptionPassword: string
+ *     responses:
+ *       200:
+ *         description: Reimport successful.
+ *       401:
+ *         description: No valid api key provided / Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+channelRouter.post('/re-import/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ReimportBodySchema }), reimport);
