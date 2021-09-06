@@ -28,6 +28,12 @@ function App() {
   return (
     <div className="App">
       <ul className="list-group">
+      
+        <li className="list-group-item  list-group-item-primary" key={'ch-address'}>
+         <div className="ms-2 me-auto">
+            <div>Channeladdress:</div><div className="fw-bold">{Config.channelAddress}</div>
+          </div>
+        </li>
         {
           data && data?.map((d,index) => {
             return (<li className="list-group-item" key={index}> 
