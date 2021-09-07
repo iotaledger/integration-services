@@ -1,4 +1,5 @@
 import { ChannelData, ChannelLog } from '../../models/types/channel-data';
+import { ValidateResponse } from '../../models/types/request-response-bodies';
 import { StreamsMessage } from '../../services/streams-service';
 
 export interface IPayload {
@@ -47,5 +48,15 @@ export class ChannelLogTransformer {
 			maskedPayload,
 			publicPayload
 		};
+	}
+
+	static validateLogs(logs: ChannelData[], tangleLogs: ChannelData[]): ValidateResponse {
+		return logs.map((log) => {
+			return {
+				link: 'string,',
+				isValid: true,
+				error: ''
+			};
+		});
 	}
 }

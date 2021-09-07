@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { get as lodashGet, isEmpty } from 'lodash';
-import { AddChannelLogBody, CreateChannelBody, ReimportBody } from '../../models/types/request-response-bodies';
+import { AddChannelLogBody, CreateChannelBody, ReimportBody, ValidateBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
 export class ChannelRoutes {
@@ -109,6 +109,28 @@ export class ChannelRoutes {
 			}
 
 			await this.channelService.reimport(channelAddress, identityId, seed, subscriptionPassword);
+			return res.sendStatus(StatusCodes.OK);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not reimport channel data'));
+		}
+	};
+
+	validateLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+		try {
+			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const { identityId } = req.user;
+			const channelLogs = req.body as ValidateBody;
+
+			if (!channelAddress || !identityId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			if (!channelLogs || channelLogs.length === 0) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no logs provided' });
+			}
+
+			await this.channelService.validate(channelAddress, identityId, channelLogs);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);

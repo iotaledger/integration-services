@@ -212,4 +212,28 @@ export class ChannelService {
 			}
 		});
 	}
+
+	async validate(channelAddress: string, identityId: string, logs: ChannelData[]): Promise<void> {
+		const lockKey = channelAddress + identityId;
+
+		return this.lock.acquire(lockKey).then(async (release) => {
+			try {
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+
+				if (!subscription || !subscription?.keyloadLink || !subscription.publicKey) {
+					throw new Error('no subscription found!');
+				}
+
+				if (subscription.accessRights === AccessRights.Write) {
+					throw new Error('not allowed to validate the logs from the channel');
+				}
+
+				// TODO request data from channel
+				// TODO call validate function
+				// TODO return result
+			} finally {
+				release();
+			}
+		});
+	}
 }

@@ -11,7 +11,7 @@ import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs, getHistory, reimport } = channelRoutes;
+const { addLogs, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
 
 export const channelRouter = Router();
 
@@ -251,7 +251,7 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  *                 error:
  *                   type: string
  */
-channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ValidateBodySchema }), reimport);
+channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ValidateBodySchema }), validateLogs);
 
 /**
  * @openapi
