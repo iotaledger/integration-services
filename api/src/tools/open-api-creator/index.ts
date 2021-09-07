@@ -4,7 +4,9 @@ import {
 	AddChannelLogBodySchema,
 	CreateChannelBodyResponseSchema,
 	ChannelDataSchema,
-	ReimportBodySchema
+	ReimportBodySchema,
+	ValidateBodySchema,
+	ValidateResponseSchema
 } from '../../models/schemas/request-response-body/channel-bodies';
 import {
 	ClaimSchema,
@@ -64,6 +66,8 @@ const schemas = {
 	CreateChannelBodyResponseSchema,
 	AddChannelLogBodySchema,
 	ChannelDataSchema,
+	ValidateBodySchema,
+	ValidateResponseSchema,
 	ChannelInfoSearchSchema,
 	AuthorizeSubscriptionBodySchema,
 	AuthorizeSubscriptionBodyResponseSchema,

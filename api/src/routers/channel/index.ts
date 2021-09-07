@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
+import {
+	AddChannelLogBodySchema,
+	CreateChannelBodySchema,
+	ReimportBodySchema,
+	ValidateBodySchema
+} from '../../models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { Logger } from '../../utils/logger';
 import { channelService } from '../services';
@@ -209,12 +214,44 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  * @openapi
  * /channels/validate/{channelAddress}:
  *   post:
- *     summary: TBD!
+ *     summary: Validates channel data by comparing the channelLog of each link with the data on the tangle.
  *     description: Validates data of a channel.
  *     tags:
  *     - channels
- *     deprecated: true
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/ValidateBodySchema"
+ *     responses:
+ *       200:
+ *         description: Returns validated result.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ValidateResponseSchema"
+ *       401:
+ *         description: No valid api key provided / Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
+channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ValidateBodySchema }), reimport);
 
 /**
  * @openapi
