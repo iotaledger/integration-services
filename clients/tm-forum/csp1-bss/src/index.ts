@@ -2,7 +2,6 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { CONFIG } from './config/config';
 import { productOrderRouter } from './routers/product-order.router';
 import { violationRouter } from './routers/violation.router';
 import { serviceOrderRouter } from './routers/service-order.router';
@@ -20,9 +19,9 @@ const startServer = async () => {
 
 	const prefix = '/tmf-api';
 	app.use(express.json());
-	useRouter(app, `${prefix}/productOrderingManagement/${CONFIG.tmf622Version}`, productOrderRouter);
-	useRouter(app, `${prefix}/serviceOrdering/${CONFIG.tmf641Version}`, serviceOrderRouter);
-	useRouter(app, `${prefix}/slaManagement/${CONFIG.tmf623Version}`, violationRouter);
+	useRouter(app, `${prefix}/productOrderingManagement/v1`, productOrderRouter);
+	useRouter(app, `/api/rest/orderManagement/1.0.0`, serviceOrderRouter);
+	useRouter(app, `${prefix}/slaManagement/v1`, violationRouter);
 	app.listen(process.env.PORT, async () => {
 		app._router.stack.forEach((router: any) => {
 			if (router.stack) {

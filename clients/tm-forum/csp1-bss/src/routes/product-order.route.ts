@@ -21,7 +21,7 @@ export class ProductOrderRoutes {
 
 				// here the csp1 would normally look in a product table to define the service order
 				console.log('Forwarding service order...');
-				await axios.post(`${CONFIG.mavenirApi}/tmf-api/serviceOrdering/v4/serviceOrder`, ServiceOrderCreate);
+				await axios.post(`${CONFIG.mavenirApi}/api/rest/orderManagement/1.0.0/serviceOrder`, ServiceOrderCreate);
 				const hashedServiceOrder = hashNonce(JSON.stringify(ServiceOrder));
 				const serviceOrderPayload = { hashedData: hashedServiceOrder };
 				await writeChannel(serviceOrderPayload, 'serviceOrder');
