@@ -1,7 +1,6 @@
 import { CONFIG, getChannelAddress } from '../config/config';
 import { csp1Client } from '../utils/client';
 
-
 export const writeChannel = async (payload: any, type: string) => {
 	try {
 		console.log(`Writing ${type} to dlt...`);
@@ -24,6 +23,3 @@ export const writeChannel = async (payload: any, type: string) => {
 		console.log(error);
 	}
 };
-
-
-

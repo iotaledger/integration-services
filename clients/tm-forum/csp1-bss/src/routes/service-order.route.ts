@@ -13,7 +13,7 @@ export class ServiceOrderRoutes {
 	writeServiceOrderCreateEvent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
 			console.log('Received service order create event...');
-			
+
 			const serviceOrderCreateEvent = req.body;
 			const hashedData = hashNonce(JSON.stringify(serviceOrderCreateEvent));
 			const payload = { hashedData };
@@ -24,7 +24,7 @@ export class ServiceOrderRoutes {
 			const slaViolationRules = ViolationRules;
 			await forwardSlaViolation(slaViolationRules);
 
-			return
+			return;
 		} catch (error) {
 			console.log(error);
 			next(new Error('Could not write service order create event'));
