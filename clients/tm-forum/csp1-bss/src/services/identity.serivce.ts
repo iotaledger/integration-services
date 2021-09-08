@@ -1,13 +1,15 @@
 import fs from 'fs';
+import path from 'path';
 
 import { CONFIG, Csp1Identity } from '../config/config';
 import { csp1Client } from '../utils/client';
 
 export const createIdentity = async (): Promise<string | undefined> => {
 	console.log('Creating the Csp1 identity...');
-	if (fs.existsSync('./src/config/Csp1Identity.json')) {
+	const identityPath = path.join(__dirname, '..', 'config', 'Csp1Identity.json');
+	if (fs.existsSync(identityPath)) {
 		console.log('Identity already created!');
-		const identityBuffer = fs.readFileSync('./src/config/Csp1Identity.json');
+		const identityBuffer = fs.readFileSync(identityPath);
 		const identity = JSON.parse(identityBuffer.toString());
 		return identity.doc.id;
 	}
@@ -18,9 +20,9 @@ export const createIdentity = async (): Promise<string | undefined> => {
 	if (res?.status === 201) {
 		console.log('successfully created Csp1 identity!');
 		console.log('###########################');
-		const dir = './src/config/';
-		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-		fs.writeFileSync(`${dir}Csp1Identity.json`, JSON.stringify(res.data));
+		const configPath = path.join(__dirname, '..', 'config');
+		if (!fs.existsSync(configPath)) fs.mkdirSync(configPath);
+		fs.writeFileSync(identityPath, JSON.stringify(res.data));
 
 		return res.data.doc.id;
 	}

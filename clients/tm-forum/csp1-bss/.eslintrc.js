@@ -6,6 +6,7 @@ module.exports = {
 	rules: {
 		'@typescript-eslint/no-explicit-any': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
-		'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+		'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+		'no-async-promise-executor': 'off'
 	}
 };

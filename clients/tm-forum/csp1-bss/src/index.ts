@@ -21,20 +21,19 @@ const startServer = async () => {
 	await setup();
 
 	const app = express();
-	const port = CONFIG.port;
 
 	const prefix = '/tmf-api';
 	app.use(express.json());
 	useRouter(app, `${prefix}/productOrderingManagement/${CONFIG.tmf622Version}`, productOrderRouter);
 	useRouter(app, `${prefix}/serviceOrdering/${CONFIG.tmf641Version}`, serviceOrderRouter);
 	useRouter(app, `${prefix}/slaManagement/${CONFIG.tmf623Version}`, violationRouter);
-	app.listen(port, async () => {
+	app.listen(process.env.PORT, async () => {
 		app._router.stack.forEach((router: any) => {
 			if (router.stack) {
 				router.stack.map((r: any) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
 			}
 		});
-		console.log(`API running on port ${port}`);
+		console.log(`API running on port ${process.env.PORT}`);
 		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const newViolations = await pollChannel();

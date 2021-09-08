@@ -4,7 +4,7 @@ import { csp1Client } from '../utils/client';
 export const checkSubscriptionState = async (channelAddress: string, identityId: string) => {
 	console.log('Checking subscription state...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve, _reject) => {
 		const interval = setInterval(async () => {
 			const res = await csp1Client.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}/${identityId}${apiKey}`);
 

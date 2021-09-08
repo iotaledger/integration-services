@@ -4,8 +4,7 @@
   "description": "CSP1-BSS Proxy for TMForum API",
   "main": "index.ts",
   "scripts": {
-    "start": "npm-run-all build",
-    "poststart": "node dist/index.js",
+    "start": "node dist/index.js",
     "serve": "ts-node-dev src/index.ts",
     "build": "npm-run-all prettier tsc lint",
     "tsc": "tsc",

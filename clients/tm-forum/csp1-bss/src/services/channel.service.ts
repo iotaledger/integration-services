@@ -39,7 +39,8 @@ export const pollChannel = async (poolingDelay = 5000): Promise<any> => {
 				if (lock === 1) {
 					console.log('Fetching channel...');
 					const channelAddress = getChannelAddress();
-					const response = await csp1Client.get(`${CONFIG.baseUrl}/channels/logs/${channelAddress}`);
+					const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
+					const response = await csp1Client.get(`${CONFIG.baseUrl}/channels/logs/${channelAddress}${apiKey}`);
 					const channelData = response?.data;
 					const slaViolations = channelData.filter((data: any) => data.channelLog.type === 'slaViolation');
 					const newViolations = slaViolations.filter((violation: any) => !forwardedViolations.includes(violation.link));
