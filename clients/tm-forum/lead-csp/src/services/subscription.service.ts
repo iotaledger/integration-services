@@ -23,13 +23,14 @@ export const checkSubscriptionState = async (channelAddress: string, identityId:
 	const res = await leadCspClient.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}${apiKey}`);
 	if (res.status === 200) {
 		const subscriptions = res.data;
+
 		const subscription = subscriptions.find((subscription: any) => subscription.identityId === identityId);
 
 		if (subscription && !subscription.isAuthorized) {
 			await authorizeSubscription(channelAddress, subscription.subscriptionLink);
 			return true;
 		} else if (!subscription) {
-			console.log(`No requested subscription found for subscription link: ${subscription.subscriptionLink}`);
+			console.log('No requested subscription found');
 			return false;
 		} else {
 			console.log('Subscription is authorized.');
