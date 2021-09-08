@@ -81,6 +81,7 @@ export const ValidateResponseSchema = Type.Array(
 	Type.Object({
 		link: Type.String(),
 		isValid: Type.Boolean(),
-		error: Type.Optional(Type.String())
+		error: Type.Optional(Type.String()),
+		tangleLog: Type.Optional(Type.Any())
 	})
 );

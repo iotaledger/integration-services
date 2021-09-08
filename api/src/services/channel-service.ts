@@ -8,7 +8,7 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
-import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
+import { CreateChannelBodyResponse, ValidateResponse } from '../models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
@@ -213,12 +213,13 @@ export class ChannelService {
 		});
 	}
 
-	async validate(channelAddress: string, identityId: string, logs: ChannelData[]): Promise<void> {
+	async validate(channelAddress: string, identityId: string, logs: ChannelData[]): Promise<ValidateResponse> {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+				// TODO uncomment
+				/*const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 
 				if (!subscription || !subscription?.keyloadLink || !subscription.publicKey) {
 					throw new Error('no subscription found!');
@@ -226,11 +227,11 @@ export class ChannelService {
 
 				if (subscription.accessRights === AccessRights.Write) {
 					throw new Error('not allowed to validate the logs from the channel');
-				}
+				}*/
 
 				// TODO request data from channel
-				// TODO call validate function
-				// TODO return result
+				const tangleLogs = [...logs];
+				return ChannelLogTransformer.validateLogs(logs, tangleLogs);
 			} finally {
 				release();
 			}

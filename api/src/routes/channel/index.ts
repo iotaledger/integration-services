@@ -130,11 +130,11 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no logs provided' });
 			}
 
-			await this.channelService.validate(channelAddress, identityId, channelLogs);
-			return res.sendStatus(StatusCodes.OK);
+			const validateRes = await this.channelService.validate(channelAddress, identityId, channelLogs);
+			return res.status(StatusCodes.OK).send(validateRes);
 		} catch (error) {
 			this.logger.error(error);
-			next(new Error('could not reimport channel data'));
+			next(new Error('could not validate the channel data'));
 		}
 	};
 }
