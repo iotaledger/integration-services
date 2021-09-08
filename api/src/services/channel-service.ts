@@ -84,7 +84,6 @@ export class ChannelService {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
 		const messages = await this.streamsService.getMessages(sub);
-		console.log('MESSAAGES', messages);
 
 		if (!messages) {
 			return [];

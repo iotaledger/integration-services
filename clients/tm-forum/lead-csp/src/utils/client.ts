@@ -18,7 +18,7 @@ const errFunc = async (error: any) => {
 		originalRequest.headers['Authorization'] = token;
 		return axios(originalRequest);
 	} else {
-		Promise.reject(error);
+		throw Error(error);
 	}
 };
 
