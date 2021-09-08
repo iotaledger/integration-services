@@ -16,7 +16,7 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 }
 
 const startServer = async () => {
-	await setup();
+	
 
 	const app = express();
 
@@ -34,6 +34,7 @@ const startServer = async () => {
 		console.log(`API running on port ${process.env.PORT}`);
 		console.log('--------------------------------------------------------');
 		console.log('--------------------------------------------------------');
+		await setup();
 	});
 };
 
