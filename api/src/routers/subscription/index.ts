@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/subscription-bodies';
+import { SubscriptionSchema } from '../../models/schemas/subscription';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
@@ -10,7 +11,7 @@ const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, author
 
 export const subscriptionRouter = Router();
 
-subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, addSubscription)
+subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }),  authMiddleWare, addSubscription);
 
 /**
  * @openapi

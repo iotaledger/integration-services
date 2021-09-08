@@ -14,10 +14,13 @@ export class SubscriptionRoutes {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const identityId = _.get(req, 'params.identityId');
-
+			const subscription = req.body as Subscription;
+			
 			if (!channelAddress || !identityId) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
+
+			this.subscriptionService.addSubscription(subscription)
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not add subscription'));
