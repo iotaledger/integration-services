@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { get as lodashGet, isEmpty } from 'lodash';
-import { AddChannelLogBody, CreateChannelBody } from '../../models/types/request-response-bodies';
+import { AddChannelLogBody, CreateChannelBody, ReimportBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 
 export class ChannelRoutes {
@@ -70,6 +70,7 @@ export class ChannelRoutes {
 			next(new Error('could not get the history'));
 		}
 	};
+
 	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
@@ -89,6 +90,29 @@ export class ChannelRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not add the logs'));
+		}
+	};
+
+	reimport = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+		try {
+			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const { identityId } = req.user;
+			const body = req.body as ReimportBody;
+			const { seed, subscriptionPassword } = body;
+
+			if (!channelAddress || !identityId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			if (!seed) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no seed provided' });
+			}
+
+			await this.channelService.reimport(channelAddress, identityId, seed, subscriptionPassword);
+			return res.sendStatus(StatusCodes.OK);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not reimport channel data'));
 		}
 	};
 }

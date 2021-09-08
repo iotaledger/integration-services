@@ -79,11 +79,13 @@ export class ChannelService {
 		};
 	}
 
-	private async fetchLogs(channelAddress: string, identityId: string, sub: Author | Subscriber): Promise<ChannelData[]> {
+	async fetchLogs(channelAddress: string, identityId: string, sub: Author | Subscriber): Promise<ChannelData[]> {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
 		}
 		const messages = await this.streamsService.getMessages(sub);
+		console.log('MESSAAGES', messages);
+
 		if (!messages) {
 			return [];
 		}
@@ -174,6 +176,37 @@ export class ChannelService {
 					this.streamsService.exportSubscription(sub, this.password)
 				);
 				return newLog;
+			} finally {
+				release();
+			}
+		});
+	}
+
+	async reimport(channelAddress: string, identityId: string, seed: string, _subscriptionPassword?: string): Promise<void> {
+		const lockKey = channelAddress + identityId;
+
+		return this.lock.acquire(lockKey).then(async (release) => {
+			try {
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+
+				if (!subscription || !subscription?.keyloadLink || !subscription.publicKey) {
+					throw new Error('no subscription found!');
+				}
+
+				if (subscription.accessRights === AccessRights.Write) {
+					throw new Error('not allowed to reimport the logs from the channel');
+				}
+
+				const isAuthor = subscription.type === SubscriptionType.Author;
+				const newSub = await this.streamsService.resetState(channelAddress, seed, isAuthor);
+				const newPublicKey = newSub.clone().get_public_key();
+
+				if (newPublicKey !== subscription.publicKey) {
+					throw new Error('wrong seed inserted');
+				}
+
+				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
+				await this.fetchLogs(channelAddress, identityId, newSub);
 			} finally {
 				release();
 			}

@@ -1,17 +1,17 @@
 import { StatusCodes } from 'http-status-codes';
-import { ChannelRoutes } from '.';
-import { ChannelInfo } from '../../models/types/channel-info';
-import { Subscription } from '../../models/types/subscription';
-import { AccessRights, SubscriptionType } from '../../models/schemas/subscription';
-import { SubscriptionPool } from '../../pools/subscription-pools';
-import { ChannelInfoService } from '../../services/channel-info-service';
-import { ChannelService } from '../../services/channel-service';
-import { StreamsMessage, StreamsService } from '../../services/streams-service';
-import { SubscriptionService } from '../../services/subscription-service';
-import { UserService } from '../../services/user-service';
-import { StreamsConfigMock } from '../../test/mocks/config';
-import { LoggerMock } from '../../test/mocks/logger';
-import { AuthorMock } from '../../test/mocks/streams';
+import { ChannelRoutes } from '..';
+import { ChannelInfo } from '../../../models/types/channel-info';
+import { Subscription } from '../../../models/types/subscription';
+import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
+import { SubscriptionPool } from '../../../pools/subscription-pools';
+import { ChannelInfoService } from '../../../services/channel-info-service';
+import { ChannelService } from '../../../services/channel-service';
+import { StreamsMessage, StreamsService } from '../../../services/streams-service';
+import { SubscriptionService } from '../../../services/subscription-service';
+import { UserService } from '../../../services/user-service';
+import { StreamsConfigMock } from '../../../test/mocks/config';
+import { LoggerMock } from '../../../test/mocks/logger';
+import { AuthorMock } from '../../../test/mocks/streams';
 
 describe('test channel routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
