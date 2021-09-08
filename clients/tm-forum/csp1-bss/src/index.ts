@@ -16,8 +16,6 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 }
 
 const startServer = async () => {
-	
-
 	const app = express();
 
 	const prefix = '/tmf-api';

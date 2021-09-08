@@ -1,13 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import { CONFIG } from '../config/config';
+import { CONFIG, Csp1Identity as identity } from '../config/config';
 import { getHexEncodedKey, signNonce } from '../utils/encryption';
 import { csp1Client } from '../utils/client';
 
 export const fetchAuth = async (): Promise<any> => {
-	const identityPath = path.join(__dirname, '..', 'config', 'Csp1Identity.json');
-	const identityBuffer = fs.readFileSync(identityPath);
-	const identity = JSON.parse(identityBuffer.toString());
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
 	const res = await csp1Client.get(`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`);

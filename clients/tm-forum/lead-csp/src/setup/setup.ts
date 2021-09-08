@@ -1,4 +1,4 @@
-import { getSubscriptionLink } from '../config/config';
+import { getIdentityId } from '../config/config';
 import { createChannel } from '../services/channel.service';
 import { createIdentity } from '../services/identity.serivce';
 import { checkSubscriptionState } from '../services/subscription.service';
@@ -18,8 +18,8 @@ export const setup = async () => {
 		process.exit(0);
 	}
 
-	const csp1SubscriptionLink = getSubscriptionLink();
-	const isCsp1Authorized = await checkSubscriptionState(channelAddress, csp1SubscriptionLink);
+	const csp1IdentityId = getIdentityId();
+	const isCsp1Authorized = await checkSubscriptionState(channelAddress, csp1IdentityId);
 	if (!isCsp1Authorized) {
 		console.log('subscription is not authorized!');
 

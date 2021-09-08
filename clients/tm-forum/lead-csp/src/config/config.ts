@@ -30,11 +30,11 @@ export const ProductOrderCreate = {
 		}
 	]
 };
-export const getSubscriptionLink = (): string => {
-	const csp1SubscriptionLink = process.env.CSP1_SUBSCRIPTION_LINK;
-	if (csp1SubscriptionLink === '<INSERT_CSP1_SUBSCRIPTION_LINK>' || !csp1SubscriptionLink) {
-		console.error('Please insert csp1 subscription link in .env !');
+export const getIdentityId = (): string => {
+	const csp1IdentityId = process.env.CSP1_IDENTITY_ID;
+	if (csp1IdentityId === '<INSERT_CSP1_IDENTITY_ID>' || !csp1IdentityId) {
+		console.error('Please insert csp1 identity id in .env !');
 		process.exit();
 	}
-	return csp1SubscriptionLink;
+	return csp1IdentityId;
 };

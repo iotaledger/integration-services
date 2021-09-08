@@ -10,10 +10,10 @@ export const checkSubscriptionState = async (channelAddress: string, identityId:
 
 			if (res?.status === 200) {
 				if (res.data === '') {
-					const subscriptionLink = await requestSubscription(channelAddress);
-					console.log(`Subscription requested. Please authorize subscription link: ${subscriptionLink}`);
+					await requestSubscription(channelAddress);
+					console.log(`Subscription requested. Please authorize via identity id: ${identityId}`);
 				} else if (!res.data.isAuthorized) {
-					console.log(`Subscription already requested. Please authorize subscription link: ${res.data.subscriptionLink}`);
+					console.log(`Subscription already requested. Please authorize via identity id: ${identityId}`);
 				} else if (res.data.isAuthorized) {
 					clearInterval(interval);
 					console.log('Subscription authorized!');
