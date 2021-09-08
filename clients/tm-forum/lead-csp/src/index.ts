@@ -15,9 +15,9 @@ const app = async () => {
 			console.log('successfully sent product order!');
 			console.log(`Response product order: ${JSON.stringify(response?.data)}`);
 		}
-	} catch (error) {
-		console.log(error);
-	}
+		// To hide heroku and tangle related timeout issues -> should be removed in the future
+		// eslint-disable-next-line no-empty
+	} catch {}
 };
 
 app();
