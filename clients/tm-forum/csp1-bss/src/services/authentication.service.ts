@@ -12,7 +12,7 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const res = await csp1Client.get(`${CONFIG.baseUrl}/authentication/prove-ownership/${identity.doc.id}${apiKey}`);
 	if (res.status !== 200) {
-		console.error('didnt receive status 200 on get request for prove-ownership!');
+		console.error('Didnt receive status 200 on get request for prove-ownership!');
 		return;
 	}
 	const body = await res.data;
@@ -29,8 +29,7 @@ export const fetchAuth = async (): Promise<any> => {
 		}
 	);
 	if (response?.status === 200) {
-		console.log('successfully authenticated!');
-		// console.log('JWT: ', response.data.jwt);
+		console.log('Successfully authenticated!');
 	}
 
 	return response;

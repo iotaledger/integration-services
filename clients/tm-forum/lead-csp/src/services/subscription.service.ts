@@ -24,12 +24,16 @@ export const checkSubscriptionState = async (channelAddress: string, subscriptio
 	if (res.status === 200) {
 		const subscriptions = res.data;
 		const subscription = subscriptions.find((subscription: any) => subscription.subscriptionLink === subscriptionLink);
+
 		if (subscription && !subscription.isAuthorized) {
 			await authorizeSubscription(channelAddress, subscriptionLink);
+			return true;
 		} else if (!subscription) {
 			console.log(`No requested subscription found for subscription link: ${subscriptionLink}`);
+			return false;
 		} else {
-			console.log('Channel has no subscriptions or the subscription is already authorized.');
+			console.log('Subscription is authorized.');
+			return true;
 		}
 	}
 };

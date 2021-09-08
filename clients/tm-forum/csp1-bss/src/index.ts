@@ -7,8 +7,6 @@ import { productOrderRouter } from './routers/product-order.router';
 import { violationRouter } from './routers/violation.router';
 import { serviceOrderRouter } from './routers/service-order.router';
 import { setup } from './setup/setup';
-import { pollChannel } from './services/channel.service';
-import { forwardSlaViolation } from './services/violation.service';
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -34,13 +32,8 @@ const startServer = async () => {
 			}
 		});
 		console.log(`API running on port ${process.env.PORT}`);
-		// eslint-disable-next-line no-constant-condition
-		while (true) {
-			const newViolations = await pollChannel();
-			for (const newViolation of newViolations) {
-				await forwardSlaViolation(newViolation);
-			}
-		}
+		console.log('--------------------------------------------------------');
+		console.log('--------------------------------------------------------');
 	});
 };
 

@@ -11,9 +11,9 @@ export class ViolationRoutes {
 	 */
 	writeSlaViolationCreateEvent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
 		try {
-			console.log('Writting violations...');
+			console.log('Received violation...');
 			const slaViolationCreateEvent = req.body;
-			await writeChannel(slaViolationCreateEvent, 'violationResponse');
+			await writeChannel(slaViolationCreateEvent, 'slaViolationCreateNotification');
 			return res.status(StatusCodes.OK).send();
 		} catch (error) {
 			console.log(error);
