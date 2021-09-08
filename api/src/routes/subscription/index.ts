@@ -10,6 +10,20 @@ import { Subscription } from '../../models/types/subscription';
 export class SubscriptionRoutes {
 	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
 
+	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const identityId = _.get(req, 'params.identityId');
+
+			if (!channelAddress || !identityId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not add subscription'));
+		}
+	};
+
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');

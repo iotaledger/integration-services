@@ -6,9 +6,11 @@ import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { subscriptionService } from '../services';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
-const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
+const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription, addSubscription} = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
+
+subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, addSubscription)
 
 /**
  * @openapi
