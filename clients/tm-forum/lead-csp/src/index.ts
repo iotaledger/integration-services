@@ -7,20 +7,18 @@ import { leadCspClient } from './utils/client';
 
 const app = async () => {
 	await setup();
-	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 	console.log('Sending product order...');
+	const url = `${CONFIG.csp1Url}/tmf-api/productOrderingManagement/v1/productOrder`;
 	try {
-		const response = await leadCspClient.post(
-			`${CONFIG.csp1Url}/productOrderingManagement/v4/productOrder${apiKey}`,
-			JSON.stringify(ProductOrderCreate)
-		);
+		const response = await leadCspClient.post(url, JSON.stringify(ProductOrderCreate));
+
 		if (response?.status === 201) {
 			console.log('successfully sent product order!');
 			console.log(`Response product order: ${JSON.stringify(response?.data)}`);
 		}
-	} catch (error) {
-		console.log(error);
-	}
+		// To hide heroku and tangle related timeout issues -> should be removed in the future
+		// eslint-disable-next-line no-empty
+	} catch (e) {}
 };
 
 app();
