@@ -89,6 +89,30 @@ export class StreamsService {
 			throw new Error('could not add logs to the channel');
 		}
 	}
+	async getMessage(subscription: Author | Subscriber, link: string): Promise<StreamsMessage> {
+		const address = Address.from_string(link);
+		const messageResponse = await subscription.clone().fetch_prev_msg(address);
+		const message = messageResponse.get_message();
+		const publicPayload = message && fromBytes(message.get_public_payload());
+		const maskedPayload = message && fromBytes(message.get_masked_payload());
+		console.log('message', message);
+		console.log('publicPayload', publicPayload);
+		console.log('maskedPayload', maskedPayload);
+
+		if (!publicPayload && !maskedPayload) {
+			return null;
+		}
+
+		const linkDetails = await this.getClient(this.config.node)?.get_link_details(address?.copy());
+		const messageId = linkDetails?.get_metadata()?.message_id;
+
+		return {
+			link,
+			messageId,
+			publicPayload: publicPayload && JSON.parse(publicPayload),
+			maskedPayload: maskedPayload && JSON.parse(maskedPayload)
+		};
+	}
 
 	async getMessages(subscription: Author | Subscriber): Promise<StreamsMessage[]> {
 		try {

@@ -217,18 +217,43 @@ export class ChannelService {
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				// TODO uncomment
-				/*const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 
-				if (!subscription || !subscription?.keyloadLink || !subscription.publicKey) {
+				// TODO check when no publicKey is needed....
+				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
 				}
 
 				if (subscription.accessRights === AccessRights.Write) {
 					throw new Error('not allowed to validate the logs from the channel');
-				}*/
+				}
 
-				// TODO request data from channel
+				const isAuthor = subscription.type === SubscriptionType.Author;
+				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+
+				if (!sub) {
+					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+				}
+				await sub.clone().sync_state();
+
+				// TODO#22 finalize validate endpoint
+				/*const m = await this.streamsService.getMessage(sub, logs[0].link);
+				const streamsMessages = [m];
+				await Promise.all(
+					logs.map(async (log) => {
+						{
+							const key = 'get-message-' + channelAddress + identityId;
+							return await this.lock.acquire(key).then(async (release) => {
+								try {
+									return this.streamsService.getMessage(sub.clone(), log.link);
+								} finally {
+									release();
+								}
+							});
+						}
+					})
+				);
+				const tangleLogs = ChannelLogTransformer.transformStreamsMessages(streamsMessages);*/
 				const tangleLogs = [...logs];
 				return ChannelLogTransformer.validateLogs(logs, tangleLogs);
 			} finally {
