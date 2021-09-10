@@ -12,15 +12,23 @@ export class SubscriptionRoutes {
 
 	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
-			const channelAddress = _.get(req, 'params.channelAddress');
-			const identityId = _.get(req, 'params.identityId');
+			const paramChannelAddress = _.get(req, 'params.channelAddress');
+			const paramIdentityId = _.get(req, 'params.identityId');
 			const subscription = req.body as Subscription;
-			
-			if (!channelAddress || !identityId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			const { channelAddress, identityId, publicKey } = subscription;
+
+			// paramChannelAddress and paramIdentityId are just used for REST completeness
+			if (!paramChannelAddress || !paramIdentityId || !publicKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress, identityId or publicKey provided' });
 			}
 
-			this.subscriptionService.addSubscription(subscription)
+			const existingSubscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			if (existingSubscription) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already added' });
+			}
+
+			await this.subscriptionService.addSubscription(subscription);
+			return res.status(StatusCodes.CREATED).send(subscription);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not add subscription'));
