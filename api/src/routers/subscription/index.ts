@@ -1,12 +1,16 @@
 import { Router } from 'express';
-import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/subscription-bodies';
+import {
+	AuthorizeSubscriptionBodySchema,
+	RequestSubscriptionBodySchema,
+	RevokeSubscriptionBodySchema
+} from '../../models/schemas/request-response-body/subscription-bodies';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { subscriptionService } from '../services';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
-const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
+const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription, removeSubscription } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
 
@@ -115,8 +119,8 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
  * @openapi
  * /subscriptions/remove/{channelAddress}:
  *   post:
- *     summary: TBD!
- *     description: Remove subscription to a channel. The author or subscriber of a channel can remove a subscription from a channel. (A subscriber can only remove its own subscription)
+ *     summary: Remove subscription to a channel.
+ *     description: Remove subscription to a channel. Only the author of a channel can remove a subscription from a channel.
  *     tags:
  *     - subscriptions
  *     parameters:
@@ -125,6 +129,13 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
  *       required: true
  *     deprecated: true
  */
+subscriptionRouter.post(
+	'/remove/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: RevokeSubscriptionBodySchema }),
+	removeSubscription
+);
 
 /**
  * @openapi

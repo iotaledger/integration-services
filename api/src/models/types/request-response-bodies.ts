@@ -20,7 +20,8 @@ import {
 	AuthorizeSubscriptionBodyResponseSchema,
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionBodyResponseSchema,
-	RequestSubscriptionBodySchema
+	RequestSubscriptionBodySchema,
+	RevokeSubscriptionBodySchema
 } from '../schemas/request-response-body/subscription-bodies';
 
 export type ProveOwnershipPostBody = Static<typeof ProveOwnershipPostBodySchema>;
@@ -37,6 +38,7 @@ export type ReimportBody = Static<typeof ReimportBodySchema>;
 export type ValidateBody = Static<typeof ValidateBodySchema>;
 export type ValidateResponse = Static<typeof ValidateResponseSchema>;
 export type AuthorizeSubscriptionBody = Static<typeof AuthorizeSubscriptionBodySchema>;
+export type RevokeSubscriptionBody = Static<typeof RevokeSubscriptionBodySchema>;
 export type RequestSubscriptionBody = Static<typeof RequestSubscriptionBodySchema>;
 export type RequestSubscriptionBodyResponse = Static<typeof RequestSubscriptionBodyResponseSchema>;
 export type AuthorizeSubscriptionBodyResponse = Static<typeof AuthorizeSubscriptionBodyResponseSchema>;

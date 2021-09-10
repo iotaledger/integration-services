@@ -49,7 +49,8 @@ import {
 	AuthorizeSubscriptionBodyResponseSchema,
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionBodyResponseSchema,
-	RequestSubscriptionBodySchema
+	RequestSubscriptionBodySchema,
+	RevokeSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
 
@@ -72,6 +73,7 @@ const schemas = {
 	AuthorizeSubscriptionBodySchema,
 	AuthorizeSubscriptionBodyResponseSchema,
 	RequestSubscriptionBodySchema,
+	RevokeSubscriptionBodySchema,
 	RequestSubscriptionBodyResponseSchema,
 	SubscriptionSchema,
 	ClaimSchema,

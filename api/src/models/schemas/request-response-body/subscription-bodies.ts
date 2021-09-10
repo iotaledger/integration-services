@@ -6,6 +6,11 @@ export const AuthorizeSubscriptionBodySchema = Type.Object({
 	identityId: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
 });
 
+export const RevokeSubscriptionBodySchema = Type.Object({
+	subscriptionLink: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
+	identityId: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()]))
+});
+
 export const RequestSubscriptionBodySchema = Type.Object({
 	subscriptionPassword: Type.Optional(
 		Type.String({
