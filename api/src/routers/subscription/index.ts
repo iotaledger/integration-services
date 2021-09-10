@@ -16,7 +16,7 @@ export const subscriptionRouter = Router();
  * /subscriptions/{channelAddress}/{identityId}:
  *   post:
  *     summary: Adds an subscription
- *     description: Adds an existing subscription (e.g. was not created with the api)
+ *     description: Adds an existing subscription (e.g. the subscription was not created with the api)
  *     tags:
  *     - subscriptions
  *     parameters:
