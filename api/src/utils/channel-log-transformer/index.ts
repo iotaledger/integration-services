@@ -1,4 +1,6 @@
+import { isEqual } from 'lodash';
 import { ChannelData, ChannelLog } from '../../models/types/channel-data';
+import { ValidateResponse } from '../../models/types/request-response-bodies';
 import { StreamsMessage } from '../../services/streams-service';
 
 export interface IPayload {
@@ -47,5 +49,33 @@ export class ChannelLogTransformer {
 			maskedPayload,
 			publicPayload
 		};
+	}
+
+	static validateLogs(logs: ChannelData[], tangleLogs: ChannelData[]): ValidateResponse {
+		return logs.map((log) => {
+			const tangleLog = tangleLogs.find((l) => l.link === log.link);
+
+			if (!tangleLog) {
+				return {
+					link: log.link,
+					isValid: false,
+					error: 'log not found on the tangle'
+				};
+			}
+
+			if (!isEqual(log.channelLog, tangleLog.channelLog)) {
+				return {
+					link: log.link,
+					isValid: false,
+					error: 'not the same data',
+					tangleLog: tangleLog.channelLog
+				};
+			}
+
+			return {
+				link: log.link,
+				isValid: true
+			};
+		});
 	}
 }

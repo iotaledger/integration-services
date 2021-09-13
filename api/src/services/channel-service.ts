@@ -8,7 +8,7 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
-import { CreateChannelBodyResponse } from '../models/types/request-response-bodies';
+import { CreateChannelBodyResponse, ValidateResponse } from '../models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
@@ -206,6 +206,56 @@ export class ChannelService {
 
 				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
 				await this.fetchLogs(channelAddress, identityId, newSub);
+			} finally {
+				release();
+			}
+		});
+	}
+
+	async validate(channelAddress: string, identityId: string, logs: ChannelData[]): Promise<ValidateResponse> {
+		const lockKey = channelAddress + identityId;
+
+		return this.lock.acquire(lockKey).then(async (release) => {
+			try {
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+
+				// TODO check when no publicKey is needed....
+				if (!subscription || !subscription?.keyloadLink) {
+					throw new Error('no subscription found!');
+				}
+
+				if (subscription.accessRights === AccessRights.Write) {
+					throw new Error('not allowed to validate the logs from the channel');
+				}
+
+				const isAuthor = subscription.type === SubscriptionType.Author;
+				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+
+				if (!sub) {
+					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+				}
+				await sub.clone().sync_state();
+
+				// TODO#22 finalize validate endpoint
+				/*const m = await this.streamsService.getMessage(sub, logs[0].link);
+				const streamsMessages = [m];
+				await Promise.all(
+					logs.map(async (log) => {
+						{
+							const key = 'get-message-' + channelAddress + identityId;
+							return await this.lock.acquire(key).then(async (release) => {
+								try {
+									return this.streamsService.getMessage(sub.clone(), log.link);
+								} finally {
+									release();
+								}
+							});
+						}
+					})
+				);
+				const tangleLogs = ChannelLogTransformer.transformStreamsMessages(streamsMessages);*/
+				const tangleLogs = [...logs];
+				return ChannelLogTransformer.validateLogs(logs, tangleLogs);
 			} finally {
 				release();
 			}
