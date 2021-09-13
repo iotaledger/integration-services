@@ -35,6 +35,10 @@ export const openApiDefinition = {
 			{
 				name: 'verification',
 				description: 'Create and verifiy credentials'
+			},
+			{
+				name: 'server-info',
+				description: 'Get information about the server'
 			}
 		],
 		servers: [
