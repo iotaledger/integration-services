@@ -44,8 +44,9 @@ const assertConfig = (config: Config) => {
 		throw Error('Server secret must to have a length of 32!');
 	}
 
-	// apiKey, commitHash can be empty if the host decides so
-	const optionalEnvVariables = ['apiKey', 'commitHash'];
+	// apiKey can be empty if the host decides so
+	// commitHash is set automatically during deployment
+	const optionalEnvVariables = ['apiKey'];
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
 			if (optionalEnvVariables.includes(Object.keys(config)[i])) {
