@@ -59,7 +59,8 @@ export const setSubscriptionAuthorization = async (
 	channelAddress: string,
 	identityId: string,
 	isAuthorized: boolean,
-	keyloadLink?: string
+	keyloadLink: string,
+	sequenceLink: string
 ): Promise<UpdateWriteOpResult> => {
 	const query = {
 		channelAddress,
@@ -69,7 +70,8 @@ export const setSubscriptionAuthorization = async (
 		$set: {
 			isAuthorized,
 			keyloadLink,
-			lastModified: new Date()
+			lastModified: new Date(),
+			sequenceLink
 		}
 	};
 

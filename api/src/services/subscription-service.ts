@@ -7,7 +7,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
-import { AuthorizeSubscriptionBodyResponse, RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
+import { RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelData } from '../models/types/channel-data';
@@ -52,10 +52,10 @@ export class SubscriptionService {
 		return channelInfo.authorId == authorId;
 	}
 
-	async setSubscriptionAuthorized(channelAddress: string, identityId: string, keyloadLink: string) {
+	async setSubscriptionAuthorized(channelAddress: string, identityId: string, keyloadLink: string, sequenceLink: string) {
 		const errMsg = 'could not authorize the subscription!';
 		const isAuthorized = true;
-		const res = await subscriptionDb.setSubscriptionAuthorization(channelAddress, identityId, isAuthorized, keyloadLink);
+		const res = await subscriptionDb.setSubscriptionAuthorization(channelAddress, identityId, isAuthorized, keyloadLink, sequenceLink);
 		if (!res?.result?.n) {
 			throw Error(errMsg);
 		}
@@ -93,7 +93,11 @@ export class SubscriptionService {
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}
 
-	async authorizeSubscription(channelAddress: string, subscription: Subscription, authorId: string): Promise<AuthorizeSubscriptionBodyResponse> {
+	async authorizeSubscription(
+		channelAddress: string,
+		subscription: Subscription,
+		authorId: string
+	): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		const lockKey = channelAddress + authorId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
@@ -121,8 +125,9 @@ export class SubscriptionService {
 
 				// authorize new subscription and add existing public keys to the new branch
 				await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
-				const keyloadLink = await this.authSub({
+				const { keyloadLink, sequenceLink } = await this.sendKeyload({
 					channelAddress,
+					anchor: channelAddress,
 					publicKeys: [publicKey, authorPubKey, ...existingSubscriptionKeys],
 					streamsAuthor,
 					authorId: authorSub.identityId,
@@ -133,8 +138,9 @@ export class SubscriptionService {
 				// create new branches for existing subscriptions including the newly added subscription public key
 				await Promise.all(
 					existingSubscriptions.map(async (sub) => {
-						await this.authSub({
+						await this.sendKeyload({
 							channelAddress,
+							anchor: channelAddress,
 							publicKeys: [...existingSubscriptionKeys, authorPubKey, publicKey],
 							streamsAuthor,
 							authorId: authorSub.identityId,
@@ -150,33 +156,34 @@ export class SubscriptionService {
 					this.streamsService.exportSubscription(streamsAuthor, this.password)
 				);
 
-				return { keyloadLink };
+				return { keyloadLink, sequenceLink };
 			} finally {
 				release();
 			}
 		});
 	}
 
-	private async authSub(params: {
+	private async sendKeyload(params: {
 		channelAddress: string;
+		anchor: string;
 		publicKeys: string[];
 		streamsAuthor: Author;
 		authorId: string;
 		identityId: string;
 		presharedKey?: string;
-	}): Promise<string> {
+	}): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		const key = 'auth-sub-' + params.channelAddress + params.authorId;
 		return await this.lock.acquire(key).then(async (release) => {
 			try {
-				const { presharedKey, channelAddress, publicKeys, streamsAuthor, identityId } = params;
+				const { presharedKey, channelAddress, publicKeys, streamsAuthor, identityId, anchor } = params;
 				await streamsAuthor.clone().sync_state();
-				const authSub = await this.streamsService.sendKeyload(channelAddress, publicKeys, <Author>streamsAuthor, presharedKey);
+				const authSub = await this.streamsService.sendKeyload(anchor, publicKeys, <Author>streamsAuthor, presharedKey);
 				if (!authSub?.keyloadLink) {
 					throw new Error('no keyload link found when authorizing the subscription');
 				}
 
-				await this.setSubscriptionAuthorized(channelAddress, identityId, authSub.keyloadLink);
-				return authSub.keyloadLink;
+				await this.setSubscriptionAuthorized(channelAddress, identityId, authSub.keyloadLink, authSub.sequenceLink);
+				return authSub;
 			} finally {
 				release();
 			}

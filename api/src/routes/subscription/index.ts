@@ -107,11 +107,7 @@ export class SubscriptionRoutes {
 				throw new Error('no valid subscription found!');
 			}
 
-			// TODO revoke subscription
-			await this.subscriptionService.requestSubscription({
-				subscriberId: authorId,
-				channelAddress
-			});
+			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription.identityId);
 
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
