@@ -78,7 +78,7 @@ export class SubscriptionRoutes {
 		}
 	};
 
-	removeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+	revokeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const authorId = req.user?.identityId;

@@ -10,7 +10,7 @@ import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { subscriptionService } from '../services';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
-const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription, removeSubscription } = subscriptionRoutes;
+const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription, revokeSubscription } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
 
@@ -117,10 +117,10 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
 
 /**
  * @openapi
- * /subscriptions/remove/{channelAddress}:
+ * /subscriptions/revoke/{channelAddress}:
  *   post:
- *     summary: Remove subscription to a channel.
- *     description: Remove subscription to a channel. Only the author of a channel can remove a subscription from a channel.
+ *     summary: Revoke subscription to a channel.
+ *     description: Revoke subscription to a channel. Only the author of a channel can revoke a subscription from a channel.
  *     tags:
  *     - subscriptions
  *     parameters:
@@ -130,11 +130,11 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
  *     deprecated: true
  */
 subscriptionRouter.post(
-	'/remove/:channelAddress',
+	'/revoke/:channelAddress',
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeSubscriptionBodySchema }),
-	removeSubscription
+	revokeSubscription
 );
 
 /**

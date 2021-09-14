@@ -163,6 +163,65 @@ export class SubscriptionService {
 		});
 	}
 
+	async revokeSubscription(channelAddress: string, subscription: Subscription, authorId: string): Promise<void> {
+		const lockKey = channelAddress + authorId;
+
+		return this.lock.acquire(lockKey).then(async (release) => {
+			try {
+				const authorSub = await this.getSubscription(channelAddress, authorId);
+				const { publicKey } = subscription;
+				const presharedKey = authorSub.presharedKey;
+				const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;
+
+				if (!streamsAuthor) {
+					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
+				}
+
+				const authorPubKey = streamsAuthor.clone().get_public_key();
+				const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
+				const existingSubscriptions = subscriptions
+					? subscriptions.filter(
+							(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+					  )
+					: [];
+
+				// remove revoked public key
+				const filteredSubscriptionKeys = existingSubscriptions.map((s) => s?.publicKey).filter((pubkey) => pubkey && pubkey !== publicKey);
+
+				// fetch prev logs before syncing state
+				await this.fetchLogs(channelAddress, streamsAuthor, authorSub.identityId);
+
+				//TODO check if sequencelink exists otherwise use channelAddress
+
+				// add new keyload message to existing branches but not including the revoked publicKey...
+				await Promise.all(
+					existingSubscriptions.map(async (sub) => {
+						return await this.sendKeyload({
+							channelAddress,
+							anchor: sub.sequenceLink,
+							publicKeys: [...filteredSubscriptionKeys, authorPubKey],
+							streamsAuthor,
+							authorId: authorSub.identityId,
+							identityId: sub.identityId,
+							presharedKey
+						});
+					})
+				);
+
+				// TODO uncomment line to actually remove the subscription also from db
+				// await subscriptionDb.removeSubscription(channelAddress, subscription.identityId)
+
+				await this.updateSubscriptionState(
+					channelAddress,
+					authorSub.identityId,
+					this.streamsService.exportSubscription(streamsAuthor, this.password)
+				);
+			} finally {
+				release();
+			}
+		});
+	}
+
 	private async sendKeyload(params: {
 		channelAddress: string;
 		anchor: string;
@@ -178,6 +237,7 @@ export class SubscriptionService {
 				const { presharedKey, channelAddress, publicKeys, streamsAuthor, identityId, anchor } = params;
 				await streamsAuthor.clone().sync_state();
 				const authSub = await this.streamsService.sendKeyload(anchor, publicKeys, <Author>streamsAuthor, presharedKey);
+
 				if (!authSub?.keyloadLink) {
 					throw new Error('no keyload link found when authorizing the subscription');
 				}
