@@ -92,7 +92,7 @@ export class SubscriptionRoutes {
 			const authorSubscription = await this.subscriptionService.getSubscription(channelAddress, authorId);
 
 			if (!authorSubscription || authorSubscription.type !== SubscriptionType.Author) {
-				return res.status(StatusCodes.BAD_REQUEST).send('subscription must be an author');
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription must be an author' });
 			}
 
 			// check if subscription exists to revoke
