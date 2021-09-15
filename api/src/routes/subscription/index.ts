@@ -103,7 +103,7 @@ export class SubscriptionRoutes {
 				subscription = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
 			}
 
-			if (!subscription || !subscription?.subscriptionLink || !subscription.publicKey) {
+			if (!subscription || !subscription?.subscriptionLink || !subscription?.publicKey) {
 				throw new Error('no valid subscription found!');
 			}
 
@@ -112,7 +112,7 @@ export class SubscriptionRoutes {
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);
-			next(new Error('could not request the subscription'));
+			next(new Error('could not revoke the subscription'));
 		}
 	};
 

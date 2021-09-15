@@ -135,12 +135,12 @@ export class SubscriptionService {
 					presharedKey
 				});
 
-				// create new branches for existing subscriptions including the newly added subscription public key
+				// create new keyloads for existing branches including the newly added subscription public key
 				await Promise.all(
 					existingSubscriptions.map(async (sub) => {
 						await this.sendKeyload({
 							channelAddress,
-							anchor: channelAddress,
+							anchor: sub?.sequenceLink || channelAddress,
 							publicKeys: [...existingSubscriptionKeys, authorPubKey, publicKey],
 							streamsAuthor,
 							authorId: authorSub.identityId,
@@ -191,14 +191,12 @@ export class SubscriptionService {
 				// fetch prev logs before syncing state
 				await this.fetchLogs(channelAddress, streamsAuthor, authorSub.identityId);
 
-				//TODO check if sequencelink exists otherwise use channelAddress
-
 				// add new keyload message to existing branches but not including the revoked publicKey...
 				await Promise.all(
 					existingSubscriptions.map(async (sub) => {
 						return await this.sendKeyload({
 							channelAddress,
-							anchor: sub.sequenceLink,
+							anchor: sub?.sequenceLink || channelAddress,
 							publicKeys: [...filteredSubscriptionKeys, authorPubKey],
 							streamsAuthor,
 							authorId: authorSub.identityId,
@@ -208,8 +206,7 @@ export class SubscriptionService {
 					})
 				);
 
-				// TODO uncomment line to actually remove the subscription also from db
-				// await subscriptionDb.removeSubscription(channelAddress, subscription.identityId)
+				await subscriptionDb.removeSubscription(channelAddress, subscription.identityId);
 
 				await this.updateSubscriptionState(
 					channelAddress,

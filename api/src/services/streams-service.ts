@@ -24,7 +24,7 @@ export class StreamsService {
 	async create(
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string }> {
+	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string; sequenceLink: string }> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -44,15 +44,16 @@ export class StreamsService {
 			}
 
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
-			const keyloadAddress = res?.get_link();
-			const keyloadLink = keyloadAddress.copy().to_string();
+			const keyloadLink = res?.get_link()?.to_string();
+			const sequenceLink = res?.get_seq_link()?.to_string();
 
 			return {
 				seed,
 				channelAddress: announcementLink,
 				author: author.clone(),
 				presharedKey,
-				keyloadLink
+				keyloadLink,
+				sequenceLink
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);

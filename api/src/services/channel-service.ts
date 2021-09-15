@@ -61,7 +61,8 @@ export class ChannelService {
 			isAuthorized: true,
 			publicKey: null,
 			keyloadLink: res.keyloadLink,
-			presharedKey: res.presharedKey
+			presharedKey: res.presharedKey,
+			sequenceLink: res.sequenceLink
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
