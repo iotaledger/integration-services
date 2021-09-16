@@ -34,7 +34,7 @@ export const CreateChannelBodySchema = Type.Object({
 	)
 });
 
-export const CreateChannelBodyResponseSchema = Type.Object({
+export const CreateChannelResponseSchema = Type.Object({
 	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
 	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	presharedKey: Type.Optional(

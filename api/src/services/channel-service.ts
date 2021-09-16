@@ -8,7 +8,7 @@ import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
-import { CreateChannelBodyResponse, ValidateResponse } from '../models/types/request-response-bodies';
+import { CreateChannelResponse, ValidateResponse } from '../models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
@@ -37,7 +37,7 @@ export class ChannelService {
 		seed?: string;
 		presharedKey?: string;
 		subscriptionPassword?: string;
-	}): Promise<CreateChannelBodyResponse> {
+	}): Promise<CreateChannelResponse> {
 		const { presharedKey, seed, hasPresharedKey, identityId, topics } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
@@ -61,7 +61,8 @@ export class ChannelService {
 			isAuthorized: true,
 			publicKey: null,
 			keyloadLink: res.keyloadLink,
-			presharedKey: res.presharedKey
+			presharedKey: res.presharedKey,
+			sequenceLink: res.sequenceLink
 		};
 
 		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);

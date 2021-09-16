@@ -13,7 +13,7 @@ export const openApiDefinition = {
 		},
 		tags: [
 			{
-				name: 'identity',
+				name: 'identities',
 				description: 'Manage decentralized identities'
 			},
 			{

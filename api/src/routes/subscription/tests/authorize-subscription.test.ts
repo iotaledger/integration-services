@@ -231,6 +231,7 @@ describe('test authorize subscription route', () => {
 		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
 		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
 			keyloadLink: 'testkeyloadlink',
+			sequenceLink: 'testsequencelink',
 			author: authorMock
 		}); // keyloadLink got created
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
@@ -246,11 +247,11 @@ describe('test authorize subscription route', () => {
 		expect(getAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, presharedKey);
-		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink');
+		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', authorId, 'new-state');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink' });
+		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink', sequenceLink: 'testsequencelink' });
 	});
 
 	it('should return keyloadLink for authorized subscription', async () => {
@@ -276,6 +277,7 @@ describe('test authorize subscription route', () => {
 		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
 		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
 			keyloadLink: 'testkeyloadlink',
+			sequenceLink: 'testsequencelink',
 			author: authorMock
 		}); // keyloadLink got created
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
@@ -291,10 +293,10 @@ describe('test authorize subscription route', () => {
 		expect(getAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, presharedKey);
-		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink');
+		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', authorId, 'new-state');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink' });
+		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink', sequenceLink: 'testsequencelink' });
 	});
 });

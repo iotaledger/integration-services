@@ -6,6 +6,7 @@ import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { Subscription } from '../../models/types/subscription';
+import { SubscriptionType } from '../../models/schemas/subscription';
 
 export class SubscriptionRoutes {
 	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
@@ -99,6 +100,44 @@ export class SubscriptionRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not request the subscription'));
+		}
+	};
+
+	revokeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const authorId = req.user?.identityId;
+			const body = req.body as AuthorizeSubscriptionBody;
+			const { subscriptionLink, identityId } = body;
+
+			if (!authorId || !channelAddress) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			const authorSubscription = await this.subscriptionService.getSubscription(channelAddress, authorId);
+
+			if (!authorSubscription || authorSubscription.type !== SubscriptionType.Author) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription must be an author' });
+			}
+
+			// check if subscription exists to revoke
+			let subscription: Subscription;
+			if (!subscriptionLink && identityId) {
+				subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			} else {
+				subscription = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
+			}
+
+			if (!subscription || !subscription?.subscriptionLink || !subscription?.publicKey) {
+				throw new Error('no valid subscription found!');
+			}
+
+			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription);
+
+			return res.sendStatus(StatusCodes.OK);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not revoke the subscription'));
 		}
 	};
 

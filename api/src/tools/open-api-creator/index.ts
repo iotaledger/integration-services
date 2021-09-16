@@ -2,7 +2,7 @@ import { ProveOwnershipPostBodySchema, NonceSchema } from '../../models/schemas/
 import {
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
-	CreateChannelBodyResponseSchema,
+	CreateChannelResponseSchema,
 	ChannelDataSchema,
 	ReimportBodySchema,
 	ValidateBodySchema,
@@ -28,28 +28,14 @@ import {
 	LatestIdentityJsonSchema
 } from '../../models/schemas/identity';
 import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
-import {
-	AggregateOfferSchema,
-	AggregateRatingSchema,
-	BrandSchema,
-	DemandSchema,
-	DistanceSchema,
-	OfferSchema,
-	PostalAddressSchema,
-	QuantitativeValueSchema,
-	ReviewRatingSchema,
-	ReviewSchema,
-	ServiceChannelSchema,
-	StructuredValueSchema,
-	ThingSchema
-} from '../../models/schemas/user-types-helper';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
 import { IdentitySchema, IdentityWithoutIdFields } from '../../models/schemas/user';
 import {
-	AuthorizeSubscriptionBodyResponseSchema,
+	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
-	RequestSubscriptionBodyResponseSchema,
-	RequestSubscriptionBodySchema
+	RequestSubscriptionResponseSchema,
+	RequestSubscriptionBodySchema,
+	RevokeSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
 
@@ -63,23 +49,28 @@ import fs from 'fs';
 const schemas = {
 	ProveOwnershipPostBodySchema,
 	CreateChannelBodySchema,
-	CreateChannelBodyResponseSchema,
 	AddChannelLogBodySchema,
 	ChannelDataSchema,
 	ValidateBodySchema,
-	ValidateResponseSchema,
-	ChannelInfoSearchSchema,
 	AuthorizeSubscriptionBodySchema,
-	AuthorizeSubscriptionBodyResponseSchema,
 	RequestSubscriptionBodySchema,
-	RequestSubscriptionBodyResponseSchema,
-	SubscriptionSchema,
-	ClaimSchema,
+	RevokeSubscriptionBodySchema,
 	RevokeVerificationBodySchema,
 	VerifyIdentityBodySchema,
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
 	SubjectBodySchema,
+	CreateIdentityBodySchema,
+	UpdateIdentityBodySchema,
+	ReimportBodySchema,
+	CreateChannelResponseSchema,
+	AuthorizeSubscriptionResponseSchema,
+	RequestSubscriptionResponseSchema,
+	ValidateResponseSchema,
+	ErrorResponseSchema,
+	ChannelInfoSearchSchema,
+	SubscriptionSchema,
+	ClaimSchema,
 	ChannelInfoSchema,
 	TopicSchema,
 	VerifiableCredentialSubjectSchema,
@@ -90,21 +81,6 @@ const schemas = {
 	IdentityDocumentJsonSchema,
 	LatestIdentityJsonSchema,
 	DocumentJsonUpdateSchema,
-	CreateIdentityBodySchema,
-	UpdateIdentityBodySchema,
-	AggregateOfferSchema,
-	AggregateRatingSchema,
-	BrandSchema,
-	DemandSchema,
-	DistanceSchema,
-	OfferSchema,
-	PostalAddressSchema,
-	QuantitativeValueSchema,
-	ReviewRatingSchema,
-	ReviewSchema,
-	ServiceChannelSchema,
-	StructuredValueSchema,
-	ThingSchema,
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,
@@ -112,10 +88,8 @@ const schemas = {
 	ServiceSchema,
 	IdentitySchema,
 	IdentityWithoutIdFields,
-	ErrorResponseSchema,
 	IdentityIdSchema,
 	NonceSchema,
-	ReimportBodySchema,
 	ChannelAddressSchema
 };
 
