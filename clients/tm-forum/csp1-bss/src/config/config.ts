@@ -84,48 +84,46 @@ export const SlaViolation = {
 	}
 };
 
-const serviceOrderItem = [
-	{
-		id: '1',
-		action: 'add',
-		service: {
-			name: 'Broadband Gold',
-			state: 'inactive',
-			serviceCharacteristic: [
-				{
-					name: 'CSI Info',
-					valueType: 'CsiInfo',
-					value: {
-						sST: 1,
-						nEST: {
-							dLThptPerUE: {
-								guaThpt: 192,
-								maxThpt: 50000
-							},
-							uLThptPerUE: {
-								guaThpt: 192,
-								maxThpt: 5000
-							},
-							maxNumberofUEs: '10',
-							isolationLevel: {
-								level: ['NO ISOLATION']
-							},
-							mMTelSupport: '1',
-							sessServContSupport: '1',
-							sliceQoSParams: ['1', '2', '5', '6', '7', '8', '9'],
-							userDataAccess: '0'
+export const ServiceOrderCreate = {
+	externalId: 'CS001',
+	description: 'Communication Service 1',
+	serviceOrderItem: [
+		{
+			id: '1',
+			action: 'add',
+			service: {
+				name: 'Broadband Gold',
+				state: 'inactive',
+				serviceCharacteristic: [
+					{
+						name: 'CSI Info',
+						valueType: 'CsiInfo',
+						value: {
+							sST: 1,
+							nEST: {
+								dLThptPerUE: {
+									guaThpt: 192,
+									maxThpt: 50000
+								},
+								uLThptPerUE: {
+									guaThpt: 192,
+									maxThpt: 5000
+								},
+								maxNumberofUEs: '10',
+								isolationLevel: {
+									level: ['NO ISOLATION']
+								},
+								mMTelSupport: '1',
+								sessServContSupport: '1',
+								sliceQoSParams: ['1', '2', '5', '6', '7', '8', '9'],
+								userDataAccess: '0'
+							}
 						}
 					}
-				}
-			]
+				]
+			}
 		}
-	}
-];
-
-export const ServiceOrderCreate = {
-	externalId: '1',
-	description: 'Communication Service 1',
-	serviceOrderItem
+	]
 };
 
 export const ProductOrder = {
@@ -136,13 +134,6 @@ export const ProductOrder = {
 			action: 'add'
 		}
 	]
-};
-
-export const ServiceOrder = {
-	id: '1',
-	externalId: '1',
-	description: 'Communication Service 1',
-	serviceOrderItem
 };
 
 export const Csp1Identity = {
