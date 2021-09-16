@@ -163,12 +163,12 @@ export class SubscriptionService {
 		});
 	}
 
-	async revokeSubscription(channelAddress: string, subscription: Subscription, authorId: string): Promise<void> {
+	async revokeSubscription(channelAddress: string, subscription: Subscription, authorSub: Subscription): Promise<void> {
+		const authorId = authorSub.identityId;
 		const lockKey = channelAddress + authorId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const authorSub = await this.getSubscription(channelAddress, authorId);
 				const { publicKey } = subscription;
 				const presharedKey = authorSub.presharedKey;
 				const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;

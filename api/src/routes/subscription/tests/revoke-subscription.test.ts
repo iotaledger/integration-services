@@ -36,7 +36,7 @@ describe('test revoke subscription route', () => {
 		channelAddress: 'testaddress',
 		identityId: 'did:iota:2345',
 		isAuthorized: true,
-		publicKey: 'testpublickey2',
+		publicKey: 'test-author-public-key',
 		seed: 'testseed2',
 		state: 'teststate2',
 		subscriptionLink: 'testlink2',
@@ -104,7 +104,7 @@ describe('test revoke subscription route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'subscription must be an author' });
 	});
 
-	fit('should return error if no subscription using the link is found to authorize', async () => {
+	it('should return error if no subscription using the link is found to authorize', async () => {
 		const loggerSpy = spyOn(LoggerMock, 'error');
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, null); // no subscription found to authorize
 		const getSubscriptionByLinkSpy = spyOn(subscriptionService, 'getSubscriptionByLink').and.returnValues(null, null); // no subscription found to authorize
@@ -119,5 +119,78 @@ describe('test revoke subscription route', () => {
 		expect(getSubscriptionByLinkSpy).toHaveBeenCalledWith('wrongsubscriptionlink');
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no valid subscription found!'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the subscription'));
+	});
+
+	it('should return ok if revokedSubscription is mocked', async () => {
+		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
+		const revokeSubscriptionSpy = spyOn(subscriptionService, 'revokeSubscription');
+		const req: any = {
+			params: { channelAddress: 'testaddress' },
+			user: { identityId: 'did:iota:1234' },
+			body: { identityId: 'did:iota:2345' }
+		};
+
+		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
+		expect(revokeSubscriptionSpy).toHaveBeenCalledWith('testaddress', subscriptionMock, authorSubscriptionMock);
+		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
+	});
+
+	it('should return bad request since subscription is already authorized', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
+		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
+		spyOn(subscriptionPool, 'get').and.returnValue(null); // no author in pool found
+		const req: any = {
+			params: { channelAddress: 'testaddress' },
+			user: { identityId: 'did:iota:1234' },
+			body: { identityId: 'did:iota:2345' }
+		};
+
+		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('no author found with channelAddress: testaddress and identityId: did:iota:2345'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the subscription'));
+	});
+
+	it('should revoke the subscription', async () => {
+		const channelAddress = 'testaddress';
+		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
+
+		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
+		const sendKeyloadSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
+			keyloadLink: 'testkeyloadlink',
+			sequenceLink: 'testsequencelink',
+			author: AuthorMock
+		});
+		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
+		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
+		const removeSubscriptionSpy = spyOn(subscriptionDb, 'removeSubscription');
+
+		spyOn(subscriptionPool, 'get').and.returnValue(AuthorMock);
+		const getSubscriptionsSpy = spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([authorSubscriptionMock, subscriptionMock]);
+
+		const req: any = {
+			params: { channelAddress },
+			user: { identityId: 'did:iota:1234' },
+			body: { identityId: 'did:iota:2345' }
+		};
+
+		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
+
+		expect(getSubscriptionsSpy).toHaveBeenCalledWith(channelAddress);
+		expect(sendKeyloadSpy).toHaveBeenCalledWith(
+			'testsequencelink2',
+			['test-author-public-key', 'test-author-public-key'],
+			AuthorMock,
+			authorSubscriptionMock.presharedKey
+		);
+		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith(
+			channelAddress,
+			authorSubscriptionMock.identityId,
+			'testkeyloadlink',
+			'testsequencelink'
+		);
+		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.identityId);
+		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.identityId, 'new-state');
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, 'veryvery-very-very-server-secret');
+		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});
 });
