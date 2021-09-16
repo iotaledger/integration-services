@@ -15,11 +15,11 @@ import {
 	VerifiableCredentialBodySchema,
 	VerifyIdentityBodySchema
 } from '../schemas/request-response-body/verification-bodies';
-import { CreateChannelBodyResponseSchema } from '../schemas/request-response-body/channel-bodies';
+import { CreateChannelResponseSchema } from '../schemas/request-response-body/channel-bodies';
 import {
-	AuthorizeSubscriptionBodyResponseSchema,
+	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
-	RequestSubscriptionBodyResponseSchema,
+	RequestSubscriptionResponseSchema,
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema
 } from '../schemas/request-response-body/subscription-bodies';
@@ -32,7 +32,7 @@ export type ChannelInfoBody = Static<typeof ChannelInfoSchema>;
 export type UserSchemaBody = Static<typeof IdentitySchema>;
 
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>;
-export type CreateChannelBodyResponse = Static<typeof CreateChannelBodyResponseSchema>;
+export type CreateChannelResponse = Static<typeof CreateChannelResponseSchema>;
 export type AddChannelLogBody = Static<typeof AddChannelLogBodySchema>;
 export type ReimportBody = Static<typeof ReimportBodySchema>;
 export type ValidateBody = Static<typeof ValidateBodySchema>;
@@ -40,8 +40,8 @@ export type ValidateResponse = Static<typeof ValidateResponseSchema>;
 export type AuthorizeSubscriptionBody = Static<typeof AuthorizeSubscriptionBodySchema>;
 export type RevokeSubscriptionBody = Static<typeof RevokeSubscriptionBodySchema>;
 export type RequestSubscriptionBody = Static<typeof RequestSubscriptionBodySchema>;
-export type RequestSubscriptionBodyResponse = Static<typeof RequestSubscriptionBodyResponseSchema>;
-export type AuthorizeSubscriptionBodyResponse = Static<typeof AuthorizeSubscriptionBodyResponseSchema>;
+export type RequestSubscriptionResponse = Static<typeof RequestSubscriptionResponseSchema>;
+export type AuthorizeSubscriptionResponse = Static<typeof AuthorizeSubscriptionResponseSchema>;
 
 export type VerifiableCredentialBody = Static<typeof VerifiableCredentialBodySchema>;
 export type VerifyIdentityBody = Static<typeof VerifyIdentityBodySchema>;

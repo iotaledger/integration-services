@@ -7,7 +7,7 @@ import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
-import { RequestSubscriptionBodyResponse } from '../models/types/request-response-bodies';
+import { RequestSubscriptionResponse } from '../models/types/request-response-bodies';
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelData } from '../models/types/channel-data';
@@ -68,7 +68,7 @@ export class SubscriptionService {
 		accessRights?: AccessRights;
 		seed?: string;
 		presharedKey?: string;
-	}): Promise<RequestSubscriptionBodyResponse> {
+	}): Promise<RequestSubscriptionResponse> {
 		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
 		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
 

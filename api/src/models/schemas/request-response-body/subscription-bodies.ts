@@ -24,11 +24,11 @@ export const RequestSubscriptionBodySchema = Type.Object({
 	presharedKey: Type.Optional(Type.String({ maxLength: 32, minLength: 32 }))
 });
 
-export const RequestSubscriptionBodyResponseSchema = Type.Object({
+export const RequestSubscriptionResponseSchema = Type.Object({
 	seed: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
 	subscriptionLink: Type.String()
 });
 
-export const AuthorizeSubscriptionBodyResponseSchema = Type.Object({
+export const AuthorizeSubscriptionResponseSchema = Type.Object({
 	keyloadLink: Type.String()
 });

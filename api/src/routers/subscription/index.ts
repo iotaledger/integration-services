@@ -249,7 +249,7 @@ subscriptionRouter.post(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/RequestSubscriptionBodyResponseSchema"
+ *               $ref: "#/components/schemas/RequestSubscriptionResponseSchema"
  *       400:
  *         description: Subscription already requested
  *         content:
@@ -310,7 +310,7 @@ subscriptionRouter.post(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/AuthorizeSubscriptionBodyResponseSchema"
+ *               $ref: "#/components/schemas/AuthorizeSubscriptionResponseSchema"
  *
  *       401:
  *         description: No valid api key provided/ Not authenticated

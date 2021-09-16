@@ -41,7 +41,7 @@ export const channelRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/CreateChannelBodyResponseSchema"
+ *               $ref: "#/components/schemas/CreateChannelResponseSchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:
