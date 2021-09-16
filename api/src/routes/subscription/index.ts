@@ -11,6 +11,31 @@ import { SubscriptionType } from '../../models/schemas/subscription';
 export class SubscriptionRoutes {
 	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
 
+	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const paramChannelAddress = _.get(req, 'params.channelAddress');
+			const paramIdentityId = _.get(req, 'params.identityId');
+			const subscription = req.body as Subscription;
+			const { channelAddress, identityId, publicKey } = subscription;
+
+			// paramChannelAddress and paramIdentityId are just used for REST completeness
+			if (!paramChannelAddress || !paramIdentityId || !publicKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress, identityId or publicKey provided' });
+			}
+
+			const existingSubscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			if (existingSubscription) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already added' });
+			}
+
+			await this.subscriptionService.addSubscription(subscription);
+			return res.status(StatusCodes.CREATED).send(subscription);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not add subscription'));
+		}
+	};
+
 	getSubscriptions = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
