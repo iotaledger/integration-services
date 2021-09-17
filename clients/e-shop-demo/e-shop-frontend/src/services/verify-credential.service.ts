@@ -15,9 +15,8 @@ const readJSON = (file: File): Promise<object> => {
 };
 
 export const getCredentials = async (identityId: any): Promise<string> => {
-  const apiKey = `?api-key=${process.env.REACT_APP_API_KEY}`;
-  const url = `${process.env.REACT_APP_API_URL}/authentication/prove-ownership/${identityId}${apiKey}`;
+  const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/authenticate/${identityId}`;
   const response = await axios.get(url);
   console.log(response.data);
-  return response.data;
+  return response.data.nonce;
 };

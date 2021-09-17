@@ -7,7 +7,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 		const identityId = req.params.identityId;
 		console.log(identityId);
         const apiKey = `?api-key=${process.env.API_KEY}`;
-        const response = await axios.get(`${process.env.baseUrl}/authentication/prove-ownership/${identityId}${apiKey}`);
+        const response = await axios.get(`${process.env.BASE_URL}/authentication/prove-ownership/${identityId}${apiKey}`);
         return res.status(StatusCodes.OK).send(response.data);
 	} catch (error) {
 		console.log(error);
