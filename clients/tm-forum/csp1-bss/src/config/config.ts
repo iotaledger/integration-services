@@ -3,7 +3,8 @@ import { Config } from '../models/config.model';
 export const CONFIG: Config = {
 	baseUrl: process.env.BASE_URL,
 	apiKey: process.env.API_KEY,
-	mavenirApi: process.env.MAVENIR_API
+	mavenirApi: process.env.MAVENIR_API,
+	mavenirApiSla: process.env.MAVENIR_API_SLA
 };
 
 export const CreateCsp1Identity = {
