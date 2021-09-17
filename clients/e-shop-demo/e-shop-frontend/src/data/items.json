@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Red wine",
+    "imageUrl": "https://images.unsplash.com/photo-1610631787813-9eeb1a2386cc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+    "price": 10.5,
+    "ageRestricted": true
+  },
+  {
+    "id": 2,
+    "name": "Bourbon",
+    "imageUrl": "https://images.unsplash.com/photo-1611536326696-b52be8ef45f6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+    "price": 16.5,
+    "ageRestricted": true
+  },
+  {
+    "id": 3,
+    "name": "Apple juice",
+    "imageUrl": "https://images.unsplash.com/photo-1626120032630-b51c96a544f5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2000&q=80",
+    "price": 4.0,
+    "ageRestricted": false
+  },
+  {
+    "id": 4,
+    "name": "Coca Cola",
+    "imageUrl": "https://images.unsplash.com/photo-1561758033-48d52648ae8b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2134&q=80",
+    "price": 4.5,
+    "ageRestricted": false
+  }
+]
