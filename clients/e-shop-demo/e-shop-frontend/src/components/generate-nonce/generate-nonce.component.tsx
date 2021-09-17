@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "../../global.styles";
 import { getCredentials } from "../../services/verify-credential.service";
 

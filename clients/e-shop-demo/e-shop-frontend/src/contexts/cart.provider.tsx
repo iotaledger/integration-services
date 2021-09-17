@@ -4,8 +4,7 @@ import { Item } from "../models/item.model";
 export const CartContext = createContext({} as any);
 
 const CartProvider = ({ children }: any) => {
-  const initialState: Item[] = [];
-  const [items, setItems] = useState(initialState);
+  const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
     console.log(`Updated Items: `, items);
