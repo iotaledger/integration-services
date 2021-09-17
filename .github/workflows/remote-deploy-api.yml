@@ -1,0 +1,41 @@
+name: Deploy API to VM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setting env
+        run: echo "GIT_SHA=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+
+      - name: ECR login
+        uses: sadjy/ssh-action@master
+        with: 
+          command: |
+            ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_INSTANCE_IP }} -p ${{ secrets.REMOTE_INSTANCE_SSH_PORT }} "aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY}}
+
+      - name: Cleaning up instance
+        uses: sadjy/ssh-action@master
+        with:
+          command: |
+            ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_INSTANCE_IP }} -p ${{ secrets.REMOTE_INSTANCE_SSH_PORT }} '[ -z "$(docker ps | grep api_e_commerce)" ] || docker stop api_e_commerce'
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY}}
+
+      - name: Remote deploy API
+        uses: sadjy/ssh-action@master
+        with:
+          command: |
+            ssh -o SendEnv=GIT_SHA ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_INSTANCE_IP }} -p ${{ secrets.REMOTE_INSTANCE_SSH_PORT }} docker run -d --rm --name api_e_commerce -p ${{ secrets.HOST_PORT }}:${{ secrets.PORT }} --env PORT=${{ secrets.PORT }} --env API_VERSION=${{ secrets.API_VERSION }} --env IOTA_PERMA_NODE=${{ secrets.IOTA_PERMA_NODE }} --env IOTA_HORNET_NODE=${{ secrets.IOTA_HORNET_NODE }} --env NETWORK=${{ secrets.NETWORK }} --env EXPLORER=${{ secrets.EXPLORER }} --env DATABASE_NAME=${{ secrets.DATABASE_NAME }} --env DATABASE_URL=${{ secrets.DATABASE_URL }} --env MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} --env MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} --env SERVER_SECRET=${{ secrets.SERVER_SECRET_SIVECO }} --env SERVER_IDENTITY=${{ secrets.SERVER_IDENTITY_SIVECO }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/e-commerce-audit-log-api:$GIT_SHA
+          host: ${{ secrets.HOST }}
+          user: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY}}
+          args: -o SendEnv=GIT_SHA
