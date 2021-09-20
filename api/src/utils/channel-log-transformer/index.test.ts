@@ -9,7 +9,7 @@ describe('test ChannelLogTransformer', () => {
 				{
 					link: '92a2cdc1d03eebcc6d46dbbbe41ff3e9d7a8b7971da61f128662ba54d10a454e0000000000000000:8232661d2ac553604189fff6',
 					messageId: 'a9cad6a23fc630255446e482b59dead3b9415ff0adb4a00302450cc683982a43',
-					channelLog: {
+					log: {
 						created: '2021-08-17T14:05:40+02:00',
 						type: 'author-test',
 						metadata: {
@@ -52,7 +52,7 @@ describe('test ChannelLogTransformer', () => {
 				{
 					link: '92a2cdc1d03eebcc6d46dbbbe41ff3e9d7a8b7971da61f128662ba54d10a454e0000000000000000:8232661d2ac553604189fff6',
 					messageId: 'a9cad6a23fc630255446e482b59dead3b9415ff0adb4a00302450cc683982a43',
-					channelLog: {
+					log: {
 						created: undefined,
 						type: undefined,
 						metadata: undefined,
@@ -90,7 +90,7 @@ describe('test ChannelLogTransformer', () => {
 		});
 
 		it('channel logs should return expected payloads', async () => {
-			const channelLog: ChannelLog = {
+			const log: ChannelLog = {
 				created: '2021-08-17T14:05:40+02:00',
 				type: 'author-test',
 				metadata: {
@@ -115,12 +115,12 @@ describe('test ChannelLogTransformer', () => {
 			const maskedPayload: IPayload = {
 				data: { x: 'I am also a payload from the author 22' }
 			};
-			const payloads = ChannelLogTransformer.getPayloads(channelLog);
+			const payloads = ChannelLogTransformer.getPayloads(log);
 			expect(payloads).toEqual({ maskedPayload, publicPayload });
 		});
 
 		it('channel logs should return all data in encrypted payloads but created and type in public', async () => {
-			const channelLog: ChannelLog = {
+			const log: ChannelLog = {
 				created: '2021-08-17T14:05:40+02:00',
 				type: 'author-test',
 				payload: {
@@ -132,16 +132,16 @@ describe('test ChannelLogTransformer', () => {
 			const maskedPayload: IPayload = {
 				data: { x: 'I am also a payload from the author 22' }
 			};
-			const payloads = ChannelLogTransformer.getPayloads(channelLog);
+			const payloads = ChannelLogTransformer.getPayloads(log);
 			expect(payloads).toEqual({ maskedPayload, publicPayload });
 		});
 
 		it('channel logs should return empty payloads', async () => {
-			const channelLog: ChannelLog = null;
+			const log: ChannelLog = null;
 
 			const publicPayload: IPayload = {};
 			const maskedPayload: IPayload = {};
-			const payloads = ChannelLogTransformer.getPayloads(channelLog);
+			const payloads = ChannelLogTransformer.getPayloads(log);
 			expect(payloads).toEqual({ maskedPayload, publicPayload });
 		});
 	});
@@ -150,7 +150,7 @@ describe('test ChannelLogTransformer', () => {
 		const logs = [
 			{
 				link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:c2bf8e1ccc98cb7b5ba286c4',
-				channelLog: {
+				log: {
 					created: '2021-09-06T14:30:08+02:00',
 					type: 'author-test',
 					metadata: {
@@ -166,7 +166,7 @@ describe('test ChannelLogTransformer', () => {
 			},
 			{
 				link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:9a52fdce3e7ee09dcce3a6e1',
-				channelLog: {
+				log: {
 					created: '2021-09-06T14:30:05+02:00',
 					type: 'author-test',
 					metadata: {
@@ -182,7 +182,7 @@ describe('test ChannelLogTransformer', () => {
 			},
 			{
 				link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:55c9c94f5a485a8911b3afb9',
-				channelLog: {
+				log: {
 					created: '2021-09-06T14:27:54+02:00',
 					type: 'author-test',
 					metadata: {
@@ -222,8 +222,8 @@ describe('test ChannelLogTransformer', () => {
 		it('first message is not valid since different on tangle', async () => {
 			const log = {
 				...logs[0],
-				channelLog: {
-					...logs[0].channelLog,
+				log: {
+					...logs[0].log,
 					payload: 'differentpayloadontangle'
 				}
 			};

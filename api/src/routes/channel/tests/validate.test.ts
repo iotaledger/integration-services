@@ -20,7 +20,7 @@ describe('test validate route', () => {
 	const logs = [
 		{
 			link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:c2bf8e1ccc98cb7b5ba286c4',
-			channelLog: {
+			log: {
 				created: '2021-09-06T14:30:08+02:00',
 				type: 'author-test',
 				metadata: {
@@ -36,7 +36,7 @@ describe('test validate route', () => {
 		},
 		{
 			link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:9a52fdce3e7ee09dcce3a6e1',
-			channelLog: {
+			log: {
 				created: '2021-09-06T14:30:05+02:00',
 				type: 'author-test',
 				metadata: {
@@ -52,7 +52,7 @@ describe('test validate route', () => {
 		},
 		{
 			link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:55c9c94f5a485a8911b3afb9',
-			channelLog: {
+			log: {
 				created: '2021-09-06T14:27:54+02:00',
 				type: 'author-test',
 				metadata: {

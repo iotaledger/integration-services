@@ -72,7 +72,7 @@ export const ChannelDataSchema = Type.Object({
 		Type.String({ format: 'date-time', description: 'Date when the data was imported from the tangle into the cached database.' })
 	),
 	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
-	channelLog: ChannelLogSchema
+	log: ChannelLogSchema
 });
 
 export const ValidateBodySchema = Type.Array(ChannelDataSchema);

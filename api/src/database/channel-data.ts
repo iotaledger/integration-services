@@ -15,16 +15,20 @@ export const getChannelData = async (
 
 	const query = { channelAddress, identityId };
 	const skip = index > 0 ? index * limit : 0;
-	const sort = { 'channelLog.created': ascending ? 1 : -1 };
+	const sort = { 'log.created': ascending ? 1 : -1 };
 	const opt = limit != null ? { limit, skip, sort } : { sort };
 
 	const channelDataArr = await MongoDbService.getDocuments<ChannelData>(collectionName, query, opt);
-	return channelDataArr.map(({ link, channelLog, messageId, imported }) => ({ link, channelLog, messageId, imported }));
+	return channelDataArr.map(({ link, log, messageId, imported }) => ({ link, log, messageId, imported }));
 };
 
-export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[]): Promise<void> => {
+export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[], _secret: string): Promise<void> => {
 	const imported = getDateStringFromDate(new Date());
+
 	const documents = channelData.map((data) => {
+		// TODO encrypt but only encrypted payload
+		// const encryptedData = encrypt(JSON.stringify(data), secret);
+
 		return {
 			...data,
 			_id: getIndex(data.link, identityId),

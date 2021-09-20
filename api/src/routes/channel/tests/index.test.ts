@@ -224,7 +224,7 @@ describe('test channel routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith([
 				{
-					channelLog: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
+					log: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
 					link: '12313:00',
 					messageId: '123'
 				}

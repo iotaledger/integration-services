@@ -214,7 +214,7 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  * @openapi
  * /channels/validate/{channelAddress}:
  *   post:
- *     summary: Validates channel data by comparing the channelLog of each link with the data on the tangle.
+ *     summary: Validates channel data by comparing the log of each link with the data on the tangle.
  *     description: Validates data of a channel.
  *     tags:
  *     - channels

@@ -255,6 +255,6 @@ export class SubscriptionService {
 
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
-		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData);
+		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.password);
 	}
 }
