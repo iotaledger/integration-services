@@ -3,12 +3,20 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { CartContext } from "../../contexts/cart.provider";
 import { useLocation } from "react-router-dom";
+import { UserContext } from "../../contexts/user.provider";
+import { removeAuthHeader } from "../../utils/axios-client";
 
 const Header = () => {
   const { items } = useContext(CartContext);
+  const { authenticated, setAuthenticated } = useContext(UserContext);
   const location = useLocation();
   const pageName = location.pathname.split("/")[1];
-  console.log(pageName);
+
+  const logout = () => {
+    setAuthenticated(false);
+    removeAuthHeader();
+  }
+
   return (
     <HeaderWrapper>
       <Link to="/">
@@ -19,9 +27,10 @@ const Header = () => {
       ) : (
         <HeaderHeading>Shop</HeaderHeading>
       )}
-      <Link to="/login">
-        <HeaderButton>Login</HeaderButton>
-      </Link>
+      {authenticated && (
+        <HeaderButton onClick={() => logout()}>Logout</HeaderButton>
+      )}
+      
       <Link to="/checkout">
         <HeaderButton>Cart ({items.length})</HeaderButton>
       </Link>

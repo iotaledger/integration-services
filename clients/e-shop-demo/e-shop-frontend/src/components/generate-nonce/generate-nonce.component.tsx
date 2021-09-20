@@ -1,27 +1,28 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../contexts/user.provider";
+
 import { Button } from "../../global.styles";
-import { getCredentials } from "../../services/verify-credential.service";
+import { generateNonce } from "../../services/authentication.service";
 
 const GenerateNonce = () => {
-  const [identityId, setIdentityId] = useState<string>();
   const [nonce, setNonce] = useState<string>();
+  const { setUserIdentityId, credential } = useContext(UserContext);
 
-  const getNonce = async () => {
-    setNonce(await getCredentials(identityId));
-  };
+  useEffect(() => {
+    async function getNonce() {
+      const identityId = credential.id;
+      console.log('identityId', credential.id)
+      setUserIdentityId(identityId);
+      setNonce(await generateNonce(identityId));
+    }
+    getNonce();
+  }, []);
 
   return (
     <>
-      Identity ID:
-      <input
-        type="text"
-        name="identity-id"
-        onChange={(event: any) => setIdentityId(event.target.value)}
-      ></input>
-      <Button onClick={() => getNonce()}>Generate Nonce</Button>
       {nonce && (
         <>
-          <p>Generated nonce: {nonce}</p>
+          <p>Generated nonce: <b>{nonce}</b></p>
           <p>Sign this nonce with your secret key using the provided tool.</p>
         </>
       )}

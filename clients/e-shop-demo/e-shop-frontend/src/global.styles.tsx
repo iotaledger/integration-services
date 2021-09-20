@@ -25,6 +25,10 @@ export const Button = styled.button`
   }
 `;
 
+export const SmallButton = styled(Button)`
+padding: 10px 20px;
+`
+
 export const Background = styled.div`
 background-color: ${props => props.theme.brown};
 width: 100%;
