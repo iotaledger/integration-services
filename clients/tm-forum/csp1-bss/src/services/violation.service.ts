@@ -9,7 +9,7 @@ import { writeChannel } from './channel.service';
 export const forwardSlaViolation = async (slaViolationCreateEvent: any) => {
 	console.log('Forwarding sla violation rules...');
 	try {
-		await axios.post(`${CONFIG.mavenirApi}/tmf-api/slaManagement/v1/listener/slaViolationCreateEvent`, slaViolationCreateEvent);
+		await axios.post(`${CONFIG.mavenirApiSla}/tmf-api/slaManagement/v1/listener/slaViolationCreateEvent`, slaViolationCreateEvent);
 		await writeChannel(slaViolationCreateEvent, 'createSlaViolationRules');
 	} catch (error) {
 		console.log(error);
