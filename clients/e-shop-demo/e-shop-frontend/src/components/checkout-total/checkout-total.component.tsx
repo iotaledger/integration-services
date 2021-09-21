@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { CartContext } from "../../contexts/cart.provider";
 import { UserContext } from "../../contexts/user.provider";
 import { Button } from "../../global.styles";
 import { Item } from "../../models/item.model";
 import { CheckoutHeading } from "../../pages/checkout/checkout.styles";
-import { verifyCredential } from "../../services/verify-credential.service";
 import CheckoutWithIota from "../checkout-iota/checkout-iota.component";
 import MessageBox from "../message-box/message-box.component";
 import { CheckoutTotalContainer } from "./checkout-total.styles";
@@ -13,7 +12,7 @@ const CheckoutTotal = () => {
   const { items, emptyCart } = useContext(CartContext);
   const [showOrderPlaceMessage, setShowOrderPlacedMessage] = useState(false);
   const cartHasAgeRestrictedItems = !!items.find(
-    (item: Item) => item.ageRestricted === true
+    (item: any) => item.item.ageRestricted === true
   );
   const { authenticated, isVerified, setIsVerified } = useContext(UserContext);
 
@@ -34,7 +33,7 @@ const CheckoutTotal = () => {
     <CheckoutTotalContainer>
       <CheckoutHeading>Total</CheckoutHeading>
       <div style={{ margin: "20px" }}>
-        Total <b>{items.reduce((sum: number, item: Item) => sum + item.price, 0)}</b> €
+        Total <b>{items.reduce((sum: number, item: any) => sum + item.item.price, 0)}</b> €
         {cartHasAgeRestrictedItems ? (
           <div>
              Cart has items <b>with</b> age restriction

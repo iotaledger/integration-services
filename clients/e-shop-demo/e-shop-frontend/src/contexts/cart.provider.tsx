@@ -4,18 +4,18 @@ import { Item } from "../models/item.model";
 export const CartContext = createContext({} as any);
 
 const CartProvider = ({ children }: any) => {
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<any[]>([]);
 
   useEffect(() => {
     console.log(`Updated Items: `, items);
   }, [items]);
 
   const addToCart = (item: Item) => {
-    setItems([...items, item]);
+    setItems([...items, {item, index: items.length}]);
   };
 
-  const removeFromCart = (itemToRemove: Item) => {
-    const filteredItems = items.filter((item) => item.id !== itemToRemove.id);
+  const removeFromCart = (index: number) => {
+    const filteredItems = items.filter((item) => item.index !== index);
     setItems(filteredItems);
   };
 

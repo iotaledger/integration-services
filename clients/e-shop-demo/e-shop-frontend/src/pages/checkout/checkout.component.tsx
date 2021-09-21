@@ -10,8 +10,8 @@ const Checkout = () => {
     <CheckoutContainer>
       <CheckoutItemsContainer>
         <CheckoutHeading>Cart</CheckoutHeading>
-        {items.map((item: any) => {
-          return <CheckoutItem item={item}></CheckoutItem>;
+        {items.map((item: any, index: number) => {
+          return <CheckoutItem key={index} index item={item}></CheckoutItem>;
         })}
         {items.length === 0 &&
         <p>No items in cart</p>

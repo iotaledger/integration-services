@@ -18,7 +18,6 @@ export const removeAuthHeader = () => {
 
 const localStorage = window.localStorage;
 const jwt = localStorage.getItem("jwt");
-console.log("jwt", jwt);
 if (jwt) {
   setAuthHeader(jwt);
 }

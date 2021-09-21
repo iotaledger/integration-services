@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Button } from "../../global.styles";
 
 export const CheckoutTotalContainer = styled.div`
   background-color: ${(props) => props.theme.brown};

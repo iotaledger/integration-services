@@ -3,7 +3,6 @@ import items from "../../data/items.json"
 import Item from "../../components/item/item.component";
 
 const ItemList = () => {
-  console.log(items)
   return (
     <ItemsContainer>
       {items.map(item => {

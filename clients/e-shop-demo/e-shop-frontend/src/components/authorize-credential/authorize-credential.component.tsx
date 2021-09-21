@@ -16,10 +16,6 @@ const AuthorizeCredential = () => {
     setAuthenticated(auth);
   };
 
-  useEffect(() => {
-    console.log("Error: ", error)
-  }, [error]);
-
   return (
     <>
     <label>

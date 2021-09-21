@@ -15,17 +15,20 @@ const UserProvider = ({ children }: any) => {
   }, []);
 
   useEffect(() => {
-    console.log("New identity id: ", userIdentityId);
+    console.log("Updated identity id: ", userIdentityId);
   }, [userIdentityId]);
 
   useEffect(() => {
-    console.log("Authenticated: ", authenticated);
+    console.log("Updated authentication: ", authenticated);
   }, [authenticated]);
 
   useEffect(() => {
-    console.log("New credential: ", credential);
+    console.log("Updated credential: ", credential);
   }, [credential]);
 
+  useEffect(() => {
+    console.log("Updated verified: ", isVerified);
+  }, [isVerified]);
 
   return (
     <UserContext.Provider
@@ -37,7 +40,7 @@ const UserProvider = ({ children }: any) => {
         credential,
         setCredential,
         isVerified,
-        setIsVerified
+        setIsVerified,
       }}
     >
       {children}
