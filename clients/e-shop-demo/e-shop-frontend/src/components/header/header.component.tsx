@@ -28,13 +28,15 @@ const Header = () => {
       ) : (
         <HeaderHeading style={{flex: '1 1 0px'}}>Shop</HeaderHeading>
       )}
-      {authenticated && (
-        <HeaderButton onClick={() => logout()}>Logout</HeaderButton>
-      )}
-      
-      <Link to="/checkout">
-        <HeaderButton>Cart ({items.length})</HeaderButton>
-      </Link>
+      <div>
+        {authenticated && (
+          <HeaderButton onClick={() => logout()}>Logout</HeaderButton>
+        )}
+        
+        <Link to="/checkout">
+          <HeaderButton>Cart ({items.length})</HeaderButton>
+        </Link>
+      </div>
     </HeaderWrapper>
   );
 };
