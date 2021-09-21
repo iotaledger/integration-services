@@ -30,9 +30,9 @@ const AuthorizeCredential = () => {
         onChange={(event: any) => setSignedNonce(event.target.value)}
       ></Input>
       </label>
-      <SmallButton style={{marginLeft: 0}} onClick={() => login()}>Authorize</SmallButton>
+      <SmallButton style={{marginLeft: 0}} onClick={() => login()}>Authenticate</SmallButton>
       <MessageBox type="danger" show={error}>
-              Could not authorize credential
+              Could not authenticate credential
             </MessageBox>
     </>
   );

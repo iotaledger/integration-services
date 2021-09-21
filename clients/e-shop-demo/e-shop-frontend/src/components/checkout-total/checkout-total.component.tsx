@@ -21,32 +21,40 @@ const CheckoutTotal = () => {
     setIsVerified(false);
     emptyCart();
     showOrderMessage();
-  }
+  };
 
   const showOrderMessage = () => {
     setShowOrderPlacedMessage(true);
     setTimeout(() => {
       setShowOrderPlacedMessage(false);
-    }, 4000)
-  }
+    }, 4000);
+  };
 
   return (
     <CheckoutTotalContainer>
       <CheckoutHeading>Total</CheckoutHeading>
-      Total {items.reduce((sum: number, item: Item) => sum + item.price, 0)} €
-      {cartHasAgeRestrictedItems ? (
-        <p>Cart has items with age restriction</p>
-      ) : (
-        <p>
-          Cart has <b>no</b> items with age restriction
-        </p>
-      )}
-      {items.length !== 0 && (
+      <div style={{ margin: "20px" }}>
+        Total <b>{items.reduce((sum: number, item: Item) => sum + item.price, 0)}</b> €
+        {cartHasAgeRestrictedItems ? (
+          <div>
+             Cart has items <b>with</b> age restriction
+          </div>
+        ) : (
+          <div>
+             Cart has <b>no</b> items with age restriction
+          </div>
+        )}
+      </div>
+      {items.length !== 0 && cartHasAgeRestrictedItems && (
         <CheckoutWithIota></CheckoutWithIota>
       )}
-      
-      {isVerified && authenticated && <Button onClick={() => onCheckout()}>Checkout</Button>}
-      <MessageBox type="success" show={showOrderPlaceMessage}>Your order has been placed!</MessageBox>
+
+      {((isVerified && authenticated) || (!cartHasAgeRestrictedItems && items.length !== 0)) && (
+        <Button onClick={() => onCheckout()}>Checkout</Button>
+      )}
+      <MessageBox type="success" show={showOrderPlaceMessage}>
+        Your order has been placed!
+      </MessageBox>
     </CheckoutTotalContainer>
   );
 };

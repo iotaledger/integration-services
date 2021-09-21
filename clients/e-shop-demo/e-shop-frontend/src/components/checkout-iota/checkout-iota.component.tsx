@@ -64,10 +64,10 @@ const CheckoutWithIota = () => {
           <MessageBox type="success" show={true}>
             Credential successful verified
           </MessageBox>
-          <CheckoutStepHeading>Authorize credential</CheckoutStepHeading>
+          <CheckoutStepHeading>Authenticate credential</CheckoutStepHeading>
           {authenticated ? (
             <MessageBox type="success" show={authenticated}>
-              Credential successful authorized
+              Credential successful authenticated
             </MessageBox>
           ) : (
             <>
