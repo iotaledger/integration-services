@@ -8,11 +8,16 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+
+
 rl.question("Please enter your nonce: ", (nonce) => {
-  rl.question("Please enter your secrect key: ", async (secretKey) => {
-    console.log(nonce, secretKey);
+  rl.stdoutMuted = true;
+  rl.query = "Please enter your secrect key: ";
+  rl.question(rl.query, async (secretKey) => {
+    
     const encodedKey = getHexEncodedKey(secretKey);
     const signedNonce = await signNonce(encodedKey, nonce);
+    rl.stdoutMuted = false;
     console.log('---------------------------------------')
     console.log(`Your signed nonce is: ${signedNonce}`);
     console.log("Use your signed nonce to log in to the e-shop.");
@@ -20,6 +25,12 @@ rl.question("Please enter your nonce: ", (nonce) => {
   });
 });
 
+rl._writeToOutput = function _writeToOutput(stringToWrite) {
+  if (rl.stdoutMuted)
+    rl.output.write("\x1B[2K\x1B[200D"+rl.query+"["+((rl.line.length%2==1)?"=-":"-=")+"]");
+  else
+    rl.output.write(stringToWrite);
+};
 const getHexEncodedKey = (base58Key) => {
   return bs58.decode(base58Key).toString("hex");
 };
