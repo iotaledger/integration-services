@@ -11,13 +11,15 @@ export const authenticate = async (
   signedNonce: string,
   identityId: string
 ): Promise<boolean> => {
-  const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/authenticate/${identityId}`;
-  const response = await client.post(url, JSON.stringify({ signedNonce }));
-  console.log(response.data);
-  if (response.status === 200) {
+  try {
+    const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/authenticate/${identityId}`;
+    const response = await client.post(url, JSON.stringify({ signedNonce }));
+    console.log(response.data);
     const jwt = response.data.jwt;
-    setAuthHeader(jwt)
+    setAuthHeader(jwt);
     return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
-  return false;
 };

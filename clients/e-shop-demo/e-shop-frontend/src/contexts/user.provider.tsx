@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 export const UserContext = createContext({} as any);
 const UserProvider = ({ children }: any) => {
   const [userIdentityId, setUserIdentityId] = useState<string>("");
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [authenticated, setAuthenticated] = useState<boolean>();
   const [credential, setCredential] = useState<object>();
   const [isVerified, setIsVerified] = useState<boolean>();
 

@@ -19,23 +19,27 @@ const CheckoutWithIota = () => {
   const inputRef = useRef<any>();
   const [aboveAgeRestriction, setAboveAgeRestriction] = useState<boolean>();
   const [file, setFile] = useState<File>();
-  const {
-    credential,
-    setCredential,
-    authenticated,
-    isVerified,
-    setIsVerified,
-  } = useContext(UserContext);
+  const { setCredential, authenticated, isVerified, setIsVerified } =
+    useContext(UserContext);
 
   const onVerify = async () => {
+    setIsVerified(false);
     const credential = await readJSON(file as File);
     const verified = await verifyCredential(credential);
-    setAboveAgeRestriction(checkAge(credential));
-    if (verified && aboveAgeRestriction) {
-      setCredential(credential);
+    const ageCheck = checkAge(credential);
+    setAboveAgeRestriction(ageCheck);
+    if (verified && ageCheck) {
       setIsVerified(verified);
+      setCredential(credential);
     }
   };
+
+  const onFileChange = (file: File) => {
+    setFile(file);
+    setIsVerified(false);
+    setCredential(undefined);
+    setAboveAgeRestriction(undefined);
+  }
 
   return (
     <CheckoutWithIotaContainer>
@@ -48,17 +52,21 @@ const CheckoutWithIota = () => {
           type="file"
           name="credentialFile"
           ref={inputRef}
-          onChange={(event: any) => setFile(event.target.files[0] as File)}
+          onChange={(event: any) => onFileChange(event.target.files[0] as File)}
         ></input>
       </label>
       {file && <SmallButton onClick={() => onVerify()}>Verify</SmallButton>}
-      <MessageBox show={aboveAgeRestriction === false}>Credential is under age restriction!</MessageBox>
+      <MessageBox type="danger" show={aboveAgeRestriction === false}>
+        Credential is under age restriction!
+      </MessageBox>
       {isVerified && (
         <>
-          <MessageBox show={true}>Credential successful verified</MessageBox>
+          <MessageBox type="success" show={true}>
+            Credential successful verified
+          </MessageBox>
           <CheckoutStepHeading>Authorize credential</CheckoutStepHeading>
           {authenticated ? (
-            <MessageBox show={authenticated}>
+            <MessageBox type="success" show={authenticated}>
               Credential successful authorized
             </MessageBox>
           ) : (

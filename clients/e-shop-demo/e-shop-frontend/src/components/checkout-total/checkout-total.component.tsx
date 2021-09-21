@@ -6,10 +6,12 @@ import { Item } from "../../models/item.model";
 import { CheckoutHeading } from "../../pages/checkout/checkout.styles";
 import { verifyCredential } from "../../services/verify-credential.service";
 import CheckoutWithIota from "../checkout-iota/checkout-iota.component";
+import MessageBox from "../message-box/message-box.component";
 import { CheckoutTotalContainer } from "./checkout-total.styles";
 
 const CheckoutTotal = () => {
-  const { items } = useContext(CartContext);
+  const { items, emptyCart } = useContext(CartContext);
+  const [showOrderPlaceMessage, setShowOrderPlacedMessage] = useState(false);
   const cartHasAgeRestrictedItems = !!items.find(
     (item: Item) => item.ageRestricted === true
   );
@@ -17,7 +19,17 @@ const CheckoutTotal = () => {
 
   const onCheckout = () => {
     setIsVerified(false);
+    emptyCart();
+    showOrderMessage();
   }
+
+  const showOrderMessage = () => {
+    setShowOrderPlacedMessage(true);
+    setTimeout(() => {
+      setShowOrderPlacedMessage(false);
+    }, 4000)
+  }
+
   return (
     <CheckoutTotalContainer>
       <CheckoutHeading>Total</CheckoutHeading>
@@ -29,8 +41,12 @@ const CheckoutTotal = () => {
           Cart has <b>no</b> items with age restriction
         </p>
       )}
-      <CheckoutWithIota></CheckoutWithIota>
+      {items.length !== 0 && (
+        <CheckoutWithIota></CheckoutWithIota>
+      )}
+      
       {isVerified && authenticated && <Button onClick={() => onCheckout()}>Checkout</Button>}
+      <MessageBox type="success" show={showOrderPlaceMessage}>Your order has been placed!</MessageBox>
     </CheckoutTotalContainer>
   );
 };

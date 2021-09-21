@@ -19,12 +19,17 @@ const CartProvider = ({ children }: any) => {
     setItems(filteredItems);
   };
 
+  const emptyCart = () => {
+    setItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{
         items,
         addToCart,
         removeFromCart,
+        emptyCart,
       }}
     >
       {children}

@@ -1,29 +1,39 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/user.provider";
-import { SmallButton } from "../../global.styles";
+import { Input, SmallButton } from "../../global.styles";
 import { authenticate } from "../../services/authentication.service";
+import MessageBox from "../message-box/message-box.component";
 
 const AuthorizeCredential = () => {
+  const [error, setError] = useState(false);
   const [signedNonce, setSignedNonce] = useState<string>("");
   const { userIdentityId, setAuthenticated } = useContext(UserContext);
 
   const login = async () => {
-      console.log(userIdentityId)
-    const authenticated = await authenticate(signedNonce, userIdentityId);
-    setAuthenticated(authenticated);
+    setError(false);
+    const auth = await authenticate(signedNonce, userIdentityId);
+    setError(!auth);
+    setAuthenticated(auth);
   };
+
+  useEffect(() => {
+    console.log("Error: ", error)
+  }, [error]);
 
   return (
     <>
     <label>
       <div>Signed nonce:</div>
-      <input
+      <Input
         type="text"
         name="signed-nonce"
         onChange={(event: any) => setSignedNonce(event.target.value)}
-      ></input>
+      ></Input>
       </label>
-      <SmallButton onClick={() => login()}>Authorize</SmallButton>
+      <SmallButton style={{marginLeft: 0}} onClick={() => login()}>Authorize</SmallButton>
+      <MessageBox type="danger" show={error}>
+              Could not authorize credential
+            </MessageBox>
     </>
   );
 };

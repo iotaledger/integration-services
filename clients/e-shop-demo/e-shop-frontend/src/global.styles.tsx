@@ -33,3 +33,11 @@ export const Background = styled.div`
 background-color: ${props => props.theme.brown};
 width: 100%;
 `
+
+export const Input = styled.input`
+width: 100%;
+padding: 8px 15px;
+box-sizing: border-box;
+margin: 8px 0;
+border-radius: 3px;
+`

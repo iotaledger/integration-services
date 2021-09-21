@@ -3,10 +3,11 @@ import { FunctionComponent } from "react";
 
 interface Props {
   show: boolean;
+  type: string;
 }
-const MessageBox: FunctionComponent<Props> = ({show, children}) => {
+const MessageBox: FunctionComponent<Props> = ({show, type, children}) => {
 
-  return (show ? (<MessageBoxWrapper>{children}</MessageBoxWrapper>): null);
+  return (show ? (<MessageBoxWrapper type={type}>{children}</MessageBoxWrapper>): null);
 };
 
 export default MessageBox;

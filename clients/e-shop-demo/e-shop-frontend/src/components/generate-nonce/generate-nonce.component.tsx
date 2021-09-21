@@ -10,13 +10,12 @@ const GenerateNonce = () => {
 
   useEffect(() => {
     async function getNonce() {
-      const identityId = credential.id;
-      console.log('identityId', credential.id)
+      const identityId = credential?.id;
       setUserIdentityId(identityId);
       setNonce(await generateNonce(identityId));
     }
     getNonce();
-  }, []);
+  }, [credential]);
 
   return (
     <>
