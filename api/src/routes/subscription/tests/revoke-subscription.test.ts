@@ -9,8 +9,8 @@ import { SubscriptionService } from '../../../services/subscription-service';
 import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
-import * as subscriptionDb from '../../../database/subscription';
-import * as channelDataDb from '../../../database/channel-data';
+import * as SubscriptionDb from '../../../database/subscription';
+import * as ChannelDataDb from '../../../database/channel-data';
 import { AuthorMock } from '../../../test/mocks/streams';
 
 describe('test revoke subscription route', () => {
@@ -57,7 +57,7 @@ describe('test revoke subscription route', () => {
 		subscriptionPool = new SubscriptionPool(streamsService, 20);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
-		spyOn(channelDataDb, 'addChannelData');
+		spyOn(ChannelDataDb, 'addChannelData');
 		res = {
 			send: sendMock,
 			sendStatus: sendStatusMock,
@@ -162,10 +162,11 @@ describe('test revoke subscription route', () => {
 		});
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
 		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
-		const removeSubscriptionSpy = spyOn(subscriptionDb, 'removeSubscription');
+		const removeSubscriptionSpy = spyOn(SubscriptionDb, 'removeSubscription');
+		const removeChannelDataSpy = spyOn(ChannelDataDb, 'deleteChannelData');
 
 		spyOn(subscriptionPool, 'get').and.returnValue(AuthorMock);
-		const getSubscriptionsSpy = spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([authorSubscriptionMock, subscriptionMock]);
+		const getSubscriptionsSpy = spyOn(SubscriptionDb, 'getSubscriptions').and.returnValue([authorSubscriptionMock, subscriptionMock]);
 
 		const req: any = {
 			params: { channelAddress },
@@ -189,6 +190,7 @@ describe('test revoke subscription route', () => {
 			'testsequencelink'
 		);
 		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.identityId);
+		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.identityId);
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.identityId, 'new-state');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, 'veryvery-very-very-server-secret');
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
