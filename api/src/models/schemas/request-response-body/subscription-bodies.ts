@@ -29,7 +29,7 @@ export const RequestSubscriptionBodySchema = Type.Object({
 export const RequestSubscriptionResponseSchema = Type.Object({
 	seed: Type.Union([
 		Type.String({
-			minLength: 72,
+			minLength: 32,
 			maxLength: 72,
 			description:
 				'Auto generated seed. Make sure you store the seed since the API will not store it. You can reuse your seed for different channels.'
