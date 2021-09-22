@@ -124,7 +124,7 @@ export class ChannelService {
 				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
 
 				await this.fetchLogs(channelAddress, identityId, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, identityId, options);
+				return await ChannelDataDb.getChannelData(channelAddress, identityId, options, this.password);
 			} finally {
 				release();
 			}
