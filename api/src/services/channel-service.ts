@@ -205,7 +205,7 @@ export class ChannelService {
 					throw new Error('wrong seed inserted');
 				}
 
-				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
+				await ChannelDataDb.removeChannelData(channelAddress, identityId);
 				await this.fetchLogs(channelAddress, identityId, newSub);
 			} finally {
 				release();

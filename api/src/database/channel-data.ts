@@ -44,7 +44,7 @@ export const addChannelData = async (channelAddress: string, identityId: string,
 	}
 };
 
-export const deleteChannelData = async (channelAddress: string, identityId: string): Promise<void> => {
+export const removeChannelData = async (channelAddress: string, identityId: string): Promise<void> => {
 	const query = { channelAddress, identityId };
 	await MongoDbService.removeDocuments(collectionName, query);
 };

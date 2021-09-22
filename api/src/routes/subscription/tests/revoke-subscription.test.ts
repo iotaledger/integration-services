@@ -163,7 +163,7 @@ describe('test revoke subscription route', () => {
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
 		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
 		const removeSubscriptionSpy = spyOn(SubscriptionDb, 'removeSubscription');
-		const removeChannelDataSpy = spyOn(ChannelDataDb, 'deleteChannelData');
+		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
 
 		spyOn(subscriptionPool, 'get').and.returnValue(AuthorMock);
 		const getSubscriptionsSpy = spyOn(SubscriptionDb, 'getSubscriptions').and.returnValue([authorSubscriptionMock, subscriptionMock]);

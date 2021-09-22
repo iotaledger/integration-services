@@ -166,14 +166,14 @@ describe('test re-import route', () => {
 		});
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
 		const resetStateSpy = spyOn(streamsService, 'resetState').and.returnValue(newSub);
-		const deleteChannelDataSpy = spyOn(ChannelDataDb, 'deleteChannelData');
+		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
 		const fetchLogsSpy = spyOn(channelService, 'fetchLogs');
 
 		await channelRoutes.reimport(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, seed, false);
-		expect(deleteChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.identityId, newSub);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
