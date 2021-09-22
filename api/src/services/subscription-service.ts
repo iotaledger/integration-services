@@ -76,7 +76,6 @@ export class SubscriptionService {
 			type: SubscriptionType.Subscriber,
 			identityId: subscriberId,
 			channelAddress: channelAddress,
-			seed: res.seed,
 			subscriptionLink: res.subscriptionLink,
 			accessRights: !isEmpty(presharedKey) ? AccessRights.Audit : accessRights, // always use audit for presharedKey
 			isAuthorized: !isEmpty(presharedKey), // if there is a presharedKey the subscription is already authorized

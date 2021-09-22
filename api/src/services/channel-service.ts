@@ -54,7 +54,6 @@ export class ChannelService {
 			identityId,
 			type: SubscriptionType.Author,
 			channelAddress: res.channelAddress,
-			seed: res.seed,
 			subscriptionLink: res.channelAddress,
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,

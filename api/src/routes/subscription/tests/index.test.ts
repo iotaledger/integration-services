@@ -20,7 +20,6 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		identityId: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		seed: 'testseed',
 		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
@@ -139,7 +138,6 @@ describe('test addSubscription route', () => {
 		identityId: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		seed: 'testseed',
 		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber

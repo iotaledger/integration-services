@@ -23,7 +23,6 @@ describe('test authorize subscription route', () => {
 		identityId: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		seed: 'testseed',
 		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
@@ -124,7 +123,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Subscriber, // caller is not the valid author
 			identityId: authorId,
 			isAuthorized: true,
-			seed: '',
 			state: ''
 		};
 		const isAuthor = false;
@@ -151,7 +149,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			seed: '',
 			state: ''
 		};
 		const isAuthor = true;
@@ -180,7 +177,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			seed: '',
 			state: '',
 			presharedKey
 		};
@@ -217,7 +213,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			seed: '',
 			state: '',
 			presharedKey // presharedKey is undefined
 		};
@@ -263,7 +258,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			seed: '',
 			state: '',
 			presharedKey
 		};

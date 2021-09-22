@@ -12,20 +12,30 @@ export const RevokeSubscriptionBodySchema = Type.Object({
 });
 
 export const RequestSubscriptionBodySchema = Type.Object({
-	subscriptionPassword: Type.Optional(
-		Type.String({
-			minLength: 8,
-			description:
-				'If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service.'
-		})
-	), // TODO#156 use to decrypt/encrypt data and state
-	seed: Type.Optional(Type.Union([Type.String({ minLength: 1, description: 'If left empty the api will generate a seed.' }), Type.Null()])),
+	seed: Type.Optional(
+		Type.Union([
+			Type.String({
+				minLength: 32,
+				description:
+					'If left empty the api will generate a seed. Make sure you store the seed since the API will not store it. You can reuse your seed for different channels.'
+			}),
+			Type.Null()
+		])
+	),
 	accessRights: Type.Optional(Type.Union([Type.Enum(AccessRights), Type.Null()])),
 	presharedKey: Type.Optional(Type.String({ maxLength: 32, minLength: 32 }))
 });
 
 export const RequestSubscriptionResponseSchema = Type.Object({
-	seed: Type.Union([Type.String({ minLength: 1 }), Type.Null()]),
+	seed: Type.Union([
+		Type.String({
+			minLength: 72,
+			maxLength: 72,
+			description:
+				'Auto generated seed. Make sure you store the seed since the API will not store it. You can reuse your seed for different channels.'
+		}),
+		Type.Null()
+	]),
 	subscriptionLink: Type.String()
 });
 

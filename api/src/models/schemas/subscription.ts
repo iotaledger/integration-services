@@ -14,7 +14,6 @@ export enum AccessRights {
 
 export const SubscriptionSchema = Type.Object({
 	type: Type.String(SubscriptionType),
-	seed: Type.String(),
 	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	identityId: Type.String({ minLength: 50, maxLength: 53 }),
 	state: Type.String(),

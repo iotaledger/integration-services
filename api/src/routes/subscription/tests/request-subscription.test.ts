@@ -114,7 +114,6 @@ describe('test request subscription route', () => {
 			identityId: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
-			seed: 'testseed',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber
@@ -156,7 +155,6 @@ describe('test request subscription route', () => {
 			channelAddress: 'testaddress',
 			identityId: 'did:iota:1234',
 			publicKey: 'testpublickey',
-			seed: 'testseed',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
@@ -203,7 +201,6 @@ describe('test request subscription route', () => {
 			channelAddress: 'testaddress',
 			identityId: 'did:iota:1234',
 			publicKey: 'testpublickey',
-			seed: 'testseed',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
