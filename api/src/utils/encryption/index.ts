@@ -47,11 +47,3 @@ export const decrypt = (cipher: string, secret: string) => {
 	const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()]);
 	return decrpyted.toString();
 };
-
-const encryptedText = encrypt('some basic messagesome ', '7023bdcb3afd7348461c06cd81fd38eb');
-console.log('encryptedText', encryptedText);
-
-const decryptedText = decrypt(encryptedText, '7023bdcb3afd7348461c06cd81fd38eb');
-console.log('decryptedText', decryptedText);
-
-console.log('hash', hashNonce('basicpw'));
