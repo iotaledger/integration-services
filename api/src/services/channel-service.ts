@@ -4,7 +4,6 @@ import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
-import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
@@ -23,7 +22,6 @@ export class ChannelService {
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionService: SubscriptionService,
-		private readonly subscriptionPool: SubscriptionPool,
 		config: StreamsConfig
 	) {
 		this.lock = Lock.getInstance();
@@ -64,7 +62,6 @@ export class ChannelService {
 			sequenceLink: res.sequenceLink
 		};
 
-		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,
@@ -120,7 +117,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				await this.fetchLogs(channelAddress, identityId, sub);
 				return await ChannelDataDb.getChannelData(channelAddress, identityId, options, this.password);
@@ -143,7 +140,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
@@ -229,7 +226,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);

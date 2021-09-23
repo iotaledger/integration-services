@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsService } from '../../../services/streams-service';
@@ -14,7 +13,7 @@ import { AuthorMock } from '../../../test/mocks/streams';
 
 describe('test validate route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 
 	const logs = [
@@ -76,9 +75,8 @@ describe('test validate route', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -166,7 +164,7 @@ describe('test validate route', () => {
 			accessRights: AccessRights.Read,
 			type: SubscriptionType.Author
 		});
-		const getSubSpy = spyOn(subscriptionPool, 'get').and.returnValue(null); // no subscriber found
+		const getSubSpy = spyOn(streamsService, 'importSubscription').and.returnValue(null); // no subscriber found
 		const loggerSpy = spyOn(LoggerMock, 'error');
 
 		await channelRoutes.validateLogs(req, res, nextMock);
@@ -193,7 +191,7 @@ describe('test validate route', () => {
 			accessRights: AccessRights.Read,
 			type: SubscriptionType.Author
 		});
-		const getSubSpy = spyOn(subscriptionPool, 'get').and.returnValue(AuthorMock);
+		const getSubSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 

@@ -3,7 +3,6 @@ import { ChannelRoutes } from '..';
 import { ChannelInfo } from '../../../models/types/channel-info';
 import { Subscription } from '../../../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
@@ -26,9 +25,8 @@ describe('test channel routes', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		const subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {

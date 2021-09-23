@@ -2,7 +2,6 @@ import { StatusCodes } from 'http-status-codes';
 import { SubscriptionRoutes } from '..';
 import { Subscription } from '../../../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
@@ -15,7 +14,7 @@ import { AuthorMock } from '../../../test/mocks/streams';
 
 describe('test revoke subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 
 	const subscriptionMock: Subscription = {
@@ -52,8 +51,7 @@ describe('test revoke subscription route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		spyOn(streamsService, 'getMessages').and.returnValue([]);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 		spyOn(ChannelDataDb, 'addChannelData');
 		res = {
@@ -136,7 +134,7 @@ describe('test revoke subscription route', () => {
 	it('should return bad request since subscription is already authorized', async () => {
 		const loggerSpy = spyOn(LoggerMock, 'error');
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
-		spyOn(subscriptionPool, 'get').and.returnValue(null); // no author in pool found
+		spyOn(streamsService, 'importSubscription').and.returnValue(null); // no author
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -163,7 +161,7 @@ describe('test revoke subscription route', () => {
 		const removeSubscriptionSpy = spyOn(SubscriptionDb, 'removeSubscription');
 		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
 
-		spyOn(subscriptionPool, 'get').and.returnValue(AuthorMock);
+		spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
 		const getSubscriptionsSpy = spyOn(SubscriptionDb, 'getSubscriptions').and.returnValue([authorSubscriptionMock, subscriptionMock]);
 
 		const req: any = {

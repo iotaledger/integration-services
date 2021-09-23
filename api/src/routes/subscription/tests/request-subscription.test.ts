@@ -2,7 +2,6 @@ import { StatusCodes } from 'http-status-codes';
 import { SubscriptionRoutes } from '..';
 import { Subscription } from '../../../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
@@ -12,7 +11,7 @@ import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test request subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 
 	beforeEach(() => {
@@ -23,8 +22,7 @@ describe('test request subscription route', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 
 		res = {
@@ -90,7 +88,6 @@ describe('test request subscription route', () => {
 		const presharedKey: string = undefined;
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
 
@@ -121,7 +118,6 @@ describe('test request subscription route', () => {
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
-		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
@@ -133,7 +129,6 @@ describe('test request subscription route', () => {
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
 
@@ -167,7 +162,6 @@ describe('test request subscription route', () => {
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
-		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
@@ -179,7 +173,6 @@ describe('test request subscription route', () => {
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
 
@@ -213,7 +206,6 @@ describe('test request subscription route', () => {
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
-		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);

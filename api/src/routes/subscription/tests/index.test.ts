@@ -2,7 +2,6 @@ import { StatusCodes } from 'http-status-codes';
 import { SubscriptionRoutes } from '..';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
 import { Subscription } from '../../../models/types/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
@@ -12,7 +11,7 @@ import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
@@ -33,8 +32,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 
 		res = {
@@ -130,7 +128,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 
 describe('test addSubscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
@@ -151,8 +149,7 @@ describe('test addSubscription route', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 
 		res = {
