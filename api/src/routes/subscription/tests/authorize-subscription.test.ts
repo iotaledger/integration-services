@@ -147,7 +147,7 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			state: ''
+			state: 'teststateofauthor'
 		};
 		const isAuthor = true;
 		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
@@ -161,7 +161,7 @@ describe('test authorize subscription route', () => {
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
-		expect(importAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no author found with channelAddress: testaddress and identityId: did:iota:1234'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
@@ -175,7 +175,7 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			state: '',
+			state: 'teststateofauthor',
 			presharedKey
 		};
 		const isAuthor = true;
@@ -195,7 +195,7 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, presharedKey);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no keyload link found when authorizing the subscription'));
@@ -211,7 +211,7 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			state: '',
+			state: 'teststateofauthor',
 			presharedKey // presharedKey is undefined
 		};
 		const isAuthor = true;
@@ -237,7 +237,7 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, presharedKey);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
@@ -256,7 +256,7 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			identityId: authorId,
 			isAuthorized: true,
-			state: '',
+			state: 'teststateofauthor',
 			presharedKey
 		};
 		const isAuthor = true;
@@ -282,7 +282,7 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('testaddress', authorId, true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, presharedKey);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');

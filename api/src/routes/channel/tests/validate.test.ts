@@ -140,6 +140,7 @@ describe('test validate route', () => {
 		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
 			keyloadLink: 'testlink',
 			publicKey: 'testkey',
+			state: AuthorMock.state,
 			accessRights: AccessRights.Write // wrong access rights
 		});
 
@@ -162,7 +163,8 @@ describe('test validate route', () => {
 			keyloadLink: 'testlink',
 			publicKey: 'testkey',
 			accessRights: AccessRights.Read,
-			type: SubscriptionType.Author
+			type: SubscriptionType.Author,
+			state: AuthorMock.state
 		});
 		const getSubSpy = spyOn(streamsService, 'importSubscription').and.returnValue(null); // no subscriber found
 		const loggerSpy = spyOn(LoggerMock, 'error');
@@ -170,7 +172,7 @@ describe('test validate route', () => {
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(getSubSpy).toHaveBeenCalledWith(channelAddress, user.identityId, true);
+		expect(getSubSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error('no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
 		);
@@ -189,9 +191,10 @@ describe('test validate route', () => {
 			keyloadLink: 'testlink',
 			publicKey: 'testkey',
 			accessRights: AccessRights.Read,
-			type: SubscriptionType.Author
+			type: SubscriptionType.Author,
+			state: AuthorMock.state
 		});
-		const getSubSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
+		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
@@ -202,7 +205,7 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(getSubSpy).toHaveBeenCalledWith(channelAddress, user.identityId, true);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
 	});
