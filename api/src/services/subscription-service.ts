@@ -1,10 +1,9 @@
 import { StreamsService } from './streams-service';
 import * as ChannelDataDb from '../database/channel-data';
-import * as subscriptionDb from '../database/subscription';
+import * as SubscriptionDb from '../database/subscription';
 import { Subscription } from '../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { ChannelInfoService } from './channel-info-service';
-import { SubscriptionPool } from '../pools/subscription-pools';
 import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
 import { RequestSubscriptionResponse } from '../models/types/request-response-bodies';
@@ -17,34 +16,29 @@ export class SubscriptionService {
 	private password: string;
 	private lock: ILock;
 
-	constructor(
-		private readonly streamsService: StreamsService,
-		private readonly channelInfoService: ChannelInfoService,
-		private readonly subscriptionPool: SubscriptionPool,
-		config: StreamsConfig
-	) {
+	constructor(private readonly streamsService: StreamsService, private readonly channelInfoService: ChannelInfoService, config: StreamsConfig) {
 		this.lock = Lock.getInstance();
 		this.password = config.statePassword;
 	}
 
 	async getSubscriptions(channelAddress: string, isAuthorized?: boolean) {
-		return subscriptionDb.getSubscriptionsByAuthorization(channelAddress, isAuthorized);
+		return SubscriptionDb.getSubscriptionsByAuthorization(channelAddress, isAuthorized);
 	}
 
 	async getSubscription(channelAddress: string, identityId: string) {
-		return subscriptionDb.getSubscription(channelAddress, identityId);
+		return SubscriptionDb.getSubscription(channelAddress, identityId);
 	}
 
 	async getSubscriptionByLink(subscriptionLink: string) {
-		return subscriptionDb.getSubscriptionByLink(subscriptionLink);
+		return SubscriptionDb.getSubscriptionByLink(subscriptionLink);
 	}
 
 	async addSubscription(subscription: Subscription) {
-		return subscriptionDb.addSubscription(subscription);
+		return SubscriptionDb.addSubscription(subscription);
 	}
 
 	async updateSubscriptionState(channelAddress: string, identityId: string, state: string) {
-		return subscriptionDb.updateSubscriptionState(channelAddress, identityId, state);
+		return SubscriptionDb.updateSubscriptionState(channelAddress, identityId, state);
 	}
 
 	async isAuthor(channelAddress: string, authorId: string): Promise<boolean> {
@@ -55,7 +49,7 @@ export class SubscriptionService {
 	async setSubscriptionAuthorized(channelAddress: string, identityId: string, keyloadLink: string, sequenceLink: string) {
 		const errMsg = 'could not authorize the subscription!';
 		const isAuthorized = true;
-		const res = await subscriptionDb.setSubscriptionAuthorization(channelAddress, identityId, isAuthorized, keyloadLink, sequenceLink);
+		const res = await SubscriptionDb.setSubscriptionAuthorization(channelAddress, identityId, isAuthorized, keyloadLink, sequenceLink);
 		if (!res?.result?.n) {
 			throw Error(errMsg);
 		}
@@ -76,7 +70,6 @@ export class SubscriptionService {
 			type: SubscriptionType.Subscriber,
 			identityId: subscriberId,
 			channelAddress: channelAddress,
-			seed: res.seed,
 			subscriptionLink: res.subscriptionLink,
 			accessRights: !isEmpty(presharedKey) ? AccessRights.Audit : accessRights, // always use audit for presharedKey
 			isAuthorized: !isEmpty(presharedKey), // if there is a presharedKey the subscription is already authorized
@@ -86,7 +79,6 @@ export class SubscriptionService {
 			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
 		};
 
-		await this.subscriptionPool.add(channelAddress, res.subscriber, subscriberId, false);
 		await this.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
 
@@ -105,14 +97,14 @@ export class SubscriptionService {
 				const authorSub = await this.getSubscription(channelAddress, authorId);
 				const { publicKey, subscriptionLink, identityId } = subscription;
 				const presharedKey = authorSub.presharedKey;
-				const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;
+				const streamsAuthor = this.streamsService.importSubscription(authorSub.state, true) as Author;
 
 				if (!streamsAuthor) {
 					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
 				}
 
 				const authorPubKey = streamsAuthor.clone().get_public_key();
-				const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
+				const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 				const existingSubscriptions = subscriptions
 					? subscriptions.filter(
 							(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
@@ -171,14 +163,14 @@ export class SubscriptionService {
 			try {
 				const { publicKey } = subscription;
 				const presharedKey = authorSub.presharedKey;
-				const streamsAuthor = (await this.subscriptionPool.get(channelAddress, authorSub.identityId, true)) as Author;
+				const streamsAuthor = this.streamsService.importSubscription(authorSub.state, true) as Author;
 
 				if (!streamsAuthor) {
 					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
 				}
 
 				const authorPubKey = streamsAuthor.clone().get_public_key();
-				const subscriptions = await subscriptionDb.getSubscriptions(channelAddress);
+				const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 				const existingSubscriptions = subscriptions
 					? subscriptions.filter(
 							(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
@@ -206,7 +198,8 @@ export class SubscriptionService {
 					})
 				);
 
-				await subscriptionDb.removeSubscription(channelAddress, subscription.identityId);
+				await SubscriptionDb.removeSubscription(channelAddress, subscription.identityId);
+				await ChannelDataDb.removeChannelData(channelAddress, subscription.identityId);
 
 				await this.updateSubscriptionState(
 					channelAddress,
@@ -255,6 +248,6 @@ export class SubscriptionService {
 
 		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
-		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData);
+		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.password);
 	}
 }

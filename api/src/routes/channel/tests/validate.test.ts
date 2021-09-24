@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsService } from '../../../services/streams-service';
@@ -14,13 +13,13 @@ import { AuthorMock } from '../../../test/mocks/streams';
 
 describe('test validate route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 
 	const logs = [
 		{
 			link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:c2bf8e1ccc98cb7b5ba286c4',
-			channelLog: {
+			log: {
 				created: '2021-09-06T14:30:08+02:00',
 				type: 'author-test',
 				metadata: {
@@ -36,7 +35,7 @@ describe('test validate route', () => {
 		},
 		{
 			link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:9a52fdce3e7ee09dcce3a6e1',
-			channelLog: {
+			log: {
 				created: '2021-09-06T14:30:05+02:00',
 				type: 'author-test',
 				metadata: {
@@ -52,7 +51,7 @@ describe('test validate route', () => {
 		},
 		{
 			link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:55c9c94f5a485a8911b3afb9',
-			channelLog: {
+			log: {
 				created: '2021-09-06T14:27:54+02:00',
 				type: 'author-test',
 				metadata: {
@@ -76,9 +75,8 @@ describe('test validate route', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -142,6 +140,7 @@ describe('test validate route', () => {
 		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
 			keyloadLink: 'testlink',
 			publicKey: 'testkey',
+			state: AuthorMock.state,
 			accessRights: AccessRights.Write // wrong access rights
 		});
 
@@ -164,15 +163,16 @@ describe('test validate route', () => {
 			keyloadLink: 'testlink',
 			publicKey: 'testkey',
 			accessRights: AccessRights.Read,
-			type: SubscriptionType.Author
+			type: SubscriptionType.Author,
+			state: AuthorMock.state
 		});
-		const getSubSpy = spyOn(subscriptionPool, 'get').and.returnValue(null); // no subscriber found
+		const getSubSpy = spyOn(streamsService, 'importSubscription').and.returnValue(null); // no subscriber found
 		const loggerSpy = spyOn(LoggerMock, 'error');
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(getSubSpy).toHaveBeenCalledWith(channelAddress, user.identityId, true);
+		expect(getSubSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error('no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
 		);
@@ -191,9 +191,10 @@ describe('test validate route', () => {
 			keyloadLink: 'testlink',
 			publicKey: 'testkey',
 			accessRights: AccessRights.Read,
-			type: SubscriptionType.Author
+			type: SubscriptionType.Author,
+			state: AuthorMock.state
 		});
-		const getSubSpy = spyOn(subscriptionPool, 'get').and.returnValue(AuthorMock);
+		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
@@ -204,7 +205,7 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(getSubSpy).toHaveBeenCalledWith(channelAddress, user.identityId, true);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
 	});

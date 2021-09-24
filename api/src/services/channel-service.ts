@@ -4,7 +4,6 @@ import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
-import { SubscriptionPool } from '../pools/subscription-pools';
 import * as ChannelDataDb from '../database/channel-data';
 import { ChannelData, ChannelLog } from '../models/types/channel-data';
 import { StreamsConfig } from '../models/config';
@@ -23,7 +22,6 @@ export class ChannelService {
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionService: SubscriptionService,
-		private readonly subscriptionPool: SubscriptionPool,
 		config: StreamsConfig
 	) {
 		this.lock = Lock.getInstance();
@@ -54,7 +52,6 @@ export class ChannelService {
 			identityId,
 			type: SubscriptionType.Author,
 			channelAddress: res.channelAddress,
-			seed: res.seed,
 			subscriptionLink: res.channelAddress,
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
@@ -65,7 +62,6 @@ export class ChannelService {
 			sequenceLink: res.sequenceLink
 		};
 
-		await this.subscriptionPool.add(res.channelAddress, res.author, identityId, true);
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,
@@ -94,7 +90,7 @@ export class ChannelService {
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
 		if (channelData?.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData);
+			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData, this.password);
 		}
 
 		return channelData;
@@ -121,22 +117,22 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				await this.fetchLogs(channelAddress, identityId, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, identityId, options);
+				return await ChannelDataDb.getChannelData(channelAddress, identityId, options, this.password);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async addLogs(channelAddress: string, identityId: string, log: ChannelLog): Promise<ChannelData> {
+	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<ChannelData> {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const channelLog: ChannelLog = { created: getDateStringFromDate(new Date()), ...log };
+				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
 
 				if (!subscription || !subscription?.keyloadLink) {
@@ -144,7 +140,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
@@ -163,12 +159,12 @@ export class ChannelService {
 					await this.fetchLogs(channelAddress, identityId, sub);
 				}
 
-				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(channelLog);
+				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(log);
 				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicPayload, maskedPayload);
 
 				// store newly added log
-				const newLog: ChannelData = { link: res.link, messageId: res.messageId, channelLog };
-				await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog]);
+				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log };
+				await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog], this.password);
 
 				await this.subscriptionService.updateSubscriptionState(
 					channelAddress,
@@ -205,7 +201,7 @@ export class ChannelService {
 					throw new Error('wrong seed inserted');
 				}
 
-				await ChannelDataDb.deleteChannelData(channelAddress, identityId);
+				await ChannelDataDb.removeChannelData(channelAddress, identityId);
 				await this.fetchLogs(channelAddress, identityId, newSub);
 			} finally {
 				release();
@@ -230,7 +226,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.subscriptionPool.get(channelAddress, identityId, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);

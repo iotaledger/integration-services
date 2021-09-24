@@ -125,77 +125,6 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
 
 /**
  * @openapi
- * /subscriptions/{channelAddress}/{identityId}:
- *   post:
- *     summary: Adds an existing subscription
- *     description: Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
- *     tags:
- *     - subscriptions
- *     parameters:
- *     - name: channelAddress
- *       in: path
- *       required: true
- *       schema:
- *         $ref: "#/components/schemas/ChannelAddressSchema"
- *       examples:
- *         channelAddress:
- *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *           summary: Example channel address
- *     - name: identityId
- *       in: path
- *       required: true
- *       schema:
- *         $ref: '#/components/schemas/IdentityIdSchema'
- *       examples:
- *         identityId:
- *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *           summary: Example identity id (DID identifier)
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/SubscriptionSchema"
- *           example:
- *             type: Subscriber
- *             seed: exampleSeed
- *             channelAddress: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *             state: exampleState
- *             isAuthorized: false
- *             accessRights: ReadAndWrite
- *             publicKey: testKey
- *     responses:
- *       201:
- *         description: Subscription added
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/SubscriptionSchema"
- *       400:
- *         description: Subscription already added or params missing
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponseSchema'
- *       401:
- *         description: No valid api key provided/ Not authenticated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponseSchema'
- *       5XX:
- *         description: Unexpected error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponseSchema'
- */
-subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);
-
-/**
- * @openapi
  * /subscriptions/request/{channelAddress}:
  *   post:
  *     summary: Request subscription to a channel
@@ -353,3 +282,74 @@ subscriptionRouter.post(
 	validate({ body: RevokeSubscriptionBodySchema }),
 	revokeSubscription
 );
+
+/**
+ * @openapi
+ * /subscriptions/{channelAddress}/{identityId}:
+ *   post:
+ *     summary: Adds an existing subscription
+ *     description: Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *           summary: Example identity id (DID identifier)
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/SubscriptionSchema"
+ *           example:
+ *             type: Subscriber
+ *             seed: exampleSeed
+ *             channelAddress: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             state: exampleState
+ *             isAuthorized: false
+ *             accessRights: ReadAndWrite
+ *             publicKey: testKey
+ *     responses:
+ *       201:
+ *         description: Subscription added
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/SubscriptionSchema"
+ *       400:
+ *         description: Subscription already added or params missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);
