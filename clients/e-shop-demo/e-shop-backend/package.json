@@ -10,8 +10,7 @@
 		"build": "npm-run-all build-tsc build-lint",
 		"test": "jest",
 		"test-watch": "npm run test -- --watchAll",
-		"start": "npm-run-all build",
-		"poststart": "node dist/index.js",
+		"start": "node dist/index.js",
 		"serve": "ts-node-dev src/index.ts"
 	},
 	"repository": {
