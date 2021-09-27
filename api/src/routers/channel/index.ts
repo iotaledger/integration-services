@@ -188,7 +188,7 @@ channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  * /channels/history/{channelAddress}:
  *   get:
  *     summary: Get the history of a channel.
- *     description: Get the history of a channel using a preshared key.
+ *     description: Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
  *     tags:
  *     - channels
  *     parameters:

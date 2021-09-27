@@ -10,6 +10,7 @@ const identityRoutes = new IdentityRoutes(userService, authorizationService, ver
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();
+
 /**
  * @openapi
  * /identities/create:
@@ -17,7 +18,7 @@ export const identityRouter = Router();
  *     summary: Create a new decentralized digital identity (DID)
  *     description: Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
  *     tags:
- *     - identity
+ *     - identities
  *     requestBody:
  *       content:
  *         application/json:
@@ -66,7 +67,7 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *     summary: Search for identities
  *     description: Search for identities in the system and returns a list of existing identities.
  *     tags:
- *     - identity
+ *     - identities
  *     parameters:
  *     - name: type
  *       in: query
@@ -126,7 +127,7 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *     summary: Get information about a specific identity
  *     description: Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
  *     tags:
- *     - identity
+ *     - identities
  *     parameters:
  *     - name: identityId
  *       in: path
@@ -167,7 +168,7 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, ge
  *     summary: Register an existing identity into the Bridge
  *     description: Register an existing identity into the Bridge. This can be used if the identity already exists or it was only created locally. Registering an identity in the Bridge makes it possible to search for it by using some of the identity attributes, i.e., the username.
  *     tags:
- *     - identity
+ *     - identities
  *     requestBody:
  *       content:
  *         application/json:
@@ -226,7 +227,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *     summary: Update claim of a registered identity
  *     description: Update claim of a registered identity.
  *     tags:
- *     - identity
+ *     - identities
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -287,7 +288,7 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *     summary: Removes an identity from the Bridge
  *     description: Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the immutable IOTA Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
  *     tags:
- *     - identity
+ *     - identities
  *     parameters:
  *     - name: identityId
  *       in: path
