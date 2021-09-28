@@ -24,7 +24,7 @@ export class StreamsService {
 	async create(
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string }> {
+	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string; sequenceLink: string }> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -44,15 +44,16 @@ export class StreamsService {
 			}
 
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
-			const keyloadAddress = res?.get_link();
-			const keyloadLink = keyloadAddress.copy().to_string();
+			const keyloadLink = res?.get_link()?.to_string();
+			const sequenceLink = res?.get_seq_link()?.to_string();
 
 			return {
 				seed,
 				channelAddress: announcementLink,
 				author: author.clone(),
 				presharedKey,
-				keyloadLink
+				keyloadLink,
+				sequenceLink
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -88,6 +89,29 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not add logs to the channel');
 		}
+	}
+
+	// TODO #22 finalize implementation fetch_prev_msg does not work as expected
+	async getMessage(subscription: Author | Subscriber, link: string): Promise<StreamsMessage> {
+		const address = Address.from_string(link);
+		const messageResponse = await subscription.clone().fetch_prev_msg(address);
+		const message = messageResponse.get_message();
+		const publicPayload = message && fromBytes(message.get_public_payload());
+		const maskedPayload = message && fromBytes(message.get_masked_payload());
+
+		if (!publicPayload && !maskedPayload) {
+			return null;
+		}
+
+		const linkDetails = await this.getClient(this.config.node)?.get_link_details(address?.copy());
+		const messageId = linkDetails?.get_metadata()?.message_id;
+
+		return {
+			link,
+			messageId,
+			publicPayload: publicPayload && JSON.parse(publicPayload),
+			maskedPayload: maskedPayload && JSON.parse(maskedPayload)
+		};
 	}
 
 	async getMessages(subscription: Author | Subscriber): Promise<StreamsMessage[]> {

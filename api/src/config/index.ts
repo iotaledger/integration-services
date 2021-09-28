@@ -5,8 +5,7 @@ import * as Identity from '@iota/identity-wasm/node';
 const StreamsConfig: StreamsConfig = {
 	node: process.env.IOTA_HORNET_NODE,
 	permaNode: process.env.IOTA_PERMA_NODE,
-	statePassword: process.env.SERVER_SECRET,
-	subscriptionExpiration: !isEmpty(process.env.SUBSCRIPTION_EXPIRATION) ? Number.parseInt(process.env.SUBSCRIPTION_EXPIRATION, 10) : 20
+	statePassword: process.env.SERVER_SECRET
 };
 
 const IdentityConfig: IdentityConfig = {

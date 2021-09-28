@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CONFIG, ProductOrder, ServiceOrder, ServiceOrderCreate } from '../config/config';
+import { CONFIG, ProductOrder, ServiceOrderCreate } from '../config/config';
 import { hashNonce } from '../utils/encryption';
 import { writeChannel } from '../services/channel.service';
 export class ProductOrderRoutes {
@@ -22,7 +22,7 @@ export class ProductOrderRoutes {
 				// here the csp1 would normally look in a product table to define the service order
 				console.log('Forwarding service order...');
 				await axios.post(`${CONFIG.mavenirApi}/api/rest/orderManagement/1.0.0/serviceOrder`, ServiceOrderCreate);
-				const hashedServiceOrder = hashNonce(JSON.stringify(ServiceOrder));
+				const hashedServiceOrder = hashNonce(JSON.stringify(ServiceOrderCreate));
 				const serviceOrderPayload = { hashedData: hashedServiceOrder };
 				await writeChannel(serviceOrderPayload, 'serviceOrder');
 

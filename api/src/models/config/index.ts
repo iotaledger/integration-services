@@ -31,5 +31,4 @@ export interface StreamsConfig {
 	statePassword: string;
 	node: string;
 	permaNode: string;
-	subscriptionExpiration: number; // in seconds
 }

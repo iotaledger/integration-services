@@ -3,7 +3,8 @@ import { Config } from '../models/config.model';
 export const CONFIG: Config = {
 	baseUrl: process.env.BASE_URL,
 	apiKey: process.env.API_KEY,
-	mavenirApi: process.env.MAVENIR_API
+	mavenirApi: process.env.MAVENIR_API,
+	mavenirApiSla: process.env.MAVENIR_API_SLA
 };
 
 export const CreateCsp1Identity = {
@@ -36,22 +37,35 @@ export const ViolationRules = {
 			href: 'http://www.example.com/tmf-api/partyManagement/v1/party/2802',
 			name: 'NNNN',
 			role: 'SLAConsumer'
+		},
+		{
+			id: '2871',
+			href: 'http://www.example.com/tmf-api/partyManagement/v1/party/2871',
+			name: 'ABCD',
+			role: 'SLAProvider'
+		},
+		{
+			id: '2890',
+			href: 'http://www.example.com/tmf-api/partyManagement/v1/party/2890',
+			name: 'XYZ',
+			role: 'SLAAuditor'
 		}
 	],
 	approved: true,
 	rule: [
 		{
-			id: 'availability',
+			id: 'dLThptPerSlice',
 			metric: 'number',
-			unit: 'number',
-			referenceValue: 'availability',
+			unit: 'kbps',
+			referenceValue: '1000000',
 			operator: '.ge',
-			tolerance: '0.5',
+			tolerance: '1000',
 			consequence: 'http://www.example.com/contract/clause/722'
 		}
 	]
 };
 
+// not used just demo violation
 export const SlaViolation = {
 	id: '37b8596c-6b36-938c-ecb7-f23c5b03f3f5',
 	sla: {
@@ -84,48 +98,47 @@ export const SlaViolation = {
 	}
 };
 
-const serviceOrderItem = [
-	{
-		id: '1',
-		action: 'add',
-		service: {
-			name: 'Broadband Gold',
-			state: 'inactive',
-			serviceCharacteristic: [
-				{
-					name: 'CSI Info',
-					valueType: 'CsiInfo',
-					value: {
-						sST: 1,
-						nEST: {
-							dLThptPerUE: {
-								guaThpt: 192,
-								maxThpt: 50000
+export const ServiceOrderCreate = {
+	externalId: 'CS001',
+	description: 'Communication Service 1',
+	serviceOrderItem: [
+		{
+			id: '1',
+			action: 'add',
+			service: {
+				name: 'Broadband Ecosoft',
+				state: 'active',
+				serviceCharacteristic: [
+					{
+						name: 'CSI Info',
+						valueType: 'CsiInfo',
+						value: {
+							sST: 1,
+							nEST: {
+								dLThptPerSlice: {
+									guaThpt: 1000000,
+									maxThpt: 5000000
+								},
+								uLThptPerSlice: {
+									guaThpt: 1000000,
+									maxThpt: 5000000
+								},
+								maxNumberofUEs: '10',
+								isolationLevel: {
+									level: ['NO ISOLATION']
+								},
+								mMTelSupport: '1',
+								sessServContSupport: '1',
+								sliceQoSParams: ['1', '2', '5', '6', '7', '8', '9'],
+								userDataAccess: '0'
 							},
-							uLThptPerUE: {
-								guaThpt: 192,
-								maxThpt: 5000
-							},
-							maxNumberofUEs: '10',
-							isolationLevel: {
-								level: ['NO ISOLATION']
-							},
-							mMTelSupport: '1',
-							sessServContSupport: '1',
-							sliceQoSParams: ['1', '2', '5', '6', '7', '8', '9'],
-							userDataAccess: '0'
+							slaId: '12278'
 						}
 					}
-				}
-			]
+				]
+			}
 		}
-	}
-];
-
-export const ServiceOrderCreate = {
-	externalId: '1',
-	description: 'Communication Service 1',
-	serviceOrderItem
+	]
 };
 
 export const ProductOrder = {
@@ -136,13 +149,6 @@ export const ProductOrder = {
 			action: 'add'
 		}
 	]
-};
-
-export const ServiceOrder = {
-	id: '1',
-	externalId: '1',
-	description: 'Communication Service 1',
-	serviceOrderItem
 };
 
 export const Csp1Identity = {

@@ -1,4 +1,4 @@
-import { Static } from "@sinclair/typebox";
-import { SubscriptionSchema } from "../schemas/subscription";
+import { Static } from '@sinclair/typebox';
+import { SubscriptionSchema } from '../schemas/subscription';
 
-export type Subscription  = Static<typeof SubscriptionSchema>
+export type Subscription = Static<typeof SubscriptionSchema>;
