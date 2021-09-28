@@ -152,6 +152,20 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *       schema:
  *         type: boolean
  *         example: true
+ *     - name: 'start-date'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *         example: 2021-09-27T13:30:00+02:00
+ *     - name: 'end-date'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *         example: 2021-09-29T13:30:00+02:00
  *     security:
  *       - BearerAuth: []
  *     responses:

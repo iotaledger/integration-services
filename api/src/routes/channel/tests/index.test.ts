@@ -159,7 +159,7 @@ describe('test channel routes', () => {
 	});
 
 	describe('test getLogs channel route', () => {
-		it('should return bad request if no channelAddress is provided', async () => {
+		it('should return bad request if no identityId is provided', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
 				user: { identityId: undefined }, //no identityId,
@@ -171,7 +171,7 @@ describe('test channel routes', () => {
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 		});
 
-		it('should return bad request if no identityId is provided', async () => {
+		it('should return bad request if no channelAddress is provided', async () => {
 			const req: any = {
 				params: {}, // no channelAddress
 				user: { identityId: 'did:iota:1234' },
@@ -181,6 +181,19 @@ describe('test channel routes', () => {
 			await channelRoutes.getLogs(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		});
+
+		it('should return bad request if startDate is after endDate', async () => {
+			const req: any = {
+				params: { channelAddress: '12345' },
+				user: { identityId: 'did:iota:1234' },
+				body: {},
+				query: { 'start-date': '2021-09-29T10:00:00+02:00', 'end-date': '2021-09-28T10:00:00+02:00' }
+			};
+
+			await channelRoutes.getLogs(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'start date is after end date' });
 		});
 	});
 

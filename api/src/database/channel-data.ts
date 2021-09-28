@@ -2,6 +2,7 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { ChannelData } from '../models/types/channel-data';
 import { getDateStringFromDate } from '../utils/date';
+import { ChannelLogRequestOptions } from '../models/types/channel-info';
 
 const collectionName = CollectionNames.channelData;
 const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
@@ -9,11 +10,19 @@ const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
 export const getChannelData = async (
 	channelAddress: string,
 	identityId: string,
-	options: { limit?: number; index?: number; ascending: boolean }
+	options: ChannelLogRequestOptions
 ): Promise<ChannelData[]> => {
-	const { ascending, index, limit } = options;
+	const { ascending, index, limit, startDate, endDate } = options;
 
-	const query = { channelAddress, identityId };
+	let created: { $gte?: string; $lte?: string };
+	if (startDate && endDate) created = { $gte: startDate, $lte: endDate };
+	else if (startDate && !endDate) created = { $gte: startDate };
+	else if (endDate && !startDate) created = { $lte: endDate };
+	const query = {
+		channelAddress,
+		identityId,
+		...(created && { 'channelLog.created': created })
+	};
 	const skip = index > 0 ? index * limit : 0;
 	const sort = { 'channelLog.created': ascending ? 1 : -1 };
 	const opt = limit != null ? { limit, skip, sort } : { sort };
