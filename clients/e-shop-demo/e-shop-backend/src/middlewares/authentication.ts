@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 export const authMiddleWare = () => (req: Request, res: Response, next: NextFunction) => {
 	const { authorization } = req.headers;
-    const serverSecret = process.env.SERVER_SECRET;
+	const serverSecret = process.env.SERVER_SECRET;
 	if (!authorization || !authorization.startsWith('Bearer')) {
 		return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authenticated!' });
 	}

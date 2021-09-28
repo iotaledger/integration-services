@@ -1,23 +1,23 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const client = axios.create();
 
-client.defaults.headers.post["Content-Type"] = "application/json";
+client.defaults.headers.post['Content-Type'] = 'application/json';
 
 export const setAuthHeader = (jwt: string) => {
-  client.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
-  const localStorage = window.localStorage;
-  localStorage.setItem("jwt", jwt);
+	client.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+	const localStorage = window.localStorage;
+	localStorage.setItem('jwt', jwt);
 };
 
 export const removeAuthHeader = () => {
-  delete client.defaults.headers.common["Authorization"];
-  const localStorage = window.localStorage;
-  localStorage.removeItem("jwt");
+	delete client.defaults.headers.common['Authorization'];
+	const localStorage = window.localStorage;
+	localStorage.removeItem('jwt');
 };
 
 const localStorage = window.localStorage;
-const jwt = localStorage.getItem("jwt");
+const jwt = localStorage.getItem('jwt');
 if (jwt) {
-  setAuthHeader(jwt);
+	setAuthHeader(jwt);
 }

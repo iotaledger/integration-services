@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Card = styled.div`
   display: flex;
@@ -9,15 +9,15 @@ export const Card = styled.div`
 `;
 
 export const CardHeading = styled.h3`
-  text-align: center;
+	text-align: center;
 `;
 
 export const CardImage = styled.img`
-  width: 50%;
-  height: auto;
-  margin: auto;
+	width: 50%;
+	height: auto;
+	margin: auto;
 `;
 
 export const CardText = styled.p`
-  text-align: center;
+	text-align: center;
 `;

@@ -1,17 +1,17 @@
 {
-	"name": "e-commerce-client-prototypes",
+	"name": "e-shop-backend",
 	"version": "1.0.0",
-	"description": "Client prototypes for the e-commerce audit log.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build-tsc": "tsc --project ./",
 		"build-lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
-		"build": "npm-run-all build-tsc build-lint",
+		"build": "npm-run-all prettier build-tsc build-lint",
 		"test": "jest",
 		"test-watch": "npm run test -- --watchAll",
 		"start": "node dist/index.js",
-		"serve": "ts-node-dev src/index.ts"
+		"serve": "ts-node-dev src/index.ts",
+		"prettier": "npx prettier --write ./src"
 	},
 	"repository": {
 		"type": "git",
@@ -21,6 +21,9 @@
 		"e-commmerce-prototypes"
 	],
 	"author": "Dominic Zettl (IOTA Foundation)",
+	"contributors": [
+	  "Tim Sigl (IOTA Foundation) <tim.sigl@iota.org>"
+	],
 	"license": "Apache-2.0",
 	"bugs": {
 		"url": "https://github.com/iotaledger/e-commerce-audit-log/issues"

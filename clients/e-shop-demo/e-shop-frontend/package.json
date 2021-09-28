@@ -26,8 +26,25 @@
     "serve": "set PORT=3001 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prettier": "npx prettier --write ./src"
   },
+  "repository": {
+		"type": "git",
+		"url": "git+https://github.com/iotaledger/e-commerce-audit-log.git"
+	},
+	"keywords": [
+		"e-commmerce-prototypes"
+	],
+	"author": "Dominic Zettl (IOTA Foundation)",
+  "contributors": [
+    "Tim Sigl (IOTA Foundation) <tim.sigl@iota.org>"
+  ],
+	"license": "Apache-2.0",
+	"bugs": {
+		"url": "https://github.com/iotaledger/e-commerce-audit-log/issues"
+	},
+	"homepage": "https://github.com/iotaledger/e-commerce-audit-log#readme",
   "eslintConfig": {
     "extends": [
       "react-app",
