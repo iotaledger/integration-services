@@ -45,7 +45,7 @@ const assertConfig = (config: Config) => {
 
 	// apiKey can be empty if the host decides so
 	// commitHash is set automatically during deployment
-	const optionalEnvVariables = ['apiKey'];
+	const optionalEnvVariables = ['apiKey', 'commitHash'];
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
 			if (optionalEnvVariables.includes(Object.keys(config)[i])) {
