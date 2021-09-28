@@ -1,7 +1,7 @@
 import { StreamsService } from './streams-service';
 import { Subscription } from '../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
-import { Topic } from '../models/types/channel-info';
+import { ChannelLogRequestOptions, Topic } from '../models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -103,7 +103,7 @@ export class ChannelService {
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
 
-	async getLogs(channelAddress: string, identityId: string, options: { limit?: number; index?: number; ascending: boolean }) {
+	async getLogs(channelAddress: string, identityId: string, options: ChannelLogRequestOptions) {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
