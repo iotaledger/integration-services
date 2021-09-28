@@ -16,14 +16,13 @@ export const getChannelData = async (
 ): Promise<ChannelData[]> => {
 	const { ascending, index, limit, startDate, endDate } = options;
 
-	let created: { $gte?: string; $lte?: string };
-	if (startDate && endDate) created = { $gte: startDate, $lte: endDate };
-	else if (startDate && !endDate) created = { $gte: startDate };
-	else if (endDate && !startDate) created = { $lte: endDate };
+	const startFilter = startDate ? { $gte: startDate } : {};
+	const endFilter = endDate ? { $lte: endDate } : {};
+	const createdFilter = startDate || endDate ?  { 'log.created':{ ...startFilter, ...endFilter }} : {}
 	const query = {
 		channelAddress,
 		identityId,
-		...(created && { 'channelLog.created': created })
+		...createdFilter
 	};
 	const skip = index > 0 ? index * limit : 0;
 	const sort = { 'log.created': ascending ? 1 : -1 };
@@ -39,7 +38,12 @@ export const getChannelData = async (
 	});
 };
 
-export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[], secret: string): Promise<void> => {
+export const addChannelData = async (
+	channelAddress: string,
+	identityId: string,
+	channelData: ChannelData[],
+	secret: string
+): Promise<void> => {
 	const imported = getDateStringFromDate(new Date());
 
 	const documents = channelData.map((data) => {
