@@ -1,12 +1,17 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema } from '../../models/schemas/request-response-body/channel-bodies';
+import {
+	AddChannelLogBodySchema,
+	CreateChannelBodySchema,
+	ReimportBodySchema,
+	ValidateBodySchema
+} from '../../models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { Logger } from '../../utils/logger';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs, getHistory, reimport } = channelRoutes;
+const { addLogs, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
 
 export const channelRouter = Router();
 
@@ -36,7 +41,7 @@ export const channelRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/CreateChannelBodyResponseSchema"
+ *               $ref: "#/components/schemas/CreateChannelResponseSchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:
@@ -152,6 +157,20 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *       schema:
  *         type: boolean
  *         example: true
+ *     - name: 'start-date'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *         example: 2021-09-27T13:30:00+02:00
+ *     - name: 'end-date'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         format: date-time
+ *         example: 2021-09-29T13:30:00+02:00
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -209,12 +228,44 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  * @openapi
  * /channels/validate/{channelAddress}:
  *   post:
- *     summary: TBD!
+ *     summary: Validates channel data by comparing the log of each link with the data on the tangle.
  *     description: Validates data of a channel.
  *     tags:
  *     - channels
- *     deprecated: true
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/ValidateBodySchema"
+ *     responses:
+ *       200:
+ *         description: Returns validated result.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ValidateResponseSchema"
+ *       401:
+ *         description: No valid api key provided / Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
+channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ValidateBodySchema }), validateLogs);
 
 /**
  * @openapi

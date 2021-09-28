@@ -1,12 +1,24 @@
 import { Router } from 'express';
-import { AuthorizeSubscriptionBodySchema, RequestSubscriptionBodySchema } from '../../models/schemas/request-response-body/subscription-bodies';
+import {
+	AuthorizeSubscriptionBodySchema,
+	RequestSubscriptionBodySchema,
+	RevokeSubscriptionBodySchema
+} from '../../models/schemas/request-response-body/subscription-bodies';
+import { SubscriptionSchema } from '../../models/schemas/subscription';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { subscriptionService } from '../services';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
-const { getSubscriptions, getSubscriptionByIdentity, requestSubscription, authorizeSubscription } = subscriptionRoutes;
+const {
+	getSubscriptions,
+	getSubscriptionByIdentity,
+	requestSubscription,
+	authorizeSubscription,
+	revokeSubscription,
+	addSubscription
+} = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
 
@@ -113,21 +125,6 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
 
 /**
  * @openapi
- * /subscriptions/remove/{channelAddress}:
- *   post:
- *     summary: TBD!
- *     description: Remove subscription to a channel. The author or subscriber of a channel can remove a subscription from a channel. (A subscriber can only remove its own subscription)
- *     tags:
- *     - subscriptions
- *     parameters:
- *     - name: channelAddress
- *       in: path
- *       required: true
- *     deprecated: true
- */
-
-/**
- * @openapi
  * /subscriptions/request/{channelAddress}:
  *   post:
  *     summary: Request subscription to a channel
@@ -159,7 +156,7 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/RequestSubscriptionBodyResponseSchema"
+ *               $ref: "#/components/schemas/RequestSubscriptionResponseSchema"
  *       400:
  *         description: Subscription already requested
  *         content:
@@ -220,7 +217,7 @@ subscriptionRouter.post(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/AuthorizeSubscriptionBodyResponseSchema"
+ *               $ref: "#/components/schemas/AuthorizeSubscriptionResponseSchema"
  *
  *       401:
  *         description: No valid api key provided/ Not authenticated
@@ -242,3 +239,117 @@ subscriptionRouter.post(
 	validate({ body: AuthorizeSubscriptionBodySchema }),
 	authorizeSubscription
 );
+
+/**
+ * @openapi
+ * /subscriptions/revoke/{channelAddress}:
+ *   post:
+ *     summary: Revoke subscription to a channel.
+ *     description: Revoke subscription to a channel. Only the author of a channel can revoke a subscription from a channel.
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/RevokeSubscriptionBodySchema"
+ *     responses:
+ *       200:
+ *         description: Sucessfully revoked the subscription.
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.post(
+	'/revoke/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: RevokeSubscriptionBodySchema }),
+	revokeSubscription
+);
+
+/**
+ * @openapi
+ * /subscriptions/{channelAddress}/{identityId}:
+ *   post:
+ *     summary: Adds an existing subscription
+ *     description: Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *           summary: Example identity id (DID identifier)
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/SubscriptionSchema"
+ *           example:
+ *             type: Subscriber
+ *             seed: exampleSeed
+ *             channelAddress: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             state: exampleState
+ *             isAuthorized: false
+ *             accessRights: ReadAndWrite
+ *             publicKey: testKey
+ *     responses:
+ *       201:
+ *         description: Subscription added
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/SubscriptionSchema"
+ *       400:
+ *         description: Subscription already added or params missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);

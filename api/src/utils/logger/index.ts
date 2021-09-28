@@ -59,7 +59,7 @@ export class Logger implements ILogger {
 				label: '[LOGGER]'
 			}),
 			winston.format.timestamp({
-				format: 'YY-MM-DD HH:MM:SS'
+				format: 'YYYY-MM-DD HH:mm:ss'
 			}),
 			winston.format.printf((info) => `${info.label}  [${info.timestamp}]  ${info.level} : ${info.message}`)
 		);

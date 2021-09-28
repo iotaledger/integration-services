@@ -3,7 +3,6 @@ import { ChannelRoutes } from '..';
 import { ChannelInfo } from '../../../models/types/channel-info';
 import { Subscription } from '../../../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
@@ -26,9 +25,8 @@ describe('test channel routes', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		const subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -76,7 +74,6 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				seed: 'verysecretseed',
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
@@ -122,7 +119,6 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				seed: 'verysecretseed',
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
@@ -159,7 +155,7 @@ describe('test channel routes', () => {
 	});
 
 	describe('test getLogs channel route', () => {
-		it('should return bad request if no channelAddress is provided', async () => {
+		it('should return bad request if no identityId is provided', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
 				user: { identityId: undefined }, //no identityId,
@@ -171,7 +167,7 @@ describe('test channel routes', () => {
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 		});
 
-		it('should return bad request if no identityId is provided', async () => {
+		it('should return bad request if no channelAddress is provided', async () => {
 			const req: any = {
 				params: {}, // no channelAddress
 				user: { identityId: 'did:iota:1234' },
@@ -181,6 +177,19 @@ describe('test channel routes', () => {
 			await channelRoutes.getLogs(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		});
+
+		it('should return bad request if startDate is after endDate', async () => {
+			const req: any = {
+				params: { channelAddress: '12345' },
+				user: { identityId: 'did:iota:1234' },
+				body: {},
+				query: { 'start-date': '2021-09-29T10:00:00+02:00', 'end-date': '2021-09-28T10:00:00+02:00' }
+			};
+
+			await channelRoutes.getLogs(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'start date is after end date' });
 		});
 	});
 
@@ -224,7 +233,7 @@ describe('test channel routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith([
 				{
-					channelLog: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
+					log: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
 					link: '12313:00',
 					messageId: '123'
 				}

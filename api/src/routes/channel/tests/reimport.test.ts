@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
 import { AccessRights } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsService } from '../../../services/streams-service';
@@ -25,9 +24,8 @@ describe('test re-import route', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		const subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -166,14 +164,14 @@ describe('test re-import route', () => {
 		});
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
 		const resetStateSpy = spyOn(streamsService, 'resetState').and.returnValue(newSub);
-		const deleteChannelDataSpy = spyOn(ChannelDataDb, 'deleteChannelData');
+		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
 		const fetchLogsSpy = spyOn(channelService, 'fetchLogs');
 
 		await channelRoutes.reimport(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, seed, false);
-		expect(deleteChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.identityId, newSub);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);

@@ -1,6 +1,5 @@
 import { CONFIG } from '../config';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
-import { SubscriptionPool } from '../pools/subscription-pools';
 import { AuthenticationService } from '../services/authentication-service';
 import { AuthorizationService } from '../services/authorization-service';
 import { ChannelInfoService } from '../services/channel-info-service';
@@ -21,10 +20,8 @@ export const authenticationService = new AuthenticationService(userService, ssiS
 
 export const channelInfoService = new ChannelInfoService(userService);
 export const streamsService = new StreamsService(streamsConfig, Logger.getInstance());
-export const subscriptionPool = new SubscriptionPool(streamsService, streamsConfig.subscriptionExpiration);
-subscriptionPool.startInterval();
-export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, streamsConfig);
-export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, streamsConfig);
+export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
+export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig);
 
 export const verificationService = new VerificationService(
 	ssiService,
