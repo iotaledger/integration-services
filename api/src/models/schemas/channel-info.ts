@@ -31,6 +31,6 @@ export const ChannelLogRequestOptionsSchema = Type.Object({
 	ascending: Type.Boolean(),
 	limit: Type.Optional(Type.Number()),
 	index: Type.Optional(Type.Number()),
-	startDate: Type.Optional(Type.String({format: 'date-time'})),
-	endDate: Type.Optional(Type.String({format: 'date-time'}))
-})
+	startDate: Type.Optional(Type.String({ format: 'date-time' })),
+	endDate: Type.Optional(Type.String({ format: 'date-time' }))
+});
