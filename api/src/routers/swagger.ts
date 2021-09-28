@@ -13,8 +13,16 @@ export const openApiDefinition = {
 		},
 		tags: [
 			{
+				name: 'identities',
+				description: 'Manage decentralized identities'
+			},
+			{
 				name: 'authentication',
 				description: 'Authenticate and authorize identities to the Bridge'
+			},
+			{
+				name: 'verification',
+				description: 'Create and verifiy credentials'
 			},
 			{
 				name: 'channel-info',
@@ -25,16 +33,8 @@ export const openApiDefinition = {
 				description: 'Create, read from, write to channels'
 			},
 			{
-				name: 'identity',
-				description: 'Manage decentralized identities'
-			},
-			{
 				name: 'subscriptions',
 				description: 'Manage and authorize subscriptions'
-			},
-			{
-				name: 'verification',
-				description: 'Create and verifiy credentials'
 			}
 		],
 		servers: [
