@@ -26,7 +26,15 @@ export class StreamsService {
 	async create(
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string; sequenceLink: string }> {
+	): Promise<{
+		seed: string;
+		channelAddress: string;
+		author: Author;
+		presharedKey: string;
+		keyloadLink: string;
+		sequenceLink: string;
+		pskId: string;
+	}> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -39,10 +47,11 @@ export class StreamsService {
 			const announcementLink = announcementAddress.copy().toString();
 			const keys = streams.PublicKeys.new();
 			const ids = streams.PskIds.new();
+			let pskId: string = undefined;
 
 			if (presharedKey) {
-				const id = author.clone().store_psk(presharedKey);
-				ids.add(id);
+				pskId = author.clone().store_psk(presharedKey);
+				ids.add(pskId);
 			}
 
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
@@ -55,7 +64,8 @@ export class StreamsService {
 				author: author.clone(),
 				presharedKey,
 				keyloadLink,
-				sequenceLink
+				sequenceLink,
+				pskId
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -173,7 +183,7 @@ export class StreamsService {
 		announcementLink: string,
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string }> {
+	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string; pskId?: string }> {
 		try {
 			const annAddress = this.getChannelAddress(announcementLink);
 
@@ -184,19 +194,26 @@ export class StreamsService {
 			const client = this.getClient(this.config.node);
 			const subscriber = streams.Subscriber.from_client(client, seed);
 			await subscriber.clone().receive_announcement(annAddress.copy());
+			let pskId: string = undefined;
 
 			if (presharedKey) {
 				// subscriber stores psk
-				await subscriber.clone().store_psk(presharedKey);
+				pskId = await subscriber.clone().store_psk(presharedKey);
 				return {
 					seed,
-					subscriber: subscriber.clone()
+					subscriber: subscriber.clone(),
+					pskId
 				};
 			}
 
 			const response = await subscriber.clone().send_subscribe(annAddress.copy());
 			const subscriptionLink = response.link;
-			return { seed, subscriptionLink: subscriptionLink?.toString(), subscriber: subscriber.clone(), publicKey: subscriber.clone().get_public_key() };
+			return {
+				seed,
+				subscriptionLink: subscriptionLink?.toString(),
+				subscriber: subscriber.clone(),
+				publicKey: subscriber.clone().get_public_key()
+			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not request the subscription to the channel');
@@ -208,12 +225,11 @@ export class StreamsService {
 		await author.clone().receive_subscribe(subscriptionAddress);
 	}
 
-	// TODO check _presharedKey
 	async sendKeyload(
 		anchorLink: string,
 		publicKeys: string[],
 		author: Author,
-		_presharedKey?: string
+		pskId?: string
 	): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		try {
 			const anchorAddress = this.getChannelAddress(anchorLink);
@@ -225,10 +241,10 @@ export class StreamsService {
 
 			const ids = streams.PskIds.new();
 
-			// if (presh<aredKey) {
-			// 	const id = author.clone().store_psk(presharedKey);
-			// 	ids.add(id);
-			// }>
+			if (pskId) {
+				ids.add(pskId);
+			}
+
 			const res = await author.clone().send_keyload(anchorAddress.copy(), ids, keys);
 			const keyloadLink = res?.link?.toString();
 			const sequenceLink = res?.seqLink?.toString();

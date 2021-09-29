@@ -136,7 +136,8 @@ describe('test request subscription route', () => {
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
-			seed: 'testseed'
+			seed: 'testseed',
+			pskId: 'testpskid'
 		});
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -157,7 +158,7 @@ describe('test request subscription route', () => {
 			accessRights: AccessRights.Audit, // access rights is audit
 			keyloadLink: 'testaddress', // keyload link is channel address
 			isAuthorized: true, // is directly authorized
-			presharedKey // has preshared key
+			pskId: 'testpskid' // has preshared key
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
@@ -180,7 +181,8 @@ describe('test request subscription route', () => {
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
-			seed: 'testseed'
+			seed: 'testseed',
+			pskId: 'testpskid'
 		});
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -201,7 +203,7 @@ describe('test request subscription route', () => {
 			accessRights: AccessRights.Audit, // access rights is always audit for presharedKey set
 			keyloadLink: 'testaddress', // keyload link is channel address
 			isAuthorized: true, // is directly authorized
-			presharedKey // has preshared key
+			pskId: 'testpskid' // has preshared key
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);

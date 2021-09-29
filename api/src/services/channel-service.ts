@@ -58,7 +58,7 @@ export class ChannelService {
 			isAuthorized: true,
 			publicKey: null,
 			keyloadLink: res.keyloadLink,
-			presharedKey: res.presharedKey,
+			pskId: res.pskId,
 			sequenceLink: res.sequenceLink
 		};
 
@@ -85,7 +85,11 @@ export class ChannelService {
 		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(channelAddress, identityId, this.streamsService.exportSubscription(sub, this.password));
+		await this.subscriptionService.updateSubscriptionState(
+			channelAddress,
+			identityId,
+			this.streamsService.exportSubscription(sub, this.password)
+		);
 
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database

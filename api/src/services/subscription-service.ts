@@ -16,7 +16,11 @@ export class SubscriptionService {
 	private password: string;
 	private lock: ILock;
 
-	constructor(private readonly streamsService: StreamsService, private readonly channelInfoService: ChannelInfoService, config: StreamsConfig) {
+	constructor(
+		private readonly streamsService: StreamsService,
+		private readonly channelInfoService: ChannelInfoService,
+		config: StreamsConfig
+	) {
 		this.lock = Lock.getInstance();
 		this.password = config.statePassword;
 	}
@@ -75,7 +79,7 @@ export class SubscriptionService {
 			isAuthorized: !isEmpty(presharedKey), // if there is a presharedKey the subscription is already authorized
 			state: this.streamsService.exportSubscription(res.subscriber, this.password),
 			publicKey: res.publicKey,
-			presharedKey: presharedKey,
+			pskId: res.pskId,
 			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
 		};
 
@@ -96,7 +100,7 @@ export class SubscriptionService {
 			try {
 				const authorSub = await this.getSubscription(channelAddress, authorId);
 				const { publicKey, subscriptionLink, identityId } = subscription;
-				const presharedKey = authorSub.presharedKey;
+				const pskId = authorSub.pskId;
 				const streamsAuthor = this.streamsService.importSubscription(authorSub.state, true) as Author;
 
 				if (!streamsAuthor) {
@@ -124,7 +128,7 @@ export class SubscriptionService {
 					streamsAuthor,
 					authorId: authorSub.identityId,
 					identityId,
-					presharedKey
+					pskId
 				});
 
 				// create new keyloads for existing branches including the newly added subscription public key
@@ -137,7 +141,7 @@ export class SubscriptionService {
 							streamsAuthor,
 							authorId: authorSub.identityId,
 							identityId: sub.identityId,
-							presharedKey
+							pskId
 						});
 					})
 				);
@@ -162,7 +166,7 @@ export class SubscriptionService {
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
 				const { publicKey } = subscription;
-				const presharedKey = authorSub.presharedKey;
+				const pskId = authorSub.pskId;
 				const streamsAuthor = this.streamsService.importSubscription(authorSub.state, true) as Author;
 
 				if (!streamsAuthor) {
@@ -193,7 +197,7 @@ export class SubscriptionService {
 							streamsAuthor,
 							authorId: authorSub.identityId,
 							identityId: sub.identityId,
-							presharedKey
+							pskId
 						});
 					})
 				);
@@ -219,14 +223,14 @@ export class SubscriptionService {
 		streamsAuthor: Author;
 		authorId: string;
 		identityId: string;
-		presharedKey?: string;
+		pskId?: string;
 	}): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		const key = 'auth-sub-' + params.channelAddress + params.authorId;
 		return await this.lock.acquire(key).then(async (release) => {
 			try {
-				const { presharedKey, channelAddress, publicKeys, streamsAuthor, identityId, anchor } = params;
+				const { pskId, channelAddress, publicKeys, streamsAuthor, identityId, anchor } = params;
 				await streamsAuthor.clone().sync_state();
-				const authSub = await this.streamsService.sendKeyload(anchor, publicKeys, <Author>streamsAuthor, presharedKey);
+				const authSub = await this.streamsService.sendKeyload(anchor, publicKeys, <Author>streamsAuthor, pskId);
 
 				if (!authSub?.keyloadLink) {
 					throw new Error('no keyload link found when authorizing the subscription');

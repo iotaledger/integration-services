@@ -177,7 +177,7 @@ describe('test revoke subscription route', () => {
 			'testsequencelink2',
 			['test-author-public-key', 'test-author-public-key'],
 			AuthorMock,
-			authorSubscriptionMock.presharedKey
+			authorSubscriptionMock.pskId
 		);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith(
 			channelAddress,
