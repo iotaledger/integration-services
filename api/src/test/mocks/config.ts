@@ -29,5 +29,6 @@ export const ConfigMock: Config = {
 	serverIdentityId: 'did:iota:1234',
 	permaNode: '',
 	hornetNode: '',
-	streamsConfig: StreamsConfigMock
+	streamsConfig: StreamsConfigMock,
+	commitHash: ''
 };

@@ -11,6 +11,7 @@ import { setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
 import { openApiDefinition } from './routers/swagger';
+import { serverInfoRouter } from './routers/server-info';
 
 const logger = Logger.getInstance();
 
@@ -45,6 +46,7 @@ async function startServer() {
 	useRouter(app, prefix + '/identities', identityRouter);
 	useRouter(app, prefix + '/authentication', authenticationRouter);
 	useRouter(app, prefix + '/verification', verificationRouter);
+	useRouter(app, '', serverInfoRouter);
 
 	app.use(errorMiddleware);
 	const server = app.listen(port, async () => {

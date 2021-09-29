@@ -5,6 +5,9 @@ import { AuthenticatedRequest } from '../../models/types/verification';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { AddChannelLogBody, CreateChannelBody, ReimportBody, ValidateBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
+import { getDateFromString } from '../../utils/date';
+import { compareAsc } from 'date-fns';
+import { ChannelLogRequestOptions } from '../../models/types/channel-info';
 
 export class ChannelRoutes {
 	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}
@@ -34,14 +37,21 @@ export class ChannelRoutes {
 			if (!channelAddress || !identityId) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
+			const startDate = <string>req.query['start-date'];
+			const endDate = <string>req.query['end-date'];
+			const tempStartDate = getDateFromString(startDate);
+			const tempEndDate = getDateFromString(endDate);
+
+			if (startDate && endDate && compareAsc(tempStartDate, tempEndDate) === 1) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'start date is after end date' });
+			}
 
 			const limitParam = parseInt(<string>req.query.limit, 10);
 			const indexParam = parseInt(<string>req.query.index, 10);
 			const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 			const index = isNaN(indexParam) ? undefined : indexParam;
 			const ascending: boolean = <string>req.query.asc === 'true';
-			const options = limit !== undefined && index !== undefined ? { limit, index, ascending } : { ascending };
-
+			const options: ChannelLogRequestOptions = limit !== undefined && index !== undefined ? { limit, index, ascending, startDate, endDate } : { ascending, startDate, endDate };
 			const channel = await this.channelService.getLogs(channelAddress, identityId, options);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {

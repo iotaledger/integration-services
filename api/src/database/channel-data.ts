@@ -2,6 +2,7 @@ import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { ChannelData } from '../models/types/channel-data';
 import { getDateStringFromDate } from '../utils/date';
+import { ChannelLogRequestOptions } from '../models/types/channel-info';
 import { decrypt, encrypt } from '../utils/encryption';
 
 const collectionName = CollectionNames.channelData;
@@ -10,12 +11,19 @@ const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
 export const getChannelData = async (
 	channelAddress: string,
 	identityId: string,
-	options: { limit?: number; index?: number; ascending: boolean },
+	options: ChannelLogRequestOptions,
 	secret: string
 ): Promise<ChannelData[]> => {
-	const { ascending, index, limit } = options;
+	const { ascending, index, limit, startDate, endDate } = options;
 
-	const query = { channelAddress, identityId };
+	const startFilter = startDate ? { $gte: startDate } : {};
+	const endFilter = endDate ? { $lte: endDate } : {};
+	const createdFilter = startDate || endDate ?  { 'log.created':{ ...startFilter, ...endFilter }} : {}
+	const query = {
+		channelAddress,
+		identityId,
+		...createdFilter
+	};
 	const skip = index > 0 ? index * limit : 0;
 	const sort = { 'log.created': ascending ? 1 : -1 };
 	const opt = limit != null ? { limit, skip, sort } : { sort };
@@ -30,7 +38,12 @@ export const getChannelData = async (
 	});
 };
 
-export const addChannelData = async (channelAddress: string, identityId: string, channelData: ChannelData[], secret: string): Promise<void> => {
+export const addChannelData = async (
+	channelAddress: string,
+	identityId: string,
+	channelData: ChannelData[],
+	secret: string
+): Promise<void> => {
 	const imported = getDateStringFromDate(new Date());
 
 	const documents = channelData.map((data) => {
