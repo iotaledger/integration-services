@@ -21,7 +21,13 @@ export const authenticationService = new AuthenticationService(userService, ssiS
 export const channelInfoService = new ChannelInfoService(userService);
 export const streamsService = new StreamsService(streamsConfig, Logger.getInstance());
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
-export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig);
+export const channelService = new ChannelService(
+	streamsService,
+	channelInfoService,
+	subscriptionService,
+	streamsConfig,
+	Logger.getInstance()
+);
 
 export const verificationService = new VerificationService(
 	ssiService,
