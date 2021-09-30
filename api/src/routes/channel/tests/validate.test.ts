@@ -3,14 +3,13 @@ import { ChannelRoutes } from '..';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
-import { StreamsService } from '../../../services/streams-service';
+import { StreamsMessage, StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
 import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
-import { ChannelLogTransformer } from '../../../utils/channel-log-transformer/index';
 
 describe('test validate route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -198,9 +197,19 @@ describe('test validate route', () => {
 			state: AuthorMock.state
 		});
 		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
-		// TODO can directly use logs need to return message as it is stored in streams
-		const x = ChannelLogTransformer;
-		const getMessageSpy = spyOn(streamsService, 'getMessage').and.returnValues(2);
+
+		const tangleMessage = (index: number): StreamsMessage => ({
+			maskedPayload: { data: logs[index].log.payload },
+			publicPayload: {
+				data: logs[index].log.publicPayload,
+				type: logs[index].log.type,
+				metadata: logs[index].log.metadata,
+				created: logs[index].log.created
+			},
+			link: logs[index].link,
+			messageId: logs[index].messageId
+		});
+		const getMessageSpy = spyOn(streamsService, 'getMessage').and.returnValues(tangleMessage(0), tangleMessage(1), tangleMessage(2));
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
