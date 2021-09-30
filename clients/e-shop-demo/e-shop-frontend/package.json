@@ -44,7 +44,6 @@
 	"bugs": {
 		"url": "https://github.com/iotaledger/e-commerce-audit-log/issues"
 	},
-	"homepage": "https://github.com/iotaledger/e-commerce-audit-log#readme",
   "eslintConfig": {
     "extends": [
       "react-app",

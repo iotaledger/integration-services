@@ -1,6 +1,6 @@
 import { client } from '../utils/axios-client';
 
-export const readJSON = (file: File): Promise<any> => {
+export const readFile = (file: File): Promise<unknown> => {
 	return new Promise((resolve, reject) => {
 		const fileReader = new FileReader();
 		fileReader.onload = () => resolve(JSON.parse(fileReader.result as string));
@@ -21,7 +21,7 @@ export const verifyCredential = async (credential: any): Promise<boolean> => {
 	}
 };
 
-export const checkAge = (credential: any, ageRestriction = 18) => {
+export const isOverAgeRestriction = (credential: any, ageRestriction = 18) => {
 	const oneYear = 1000 * 60 * 60 * 24 * 365;
 	const birthDate = Date.parse(credential?.credentialSubject?.birthDate);
 	const currentDate = new Date().getTime();

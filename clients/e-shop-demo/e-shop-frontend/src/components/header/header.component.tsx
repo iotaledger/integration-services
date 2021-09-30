@@ -18,16 +18,14 @@ const Header = () => {
 		removeAuthHeader();
 	};
 
+	const title = pageName ? pageName.toUpperCase() : 'Shop';
 	return (
 		<HeaderWrapper>
 			<Link to="/" style={{ flex: '1 1 0px' }}>
 				<img src={logo} alt="logo" style={{ width: '50px', height: 'auto', margin: '5px 20px' }}></img>
 			</Link>
-			{pageName !== '' ? (
-				<HeaderHeading style={{ flex: '1 1 0px' }}>{pageName.toUpperCase()}</HeaderHeading>
-			) : (
-				<HeaderHeading style={{ flex: '1 1 0px' }}>Shop</HeaderHeading>
-			)}
+
+			<HeaderHeading style={{ flex: '1 1 0px' }}>{title}</HeaderHeading>
 			<div>
 				{authenticated && <HeaderButton onClick={() => logout()}>Logout</HeaderButton>}
 

@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from 'react';
 
 export const UserContext = createContext({} as any);
 const UserProvider = ({ children }: any) => {
-	const [userIdentityId, setUserIdentityId] = useState<string>('');
 	const [authenticated, setAuthenticated] = useState<boolean>();
 	const [credential, setCredential] = useState<object>();
 	const [isVerified, setIsVerified] = useState<boolean>();
@@ -13,10 +12,6 @@ const UserProvider = ({ children }: any) => {
 		const auth = jwt ? true : false;
 		setAuthenticated(auth);
 	}, []);
-
-	useEffect(() => {
-		console.log('Updated identity id: ', userIdentityId);
-	}, [userIdentityId]);
 
 	useEffect(() => {
 		console.log('Updated authentication: ', authenticated);
@@ -33,8 +28,6 @@ const UserProvider = ({ children }: any) => {
 	return (
 		<UserContext.Provider
 			value={{
-				userIdentityId,
-				setUserIdentityId,
 				authenticated,
 				setAuthenticated,
 				credential,

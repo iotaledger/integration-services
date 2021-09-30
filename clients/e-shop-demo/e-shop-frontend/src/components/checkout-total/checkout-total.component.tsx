@@ -27,6 +27,8 @@ const CheckoutTotal = () => {
 		}, 4000);
 	};
 
+	const showCheckoutButton = (isVerified && authenticated) || (!cartHasAgeRestrictedItems && items.length !== 0);
+
 	return (
 		<CheckoutTotalContainer>
 			<CheckoutHeading>Total</CheckoutHeading>
@@ -44,9 +46,7 @@ const CheckoutTotal = () => {
 			</div>
 			{items.length !== 0 && cartHasAgeRestrictedItems && <CheckoutWithIota></CheckoutWithIota>}
 
-			{((isVerified && authenticated) || (!cartHasAgeRestrictedItems && items.length !== 0)) && (
-				<Button onClick={() => onCheckout()}>Checkout</Button>
-			)}
+			{showCheckoutButton && <Button onClick={() => onCheckout()}>Checkout</Button>}
 			<MessageBox type="success" show={showOrderPlaceMessage}>
 				Your order has been placed!
 			</MessageBox>
