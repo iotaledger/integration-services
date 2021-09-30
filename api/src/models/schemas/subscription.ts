@@ -23,5 +23,5 @@ export const SubscriptionSchema = Type.Object({
 	publicKey: Type.Optional(Type.String()),
 	keyloadLink: Type.Optional(Type.String()),
 	sequenceLink: Type.Optional(Type.String()),
-	presharedKey: Type.Optional(Type.String())
+	pskId: Type.Optional(Type.String())
 });

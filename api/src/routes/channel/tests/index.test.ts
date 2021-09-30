@@ -108,6 +108,7 @@ describe('test channel routes', () => {
 		});
 		it('should create and return a channel for the user using a preshared key', async () => {
 			const presharedKey = 'd57921c36648c411db5048b652ec11b8';
+			const pskId = 'testpskid';
 			const req: any = {
 				params: {},
 				user: { identityId: 'did:iota:1234' },
@@ -124,7 +125,7 @@ describe('test channel routes', () => {
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
 				publicKey: null,
-				presharedKey
+				pskId
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
@@ -137,6 +138,7 @@ describe('test channel routes', () => {
 				seed: 'verysecretseed',
 				author: {},
 				channelAddress: '1234234234',
+				pskId,
 				presharedKey,
 				keyloadLink: 'author-keyload-link'
 			});
@@ -145,7 +147,7 @@ describe('test channel routes', () => {
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
-			expect(createSpy).toHaveBeenCalledWith('verysecretseed', 'd57921c36648c411db5048b652ec11b8');
+			expect(createSpy).toHaveBeenCalledWith('verysecretseed', presharedKey);
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
@@ -223,7 +225,9 @@ describe('test channel routes', () => {
 				query: { 'preshared-key': 'eaifooaeenagr' },
 				body: {}
 			};
-			const messages: StreamsMessage[] = [{ link: '12313:00', maskedPayload: undefined, messageId: '123', publicPayload: { data: { a: 124 } } }];
+			const messages: StreamsMessage[] = [
+				{ link: '12313:00', maskedPayload: undefined, messageId: '123', publicPayload: { data: { a: 124 } } }
+			];
 			const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({ subscriber: {} });
 			const getMessagesSpy = spyOn(streamsService, 'getMessages').and.returnValue(messages);
 

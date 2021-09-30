@@ -1,7 +1,7 @@
 let imports = {};
 imports['__wbindgen_placeholder__'] = module.exports;
 let wasm;
-const { TextDecoder, TextEncoder } = require(String.raw`util`);
+const { TextDecoder, TextEncoder } = require(`util`);
 
 const heap = new Array(32).fill(undefined);
 
@@ -205,7 +205,7 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     return real;
 }
 function __wbg_adapter_30(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h9b0c310cd07688f8(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h81d2a8c321411cc5(arg0, arg1, addHeapObject(arg2));
 }
 
 function handleError(f, args) {
@@ -226,11 +226,6 @@ function _assertClass(instance, klass) {
     }
     return instance.ptr;
 }
-/**
-*/
-module.exports.set_panic_hook = function() {
-    wasm.set_panic_hook();
-};
 
 function passArray8ToWasm0(arg, malloc) {
     const ptr = malloc(arg.length * 1);
@@ -242,8 +237,14 @@ function passArray8ToWasm0(arg, malloc) {
 const u32CvtShim = new Uint32Array(2);
 
 const uint64CvtShim = new BigUint64Array(u32CvtShim.buffer);
-function __wbg_adapter_196(arg0, arg1, arg2, arg3) {
-    wasm.wasm_bindgen__convert__closures__invoke2_mut__h670ccab802e5ed7a(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
+/**
+*/
+module.exports.set_panic_hook = function() {
+    wasm.set_panic_hook();
+};
+
+function __wbg_adapter_232(arg0, arg1, arg2, arg3) {
+    wasm.wasm_bindgen__convert__closures__invoke2_mut__hcaf355ca835a5c8c(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
 /**
@@ -253,6 +254,14 @@ module.exports.ChannelType = Object.freeze({ SingleBranch:0,"0":"SingleBranch",M
 */
 module.exports.LedgerInclusionState = Object.freeze({ Conflicting:0,"0":"Conflicting",Included:1,"1":"Included",NoTransaction:2,"2":"NoTransaction", });
 /**
+* Tangle representation of a Message Link.
+*
+* An `Address` is comprised of 2 distinct parts: the channel identifier
+* ({@link ChannelAddress}) and the message identifier
+* ({@link MsgId}). The channel identifier is unique per channel and is common in the
+* `Address` of all messages published in it. The message identifier is
+* produced pseudo-randomly out of the the message's sequence number, the
+* previous message identifier, and other internal properties.
 */
 class Address {
 
@@ -275,68 +284,66 @@ class Address {
         wasm.__wbg_address_free(ptr);
     }
     /**
-    * @returns {string}
+    * @param {ChannelAddress} channel_address
+    * @param {MsgId} msgid
     */
-    get addr_id() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.address_addr_id(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} addr_id
-    */
-    set addr_id(addr_id) {
-        var ptr0 = passStringToWasm0(addr_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.address_set_addr_id(this.ptr, ptr0, len0);
-    }
-    /**
-    * @returns {string}
-    */
-    get msg_id() {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.address_msg_id(retptr, this.ptr);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            return getStringFromWasm0(r0, r1);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-            wasm.__wbindgen_free(r0, r1);
-        }
-    }
-    /**
-    * @param {string} msg_id
-    */
-    set msg_id(msg_id) {
-        var ptr0 = passStringToWasm0(msg_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        wasm.address_set_msg_id(this.ptr, ptr0, len0);
-    }
-    /**
-    * @param {string} link
-    * @returns {Address}
-    */
-    static from_string(link) {
-        var ptr0 = passStringToWasm0(link, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.address_from_string(ptr0, len0);
+    constructor(channel_address, msgid) {
+        _assertClass(channel_address, ChannelAddress);
+        var ptr0 = channel_address.ptr;
+        channel_address.ptr = 0;
+        _assertClass(msgid, MsgId);
+        var ptr1 = msgid.ptr;
+        msgid.ptr = 0;
+        var ret = wasm.address_new(ptr0, ptr1);
         return Address.__wrap(ret);
     }
     /**
-    * @returns {string}
+    * @returns {ChannelAddress}
     */
-    to_string() {
+    get channelAddress() {
+        var ret = wasm.address_channelAddress(this.ptr);
+        return ChannelAddress.__wrap(ret);
+    }
+    /**
+    * @returns {MsgId}
+    */
+    get msgId() {
+        var ret = wasm.address_msgId(this.ptr);
+        return MsgId.__wrap(ret);
+    }
+    /**
+    * Generate the hash used to index the {@link Message} published in this address.
+    *
+    * Currently this hash is computed with {@link https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2|Blake2b256}.
+    * The returned Uint8Array contains the binary digest of the hash. To obtain the hexadecimal representation of the
+    * hash, use the convenience method {@link Address#toMsgIndexHex}.
+    * @returns {Uint8Array}
+    */
+    toMsgIndex() {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.address_to_string(retptr, this.ptr);
+            wasm.address_toMsgIndex(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var v0 = getArrayU8FromWasm0(r0, r1).slice();
+            wasm.__wbindgen_free(r0, r1 * 1);
+            return v0;
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
+    }
+    /**
+    * Generate the hash used to index the {@link Message} published in this address.
+    *
+    * Currently this hash is computed with {@link https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2|Blake2b256}.
+    * The returned String contains the hexadecimal digest of the hash. To obtain the binary digest of the hash,
+    * use the method {@link Address#toMsgIndex}.
+    * @returns {string}
+    */
+    toMsgIndexHex() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.address_toMsgIndexHex(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             return getStringFromWasm0(r0, r1);
@@ -344,6 +351,43 @@ class Address {
             wasm.__wbindgen_add_to_stack_pointer(16);
             wasm.__wbindgen_free(r0, r1);
         }
+    }
+    /**
+    * Render the `Address` as a colon-separated String of the hex-encoded {@link Address#channelAddress} and
+    * {@link Address#msgId} (`<channelAddressHex>:<msgIdHex>`) suitable for exchanging the `Address` between
+    * participants. To convert the String back to an `Address`, use {@link Address.parse}.
+    *
+    * @see Address.parse
+    * @returns {string}
+    */
+    toString() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.address_toString(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * Decode an `Address` out of a String. The String must follow the format used by {@link Address#toString}
+    *
+    * @throws Throws an error if String does not follow the format `<channelAddressHex>:<msgIdHex>`
+    *
+    * @see Address#toString
+    * @see ChannelAddress#hex
+    * @see MsgId#hex
+    * @param {string} string
+    * @returns {Address}
+    */
+    static parse(string) {
+        var ptr0 = passStringToWasm0(string, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.address_parse(ptr0, len0);
+        return Address.__wrap(ret);
     }
     /**
     * @returns {Address}
@@ -442,6 +486,25 @@ class Author {
         }
     }
     /**
+    * @param {string} seed
+    * @param {Address} ann_address
+    * @param {number} implementation
+    * @param {SendOptions} options
+    * @returns {Promise<Author>}
+    */
+    static recover(seed, ann_address, implementation, options) {
+        var ptr0 = passStringToWasm0(seed, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        _assertClass(ann_address, Address);
+        var ptr1 = ann_address.ptr;
+        ann_address.ptr = 0;
+        _assertClass(options, SendOptions);
+        var ptr2 = options.ptr;
+        options.ptr = 0;
+        var ret = wasm.author_recover(ptr0, len0, ptr1, implementation, ptr2);
+        return takeObject(ret);
+    }
+    /**
     * @returns {Author}
     */
     clone() {
@@ -511,7 +574,7 @@ class Author {
         }
     }
     /**
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_announce() {
         const ptr = this.__destroy_into_raw();
@@ -520,7 +583,7 @@ class Author {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_keyload_for_everyone(link) {
         const ptr = this.__destroy_into_raw();
@@ -534,7 +597,7 @@ class Author {
     * @param {Address} link
     * @param {PskIds} psk_ids
     * @param {PublicKeys} sig_pks
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_keyload(link, psk_ids, sig_pks) {
         const ptr = this.__destroy_into_raw();
@@ -554,7 +617,7 @@ class Author {
     * @param {Address} link
     * @param {Uint8Array} public_payload
     * @param {Uint8Array} masked_payload
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_tagged_packet(link, public_payload, masked_payload) {
         const ptr = this.__destroy_into_raw();
@@ -572,7 +635,7 @@ class Author {
     * @param {Address} link
     * @param {Uint8Array} public_payload
     * @param {Uint8Array} masked_payload
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_signed_packet(link, public_payload, masked_payload) {
         const ptr = this.__destroy_into_raw();
@@ -588,7 +651,7 @@ class Author {
     }
     /**
     * @param {Address} link_to
-    * @returns {any}
+    * @returns {Promise<void>}
     */
     receive_subscribe(link_to) {
         const ptr = this.__destroy_into_raw();
@@ -599,8 +662,20 @@ class Author {
         return takeObject(ret);
     }
     /**
+    * @param {Address} link_to
+    * @returns {Promise<void>}
+    */
+    receive_unsubscribe(link_to) {
+        const ptr = this.__destroy_into_raw();
+        _assertClass(link_to, Address);
+        var ptr0 = link_to.ptr;
+        link_to.ptr = 0;
+        var ret = wasm.author_receive_unsubscribe(ptr, ptr0);
+        return takeObject(ret);
+    }
+    /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     receive_tagged_packet(link) {
         const ptr = this.__destroy_into_raw();
@@ -612,7 +687,7 @@ class Author {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     receive_signed_packet(link) {
         const ptr = this.__destroy_into_raw();
@@ -624,7 +699,7 @@ class Author {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<Address>}
     */
     receive_sequence(link) {
         const ptr = this.__destroy_into_raw();
@@ -636,7 +711,7 @@ class Author {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     receive_msg(link) {
         const ptr = this.__destroy_into_raw();
@@ -647,7 +722,20 @@ class Author {
         return takeObject(ret);
     }
     /**
-    * @returns {any}
+    * @param {Address} anchor_link
+    * @param {number} msg_num
+    * @returns {Promise<UserResponse>}
+    */
+    receive_msg_by_sequence_number(anchor_link, msg_num) {
+        const ptr = this.__destroy_into_raw();
+        _assertClass(anchor_link, Address);
+        var ptr0 = anchor_link.ptr;
+        anchor_link.ptr = 0;
+        var ret = wasm.author_receive_msg_by_sequence_number(ptr, ptr0, msg_num);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {Promise<void>}
     */
     sync_state() {
         const ptr = this.__destroy_into_raw();
@@ -655,7 +743,7 @@ class Author {
         return takeObject(ret);
     }
     /**
-    * @returns {any}
+    * @returns {Promise<Array<any>>}
     */
     fetch_next_msgs() {
         const ptr = this.__destroy_into_raw();
@@ -664,7 +752,7 @@ class Author {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     fetch_prev_msg(link) {
         const ptr = this.__destroy_into_raw();
@@ -677,7 +765,7 @@ class Author {
     /**
     * @param {Address} link
     * @param {number} num_msgs
-    * @returns {any}
+    * @returns {Promise<Array<any>>}
     */
     fetch_prev_msgs(link, num_msgs) {
         const ptr = this.__destroy_into_raw();
@@ -688,15 +776,149 @@ class Author {
         return takeObject(ret);
     }
     /**
-    * @returns {any}
+    * @returns {Promise<Array<any>>}
     */
     gen_next_msg_ids() {
         const ptr = this.__destroy_into_raw();
         var ret = wasm.author_gen_next_msg_ids(ptr);
         return takeObject(ret);
     }
+    /**
+    * @returns {Array<any>}
+    */
+    fetch_state() {
+        var ret = wasm.author_fetch_state(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {string} pk_str
+    */
+    store_new_subscriber(pk_str) {
+        var ptr0 = passStringToWasm0(pk_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.author_store_new_subscriber(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {string} pk_str
+    */
+    remove_subscriber(pk_str) {
+        var ptr0 = passStringToWasm0(pk_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.author_remove_subscriber(this.ptr, ptr0, len0);
+    }
+    /**
+    * @param {string} pskid_str
+    */
+    remove_psk(pskid_str) {
+        var ptr0 = passStringToWasm0(pskid_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.author_remove_psk(this.ptr, ptr0, len0);
+    }
 }
 module.exports.Author = Author;
+/**
+* Channel application instance identifier (40 Byte)
+*/
+class ChannelAddress {
+
+    static __wrap(ptr) {
+        const obj = Object.create(ChannelAddress.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_channeladdress_free(ptr);
+    }
+    /**
+    * Render the `ChannelAddress` as a 40 Byte {@link https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array}
+    *
+    * @see ChannelAddress#hex
+    * @returns {Uint8Array}
+    */
+    bytes() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.channeladdress_bytes(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var v0 = getArrayU8FromWasm0(r0, r1).slice();
+            wasm.__wbindgen_free(r0, r1 * 1);
+            return v0;
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
+    }
+    /**
+    * Render the `ChannelAddress` as a 40 Byte (80 char) hexadecimal String
+    *
+    * @see ChannelAddress#bytes
+    * @returns {string}
+    */
+    hex() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.channeladdress_hex(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * Render the `ChannelAddress` as an exchangeable String. Currently
+    * outputs the same as {@link ChannelAddress#hex}.
+    *
+    * @see ChannelAddress#hex
+    * @see ChannelAddress.parse
+    * @returns {string}
+    */
+    toString() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.channeladdress_toString(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * Decode a `ChannelAddress` out of a String. The string must be a 80 char long hexadecimal string.
+    *
+    * @see ChannelAddress#toString
+    * @throws Throws error if string does not follow the expected format
+    * @param {string} string
+    * @returns {ChannelAddress}
+    */
+    static parse(string) {
+        var ptr0 = passStringToWasm0(string, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.channeladdress_parse(ptr0, len0);
+        return ChannelAddress.__wrap(ret);
+    }
+    /**
+    * @returns {ChannelAddress}
+    */
+    copy() {
+        var ret = wasm.channeladdress_copy(this.ptr);
+        return ChannelAddress.__wrap(ret);
+    }
+}
+module.exports.ChannelAddress = ChannelAddress;
 /**
 */
 class Client {
@@ -734,18 +956,33 @@ class Client {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<any>}
     */
     get_link_details(link) {
         const ptr = this.__destroy_into_raw();
         _assertClass(link, Address);
-        var ptr0 = link.ptr;
-        link.ptr = 0;
-        var ret = wasm.client_get_link_details(ptr, ptr0);
+        var ret = wasm.client_get_link_details(ptr, link.ptr);
         return takeObject(ret);
     }
 }
 module.exports.Client = Client;
+/**
+*/
+class Cursor {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_cursor_free(ptr);
+    }
+}
+module.exports.Cursor = Cursor;
 /**
 */
 class Details {
@@ -814,13 +1051,13 @@ class Message {
         return Message.__wrap(ret);
     }
     /**
-    * @param {string | undefined} pk
+    * @param {string | undefined} identifier
     * @param {Uint8Array} public_payload
     * @param {Uint8Array} masked_payload
     * @returns {Message}
     */
-    static new(pk, public_payload, masked_payload) {
-        var ptr0 = isLikeNone(pk) ? 0 : passStringToWasm0(pk, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    static new(identifier, public_payload, masked_payload) {
+        var ptr0 = isLikeNone(identifier) ? 0 : passStringToWasm0(identifier, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passArray8ToWasm0(public_payload, wasm.__wbindgen_malloc);
         var len1 = WASM_VECTOR_LEN;
@@ -832,10 +1069,10 @@ class Message {
     /**
     * @returns {string}
     */
-    get_pk() {
+    get_identifier() {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.message_get_pk(retptr, this.ptr);
+            wasm.message_get_identifier(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             return getStringFromWasm0(r0, r1);
@@ -883,7 +1120,6 @@ class MessageMetadata {
         wasm.__wbg_messagemetadata_free(ptr);
     }
     /**
-    * @returns {boolean}
     */
     get is_solid() {
         var ret = wasm.__wbg_get_messagemetadata_is_solid(this.ptr);
@@ -896,7 +1132,6 @@ class MessageMetadata {
         wasm.__wbg_set_messagemetadata_is_solid(this.ptr, arg0);
     }
     /**
-    * @returns {number | undefined}
     */
     get referenced_by_milestone_index() {
         try {
@@ -916,7 +1151,6 @@ class MessageMetadata {
         wasm.__wbg_set_messagemetadata_referenced_by_milestone_index(this.ptr, !isLikeNone(arg0), isLikeNone(arg0) ? 0 : arg0);
     }
     /**
-    * @returns {number | undefined}
     */
     get milestone_index() {
         try {
@@ -936,7 +1170,6 @@ class MessageMetadata {
         wasm.__wbg_set_messagemetadata_milestone_index(this.ptr, !isLikeNone(arg0), isLikeNone(arg0) ? 0 : arg0);
     }
     /**
-    * @returns {number | undefined}
     */
     get ledger_inclusion_state() {
         var ret = wasm.__wbg_get_messagemetadata_ledger_inclusion_state(this.ptr);
@@ -949,7 +1182,6 @@ class MessageMetadata {
         wasm.__wbg_set_messagemetadata_ledger_inclusion_state(this.ptr, isLikeNone(arg0) ? 3 : arg0);
     }
     /**
-    * @returns {number | undefined}
     */
     get conflict_reason() {
         var ret = wasm.__wbg_get_messagemetadata_conflict_reason(this.ptr);
@@ -962,7 +1194,6 @@ class MessageMetadata {
         wasm.__wbg_set_messagemetadata_conflict_reason(this.ptr, isLikeNone(arg0) ? 0xFFFFFF : arg0);
     }
     /**
-    * @returns {boolean | undefined}
     */
     get should_promote() {
         var ret = wasm.__wbg_get_messagemetadata_should_promote(this.ptr);
@@ -975,7 +1206,6 @@ class MessageMetadata {
         wasm.__wbg_set_messagemetadata_should_promote(this.ptr, isLikeNone(arg0) ? 0xFFFFFF : arg0 ? 1 : 0);
     }
     /**
-    * @returns {boolean | undefined}
     */
     get should_reattach() {
         var ret = wasm.__wbg_get_messagemetadata_should_reattach(this.ptr);
@@ -1035,7 +1265,6 @@ class MilestoneResponse {
     }
     /**
     * Milestone index.
-    * @returns {number}
     */
     get index() {
         var ret = wasm.__wbg_get_milestoneresponse_index(this.ptr);
@@ -1050,7 +1279,6 @@ class MilestoneResponse {
     }
     /**
     * Milestone timestamp.
-    * @returns {BigInt}
     */
     get timestamp() {
         try {
@@ -1094,6 +1322,109 @@ class MilestoneResponse {
 }
 module.exports.MilestoneResponse = MilestoneResponse;
 /**
+* Message identifier (12 Byte). Unique within a Channel.
+*/
+class MsgId {
+
+    static __wrap(ptr) {
+        const obj = Object.create(MsgId.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_msgid_free(ptr);
+    }
+    /**
+    * Render the `MsgId` as a 12 Byte {@link https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array}
+    *
+    * @see MsgId#hex
+    * @returns {Uint8Array}
+    */
+    bytes() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.msgid_bytes(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var v0 = getArrayU8FromWasm0(r0, r1).slice();
+            wasm.__wbindgen_free(r0, r1 * 1);
+            return v0;
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
+    }
+    /**
+    * Render the `MsgId` as a 12 Byte (24 char) hexadecimal String
+    *
+    * @see MsgId#bytes
+    * @returns {string}
+    */
+    hex() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.msgid_hex(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * Render the `MsgId` as an exchangeable String. Currently
+    * outputs the same as {@link MsgId#hex}.
+    *
+    * @see MsgId#hex
+    * @see MsgId.parse
+    * @returns {string}
+    */
+    toString() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.msgid_toString(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * Decode a `MsgId` out of a String. The string must be a 24 char long hexadecimal string.
+    *
+    * @see Msgid#toString
+    * @throws Throws error if string does not follow the expected format
+    * @param {string} string
+    * @returns {MsgId}
+    */
+    static parse(string) {
+        var ptr0 = passStringToWasm0(string, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.msgid_parse(ptr0, len0);
+        return MsgId.__wrap(ret);
+    }
+    /**
+    * @returns {MsgId}
+    */
+    copy() {
+        var ret = wasm.msgid_copy(this.ptr);
+        return MsgId.__wrap(ret);
+    }
+}
+module.exports.MsgId = MsgId;
+/**
 */
 class NextMsgId {
 
@@ -1116,12 +1447,12 @@ class NextMsgId {
         wasm.__wbg_nextmsgid_free(ptr);
     }
     /**
-    * @param {string} pk
+    * @param {string} identifier
     * @param {Address} msgid
     * @returns {NextMsgId}
     */
-    static new(pk, msgid) {
-        var ptr0 = passStringToWasm0(pk, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    static new(identifier, msgid) {
+        var ptr0 = passStringToWasm0(identifier, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         _assertClass(msgid, Address);
         var ptr1 = msgid.ptr;
@@ -1132,10 +1463,10 @@ class NextMsgId {
     /**
     * @returns {string}
     */
-    get_pk() {
+    get identifier() {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.nextmsgid_get_pk(retptr, this.ptr);
+            wasm.nextmsgid_identifier(retptr, this.ptr);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             return getStringFromWasm0(r0, r1);
@@ -1147,8 +1478,8 @@ class NextMsgId {
     /**
     * @returns {Address}
     */
-    get_link() {
-        var ret = wasm.nextmsgid_get_link(this.ptr);
+    get link() {
+        var ret = wasm.nextmsgid_link(this.ptr);
         return Address.__wrap(ret);
     }
 }
@@ -1268,7 +1599,6 @@ class SendOptions {
         wasm.__wbg_sendoptions_free(ptr);
     }
     /**
-    * @returns {boolean}
     */
     get local_pow() {
         var ret = wasm.__wbg_get_sendoptions_local_pow(this.ptr);
@@ -1389,6 +1719,24 @@ class Subscriber {
         return Subscriber.__wrap(ret);
     }
     /**
+    * @param {string} seed
+    * @param {Address} ann_address
+    * @param {SendOptions} options
+    * @returns {Promise<Subscriber>}
+    */
+    static recover(seed, ann_address, options) {
+        var ptr0 = passStringToWasm0(seed, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        _assertClass(ann_address, Address);
+        var ptr1 = ann_address.ptr;
+        ann_address.ptr = 0;
+        _assertClass(options, SendOptions);
+        var ptr2 = options.ptr;
+        options.ptr = 0;
+        var ret = wasm.subscriber_recover(ptr0, len0, ptr1, ptr2);
+        return takeObject(ret);
+    }
+    /**
     * @returns {Subscriber}
     */
     clone() {
@@ -1458,6 +1806,21 @@ class Subscriber {
         }
     }
     /**
+    * @returns {string}
+    */
+    author_public_key() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.subscriber_author_public_key(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
     * @returns {boolean}
     */
     is_registered() {
@@ -1490,7 +1853,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<void>}
     */
     receive_announcement(link) {
         const ptr = this.__destroy_into_raw();
@@ -1502,7 +1865,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<boolean>}
     */
     receive_keyload(link) {
         const ptr = this.__destroy_into_raw();
@@ -1514,7 +1877,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     receive_tagged_packet(link) {
         const ptr = this.__destroy_into_raw();
@@ -1526,7 +1889,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     receive_signed_packet(link) {
         const ptr = this.__destroy_into_raw();
@@ -1538,7 +1901,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<Address>}
     */
     receive_sequence(link) {
         const ptr = this.__destroy_into_raw();
@@ -1550,7 +1913,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     receive_msg(link) {
         const ptr = this.__destroy_into_raw();
@@ -1561,8 +1924,21 @@ class Subscriber {
         return takeObject(ret);
     }
     /**
+    * @param {Address} anchor_link
+    * @param {number} msg_num
+    * @returns {Promise<UserResponse>}
+    */
+    receive_msg_by_sequence_number(anchor_link, msg_num) {
+        const ptr = this.__destroy_into_raw();
+        _assertClass(anchor_link, Address);
+        var ptr0 = anchor_link.ptr;
+        anchor_link.ptr = 0;
+        var ret = wasm.subscriber_receive_msg_by_sequence_number(ptr, ptr0, msg_num);
+        return takeObject(ret);
+    }
+    /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_subscribe(link) {
         const ptr = this.__destroy_into_raw();
@@ -1574,9 +1950,21 @@ class Subscriber {
     }
     /**
     * @param {Address} link
+    * @returns {Promise<UserResponse>}
+    */
+    send_unsubscribe(link) {
+        const ptr = this.__destroy_into_raw();
+        _assertClass(link, Address);
+        var ptr0 = link.ptr;
+        link.ptr = 0;
+        var ret = wasm.subscriber_send_unsubscribe(ptr, ptr0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {Address} link
     * @param {Uint8Array} public_payload
     * @param {Uint8Array} masked_payload
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_tagged_packet(link, public_payload, masked_payload) {
         const ptr = this.__destroy_into_raw();
@@ -1594,7 +1982,7 @@ class Subscriber {
     * @param {Address} link
     * @param {Uint8Array} public_payload
     * @param {Uint8Array} masked_payload
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     send_signed_packet(link, public_payload, masked_payload) {
         const ptr = this.__destroy_into_raw();
@@ -1609,7 +1997,7 @@ class Subscriber {
         return takeObject(ret);
     }
     /**
-    * @returns {any}
+    * @returns {Promise<void>}
     */
     sync_state() {
         const ptr = this.__destroy_into_raw();
@@ -1617,7 +2005,7 @@ class Subscriber {
         return takeObject(ret);
     }
     /**
-    * @returns {any}
+    * @returns {Promise<Array<any>>}
     */
     fetch_next_msgs() {
         const ptr = this.__destroy_into_raw();
@@ -1626,7 +2014,7 @@ class Subscriber {
     }
     /**
     * @param {Address} link
-    * @returns {any}
+    * @returns {Promise<UserResponse>}
     */
     fetch_prev_msg(link) {
         const ptr = this.__destroy_into_raw();
@@ -1639,7 +2027,7 @@ class Subscriber {
     /**
     * @param {Address} link
     * @param {number} num_msgs
-    * @returns {any}
+    * @returns {Promise<Array<any>>}
     */
     fetch_prev_msgs(link, num_msgs) {
         const ptr = this.__destroy_into_raw();
@@ -1648,6 +2036,27 @@ class Subscriber {
         link.ptr = 0;
         var ret = wasm.subscriber_fetch_prev_msgs(ptr, ptr0, num_msgs);
         return takeObject(ret);
+    }
+    /**
+    * @returns {Array<any>}
+    */
+    fetch_state() {
+        var ret = wasm.subscriber_fetch_state(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    */
+    reset_state() {
+        const ptr = this.__destroy_into_raw();
+        wasm.subscriber_reset_state(ptr);
+    }
+    /**
+    * @param {string} pskid_str
+    */
+    remove_psk(pskid_str) {
+        var ptr0 = passStringToWasm0(pskid_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.subscriber_remove_psk(this.ptr, ptr0, len0);
     }
 }
 module.exports.Subscriber = Subscriber;
@@ -1704,7 +2113,7 @@ class UserResponse {
     * @param {Message | undefined} message
     * @returns {UserResponse}
     */
-    static from_strings(link, seq_link, message) {
+    static fromStrings(link, seq_link, message) {
         var ptr0 = passStringToWasm0(link, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = isLikeNone(seq_link) ? 0 : passStringToWasm0(seq_link, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
@@ -1715,7 +2124,7 @@ class UserResponse {
             ptr2 = message.ptr;
             message.ptr = 0;
         }
-        var ret = wasm.userresponse_from_strings(ptr0, len0, ptr1, len1, ptr2);
+        var ret = wasm.userresponse_fromStrings(ptr0, len0, ptr1, len1, ptr2);
         return UserResponse.__wrap(ret);
     }
     /**
@@ -1728,26 +2137,100 @@ class UserResponse {
     /**
     * @returns {Address}
     */
-    get_link() {
-        var ret = wasm.userresponse_get_link(this.ptr);
+    get link() {
+        var ret = wasm.userresponse_link(this.ptr);
         return Address.__wrap(ret);
+    }
+    /**
+    * @returns {Address | undefined}
+    */
+    get seqLink() {
+        var ret = wasm.userresponse_seqLink(this.ptr);
+        return ret === 0 ? undefined : Address.__wrap(ret);
+    }
+    /**
+    * @returns {Message | undefined}
+    */
+    get message() {
+        var ret = wasm.userresponse_message(this.ptr);
+        return ret === 0 ? undefined : Message.__wrap(ret);
+    }
+}
+module.exports.UserResponse = UserResponse;
+/**
+*/
+class UserState {
+
+    static __wrap(ptr) {
+        const obj = Object.create(UserState.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_userstate_free(ptr);
+    }
+    /**
+    * @param {string} identifier
+    * @param {Cursor} cursor
+    * @returns {UserState}
+    */
+    static new(identifier, cursor) {
+        var ptr0 = passStringToWasm0(identifier, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        _assertClass(cursor, Cursor);
+        var ptr1 = cursor.ptr;
+        cursor.ptr = 0;
+        var ret = wasm.userstate_new(ptr0, len0, ptr1);
+        return UserState.__wrap(ret);
+    }
+    /**
+    * @returns {string}
+    */
+    get identifier() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.userstate_identifier(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
     }
     /**
     * @returns {Address}
     */
-    get_seq_link() {
-        var ret = wasm.userresponse_get_seq_link(this.ptr);
+    get link() {
+        var ret = wasm.userstate_link(this.ptr);
         return Address.__wrap(ret);
     }
     /**
-    * @returns {Message}
+    * @returns {number}
     */
-    get_message() {
-        var ret = wasm.userresponse_get_message(this.ptr);
-        return Message.__wrap(ret);
+    get seqNo() {
+        var ret = wasm.userstate_seqNo(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @returns {number}
+    */
+    get branchNo() {
+        var ret = wasm.userstate_branchNo(this.ptr);
+        return ret >>> 0;
     }
 }
-module.exports.UserResponse = UserResponse;
+module.exports.UserState = UserState;
 
 module.exports.__wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
@@ -1763,7 +2246,17 @@ module.exports.__wbg_details_new = function(arg0) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_new_515b65a8e7699d00 = function() {
+module.exports.__wbg_author_new = function(arg0) {
+    var ret = Author.__wrap(arg0);
+    return addHeapObject(ret);
+};
+
+module.exports.__wbg_subscriber_new = function(arg0) {
+    var ret = Subscriber.__wrap(arg0);
+    return addHeapObject(ret);
+};
+
+module.exports.__wbg_new_949bbc1147195c4e = function() {
     var ret = new Array();
     return addHeapObject(ret);
 };
@@ -1773,7 +2266,7 @@ module.exports.__wbg_nextmsgid_new = function(arg0) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_push_b7f68478f81d358b = function(arg0, arg1) {
+module.exports.__wbg_push_284486ca27c6aa8b = function(arg0, arg1) {
     var ret = getObject(arg0).push(getObject(arg1));
     return ret;
 };
@@ -1799,12 +2292,7 @@ module.exports.__wbg_error_4bb6c2a97407129a = function(arg0, arg1) {
     }
 };
 
-module.exports.__wbg_static_accessor_MODULE_452b4680e8614c81 = function() {
-    var ret = module;
-    return addHeapObject(ret);
-};
-
-module.exports.__wbg_text_7c3304aebfcffa1a = function() { return handleError(function (arg0) {
+module.exports.__wbg_text_8279d34d73e43c68 = function() { return handleError(function (arg0) {
     var ret = getObject(arg0).text();
     return addHeapObject(ret);
 }, arguments) };
@@ -1818,17 +2306,17 @@ module.exports.__wbindgen_string_get = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_new_edbe38a4e21329dd = function() {
+module.exports.__wbg_new_0b83d3df67ecb33e = function() {
     var ret = new Object();
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_new_80e79fe6852cbe9c = function() { return handleError(function () {
+module.exports.__wbg_new_9c35e8e8b09fb4a3 = function() { return handleError(function () {
     var ret = new Headers();
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_append_441dc2c4b2281095 = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
+module.exports.__wbg_append_fb85316567f7a798 = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
     getObject(arg0).append(getStringFromWasm0(arg1, arg2), getStringFromWasm0(arg3, arg4));
 }, arguments) };
 
@@ -1842,52 +2330,52 @@ module.exports.__wbindgen_memory = function() {
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_buffer_9e184d6f785de5ed = function(arg0) {
+module.exports.__wbg_buffer_397eaa4d72ee94dd = function(arg0) {
     var ret = getObject(arg0).buffer;
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_newwithbyteoffsetandlength_e57ad1f2ce812c03 = function(arg0, arg1, arg2) {
+module.exports.__wbg_newwithbyteoffsetandlength_4b9b8c4e3f5adbff = function(arg0, arg1, arg2) {
     var ret = new Uint8Array(getObject(arg0), arg1 >>> 0, arg2 >>> 0);
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_new_e8101319e4cf95fc = function(arg0) {
+module.exports.__wbg_new_a7ce447f15ff496f = function(arg0) {
     var ret = new Uint8Array(getObject(arg0));
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_newwithstrandinit_155cb1478824b198 = function() { return handleError(function (arg0, arg1, arg2) {
+module.exports.__wbg_newwithstrandinit_9b0fa00478c37287 = function() { return handleError(function (arg0, arg1, arg2) {
     var ret = new Request(getStringFromWasm0(arg0, arg1), getObject(arg2));
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_has_9fa0c068863afd36 = function() { return handleError(function (arg0, arg1) {
+module.exports.__wbg_has_1275b5eec3dc7a7a = function() { return handleError(function (arg0, arg1) {
     var ret = Reflect.has(getObject(arg0), getObject(arg1));
     return ret;
 }, arguments) };
 
-module.exports.__wbg_fetch_9dbf87b840590e85 = function(arg0, arg1) {
+module.exports.__wbg_fetch_b4e81012e07ff95a = function(arg0, arg1) {
     var ret = getObject(arg0).fetch(getObject(arg1));
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_fetch_01d048dd000bcda1 = function(arg0) {
+module.exports.__wbg_fetch_d6391b3bc62838b4 = function(arg0) {
     var ret = fetch(getObject(arg0));
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_instanceof_Response_d61ff4c524b8dbc4 = function(arg0) {
+module.exports.__wbg_instanceof_Response_e1b11afbefa5b563 = function(arg0) {
     var ret = getObject(arg0) instanceof Response;
     return ret;
 };
 
-module.exports.__wbg_status_1a7d875f6e1318cd = function(arg0) {
+module.exports.__wbg_status_6d8bb444ddc5a7b2 = function(arg0) {
     var ret = getObject(arg0).status;
     return ret;
 };
 
-module.exports.__wbg_url_0ffe73d78f393423 = function(arg0, arg1) {
+module.exports.__wbg_url_50e0bdb6051741be = function(arg0, arg1) {
     var ret = getObject(arg1).url;
     var ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     var len0 = WASM_VECTOR_LEN;
@@ -1895,17 +2383,17 @@ module.exports.__wbg_url_0ffe73d78f393423 = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_headers_f49eca784c8ebeba = function(arg0) {
+module.exports.__wbg_headers_5ffa990806e04cfc = function(arg0) {
     var ret = getObject(arg0).headers;
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_iterator_30586bd3e46ee10e = function() {
+module.exports.__wbg_iterator_4fc4ce93e6b92958 = function() {
     var ret = Symbol.iterator;
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_get_800098c980b31ea2 = function() { return handleError(function (arg0, arg1) {
+module.exports.__wbg_get_4d0f21c2f823742e = function() { return handleError(function (arg0, arg1) {
     var ret = Reflect.get(getObject(arg0), getObject(arg1));
     return addHeapObject(ret);
 }, arguments) };
@@ -1915,7 +2403,7 @@ module.exports.__wbindgen_is_function = function(arg0) {
     return ret;
 };
 
-module.exports.__wbg_call_ba36642bd901572b = function() { return handleError(function (arg0, arg1) {
+module.exports.__wbg_call_888d259a5fefc347 = function() { return handleError(function (arg0, arg1) {
     var ret = getObject(arg0).call(getObject(arg1));
     return addHeapObject(ret);
 }, arguments) };
@@ -1926,7 +2414,7 @@ module.exports.__wbindgen_is_object = function(arg0) {
     return ret;
 };
 
-module.exports.__wbg_next_e38a92137a5693de = function(arg0) {
+module.exports.__wbg_next_c4151d46d5fa7097 = function(arg0) {
     var ret = getObject(arg0).next;
     return addHeapObject(ret);
 };
@@ -1940,34 +2428,34 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_arrayBuffer_b7c95af83e1e2705 = function() { return handleError(function (arg0) {
+module.exports.__wbg_arrayBuffer_b8937ed04beb0d36 = function() { return handleError(function (arg0) {
     var ret = getObject(arg0).arrayBuffer();
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_length_2d56cb37075fcfb1 = function(arg0) {
+module.exports.__wbg_length_1eb8fc608a0d4cdb = function(arg0) {
     var ret = getObject(arg0).length;
     return ret;
 };
 
-module.exports.__wbg_new0_85024d5e91a046e9 = function() {
+module.exports.__wbg_new0_fd3a3a290b25cdac = function() {
     var ret = new Date();
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_getTime_55dfad3366aec58a = function(arg0) {
+module.exports.__wbg_getTime_10d33f4f2959e5dd = function(arg0) {
     var ret = getObject(arg0).getTime();
     return ret;
 };
 
-module.exports.__wbg_new_c143a4f563f78c4e = function(arg0, arg1) {
+module.exports.__wbg_new_b1d61b5687f5e73a = function(arg0, arg1) {
     try {
         var state0 = {a: arg0, b: arg1};
         var cb0 = (arg0, arg1) => {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_196(a, state0.b, arg0, arg1);
+                return __wbg_adapter_232(a, state0.b, arg0, arg1);
             } finally {
                 state0.a = a;
             }
@@ -1979,13 +2467,8 @@ module.exports.__wbg_new_c143a4f563f78c4e = function(arg0, arg1) {
     }
 };
 
-module.exports.__wbindgen_number_new = function(arg0) {
-    var ret = arg0;
-    return addHeapObject(ret);
-};
-
-module.exports.__wbg_userresponse_new = function(arg0) {
-    var ret = UserResponse.__wrap(arg0);
+module.exports.__wbg_userstate_new = function(arg0) {
+    var ret = UserState.__wrap(arg0);
     return addHeapObject(ret);
 };
 
@@ -1994,37 +2477,47 @@ module.exports.__wbg_address_new = function(arg0) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_next_8b73f854755d8e5e = function() { return handleError(function (arg0) {
+module.exports.__wbg_userresponse_new = function(arg0) {
+    var ret = UserResponse.__wrap(arg0);
+    return addHeapObject(ret);
+};
+
+module.exports.__wbindgen_number_new = function(arg0) {
+    var ret = arg0;
+    return addHeapObject(ret);
+};
+
+module.exports.__wbg_next_7720502039b96d00 = function() { return handleError(function (arg0) {
     var ret = getObject(arg0).next();
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_done_86efa5ac73f5b194 = function(arg0) {
+module.exports.__wbg_done_b06cf0578e89ff68 = function(arg0) {
     var ret = getObject(arg0).done;
     return ret;
 };
 
-module.exports.__wbg_value_708ce1aa93862729 = function(arg0) {
+module.exports.__wbg_value_e74a542443d92451 = function(arg0) {
     var ret = getObject(arg0).value;
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_self_bb69a836a72ec6e9 = function() { return handleError(function () {
+module.exports.__wbg_self_c6fbdfc2918d5e58 = function() { return handleError(function () {
     var ret = self.self;
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_window_3304fc4b414c9693 = function() { return handleError(function () {
+module.exports.__wbg_window_baec038b5ab35c54 = function() { return handleError(function () {
     var ret = window.window;
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_globalThis_e0d21cabc6630763 = function() { return handleError(function () {
+module.exports.__wbg_globalThis_3f735a5746d41fbd = function() { return handleError(function () {
     var ret = globalThis.globalThis;
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_global_8463719227271676 = function() { return handleError(function () {
+module.exports.__wbg_global_1bc0b39582740e95 = function() { return handleError(function () {
     var ret = global.global;
     return addHeapObject(ret);
 }, arguments) };
@@ -2034,21 +2527,21 @@ module.exports.__wbindgen_is_undefined = function(arg0) {
     return ret;
 };
 
-module.exports.__wbg_newnoargs_9fdd8f3961dd1bee = function(arg0, arg1) {
+module.exports.__wbg_newnoargs_be86524d73f67598 = function(arg0, arg1) {
     var ret = new Function(getStringFromWasm0(arg0, arg1));
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_call_3fc07b7d5fc9022d = function() { return handleError(function (arg0, arg1, arg2) {
+module.exports.__wbg_call_346669c262382ad7 = function() { return handleError(function (arg0, arg1, arg2) {
     var ret = getObject(arg0).call(getObject(arg1), getObject(arg2));
     return addHeapObject(ret);
 }, arguments) };
 
-module.exports.__wbg_set_e8ae7b27314e8b98 = function(arg0, arg1, arg2) {
+module.exports.__wbg_set_969ad0a60e51d320 = function(arg0, arg1, arg2) {
     getObject(arg0).set(getObject(arg1), arg2 >>> 0);
 };
 
-module.exports.__wbg_set_73349fc4814e0fc6 = function() { return handleError(function (arg0, arg1, arg2) {
+module.exports.__wbg_set_82a4e8a85e31ac42 = function() { return handleError(function (arg0, arg1, arg2) {
     var ret = Reflect.set(getObject(arg0), getObject(arg1), getObject(arg2));
     return ret;
 }, arguments) };
@@ -2057,11 +2550,6 @@ module.exports.__wbg_self_86b4b13392c7af56 = function() { return handleError(fun
     var ret = self.self;
     return addHeapObject(ret);
 }, arguments) };
-
-module.exports.__wbg_require_f5521a5b85ad2542 = function(arg0, arg1, arg2) {
-    var ret = getObject(arg0).require(getStringFromWasm0(arg1, arg2));
-    return addHeapObject(ret);
-};
 
 module.exports.__wbg_crypto_b8c92eaac23d0d80 = function(arg0) {
     var ret = getObject(arg0).crypto;
@@ -2073,12 +2561,22 @@ module.exports.__wbg_msCrypto_9ad6677321a08dd8 = function(arg0) {
     return addHeapObject(ret);
 };
 
+module.exports.__wbg_static_accessor_MODULE_452b4680e8614c81 = function() {
+    var ret = module;
+    return addHeapObject(ret);
+};
+
+module.exports.__wbg_require_f5521a5b85ad2542 = function(arg0, arg1, arg2) {
+    var ret = getObject(arg0).require(getStringFromWasm0(arg1, arg2));
+    return addHeapObject(ret);
+};
+
 module.exports.__wbg_getRandomValues_dd27e6b0652b3236 = function(arg0) {
     var ret = getObject(arg0).getRandomValues;
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_newwithlength_a8d1dbcbe703a5c6 = function(arg0) {
+module.exports.__wbg_newwithlength_929232475839a482 = function(arg0) {
     var ret = new Uint8Array(arg0 >>> 0);
     return addHeapObject(ret);
 };
@@ -2087,7 +2585,7 @@ module.exports.__wbg_randomFillSync_d2ba53160aec6aba = function(arg0, arg1, arg2
     getObject(arg0).randomFillSync(getArrayU8FromWasm0(arg1, arg2));
 };
 
-module.exports.__wbg_subarray_901ede8318da52a6 = function(arg0, arg1, arg2) {
+module.exports.__wbg_subarray_8b658422a224f479 = function(arg0, arg1, arg2) {
     var ret = getObject(arg0).subarray(arg1 >>> 0, arg2 >>> 0);
     return addHeapObject(ret);
 };
@@ -2112,13 +2610,18 @@ module.exports.__wbindgen_rethrow = function(arg0) {
     throw takeObject(arg0);
 };
 
-module.exports.__wbg_then_c2361a9d5c9a4fcb = function(arg0, arg1) {
+module.exports.__wbg_then_2fcac196782070cc = function(arg0, arg1) {
     var ret = getObject(arg0).then(getObject(arg1));
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_then_6c9a4bf55755f9b8 = function(arg0, arg1, arg2) {
+module.exports.__wbg_then_8c2d62e8ae5978f7 = function(arg0, arg1, arg2) {
     var ret = getObject(arg0).then(getObject(arg1), getObject(arg2));
+    return addHeapObject(ret);
+};
+
+module.exports.__wbg_resolve_d23068002f584f22 = function(arg0) {
+    var ret = Promise.resolve(getObject(arg0));
     return addHeapObject(ret);
 };
 
@@ -2132,13 +2635,8 @@ module.exports.__wbindgen_cb_drop = function(arg0) {
     return ret;
 };
 
-module.exports.__wbg_resolve_cae3d8f752f5db88 = function(arg0) {
-    var ret = Promise.resolve(getObject(arg0));
-    return addHeapObject(ret);
-};
-
-module.exports.__wbindgen_closure_wrapper4068 = function(arg0, arg1, arg2) {
-    var ret = makeMutClosure(arg0, arg1, 150, __wbg_adapter_30);
+module.exports.__wbindgen_closure_wrapper4574 = function(arg0, arg1, arg2) {
+    var ret = makeMutClosure(arg0, arg1, 129, __wbg_adapter_30);
     return addHeapObject(ret);
 };
 

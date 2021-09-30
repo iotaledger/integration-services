@@ -3,6 +3,8 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
+import { ChannelAddress } from '../streams-lib/wasm-node/iota_streams_wasm';
+import { MsgId } from '../streams-lib/wasm-node/iota_streams_wasm';
 
 streams.set_panic_hook();
 
@@ -24,7 +26,15 @@ export class StreamsService {
 	async create(
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; channelAddress: string; author: Author; presharedKey: string; keyloadLink: string; sequenceLink: string }> {
+	): Promise<{
+		seed: string;
+		channelAddress: string;
+		author: Author;
+		presharedKey: string;
+		keyloadLink: string;
+		sequenceLink: string;
+		pskId: string;
+	}> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -33,19 +43,20 @@ export class StreamsService {
 			const client = this.getClient(this.config.node);
 			const author = streams.Author.from_client(client, seed, ChannelType.MultiBranch);
 			const announceResponse = await author.clone().send_announce();
-			const announcementAddress = announceResponse.get_link();
-			const announcementLink = announcementAddress.copy().to_string();
+			const announcementAddress = announceResponse.link;
+			const announcementLink = announcementAddress.copy().toString();
 			const keys = streams.PublicKeys.new();
 			const ids = streams.PskIds.new();
+			let pskId: string = undefined;
 
 			if (presharedKey) {
-				const id = author.clone().store_psk(presharedKey);
-				ids.add(id);
+				pskId = author.clone().store_psk(presharedKey);
+				ids.add(pskId);
 			}
 
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
-			const keyloadLink = res?.get_link()?.to_string();
-			const sequenceLink = res?.get_seq_link()?.to_string();
+			const keyloadLink = res?.link.toString();
+			const sequenceLink = res?.seqLink.toString();
 
 			return {
 				seed,
@@ -53,7 +64,8 @@ export class StreamsService {
 				author: author.clone(),
 				presharedKey,
 				keyloadLink,
-				sequenceLink
+				sequenceLink,
+				pskId
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -68,12 +80,12 @@ export class StreamsService {
 		maskedPayload: unknown
 	): Promise<{ link: string; messageId: string }> {
 		try {
-			const latestAddress = Address.from_string(keyloadLink);
+			const latestAddress = this.getChannelAddress(keyloadLink);
 			const pubPayload = toBytes(JSON.stringify(publicPayload));
 			const mPayload = toBytes(JSON.stringify(maskedPayload));
 
 			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, pubPayload, mPayload);
-			const messageLink = sendResponse?.get_link();
+			const messageLink = sendResponse?.link;
 			if (!messageLink) {
 				throw new Error('could not send signed packet');
 			}
@@ -83,7 +95,7 @@ export class StreamsService {
 
 			return {
 				messageId,
-				link: messageLink?.to_string()
+				link: messageLink?.toString()
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -93,9 +105,9 @@ export class StreamsService {
 
 	// TODO #22 finalize implementation fetch_prev_msg does not work as expected
 	async getMessage(subscription: Author | Subscriber, link: string): Promise<StreamsMessage> {
-		const address = Address.from_string(link);
+		const address = this.getChannelAddress(link);
 		const messageResponse = await subscription.clone().fetch_prev_msg(address);
-		const message = messageResponse.get_message();
+		const message = messageResponse.message;
 		const publicPayload = message && fromBytes(message.get_public_payload());
 		const maskedPayload = message && fromBytes(message.get_masked_payload());
 
@@ -130,10 +142,10 @@ export class StreamsService {
 
 				if (nextMessages && nextMessages.length > 0) {
 					const cData: StreamsMessage[] = await Promise.all(
-						nextMessages.map(async (messageResponse: any) => {
-							const address = messageResponse?.get_link();
-							const link = address?.copy()?.to_string();
-							const message = messageResponse.get_message();
+						nextMessages.map(async (messageResponse: streams.UserResponse) => {
+							const address = messageResponse?.link;
+							const link = address?.copy()?.toString();
+							const message = messageResponse.message;
 							const publicPayload = message && fromBytes(message.get_public_payload());
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 
@@ -171,9 +183,9 @@ export class StreamsService {
 		announcementLink: string,
 		seed?: string,
 		presharedKey?: string
-	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string }> {
+	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string; pskId?: string }> {
 		try {
-			const annAddress = streams.Address.from_string(announcementLink);
+			const annAddress = this.getChannelAddress(announcementLink);
 
 			if (!seed) {
 				seed = this.makeSeed(81);
@@ -182,19 +194,26 @@ export class StreamsService {
 			const client = this.getClient(this.config.node);
 			const subscriber = streams.Subscriber.from_client(client, seed);
 			await subscriber.clone().receive_announcement(annAddress.copy());
+			let pskId: string = undefined;
 
 			if (presharedKey) {
 				// subscriber stores psk
-				await subscriber.clone().store_psk(presharedKey);
+				pskId = await subscriber.clone().store_psk(presharedKey);
 				return {
 					seed,
-					subscriber: subscriber.clone()
+					subscriber: subscriber.clone(),
+					pskId
 				};
 			}
 
 			const response = await subscriber.clone().send_subscribe(annAddress.copy());
-			const subscriptionLink = response.get_link();
-			return { seed, subscriptionLink: subscriptionLink.to_string(), subscriber: subscriber.clone(), publicKey: subscriber.clone().get_public_key() };
+			const subscriptionLink = response.link;
+			return {
+				seed,
+				subscriptionLink: subscriptionLink?.toString(),
+				subscriber: subscriber.clone(),
+				publicKey: subscriber.clone().get_public_key()
+			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not request the subscription to the channel');
@@ -202,7 +221,7 @@ export class StreamsService {
 	}
 
 	async receiveSubscribe(subscriptionLink: string, author: Author) {
-		const subscriptionAddress = streams.Address.from_string(subscriptionLink);
+		const subscriptionAddress = this.getChannelAddress(subscriptionLink);
 		await author.clone().receive_subscribe(subscriptionAddress);
 	}
 
@@ -210,10 +229,10 @@ export class StreamsService {
 		anchorLink: string,
 		publicKeys: string[],
 		author: Author,
-		presharedKey?: string
+		pskId?: string
 	): Promise<{ keyloadLink: string; sequenceLink: string }> {
 		try {
-			const anchorAddress = streams.Address.from_string(anchorLink);
+			const anchorAddress = this.getChannelAddress(anchorLink);
 
 			const keys = streams.PublicKeys.new();
 			publicKeys.forEach((publicKey) => {
@@ -222,14 +241,13 @@ export class StreamsService {
 
 			const ids = streams.PskIds.new();
 
-			if (presharedKey) {
-				const id = author.clone().store_psk(presharedKey);
-				ids.add(id);
+			if (pskId) {
+				ids.add(pskId);
 			}
 
 			const res = await author.clone().send_keyload(anchorAddress.copy(), ids, keys);
-			const keyloadLink = res?.get_link()?.to_string();
-			const sequenceLink = res?.get_seq_link()?.to_string();
+			const keyloadLink = res?.link?.toString();
+			const sequenceLink = res?.seqLink?.toString();
 
 			if (!keyloadLink) {
 				throw new Error('could not send the keyload');
@@ -248,7 +266,7 @@ export class StreamsService {
 			throw new Error('not supported for authors');
 		}
 		const sub = Subscriber.from_client(client, seed);
-		const channelAddress = Address.from_string(channelLink);
+		const channelAddress = this.getChannelAddress(channelLink);
 		await sub.clone().receive_announcement(channelAddress);
 		return sub;
 	}
@@ -284,6 +302,11 @@ export class StreamsService {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not export the subscription object');
 		}
+	}
+
+	getChannelAddress(link: string): Address {
+		const [channelAddr, msgId] = link.split(':');
+		return new Address(ChannelAddress.parse(channelAddr), MsgId.parse(msgId));
 	}
 
 	private getClient(node: string): streams.Client {
