@@ -20,27 +20,25 @@ const AuthenticateCredential = () => {
 
 	return (
 		<>
-			{!authenticated ? (
-			<>
-				<GenerateNonce></GenerateNonce>
-				<label>
-					<div>Signed nonce:</div>
-					<Input type="text" name="signed-nonce" onChange={(event: any) => setSignedNonce(event.target.value)}></Input>
-				</label>
-				<SmallButton style={{ marginLeft: 0 }} onClick={() => onAuthenticate()}>
-					Authenticate
-				</SmallButton>
-			</>
-			): (
-			<>
-				<MessageBox type="danger" show={authError}>
-					Could not authenticate credential
-				</MessageBox>
-				<MessageBox type="success" show={authenticated}>
-					Credential successful authenticated
-				</MessageBox>
-			</>
+			{!authenticated && (
+				<>
+					<GenerateNonce></GenerateNonce>
+					<label>
+						<div>Signed nonce:</div>
+						<Input type="text" name="signed-nonce" onChange={(event: any) => setSignedNonce(event.target.value)}></Input>
+					</label>
+					<SmallButton style={{ marginLeft: 0 }} onClick={onAuthenticate}>
+						Authenticate
+					</SmallButton>
+				</>
 			)}
+			<MessageBox type="success" show={authenticated}>
+				Credential successful authenticated
+			</MessageBox>
+
+			<MessageBox type="danger" show={authError}>
+				Could not authenticate credential
+			</MessageBox>
 		</>
 	);
 };

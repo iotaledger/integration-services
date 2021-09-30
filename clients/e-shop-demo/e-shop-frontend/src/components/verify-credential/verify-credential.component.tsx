@@ -16,7 +16,7 @@ const VerifyCredential = () => {
 		const credential = await readFile(file as File);
 		const verified = await verifyCredential(credential);
 		const overAgeRestriction = isOverAgeRestriction(credential);
-		setAgeRestrictionError(overAgeRestriction);
+		setAgeRestrictionError(!overAgeRestriction);
 		setIsVerified(verified);
 		setCredential(credential);
 	};
@@ -25,7 +25,7 @@ const VerifyCredential = () => {
 		setFile(file);
 		setIsVerified(false);
 		setCredential(undefined);
-		setAgeRestrictionError(undefined);
+		setAgeRestrictionError(false);
 	};
 	return (
 		<>
@@ -33,8 +33,8 @@ const VerifyCredential = () => {
 				<CheckoutStepHeading>Verify credential</CheckoutStepHeading>
 				<input type="file" name="credentialFile" ref={inputRef} onChange={(event: any) => onFileChange(event.target.files[0] as File)}></input>
 			</label>
-			{file && <SmallButton onClick={() => onVerify()}>Verify</SmallButton>}
-			<MessageBox type="danger" show={ageRestrictionError === false}>
+			{file && <SmallButton onClick={onVerify}>Verify</SmallButton>}
+			<MessageBox type="danger" show={ageRestrictionError === true}>
 				Credential is under age restriction!
 			</MessageBox>
 		</>

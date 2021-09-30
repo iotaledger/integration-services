@@ -46,7 +46,7 @@ const CheckoutTotal = () => {
 			</div>
 			{items.length !== 0 && cartHasAgeRestrictedItems && <CheckoutWithIota></CheckoutWithIota>}
 
-			{showCheckoutButton && <Button onClick={() => onCheckout()}>Checkout</Button>}
+			{showCheckoutButton && <Button onClick={onCheckout}>Checkout</Button>}
 			<MessageBox type="success" show={showOrderPlaceMessage}>
 				Your order has been placed!
 			</MessageBox>
