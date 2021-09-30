@@ -10,6 +10,7 @@ import { StreamsConfigMock } from '../../../test/mocks/config';
 import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
+import { ChannelLogTransformer } from '../../../utils/channel-log-transformer/index';
 
 describe('test validate route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -76,7 +77,7 @@ describe('test validate route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -174,7 +175,9 @@ describe('test validate route', () => {
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(getSubSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(loggerSpy).toHaveBeenCalledWith(
-			new Error('no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
+			new Error(
+				'no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm'
+			)
 		);
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not validate the channel data'));
 	});
@@ -195,6 +198,9 @@ describe('test validate route', () => {
 			state: AuthorMock.state
 		});
 		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
+		// TODO can directly use logs need to return message as it is stored in streams
+		const x = ChannelLogTransformer;
+		const getMessageSpy = spyOn(streamsService, 'getMessage').and.returnValues(2);
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
@@ -205,6 +211,7 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getMessageSpy).toHaveBeenCalledTimes(3);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
