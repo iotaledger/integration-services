@@ -6,7 +6,6 @@ import { CheckoutStepHeading } from '../checkout-iota/checkout-iota.styles';
 import MessageBox from '../message-box/message-box.component';
 
 const VerifyCredential = () => {
-
 	const inputRef = useRef<any>();
 	const [ageRestrictionError, setAgeRestrictionError] = useState<boolean>();
 	const [file, setFile] = useState<File>();
@@ -18,10 +17,8 @@ const VerifyCredential = () => {
 		const verified = await verifyCredential(credential);
 		const overAgeRestriction = isOverAgeRestriction(credential);
 		setAgeRestrictionError(overAgeRestriction);
-		if (verified && overAgeRestriction) {
-			setIsVerified(verified);
-			setCredential(credential);
-		}
+		setIsVerified(verified);
+		setCredential(credential);
 	};
 
 	const onFileChange = (file: File) => {
