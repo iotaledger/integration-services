@@ -30,6 +30,7 @@ export class StreamsService {
 		seed: string;
 		channelAddress: string;
 		author: Author;
+		publicKey: string;
 		presharedKey: string;
 		keyloadLink: string;
 		sequenceLink: string;
@@ -48,6 +49,7 @@ export class StreamsService {
 			const keys = streams.PublicKeys.new();
 			const ids = streams.PskIds.new();
 			let pskId: string = undefined;
+			const publicKey = author.get_public_key();
 
 			if (presharedKey) {
 				pskId = author.clone().store_psk(presharedKey);
@@ -63,6 +65,7 @@ export class StreamsService {
 				channelAddress: announcementLink,
 				author: author.clone(),
 				presharedKey,
+				publicKey,
 				keyloadLink,
 				sequenceLink,
 				pskId

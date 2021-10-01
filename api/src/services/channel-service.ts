@@ -58,7 +58,7 @@ export class ChannelService {
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
-			publicKey: null,
+			publicKey: res.publicKey,
 			keyloadLink: res.keyloadLink,
 			pskId: res.pskId,
 			sequenceLink: res.sequenceLink
