@@ -3,7 +3,7 @@ import { ChannelRoutes } from '..';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
-import { StreamsService } from '../../../services/streams-service';
+import { StreamsMessage, StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
 import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
@@ -76,7 +76,7 @@ describe('test validate route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -174,7 +174,9 @@ describe('test validate route', () => {
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(getSubSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(loggerSpy).toHaveBeenCalledWith(
-			new Error('no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
+			new Error(
+				'no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm'
+			)
 		);
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not validate the channel data'));
 	});
@@ -196,6 +198,19 @@ describe('test validate route', () => {
 		});
 		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
 
+		const tangleMessage = (index: number): StreamsMessage => ({
+			maskedPayload: { data: logs[index].log.payload },
+			publicPayload: {
+				data: logs[index].log.publicPayload,
+				type: logs[index].log.type,
+				metadata: logs[index].log.metadata,
+				created: logs[index].log.created
+			},
+			link: logs[index].link,
+			messageId: logs[index].messageId
+		});
+		const getMessageSpy = spyOn(streamsService, 'getMessage').and.returnValues(tangleMessage(0), tangleMessage(1), tangleMessage(2));
+
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		const expectedValidatedLogs = [
@@ -205,6 +220,7 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getMessageSpy).toHaveBeenCalledTimes(3);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith(AuthorMock.state, true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
