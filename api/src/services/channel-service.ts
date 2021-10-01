@@ -200,7 +200,8 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const newSub = await this.streamsService.resetState(channelAddress, seed, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
+				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
 
 				if (newPublicKey !== subscription.publicKey) {

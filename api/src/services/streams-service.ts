@@ -260,15 +260,14 @@ export class StreamsService {
 		}
 	}
 
-	async resetState(channelLink: string, seed: string, isAuthor: boolean): Promise<Subscriber> {
-		const client = this.getClient(this.config.node);
+	async resetState(_channelLink: string, subscription: Author | Subscriber, isAuthor: boolean): Promise<Author | Subscriber> {
 		if (isAuthor) {
 			throw new Error('not supported for authors');
+			// TODO#196 this method is currently not exposed
+			// const client = this.getClient(this.config.node);
 		}
-		const sub = Subscriber.from_client(client, seed);
-		const channelAddress = this.getChannelAddress(channelLink);
-		await sub.clone().receive_announcement(channelAddress);
-		return sub;
+		(subscription as Subscriber).clone().reset_state();
+		return subscription;
 	}
 
 	makeSeed(size: number) {
