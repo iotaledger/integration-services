@@ -37,6 +37,10 @@ export class SubscriptionService {
 		return SubscriptionDb.getSubscriptionByLink(subscriptionLink);
 	}
 
+	async getSubscriptionByPublicKey(channelAddress: string, publicKey: string) {
+		return SubscriptionDb.getSubscriptionByPublicKey(channelAddress, publicKey);
+	}
+
 	async addSubscription(subscription: Subscription) {
 		return SubscriptionDb.addSubscription(subscription);
 	}
@@ -82,6 +86,12 @@ export class SubscriptionService {
 			pskId: res.pskId,
 			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
 		};
+
+		const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
+
+		if (existingSubscription) {
+			throw new Error('public key already used');
+		}
 
 		await this.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
