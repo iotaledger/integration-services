@@ -5,11 +5,16 @@ import { SubscriptionService } from '../../services/subscription-service';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
-import { Subscription } from '../../models/types/subscription';
+import { Subscription, SubscriptionUpdate } from '../../models/types/subscription';
 import { SubscriptionType } from '../../models/schemas/subscription';
+import { ChannelInfoService } from '../../services/channel-info-service';
 
 export class SubscriptionRoutes {
-	constructor(private readonly subscriptionService: SubscriptionService, private readonly logger: ILogger) {}
+	constructor(
+		private readonly subscriptionService: SubscriptionService,
+		private readonly channelInfoService: ChannelInfoService,
+		private readonly logger: ILogger
+	) {}
 
 	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
@@ -33,6 +38,76 @@ export class SubscriptionRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not add subscription'));
+		}
+	};
+
+	updateSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const subscriberId = _.get(req, 'params.identityId');
+			const userIdentityId = req.user.identityId;
+			const subscriptionUpdate = req.body as SubscriptionUpdate;
+
+			// no updates on the channelAddress are allowed
+			delete subscriptionUpdate.channelAddress;
+
+			if (!channelAddress || !subscriberId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
+
+			console.log({ channelAddress, subscriberId, userIdentityId, subscriptionUpdate, authorId });
+
+			// updating is only allowed for the subscriber and channel author
+			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not authorized to update the subscription' });
+			}
+
+			const subscription = await this.subscriptionService.getSubscription(channelAddress, subscriberId);
+
+			if (!subscription) {
+				return res.status(StatusCodes.NOT_FOUND).send({ error: 'no subscription found' });
+			}
+
+			await this.subscriptionService.updateSubscription(channelAddress, subscriberId, subscriptionUpdate);
+			return res.status(StatusCodes.OK).send();
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not update subscription'));
+		}
+	};
+
+	deleteSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const subscriberId = _.get(req, 'params.identityId');
+			const userIdentityId = req.user.identityId;
+
+			if (!channelAddress || !subscriberId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			}
+
+			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
+
+			console.log({ channelAddress, subscriberId, userIdentityId, authorId });
+
+			// deleting is only allowed for the subscriber and channel author
+			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not authorized to delete the subscription' });
+			}
+
+			const subscription = await this.subscriptionService.getSubscription(channelAddress, subscriberId);
+
+			if (!subscription) {
+				return res.status(StatusCodes.NOT_FOUND).send({ error: 'no subscription found' });
+			}
+
+			await this.subscriptionService.deleteSubscription(channelAddress, subscriberId);
+			return res.status(StatusCodes.OK).send();
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not delete subscription'));
 		}
 	};
 

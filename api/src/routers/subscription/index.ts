@@ -4,20 +4,22 @@ import {
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
-import { SubscriptionSchema } from '../../models/schemas/subscription';
+import { SubscriptionSchema, SubscriptionUpdateSchema } from '../../models/schemas/subscription';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
-import { subscriptionService } from '../services';
+import { channelInfoService, subscriptionService } from '../services';
 
-const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
+const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, Logger.getInstance());
 const {
 	getSubscriptions,
 	getSubscriptionByIdentity,
 	requestSubscription,
 	authorizeSubscription,
 	revokeSubscription,
-	addSubscription
+	addSubscription,
+	updateSubscription,
+	deleteSubscription
 } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
@@ -353,3 +355,7 @@ subscriptionRouter.post(
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);
+
+subscriptionRouter.put('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionUpdateSchema }), authMiddleWare, updateSubscription);
+
+subscriptionRouter.delete('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, deleteSubscription);

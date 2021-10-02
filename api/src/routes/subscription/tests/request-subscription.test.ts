@@ -23,7 +23,7 @@ describe('test request subscription route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
+		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
 		res = {
 			send: sendMock,

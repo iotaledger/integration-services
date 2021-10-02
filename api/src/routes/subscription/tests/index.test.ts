@@ -33,7 +33,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
+		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
 		res = {
 			send: sendMock,
@@ -150,7 +150,7 @@ describe('test addSubscription route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
+		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
 		res = {
 			send: sendMock,
