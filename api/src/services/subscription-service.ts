@@ -74,6 +74,14 @@ export class SubscriptionService {
 		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
 		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
 
+		if (res.publicKey) {
+			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
+
+			if (existingSubscription) {
+				throw new Error('public key already used');
+			}
+		}
+
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
 			identityId: subscriberId,
@@ -86,12 +94,6 @@ export class SubscriptionService {
 			pskId: res.pskId,
 			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
 		};
-
-		const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
-
-		if (existingSubscription) {
-			throw new Error('public key already used');
-		}
 
 		await this.addSubscription(subscription);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
