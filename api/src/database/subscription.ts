@@ -47,12 +47,21 @@ export const updateSubscription = async (
 	subscriptionUpdate: SubscriptionUpdate
 ): Promise<UpdateWriteOpResult> => {
 	const query = { _id: getIndex(identityId, channelAddress) };
-	const updateObject = MongoDbService.getPlainObject(subscriptionUpdate);
-
+	// updates on channelAddress, publicKey, identityId and type are not allowed
+	const { state, subscriptionLink, isAuthorized, accessRights, keyloadLink, sequenceLink, pskId } = subscriptionUpdate;
+	const plainUpdate = MongoDbService.getPlainObject({
+		state,
+		subscriptionLink,
+		isAuthorized,
+		accessRights,
+		keyloadLink,
+		sequenceLink,
+		pskId
+	});
+	
 	const update = {
-		$set: { ...updateObject }
+		$set: { ...plainUpdate }
 	};
-
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 

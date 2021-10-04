@@ -48,9 +48,6 @@ export class SubscriptionRoutes {
 			const userIdentityId = req.user.identityId;
 			const subscriptionUpdate = req.body as SubscriptionUpdate;
 
-			// no updates on the channelAddress are allowed
-			delete subscriptionUpdate.channelAddress;
-
 			if (!channelAddress || !subscriberId) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
 			}
@@ -61,7 +58,7 @@ export class SubscriptionRoutes {
 
 			// updating is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not authorized to update the subscription' });
+				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized to update the subscription' });
 			}
 
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, subscriberId);
@@ -94,7 +91,7 @@ export class SubscriptionRoutes {
 
 			// deleting is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not authorized to delete the subscription' });
+				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized to delete the subscription' });
 			}
 
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, subscriberId);
