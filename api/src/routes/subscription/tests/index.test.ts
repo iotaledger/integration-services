@@ -174,7 +174,7 @@ describe('test addSubscription route', () => {
 		// shallow object copy
 		const subscriptionMockWithoutPublicKey = Object.assign({}, subscriptionMock);
 		delete subscriptionMockWithoutPublicKey.publicKey;
-		const channelAddress = 'did:iota:1234';
+		const channelAddress = '1234234234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
 			params: { channelAddress, identityId },
@@ -188,7 +188,7 @@ describe('test addSubscription route', () => {
 
 	it('should return bad request since subscription has already been added', async () => {
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(subscriptionMock);
-		const channelAddress = 'did:iota:1234';
+		const channelAddress = '1234234234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
 			params: { channelAddress, identityId },
@@ -203,7 +203,7 @@ describe('test addSubscription route', () => {
 	it('should return created', async () => {
 		spyOn(subscriptionService, 'addSubscription').and.returnValue(undefined);
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
-		const channelAddress = 'did:iota:1234';
+		const channelAddress = '1234234234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
 			params: { channelAddress, identityId },
@@ -214,5 +214,188 @@ describe('test addSubscription route', () => {
 		expect(subscriptionService.addSubscription).toHaveBeenCalledWith(subscriptionMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith(subscriptionMock);
+	});
+});
+
+describe('test updateSubscription route', () => {
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
+	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	const subscriptionMock: Subscription = {
+		accessRights: AccessRights.Read,
+		channelAddress: 'testaddress',
+		identityId: 'did:iota:1234',
+		isAuthorized: false,
+		publicKey: 'testpublickey',
+		state: 'teststate',
+		subscriptionLink: 'testlink',
+		type: SubscriptionType.Subscriber
+	};
+
+	beforeEach(() => {
+		sendMock = jest.fn();
+		sendStatusMock = jest.fn();
+		nextMock = jest.fn();
+		const config = StreamsConfigMock;
+		userService = new UserService({} as any, '', LoggerMock);
+		streamsService = new StreamsService(config, LoggerMock);
+		channelInfoService = new ChannelInfoService(userService);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
+
+		res = {
+			send: sendMock,
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
+		};
+	});
+
+	it('should return bad request since params are missing', async () => {
+		const req: any = {
+			params: {},
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.updateSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+	});
+
+	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
+		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		const channelAddress = '1234234234';
+		const identityId = 'did:iota:5678';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.updateSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+		expect(res.send).toHaveBeenCalledWith({ error: 'not authorized to update the subscription' });
+	});
+
+	it('should return not found since so subscription with channelAddress and identityId does not exist', async () => {
+		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
+		const channelAddress = '1234234234';
+		const identityId = 'did:iota:1234';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.updateSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.NOT_FOUND);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no subscription found' });
+	});
+
+	it('should return ok', async () => {
+		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		spyOn(subscriptionService, 'getSubscription').and.returnValue({ channelAddress: '1234234234' });
+		spyOn(subscriptionService, 'updateSubscription').and.returnValue(undefined);
+		const channelAddress = 'did:iota:1234';
+		const identityId = 'did:iota:1234';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.updateSubscription(req, res, nextMock);
+
+		expect(subscriptionService.updateSubscription).toHaveBeenCalledWith(channelAddress, identityId, subscriptionMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith();
+	});
+});
+
+
+describe('test deleteSubscription route', () => {
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
+	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	const subscriptionMock: Subscription = {
+		accessRights: AccessRights.Read,
+		channelAddress: 'testaddress',
+		identityId: 'did:iota:1234',
+		isAuthorized: false,
+		publicKey: 'testpublickey',
+		state: 'teststate',
+		subscriptionLink: 'testlink',
+		type: SubscriptionType.Subscriber
+	};
+
+	beforeEach(() => {
+		sendMock = jest.fn();
+		sendStatusMock = jest.fn();
+		nextMock = jest.fn();
+		const config = StreamsConfigMock;
+		userService = new UserService({} as any, '', LoggerMock);
+		streamsService = new StreamsService(config, LoggerMock);
+		channelInfoService = new ChannelInfoService(userService);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
+
+		res = {
+			send: sendMock,
+			sendStatus: sendStatusMock,
+			status: jest.fn(() => res)
+		};
+	});
+
+	it('should return bad request since params are missing', async () => {
+		const req: any = {
+			params: {},
+			user: { identityId: 'did:iota:1234' }
+		};
+		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+	});
+
+	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
+		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		const channelAddress = '1234234234';
+		const identityId = 'did:iota:5678';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' }
+		};
+		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+		expect(res.send).toHaveBeenCalledWith({ error: 'not authorized to delete the subscription' });
+	});
+
+	it('should return not found since so subscription with channelAddress and identityId does not exist', async () => {
+		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
+		const channelAddress = '1234234234';
+		const identityId = 'did:iota:1234';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.NOT_FOUND);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no subscription found' });
+	});
+
+	it('should return ok', async () => {
+		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		spyOn(subscriptionService, 'getSubscription').and.returnValue({ channelAddress: '1234234234' });
+		spyOn(subscriptionService, 'deleteSubscription').and.returnValue(undefined);
+		const channelAddress = 'did:iota:1234';
+		const identityId = 'did:iota:1234';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
+
+		expect(subscriptionService.deleteSubscription).toHaveBeenCalledWith(channelAddress, identityId);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith();
 	});
 });

@@ -53,9 +53,7 @@ export class SubscriptionRoutes {
 			}
 
 			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
-
-			console.log({ channelAddress, subscriberId, userIdentityId, subscriptionUpdate, authorId });
-
+			
 			// updating is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
 				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized to update the subscription' });
@@ -86,8 +84,6 @@ export class SubscriptionRoutes {
 			}
 
 			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
-
-			console.log({ channelAddress, subscriberId, userIdentityId, authorId });
 
 			// deleting is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
