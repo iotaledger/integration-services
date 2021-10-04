@@ -10,6 +10,7 @@ import { StreamsConfigMock } from '../../../test/mocks/config';
 import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import * as ChannelDataDb from '../../../database/channel-data';
+import { SubscriberMock } from '../../../test/mocks/streams';
 
 describe('test re-import route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -25,7 +26,7 @@ describe('test re-import route', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -133,16 +134,19 @@ describe('test re-import route', () => {
 		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
 			keyloadLink: 'testlink',
 			publicKey: 'testkey', // different public key as newSub
-			accessRights: AccessRights.Read
+			accessRights: AccessRights.Read,
+			state: 'teststate'
 		});
 		const loggerSpy = spyOn(LoggerMock, 'error');
 		const newSub = { clone: () => newSub, get_public_key: () => 'differenttestkey' }; // public key is different as the one in the prev. subscription
 		const resetStateSpy = spyOn(streamsService, 'resetState').and.returnValue(newSub);
+		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(SubscriberMock);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, seed, false);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
+		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('wrong seed inserted'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not reimport channel data'));
 	});
@@ -160,17 +164,20 @@ describe('test re-import route', () => {
 		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
 			keyloadLink: 'testlink',
 			publicKey: 'testkey', // same public key as in newSub
-			accessRights: AccessRights.Read
+			accessRights: AccessRights.Read,
+			state: 'teststate'
 		});
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
 		const resetStateSpy = spyOn(streamsService, 'resetState').and.returnValue(newSub);
 		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
 		const fetchLogsSpy = spyOn(channelService, 'fetchLogs');
+		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(SubscriberMock);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, seed, false);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
+		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.identityId, newSub);
 		expect(loggerSpy).not.toHaveBeenCalled();

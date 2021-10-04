@@ -106,7 +106,7 @@ export class StreamsService {
 	// TODO #22 finalize implementation fetch_prev_msg does not work as expected
 	async getMessage(subscription: Author | Subscriber, link: string): Promise<StreamsMessage> {
 		const address = this.getChannelAddress(link);
-		const messageResponse = await subscription.clone().fetch_prev_msg(address);
+		const messageResponse = await subscription.clone().receive_msg(address?.copy());
 		const message = messageResponse.message;
 		const publicPayload = message && fromBytes(message.get_public_payload());
 		const maskedPayload = message && fromBytes(message.get_masked_payload());
@@ -260,15 +260,14 @@ export class StreamsService {
 		}
 	}
 
-	async resetState(channelLink: string, seed: string, isAuthor: boolean): Promise<Subscriber> {
-		const client = this.getClient(this.config.node);
+	async resetState(_channelLink: string, subscription: Author | Subscriber, isAuthor: boolean): Promise<Author | Subscriber> {
 		if (isAuthor) {
 			throw new Error('not supported for authors');
+			// TODO#196 this method is currently not exposed
+			// const client = this.getClient(this.config.node);
 		}
-		const sub = Subscriber.from_client(client, seed);
-		const channelAddress = this.getChannelAddress(channelLink);
-		await sub.clone().receive_announcement(channelAddress);
-		return sub;
+		(subscription as Subscriber).clone().reset_state();
+		return subscription;
 	}
 
 	makeSeed(size: number) {

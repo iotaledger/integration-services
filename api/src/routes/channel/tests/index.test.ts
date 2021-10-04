@@ -26,7 +26,7 @@ describe('test channel routes', () => {
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {

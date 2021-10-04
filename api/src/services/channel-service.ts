@@ -13,6 +13,7 @@ import { ILock, Lock } from '../utils/lock';
 import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { getDateStringFromDate } from '../utils/date';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
+import { ILogger } from '../utils/logger';
 
 export class ChannelService {
 	private readonly password: string;
@@ -22,7 +23,8 @@ export class ChannelService {
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionService: SubscriptionService,
-		config: StreamsConfig
+		config: StreamsConfig,
+		private readonly logger: ILogger
 	) {
 		this.lock = Lock.getInstance();
 		this.password = config.statePassword;
@@ -198,7 +200,8 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const newSub = await this.streamsService.resetState(channelAddress, seed, isAuthor);
+				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
+				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
 
 				if (newPublicKey !== subscription.publicKey) {
@@ -237,25 +240,22 @@ export class ChannelService {
 				}
 				await sub.clone().sync_state();
 
-				// TODO#22 finalize validate endpoint
-				/*const m = await this.streamsService.getMessage(sub, logs[0].link);
-				const streamsMessages = [m];
-				await Promise.all(
+				const streamsMessages = await Promise.all(
 					logs.map(async (log) => {
-						{
-							const key = 'get-message-' + channelAddress + identityId;
-							return await this.lock.acquire(key).then(async (release) => {
-								try {
-									return this.streamsService.getMessage(sub.clone(), log.link);
-								} finally {
-									release();
-								}
-							});
-						}
+						const key = 'get-message-' + channelAddress + identityId;
+						return await this.lock.acquire(key).then(async (release) => {
+							try {
+								return await this.streamsService.getMessage(sub.clone(), log?.link);
+							} catch (e) {
+								this.logger.error(`could not validate message with link: ${log?.link}`);
+								this.logger.error(e);
+							} finally {
+								release();
+							}
+						});
 					})
 				);
-				const tangleLogs = ChannelLogTransformer.transformStreamsMessages(streamsMessages);*/
-				const tangleLogs = [...logs];
+				const tangleLogs = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
 				return ChannelLogTransformer.validateLogs(logs, tangleLogs);
 			} finally {
 				release();

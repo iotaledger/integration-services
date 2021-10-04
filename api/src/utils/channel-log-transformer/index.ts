@@ -2,6 +2,7 @@ import { isEqual } from 'lodash';
 import { ChannelData, ChannelLog } from '../../models/types/channel-data';
 import { ValidateResponse } from '../../models/types/request-response-bodies';
 import { StreamsMessage } from '../../services/streams-service';
+import _ from 'lodash';
 
 export interface IPayload {
 	data?: any;
@@ -63,7 +64,10 @@ export class ChannelLogTransformer {
 				};
 			}
 
-			if (!isEqual(channelData.log, tangleLog.log)) {
+			const omitedLog = _(channelData.log).omitBy(_.isUndefined).omitBy(_.isNull).value();
+			const omitedTangleLog = _(tangleLog.log).omitBy(_.isUndefined).omitBy(_.isNull).value();
+
+			if (!isEqual(omitedLog, omitedTangleLog)) {
 				return {
 					link: channelData.link,
 					isValid: false,
