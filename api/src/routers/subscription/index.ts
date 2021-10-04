@@ -396,7 +396,7 @@ subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, valida
  *       200:
  *         description: Subscription updated
  *       400:
- *         description: Missing channelAddress
+ *         description: Missing channelAddress / identityId
  *         content:
  *           application/json:
  *             schema:
