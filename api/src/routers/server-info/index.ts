@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { ServerInfoRoutes } from '../../routes/server-info';
 import { Logger } from '../../utils/logger';
-import { apiKeyMiddleware } from '../middlewares';
 
 const serverInfoRoutes = new ServerInfoRoutes(Logger.getInstance());
 const { getServerInfo } = serverInfoRoutes;
@@ -35,15 +34,6 @@ export const serverInfoRouter = Router();
  *                 - commitHash
  *                 - identityId
  *                 - version
- *       401:
- *         description: No valid api key provided 
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
  *       5XX:
  *         description: Unexpected error
  *         content:
@@ -54,4 +44,4 @@ export const serverInfoRouter = Router();
  *                 error:
  *                   type: string
  */
-serverInfoRouter.get('/info', apiKeyMiddleware, getServerInfo);
+serverInfoRouter.get('/info', getServerInfo);
