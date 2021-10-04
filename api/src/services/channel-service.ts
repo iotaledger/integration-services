@@ -58,7 +58,7 @@ export class ChannelService {
 			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
-			publicKey: null,
+			publicKey: res.publicKey,
 			keyloadLink: res.keyloadLink,
 			pskId: res.pskId,
 			sequenceLink: res.sequenceLink
@@ -184,7 +184,7 @@ export class ChannelService {
 		});
 	}
 
-	async reimport(channelAddress: string, identityId: string, seed: string, _subscriptionPassword?: string): Promise<void> {
+	async reimport(channelAddress: string, identityId: string, _seed: string, _subscriptionPassword?: string): Promise<void> {
 		const lockKey = channelAddress + identityId;
 
 		return this.lock.acquire(lockKey).then(async (release) => {

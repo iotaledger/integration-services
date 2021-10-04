@@ -37,6 +37,10 @@ export class SubscriptionService {
 		return SubscriptionDb.getSubscriptionByLink(subscriptionLink);
 	}
 
+	async getSubscriptionByPublicKey(channelAddress: string, publicKey: string) {
+		return SubscriptionDb.getSubscriptionByPublicKey(channelAddress, publicKey);
+	}
+
 	async addSubscription(subscription: Subscription) {
 		return SubscriptionDb.addSubscription(subscription);
 	}
@@ -69,6 +73,14 @@ export class SubscriptionService {
 	}): Promise<RequestSubscriptionResponse> {
 		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
 		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+
+		if (res.publicKey) {
+			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
+
+			if (existingSubscription) {
+				throw new Error('public key already used');
+			}
+		}
 
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,

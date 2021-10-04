@@ -66,7 +66,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { identityId: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', encrypted: true }
+				body: { topics: [], seed: 'verysecretseed' }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -78,7 +78,7 @@ describe('test channel routes', () => {
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
-				publicKey: null
+				publicKey: 'testpublickey'
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
@@ -91,7 +91,8 @@ describe('test channel routes', () => {
 				seed: 'verysecretseed',
 				author: AuthorMock,
 				channelAddress: '1234234234',
-				keyloadLink: 'author-keyload-link'
+				keyloadLink: 'author-keyload-link',
+				publicKey: 'testpublickey'
 			});
 			const addSubscriptionSpy = spyOn(subscriptionService, 'addSubscription');
 			const addChannelInfoSpy = spyOn(channelInfoService, 'addChannelInfo');
@@ -112,7 +113,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { identityId: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', encrypted: true, presharedKey, hasPresharedKey: true }
+				body: { topics: [], presharedKey, hasPresharedKey: true }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -124,7 +125,6 @@ describe('test channel routes', () => {
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
-				publicKey: null,
 				pskId
 			};
 			const expectedChannelInfo: ChannelInfo = {
@@ -147,7 +147,7 @@ describe('test channel routes', () => {
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
-			expect(createSpy).toHaveBeenCalledWith('verysecretseed', presharedKey);
+			expect(createSpy).toHaveBeenCalledWith(undefined, presharedKey);
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);

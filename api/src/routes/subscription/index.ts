@@ -23,7 +23,12 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress, identityId or publicKey provided' });
 			}
 
-			const existingSubscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			let existingSubscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			if (existingSubscription) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already added' });
+			}
+
+			existingSubscription = await this.subscriptionService.getSubscriptionByPublicKey(channelAddress, publicKey);
 			if (existingSubscription) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already added' });
 			}
