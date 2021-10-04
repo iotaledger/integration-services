@@ -3,7 +3,6 @@ import { ChannelRoutes } from '..';
 import { ChannelInfo } from '../../../models/types/channel-info';
 import { Subscription } from '../../../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
@@ -26,9 +25,8 @@ describe('test channel routes', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		const subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
-		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
 
 		res = {
@@ -68,7 +66,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { identityId: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', encrypted: true }
+				body: { topics: [], seed: 'verysecretseed' }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -76,12 +74,11 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				seed: 'verysecretseed',
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
-				publicKey: null
+				publicKey: 'testpublickey'
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
@@ -94,7 +91,8 @@ describe('test channel routes', () => {
 				seed: 'verysecretseed',
 				author: AuthorMock,
 				channelAddress: '1234234234',
-				keyloadLink: 'author-keyload-link'
+				keyloadLink: 'author-keyload-link',
+				publicKey: 'testpublickey'
 			});
 			const addSubscriptionSpy = spyOn(subscriptionService, 'addSubscription');
 			const addChannelInfoSpy = spyOn(channelInfoService, 'addChannelInfo');
@@ -111,10 +109,11 @@ describe('test channel routes', () => {
 		});
 		it('should create and return a channel for the user using a preshared key', async () => {
 			const presharedKey = 'd57921c36648c411db5048b652ec11b8';
+			const pskId = 'testpskid';
 			const req: any = {
 				params: {},
 				user: { identityId: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', encrypted: true, presharedKey, hasPresharedKey: true }
+				body: { topics: [], presharedKey, hasPresharedKey: true }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -122,13 +121,11 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				seed: 'verysecretseed',
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
-				publicKey: null,
-				presharedKey
+				pskId
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
@@ -141,6 +138,7 @@ describe('test channel routes', () => {
 				seed: 'verysecretseed',
 				author: {},
 				channelAddress: '1234234234',
+				pskId,
 				presharedKey,
 				keyloadLink: 'author-keyload-link'
 			});
@@ -149,7 +147,7 @@ describe('test channel routes', () => {
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
-			expect(createSpy).toHaveBeenCalledWith('verysecretseed', 'd57921c36648c411db5048b652ec11b8');
+			expect(createSpy).toHaveBeenCalledWith(undefined, presharedKey);
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
@@ -159,7 +157,7 @@ describe('test channel routes', () => {
 	});
 
 	describe('test getLogs channel route', () => {
-		it('should return bad request if no channelAddress is provided', async () => {
+		it('should return bad request if no identityId is provided', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
 				user: { identityId: undefined }, //no identityId,
@@ -171,7 +169,7 @@ describe('test channel routes', () => {
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
 		});
 
-		it('should return bad request if no identityId is provided', async () => {
+		it('should return bad request if no channelAddress is provided', async () => {
 			const req: any = {
 				params: {}, // no channelAddress
 				user: { identityId: 'did:iota:1234' },
@@ -181,6 +179,19 @@ describe('test channel routes', () => {
 			await channelRoutes.getLogs(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		});
+
+		it('should return bad request if startDate is after endDate', async () => {
+			const req: any = {
+				params: { channelAddress: '12345' },
+				user: { identityId: 'did:iota:1234' },
+				body: {},
+				query: { 'start-date': '2021-09-29T10:00:00+02:00', 'end-date': '2021-09-28T10:00:00+02:00' }
+			};
+
+			await channelRoutes.getLogs(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'start date is after end date' });
 		});
 	});
 
@@ -214,7 +225,9 @@ describe('test channel routes', () => {
 				query: { 'preshared-key': 'eaifooaeenagr' },
 				body: {}
 			};
-			const messages: StreamsMessage[] = [{ link: '12313:00', maskedPayload: undefined, messageId: '123', publicPayload: { data: { a: 124 } } }];
+			const messages: StreamsMessage[] = [
+				{ link: '12313:00', maskedPayload: undefined, messageId: '123', publicPayload: { data: { a: 124 } } }
+			];
 			const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({ subscriber: {} });
 			const getMessagesSpy = spyOn(streamsService, 'getMessages').and.returnValue(messages);
 
@@ -224,7 +237,7 @@ describe('test channel routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith([
 				{
-					channelLog: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
+					log: { created: undefined, metadata: undefined, payload: undefined, publicPayload: { a: 124 }, type: undefined },
 					link: '12313:00',
 					messageId: '123'
 				}

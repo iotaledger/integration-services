@@ -34,7 +34,7 @@ export const CreateChannelBodySchema = Type.Object({
 	)
 });
 
-export const CreateChannelBodyResponseSchema = Type.Object({
+export const CreateChannelResponseSchema = Type.Object({
 	seed: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
 	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	presharedKey: Type.Optional(
@@ -68,7 +68,20 @@ export const ChannelLogSchema = AddChannelLogBodySchema;
 
 export const ChannelDataSchema = Type.Object({
 	link: Type.String(),
-	imported: Type.Optional(Type.Any()),
+	imported: Type.Optional(
+		Type.String({ format: 'date-time', description: 'Date when the data was imported from the tangle into the cached database.' })
+	),
 	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
-	channelLog: ChannelLogSchema
+	log: ChannelLogSchema
 });
+
+export const ValidateBodySchema = Type.Array(ChannelDataSchema);
+
+export const ValidateResponseSchema = Type.Array(
+	Type.Object({
+		link: Type.String(),
+		isValid: Type.Boolean(),
+		error: Type.Optional(Type.String()),
+		tangleLog: Type.Optional(Type.Any())
+	})
+);

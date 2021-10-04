@@ -7,9 +7,9 @@ export const auditChannelData = async (channelData: any[]) => {
 		return console.log('Data stream is empty');
 	}
 	const hashedFile = await loadAndHashFile();
-	const data = channelData.find((data) => data.channelLog.payload.fileName === hashedFile.fileName);
-	const payload = data.channelLog.payload;
-	if (hashedFile.hashedFile === payload.hashedFile) {
+	const data = channelData.find((data) => data?.log?.payload?.fileName === hashedFile?.fileName);
+	const payload = data?.log?.payload;
+	if (hashedFile?.hashedFile === payload?.hashedFile) {
 		console.log(`~~~~~~~Log ${payload.fileName} is valid!~~~~~~~`);
 	} else {
 		console.log(`~~~~~~~Log ${payload.fileName}is invalid!~~~~~~~`);

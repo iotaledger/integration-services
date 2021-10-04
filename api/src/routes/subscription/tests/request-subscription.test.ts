@@ -2,7 +2,6 @@ import { StatusCodes } from 'http-status-codes';
 import { SubscriptionRoutes } from '..';
 import { Subscription } from '../../../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
-import { SubscriptionPool } from '../../../pools/subscription-pools';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
@@ -12,7 +11,7 @@ import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test request subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService, subscriptionPool: SubscriptionPool;
+	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
 	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
 
 	beforeEach(() => {
@@ -23,8 +22,7 @@ describe('test request subscription route', () => {
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
 		channelInfoService = new ChannelInfoService(userService);
-		subscriptionPool = new SubscriptionPool(streamsService, 20);
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, subscriptionPool, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
 
 		res = {
@@ -85,12 +83,51 @@ describe('test request subscription route', () => {
 		expect(res.send).toHaveBeenCalledWith('subscription already requested');
 	});
 
+	it('should not create a subscription since publicKey already used', async () => {
+		const loggerSpy = spyOn(LoggerMock, 'error');
+		const foundSubscription: Subscription = {
+			accessRights: AccessRights.Read,
+			channelAddress: 'testaddress',
+			identityId: 'did:iota:1234',
+			isAuthorized: false,
+			publicKey: 'testpublickey',
+			state: 'teststate',
+			subscriptionLink: 'testlink',
+			type: SubscriptionType.Subscriber
+		};
+		const seed: string = undefined;
+		const presharedKey: string = undefined;
+		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
+		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(foundSubscription); // found some subscription so should return an error
+		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
+
+		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
+			subscriber: null,
+			subscriptionLink: 'testlink',
+			publicKey: 'testpublickey',
+			seed: 'testseed'
+		});
+		const req: any = {
+			params: { channelAddress: 'testaddress' },
+			user: { identityId: 'did:iota:1234' },
+			body: { accessRights: AccessRights.Read }
+		};
+
+		await subscriptionRoutes.requestSubscription(req, res, nextMock);
+
+		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
+		expect(exportSubscriptionSpy).not.toHaveBeenCalled();
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('public key already used'));
+		expect(nextMock).toHaveBeenCalledWith(new Error('could not request the subscription'));
+	});
+
 	it('should create a subscription', async () => {
 		const seed: string = undefined;
 		const presharedKey: string = undefined;
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
+		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
 
@@ -114,7 +151,6 @@ describe('test request subscription route', () => {
 			identityId: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
-			seed: 'testseed',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber
@@ -122,7 +158,7 @@ describe('test request subscription route', () => {
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
-		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
+		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
@@ -134,7 +170,7 @@ describe('test request subscription route', () => {
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
+		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
 
@@ -142,7 +178,8 @@ describe('test request subscription route', () => {
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
-			seed: 'testseed'
+			seed: 'testseed',
+			pskId: 'testpskid'
 		});
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -156,7 +193,6 @@ describe('test request subscription route', () => {
 			channelAddress: 'testaddress',
 			identityId: 'did:iota:1234',
 			publicKey: 'testpublickey',
-			seed: 'testseed',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
@@ -164,12 +200,12 @@ describe('test request subscription route', () => {
 			accessRights: AccessRights.Audit, // access rights is audit
 			keyloadLink: 'testaddress', // keyload link is channel address
 			isAuthorized: true, // is directly authorized
-			presharedKey // has preshared key
+			pskId: 'testpskid' // has preshared key
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
-		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
@@ -181,15 +217,16 @@ describe('test request subscription route', () => {
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
 		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const subscriptionPoolAddSpy = spyOn(subscriptionPool, 'add');
+		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
 		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
 		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
 
 		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
 			subscriber: null,
 			subscriptionLink: 'testlink',
-			publicKey: 'testpublickey',
-			seed: 'testseed'
+			publicKey: undefined, // no public key since uses presharedkey
+			seed: 'testseed',
+			pskId: 'testpskid'
 		});
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -202,8 +239,6 @@ describe('test request subscription route', () => {
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
 			identityId: 'did:iota:1234',
-			publicKey: 'testpublickey',
-			seed: 'testseed',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
@@ -211,12 +246,12 @@ describe('test request subscription route', () => {
 			accessRights: AccessRights.Audit, // access rights is always audit for presharedKey set
 			keyloadLink: 'testaddress', // keyload link is channel address
 			isAuthorized: true, // is directly authorized
-			presharedKey // has preshared key
+			pskId: 'testpskid' // has preshared key
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(getSubscriptionByPublicKeySpy).not.toHaveBeenCalled(); // not called since it has no public key because of preshared key
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
-		expect(subscriptionPoolAddSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);

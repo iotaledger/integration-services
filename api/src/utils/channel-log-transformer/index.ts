@@ -1,5 +1,8 @@
+import { isEqual } from 'lodash';
 import { ChannelData, ChannelLog } from '../../models/types/channel-data';
+import { ValidateResponse } from '../../models/types/request-response-bodies';
 import { StreamsMessage } from '../../services/streams-service';
+import _ from 'lodash';
 
 export interface IPayload {
 	data?: any;
@@ -17,7 +20,7 @@ export class ChannelLogTransformer {
 			return {
 				link: message?.link,
 				messageId: message?.messageId,
-				channelLog: ChannelLogTransformer.getChannelLog(message?.publicPayload, message?.maskedPayload)
+				log: ChannelLogTransformer.getChannelLog(message?.publicPayload, message?.maskedPayload)
 			};
 		});
 	}
@@ -32,20 +35,51 @@ export class ChannelLogTransformer {
 		};
 	}
 
-	static getPayloads(channelLog: ChannelLog): { publicPayload: IPayload; maskedPayload: IPayload } {
+	static getPayloads(log: ChannelLog): { publicPayload: IPayload; maskedPayload: IPayload } {
 		const maskedPayload: IPayload = {
-			data: channelLog?.payload
+			data: log?.payload
 		};
 		const publicPayload: IPayload = {
-			metadata: channelLog?.metadata,
-			type: channelLog?.type,
-			data: channelLog?.publicPayload,
-			created: channelLog?.created
+			metadata: log?.metadata,
+			type: log?.type,
+			data: log?.publicPayload,
+			created: log?.created
 		};
 
 		return {
 			maskedPayload,
 			publicPayload
 		};
+	}
+
+	static validateLogs(logs: ChannelData[], tangleLogs: ChannelData[]): ValidateResponse {
+		return logs.map((channelData) => {
+			const tangleLog = tangleLogs.find((l) => l.link === channelData.link);
+
+			if (!tangleLog) {
+				return {
+					link: channelData.link,
+					isValid: false,
+					error: 'log not found on the tangle'
+				};
+			}
+
+			const omitedLog = _(channelData.log).omitBy(_.isUndefined).omitBy(_.isNull).value();
+			const omitedTangleLog = _(tangleLog.log).omitBy(_.isUndefined).omitBy(_.isNull).value();
+
+			if (!isEqual(omitedLog, omitedTangleLog)) {
+				return {
+					link: channelData.link,
+					isValid: false,
+					error: 'not the same data',
+					tangleLog: tangleLog.log
+				};
+			}
+
+			return {
+				link: channelData.link,
+				isValid: true
+			};
+		});
 	}
 }

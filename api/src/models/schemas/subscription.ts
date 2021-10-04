@@ -14,7 +14,6 @@ export enum AccessRights {
 
 export const SubscriptionSchema = Type.Object({
 	type: Type.String(SubscriptionType),
-	seed: Type.String(),
 	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
 	identityId: Type.String({ minLength: 50, maxLength: 53 }),
 	state: Type.String(),
@@ -23,5 +22,6 @@ export const SubscriptionSchema = Type.Object({
 	accessRights: Type.String(AccessRights),
 	publicKey: Type.Optional(Type.String()),
 	keyloadLink: Type.Optional(Type.String()),
-	presharedKey: Type.Optional(Type.String())
+	sequenceLink: Type.Optional(Type.String()),
+	pskId: Type.Optional(Type.String())
 });

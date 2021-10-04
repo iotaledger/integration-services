@@ -13,6 +13,7 @@ export interface Config {
 	hornetNode: string;
 	permaNode: string;
 	jwtExpiration: string;
+	commitHash: string;
 }
 
 export interface IdentityConfig {
@@ -30,5 +31,4 @@ export interface StreamsConfig {
 	statePassword: string;
 	node: string;
 	permaNode: string;
-	subscriptionExpiration: number; // in seconds
 }

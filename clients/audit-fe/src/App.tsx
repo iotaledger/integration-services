@@ -6,7 +6,7 @@ import ReactJson from 'react-json-view'
 import { Config } from './config';
 
 function App() {
-  const [data, setData] = useState<{messageId:string;link:string;channelLog:any}[]>([]);
+  const [data, setData] = useState<{messageId:string;link:string;log:any}[]>([]);
 
   useEffect(() => {
     const channelAddress= Config.channelAddress

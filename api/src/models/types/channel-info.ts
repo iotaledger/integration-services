@@ -1,5 +1,5 @@
 import { Static } from '@sinclair/typebox';
-import { TopicSchema, ChannelInfoSchema, ChannelInfoSearchSchema } from '../schemas/channel-info';
+import { TopicSchema, ChannelInfoSchema, ChannelInfoSearchSchema, ChannelLogRequestOptionsSchema } from '../schemas/channel-info';
 
 export type Topic = Static<typeof TopicSchema>;
 
@@ -14,3 +14,5 @@ export interface ChannelInfoPersistence extends OmitedChannelInfo {
 
 type ChannelInfoSearchDate = Static<typeof ChannelInfoSearchSchema>;
 export type ChannelInfoSearch = Omit<ChannelInfoSearchDate, 'created' | 'latestMessage'> & { created: Date, latestMessage: Date }
+
+export type ChannelLogRequestOptions = Static<typeof ChannelLogRequestOptionsSchema>;

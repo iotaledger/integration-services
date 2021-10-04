@@ -3,8 +3,7 @@ import { Config, IdentityConfig, StreamsConfig } from '../../models/config';
 export const StreamsConfigMock: StreamsConfig = {
 	node: '',
 	permaNode: '',
-	statePassword: 'veryvery-very-very-server-secret',
-	subscriptionExpiration: 20
+	statePassword: 'veryvery-very-very-server-secret'
 };
 
 export const IdentityConfigMock: IdentityConfig = {
@@ -30,5 +29,6 @@ export const ConfigMock: Config = {
 	serverIdentityId: 'did:iota:1234',
 	permaNode: '',
 	hornetNode: '',
-	streamsConfig: StreamsConfigMock
+	streamsConfig: StreamsConfigMock,
+	commitHash: ''
 };

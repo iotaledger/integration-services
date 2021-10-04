@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { Subscription } from '../models/types/subscription';
 
 // Subscription documents keeps information about a subscription a user in regard of a channel
@@ -31,6 +31,11 @@ export const getSubscriptionByLink = async (subscriptionLink: string): Promise<S
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
+export const getSubscriptionByPublicKey = async (channelAddress: string, publicKey: string): Promise<Subscription | null> => {
+	const query = { channelAddress, publicKey };
+	return MongoDbService.getDocument<Subscription>(collectionName, query);
+};
+
 export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const document = {
 		_id: getIndex(subscription.identityId, subscription.channelAddress),
@@ -39,6 +44,11 @@ export const addSubscription = async (subscription: Subscription): Promise<Inser
 	};
 
 	return MongoDbService.insertDocument(collectionName, document);
+};
+
+export const removeSubscription = async (channelAddress: string, identityId: string): Promise<DeleteWriteOpResultObject> => {
+	const query = { _id: getIndex(identityId, channelAddress) };
+	return MongoDbService.removeDocument(collectionName, query);
 };
 
 export const updateSubscriptionState = async (channelAddress: string, identityId: string, state: string): Promise<UpdateWriteOpResult> => {
@@ -59,7 +69,8 @@ export const setSubscriptionAuthorization = async (
 	channelAddress: string,
 	identityId: string,
 	isAuthorized: boolean,
-	keyloadLink?: string
+	keyloadLink: string,
+	sequenceLink: string
 ): Promise<UpdateWriteOpResult> => {
 	const query = {
 		channelAddress,
@@ -69,7 +80,8 @@ export const setSubscriptionAuthorization = async (
 		$set: {
 			isAuthorized,
 			keyloadLink,
-			lastModified: new Date()
+			lastModified: new Date(),
+			sequenceLink
 		}
 	};
 

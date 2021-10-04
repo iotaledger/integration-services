@@ -5,8 +5,7 @@ import * as Identity from '@iota/identity-wasm/node';
 const StreamsConfig: StreamsConfig = {
 	node: process.env.IOTA_HORNET_NODE,
 	permaNode: process.env.IOTA_PERMA_NODE,
-	statePassword: process.env.SERVER_SECRET,
-	subscriptionExpiration: !isEmpty(process.env.SUBSCRIPTION_EXPIRATION) ? Number.parseInt(process.env.SUBSCRIPTION_EXPIRATION, 10) : 20
+	statePassword: process.env.SERVER_SECRET
 };
 
 const IdentityConfig: IdentityConfig = {
@@ -30,6 +29,7 @@ export const CONFIG: Config = {
 	hornetNode: process.env.IOTA_HORNET_NODE,
 	permaNode: process.env.IOTA_PERMA_NODE,
 	apiKey: process.env.API_KEY,
+	commitHash: process.env.COMMIT_HASH,
 	identityConfig: IdentityConfig,
 	streamsConfig: StreamsConfig,
 	jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
@@ -43,10 +43,12 @@ const assertConfig = (config: Config) => {
 		throw Error('Server secret must to have a length of 32!');
 	}
 
+	// apiKey can be empty if the host decides so
+	// commitHash is set automatically during deployment
+	const optionalEnvVariables = ['apiKey', 'commitHash'];
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
-			// apiKey can be empty if the host decides so
-			if (Object.keys(config)[i] === 'apiKey') {
+			if (optionalEnvVariables.includes(Object.keys(config)[i])) {
 				return;
 			}
 

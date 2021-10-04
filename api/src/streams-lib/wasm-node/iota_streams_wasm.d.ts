@@ -18,30 +18,73 @@ export enum LedgerInclusionState {
   NoTransaction,
 }
 /**
+* Tangle representation of a Message Link.
+*
+* An `Address` is comprised of 2 distinct parts: the channel identifier
+* ({@link ChannelAddress}) and the message identifier
+* ({@link MsgId}). The channel identifier is unique per channel and is common in the
+* `Address` of all messages published in it. The message identifier is
+* produced pseudo-randomly out of the the message's sequence number, the
+* previous message identifier, and other internal properties.
 */
 export class Address {
   free(): void;
 /**
-* @param {string} link
-* @returns {Address}
+* @param {ChannelAddress} channel_address
+* @param {MsgId} msgid
 */
-  static from_string(link: string): Address;
+  constructor(channel_address: ChannelAddress, msgid: MsgId);
 /**
+* Generate the hash used to index the {@link Message} published in this address.
+*
+* Currently this hash is computed with {@link https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2|Blake2b256}.
+* The returned Uint8Array contains the binary digest of the hash. To obtain the hexadecimal representation of the
+* hash, use the convenience method {@link Address#toMsgIndexHex}.
+* @returns {Uint8Array}
+*/
+  toMsgIndex(): Uint8Array;
+/**
+* Generate the hash used to index the {@link Message} published in this address.
+*
+* Currently this hash is computed with {@link https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2|Blake2b256}.
+* The returned String contains the hexadecimal digest of the hash. To obtain the binary digest of the hash,
+* use the method {@link Address#toMsgIndex}.
 * @returns {string}
 */
-  to_string(): string;
+  toMsgIndexHex(): string;
+/**
+* Render the `Address` as a colon-separated String of the hex-encoded {@link Address#channelAddress} and
+* {@link Address#msgId} (`<channelAddressHex>:<msgIdHex>`) suitable for exchanging the `Address` between
+* participants. To convert the String back to an `Address`, use {@link Address.parse}.
+*
+* @see Address.parse
+* @returns {string}
+*/
+  toString(): string;
+/**
+* Decode an `Address` out of a String. The String must follow the format used by {@link Address#toString}
+*
+* @throws Throws an error if String does not follow the format `<channelAddressHex>:<msgIdHex>`
+*
+* @see Address#toString
+* @see ChannelAddress#hex
+* @see MsgId#hex
+* @param {string} string
+* @returns {Address}
+*/
+  static parse(string: string): Address;
 /**
 * @returns {Address}
 */
   copy(): Address;
 /**
-* @returns {string}
+* @returns {ChannelAddress}
 */
-  addr_id: string;
+  readonly channelAddress: ChannelAddress;
 /**
-* @returns {string}
+* @returns {MsgId}
 */
-  msg_id: string;
+  readonly msgId: MsgId;
 }
 /**
 */
@@ -73,6 +116,14 @@ export class Author {
 */
   export(password: string): Uint8Array;
 /**
+* @param {string} seed
+* @param {Address} ann_address
+* @param {number} implementation
+* @param {SendOptions} options
+* @returns {Promise<Author>}
+*/
+  static recover(seed: string, ann_address: Address, implementation: number, options: SendOptions): Promise<Author>;
+/**
 * @returns {Author}
 */
   clone(): Author;
@@ -98,83 +149,152 @@ export class Author {
 */
   get_public_key(): string;
 /**
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_announce(): any;
+  send_announce(): Promise<UserResponse>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_keyload_for_everyone(link: Address): any;
+  send_keyload_for_everyone(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {PskIds} psk_ids
 * @param {PublicKeys} sig_pks
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_keyload(link: Address, psk_ids: PskIds, sig_pks: PublicKeys): any;
+  send_keyload(link: Address, psk_ids: PskIds, sig_pks: PublicKeys): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {Uint8Array} public_payload
 * @param {Uint8Array} masked_payload
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_tagged_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): any;
+  send_tagged_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {Uint8Array} public_payload
 * @param {Uint8Array} masked_payload
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_signed_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): any;
+  send_signed_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): Promise<UserResponse>;
 /**
 * @param {Address} link_to
-* @returns {any}
+* @returns {Promise<void>}
 */
-  receive_subscribe(link_to: Address): any;
+  receive_subscribe(link_to: Address): Promise<void>;
+/**
+* @param {Address} link_to
+* @returns {Promise<void>}
+*/
+  receive_unsubscribe(link_to: Address): Promise<void>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  receive_tagged_packet(link: Address): any;
+  receive_tagged_packet(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  receive_signed_packet(link: Address): any;
+  receive_signed_packet(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<Address>}
 */
-  receive_sequence(link: Address): any;
+  receive_sequence(link: Address): Promise<Address>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  receive_msg(link: Address): any;
+  receive_msg(link: Address): Promise<UserResponse>;
 /**
-* @returns {any}
+* @param {Address} anchor_link
+* @param {number} msg_num
+* @returns {Promise<UserResponse>}
 */
-  sync_state(): any;
+  receive_msg_by_sequence_number(anchor_link: Address, msg_num: number): Promise<UserResponse>;
 /**
-* @returns {any}
+* @returns {Promise<void>}
 */
-  fetch_next_msgs(): any;
+  sync_state(): Promise<void>;
+/**
+* @returns {Promise<Array<any>>}
+*/
+  fetch_next_msgs(): Promise<Array<any>>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  fetch_prev_msg(link: Address): any;
+  fetch_prev_msg(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {number} num_msgs
-* @returns {any}
+* @returns {Promise<Array<any>>}
 */
-  fetch_prev_msgs(link: Address, num_msgs: number): any;
+  fetch_prev_msgs(link: Address, num_msgs: number): Promise<Array<any>>;
 /**
-* @returns {any}
+* @returns {Promise<Array<any>>}
 */
-  gen_next_msg_ids(): any;
+  gen_next_msg_ids(): Promise<Array<any>>;
+/**
+* @returns {Array<any>}
+*/
+  fetch_state(): Array<any>;
+/**
+* @param {string} pk_str
+*/
+  store_new_subscriber(pk_str: string): void;
+/**
+* @param {string} pk_str
+*/
+  remove_subscriber(pk_str: string): void;
+/**
+* @param {string} pskid_str
+*/
+  remove_psk(pskid_str: string): void;
+}
+/**
+* Channel application instance identifier (40 Byte)
+*/
+export class ChannelAddress {
+  free(): void;
+/**
+* Render the `ChannelAddress` as a 40 Byte {@link https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array}
+*
+* @see ChannelAddress#hex
+* @returns {Uint8Array}
+*/
+  bytes(): Uint8Array;
+/**
+* Render the `ChannelAddress` as a 40 Byte (80 char) hexadecimal String
+*
+* @see ChannelAddress#bytes
+* @returns {string}
+*/
+  hex(): string;
+/**
+* Render the `ChannelAddress` as an exchangeable String. Currently
+* outputs the same as {@link ChannelAddress#hex}.
+*
+* @see ChannelAddress#hex
+* @see ChannelAddress.parse
+* @returns {string}
+*/
+  toString(): string;
+/**
+* Decode a `ChannelAddress` out of a String. The string must be a 80 char long hexadecimal string.
+*
+* @see ChannelAddress#toString
+* @throws Throws error if string does not follow the expected format
+* @param {string} string
+* @returns {ChannelAddress}
+*/
+  static parse(string: string): ChannelAddress;
+/**
+* @returns {ChannelAddress}
+*/
+  copy(): ChannelAddress;
 }
 /**
 */
@@ -187,9 +307,14 @@ export class Client {
   constructor(node: string, options: SendOptions);
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<any>}
 */
-  get_link_details(link: Address): any;
+  get_link_details(link: Address): Promise<any>;
+}
+/**
+*/
+export class Cursor {
+  free(): void;
 }
 /**
 */
@@ -213,16 +338,16 @@ export class Message {
 */
   static default(): Message;
 /**
-* @param {string | undefined} pk
+* @param {string | undefined} identifier
 * @param {Uint8Array} public_payload
 * @param {Uint8Array} masked_payload
 * @returns {Message}
 */
-  static new(pk: string | undefined, public_payload: Uint8Array, masked_payload: Uint8Array): Message;
+  static new(identifier: string | undefined, public_payload: Uint8Array, masked_payload: Uint8Array): Message;
 /**
 * @returns {string}
 */
-  get_pk(): string;
+  get_identifier(): string;
 /**
 * @returns {Array<any>}
 */
@@ -237,7 +362,6 @@ export class Message {
 export class MessageMetadata {
   free(): void;
 /**
-* @returns {number | undefined}
 */
   conflict_reason?: number;
 /**
@@ -245,11 +369,9 @@ export class MessageMetadata {
 */
   readonly get_parent_message_ids: Array<any>;
 /**
-* @returns {boolean}
 */
   is_solid: boolean;
 /**
-* @returns {number | undefined}
 */
   ledger_inclusion_state?: number;
 /**
@@ -257,19 +379,15 @@ export class MessageMetadata {
 */
   readonly message_id: string;
 /**
-* @returns {number | undefined}
 */
   milestone_index?: number;
 /**
-* @returns {number | undefined}
 */
   referenced_by_milestone_index?: number;
 /**
-* @returns {boolean | undefined}
 */
   should_promote?: boolean;
 /**
-* @returns {boolean | undefined}
 */
   should_reattach?: boolean;
 }
@@ -279,7 +397,6 @@ export class MilestoneResponse {
   free(): void;
 /**
 * Milestone index.
-* @returns {number}
 */
   index: number;
 /**
@@ -288,28 +405,69 @@ export class MilestoneResponse {
   readonly message_id: string;
 /**
 * Milestone timestamp.
-* @returns {BigInt}
 */
   timestamp: BigInt;
+}
+/**
+* Message identifier (12 Byte). Unique within a Channel.
+*/
+export class MsgId {
+  free(): void;
+/**
+* Render the `MsgId` as a 12 Byte {@link https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array}
+*
+* @see MsgId#hex
+* @returns {Uint8Array}
+*/
+  bytes(): Uint8Array;
+/**
+* Render the `MsgId` as a 12 Byte (24 char) hexadecimal String
+*
+* @see MsgId#bytes
+* @returns {string}
+*/
+  hex(): string;
+/**
+* Render the `MsgId` as an exchangeable String. Currently
+* outputs the same as {@link MsgId#hex}.
+*
+* @see MsgId#hex
+* @see MsgId.parse
+* @returns {string}
+*/
+  toString(): string;
+/**
+* Decode a `MsgId` out of a String. The string must be a 24 char long hexadecimal string.
+*
+* @see Msgid#toString
+* @throws Throws error if string does not follow the expected format
+* @param {string} string
+* @returns {MsgId}
+*/
+  static parse(string: string): MsgId;
+/**
+* @returns {MsgId}
+*/
+  copy(): MsgId;
 }
 /**
 */
 export class NextMsgId {
   free(): void;
 /**
-* @param {string} pk
+* @param {string} identifier
 * @param {Address} msgid
 * @returns {NextMsgId}
 */
-  static new(pk: string, msgid: Address): NextMsgId;
+  static new(identifier: string, msgid: Address): NextMsgId;
 /**
 * @returns {string}
 */
-  get_pk(): string;
+  readonly identifier: string;
 /**
 * @returns {Address}
 */
-  get_link(): Address;
+  readonly link: Address;
 }
 /**
 */
@@ -359,7 +517,6 @@ export class SendOptions {
 */
   clone(): SendOptions;
 /**
-* @returns {boolean}
 */
   local_pow: boolean;
 /**
@@ -390,6 +547,13 @@ export class Subscriber {
 */
   static import(client: Client, bytes: Uint8Array, password: string): Subscriber;
 /**
+* @param {string} seed
+* @param {Address} ann_address
+* @param {SendOptions} options
+* @returns {Promise<Subscriber>}
+*/
+  static recover(seed: string, ann_address: Address, options: SendOptions): Promise<Subscriber>;
+/**
 * @returns {Subscriber}
 */
   clone(): Subscriber;
@@ -415,6 +579,10 @@ export class Subscriber {
 */
   get_public_key(): string;
 /**
+* @returns {string}
+*/
+  author_public_key(): string;
+/**
 * @returns {boolean}
 */
   is_registered(): boolean;
@@ -428,72 +596,94 @@ export class Subscriber {
   export(password: string): Uint8Array;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<void>}
 */
-  receive_announcement(link: Address): any;
+  receive_announcement(link: Address): Promise<void>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<boolean>}
 */
-  receive_keyload(link: Address): any;
+  receive_keyload(link: Address): Promise<boolean>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  receive_tagged_packet(link: Address): any;
+  receive_tagged_packet(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  receive_signed_packet(link: Address): any;
+  receive_signed_packet(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<Address>}
 */
-  receive_sequence(link: Address): any;
+  receive_sequence(link: Address): Promise<Address>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  receive_msg(link: Address): any;
+  receive_msg(link: Address): Promise<UserResponse>;
+/**
+* @param {Address} anchor_link
+* @param {number} msg_num
+* @returns {Promise<UserResponse>}
+*/
+  receive_msg_by_sequence_number(anchor_link: Address, msg_num: number): Promise<UserResponse>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_subscribe(link: Address): any;
+  send_subscribe(link: Address): Promise<UserResponse>;
+/**
+* @param {Address} link
+* @returns {Promise<UserResponse>}
+*/
+  send_unsubscribe(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {Uint8Array} public_payload
 * @param {Uint8Array} masked_payload
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_tagged_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): any;
+  send_tagged_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {Uint8Array} public_payload
 * @param {Uint8Array} masked_payload
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  send_signed_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): any;
+  send_signed_packet(link: Address, public_payload: Uint8Array, masked_payload: Uint8Array): Promise<UserResponse>;
 /**
-* @returns {any}
+* @returns {Promise<void>}
 */
-  sync_state(): any;
+  sync_state(): Promise<void>;
 /**
-* @returns {any}
+* @returns {Promise<Array<any>>}
 */
-  fetch_next_msgs(): any;
+  fetch_next_msgs(): Promise<Array<any>>;
 /**
 * @param {Address} link
-* @returns {any}
+* @returns {Promise<UserResponse>}
 */
-  fetch_prev_msg(link: Address): any;
+  fetch_prev_msg(link: Address): Promise<UserResponse>;
 /**
 * @param {Address} link
 * @param {number} num_msgs
-* @returns {any}
+* @returns {Promise<Array<any>>}
 */
-  fetch_prev_msgs(link: Address, num_msgs: number): any;
+  fetch_prev_msgs(link: Address, num_msgs: number): Promise<Array<any>>;
+/**
+* @returns {Array<any>}
+*/
+  fetch_state(): Array<any>;
+/**
+*/
+  reset_state(): void;
+/**
+* @param {string} pskid_str
+*/
+  remove_psk(pskid_str: string): void;
 }
 /**
 */
@@ -512,7 +702,7 @@ export class UserResponse {
 * @param {Message | undefined} message
 * @returns {UserResponse}
 */
-  static from_strings(link: string, seq_link?: string, message?: Message): UserResponse;
+  static fromStrings(link: string, seq_link?: string, message?: Message): UserResponse;
 /**
 * @returns {UserResponse}
 */
@@ -520,13 +710,40 @@ export class UserResponse {
 /**
 * @returns {Address}
 */
-  get_link(): Address;
+  readonly link: Address;
+/**
+* @returns {Message | undefined}
+*/
+  readonly message: Message | undefined;
+/**
+* @returns {Address | undefined}
+*/
+  readonly seqLink: Address | undefined;
+}
+/**
+*/
+export class UserState {
+  free(): void;
+/**
+* @param {string} identifier
+* @param {Cursor} cursor
+* @returns {UserState}
+*/
+  static new(identifier: string, cursor: Cursor): UserState;
+/**
+* @returns {number}
+*/
+  readonly branchNo: number;
+/**
+* @returns {string}
+*/
+  readonly identifier: string;
 /**
 * @returns {Address}
 */
-  get_seq_link(): Address;
+  readonly link: Address;
 /**
-* @returns {Message}
+* @returns {number}
 */
-  get_message(): Message;
+  readonly seqNo: number;
 }
