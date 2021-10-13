@@ -4,20 +4,22 @@ import {
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
-import { SubscriptionSchema } from '../../models/schemas/subscription';
+import { SubscriptionSchema, SubscriptionUpdateSchema } from '../../models/schemas/subscription';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
-import { subscriptionService } from '../services';
+import { channelInfoService, subscriptionService } from '../services';
 
-const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, Logger.getInstance());
+const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, Logger.getInstance());
 const {
 	getSubscriptions,
 	getSubscriptionByIdentity,
 	requestSubscription,
 	authorizeSubscription,
 	revokeSubscription,
-	addSubscription
+	addSubscription,
+	updateSubscription,
+	deleteSubscription
 } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
@@ -128,7 +130,7 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
  * /subscriptions/request/{channelAddress}:
  *   post:
  *     summary: Request subscription to a channel
- *     description: Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from. The subscriber can use an already generated seed or let it generate by the api so in this case the seed should be undefined.
+ *     description: Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from.
  *     tags:
  *     - subscriptions
  *     parameters:
@@ -319,7 +321,6 @@ subscriptionRouter.post(
  *             $ref: "#/components/schemas/SubscriptionSchema"
  *           example:
  *             type: Subscriber
- *             seed: exampleSeed
  *             channelAddress: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *             state: exampleState
@@ -352,4 +353,142 @@ subscriptionRouter.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);
+subscriptionRouter.post(
+	'/:channelAddress/:identityId',
+	apiKeyMiddleware,
+	validate({ body: SubscriptionSchema }),
+	authMiddleWare,
+	addSubscription
+);
+
+/**
+ * @openapi
+ * /subscriptions/{channelAddress}/{identityId}:
+ *   put:
+ *     summary: Updates an existing subscription
+ *     description: Updates an existing subscription
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *           summary: Example identity id (DID identifier)
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/SubscriptionUpdateSchema"
+ *           example:
+ *             isAuthorized: false
+ *             accessRights: ReadAndWrite
+ *     responses:
+ *       200:
+ *         description: Subscription updated
+ *       400:
+ *         description: Missing channelAddress / identityId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       404:
+ *         description: No subscription found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.put(
+	'/:channelAddress/:identityId',
+	apiKeyMiddleware,
+	validate({ body: SubscriptionUpdateSchema }),
+	authMiddleWare,
+	updateSubscription
+);
+
+/**
+ * @openapi
+ * /subscriptions/{channelAddress}/{identityId}:
+ *   delete:
+ *     summary: Deletes subscription
+ *     description: Deletes an existing subscription
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     - name: identityId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         identityId:
+ *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *           summary: Example identity id (DID identifier)
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subscription deleted
+ *       400:
+ *         description: Missing channelAddress / identityId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       404:
+ *         description: No subscription found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.delete('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, deleteSubscription);

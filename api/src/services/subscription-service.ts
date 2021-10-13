@@ -2,7 +2,7 @@ import { Author } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
 import * as ChannelDataDb from '../database/channel-data';
 import * as SubscriptionDb from '../database/subscription';
-import { Subscription } from '../models/types/subscription';
+import { Subscription, SubscriptionUpdate } from '../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { ChannelInfoService } from './channel-info-service';
 import { StreamsConfig } from '../models/config';
@@ -43,6 +43,14 @@ export class SubscriptionService {
 
 	async addSubscription(subscription: Subscription) {
 		return SubscriptionDb.addSubscription(subscription);
+	}
+
+	async updateSubscription(channelAddress: string, identityId: string, subscription: SubscriptionUpdate) {
+		return SubscriptionDb.updateSubscription(channelAddress, identityId, subscription);
+	}
+
+	async deleteSubscription(channelAddress: string, identityId: string) {
+		return SubscriptionDb.removeSubscription(channelAddress, identityId);
 	}
 
 	async updateSubscriptionState(channelAddress: string, identityId: string, state: string) {

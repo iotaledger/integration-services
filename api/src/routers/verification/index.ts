@@ -97,7 +97,13 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-verificationRouter.post('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), addTrustedRootIdentity);
+verificationRouter.post(
+	'/trusted-roots',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: TrustedRootBodySchema }),
+	addTrustedRootIdentity
+);
 
 /**
  * @openapi
@@ -167,7 +173,13 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-verificationRouter.delete('/trusted-roots', apiKeyMiddleware, authMiddleWare, validate({ body: TrustedRootBodySchema }), removeTrustedRootIdentity);
+verificationRouter.delete(
+	'/trusted-roots',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: TrustedRootBodySchema }),
+	removeTrustedRootIdentity
+);
 
 /**
  * @openapi
@@ -286,7 +298,12 @@ verificationRouter.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-verificationRouter.post('/check-credential', apiKeyMiddleware, validate({ body: VerifiableCredentialBodySchema }), checkVerifiableCredential);
+verificationRouter.post(
+	'/check-credential',
+	apiKeyMiddleware,
+	validate({ body: VerifiableCredentialBodySchema }),
+	checkVerifiableCredential
+);
 
 /**
  * @openapi
