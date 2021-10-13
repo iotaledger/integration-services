@@ -19,7 +19,7 @@ The image below shows the interaction between Issuer, Owner, Verifier and the le
 
 The IOTA Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that allows entities to create decentralized identities (DIDs), verify them, attach verifiable credentials and verify them.
 
-The figure below shows the envisioned system architecture (within the full set of IOTA e-commerce tools developed for the ENSURESEC project).
+The figure below shows the envisioned system architecture (within the full set of IOTA Integration Services developed for the ENSURESEC project).
 ![IOTA-Tools-Architecture](https://user-images.githubusercontent.com/1702827/119853084-c5d9e580-bf07-11eb-9cac-9aab23d7123a.png)
 
 Below we provide examples on how the Bridge could be used in the context of e-commerce ecosystems, in particular: 1) secure goods distribution and 2) secure sales.
