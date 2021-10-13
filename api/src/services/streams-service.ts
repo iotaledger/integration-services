@@ -1,4 +1,16 @@
-import streams, { Address, Author, Subscriber, ChannelType } from '@iota/streams/node/streams_wasm';
+import streams, {
+	Address,
+	Author,
+	Subscriber,
+	ChannelType,
+	StreamsClient,
+	ClientBuilder,
+	PublicKeys,
+	PskIds,
+	UserResponse,
+	ChannelAddress,
+	MsgId
+} from '@iota/streams/node/streams_wasm';
 import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
@@ -40,12 +52,12 @@ export class StreamsService {
 			}
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
-			const author = streams.Author.fromClient(client, seed, ChannelType.MultiBranch);
+			const author = Author.fromClient(client, seed, ChannelType.MultiBranch);
 			const announceResponse = await author.clone().send_announce();
 			const announcementAddress = announceResponse.link;
 			const announcementLink = announcementAddress.copy().toString();
-			const keys = new streams.PublicKeys();
-			const ids = streams.PskIds.new();
+			const keys = new PublicKeys();
+			const ids = PskIds.new();
 			let pskId: string = undefined;
 			const publicKey = author.get_public_key();
 
@@ -143,7 +155,7 @@ export class StreamsService {
 
 				if (nextMessages && nextMessages.length > 0) {
 					const cData: StreamsMessage[] = await Promise.all(
-						nextMessages.map(async (messageResponse: streams.UserResponse) => {
+						nextMessages.map(async (messageResponse: UserResponse) => {
 							const address = messageResponse?.link;
 							const link = address?.copy()?.toString();
 							const message = messageResponse.message;
@@ -194,7 +206,7 @@ export class StreamsService {
 			}
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
-			const subscriber = streams.Subscriber.fromClient(client, seed);
+			const subscriber = Subscriber.fromClient(client, seed);
 			await subscriber.clone().receive_announcement(annAddress.copy());
 			let pskId: string = undefined;
 
@@ -236,12 +248,12 @@ export class StreamsService {
 		try {
 			const anchorAddress = this.getChannelAddress(anchorLink);
 
-			const keys = new streams.PublicKeys();
+			const keys = new PublicKeys();
 			publicKeys.forEach((publicKey) => {
 				keys.add(publicKey);
 			});
 
-			const ids = streams.PskIds.new();
+			const ids = PskIds.new();
 
 			if (pskId) {
 				ids.add(pskId);
@@ -286,10 +298,10 @@ export class StreamsService {
 			const password = this.config.statePassword;
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			if (isAuthor) {
-				return streams.Author.import(client, toBytes(state), password);
+				return Author.import(client, toBytes(state), password);
 			}
 
-			return streams.Subscriber.import(client, toBytes(state), password);
+			return Subscriber.import(client, toBytes(state), password);
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
 			throw new Error('could not import the subscription object');
@@ -307,12 +319,17 @@ export class StreamsService {
 
 	getChannelAddress(link: string): Address {
 		const [channelAddr, msgId] = link.split(':');
-		return new Address(streams.ChannelAddress.parse(channelAddr), streams.MsgId.parse(msgId));
+		return new Address(ChannelAddress.parse(channelAddr), MsgId.parse(msgId));
 	}
 
-	private async getClient(node: string, permanode: string): Promise<streams.StreamsClient> {
-		console.log('PERMANODE', permanode);
-		const client = await new streams.ClientBuilder().node(node).permanode(permanode).build();
-		return streams.StreamsClient.fromClient(client);
+	private async getClient(node: string, permaNode?: string): Promise<StreamsClient> {
+		let builder = await new ClientBuilder().node(node);
+
+		if (permaNode) {
+			builder = builder.permanode(permaNode);
+		}
+
+		const client = await builder.build();
+		return StreamsClient.fromClient(client);
 	}
 }
