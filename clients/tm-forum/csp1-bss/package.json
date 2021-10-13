@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iotaledger/e-commerce-tools.git"
+    "url": "git+https://github.com/iotaledger/integration-services.git"
   },
   "keywords": [
     "ensuresec",
@@ -30,9 +30,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/iotaledger/e-commerce-tools/issues"
+    "url": "https://github.com/iotaledger/integration-services/issues"
   },
-  "homepage": "https://github.com/iotaledger/e-commerce-tools#readme",
+  "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
     "ajv": "^8.6.2",
     "ajv-formats": "^2.1.0",

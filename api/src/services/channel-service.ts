@@ -1,3 +1,4 @@
+import { Author, Subscriber } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
 import { Subscription } from '../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
@@ -10,7 +11,6 @@ import { StreamsConfig } from '../models/config';
 import { CreateChannelResponse, ValidateResponse } from '../models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
-import { Subscriber, Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { getDateStringFromDate } from '../utils/date';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { ILogger } from '../utils/logger';
@@ -123,7 +123,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				await this.fetchLogs(channelAddress, identityId, sub);
 				return await ChannelDataDb.getChannelData(channelAddress, identityId, options, this.password);
@@ -146,7 +146,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
@@ -200,7 +200,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
 
@@ -233,7 +233,7 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
