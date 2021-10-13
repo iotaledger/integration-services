@@ -4,7 +4,6 @@ COPY package*.json ./
 
 RUN npm install
 COPY . .
-COPY ./src/streams-lib/wasm-node/ ./dist/streams-lib/wasm-node/
 RUN npm run build
 
 EXPOSE 3000

@@ -31,6 +31,11 @@ export const getSubscriptionByLink = async (subscriptionLink: string): Promise<S
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
+export const getSubscriptionByPublicKey = async (channelAddress: string, publicKey: string): Promise<Subscription | null> => {
+	const query = { channelAddress, publicKey };
+	return MongoDbService.getDocument<Subscription>(collectionName, query);
+};
+
 export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const document = {
 		_id: getIndex(subscription.identityId, subscription.channelAddress),

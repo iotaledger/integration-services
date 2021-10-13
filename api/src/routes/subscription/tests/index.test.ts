@@ -200,10 +200,29 @@ describe('test addSubscription route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'subscription already added' });
 	});
 
+	it('should not return created since publicKey already used by other identity', async () => {
+		spyOn(subscriptionService, 'addSubscription').and.returnValue(undefined);
+		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
+		spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(subscriptionMock);
+		const channelAddress = 'did:iota:1234';
+		const identityId = 'did:iota:5678';
+		const req: any = {
+			params: { channelAddress, identityId },
+			user: { identityId: 'did:iota:1234' },
+			body: subscriptionMock
+		};
+		await subscriptionRoutes.addSubscription(req, res, nextMock);
+
+		expect(subscriptionService.addSubscription).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'subscription already added' });
+	});
+
 	it('should return created', async () => {
 		spyOn(subscriptionService, 'addSubscription').and.returnValue(undefined);
 		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
-		const channelAddress = '1234234234';
+		spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
+		const channelAddress = 'did:iota:1234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
 			params: { channelAddress, identityId },
@@ -308,7 +327,6 @@ describe('test updateSubscription route', () => {
 		expect(res.send).toHaveBeenCalledWith();
 	});
 });
-
 
 describe('test deleteSubscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
