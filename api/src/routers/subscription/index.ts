@@ -353,7 +353,13 @@ subscriptionRouter.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);
+subscriptionRouter.post(
+	'/:channelAddress/:identityId',
+	apiKeyMiddleware,
+	validate({ body: SubscriptionSchema }),
+	authMiddleWare,
+	addSubscription
+);
 
 /**
  * @openapi
@@ -420,7 +426,13 @@ subscriptionRouter.post('/:channelAddress/:identityId', apiKeyMiddleware, valida
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-subscriptionRouter.put('/:channelAddress/:identityId', apiKeyMiddleware, validate({ body: SubscriptionUpdateSchema }), authMiddleWare, updateSubscription);
+subscriptionRouter.put(
+	'/:channelAddress/:identityId',
+	apiKeyMiddleware,
+	validate({ body: SubscriptionUpdateSchema }),
+	authMiddleWare,
+	updateSubscription
+);
 
 /**
  * @openapi
