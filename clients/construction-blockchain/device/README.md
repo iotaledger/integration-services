@@ -1,8 +1,14 @@
-# CSP1 TMForum Proxy
-This server proxies the TMForum API and writes intercepted payloads to the tangle.
+# Device
+Device which creates and identity, authenticates at the api and subscribes to a channel. After it is authorized by the author, it writes payloads to the channel.
 
 ## Usage
-1. Run the Lead CSP and copy the channel address in the csp1-bbs .env file
-2. Run CSP1 by executing: ```npm run serve``` in the root directory, it will automatically create an identity and request a subscription to the channel
-3. Authorize CSP1 with the Lead CSP by the identity id from the console
-* CSP1 will create an api
+1. Copy the .env-example and rename it to .env
+2. Set the following environment variables to the appropriate values:
+
+```
+BASE_URL=http://localhost:3000/api/v1
+CHANNEL_ADDRESS=<INSERT_CHANNEL_ADDRESS>
+API_KEY=<INSERT_API_KEY>
+```
+
+3. Run the device using `npm run serve`

@@ -1,12 +1,20 @@
+import fs from 'fs';
+import path from 'path';
 import { CONFIG } from '../config/config';
 import { getHexEncodedKey, signNonce } from '../utils/encryption';
 import { axiosClient } from '../utils/client';
-import * as identity from '../config/Csp1Identity.json';
 
 export const fetchAuth = async (): Promise<any> => {
+	const identityPath = path.join(__dirname, '..', 'config', 'DeviceIdentity.json');
+	let file, identity;
+	try {
+		file = fs.readFileSync(identityPath);
+		identity = file && JSON.parse(file.toString());
+	} catch (e) {}
+
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
-	if (!identity?.doc.id) {
+	if ((identity as any)?.doc?.id == null) {
 		throw new Error('no identity found');
 	}
 

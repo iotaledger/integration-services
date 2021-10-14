@@ -1,14 +1,20 @@
 import fs from 'fs';
 import path from 'path';
-import * as data from '../config/Csp1Identity.json';
 
 import { CONFIG, DeviceIdentity } from '../config/config';
 import { axiosClient } from '../utils/client';
 
 export const createIdentity = async (): Promise<string | undefined> => {
-	if (data) {
+	const identityPath = path.join(__dirname, '..', 'config', 'DeviceIdentity.json');
+	let file, identity;
+	try {
+		file = fs.readFileSync(identityPath);
+		identity = file && JSON.parse(file.toString());
+	} catch (e) {}
+
+	if (identity?.doc?.id != null) {
 		console.log('Identity already created!');
-		return data?.doc?.id;
+		return identity?.doc?.id;
 	}
 	console.log('Creating the device identity...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
@@ -19,7 +25,6 @@ export const createIdentity = async (): Promise<string | undefined> => {
 		console.log('successfully created Csp1 identity!');
 		console.log('###########################');
 		const configPath = path.join(__dirname, '..', 'config');
-		const identityPath = path.join(__dirname, '..', 'config', 'Csp1Identity.json');
 		if (!fs.existsSync(configPath)) fs.mkdirSync(configPath);
 		fs.writeFileSync(identityPath, JSON.stringify(res.data));
 
