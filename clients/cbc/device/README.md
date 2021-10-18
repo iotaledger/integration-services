@@ -7,8 +7,8 @@ Device which creates and identity, authenticates at the api and subscribes to a 
 
 ```
 BASE_URL=http://localhost:3000/api/v1
-CHANNEL_ADDRESS=<INSERT_CHANNEL_ADDRESS>
 API_KEY=<INSERT_API_KEY>
+CHANNEL_ADDRESS=<INSERT_CHANNEL_ADDRESS>
 ```
 
 3. Run the device using `npm run serve`

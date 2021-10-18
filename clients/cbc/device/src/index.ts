@@ -10,10 +10,15 @@ const startDevice = async () => {
 	console.log('--------------------------------------------------------');
 	const { identityId, channelAddress } = await setup();
 	await checkSubscriptionState(channelAddress, identityId);
-	await writeChannel({ test: 2, identityId }, 'testpayload1');
-	await writeChannel({ test: 2, identityId }, 'testpayload2');
-	await writeChannel({ test: 2, identityId }, 'testpayload3');
-	await writeChannel({ test: 2, identityId }, 'testpayload4');
+	const measurement = (index: number) => {
+		const factor = index * 0.5;
+		return { produced: { value: factor * 30, unit: 'kWh' }, consumption: { value: factor * 20, unit: 'kWh' } };
+	};
+
+	await writeChannel({ ...measurement(1), identityId }, 'measurement');
+	await writeChannel({ ...measurement(2), identityId }, 'measurement');
+	await writeChannel({ ...measurement(3), identityId }, 'measurement');
+	await writeChannel({ ...measurement(4), identityId }, 'measurement');
 	console.log('Device demo finished :)');
 };
 
