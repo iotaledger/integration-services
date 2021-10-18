@@ -1,0 +1,4 @@
+DeviceIdentity.json
+.env
+dist/
+node_modules/
