@@ -10,14 +10,14 @@ export const DeviceIdentity = {
 	claim: {
 		type: 'Device',
 		category: ['sensor'],
-		controlledProperty: ['fillingLevel', 'temperature'],
-		controlledAsset: ['wastecontainer-Osuna-100'],
+		controlledProperty: ['electricityConsumption', 'energy'],
+		controlledAsset: ['electricity-consumption-sensors', 'photovoltaics-sensors'],
 		ipAddress: ['192.14.56.78'],
 		mcc: '214',
 		mnc: '07',
 		serialNumber: '9845A',
 		refDeviceModel: 'myDevice-sensor-345',
-		dateFirstUsed: '2014-09-11T11:00:00Z',
+		dateFirstUsed: new Date().toISOString(),
 		owner: ['did:iota:P64uksi4B6Vg4ZEiTe3bpmzbA9EHNmeJxp1LxXtXeov']
 	}
 };

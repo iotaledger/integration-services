@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-
 import { CONFIG, DeviceIdentity } from '../config/config';
 import { axiosClient } from '../utils/client';
 
@@ -10,7 +9,9 @@ export const createIdentity = async (): Promise<string | undefined> => {
 	try {
 		file = fs.readFileSync(identityPath);
 		identity = file && JSON.parse(file.toString());
-	} catch (e) {}
+	} catch (e) {
+		console.log('no identity file found');
+	}
 
 	if (identity?.doc?.id != null) {
 		console.log('Identity already created!');
@@ -22,7 +23,8 @@ export const createIdentity = async (): Promise<string | undefined> => {
 	const res = await axiosClient.post(`${CONFIG.baseUrl}/identities/create${apiKey}`, JSON.stringify(DeviceIdentity));
 
 	if (res?.status === 201) {
-		console.log('successfully created Csp1 identity!');
+		console.log('Successfully created the identity!');
+		console.log('###########################');
 		console.log('###########################');
 		const configPath = path.join(__dirname, '..', 'config');
 		if (!fs.existsSync(configPath)) fs.mkdirSync(configPath);

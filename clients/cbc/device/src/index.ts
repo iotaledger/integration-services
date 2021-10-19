@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // eslint-disable-line
 import { writeChannel } from './services/channel.service';
 import { checkSubscriptionState } from './services/subscription.service';
 

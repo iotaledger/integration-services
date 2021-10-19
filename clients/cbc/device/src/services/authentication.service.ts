@@ -10,7 +10,9 @@ export const fetchAuth = async (): Promise<any> => {
 	try {
 		file = fs.readFileSync(identityPath);
 		identity = file && JSON.parse(file.toString());
-	} catch (e) {}
+	} catch (e) {
+		console.log('error when reading file');
+	}
 
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
