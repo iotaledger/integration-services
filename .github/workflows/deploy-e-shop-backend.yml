@@ -1,0 +1,32 @@
+name: Deploy E-shop-backend
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./clients/e-shop-demo/e-shop-backend
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_PROJECT_NAME: ${{ secrets.VERCEL_PROJECT_NAME }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - run: npm install
+
+      - run: npm run build
+
+      - name: Deploy backend
+        run: |
+          npx vercel --token ${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} --force --build-env PORT=${{ secrets.ESHOP_BACKEND_PORT }} --build-env BASE_URL=${{ secrets.ESHOP_BACKEND_BASE_URL }} --build-env API_KEY=${{ secrets.ESHOP_BACKEND_API_KEY }} --prod
