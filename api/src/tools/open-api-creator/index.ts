@@ -39,7 +39,7 @@ import {
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
 
-import { SubscriptionSchema } from '../../models/schemas/subscription';
+import { SubscriptionSchema, SubscriptionUpdateSchema } from '../../models/schemas/subscription';
 
 import fs from 'fs';
 
@@ -70,6 +70,7 @@ const schemas = {
 	ErrorResponseSchema,
 	ChannelInfoSearchSchema,
 	SubscriptionSchema,
+	SubscriptionUpdateSchema,
 	ClaimSchema,
 	ChannelInfoSchema,
 	TopicSchema,

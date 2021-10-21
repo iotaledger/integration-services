@@ -1,6 +1,6 @@
 # **** Disclaimer ****
 This is work in progress and will evolve as IOTA core tools develop and ENSURESEC project requirements update
-# Setup the E-Commerce Tools
+# Setup the Integration Service Tools
 
 ## 1. Copy .env file
 
@@ -27,7 +27,7 @@ IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
 IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
 NETWORK=main
 EXPLORER=https://explorer.iota.org/mainnet/transaction
-DATABASE_NAME=e-commerce-tools
+DATABASE_NAME=integration-services
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
 DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017

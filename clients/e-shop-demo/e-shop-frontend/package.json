@@ -22,7 +22,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "REACT_APP_E_SHOP_BACKEND_URL=https://e-shop-demo-backend.herokuapp.com react-scripts start",
     "serve": "set PORT=3001 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -30,20 +30,20 @@
     "prettier": "npx prettier --write ./src"
   },
   "repository": {
-		"type": "git",
-		"url": "git+https://github.com/iotaledger/e-commerce-audit-log.git"
-	},
-	"keywords": [
-		"e-commmerce-prototypes"
-	],
-	"author": "Dominic Zettl (IOTA Foundation)",
+    "type": "git",
+    "url": "git+https://github.com/iotaledger/e-commerce-audit-log.git"
+  },
+  "keywords": [
+    "e-commmerce-prototypes"
+  ],
+  "author": "Dominic Zettl (IOTA Foundation)",
   "contributors": [
     "Tim Sigl (IOTA Foundation) <tim.sigl@iota.org>"
   ],
-	"license": "Apache-2.0",
-	"bugs": {
-		"url": "https://github.com/iotaledger/e-commerce-audit-log/issues"
-	},
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/iotaledger/e-commerce-audit-log/issues"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

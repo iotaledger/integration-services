@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
-import { Subscription } from '../models/types/subscription';
+import { Subscription, SubscriptionUpdate } from '../models/types/subscription';
 
 // Subscription documents keeps information about a subscription a user in regard of a channel
 const collectionName = CollectionNames.subscriptions;
@@ -44,6 +44,30 @@ export const addSubscription = async (subscription: Subscription): Promise<Inser
 	};
 
 	return MongoDbService.insertDocument(collectionName, document);
+};
+
+export const updateSubscription = async (
+	channelAddress: string,
+	identityId: string,
+	subscriptionUpdate: SubscriptionUpdate
+): Promise<UpdateWriteOpResult> => {
+	const query = { _id: getIndex(identityId, channelAddress) };
+	// updates on channelAddress, publicKey, identityId and type are not allowed
+	const { state, subscriptionLink, isAuthorized, accessRights, keyloadLink, sequenceLink, pskId } = subscriptionUpdate;
+	const plainUpdate = MongoDbService.getPlainObject({
+		state,
+		subscriptionLink,
+		isAuthorized,
+		accessRights,
+		keyloadLink,
+		sequenceLink,
+		pskId
+	});
+	
+	const update = {
+		$set: { ...plainUpdate }
+	};
+	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
 export const removeSubscription = async (channelAddress: string, identityId: string): Promise<DeleteWriteOpResultObject> => {

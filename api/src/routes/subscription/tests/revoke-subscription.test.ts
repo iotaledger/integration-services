@@ -52,7 +52,7 @@ describe('test revoke subscription route', () => {
 		spyOn(streamsService, 'getMessages').and.returnValue([]);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
-		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, LoggerMock);
+		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 		spyOn(ChannelDataDb, 'addChannelData');
 		res = {
 			send: sendMock,

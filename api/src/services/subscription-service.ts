@@ -1,10 +1,10 @@
+import { Author } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
 import * as ChannelDataDb from '../database/channel-data';
 import * as SubscriptionDb from '../database/subscription';
-import { Subscription } from '../models/types/subscription';
+import { Subscription, SubscriptionUpdate } from '../models/types/subscription';
 import { AccessRights, SubscriptionType } from '../models/schemas/subscription';
 import { ChannelInfoService } from './channel-info-service';
-import { Author } from '../streams-lib/wasm-node/iota_streams_wasm';
 import { StreamsConfig } from '../models/config';
 import { RequestSubscriptionResponse } from '../models/types/request-response-bodies';
 import { isEmpty } from 'lodash';
@@ -43,6 +43,14 @@ export class SubscriptionService {
 
 	async addSubscription(subscription: Subscription) {
 		return SubscriptionDb.addSubscription(subscription);
+	}
+
+	async updateSubscription(channelAddress: string, identityId: string, subscription: SubscriptionUpdate) {
+		return SubscriptionDb.updateSubscription(channelAddress, identityId, subscription);
+	}
+
+	async deleteSubscription(channelAddress: string, identityId: string) {
+		return SubscriptionDb.removeSubscription(channelAddress, identityId);
 	}
 
 	async updateSubscriptionState(channelAddress: string, identityId: string, state: string) {
@@ -113,7 +121,7 @@ export class SubscriptionService {
 				const authorSub = await this.getSubscription(channelAddress, authorId);
 				const { publicKey, subscriptionLink, identityId } = subscription;
 				const pskId = authorSub.pskId;
-				const streamsAuthor = this.streamsService.importSubscription(authorSub.state, true) as Author;
+				const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
 
 				if (!streamsAuthor) {
 					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
@@ -179,7 +187,7 @@ export class SubscriptionService {
 			try {
 				const { publicKey } = subscription;
 				const pskId = authorSub.pskId;
-				const streamsAuthor = this.streamsService.importSubscription(authorSub.state, true) as Author;
+				const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
 
 				if (!streamsAuthor) {
 					throw new Error(`no author found with channelAddress: ${channelAddress} and identityId: ${authorSub?.identityId}`);
