@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: integration-service-fe
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: integration-service-fe
+  template:
+    metadata:
+      labels:
+        app: integration-service-fe
+    spec:
+      containers:
+      - image: mastrogiovanni/integration-service-fe:latest
+        name: integration-service-fe
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "250m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - protocol: TCP
+          containerPort: 5000
+

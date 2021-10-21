@@ -1,0 +1,27 @@
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: integration-service-fe-mapping
+spec:
+  prefix: /
+  rewrite: /
+  service: integration-service-fe-service.default:5000
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: mapping-minikube
+spec:
+  prefix: /api/
+  rewrite: /api/
+  service: ensuresec-api-service.default:3000
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: mapping-minikube-info
+spec:
+  prefix: /info
+  rewrite: /info
+  service: ensuresec-api-service.default:3000
