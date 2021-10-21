@@ -60,7 +60,7 @@ describe('test user routes', () => {
 				username: 'charlie',
 				registrationDate: getDateFromString('2021-02-12T14:58:05+01:00')
 			};
-			const searchUserSpy = spyOn(UserDb, 'searchUsers').and.returnValue([]);
+			const searchUserSpy = jest.spyOn(UserDb, 'searchUsers').mockImplementation(async () => []);
 			const req: any = {
 				params: {},
 				query: {
@@ -100,7 +100,7 @@ describe('test user routes', () => {
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date
 			};
-			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => user);
 			const req: any = {
 				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
@@ -130,7 +130,7 @@ describe('test user routes', () => {
 				registrationDate: date,
 				isPrivate: true
 			};
-			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => user);
 			const req: any = {
 				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
@@ -162,7 +162,7 @@ describe('test user routes', () => {
 				registrationDate: date,
 				isPrivate: true
 			};
-			const getUserSpy = spyOn(UserDb, 'getUser').and.returnValue(user);
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => user);
 			const req: any = {
 				params: { identityId: requestUser.identityId }, // same identityId as requestUser
 				body: null,
@@ -184,8 +184,8 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when reading from db', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const getUserSpy = spyOn(UserDb, 'getUser').and.callFake(() => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
@@ -223,9 +223,11 @@ describe('test user routes', () => {
 		});
 
 		it('should return 404 since no user added', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 0 } }); // no user added
-			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementation(async () => ({ result: { n: 0 } } as any)); // no user added
+			const getLatestDocSpy = jest
+				.spyOn(ssiService, 'getLatestIdentityJson')
+				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
 
 			const req: any = {
 				params: {},
@@ -240,8 +242,10 @@ describe('test user routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not add the identity'));
 		});
 		it('should add user', async () => {
-			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
-			const addUserSpy = spyOn(UserDb, 'addUser').and.returnValue({ result: { n: 1 } });
+			const getLatestDocSpy = jest
+				.spyOn(ssiService, 'getLatestIdentityJson')
+				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
+			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
 				params: {},
@@ -256,9 +260,11 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when adding to db', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const getLatestDocSpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue({ document: UserIdentityMock.doc, messageId: '' });
-			const addUserSpy = spyOn(UserDb, 'addUser').and.callFake(() => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const getLatestDocSpy = jest
+				.spyOn(ssiService, 'getLatestIdentityJson')
+				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
+			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementation(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
@@ -278,9 +284,9 @@ describe('test user routes', () => {
 
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
-			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
-			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity').and.returnValue(UserIdentityMock);
-			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
+			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementation(async () => UserIdentityMock);
+			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity').mockImplementation(async () => ({ result: { n: 1 } } as any));
+			const userSpy = jest.spyOn(userService, 'addUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
 				body: {
@@ -304,9 +310,9 @@ describe('test user routes', () => {
 		});
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
-			const identitySpy = spyOn(ssiService, 'createIdentity').and.returnValue(UserIdentityMock);
-			const saveIdentitySpy = spyOn(IdentityDocsDb, 'saveIdentity');
-			const userSpy = spyOn(userService, 'addUser').and.returnValue({ result: { n: 1 } });
+			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementation(async () => UserIdentityMock);
+			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity');
+			const userSpy = jest.spyOn(userService, 'addUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
 				body: {
@@ -352,7 +358,7 @@ describe('test user routes', () => {
 		});
 
 		it('should return 404 since no user updated', async () => {
-			const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 0 } });
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => ({ result: { n: 0 } } as any));
 
 			const req: any = {
 				user: { identityId: validBody.identityId },
@@ -368,8 +374,8 @@ describe('test user routes', () => {
 		});
 
 		it('is not authorized to update the user', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
 				user: { identityId: 'did:iota:123456789' }, // different request identityId than user to update
@@ -385,7 +391,7 @@ describe('test user routes', () => {
 		});
 
 		it('should update expected user', async () => {
-			const updateUserSpy = spyOn(UserDb, 'updateUser').and.returnValue({ result: { n: 1 } });
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
 				user: { identityId: validBody.identityId },
@@ -400,8 +406,8 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when updating the db', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const updateUserSpy = spyOn(UserDb, 'updateUser').and.callFake(() => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
@@ -432,8 +438,8 @@ describe('test user routes', () => {
 		});
 
 		it('is not authorized to delete different user', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser');
 
 			const req: any = {
 				user: { identityId: 'did:iota:123456789' },
@@ -449,8 +455,8 @@ describe('test user routes', () => {
 		});
 
 		it('should delete expected user', async () => {
-			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
-			const revokeVerifiableCredentialsSpy = spyOn(verificationService, 'revokeVerifiableCredentials');
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser');
+			const revokeVerifiableCredentialsSpy = jest.spyOn(verificationService, 'revokeVerifiableCredentials');
 
 			const req: any = {
 				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
@@ -466,8 +472,8 @@ describe('test user routes', () => {
 		});
 
 		it('should delete expected user and revoke all credentials', async () => {
-			const deleteUserSpy = spyOn(UserDb, 'deleteUser');
-			const revokeVerifiableCredentialsSpy = spyOn(verificationService, 'revokeVerifiableCredentials');
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser');
+			const revokeVerifiableCredentialsSpy = jest.spyOn(verificationService, 'revokeVerifiableCredentials');
 
 			const req: any = {
 				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
@@ -484,8 +490,8 @@ describe('test user routes', () => {
 		});
 
 		it('should call next(err) if an error occurs when removing from db', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const deleteUserSpy = spyOn(UserDb, 'deleteUser').and.callFake(() => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser').mockImplementation(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {

@@ -38,7 +38,7 @@ describe('test channel routes', () => {
 
 	describe('test create channel route', () => {
 		it('should call nextMock if no body is provided', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const req: any = {
 				params: {},
 				user: { identityId: undefined },
@@ -78,7 +78,9 @@ describe('test channel routes', () => {
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
-				publicKey: 'testpublickey'
+				publicKey: 'testpublickey',
+				pskId: '',
+				sequenceLink: ''
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
@@ -86,16 +88,21 @@ describe('test channel routes', () => {
 				topics: []
 			};
 
-			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
-			const createSpy = spyOn(streamsService, 'create').and.returnValue({
+			const exportSubscriptionSpy = jest
+				.spyOn(streamsService, 'exportSubscription')
+				.mockReturnValue('uint8array string of subscription state');
+			const createSpy = jest.spyOn(streamsService, 'create').mockImplementation(async () => ({
 				seed: 'verysecretseed',
-				author: AuthorMock,
+				author: AuthorMock as any,
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
-				publicKey: 'testpublickey'
-			});
-			const addSubscriptionSpy = spyOn(subscriptionService, 'addSubscription');
-			const addChannelInfoSpy = spyOn(channelInfoService, 'addChannelInfo');
+				publicKey: 'testpublickey',
+				presharedKey: '',
+				pskId: '',
+				sequenceLink: ''
+			}));
+			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription');
+			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo');
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
@@ -125,7 +132,9 @@ describe('test channel routes', () => {
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				identityId: 'did:iota:1234',
-				pskId
+				pskId,
+				publicKey: '',
+				sequenceLink: ''
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
@@ -133,17 +142,21 @@ describe('test channel routes', () => {
 				topics: []
 			};
 
-			const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('uint8array string of subscription state');
-			const createSpy = spyOn(streamsService, 'create').and.returnValue({
+			const exportSubscriptionSpy = jest
+				.spyOn(streamsService, 'exportSubscription')
+				.mockReturnValue('uint8array string of subscription state');
+			const createSpy = jest.spyOn(streamsService, 'create').mockImplementation(async () => ({
 				seed: 'verysecretseed',
-				author: {},
+				author: {} as any,
 				channelAddress: '1234234234',
 				pskId,
 				presharedKey,
-				keyloadLink: 'author-keyload-link'
-			});
-			const addSubscriptionSpy = spyOn(subscriptionService, 'addSubscription');
-			const addChannelInfoSpy = spyOn(channelInfoService, 'addChannelInfo');
+				keyloadLink: 'author-keyload-link',
+				publicKey: '',
+				sequenceLink: ''
+			}));
+			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription');
+			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo');
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
@@ -228,8 +241,10 @@ describe('test channel routes', () => {
 			const messages: StreamsMessage[] = [
 				{ link: '12313:00', maskedPayload: undefined, messageId: '123', publicPayload: { data: { a: 124 } } }
 			];
-			const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({ subscriber: {} });
-			const getMessagesSpy = spyOn(streamsService, 'getMessages').and.returnValue(messages);
+			const requestSubscriptionSpy = jest
+				.spyOn(streamsService, 'requestSubscription')
+				.mockImplementation(async () => ({ subscriber: {} } as any));
+			const getMessagesSpy = jest.spyOn(streamsService, 'getMessages').mockImplementation(async () => messages);
 
 			await channelRoutes.getHistory(req, res, nextMock);
 			expect(requestSubscriptionSpy).toHaveBeenCalledWith('12345', undefined, 'eaifooaeenagr');

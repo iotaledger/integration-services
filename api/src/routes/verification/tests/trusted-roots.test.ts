@@ -48,9 +48,9 @@ describe('test authentication routes', () => {
 
 	describe('test get trusted root route', () => {
 		it('should return trusted roots.', async () => {
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([
-				{ identityId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
-			]);
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ identityId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }]));
 			const req: any = {
 				params: {},
 				body: null
@@ -78,8 +78,10 @@ describe('test authentication routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		});
 		it('should not add trusted root since db throws an error!', async () => {
-			const addTrustedRootIdSpy = spyOn(TrustedRootsDb, 'addTrustedRootId').and.throwError('db error');
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const addTrustedRootIdSpy = jest.spyOn(TrustedRootsDb, 'addTrustedRootId').mockImplementation(() => {
+				throw new Error('db error');
+			});
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const req: any = {
 				params: {},
 				user: {
@@ -95,7 +97,9 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not add the trusted root'));
 		});
 		it('should add trusted root to the identity!', async () => {
-			const addTrustedRootIdSpy = spyOn(TrustedRootsDb, 'addTrustedRootId').and.returnValue({ result: { n: 1 } });
+			const addTrustedRootIdSpy = jest
+				.spyOn(TrustedRootsDb, 'addTrustedRootId')
+				.mockReturnValue(Promise.resolve({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
 				user: {
@@ -125,8 +129,10 @@ describe('test authentication routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		});
 		it('should not delete trusted root since db throws an error!', async () => {
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const removeTrustedRootIdSpy = spyOn(TrustedRootsDb, 'removeTrustedRootId').and.throwError('db error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const removeTrustedRootIdSpy = jest.spyOn(TrustedRootsDb, 'removeTrustedRootId').mockImplementation(() => {
+				throw new Error('db error');
+			});
 			const req: any = {
 				params: {},
 				user: {
@@ -142,7 +148,9 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not remove the trusted root'));
 		});
 		it('should delete trusted root!', async () => {
-			const removeTrustedRootIdSpy = spyOn(TrustedRootsDb, 'removeTrustedRootId').and.returnValue({ result: { n: 1 } });
+			const removeTrustedRootIdSpy = jest
+				.spyOn(TrustedRootsDb, 'removeTrustedRootId')
+				.mockReturnValue(Promise.resolve({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
 				user: {

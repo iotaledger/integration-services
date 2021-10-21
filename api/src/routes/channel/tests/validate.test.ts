@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
 import { AccessRights, SubscriptionType } from '../../../models/schemas/subscription';
+import { Subscription } from '../../../models/types/subscription';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
@@ -118,8 +119,8 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue(null); // no subscription found
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
@@ -136,13 +137,16 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey',
-			state: AuthorMock.state,
-			accessRights: AccessRights.Write // wrong access rights
-		});
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey',
+					state: AuthorMock.state,
+					accessRights: AccessRights.Write // wrong access rights
+				} as Subscription)
+		);
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
@@ -159,15 +163,18 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey',
-			accessRights: AccessRights.Read,
-			type: SubscriptionType.Author,
-			state: AuthorMock.state
-		});
-		const getSubSpy = spyOn(streamsService, 'importSubscription').and.returnValue(null); // no subscriber found
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey',
+					accessRights: AccessRights.Read,
+					type: SubscriptionType.Author,
+					state: AuthorMock.state
+				} as Subscription)
+		);
+		const getSubSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no subscriber found
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
@@ -189,14 +196,17 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey',
-			accessRights: AccessRights.Read,
-			type: SubscriptionType.Author,
-			state: AuthorMock.state
-		});
-		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey',
+					accessRights: AccessRights.Read,
+					type: SubscriptionType.Author,
+					state: AuthorMock.state
+				} as Subscription)
+		);
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock as any);
 
 		const tangleMessage = (index: number): StreamsMessage => ({
 			maskedPayload: { data: logs[index].log.payload },
@@ -209,7 +219,8 @@ describe('test validate route', () => {
 			link: logs[index].link,
 			messageId: logs[index].messageId
 		});
-		const getMessageSpy = spyOn(streamsService, 'getMessage').and.returnValues(tangleMessage(0), tangleMessage(1), tangleMessage(2));
+		// TODO
+		const getMessageSpy = jest.spyOn(streamsService, 'getMessage').and.returnValues(tangleMessage(0), tangleMessage(1), tangleMessage(2));
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 

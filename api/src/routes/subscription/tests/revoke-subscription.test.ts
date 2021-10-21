@@ -49,7 +49,7 @@ describe('test revoke subscription route', () => {
 		const config = StreamsConfigMock;
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
-		spyOn(streamsService, 'getMessages').and.returnValue([]);
+		spyOn(streamsService, 'getMessages').mockReturnValue([]);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
@@ -62,7 +62,7 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should call nextMock if no body is provided', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
 			params: {},
 			user: { identityId: undefined },
@@ -101,9 +101,9 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should return error if no subscription using the link is found to authorize', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, null); // no subscription found to authorize
-		const getSubscriptionByLinkSpy = spyOn(subscriptionService, 'getSubscriptionByLink').and.returnValues(null, null); // no subscription found to authorize
+		const getSubscriptionByLinkSpy = jest.spyOn(subscriptionService, 'getSubscriptionByLink').and.returnValues(null, null); // no subscription found to authorize
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:2345' },
@@ -119,7 +119,7 @@ describe('test revoke subscription route', () => {
 
 	it('should return ok if revokedSubscription is mocked', async () => {
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
-		const revokeSubscriptionSpy = spyOn(subscriptionService, 'revokeSubscription');
+		const revokeSubscriptionSpy = jest.spyOn(subscriptionService, 'revokeSubscription');
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -132,9 +132,9 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should return bad request since subscription is already authorized', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
-		spyOn(streamsService, 'importSubscription').and.returnValue(null); // no author
+		spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -150,19 +150,19 @@ describe('test revoke subscription route', () => {
 		const channelAddress = 'testaddress';
 		spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
 
-		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
-		const sendKeyloadSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
+		const updateSubscriptionStateSpy = jest.spyOn(subscriptionService, 'updateSubscriptionState');
+		const sendKeyloadSpy = jest.spyOn(streamsService, 'sendKeyload').mockReturnValue({
 			keyloadLink: 'testkeyloadlink',
 			sequenceLink: 'testsequencelink',
 			author: AuthorMock
 		});
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
-		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
-		const removeSubscriptionSpy = spyOn(SubscriptionDb, 'removeSubscription');
-		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
+		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized');
+		const removeSubscriptionSpy = jest.spyOn(SubscriptionDb, 'removeSubscription');
+		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData');
 
-		spyOn(streamsService, 'importSubscription').and.returnValue(AuthorMock);
-		const getSubscriptionsSpy = spyOn(SubscriptionDb, 'getSubscriptions').and.returnValue([authorSubscriptionMock, subscriptionMock]);
+		spyOn(streamsService, 'importSubscription').mockReturnValue(AuthorMock);
+		const getSubscriptionsSpy = jest.spyOn(SubscriptionDb, 'getSubscriptions').mockReturnValue([authorSubscriptionMock, subscriptionMock]);
 
 		const req: any = {
 			params: { channelAddress },

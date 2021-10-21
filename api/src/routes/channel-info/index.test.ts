@@ -7,6 +7,7 @@ import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';
 import { StatusCodes } from 'http-status-codes';
+import { UpdateWriteOpResult } from 'mongodb';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -38,8 +39,8 @@ describe('test Search user', () => {
 			created: getDateFromString('2021-02-12T14:58:05+01:00'),
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
-		const searchChannelInfoSpy = spyOn(ChannelInfoDb, 'searchChannelInfo').and.returnValue([]);
-		const getUserSpy = spyOn(userService, 'getIdentityId').and.returnValue('1234-5678-9');
+		const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => []);
+		const getUserSpy = jest.spyOn(userService, 'getIdentityId').mockImplementation(async () => '1234-5678-9');
 
 		const req: any = {
 			params: {},
@@ -106,7 +107,7 @@ describe('test GET channelInfo', () => {
 			latestMessage: null,
 			channelAddress: 'test-address3'
 		};
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channelInfo);
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channelInfo);
 		const req: any = {
 			params: { channelAddress: 'test-address' },
 			body: null
@@ -126,8 +127,8 @@ describe('test GET channelInfo', () => {
 	});
 
 	it('should call next(err) if an error occurs', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.callFake(() => {
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
@@ -182,7 +183,7 @@ describe('test POST channelInfo', () => {
 	});
 
 	it('should return 404 since no channel added', async () => {
-		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 0 } });
+		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => ({ result: { n: 0 } } as any));
 
 		const req: any = {
 			user: { identityId: validBody.authorId },
@@ -198,8 +199,8 @@ describe('test POST channelInfo', () => {
 	});
 
 	it('should not add channel info since request identityid does not match', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
 			user: { identityId: 'did:iota:123456' },
@@ -215,7 +216,7 @@ describe('test POST channelInfo', () => {
 	});
 
 	it('should add channel info since request identityid does match', async () => {
-		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.returnValue({ result: { n: 1 } });
+		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
 			user: { identityId: validBody.authorId },
@@ -229,8 +230,8 @@ describe('test POST channelInfo', () => {
 		expect(sendStatusMock).toHaveBeenCalledWith(201);
 	});
 	it('should call next(err) if an error occurs', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const addChannelInfoSpy = spyOn(ChannelInfoDb, 'addChannelInfo').and.callFake(() => {
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
@@ -267,7 +268,7 @@ describe('test PUT channelInfo', () => {
 		channelInfoService = new ChannelInfoService(userService);
 		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
-		getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({
+		getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => ({
 			created: getDateFromString('2021-03-26T16:13:11+01:00'),
 			authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 			subscriberIds: [],
@@ -279,7 +280,7 @@ describe('test PUT channelInfo', () => {
 			],
 			latestMessage: null,
 			channelAddress: 'test-address-c3-device'
-		});
+		}));
 
 		res = {
 			send: sendMock,
@@ -298,7 +299,9 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should return 404 since no channel updated', async () => {
-		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 0 } });
+		const updateChannelTopicSpy = jest
+			.spyOn(ChannelInfoDb, 'updateChannelTopic')
+			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
 
 		const req: any = {
 			user: { identityId: validBody.authorId },
@@ -314,7 +317,9 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should update expected channel info', async () => {
-		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
+		const updateChannelTopicSpy = jest
+			.spyOn(ChannelInfoDb, 'updateChannelTopic')
+			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
 
 		const req: any = {
 			user: { identityId: validBody.authorId },
@@ -329,8 +334,10 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should not update expected channel info since not allowed', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.returnValue({ result: { n: 1 } });
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const updateChannelTopicSpy = jest
+			.spyOn(ChannelInfoDb, 'updateChannelTopic')
+			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
 
 		const req: any = {
 			user: { identityId: 'did:iota:123456' }, // different identityId as authorId
@@ -346,8 +353,8 @@ describe('test PUT channelInfo', () => {
 	});
 
 	it('should call next(err) if an error occurs', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const updateChannelTopicSpy = spyOn(ChannelInfoDb, 'updateChannelTopic').and.callFake(() => {
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const updateChannelTopicSpy = jest.spyOn(ChannelInfoDb, 'updateChannelTopic').mockImplementation(async () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
@@ -396,7 +403,7 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should return bad request if no address is given as parameter', async () => {
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo');
 		const req: any = {
 			params: {},
 			body: null
@@ -408,9 +415,9 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should not be able to parse the channel since it is no valid channel', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue({}); // no valid channel
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => ({} as any)); // no valid channel
 
 		const req: any = {
 			identityId: 'did:iota:1234567', // wrong identityid
@@ -427,9 +434,9 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should return error since channel is not found', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
-		const getChannelInfoSpy = spyOn(channelInfoService, 'getChannelInfo').and.returnValue(null); // channel is null
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelInfo').mockReturnValue(null); // channel is null
 
 		const req: any = {
 			identityId: 'did:iota:1234567', // wrong identityid
@@ -446,9 +453,9 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should not delete the expected channel info since he is not authorized', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
 
 		const req: any = {
 			user: { identityId: 'did:iota:1234567' }, // wrong identityid
@@ -465,8 +472,8 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should delete the expected channel info since he is authorized', async () => {
-		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo');
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
 
 		const req: any = {
 			user: { identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same identityId as authorId of channel
@@ -482,9 +489,9 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should call next(err) if an error occurs', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getChannelInfoSpy = spyOn(ChannelInfoDb, 'getChannelInfo').and.returnValue(channel);
-		const deleteChannelInfoSpy = spyOn(ChannelInfoDb, 'deleteChannelInfo').and.callFake(() => {
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo').mockImplementation(() => {
 			throw new Error('Test error');
 		});
 		const req: any = {
