@@ -11,7 +11,6 @@ import { LoggerMock } from '../../../test/mocks/logger';
 import * as subscriptionDb from '../../../database/subscription';
 import * as channelDataDb from '../../../database/channel-data';
 import { AuthorMock } from '../../../test/mocks/streams';
-import { Author } from '@iota/streams/node/streams_wasm';
 
 describe('test authorize subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -129,7 +128,10 @@ describe('test authorize subscription route', () => {
 
 		const sub = { ...subscriptionMock, isAuthorized: false };
 		// TODO
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(sub, notanauthor);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => sub)
+			.mockImplementationOnce(async () => notanauthor);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:different-as-author' },
@@ -153,7 +155,10 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
@@ -182,7 +187,10 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe');
@@ -218,7 +226,10 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
 		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const authorMock = AuthorMock;
 		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe');
@@ -263,7 +274,11 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
+
 		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const authorMock = AuthorMock;
 		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe');

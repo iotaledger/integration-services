@@ -220,7 +220,11 @@ describe('test validate route', () => {
 			messageId: logs[index].messageId
 		});
 		// TODO
-		const getMessageSpy = jest.spyOn(streamsService, 'getMessage').and.returnValues(tangleMessage(0), tangleMessage(1), tangleMessage(2));
+		const getMessageSpy = jest
+			.spyOn(streamsService, 'getMessage')
+			.mockImplementationOnce(async () => tangleMessage(0))
+			.mockImplementationOnce(async () => tangleMessage(1))
+			.mockImplementationOnce(async () => tangleMessage(2));
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 

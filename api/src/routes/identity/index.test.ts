@@ -60,7 +60,7 @@ describe('test user routes', () => {
 				username: 'charlie',
 				registrationDate: getDateFromString('2021-02-12T14:58:05+01:00')
 			};
-			const searchUserSpy = jest.spyOn(UserDb, 'searchUsers').mockImplementation(async () => []);
+			const searchUserSpy = jest.spyOn(UserDb, 'searchUsers').mockImplementationOnce(async () => []);
 			const req: any = {
 				params: {},
 				query: {
@@ -100,7 +100,7 @@ describe('test user routes', () => {
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date
 			};
-			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => user);
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
 				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
@@ -130,7 +130,7 @@ describe('test user routes', () => {
 				registrationDate: date,
 				isPrivate: true
 			};
-			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => user);
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
 				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
@@ -162,7 +162,7 @@ describe('test user routes', () => {
 				registrationDate: date,
 				isPrivate: true
 			};
-			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => user);
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
 				params: { identityId: requestUser.identityId }, // same identityId as requestUser
 				body: null,
@@ -185,7 +185,7 @@ describe('test user routes', () => {
 
 		it('should call next(err) if an error occurs when reading from db', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementation(async () => {
+			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
@@ -224,10 +224,10 @@ describe('test user routes', () => {
 
 		it('should return 404 since no user added', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementation(async () => ({ result: { n: 0 } } as any)); // no user added
+			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => ({ result: { n: 0 } } as any)); // no user added
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityJson')
-				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
+				.mockImplementationOnce(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
 
 			const req: any = {
 				params: {},
@@ -244,8 +244,8 @@ describe('test user routes', () => {
 		it('should add user', async () => {
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityJson')
-				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
-			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
+				.mockImplementationOnce(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
+			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
 				params: {},
@@ -263,8 +263,8 @@ describe('test user routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityJson')
-				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
-			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementation(async () => {
+				.mockImplementationOnce(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
+			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
@@ -284,9 +284,9 @@ describe('test user routes', () => {
 
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
-			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementation(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity').mockImplementation(async () => ({ result: { n: 1 } } as any));
-			const userSpy = jest.spyOn(userService, 'addUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
+			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
+			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
 				body: {
@@ -310,9 +310,9 @@ describe('test user routes', () => {
 		});
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
-			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementation(async () => UserIdentityMock);
+			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
 			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity');
-			const userSpy = jest.spyOn(userService, 'addUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
+			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
 				body: {
@@ -358,7 +358,7 @@ describe('test user routes', () => {
 		});
 
 		it('should return 404 since no user updated', async () => {
-			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => ({ result: { n: 0 } } as any));
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 0 } } as any));
 
 			const req: any = {
 				user: { identityId: validBody.identityId },
@@ -375,7 +375,7 @@ describe('test user routes', () => {
 
 		it('is not authorized to update the user', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
 				user: { identityId: 'did:iota:123456789' }, // different request identityId than user to update
@@ -391,7 +391,7 @@ describe('test user routes', () => {
 		});
 
 		it('should update expected user', async () => {
-			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => ({ result: { n: 1 } } as any));
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
 				user: { identityId: validBody.identityId },
@@ -407,7 +407,7 @@ describe('test user routes', () => {
 
 		it('should call next(err) if an error occurs when updating the db', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementation(async () => {
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
@@ -491,7 +491,7 @@ describe('test user routes', () => {
 
 		it('should call next(err) if an error occurs when removing from db', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser').mockImplementation(async () => {
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser').mockImplementationOnce(async () => {
 				throw new Error('Test error');
 			});
 			const req: any = {

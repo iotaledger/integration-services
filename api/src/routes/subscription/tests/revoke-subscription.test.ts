@@ -87,7 +87,7 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should return error if no author is found', async () => {
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(null, null); // no author found to authorize
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => authorSubscriptionMock); // no author found to authorize
 		jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -102,7 +102,10 @@ describe('test revoke subscription route', () => {
 
 	it('should return error if no subscription using the link is found to authorize', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, null); // no subscription found to authorize
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => authorSubscriptionMock)
+			.mockImplementationOnce(async () => null); // no subscription found to authorize
 		const getSubscriptionByLinkSpy = jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -118,7 +121,10 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should return ok if revokedSubscription is mocked', async () => {
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => authorSubscriptionMock)
+			.mockImplementationOnce(async () => subscriptionMock);
 		const revokeSubscriptionSpy = jest.spyOn(subscriptionService, 'revokeSubscription');
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -133,7 +139,10 @@ describe('test revoke subscription route', () => {
 
 	it('should return bad request since subscription is already authorized', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => authorSubscriptionMock)
+			.mockImplementationOnce(async () => subscriptionMock);
 		jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
@@ -148,7 +157,10 @@ describe('test revoke subscription route', () => {
 
 	it('should revoke the subscription', async () => {
 		const channelAddress = 'testaddress';
-		jest.spyOn(subscriptionService, 'getSubscription').and.returnValues(authorSubscriptionMock, subscriptionMock);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => authorSubscriptionMock)
+			.mockImplementationOnce(async () => subscriptionMock);
 
 		const updateSubscriptionStateSpy = jest.spyOn(subscriptionService, 'updateSubscriptionState');
 		const sendKeyloadSpy = jest.spyOn(streamsService, 'sendKeyload').mockImplementation(async () => ({
