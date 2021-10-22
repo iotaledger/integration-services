@@ -507,4 +507,8 @@ describe('test user routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the identity'));
 		});
 	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.resetModules();
+	});
 });

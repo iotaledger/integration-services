@@ -507,4 +507,8 @@ describe('test DELETE channelInfo', () => {
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not delete the channel info'));
 	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.resetModules();
+	});
 });

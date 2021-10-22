@@ -240,4 +240,8 @@ describe('test validate route', () => {
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
 	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.resetModules();
+	});
 });
