@@ -455,8 +455,10 @@ describe('test user routes', () => {
 		});
 
 		it('should delete expected user', async () => {
-			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser');
-			const revokeVerifiableCredentialsSpy = jest.spyOn(verificationService, 'revokeVerifiableCredentials');
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser').mockImplementation(async () => null);
+			const revokeVerifiableCredentialsSpy = jest
+				.spyOn(verificationService, 'revokeVerifiableCredentials')
+				.mockImplementation(async () => null);
 
 			const req: any = {
 				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
@@ -472,8 +474,10 @@ describe('test user routes', () => {
 		});
 
 		it('should delete expected user and revoke all credentials', async () => {
-			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser');
-			const revokeVerifiableCredentialsSpy = jest.spyOn(verificationService, 'revokeVerifiableCredentials');
+			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser').mockImplementation(async () => null);
+			const revokeVerifiableCredentialsSpy = jest
+				.spyOn(verificationService, 'revokeVerifiableCredentials')
+				.mockImplementation(async () => null);
 
 			const req: any = {
 				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },

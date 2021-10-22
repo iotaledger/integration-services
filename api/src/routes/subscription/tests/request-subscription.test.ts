@@ -128,10 +128,10 @@ describe('test request subscription route', () => {
 		const seed: string = undefined;
 		const presharedKey: string = undefined;
 		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
-		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription');
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId');
+		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
@@ -171,10 +171,10 @@ describe('test request subscription route', () => {
 		const seed: string = undefined;
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
-		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription');
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId');
+		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
@@ -218,10 +218,10 @@ describe('test request subscription route', () => {
 		const seed: string = undefined;
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
 		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
-		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription');
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId');
+		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,

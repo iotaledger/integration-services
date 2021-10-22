@@ -97,12 +97,12 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				publicKey: 'testpublickey',
-				presharedKey: '',
+				presharedKey,
 				pskId: '',
 				sequenceLink: ''
 			}));
-			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription');
-			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo');
+			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
+			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo').mockImplementation(async () => null);
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
@@ -155,8 +155,8 @@ describe('test channel routes', () => {
 				publicKey: '',
 				sequenceLink: ''
 			}));
-			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription');
-			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo');
+			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
+			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo').mockImplementation(async () => null);
 
 			await channelRoutes.createChannel(req, res, nextMock);
 

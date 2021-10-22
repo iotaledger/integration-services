@@ -61,6 +61,10 @@ describe('test Search user', () => {
 		expect(getUserSpy).toHaveBeenCalledWith('charliebrown');
 		expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
 	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.clearAllMocks();
+	});
 });
 
 describe('test GET channelInfo', () => {
@@ -142,6 +146,10 @@ describe('test GET channelInfo', () => {
 		expect(sendMock).not.toHaveBeenCalled();
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not get the channel info'));
+	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.clearAllMocks();
 	});
 });
 
@@ -245,6 +253,10 @@ describe('test POST channelInfo', () => {
 		expect(sendMock).not.toHaveBeenCalled();
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not add the channel info'));
+	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.clearAllMocks();
 	});
 });
 
@@ -369,6 +381,10 @@ describe('test PUT channelInfo', () => {
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('Test error'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not update the channel info'));
 	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.clearAllMocks();
+	});
 });
 
 describe('test DELETE channelInfo', () => {
@@ -403,7 +419,7 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should return bad request if no address is given as parameter', async () => {
-		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo');
+		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => null);
 		const req: any = {
 			params: {},
 			body: null
@@ -416,7 +432,7 @@ describe('test DELETE channelInfo', () => {
 
 	it('should not be able to parse the channel since it is no valid channel', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo').mockImplementation(async () => null);
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => ({} as any)); // no valid channel
 
 		const req: any = {
@@ -435,7 +451,7 @@ describe('test DELETE channelInfo', () => {
 
 	it('should return error since channel is not found', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo').mockImplementation(async () => null);
 		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelInfo').mockReturnValue(null); // channel is null
 
 		const req: any = {
@@ -454,7 +470,7 @@ describe('test DELETE channelInfo', () => {
 
 	it('should not delete the expected channel info since he is not authorized', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo').mockImplementation(async () => null);
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
 
 		const req: any = {
@@ -472,7 +488,7 @@ describe('test DELETE channelInfo', () => {
 	});
 
 	it('should delete the expected channel info since he is authorized', async () => {
-		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo');
+		const deleteChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'deleteChannelInfo').mockImplementation(async () => null);
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
 
 		const req: any = {

@@ -43,7 +43,7 @@ describe('test authentication routes', () => {
 			const userMock: User = null;
 
 			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
-			const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce');
+			const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
 			const req: any = {
 				params: { identityId: null },
 				body: null

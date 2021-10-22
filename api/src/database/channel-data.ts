@@ -18,7 +18,7 @@ export const getChannelData = async (
 
 	const startFilter = startDate ? { $gte: startDate } : {};
 	const endFilter = endDate ? { $lte: endDate } : {};
-	const createdFilter = startDate || endDate ?  { 'log.created':{ ...startFilter, ...endFilter }} : {}
+	const createdFilter = startDate || endDate ? { 'log.created': { ...startFilter, ...endFilter } } : {};
 	const query = {
 		channelAddress,
 		identityId,
@@ -69,6 +69,8 @@ export const addChannelData = async (
 };
 
 export const removeChannelData = async (channelAddress: string, identityId: string): Promise<void> => {
+	console.log('wassa wasa wasa was uuup');
+
 	const query = { channelAddress, identityId };
 	await MongoDbService.removeDocuments(collectionName, query);
 };

@@ -54,7 +54,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	});
 
 	it('should return ok with subscription', async () => {
-		spyOn(subscriptionService, 'getSubscriptions').and.returnValue([subscriptionMock]);
+		jest.spyOn(subscriptionService, 'getSubscriptions').mockImplementation(async () => [subscriptionMock]);
 		const channelAddress = 'testaddress';
 		const req: any = {
 			params: { channelAddress },
@@ -68,7 +68,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	});
 
 	it('should return ok with service receiving isAuthorized equals true', async () => {
-		spyOn(subscriptionService, 'getSubscriptions').and.returnValue([subscriptionMock]);
+		jest.spyOn(subscriptionService, 'getSubscriptions').mockImplementation(async () => [subscriptionMock]);
 		const channelAddress = 'testaddress';
 		const isAuthorized = 'true';
 		const req: any = {
@@ -84,7 +84,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	});
 
 	it('should return ok with service receiving isAuthorized equals false', async () => {
-		spyOn(subscriptionService, 'getSubscriptions').and.returnValue([subscriptionMock]);
+		jest.spyOn(subscriptionService, 'getSubscriptions').mockImplementation(async () => [subscriptionMock]);
 		const channelAddress = 'testaddress';
 		const isAuthorized = 'false';
 		const req: any = {
@@ -111,7 +111,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	});
 
 	it('should return bad request since params are missing', async () => {
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(subscriptionMock);
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => subscriptionMock);
 		const channelAddress = 'did:iota:1234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
@@ -187,7 +187,7 @@ describe('test addSubscription route', () => {
 	});
 
 	it('should return bad request since subscription has already been added', async () => {
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(subscriptionMock);
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => subscriptionMock);
 		const channelAddress = '1234234234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
@@ -201,9 +201,9 @@ describe('test addSubscription route', () => {
 	});
 
 	it('should not return created since publicKey already used by other identity', async () => {
-		spyOn(subscriptionService, 'addSubscription').and.returnValue(undefined);
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
-		spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(subscriptionMock);
+		jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => undefined);
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
+		jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockImplementation(async () => subscriptionMock);
 		const channelAddress = 'did:iota:1234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
@@ -219,9 +219,9 @@ describe('test addSubscription route', () => {
 	});
 
 	it('should return created', async () => {
-		spyOn(subscriptionService, 'addSubscription').and.returnValue(undefined);
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
-		spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
+		jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => undefined);
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
+		jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockImplementation(async () => null);
 		const channelAddress = 'did:iota:1234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
@@ -281,7 +281,11 @@ describe('test updateSubscription route', () => {
 	});
 
 	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
-		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
+		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
+			authorId: 'did:iota:91011',
+			channelAddress: '1234234234',
+			topics: []
+		}));
 		const channelAddress = '1234234234';
 		const identityId = 'did:iota:5678';
 		const req: any = {
@@ -295,8 +299,12 @@ describe('test updateSubscription route', () => {
 	});
 
 	it('should return not found since so subscription with channelAddress and identityId does not exist', async () => {
-		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
+		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
+			authorId: 'did:iota:91011',
+			channelAddress: '1234234234',
+			topics: []
+		}));
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
 		const channelAddress = '1234234234';
 		const identityId = 'did:iota:1234';
 		const req: any = {
@@ -310,9 +318,15 @@ describe('test updateSubscription route', () => {
 	});
 
 	it('should return ok', async () => {
-		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
-		spyOn(subscriptionService, 'getSubscription').and.returnValue({ channelAddress: '1234234234' });
-		spyOn(subscriptionService, 'updateSubscription').and.returnValue(undefined);
+		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
+			authorId: 'did:iota:91011',
+			channelAddress: '1234234234',
+			topics: []
+		}));
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({
+			...subscriptionMock
+		}));
+		jest.spyOn(subscriptionService, 'updateSubscription').mockImplementation(async () => undefined);
 		const channelAddress = 'did:iota:1234';
 		const identityId = 'did:iota:1234';
 		const req: any = {
@@ -372,8 +386,12 @@ describe('test deleteSubscription route', () => {
 	});
 
 	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
-		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
 		const channelAddress = '1234234234';
+		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
+			authorId: 'did:iota:91011',
+			channelAddress,
+			topics: []
+		}));
 		const identityId = 'did:iota:5678';
 		const req: any = {
 			params: { channelAddress, identityId },
@@ -385,9 +403,13 @@ describe('test deleteSubscription route', () => {
 	});
 
 	it('should return not found since so subscription with channelAddress and identityId does not exist', async () => {
-		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(undefined);
 		const channelAddress = '1234234234';
+		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
+			authorId: 'did:iota:91011',
+			channelAddress,
+			topics: []
+		}));
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
 		const identityId = 'did:iota:1234';
 		const req: any = {
 			params: { channelAddress, identityId },
@@ -400,10 +422,17 @@ describe('test deleteSubscription route', () => {
 	});
 
 	it('should return ok', async () => {
-		spyOn(channelInfoService, 'getChannelInfo').and.returnValue({ authorId: 'did:iota:91011' });
-		spyOn(subscriptionService, 'getSubscription').and.returnValue({ channelAddress: '1234234234' });
-		spyOn(subscriptionService, 'deleteSubscription').and.returnValue(undefined);
 		const channelAddress = 'did:iota:1234';
+		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
+			authorId: 'did:iota:91011',
+			channelAddress,
+			topics: []
+		}));
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({
+			...subscriptionMock,
+			channelAddress
+		}));
+		jest.spyOn(subscriptionService, 'deleteSubscription').mockImplementation(async () => undefined);
 		const identityId = 'did:iota:1234';
 		const req: any = {
 			params: { channelAddress, identityId },

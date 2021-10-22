@@ -182,8 +182,8 @@ describe('test re-import route', () => {
 		);
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
 		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as any);
-		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData');
-		const fetchLogsSpy = jest.spyOn(channelService, 'fetchLogs');
+		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
+		const fetchLogsSpy = jest.spyOn(channelService, 'fetchLogs').mockImplementation(async () => null);
 		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock as any);
 
 		await channelRoutes.reimport(req, res, nextMock);
@@ -195,5 +195,10 @@ describe('test re-import route', () => {
 		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.identityId, newSub);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
+	});
+
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.resetModules();
 	});
 });
