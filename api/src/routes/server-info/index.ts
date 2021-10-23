@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { CONFIG } from "../../config";
+import { readRootIdentity } from "../../setup";
 import { ILogger } from "../../utils/logger";
 
 export class ServerInfoRoutes {
@@ -11,7 +12,7 @@ export class ServerInfoRoutes {
     getServerInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const commitHash = CONFIG.commitHash || 'not defined';
-            const identityId = CONFIG.serverIdentityId || 'not defined';
+            const identityId = readRootIdentity() || 'not defined';
             const version = CONFIG.apiVersion || 'not defined';
 
             res.status(StatusCodes.OK).send({

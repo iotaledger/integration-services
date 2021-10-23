@@ -7,13 +7,21 @@ import { authenticationRouter, verificationRouter, channelInfoRouter, channelRou
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import * as expressWinston from 'express-winston';
-import { setupApi } from './setup';
+import { checkRootIdentity, setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
 import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
+import yargs from 'yargs';
 
 const logger = Logger.getInstance();
+
+const argv = yargs
+    .command('server', 'Start the integration service API', {})
+    .command('keygen', 'Generate root identity for integration service API', {})
+    .help()
+    .alias('help', 'h')
+    .argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -23,8 +31,12 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 }
 
 async function startServer() {
+
 	// setup did for server if not exists
-	await setupApi();
+	if (!await checkRootIdentity()) {
+		process.exit(0);
+		return;
+	}
 
 	const app = express();
 	const port = CONFIG.port;
@@ -55,4 +67,15 @@ async function startServer() {
 	});
 	server.setTimeout(50000);
 }
-startServer();
+
+if (argv._.includes("server")) {
+	startServer();
+}
+else if (argv._.includes("keygen")) {
+	setupApi();
+}
+else {
+	// argv._.help();
+}
+
+

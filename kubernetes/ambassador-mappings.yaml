@@ -6,7 +6,7 @@ metadata:
 spec:
   prefix: /
   rewrite: /
-  service: integration-service-fe-service.default:5000
+  service: integration-service-fe.default:5000
 ---
 apiVersion: getambassador.io/v2
 kind: Mapping
@@ -15,7 +15,7 @@ metadata:
 spec:
   prefix: /api/
   rewrite: /api/
-  service: ensuresec-api-service.default:3000
+  service: integration-service-api.default:3000
 ---
 apiVersion: getambassador.io/v2
 kind: Mapping
@@ -24,4 +24,4 @@ metadata:
 spec:
   prefix: /info
   rewrite: /info
-  service: ensuresec-api-service.default:3000
+  service: integration-service-api.default:3000

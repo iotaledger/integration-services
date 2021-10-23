@@ -1,6 +1,6 @@
 {
   "name": "integration-services",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Audit log of the ensuresec project.",
   "main": "dist/index.js",
   "scripts": {
@@ -10,8 +10,10 @@
     "build": "npm-run-all build-tsc build-lint",
     "test": "jest",
     "test-watch": "npm run test -- --watchAll",
-    "start-node": "node dist/index.js",
+    "start-node": "node dist/index.js server",
+    "start-keygen": "node dist/index.js keygen",
     "start": "npm-run-all build start-node",
+    "keygen": "npm-run-all build start-keygen",
     "build-watch": "tsc --watch ",
     "serve-nodemon": "nodemon ./dist/index",
     "serve": "run-p build-watch serve-nodemon",
@@ -58,7 +60,8 @@
     "node-fetch": "^2.6.1",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "yargs": "^17.2.1"
   },
   "jest": {
     "testEnvironment": "node"

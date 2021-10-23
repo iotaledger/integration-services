@@ -13,6 +13,10 @@ spec:
       labels:
         app: integration-service-fe
     spec:
+      initContainers:
+      - name: wait-for-hornet
+        image: busybox:1.28
+        command: ['sh', '-c', "until nslookup integration-service-api.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for integration-service-api; sleep 2; done"]
       containers:
       - image: mastrogiovanni/integration-service-fe:latest
         name: integration-service-fe
