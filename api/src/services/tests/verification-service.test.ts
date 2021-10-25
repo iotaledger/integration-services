@@ -29,7 +29,7 @@ describe('test getKeyCollection', () => {
 
 	it('should generate a new keycollection since index not found', async () => {
 		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve({} as any));
-		const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
+		const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection').mockReturnValue(
 			Promise.resolve({
 				keyCollectionJson: {
@@ -63,11 +63,14 @@ describe('test getKeyCollection', () => {
 			keys: [{ public: 'public-key', secret: 'secret-key' }],
 			type: ''
 		};
-		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve({} as any));
-		const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection');
+		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockImplementation(async () => {
+			return {} as any;
+		});
+		const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection').mockImplementation(async () => null);
 		const getKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'getKeyCollection').mockReturnValue(Promise.resolve(foundKeyCollection as any)); // keycollection found
-		const saveKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'saveKeyCollection');
+		const saveKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'saveKeyCollection').mockImplementation(async () => null);
+
 		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
 
 		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, cfg.serverIdentityId, cfg.serverSecret);
@@ -76,5 +79,10 @@ describe('test getKeyCollection', () => {
 		expect(getIdentitySpy).not.toHaveBeenCalled();
 		expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 		expect(keyCollection).toEqual(expectedKeyCollection);
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
+		jest.restoreAllMocks();
 	});
 });

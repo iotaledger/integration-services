@@ -59,7 +59,7 @@ describe('test authentication routes', () => {
 
 		it('should return a valid nonce to solve', async () => {
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce');
+			const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
 			const req: any = {
 				params: { identityId },
 				body: null
@@ -101,7 +101,7 @@ describe('test authentication routes', () => {
 			const userMock: User = null;
 			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
-			const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockReturnValue(null);
+			const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => null);
 			const req: any = {
 				params: { identityId },
 				body: { signedNonce: 'SIGNED_NONCE' }

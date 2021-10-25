@@ -61,8 +61,10 @@ describe('test authentication routes', () => {
 				.mockReturnValue(Promise.resolve(linkedIdentity));
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity');
 			const revokeVerifiableCredentialSpy = jest.spyOn(ssiService, 'revokeVerifiableCredential');
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: identityToRevoke },
 				params: {},
@@ -100,8 +102,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:4321' }, // different request user id than initiatorId
 				params: {},
@@ -140,8 +144,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:1234' }, // same request user id as initiatorId
 				params: {},
@@ -181,8 +187,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' }, // same request user id as linkedIdentity / subject id
 				params: {},
@@ -221,8 +229,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin }, // user is an admin
 				params: {},
@@ -263,8 +273,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
@@ -305,8 +317,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
@@ -344,8 +358,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Manager, type: UserType.Person }, // user is an org admin
 				params: {},
@@ -383,8 +399,10 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:1234', type: UserType.Person }, // same request user id as initiatorId
 				params: {},
@@ -400,5 +418,9 @@ describe('test authentication routes', () => {
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
+	});
+	afterEach(() => {
+		jest.clearAllMocks();
+		jest.resetAllMocks();
 	});
 });

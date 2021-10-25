@@ -313,7 +313,7 @@ describe('test PUT channelInfo', () => {
 	it('should return 404 since no channel updated', async () => {
 		const updateChannelTopicSpy = jest
 			.spyOn(ChannelInfoDb, 'updateChannelTopic')
-			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
+			.mockImplementation(async () => ({ result: { n: 0 } } as UpdateWriteOpResult));
 
 		const req: any = {
 			user: { identityId: validBody.authorId },
@@ -525,6 +525,6 @@ describe('test DELETE channelInfo', () => {
 	});
 	afterEach(() => {
 		jest.resetAllMocks();
-		jest.resetModules();
+		jest.clearAllMocks();
 	});
 });
