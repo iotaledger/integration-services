@@ -143,7 +143,7 @@ describe('test validate route', () => {
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
-					state: AuthorMock.state,
+					state: 'someteststate',
 					accessRights: AccessRights.Write // wrong access rights
 				} as Subscription)
 		);
@@ -170,7 +170,7 @@ describe('test validate route', () => {
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
 					type: SubscriptionType.Author,
-					state: AuthorMock.state
+					state: 'someteststate'
 				} as Subscription)
 		);
 		const getSubSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no subscriber found
@@ -179,7 +179,7 @@ describe('test validate route', () => {
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(getSubSpy).toHaveBeenCalledWith(AuthorMock.state, true);
+		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error(
 				'no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm'
@@ -203,10 +203,10 @@ describe('test validate route', () => {
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
 					type: SubscriptionType.Author,
-					state: AuthorMock.state
+					state: 'someteststate'
 				} as Subscription)
 		);
-		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock as any);
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock);
 
 		const tangleMessage = (index: number): StreamsMessage => ({
 			maskedPayload: { data: logs[index].log.payload },
@@ -236,7 +236,7 @@ describe('test validate route', () => {
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
 		expect(getMessageSpy).toHaveBeenCalledTimes(3);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith(AuthorMock.state, true);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
 	});

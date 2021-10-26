@@ -12,6 +12,7 @@ import { LoggerMock } from '../../../test/mocks/logger';
 import * as ChannelDataDb from '../../../database/channel-data';
 import { SubscriberMock } from '../../../test/mocks/streams';
 import { Subscription } from '../../../models/types/subscription';
+import { Subscriber } from '@iota/streams/node/streams_wasm';
 
 describe('test re-import route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -149,8 +150,8 @@ describe('test re-import route', () => {
 		);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const newSub = { clone: () => newSub, get_public_key: () => 'differenttestkey' }; // public key is different as the one in the prev. subscription
-		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as any);
-		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock as any);
+		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as Subscriber);
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
@@ -181,10 +182,10 @@ describe('test re-import route', () => {
 				} as Subscription)
 		);
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
-		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as any);
+		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as Subscriber);
 		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
 		const fetchLogsSpy = jest.spyOn(channelService, 'fetchLogs').mockImplementation(async () => null);
-		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock as any);
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock);
 
 		await channelRoutes.reimport(req, res, nextMock);
 

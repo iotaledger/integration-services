@@ -173,7 +173,7 @@ describe('test revoke subscription route', () => {
 		const removeSubscriptionSpy = jest.spyOn(SubscriptionDb, 'removeSubscription').mockImplementation(async () => null);
 		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
 
-		jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock as any);
+		jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock);
 		const getSubscriptionsSpy = jest
 			.spyOn(SubscriptionDb, 'getSubscriptions')
 			.mockImplementation(async () => [authorSubscriptionMock, subscriptionMock]);

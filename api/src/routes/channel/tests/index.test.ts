@@ -93,7 +93,7 @@ describe('test channel routes', () => {
 				.mockReturnValue('uint8array string of subscription state');
 			const createSpy = jest.spyOn(streamsService, 'create').mockImplementation(async () => ({
 				seed: 'verysecretseed',
-				author: AuthorMock as any,
+				author: AuthorMock,
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				publicKey: 'testpublickey',
