@@ -87,7 +87,7 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should return error if no author is found', async () => {
-		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => authorSubscriptionMock); // no author found to authorize
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => null); // no author found to authorize
 		jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockImplementation(async () => null); // no subscription found to authorize
 		const req: any = {
 			params: { channelAddress: 'testaddress' },

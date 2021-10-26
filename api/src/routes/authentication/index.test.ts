@@ -38,167 +38,169 @@ describe('test authentication routes', () => {
 		};
 	});
 
-	describe('test getNonce route', () => {
-		it('should return bad request because no identityId provided.', async () => {
-			const userMock: User = null;
+	it('getNonce - should return bad request because no identityId provided.', async () => {
+		const userMock: User = null;
 
-			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
-			const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
-			const req: any = {
-				params: { identityId: null },
-				body: null
-			};
+		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
+		const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
+		const req: any = {
+			params: { identityId: null },
+			body: null
+		};
 
-			await authenticationRoutes.getNonce(req, res, nextMock);
+		await authenticationRoutes.getNonce(req, res, nextMock);
 
-			expect(getUserSpy).not.toHaveBeenCalled();
-			expect(upsertNonceSpy).not.toHaveBeenCalled();
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
-		});
-
-		it('should return a valid nonce to solve', async () => {
-			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
-			const req: any = {
-				params: { identityId },
-				body: null
-			};
-
-			await authenticationRoutes.getNonce(req, res, nextMock);
-
-			expect(upsertNonceSpy).toHaveBeenCalled();
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalled();
-		});
+		expect(getUserSpy).not.toHaveBeenCalled();
+		expect(upsertNonceSpy).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
 	});
 
-	describe('test auth route', () => {
-		it('should return bad request because no identityId provided.', async () => {
-			const req: any = {
-				params: { identityId: null },
-				body: { signedNonce: 'SIGNED_NONCE' }
-			};
+	it('getNonce - should return a valid nonce to solve', async () => {
+		const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+		const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
+		const req: any = {
+			params: { identityId },
+			body: null
+		};
 
-			await authenticationRoutes.proveOwnership(req, res, nextMock);
+		await authenticationRoutes.getNonce(req, res, nextMock);
 
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no signedNonce or identityId provided' });
+		expect(upsertNonceSpy).toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalled();
+	});
+
+	it('auth - should return bad request because no identityId provided.', async () => {
+		const req: any = {
+			params: { identityId: null },
+			body: { signedNonce: 'SIGNED_NONCE' }
+		};
+
+		await authenticationRoutes.proveOwnership(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no signedNonce or identityId provided' });
+	});
+
+	it('auth - should return bad request because no signedNonce is provided in the body.', async () => {
+		const req: any = {
+			params: { identityId: 'identityid' },
+			body: null
+		};
+
+		await authenticationRoutes.proveOwnership(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no signedNonce or identityId provided' });
+	});
+
+	it('auth - should return the jwt for identity not in db but on tangle', async () => {
+		const verified = true;
+		const identityId = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
+		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
+		const getLatestIdentityJsonSpy = jest.spyOn(ssiService, 'getLatestIdentityJson').mockImplementation(async () => {
+			return { document: UserIdentityMock.doc, messageId: '' };
 		});
-		it('should return bad request because no signedNonce is provided in the body.', async () => {
-			const req: any = {
-				params: { identityId: 'identityid' },
-				body: null
-			};
+		const getNonceSpy = jest
+			.spyOn(AuthDb, 'getNonce')
+			.mockImplementation(async () => ({ identityId, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
+		const verifySignedNonceSpy = jest.spyOn(EncryptionUtils, 'verifySignedNonce').mockImplementation(async () => verified);
+		const req: any = {
+			params: { identityId },
+			body: { signedNonce: 'SIGNED_NONCE' }
+		};
 
-			await authenticationRoutes.proveOwnership(req, res, nextMock);
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no signedNonce or identityId provided' });
-		});
+		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		it('should throw error since no user found', async () => {
-			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const userMock: User = null;
-			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
-			const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => null);
-			const req: any = {
-				params: { identityId },
-				body: { signedNonce: 'SIGNED_NONCE' }
-			};
+		expect(getUserSpy).toHaveBeenCalledWith(identityId);
+		expect(getLatestIdentityJsonSpy).toHaveBeenCalledWith(identityId);
+		expect(getNonceSpy).toHaveBeenCalledWith(identityId);
+		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
+			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+			'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
+			'SIGNED_NONCE'
+		);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalled();
+	});
 
-			await authenticationRoutes.proveOwnership(req, res, nextMock);
+	it('auth - should throw error since no user found', async () => {
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const userMock: User = null;
+		const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementationOnce(async () => userMock);
+		const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementationOnce(async () => null);
+		const req: any = {
+			params: { identityId },
+			body: { signedNonce: 'SIGNED_NONCE' }
+		};
 
-			expect(getUserSpy).toHaveBeenCalledWith(identityId);
-			expect(getLatestIdentitySpy).toHaveBeenCalledWith(identityId);
-			expect(loggerSpy).toHaveBeenCalledWith(new Error(`no identity with id: ${identityId} found!`));
-			expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
-		});
+		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		it('should throw error for a nonce which is verified=false', async () => {
-			const loggerSpy = jest.spyOn(LoggerMock, 'error');
-			const verified = false;
-			const userMock: User = validUserMock;
-			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+		expect(getUserSpy).toHaveBeenCalledWith(identityId);
+		expect(getLatestIdentitySpy).toHaveBeenCalledWith(identityId);
+		expect(loggerSpy).toHaveBeenCalledWith(new Error(`no identity with id: ${identityId} found!`));
+		expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
+	});
 
-			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
-			const getNonceSpy = jest
-				.spyOn(AuthDb, 'getNonce')
-				.mockImplementation(async () => ({ identityId, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
-			const verifySignedNonceSpy = jest.spyOn(EncryptionUtils, 'verifySignedNonce').mockImplementation(async () => verified);
-			const req: any = {
-				params: { identityId },
-				body: { signedNonce: 'SIGNED_NONCE' }
-			};
+	it('auth - should throw error for a nonce which is verified=false', async () => {
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const verified = false;
+		const userMock: User = validUserMock;
+		const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 
-			await authenticationRoutes.proveOwnership(req, res, nextMock);
+		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
+		const getNonceSpy = jest
+			.spyOn(AuthDb, 'getNonce')
+			.mockImplementation(async () => ({ identityId, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
+		const verifySignedNonceSpy = jest.spyOn(EncryptionUtils, 'verifySignedNonce').mockImplementation(async () => verified);
+		const req: any = {
+			params: { identityId },
+			body: { signedNonce: 'SIGNED_NONCE' }
+		};
 
-			expect(getUserSpy).toHaveBeenCalledWith(identityId);
-			expect(getNonceSpy).toHaveBeenCalledWith(identityId);
-			expect(verifySignedNonceSpy).toHaveBeenCalledWith(
-				'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
-				'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
-				'SIGNED_NONCE'
-			);
-			expect(loggerSpy).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
-			expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
-		});
+		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		it('should return the jwt for identity not in db but on tangle', async () => {
-			const verified = true;
-			const identityId = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
-			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
-			const getLatestIdentitySpy = jest
-				.spyOn(ssiService, 'getLatestIdentityJson')
-				.mockImplementation(async () => ({ document: UserIdentityMock.doc, messageId: '' }));
-			const getNonceSpy = jest
-				.spyOn(AuthDb, 'getNonce')
-				.mockImplementation(async () => ({ identityId, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
-			const verifySignedNonceSpy = jest.spyOn(EncryptionUtils, 'verifySignedNonce').mockImplementation(async () => verified);
-			const req: any = {
-				params: { identityId },
-				body: { signedNonce: 'SIGNED_NONCE' }
-			};
+		expect(getUserSpy).toHaveBeenCalledWith(identityId);
+		expect(getNonceSpy).toHaveBeenCalledWith(identityId);
+		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
+			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+			'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
+			'SIGNED_NONCE'
+		);
+		expect(loggerSpy).toHaveBeenCalledWith(new Error(`signed nonce is not valid!`));
+		expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
+	});
 
-			await authenticationRoutes.proveOwnership(req, res, nextMock);
+	it('auth - should return the jwt for nonce which is verified=true', async () => {
+		const verified = true;
+		const userMock: User = validUserMock;
+		const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
+		const getNonceSpy = jest
+			.spyOn(AuthDb, 'getNonce')
+			.mockImplementation(async () => ({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43', identityId: userMock.identityId }));
+		const verifySignedNonceSpy = jest.spyOn(EncryptionUtils, 'verifySignedNonce').mockImplementation(async () => verified);
+		const req: any = {
+			params: { identityId },
+			body: { signedNonce: 'SIGNED_NONCE' }
+		};
 
-			expect(getUserSpy).toHaveBeenCalledWith(identityId);
-			expect(getLatestIdentitySpy).toHaveBeenCalledWith(identityId);
-			expect(getNonceSpy).toHaveBeenCalledWith(identityId);
-			expect(verifySignedNonceSpy).toHaveBeenCalledWith(
-				'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
-				'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
-				'SIGNED_NONCE'
-			);
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalled();
-		});
+		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		it('should return the jwt for nonce which is verified=true', async () => {
-			const verified = true;
-			const userMock: User = validUserMock;
-			const identityId = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-			const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
-			const getNonceSpy = jest
-				.spyOn(AuthDb, 'getNonce')
-				.mockImplementation(async () => ({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43', identityId: userMock.identityId }));
-			const verifySignedNonceSpy = jest.spyOn(EncryptionUtils, 'verifySignedNonce').mockImplementation(async () => verified);
-			const req: any = {
-				params: { identityId },
-				body: { signedNonce: 'SIGNED_NONCE' }
-			};
-
-			await authenticationRoutes.proveOwnership(req, res, nextMock);
-
-			expect(getUserSpy).toHaveBeenCalledWith(identityId);
-			expect(getNonceSpy).toHaveBeenCalledWith(identityId);
-			expect(verifySignedNonceSpy).toHaveBeenCalledWith(
-				'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
-				'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
-				'SIGNED_NONCE'
-			);
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalled();
-		});
+		expect(getUserSpy).toHaveBeenCalledWith(identityId);
+		expect(getNonceSpy).toHaveBeenCalledWith(identityId);
+		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
+			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+			'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
+			'SIGNED_NONCE'
+		);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalled();
+	});
+	afterEach(() => {
+		jest.clearAllMocks();
+		jest.resetAllMocks();
+		jest.resetModules();
 	});
 });
