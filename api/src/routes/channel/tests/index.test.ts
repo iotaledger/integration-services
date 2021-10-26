@@ -243,12 +243,12 @@ describe('test channel routes', () => {
 			];
 			const requestSubscriptionSpy = jest
 				.spyOn(streamsService, 'requestSubscription')
-				.mockImplementation(async () => ({ subscriber: {} } as any));
+				.mockImplementation(async () => ({ subscriber: null, pskId: '', seed: '' }));
 			const getMessagesSpy = jest.spyOn(streamsService, 'getMessages').mockImplementation(async () => messages);
 
 			await channelRoutes.getHistory(req, res, nextMock);
 			expect(requestSubscriptionSpy).toHaveBeenCalledWith('12345', undefined, 'eaifooaeenagr');
-			expect(getMessagesSpy).toHaveBeenCalledWith({});
+			expect(getMessagesSpy).toHaveBeenCalledWith(null);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith([
 				{

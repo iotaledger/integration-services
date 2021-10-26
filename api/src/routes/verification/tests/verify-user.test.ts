@@ -52,11 +52,11 @@ describe('test authentication routes', () => {
 	describe('test verifyIdentity route', () => {
 		let createVerifiableCredentialSpy: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
 		let getNextCredentialIndexSpy: any, addVerifiableCredentialSpy: any, addUserVCSpy: any;
-		const vcMock = { VCMOCK: 1 };
+		const vcMock: any = { VCMOCK: 1 };
 		beforeEach(() => {
 			keyCollectionIndex = 0;
-			createVerifiableCredentialSpy = jest.spyOn(ssiService, 'createVerifiableCredential').mockImplementation(async () => vcMock as any);
-			getKeyCollectionSpy = jest.spyOn(KeyCollectionDB, 'getKeyCollection').mockImplementation(async () => KeyCollectionMock as any);
+			createVerifiableCredentialSpy = jest.spyOn(ssiService, 'createVerifiableCredential').mockImplementation(async () => vcMock);
+			getKeyCollectionSpy = jest.spyOn(KeyCollectionDB, 'getKeyCollection').mockImplementation(async () => KeyCollectionMock);
 			getNextCredentialIndexSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getNextCredentialIndex')
 				.mockImplementation(async () => keyCollectionIndex);
@@ -225,7 +225,8 @@ describe('test authentication routes', () => {
 			};
 			const expectedKeyCollection = {
 				type: KeyCollectionMock.type,
-				keys: KeyCollectionMock.keys
+				keys: KeyCollectionMock.keys,
+				publicKeyBase58: 'testpublickey'
 			};
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,
@@ -292,7 +293,8 @@ describe('test authentication routes', () => {
 			};
 			const expectedKeyCollection = {
 				type: KeyCollectionMock.type,
-				keys: KeyCollectionMock.keys
+				keys: KeyCollectionMock.keys,
+				publicKeyBase58: 'testpublickey'
 			};
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,

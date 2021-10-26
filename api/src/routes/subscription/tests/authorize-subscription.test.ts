@@ -196,7 +196,9 @@ describe('test authorize subscription route', () => {
 		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe').mockImplementation(async () => null);
 		const authorMock = AuthorMock;
 		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => authorMock); // author found
-		const authorizeSubscriptionSpy = jest.spyOn(streamsService, 'sendKeyload').mockImplementation(async () => ({ keyloadLink: '' } as any));
+		const authorizeSubscriptionSpy = jest
+			.spyOn(streamsService, 'sendKeyload')
+			.mockImplementation(async () => ({ keyloadLink: '', sequenceLink: '' }));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
