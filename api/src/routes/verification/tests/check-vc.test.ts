@@ -51,10 +51,10 @@ describe('test authentication routes', () => {
 	describe('test checkVerifiableCredential route', () => {
 		it('should throw an error since no server identity is found with the id!', async () => {
 			const isVerified = true;
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const checkVerifiableCredentialSpy = jest.spyOn(ssiService, 'checkVerifiableCredential').mockReturnValue(Promise.resolve(isVerified));
 			// no server identity found
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(null);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(null));
 			const req: any = {
 				params: {},
 				body: vcToCheck
@@ -70,10 +70,10 @@ describe('test authentication routes', () => {
 
 		it('should throw error since no trusted roots found!', async () => {
 			const isVerified = false;
-			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(isVerified);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([]);
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const checkVerifiableCredentialSpy = jest.spyOn(ssiService, 'checkVerifiableCredential').mockReturnValue(Promise.resolve(isVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getTrustedRootIdsSpy = jest.spyOn(TrustedRootsDb, 'getTrustedRootIds').mockReturnValue(Promise.resolve([]));
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 
 			const req: any = {
 				params: {},
@@ -91,9 +91,13 @@ describe('test authentication routes', () => {
 
 		it('should return false since since root is not trusted', async () => {
 			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ identityId: 'did:iota:123noissuer' }]);
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiableCredential')
+				.mockReturnValue(Promise.resolve(vcIsVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ identityId: 'did:iota:123noissuer' }]));
 
 			const req: any = {
 				params: {},
@@ -111,9 +115,13 @@ describe('test authentication routes', () => {
 
 		it('should return false since it is not verified', async () => {
 			const vcIsVerified = false;
-			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ identityId: ServerIdentityMock.doc.id }]);
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiableCredential')
+				.mockReturnValue(Promise.resolve(vcIsVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ identityId: ServerIdentityMock.doc.id }]));
 
 			const req: any = {
 				params: {},
@@ -130,9 +138,13 @@ describe('test authentication routes', () => {
 		});
 		it('should return true since vc is verified and root is trusted', async () => {
 			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(ssiService, 'checkVerifiableCredential').and.returnValue(vcIsVerified);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const getTrustedRootIdsSpy = spyOn(TrustedRootsDb, 'getTrustedRootIds').and.returnValue([{ identityId: ServerIdentityMock.doc.id }]);
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiableCredential')
+				.mockReturnValue(Promise.resolve(vcIsVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ identityId: ServerIdentityMock.doc.id }]));
 
 			const req: any = {
 				params: {},

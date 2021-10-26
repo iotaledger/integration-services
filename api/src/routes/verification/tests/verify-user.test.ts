@@ -52,19 +52,21 @@ describe('test authentication routes', () => {
 	describe('test verifyIdentity route', () => {
 		let createVerifiableCredentialSpy: any, keyCollectionIndex: any, getKeyCollectionSpy: any;
 		let getNextCredentialIndexSpy: any, addVerifiableCredentialSpy: any, addUserVCSpy: any;
-		const vcMock = { VCMOCK: 1 };
+		const vcMock: any = { VCMOCK: 1 };
 		beforeEach(() => {
 			keyCollectionIndex = 0;
-			createVerifiableCredentialSpy = spyOn(ssiService, 'createVerifiableCredential').and.returnValue(vcMock);
-			getKeyCollectionSpy = spyOn(KeyCollectionDB, 'getKeyCollection').and.returnValue(KeyCollectionMock);
-			getNextCredentialIndexSpy = spyOn(KeyCollectionLinksDB, 'getNextCredentialIndex').and.returnValue(keyCollectionIndex);
-			addVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'addVerifiableCredential');
-			addUserVCSpy = spyOn(userService, 'addUserVC');
+			createVerifiableCredentialSpy = jest.spyOn(ssiService, 'createVerifiableCredential').mockImplementation(async () => vcMock);
+			getKeyCollectionSpy = jest.spyOn(KeyCollectionDB, 'getKeyCollection').mockImplementation(async () => KeyCollectionMock);
+			getNextCredentialIndexSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getNextCredentialIndex')
+				.mockImplementation(async () => keyCollectionIndex);
+			addVerifiableCredentialSpy = jest.spyOn(KeyCollectionLinksDB, 'addVerifiableCredential').mockImplementation(() => null);
+			addUserVCSpy = jest.spyOn(userService, 'addUserVC').mockImplementation(() => null);
 		});
 
 		it('should not verify since different identityId in request', async () => {
 			const subject = TestUsersMock[0];
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
 				user: { identityId: 'WRONGUSERID' },
@@ -87,7 +89,7 @@ describe('test authentication routes', () => {
 
 		it('should not verify since no valid credentialSubject!', async () => {
 			const subject = TestUsersMock[0];
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
 				user: { identityId: initiatorVC.id },
@@ -113,7 +115,7 @@ describe('test authentication routes', () => {
 
 		it('should not verify since initiator is not allowed to authorize others!', async () => {
 			const subject = TestUsersMock[0];
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
 				user: { identityId: initiatorVC.id },
@@ -136,7 +138,7 @@ describe('test authentication routes', () => {
 
 		it('should not verify for user which has valid vc but credential is not from type VerifiedIdentityCredential', async () => {
 			const subject = TestUsersMock[0];
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[1]; // this credential is from type SomeBasicCredential
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
@@ -160,11 +162,13 @@ describe('test authentication routes', () => {
 
 		it('should not verify since vc of initiator is not verified (initiatorVcIsVerified=false).', async () => {
 			const subject = TestUsersMock[0];
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const initiatorVcIsVerified = false;
 
-			const checkVerifiableCredentialSpy = spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(verificationService, 'checkVerifiableCredential')
+				.mockImplementation(async () => initiatorVcIsVerified);
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},
@@ -190,7 +194,7 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockImplementation(async () => ServerIdentityMock);
 			const req: any = {
 				user: { identityId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
@@ -221,7 +225,8 @@ describe('test authentication routes', () => {
 			};
 			const expectedKeyCollection = {
 				type: KeyCollectionMock.type,
-				keys: KeyCollectionMock.keys
+				keys: KeyCollectionMock.keys,
+				publicKeyBase58: 'testpublickey'
 			};
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,
@@ -253,8 +258,10 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const initiatorVcIsVerified = true;
-			const checkVerifiableCredentialSpy = spyOn(verificationService, 'checkVerifiableCredential').and.returnValue(initiatorVcIsVerified);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(verificationService, 'checkVerifiableCredential')
+				.mockImplementation(async () => initiatorVcIsVerified);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockImplementation(async () => ServerIdentityMock);
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},
@@ -286,7 +293,8 @@ describe('test authentication routes', () => {
 			};
 			const expectedKeyCollection = {
 				type: KeyCollectionMock.type,
-				keys: KeyCollectionMock.keys
+				keys: KeyCollectionMock.keys,
+				publicKeyBase58: 'testpublickey'
 			};
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,
@@ -312,5 +320,9 @@ describe('test authentication routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith(vcMock);
 		});
+	});
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.clearAllMocks();
 	});
 });

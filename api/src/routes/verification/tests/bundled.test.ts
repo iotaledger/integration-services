@@ -46,7 +46,7 @@ describe('test authentication routes', () => {
 
 	describe('test getLatestDocument route', () => {
 		it('should return bad request if no id for the identity is provided!', async () => {
-			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson');
+			const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityJson');
 			const req: any = {
 				params: {},
 				body: null
@@ -61,7 +61,9 @@ describe('test authentication routes', () => {
 
 		it('should return the document of the id', async () => {
 			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
-			const getLatestIdentitySpy = spyOn(ssiService, 'getLatestIdentityJson').and.returnValue(UserIdentityMock);
+			const getLatestIdentitySpy = jest
+				.spyOn(ssiService, 'getLatestIdentityJson')
+				.mockReturnValue(Promise.resolve(UserIdentityMock as any));
 			const req: any = {
 				params: { identityId: id },
 				body: null

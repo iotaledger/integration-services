@@ -18,7 +18,7 @@ export const getChannelData = async (
 
 	const startFilter = startDate ? { $gte: startDate } : {};
 	const endFilter = endDate ? { $lte: endDate } : {};
-	const createdFilter = startDate || endDate ?  { 'log.created':{ ...startFilter, ...endFilter }} : {}
+	const createdFilter = startDate || endDate ? { 'log.created': { ...startFilter, ...endFilter } } : {};
 	const query = {
 		channelAddress,
 		identityId,

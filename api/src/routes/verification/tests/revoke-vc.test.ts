@@ -54,13 +54,17 @@ describe('test authentication routes', () => {
 		it('should throw an error since no verfiable credential is found to revoke!', async () => {
 			const identityToRevoke = vcMock.id;
 			// since we won't have a linkedIdentity for it won't go further
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const linkedIdentity: any = null;
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity');
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential');
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity');
+			const revokeVerifiableCredentialSpy = jest.spyOn(ssiService, 'revokeVerifiableCredential');
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: identityToRevoke },
 				params: {},
@@ -80,7 +84,7 @@ describe('test authentication routes', () => {
 
 		it('is not authorized to revoke the identity since not same request uid as initiatorId', async () => {
 			const identityToRevoke = vcMock.id;
-			const loggerSpy = spyOn(LoggerMock, 'error');
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -91,11 +95,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:4321' }, // different request user id than initiatorId
 				params: {},
@@ -115,7 +125,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since same request uid as initiatorId', async () => {
 			const identityToRevoke = vcMock.id;
-			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
+			const removeUserVcSpy = jest.spyOn(UserDb, 'removeUserVC').mockReturnValue(Promise.resolve({ verifiableCredentials: [] } as any)); // no further vc inside user data
 			const keyCollectionIndex = 0;
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
@@ -127,11 +137,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:1234' }, // same request user id as initiatorId
 				params: {},
@@ -152,7 +168,7 @@ describe('test authentication routes', () => {
 		it('is authorized to revoke the identity since same request uid as subject id', async () => {
 			const vcToRevoke = { ...vcMock, id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' };
 			const identityToRevoke = vcToRevoke.id;
-			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
+			const removeUserVcSpy = jest.spyOn(UserDb, 'removeUserVC').mockReturnValue(Promise.resolve({ verifiableCredentials: [] } as any)); // no further vc inside user da)ta
 			const keyCollectionIndex = 0;
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
@@ -164,11 +180,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' }, // same request user id as linkedIdentity / subject id
 				params: {},
@@ -188,7 +210,7 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an admin user', async () => {
 			const identityToRevoke = vcMock.id;
-			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
+			const removeUserVcSpy = jest.spyOn(UserDb, 'removeUserVC').mockReturnValue(Promise.resolve({ verifiableCredentials: [] } as any)); // no further vc inside user data
 			const keyCollectionIndex = 0;
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
@@ -200,11 +222,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin }, // user is an admin
 				params: {},
@@ -224,7 +252,9 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an admin user but has further valid vcs', async () => {
 			const identityToRevoke = vcMock.id;
-			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [vcMock] }); // has another valid vc inside
+			const removeUserVcSpy = jest
+				.spyOn(UserDb, 'removeUserVC')
+				.mockReturnValue(Promise.resolve({ verifiableCredentials: [vcMock] } as any)); // has another valid vc inside
 			const keyCollectionIndex = 0;
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
@@ -236,11 +266,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
@@ -260,7 +296,9 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an admin user but has further invalid vcs', async () => {
 			const identityToRevoke = vcMock.id;
-			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [vcMock] }); // has another valid vc inside
+			const removeUserVcSpy = jest
+				.spyOn(UserDb, 'removeUserVC')
+				.mockReturnValue(Promise.resolve({ verifiableCredentials: [vcMock] } as any)); // has another valid vc inside
 			const keyCollectionIndex = 0;
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
@@ -272,11 +310,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
@@ -296,8 +340,8 @@ describe('test authentication routes', () => {
 
 		it('is authorized to revoke the identity since it is an org admin user', async () => {
 			const identityToRevoke = vcMock.id;
-			const loggerSpy = spyOn(LoggerMock, 'error');
-			const removeUserVcSpy = spyOn(UserDb, 'removeUserVC').and.returnValue({ verifiableCredentials: [] }); // no further vc inside user data
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const removeUserVcSpy = jest.spyOn(UserDb, 'removeUserVC').mockReturnValue(Promise.resolve({ verifiableCredentials: [] } as any)); // no further vc inside user data
 			const linkedIdentity: VerifiableCredentialPersistence = {
 				index: 0,
 				initiatorId: 'did:iota:1234',
@@ -308,10 +352,16 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: true
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:11223344', role: UserRoles.Manager, type: UserType.Person }, // user is an org admin
 				params: {},
@@ -342,11 +392,17 @@ describe('test authentication routes', () => {
 				docUpdate: ServerIdentityMock.doc,
 				revoked: false
 			};
-			const getVerifiableCredentialSpy = spyOn(KeyCollectionLinksDB, 'getVerifiableCredential').and.returnValue(linkedIdentity);
-			const getIdentitySpy = spyOn(IdentityDocsDb, 'getIdentity').and.returnValue(ServerIdentityMock);
-			const revokeVerifiableCredentialSpy = spyOn(ssiService, 'revokeVerifiableCredential').and.returnValue(revokeResult);
-			const updateIdentityDocSpy = spyOn(IdentityDocsDb, 'updateIdentityDoc');
-			const revokeVerifiableCredentialDbSpy = spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential');
+			const getVerifiableCredentialSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
+				.mockReturnValue(Promise.resolve(linkedIdentity));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const revokeVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'revokeVerifiableCredential')
+				.mockReturnValue(Promise.resolve(revokeResult as any));
+			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
+			const revokeVerifiableCredentialDbSpy = jest
+				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
+				.mockImplementation(async () => null);
 			const req: any = {
 				user: { identityId: 'did:iota:1234', type: UserType.Person }, // same request user id as initiatorId
 				params: {},
@@ -362,5 +418,9 @@ describe('test authentication routes', () => {
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
+	});
+	afterEach(() => {
+		jest.clearAllMocks();
+		jest.resetAllMocks();
 	});
 });
