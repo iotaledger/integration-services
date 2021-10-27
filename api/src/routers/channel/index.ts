@@ -34,7 +34,6 @@ export const channelRouter = Router();
  *             topics:
  *             - type: example-channel-data
  *               source: channel-creator
- *             encrypted: false
  *     responses:
  *       201:
  *         description: Returns the created channel
