@@ -104,7 +104,7 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *         content:
  *           application/json:
  *             schema:
- *               AnyValue: {}
+ *               $ref: '#/components/schemas/IdentitySchema'
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:

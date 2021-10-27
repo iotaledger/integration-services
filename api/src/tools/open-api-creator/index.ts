@@ -38,9 +38,7 @@ import {
 	RevokeSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
-
 import { SubscriptionSchema, SubscriptionUpdateSchema } from '../../models/schemas/subscription';
-
 import fs from 'fs';
 
 /**

@@ -220,6 +220,18 @@ channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  *       description: Preshared key defined by the author to encrypt/decrypt data.
  *       schema:
  *         type: string
+ *     responses:
+ *       200:
+ *         description: Received history.
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 

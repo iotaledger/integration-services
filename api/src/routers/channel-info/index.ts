@@ -177,6 +177,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *                 error:
  *                   type: string
  *       404:
+ *         description: Channel not found.
  *         content:
  *           application/json:
  *             schema:
@@ -237,6 +238,7 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *                 error:
  *                   type: string
  *       404:
+ *         description: Channel not found.
  *         content:
  *           application/json:
  *             schema:
