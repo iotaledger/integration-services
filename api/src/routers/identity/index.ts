@@ -144,7 +144,7 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserSchema"
+ *               $ref: "#/components/schemas/IdentitySchema"
  *       401:
  *         description: No valid api key
  *         content:
@@ -173,7 +173,7 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, ge
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/UserSchema"
+ *             $ref: "#/components/schemas/IdentitySchema"
  *           example:
  *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
@@ -204,7 +204,7 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, ge
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserSchema"
+ *               $ref: "#/components/schemas/IdentitySchema"
  *       401:
  *         description: No valid api key
  *         content:
@@ -234,7 +234,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/UserSchema"
+ *             $ref: "#/components/schemas/IdentitySchema"
  *           example:
  *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
@@ -265,7 +265,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserSchema"
+ *               $ref: "#/components/schemas/IdentitySchema"
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:

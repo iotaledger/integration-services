@@ -29,7 +29,7 @@ export type Nonce = Static<typeof NonceSchema>;
 
 export type ChannelInfoBody = Static<typeof ChannelInfoSchema>;
 
-export type UserSchemaBody = Static<typeof IdentitySchema>;
+export type IdentitySchemaBody = Static<typeof IdentitySchema>;
 
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>;
 export type CreateChannelResponse = Static<typeof CreateChannelResponseSchema>;
