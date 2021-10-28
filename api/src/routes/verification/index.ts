@@ -10,6 +10,7 @@ import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 import { ILogger } from '../../utils/logger';
+import { readRootIdentity } from '../../setup/utilities';
 
 export class VerificationRoutes {
 	constructor(
@@ -40,7 +41,7 @@ export class VerificationRoutes {
 
 			const vc: VerifiableCredentialJson = await this.verificationService.verifyIdentity(
 				subject,
-				this.config.serverIdentityId,
+				readRootIdentity(this.config.serverIdentityId),
 				initiatorVC?.credentialSubject?.id || requestUser.identityId
 			);
 
@@ -76,7 +77,7 @@ export class VerificationRoutes {
 				throw error;
 			}
 
-			await this.verificationService.revokeVerifiableCredential(vcp, this.config.serverIdentityId);
+			await this.verificationService.revokeVerifiableCredential(vcp, readRootIdentity(this.config.serverIdentityId));
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {

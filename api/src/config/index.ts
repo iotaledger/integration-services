@@ -36,9 +36,11 @@ export const CONFIG: Config = {
 };
 
 const assertConfig = (config: Config) => {
+	
 	if (config.serverSecret === '<server-secret>' || config.serverIdentityId === '<server-identity>') {
 		console.error('please replace the default values!');
 	}
+
 	if (config.serverSecret.length !== 32) {
 		throw Error('Server secret must to have a length of 32!');
 	}

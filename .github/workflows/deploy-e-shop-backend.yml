@@ -3,6 +3,10 @@ name: Deploy E-shop-backend
 on:
   push:
     branches: [ master ]
+    paths: 
+      - "clients/e-shop-demo/**"
+      - ".github/workflows/deploy-e-shop-backend.yml"
+
   workflow_dispatch:
 
 jobs:

@@ -34,11 +34,11 @@ describe('test authorize subscription route', () => {
 		const config = StreamsConfigMock;
 		userService = new UserService({} as any, '', LoggerMock);
 		streamsService = new StreamsService(config, LoggerMock);
-		spyOn(streamsService, 'getMessages').and.returnValue([]);
+		jest.spyOn(streamsService, 'getMessages').mockImplementation(async () => []);
 		channelInfoService = new ChannelInfoService(userService);
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
-		spyOn(channelDataDb, 'addChannelData');
+		jest.spyOn(channelDataDb, 'addChannelData').mockImplementation(async () => null);
 		res = {
 			send: sendMock,
 			sendStatus: sendStatusMock,
@@ -47,7 +47,7 @@ describe('test authorize subscription route', () => {
 	});
 
 	it('should call nextMock if no body is provided', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
 			params: {},
 			user: { identityId: undefined },
@@ -72,8 +72,8 @@ describe('test authorize subscription route', () => {
 	});
 
 	it('should return error if no subscription using the link is found to authorize', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		spyOn(subscriptionService, 'getSubscriptionByLink').and.returnValue(null); // no subscription found to authorize
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
 			params: {}, // no channelAddress
 			user: { identityId: 'did:iota:1234' },
@@ -86,8 +86,8 @@ describe('test authorize subscription route', () => {
 	});
 
 	it('should return error if no subscription using the id is found to authorize', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(null); // no subscription found to authorize
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
 			params: {}, // no channelAddress
 			user: { identityId: 'did:iota:1234' },
@@ -101,7 +101,7 @@ describe('test authorize subscription route', () => {
 
 	it('should return bad request since subscription is already authorized', async () => {
 		const sub = { ...subscriptionMock, isAuthorized: true };
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(sub);
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => sub);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -124,10 +124,14 @@ describe('test authorize subscription route', () => {
 			state: ''
 		};
 		const isAuthor = false;
-		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
+		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
 
 		const sub = { ...subscriptionMock, isAuthorized: false };
-		spyOn(subscriptionService, 'getSubscription').and.returnValues(sub, notanauthor);
+		// TODO
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => sub)
+			.mockImplementationOnce(async () => notanauthor);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:different-as-author' },
@@ -150,10 +154,13 @@ describe('test authorize subscription route', () => {
 			state: 'teststateofauthor'
 		};
 		const isAuthor = true;
-		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
-		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const importAuthorSpy = spyOn(streamsService, 'importSubscription').and.returnValue(null); // no author
+		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
@@ -179,14 +186,19 @@ describe('test authorize subscription route', () => {
 			pskId
 		};
 		const isAuthor = true;
-		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
-		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
-		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
+		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
+		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe').mockImplementation(async () => null);
 		const authorMock = AuthorMock;
-		const importAuthorSpy = spyOn(streamsService, 'importSubscription').and.returnValue(authorMock); // author found
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({ keyloadLink: '' });
+		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => authorMock); // author found
+		const authorizeSubscriptionSpy = jest
+			.spyOn(streamsService, 'sendKeyload')
+			.mockImplementation(async () => ({ keyloadLink: '', sequenceLink: '' }));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
@@ -215,20 +227,23 @@ describe('test authorize subscription route', () => {
 			pskId // presharedKey is undefined
 		};
 		const isAuthor = true;
-		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
-		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
-		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
+		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
+		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const authorMock = AuthorMock;
-		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
-		const importAuthorSpy = spyOn(streamsService, 'importSubscription').and.returnValue(authorMock); // author found
-		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
+		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe').mockImplementation(async () => null);
+		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => authorMock); // author found
+		const updateSubscriptionStateSpy = jest.spyOn(subscriptionService, 'updateSubscriptionState').mockImplementation(async () => null);
+		const authorizeSubscriptionSpy = jest.spyOn(streamsService, 'sendKeyload').mockImplementation(async () => ({
 			keyloadLink: 'testkeyloadlink',
 			sequenceLink: 'testsequencelink',
 			author: authorMock
-		}); // keyloadLink got created
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
-		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
+		})); // keyloadLink got created
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
+		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },
@@ -260,20 +275,24 @@ describe('test authorize subscription route', () => {
 			pskId
 		};
 		const isAuthor = true;
-		spyOn(subscriptionService, 'isAuthor').and.returnValue(isAuthor);
-		spyOn(subscriptionService, 'getSubscription').and.returnValues(subscriptionMock, author);
-		spyOn(subscriptionDb, 'getSubscriptions').and.returnValue([]);
+		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => subscriptionMock)
+			.mockImplementationOnce(async () => author);
+
+		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const authorMock = AuthorMock;
-		const receiveSubscribeSpy = spyOn(streamsService, 'receiveSubscribe');
-		const importAuthorSpy = spyOn(streamsService, 'importSubscription').and.returnValue(authorMock); // author found
-		const updateSubscriptionStateSpy = spyOn(subscriptionService, 'updateSubscriptionState');
-		const authorizeSubscriptionSpy = spyOn(streamsService, 'sendKeyload').and.returnValue({
+		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe').mockImplementation(async () => null);
+		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => authorMock); // author found
+		const updateSubscriptionStateSpy = jest.spyOn(subscriptionService, 'updateSubscriptionState').mockImplementation(async () => null);
+		const authorizeSubscriptionSpy = jest.spyOn(streamsService, 'sendKeyload').mockImplementation(async () => ({
 			keyloadLink: 'testkeyloadlink',
 			sequenceLink: 'testsequencelink',
 			author: authorMock
-		}); // keyloadLink got created
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('new-state');
-		const setSubscriptionAuthorizedSpy = spyOn(subscriptionService, 'setSubscriptionAuthorized');
+		})); // keyloadLink got created
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
+		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: authorId },

@@ -9,6 +9,7 @@ import { StreamsService } from '../services/streams-service';
 import { SubscriptionService } from '../services/subscription-service';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
+import { readRootIdentity } from '../setup/utilities';
 import { Logger } from '../utils/logger';
 
 const { serverSecret, identityConfig, serverIdentityId, jwtExpiration, streamsConfig } = CONFIG;
@@ -33,7 +34,7 @@ export const verificationService = new VerificationService(
 	ssiService,
 	userService,
 	{
-		serverIdentityId,
+		serverIdentityId: readRootIdentity(serverIdentityId),
 		serverSecret,
 		keyCollectionSize: KEY_COLLECTION_SIZE
 	},

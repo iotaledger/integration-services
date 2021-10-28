@@ -11,6 +11,8 @@ import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import * as ChannelDataDb from '../../../database/channel-data';
 import { SubscriberMock } from '../../../test/mocks/streams';
+import { Subscription } from '../../../models/types/subscription';
+import { Subscriber } from '@iota/streams/node/streams_wasm';
 
 describe('test re-import route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -68,8 +70,8 @@ describe('test re-import route', () => {
 			user,
 			body: { seed: 'testseeddontusethis' }
 		};
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue(null); // no subscription found
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found
 
 		await channelRoutes.reimport(req, res, nextMock);
 
@@ -86,12 +88,15 @@ describe('test re-import route', () => {
 			user,
 			body: { seed: 'testseeddontusethis' }
 		};
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey',
-			accessRights: AccessRights.Write // wrong access rights
-		});
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey',
+					accessRights: AccessRights.Write // wrong access rights
+				} as Subscription)
+		);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
@@ -108,12 +113,15 @@ describe('test re-import route', () => {
 			user,
 			body: { seed: 'testseeddontusethis' }
 		};
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey',
-			accessRights: AccessRights.Write // wrong access rights
-		});
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey',
+					accessRights: AccessRights.Write // wrong access rights
+				} as Subscription)
+		);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
@@ -131,16 +139,19 @@ describe('test re-import route', () => {
 			user,
 			body: { seed }
 		};
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey', // different public key as newSub
-			accessRights: AccessRights.Read,
-			state: 'teststate'
-		});
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey', // different public key as newSub
+					accessRights: AccessRights.Read,
+					state: 'teststate'
+				} as Subscription)
+		);
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const newSub = { clone: () => newSub, get_public_key: () => 'differenttestkey' }; // public key is different as the one in the prev. subscription
-		const resetStateSpy = spyOn(streamsService, 'resetState').and.returnValue(newSub);
-		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(SubscriberMock);
+		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as Subscriber);
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
@@ -160,18 +171,21 @@ describe('test re-import route', () => {
 			user,
 			body: { seed }
 		};
-		const loggerSpy = spyOn(LoggerMock, 'error');
-		const getSubscriptionSpy = spyOn(subscriptionService, 'getSubscription').and.returnValue({
-			keyloadLink: 'testlink',
-			publicKey: 'testkey', // same public key as in newSub
-			accessRights: AccessRights.Read,
-			state: 'teststate'
-		});
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+			async () =>
+				({
+					keyloadLink: 'testlink',
+					publicKey: 'testkey', // same public key as in newSub
+					accessRights: AccessRights.Read,
+					state: 'teststate'
+				} as Subscription)
+		);
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
-		const resetStateSpy = spyOn(streamsService, 'resetState').and.returnValue(newSub);
-		const removeChannelDataSpy = spyOn(ChannelDataDb, 'removeChannelData');
-		const fetchLogsSpy = spyOn(channelService, 'fetchLogs');
-		const importSubscriptionSpy = spyOn(streamsService, 'importSubscription').and.returnValue(SubscriberMock);
+		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as Subscriber);
+		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
+		const fetchLogsSpy = jest.spyOn(channelService, 'fetchLogs').mockImplementation(async () => null);
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock);
 
 		await channelRoutes.reimport(req, res, nextMock);
 
@@ -182,5 +196,10 @@ describe('test re-import route', () => {
 		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.identityId, newSub);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
+	});
+
+	afterEach(() => {
+		jest.resetAllMocks();
+		jest.resetModules();
 	});
 });

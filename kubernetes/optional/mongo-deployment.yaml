@@ -20,11 +20,13 @@ spec:
         ports:
           - containerPort: 27017
         volumeMounts:
-        - mountPath: /data/db
-          name: db
+        - name: db
+          mountPath: /data/db
+        - name: mongo-init
+          mountPath: /docker-entrypoint-initdb.d
         env:
           - name: MONGO_INITDB_DATABASE
-            value: "e-commerce-audit-log"
+            value: "integration-service-db"
           - name: MONGO_INITDB_ROOT_USERNAME
             valueFrom:
               secretKeyRef:
@@ -38,4 +40,11 @@ spec:
       volumes:
       - name: db
         emptyDir: {}
+      - name: mongo-init
+        configMap:
+          name: init-mongo-cfg
+          items:
+          - key: mongo-init.js
+            path: mongo-init.js
+      
                   

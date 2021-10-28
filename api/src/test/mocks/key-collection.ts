@@ -3,6 +3,7 @@ export const KeyCollectionMock = {
 	count: 8,
 	index: 0,
 	type: 'ed25519',
+	publicKeyBase58: 'testpublickey',
 	keys: [
 		{ public: '8umCw8eGrcJvo2uEcfa4138LJaW3mebiQkDfEaR7hTpG', secret: 'fmgfdXAGDpc9AGnNVHUiktAi8KQnhi2cWeL5Lp1TWtm' },
 		{ public: 'AKUEjuUumzF8h2qArNzPVko51z4XmSL6xNcDGFqzpiT7', secret: 'EHUYgZTk83xyeBNzYRVBb1StF6mDnzLjEwdX8PpCAtZ5' },

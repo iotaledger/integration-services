@@ -10,7 +10,7 @@
 		"typeRoots": ["node_modules/@types", "types"],
 		"outDir": "dist",
 		"resolveJsonModule": true,
-		"allowJs": true
+		"allowJs": true,
 	},
 	"include": ["src"]
 }

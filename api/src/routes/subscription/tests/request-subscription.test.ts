@@ -33,7 +33,7 @@ describe('test request subscription route', () => {
 	});
 
 	it('should call nextMock if no body is provided', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
 			params: {},
 			user: { identityId: undefined },
@@ -58,7 +58,7 @@ describe('test request subscription route', () => {
 	});
 
 	it('should return bad request since no channelAddress is provided', async () => {
-		spyOn(subscriptionService, 'getSubscription').and.returnValue({}); // already a subscription is found!
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
 			params: {}, // no channelAddress
 			user: { identityId: 'did:iota1234' },
@@ -71,7 +71,7 @@ describe('test request subscription route', () => {
 	});
 
 	it('should return bad request since already a subscription is requested', async () => {
-		spyOn(subscriptionService, 'getSubscription').and.returnValue({}); // already a subscription is found!
+		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota1234' },
@@ -84,7 +84,7 @@ describe('test request subscription route', () => {
 	});
 
 	it('should not create a subscription since publicKey already used', async () => {
-		const loggerSpy = spyOn(LoggerMock, 'error');
+		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const foundSubscription: Subscription = {
 			accessRights: AccessRights.Read,
 			channelAddress: 'testaddress',
@@ -97,16 +97,18 @@ describe('test request subscription route', () => {
 		};
 		const seed: string = undefined;
 		const presharedKey: string = undefined;
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
-		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(foundSubscription); // found some subscription so should return an error
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
+		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
+		const getSubscriptionByPublicKeySpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionByPublicKey')
+			.mockImplementation(async () => foundSubscription); // found some subscription so should return an error
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
 
-		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
+		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
 			seed: 'testseed'
-		});
+		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -125,18 +127,18 @@ describe('test request subscription route', () => {
 	it('should create a subscription', async () => {
 		const seed: string = undefined;
 		const presharedKey: string = undefined;
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
-		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
-		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
+		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
+		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
+		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 
-		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
+		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
 			seed: 'testseed'
-		});
+		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -168,19 +170,19 @@ describe('test request subscription route', () => {
 	it('should create a subscription using a preshared key', async () => {
 		const seed: string = undefined;
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
-		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
-		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
+		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
+		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
+		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 
-		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
+		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
 			seed: 'testseed',
 			pskId: 'testpskid'
-		});
+		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },
@@ -215,19 +217,19 @@ describe('test request subscription route', () => {
 	it('should create a subscription using a preshared key but not having ReadAndWrite rights', async () => {
 		const seed: string = undefined;
 		const presharedKey = 'd57921c36648c411db5048b652ec11b8';
-		spyOn(subscriptionService, 'getSubscription').and.returnValue(null);
-		const subscriptionServiceAddSpy = spyOn(subscriptionService, 'addSubscription');
-		const getSubscriptionByPublicKeySpy = spyOn(subscriptionService, 'getSubscriptionByPublicKey').and.returnValue(null);
-		const exportSubscriptionSpy = spyOn(streamsService, 'exportSubscription').and.returnValue('teststate');
-		const addChannelSubscriberIdSpy = spyOn(channelInfoService, 'addChannelSubscriberId');
+		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
+		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
+		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 
-		const requestSubscriptionSpy = spyOn(streamsService, 'requestSubscription').and.returnValue({
+		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
 			subscriptionLink: 'testlink',
 			publicKey: undefined, // no public key since uses presharedkey
 			seed: 'testseed',
 			pskId: 'testpskid'
-		});
+		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { identityId: 'did:iota:1234' },

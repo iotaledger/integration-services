@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: integration-service-api
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$2
+spec:
+  rules:
+  - host: ensuresec.solutions.iota.org
+    http:
+      paths:
+      - path: /api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: integration-service-api
+            port:
+              number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: integration-service-fe
+spec:
+  rules:
+  - host: ensuresec.solutions.iota.org
+    http:
+      paths:
+      - path: /info
+        pathType: Prefix
+        backend:
+          service:
+            name: integration-service-api
+            port:
+              number: 3000      
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: integration-service-fe-service
+            port:
+              number: 5000
