@@ -25,8 +25,7 @@ Subfolder:
 3. The client creates a stream channel with the body:
 ```
 {
-    "topics": [{"type":"hashed-audit-log-file","source":"frama-c-client"}],
-    "encrypted":false
+    "topics": [{"type":"hashed-audit-log-file","source":"frama-c-client"}]
 }
 ```
 
