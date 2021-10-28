@@ -69,7 +69,7 @@ describe('test authentication routes', () => {
 			const req: any = {
 				params: {},
 				user: null, // no admin user
-				body: { trustedRoot: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
+				body: { trustedRootId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
 			};
 
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
@@ -87,7 +87,7 @@ describe('test authentication routes', () => {
 				user: {
 					role: UserRoles.Admin
 				},
-				body: { trustedRoot: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
+				body: { trustedRootId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
 			};
 
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
@@ -105,7 +105,7 @@ describe('test authentication routes', () => {
 				user: {
 					role: UserRoles.Admin
 				},
-				body: { trustedRoot: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
+				body: { trustedRootId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
 			};
 
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
@@ -118,9 +118,9 @@ describe('test authentication routes', () => {
 	describe('test delete trusted root route', () => {
 		it('should return unauthorized if user is no admin!', async () => {
 			const req: any = {
-				params: {},
+				params: { trustedRootId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' },
 				user: null, // no admin user
-				body: { trustedRoot: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
+				body: {}
 			};
 
 			await verificationRoutes.addTrustedRootIdentity(req, res, nextMock);
@@ -134,11 +134,11 @@ describe('test authentication routes', () => {
 				throw new Error('db error');
 			});
 			const req: any = {
-				params: {},
+				params: { trustedRootId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' },
 				user: {
 					role: UserRoles.Admin
 				},
-				body: { trustedRoot: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
+				body: {}
 			};
 
 			await verificationRoutes.removeTrustedRootIdentity(req, res, nextMock);
@@ -152,11 +152,11 @@ describe('test authentication routes', () => {
 				.spyOn(TrustedRootsDb, 'removeTrustedRootId')
 				.mockReturnValue(Promise.resolve({ result: { n: 1 } } as any));
 			const req: any = {
-				params: {},
+				params: { trustedRootId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' },
 				user: {
 					role: UserRoles.Admin
 				},
-				body: { trustedRoot: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }
+				body: {}
 			};
 
 			await verificationRoutes.removeTrustedRootIdentity(req, res, nextMock);

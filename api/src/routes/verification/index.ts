@@ -10,6 +10,7 @@ import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 import { ILogger } from '../../utils/logger';
+import * as _ from 'lodash';
 
 export class VerificationRoutes {
 	constructor(
@@ -105,12 +106,12 @@ export class VerificationRoutes {
 
 	addTrustedRootIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
-			const { trustedRoot } = req.body as TrustedRootBody;
+			const { trustedRootId } = req.body as TrustedRootBody;
 			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
 				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized!' });
 			}
 
-			await this.verificationService.addTrustedRootId(trustedRoot);
+			await this.verificationService.addTrustedRootId(trustedRootId);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);
@@ -120,12 +121,17 @@ export class VerificationRoutes {
 
 	removeTrustedRootIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
-			const { trustedRoot } = req.body as TrustedRootBody;
+			const trustedRootId = _.get(req, 'params.trustedRootId');
+
+			if (_.isEmpty(trustedRootId)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no trustedRootId provided' });
+			}
+
 			if (!this.authorizationService.isAuthorizedAdmin(req.user)) {
 				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized!' });
 			}
 
-			await this.verificationService.removeTrustedRootId(trustedRoot);
+			await this.verificationService.removeTrustedRootId(trustedRootId);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);
@@ -156,7 +162,11 @@ export class VerificationRoutes {
 		return { isAuthorized: true, error: null };
 	};
 
-	isAuthorizedToVerify = async (subject: Subject, initiatorVC: VerifiableCredentialJson, requestUser: User): Promise<AuthorizationCheck> => {
+	isAuthorizedToVerify = async (
+		subject: Subject,
+		initiatorVC: VerifiableCredentialJson,
+		requestUser: User
+	): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
 		if (!isAdmin) {
 			if (!initiatorVC || !initiatorVC.credentialSubject) {
