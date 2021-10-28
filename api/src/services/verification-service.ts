@@ -198,12 +198,12 @@ export class VerificationService {
 		return trustedRoots.map((root) => root.identityId);
 	}
 
-	async addTrustedRootId(trustedRoot: string) {
-		return TrustedRootsDb.addTrustedRootId(trustedRoot);
+	async addTrustedRootId(trustedRootId: string) {
+		return TrustedRootsDb.addTrustedRootId(trustedRootId);
 	}
 
-	async removeTrustedRootId(trustedRoot: string) {
-		return TrustedRootsDb.removeTrustedRootId(trustedRoot);
+	async removeTrustedRootId(trustedRootId: string) {
+		return TrustedRootsDb.removeTrustedRootId(trustedRootId);
 	}
 
 	async setUserVerified(identityId: string, issuerId: string, vc: VerifiableCredentialJson) {
@@ -219,7 +219,11 @@ export class VerificationService {
 		await IdentityDocsDb.updateIdentityDoc(docUpdate);
 	}
 
-	private async generateKeyCollection(keyCollectionIndex: number, keyCollectionSize: number, issuerId: string): Promise<KeyCollectionPersistence> {
+	private async generateKeyCollection(
+		keyCollectionIndex: number,
+		keyCollectionSize: number,
+		issuerId: string
+	): Promise<KeyCollectionPersistence> {
 		try {
 			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
 
@@ -227,7 +231,11 @@ export class VerificationService {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));
 			}
 
-			const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
+			const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(
+				keyCollectionIndex,
+				keyCollectionSize,
+				issuerIdentity
+			);
 			await this.updateDatabaseIdentityDoc(docUpdate);
 			return {
 				...keyCollectionJson,

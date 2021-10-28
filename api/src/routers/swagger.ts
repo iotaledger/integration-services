@@ -37,10 +37,6 @@ export const openApiDefinition = {
 				description: 'Manage and authorize subscriptions'
 			},
 			{
-				name: 'verification',
-				description: 'Create and verifiy credentials'
-			},
-			{
 				name: 'server-info',
 				description: 'Get information about the server'
 			}

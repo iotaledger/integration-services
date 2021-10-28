@@ -80,7 +80,7 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *           schema:
  *             $ref: "#/components/schemas/TrustedRootBodySchema"
  *           example:
- *             trustedRoot: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *             trustedRootId: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *     responses:
  *       200:
  *         description: Successful added trusted Root identity identifier.
@@ -142,21 +142,24 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
 
 /**
  * @openapi
- * /verification/trusted-roots:
+ * /verification/trusted-roots/{trustedRootId}:
  *   delete:
  *     summary: Remove Trusted Root identity identifiers (DIDs)
  *     description: Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
  *     tags:
  *     - verification
+ *     parameters:
+ *     - name: trustedRootId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: '#/components/schemas/IdentityIdSchema'
+ *       examples:
+ *         trustedRootId:
+ *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
+ *           summary: Root identity removed from the service
  *     security:
  *       - BearerAuth: []
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/TrustedRootBodySchema"
- *           example:
- *             trustedRoot: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *     responses:
  *       200:
  *         description: Successful removed trusted Root identity identifier.
@@ -173,13 +176,7 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-verificationRouter.delete(
-	'/trusted-roots',
-	apiKeyMiddleware,
-	authMiddleWare,
-	validate({ body: TrustedRootBodySchema }),
-	removeTrustedRootIdentity
-);
+verificationRouter.delete('/trusted-roots/:trustedRootId', apiKeyMiddleware, authMiddleWare, removeTrustedRootIdentity);
 
 /**
  * @openapi

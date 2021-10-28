@@ -254,6 +254,12 @@ subscriptionRouter.post(
  *     - name: channelAddress
  *       in: path
  *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     requestBody:

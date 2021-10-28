@@ -7,7 +7,7 @@ import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '../../models/types/identity';
-import { UserSchemaBody } from '../../models/types/request-response-bodies';
+import { IdentitySchemaBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { VerificationService } from '../../services/verification-service';
 
@@ -61,7 +61,7 @@ export class IdentityRoutes {
 
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
-			const user = req.body as UserSchemaBody;
+			const user = req.body as IdentitySchemaBody;
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {
