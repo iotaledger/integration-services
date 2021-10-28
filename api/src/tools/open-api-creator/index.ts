@@ -29,7 +29,7 @@ import {
 } from '../../models/schemas/identity';
 import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
-import { IdentitySchema, IdentityWithoutIdFields } from '../../models/schemas/user';
+import { IdentitySchema } from '../../models/schemas/user';
 import {
 	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
@@ -38,9 +38,7 @@ import {
 	RevokeSubscriptionBodySchema
 } from '../../models/schemas/request-response-body/subscription-bodies';
 import { ErrorResponseSchema, IdentityIdSchema } from '../../models/schemas/request-response-body/misc-bodies';
-
 import { SubscriptionSchema, SubscriptionUpdateSchema } from '../../models/schemas/subscription';
-
 import fs from 'fs';
 
 /**
@@ -88,7 +86,6 @@ const schemas = {
 	ProductSchema,
 	ServiceSchema,
 	IdentitySchema,
-	IdentityWithoutIdFields,
 	IdentityIdSchema,
 	NonceSchema,
 	ChannelAddressSchema

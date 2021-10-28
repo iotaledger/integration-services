@@ -17,6 +17,5 @@ export const CreatorIdentity = {
 };
 
 export const ChannelConfig = {
-	topics: [{ type: 'hashed-audit-log-file', source: 'frama-c-client' }],
-	encrypted: false
+	topics: [{ type: 'hashed-audit-log-file', source: 'frama-c-client' }]
 };

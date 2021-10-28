@@ -24,5 +24,5 @@ export const RevokeVerificationBodySchema = Type.Object({
 });
 
 export const TrustedRootBodySchema = Type.Object({
-	trustedRoot: Type.String({ minLength: 50, maxLength: 53 }) // did
+	trustedRootId: Type.String({ minLength: 50, maxLength: 53 }) // did
 });

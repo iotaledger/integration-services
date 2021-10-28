@@ -34,7 +34,6 @@ export const channelRouter = Router();
  *             topics:
  *             - type: example-channel-data
  *               source: channel-creator
- *             encrypted: false
  *     responses:
  *       201:
  *         description: Returns the created channel
@@ -221,6 +220,18 @@ channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  *       description: Preshared key defined by the author to encrypt/decrypt data.
  *       schema:
  *         type: string
+ *     responses:
+ *       200:
+ *         description: Received history.
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
 
@@ -232,6 +243,16 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  *     description: Validates data of a channel.
  *     tags:
  *     - channels
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
  *     requestBody:

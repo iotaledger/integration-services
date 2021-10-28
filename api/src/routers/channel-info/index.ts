@@ -158,7 +158,6 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *             - did:iota:D2hAY4ETPv2YFjyXQpeijgNp1bb1MijmXtiBJNNKx1NE
  *             - did:iota:9aJBqphbRMpdgAunuSE7iLKpEhu991ZQLUQutF6HWDpJ
  *             latestLink: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:8ff362973ecc2cfd62831acb
- *             encrypted: false
  *             topics:
  *             - type: example-channel-data
  *               source: channel-creator
@@ -177,6 +176,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *                 error:
  *                   type: string
  *       404:
+ *         description: Channel not found.
  *         content:
  *           application/json:
  *             schema:
@@ -218,7 +218,6 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *             - did:iota:D2hAY4ETPv2YFjyXQpeijgNp1bb1MijmXtiBJNNKx1NE
  *             - did:iota:9aJBqphbRMpdgAunuSE7iLKpEhu991ZQLUQutF6HWDpJ
  *             latestLink: 186ae31cffc392c8de858b95e82591368fee453da41653469a35d442c18a4f7e0000000000000000:8ff362973ecc2cfd62831acb
- *             encrypted: false
  *             topics:
  *             - type: example-channel-data
  *               source: channel-creator
@@ -237,6 +236,7 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *                 error:
  *                   type: string
  *       404:
+ *         description: Channel not found.
  *         content:
  *           application/json:
  *             schema:
