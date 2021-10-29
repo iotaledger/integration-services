@@ -59,8 +59,9 @@ eceaab9343eb   mongo:latest   "docker-entrypoint.s…"   7 seconds ago   Up 7 se
 
 2.1. Make sure you are in the `/api` folder and use the following commands:
 ```
-npm install
-npm run start
+npm install     # Install dependencies
+npm run keygen  # Generate root identity: output on SERVER_ENTITY file
+npm run start   # Run server
 ```
 
 If it was the first time the api is started, no `SERVER_IDENTITY` is defined since it was left blank previously. The api should log a newly generated identity id which needs to be used as server identity as following:
