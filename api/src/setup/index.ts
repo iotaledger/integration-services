@@ -27,6 +27,7 @@ export class KeyGenerator {
         this.serverSecret = serverSecret;
         this.serverIdentityId = serverIdentityId;
         this.identityConfig = identityConfig;
+        this.keyResolver = keyResolver;
 
         if (!this.serverSecret) {
             throw Error('A server secret must be defined to work with the API!');
@@ -42,7 +43,7 @@ export class KeyGenerator {
     
         logger.log(`Checking root identity...`);
     
-        const serverIdentityId = readRootIdentity(this.serverIdentityId);
+        const serverIdentityId = this.keyResolver.resolve(this.serverIdentityId);
         if (!serverIdentityId) {
             logger.error("Root identity is missing")
             return null;
@@ -124,7 +125,7 @@ export class KeyGenerator {
         
         // Check if root identity exists and if it is valid
         try {
-            const rootIdentity = readRootIdentity(this.serverIdentityId);
+            const rootIdentity = this.keyResolver.resolve(this.serverIdentityId);
             if (rootIdentity) {
                 logger.error("Root identity already exists: verify it, " + rootIdentity);
                 const serverIdentity = await this.getRootIdentityFromId(rootIdentity)

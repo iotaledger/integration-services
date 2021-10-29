@@ -14,6 +14,7 @@ import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
+import { KeyResolver } from './setup/key-resolver';
 
 const logger = Logger.getInstance();
 
@@ -42,7 +43,7 @@ async function hasRootIdentity(): Promise<string> {
 
 		await MongoDbService.connect(dbUrl, dbName);
 
-		const keyGenerator: KeyGenerator = new KeyGenerator(serverSecret, serverIdentityId, CONFIG.identityConfig);
+		const keyGenerator: KeyGenerator = new KeyGenerator(new KeyResolver(), serverSecret, serverIdentityId, CONFIG.identityConfig);
 
 		const rootIdentity = await keyGenerator.checkRootIdentity();
 
@@ -115,7 +116,7 @@ else if (argv._.includes("keygen")) {
 
 			await MongoDbService.connect(dbUrl, dbName);
 	
-			const keyGenerator: KeyGenerator = new KeyGenerator(serverSecret, serverIdentityId, CONFIG.identityConfig);
+			const keyGenerator: KeyGenerator = new KeyGenerator(new KeyResolver(), serverSecret, serverIdentityId, CONFIG.identityConfig);
 		
 			await keyGenerator.keyGeneration();
 	
