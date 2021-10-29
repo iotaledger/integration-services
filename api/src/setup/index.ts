@@ -6,23 +6,24 @@ import { UserService } from "../services/user-service";
 import { VerificationService } from "../services/verification-service";
 import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from "../utils/encryption";
 import { Logger } from "../utils/logger";
-import { readRootIdentity } from "./utilities";
 
 import * as serverIdentityJson from '../config/server-identity.json';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { SsiService } from "../services/ssi-service";
 import { KEY_COLLECTION_SIZE } from "../config/identity";
 import { IdentityConfig } from "../models/config";
+import { KeyResolver } from "./key-resolver";
 
 const logger = Logger.getInstance();
 
 export class KeyGenerator {
-   
+
+    private keyResolver: KeyResolver;
     private identityConfig: IdentityConfig;
     private serverSecret: string;
     private serverIdentityId: string;
 
-    constructor(serverSecret: string, serverIdentityId: string, identityConfig: IdentityConfig) {
+    constructor(keyResolver: KeyResolver, serverSecret: string, serverIdentityId: string, identityConfig: IdentityConfig) {
         this.serverSecret = serverSecret;
         this.serverIdentityId = serverIdentityId;
         this.identityConfig = identityConfig;
