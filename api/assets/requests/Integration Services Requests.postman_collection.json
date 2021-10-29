@@ -1,0 +1,1869 @@
+{
+	"info": {
+		"_postman_id": "489c0a13-58a4-4d0f-9040-92617dc97fe9",
+		"name": "Integration Services Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "info",
+			"item": [
+				{
+					"name": "Get server info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/info",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "channel-info",
+			"item": [
+				{
+					"name": "Get Channel Info form test-address channel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"channel-info",
+								"channel",
+								"{{channel_address}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Channel Info",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"description": "Token of the same device!",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n        \"created\": \"2021-06-30T17:15:52+02:00\",\n        \"authorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"subscriberIds\": [],\n        \"topics\": [\n            {\n                \"type\": \"smart-audit-log\",\n                \"source\": \"devices and user\"\n            }\n        ],\n        \"encrypted\": false,\n        \"latestLink\": \"a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e\",\n        \"channelAddress\": \"a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/channel-info/channel/",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"channel-info",
+								"channel",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Channel Info",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"description": "Token of the same device!",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "",
+								"description": "Token of other user id as author id",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n        \"created\": \"2021-06-30T17:15:52+02:00\",\n        \"authorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"subscriberIds\": [],\n        \"topics\": [\n            {\n                \"type\": \"smart-audit-log\",\n                \"source\": \"devices and user\"\n            }\n        ],\n        \"encrypted\": false,\n        \"latestLink\": \"a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e\",\n        \"channelAddress\": \"a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/channel-info/channel",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"channel-info",
+								"channel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Channel Info",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"description": "Different User not allowed to delete channel!",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/channel-info/channel/a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"channel-info",
+								"channel",
+								"a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Channel Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/channel-info/search?created=2021-06-16T10%3A03%3A22.758%2B00%3A00",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"channel-info",
+								"search"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "iota-test",
+									"disabled": true
+								},
+								{
+									"key": "created",
+									"value": "2021-06-16T10%3A03%3A22.758%2B00%3A00"
+								},
+								{
+									"key": "author-id",
+									"value": "did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc",
+									"disabled": true
+								},
+								{
+									"key": "topic-type",
+									"value": "smart-audit-log",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Channel Info #2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{user_jwt}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/channel-info/search?created=2021-02-14T16:11:48",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"channel-info",
+								"search"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "asxa",
+									"disabled": true
+								},
+								{
+									"key": "created",
+									"value": "2021-02-14T16:11:48"
+								},
+								{
+									"key": "author-id",
+									"value": "public-key-charlie",
+									"disabled": true
+								},
+								{
+									"key": "latest-message",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "skip",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "topic-source",
+									"value": "device",
+									"disabled": true
+								},
+								{
+									"key": "topic-type",
+									"value": "error-",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "channel",
+			"item": [
+				{
+					"name": "Subscription Management",
+					"item": [
+						{
+							"name": "Get Subscriptions of channel",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add existing subscription",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "    {\n        \"type\": \"Subscriber\",\n        \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": false,\n        \"state\":\"\",\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:27:37.425Z\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"{{channel_address}}",
+										"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT existing subscription Copy",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"type\": \"Subscriber\",\n        \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": true,\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:32:50.795Z\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"{{channel_address}}",
+										"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE existing Subscription",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"{{channel_address}}",
+										"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revoke subscription",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/revoke/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"revoke",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Authorize to channel",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subscriptionLink\": \"b8729dd5b5e301aaaa61124c54fdc31fd3d95ecd4096cffd6205263dffe0c53e0000000000000000:af49031fa8b734ece21b45e1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/authorize/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"authorize",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Subscribe to channel",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"accessRights\": \"ReadAndWrite\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"request",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Subscribe to channel using presharedkey",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"description": "did:iota:4tc84TCUDpcUg4Lsf6MsumYBHDKskQVJrzq9HcL3pWXW",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"description": "did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"accessRights\": \"Read\",\n    \"presharedKey\":\"b73c7d279a658ad32456b6302a125056\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"request",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Add & Get Channel Data",
+					"item": [
+						{
+							"name": "Get Channel Info",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channel-info",
+										"channel",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Channel",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"topics\": [{\"type\":\"smart-audit-log\",\"source\":\"devices and user\"}],\n    \"hasPresharedKey\":true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/create",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Channel Logs as author",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"logs",
+										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "index",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "asc",
+											"value": "true",
+											"disabled": true
+										},
+										{
+											"key": "start-date",
+											"value": "2021-09-21T14:36:21%2b02:00",
+											"disabled": true
+										},
+										{
+											"key": "end-date",
+											"value": "2021-09-22T14:36:24%2b02:00",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Channel Logs as device subscriber",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"logs",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Channel Logs as user subscriber",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"logs",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Channel History",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/channels/history/{{channel_address}}?preshared-key=9d99aab2f931cf62d3508746dde80b76",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"history",
+										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "preshared-key",
+											"value": "9d99aab2f931cf62d3508746dde80b76"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Channel log - as author",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"author-test\",\n    \"metadata\": {\"somedata\":22},\n    \"publicPayload\": {\"data\":\"testdata123\"},\n    \"payload\": {\"obj\":\"I am an object from the author\", \"x1\":12359, \"x2\":{\"y\":\"nested array\"}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"logs",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Channel log - as device subscriber",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"subscriber-test\",\n    \"payload\": \"payload from device 113\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"logs",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Channel log as user subscriber",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"subscriber-test\",\n    \"payload\": \"message from the user hiii 444\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"logs",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reimport data as subscriber",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"seed\": \"mzocsrihwhezkckcubfiiuqvrcpfgkisarqelzwnesvoubknjmyitmxddniyhpzuecwhszyb\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/re-import/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"re-import",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reimport data as Author",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{    \n    \"seed\": \"juluidbfqrjpuzgwxtmsbcrsvatyvcowcsgzwilmwewqkkkhazpzgpenbjvwhthjplycieyh\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/re-import/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"re-import",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate logs",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"link\": \"f0fc2323e9d4f994834fd6a130c06a659f2f520a1746e7a52f415c65157672030000000000000000:f0b443ac99b6433d94e8b843\",\n        \"log\": {\n            \"created\": \"2021-09-29T16:14:13+02:00\",\n            \"type\": \"author-test\",\n            \"metadata\": {\n                \"somedata\": 22\n            },\n            \"publicPayload\": {\n                \"data\": \"testdata123\"\n            },\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"9ba05c788d8d9e44f66e02967f6e718124c45738c7fa6bdedc103fc1b20928e9\",\n        \"imported\": \"2021-09-29T16:14:15+02:00\"\n    },\n    {\n        \"link\": \"f0fc2323e9d4f994834fd6a130c06a659f2f520a1746e7a52f415c65157672030000000000000000:8ffa0e1cf065d40a477f3256\",\n        \"log\": {\n            \"created\": \"2021-09-29T16:14:05+02:00\",\n            \"type\": \"author-test\",\n            \"metadata\": {\n                \"somedata\": 22\n            },\n            \"publicPayload\": {\n                \"data\": \"testdata123\"\n            },\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"55f608146794e37d5ecf53c36b2cf8f0525b76e2882c18ded32224f43afef25b\",\n        \"imported\": \"2021-09-29T16:14:11+02:00\"\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/channels/validate/{{channel_address}}",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"channels",
+										"validate",
+										"{{channel_address}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "identity",
+			"item": [
+				{
+					"name": "Create identities",
+					"item": [
+						{
+							"name": "Create Organization",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"storeIdentity\":true,\n  \"username\": \"some-organization\",\n  \"claim\": {\n        \"type\":\"Organization\",\n        \"name\":\"Some organization\",\n        \"url\":\"https://www.some-org.org/\"\n   }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/identities/create",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"identities",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Person",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"iota-test-engineer\",\n  \"claim\": {\n        \"type\":\"Person\",\n        \"name\":\"Test Engineer\",\n        \"familyName\":\"Engineer\",\n        \"givenName\":\"Test\",\n        \"jobTitle\":\"Software Engineer\"\n   }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/identities/create",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"identities",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Device",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"iota-test-device\",\n  \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\"sensor\"],\n        \"controlledProperty\": [\"fillingLevel\",\"temperature\"],\n        \"controlledAsset\":[\"wastecontainer-Osuna-100\"],\n        \"ipAddress\": [\"192.14.56.78\"],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\":\"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/identities/create",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"identities",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"frama-c-client\",\n  \"claim\": {\n        \"type\":\"Service\",\n        \"name\":\"Frama C Client\",\n        \"category\": \"embedded-tool\",\n        \"description\":\"Creates embedded logs\"\n   }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/identities/create",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"identities",
+										"create"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create identity",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"user-with-stored-identity\",\n  \"claim\": {\n        \"type\":\"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\"sensor\"],\n        \"controlledProperty\": [\"fillingLevel\",\"temperature\"],\n        \"controlledAsset\":[\"wastecontainer-Osuna-100\"],\n        \"ipAddress\": [\"192.14.56.78\"],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\":\"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\"http://person.org/leon\"]\n   }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/identities/create",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"identities",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Identity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{device_jwt}}",
+								"description": "Authorized since device itself",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{user_jwt}}",
+								"description": "Not authorized since other user trying to delete",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"description": "Admin user is allowed!",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/identities/identity/did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"identities",
+								"identity",
+								"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Identity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identityId\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"CDhSJKRJwqbsrVoCnBemtjB2b1uaa8SyLbQZD4mGx3M4\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-10-28T15:22:20+02:00\",\n    \"claim\": {\n        \"type\": \"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"http://person.org/leon\"\n        ]\n    },\n    \"role\": \"User\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/identities/identity",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"identities",
+								"identity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Identity",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identityId\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"otChDKcR7g25oDhGSVZhiF1241Fqh5FaSEQnNQVaH9S\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-06-01T18:05:25+02:00\",\n    \"isPrivate\":false,\n    \"role\": \"User\",\n    \"verifiableCredentials\":[]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/identities/identity",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"identities",
+								"identity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Identity",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{device_jwt}}",
+								"description": "Authorized since device itself",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{user_jwt}}",
+								"description": "Not authorized since other user trying to delete",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"description": "Admin user is allowed!",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/identities/identity/did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y?revoke-credentials=true",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"identities",
+								"identity",
+								"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y"
+							],
+							"query": [
+								{
+									"key": "revoke-credentials",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Identity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{device_jwt}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/identities/search?username=test",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"identities",
+								"search"
+							],
+							"query": [
+								{
+									"key": "verified",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "registration-date",
+									"value": "2021-02-27T10%3A03%3A22.758%2B00%3A00",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "index",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "organization",
+									"value": "IOTA",
+									"disabled": true
+								},
+								{
+									"key": "classification",
+									"value": "device",
+									"disabled": true
+								},
+								{
+									"key": "subscribed-channel-ids",
+									"value": "test-address-c2",
+									"disabled": true
+								},
+								{
+									"key": "subscribed-channel-ids",
+									"value": "test-address",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "test"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "verification",
+			"item": [
+				{
+					"name": "issue & revoke credentials",
+					"item": [
+						{
+							"name": "Issue credential as Admin user",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Person\",\n        \"name\": \"Test Engineer\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"jobTitle\": \"Software Engineer\"\n    }\n  }\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/verification/create-credential",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"create-credential"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Issue vaccination Credential as Admin user",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VaccinationCertificate\",\n      \"claim\": {\n           \"type\":\"VaccinationCertificate\",\n           \"VaccinationType\": \"Astrazeneca\",\n           \"Location\": \"UCLH\",\n           \"BatchNoDoseOne\": \"ELO141\",\n           \"DateDoseOne\": \"03-01-2021\",\n           \"BatchNoDoseTwo\": \"ELO183\",\n           \"DateDoseTwo\": \"24-01-2021\",\n           \"name\": \"Test User\",\n           \"birthDate\":\"1980-06-21T08:38:05.988Z\"\n    }\n  }\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/verification/create-credential",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"create-credential"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Issue credential as user needing an initiatorVC",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n        ]\n    }\n  },\n  \"initiatorVC\": {\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VerifiedIdentityCredential\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"@context\": \"https://schema.org/\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"initiatorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"jobTitle\": \"Software Engineer\",\n        \"name\": \"Test Engineer\",\n        \"type\": \"Person\"\n    },\n    \"issuer\": \"did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof\",\n    \"issuanceDate\": \"2021-06-18T11:33:59Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24\"\n    }\n}\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/verification/create-credential",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"create-credential"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revoke verifiable credential",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"description": "Revoke as a server",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"description": "Revoke as a device",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user_jwt}}",
+										"description": "Revoke as a user",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"signatureValue\": \"FEUfGvSUk6Y1JSGskFfVhx2nko1czWczp2MZ4xXXB7bA.1116m3LMtMpLgoRq3nUaYDTwbNxiH8ZQTAYDShD6Rs7NtSkbPf5bCZwSJ1j4hNtAM7PCJodsyuEbyxDCzgJEAkATkE1wUgifw4oe6AfDvcnrLTZK3mh7XUj97niWzRoPsXBvrbSk6eWReR16wDadPpPaTsURJVjdMGLiUjTKJM7AiXid59VEm9xFkDyeX72mqK4d6LWnpKqWpR2mBb1UDAHBJqgJi52Li1p48NxZQ9ucyaN3gPz4uSGHJTd7Lj2m1D98RZBLyCjJNuLtbS7bqXo3nDqPmukQNeaocB19VxjnkEafNDUfqAHukMtgokEwSpeBVFsMb17MsTnWvkYv48WefCG1N3nGHNnCp3yx4e5j6hAY2pNFpxNYXDC73JkE1qsqWKHoY54SAaLYmViVkCuaMA1KBbS3oNXa96fWbJRTJboJr6rpuPho7DyxVPTESc8ey5hWyKVW8smxE2qpaUvvVxcMiRh5ruQMpvha25JjZ2LbjerwUtbqNTkQJLoNBG4jrJhFisphajmeZbMnyt3Mi2z3gU1VX.4QhJmhWSCu6B3j7uVEaUXx7qomgARLpfWdhH7GSabxcm9F35Cv9SWzP1ZeAjtyfRVy2J2W9bkYrgvcCb3UtwiFMV\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/verification/revoke-credential",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"revoke-credential"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "maintain trusted roots",
+					"item": [
+						{
+							"name": "Get trusted root identities",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{deployment_url}}/verification/trusted-roots",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"trusted-roots"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add trusted root",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"trustedRoot\": \"did:iota:H9tvjB91Lme2JMYtgLvT6KxyLYjtFGkwWGRfgjA5MkoD\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{deployment_url}}/verification/trusted-roots",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"trusted-roots"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove trusted root",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{deployment_url}}/verification/trusted-roots/did:iota:H9tvjB91Lme2JMYtgLvT6KxyLYjtFGkwWGRfgjA5MkoD",
+									"host": [
+										"{{deployment_url}}"
+									],
+									"path": [
+										"verification",
+										"trusted-roots",
+										"did:iota:H9tvjB91Lme2JMYtgLvT6KxyLYjtFGkwWGRfgjA5MkoD"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "f82191be-3454-4981-a9c0-8374d6f2af82",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get latest document from tangle",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/verification/latest-document/did:iota:BCxLY1Ae4wHTZ1XxaAggqJz1zHMDo3GbJot8zW5awJC3",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"verification",
+								"latest-document",
+								"did:iota:BCxLY1Ae4wHTZ1XxaAggqJz1zHMDo3GbJot8zW5awJC3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check verifiable credential",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:72rrNF1mqnVmrUES8M3A66ScrSb41YrEshGyUs6ipAff\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VaccinationCertificate\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:72rrNF1mqnVmrUES8M3A66ScrSb41YrEshGyUs6ipAff\",\n        \"BatchNoDoseOne\": \"ELO141\",\n        \"BatchNoDoseTwo\": \"ELO183\",\n        \"DateDoseOne\": \"03-01-2021\",\n        \"DateDoseTwo\": \"24-01-2021\",\n        \"Location\": \"UCLH\",\n        \"VaccinationType\": \"Pfizer\",\n        \"birthDate\": \"1980-06-21T08:38:05.988Z\",\n        \"initiatorId\": \"did:iota:3d2aY6ok7z6oHdGHVoPSnmXizn18S3Y7VEY4GH7ecsis\",\n        \"name\": \"Test User\",\n        \"type\": \"VaccinationCertificate\"\n    },\n    \"issuer\": \"did:iota:JAwciYTrRSFt1F9b2RYAoEKFy7foa3h3Jkn6MaHUffCa\",\n    \"issuanceDate\": \"2021-07-06T12:33:22Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"21Tz55kzDcZpxvL62KgWbyyfnYt4BjZ8YZvRQLAbME24.1116m1z9egDfE11PuMxiqqFRs1BpdvJYTaFSEhtFAWjbmJn558rKDsibm81tHCYAeLkcWpzKD6QBsUNp2J8ckQMpQySEyDR27K6U3ysBfgSESrt1FqtAxx4y8FY6boHqeBE7Lj5TNSGjnpddXCK3kb6C9osUTL8rX5dQfKA2vdXRLy1DpYajZqpze148qTBJySWrLwVfa2WLKVFCsE3uxAbh6u178K1rW4jvPfWf9c9nPydMA7XzuR8YtF77KHHw2ieJyjy6YPMas9fp3AGzcxYCEvRm1VQ9eWpZGZnSUtjhjjzzk25UX2FmmXEEJLo9o3rZoPRC4vaQZ8BmyUkfJ61jPJrYvWxuK45Rhf44BS83gexrKYmqcekak5jTK5mkbaWzUVBHmRmdh3q6xdATLeK8d7aYW2k5dTGXBZTy9SveCYEgQSSGv4G7A3SGEB53Wq3Q6m6bgV5p6MvzePEBszHrLqkJxtyHvAP3R12h4gvGmKqVYBAz1QBMkvofcMJSuP1NpAQgik953MYhfFkgpHbAUqZGxcVDC.5kvYz98TR3csH8GXukmw7fHivUJiRaD2w1ai5LTczJpv5f7DdLpHkTBzEUt9ykjjTRqcsaRBAGSNEHynX3S5gg5n\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/verification/check-credential",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"verification",
+								"check-credential"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authentication",
+			"item": [
+				{
+					"name": "Get Challenge",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{deployment_url}}/authentication/prove-ownership/did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"authentication",
+								"prove-ownership",
+								"did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate via signed challenge",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"type": "text",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"signedNonce\":\"31aed320281917f69636f9f53602b30f561d4f6e409864df4bcf2a8ba0368a89abf24a64c1b7599fe1fc4b84b94c2e9945e5425f3e261ebf72c90a51b180ef00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{deployment_url}}/authentication/prove-ownership/did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez",
+							"host": [
+								"{{deployment_url}}"
+							],
+							"path": [
+								"authentication",
+								"prove-ownership",
+								"did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "deployment_url",
+			"value": "localhost:3000/api/v1"
+		},
+		{
+			"key": "api-key",
+			"value": ""
+		},
+		{
+			"key": "admin_jwt",
+			"value": ""
+		},
+		{
+			"key": "user_jwt",
+			"value": ""
+		},
+		{
+			"key": "device_jwt",
+			"value": ""
+		},
+		{
+			"key": "channel_address",
+			"value": "b8729dd5b5e301aaaa61124c54fdc31fd3d95ecd4096cffd6205263dffe0c53e0000000000000000:a3fde347ca3c63e92b832ebe"
+		}
+	]
+}
