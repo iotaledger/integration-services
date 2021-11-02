@@ -16,8 +16,6 @@ on:
       - "api/**"
       - ".github/workflows/deploy-api-dockerhub.yml"
 
-#  workflow_dispatch:
-
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -29,14 +27,14 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          username: ${{ secrets.TEST_USERNAME }}
-          password: ${{ secrets.TEST_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: mastrogiovanni/e-commerce-tools
+          images: iotaledger/intergration-services
           
       
       - name: Build and push Docker image
