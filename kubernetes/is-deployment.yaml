@@ -21,11 +21,17 @@ spec:
         - -c
         - >
           set -x;
-          until nslookup "hornet-tcp.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local";
+          until nslookup $IOTA_HORNET_NODE | sed -e 's/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/';
           do 
           echo waiting for Hornet;
           sleep 2;
           done
+        env:
+        - name: "IOTA_HORNET_NODE"
+          valueFrom:
+            configMapKeyRef:
+              name: integration-service-api-config 
+              key: IOTA_HORNET_NODE
 
       - name: wait-for-mongo
         image: busybox:1.28
@@ -41,7 +47,7 @@ spec:
           done
 
       - name: create-root-identity
-        image: mastrogiovanni/e-commerce-tools:1.0.2
+        image: iotaledger/integration-services:latest
         command: ["node", "dist/index.js", "keygen"]
         env:
         - name: "SERVER_IDENTITY"
@@ -95,7 +101,7 @@ spec:
 
       containers:
       - name: integration-service-api
-        image: mastrogiovanni/e-commerce-tools:1.0.2
+        image: iotaledger/integration-services:latest
         command: ["node", "dist/index.js", "server"]
         resources:
           requests:

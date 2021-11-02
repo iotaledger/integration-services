@@ -47,7 +47,7 @@ kubectl apply \
     -f is-deployment.yaml \
     -f is-pvc.yaml \
     -f is-secrets.yaml \
-    -f is-service.yaml \
+    -f is-service.yaml
 ```
 
 ## Access to APIs
