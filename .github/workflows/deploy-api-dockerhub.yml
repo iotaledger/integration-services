@@ -2,12 +2,21 @@ name: Deploy API on DockerHub
 
 on:
   push:
-    branches: [ "*" ]
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+    paths: 
+      - "api/**"
+      - ".github/workflows/deploy-api-dockerhub.yml"
+  pull_request:
+    branches:
+      - 'master'
     paths: 
       - "api/**"
       - ".github/workflows/deploy-api-dockerhub.yml"
 
-  workflow_dispatch:
+#  workflow_dispatch:
 
 jobs:
   push_to_registry:
