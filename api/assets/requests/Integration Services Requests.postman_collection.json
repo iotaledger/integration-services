@@ -14,13 +14,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/info",
+							"raw": "localhost:3000/info?api-key={{api-key}}",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
 								"info"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -37,7 +43,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}",
+							"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
@@ -45,6 +51,12 @@
 								"channel-info",
 								"channel",
 								"{{channel_address}}"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -72,14 +84,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/channel/",
+							"raw": "{{deployment_url}}/channel-info/channel?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"channel-info",
-								"channel",
-								""
+								"channel"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -114,13 +131,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/channel",
+							"raw": "{{deployment_url}}/channel-info/channel?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"channel-info",
 								"channel"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -139,14 +162,20 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/channel/a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e",
+							"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"channel-info",
 								"channel",
-								"a10f9bf6291a6a5acdeb0ede260dba00d87b8a66ba832b2e80c10c6f6c9666490000000000000000:b442ffea33036f16ff76a69e"
+								"{{channel_address}}"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -164,7 +193,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/search?created=2021-06-16T10%3A03%3A22.758%2B00%3A00",
+							"raw": "{{deployment_url}}/channel-info/search?api-key={{api-key}}&created=2021-06-16T10%3A03%3A22.758%2B00%3A00",
 							"host": [
 								"{{deployment_url}}"
 							],
@@ -179,10 +208,6 @@
 									"disabled": true
 								},
 								{
-									"key": "created",
-									"value": "2021-06-16T10%3A03%3A22.758%2B00%3A00"
-								},
-								{
 									"key": "author-id",
 									"value": "did:iota:AF1ss8QmCM9feWEERRBjZH72Hpg6eUvVK9jHpwz3sgcc",
 									"disabled": true
@@ -191,6 +216,14 @@
 									"key": "topic-type",
 									"value": "smart-audit-log",
 									"disabled": true
+								},
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								},
+								{
+									"key": "created",
+									"value": "2021-06-16T10%3A03%3A22.758%2B00%3A00"
 								}
 							]
 						}
@@ -209,7 +242,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/search?created=2021-02-14T16:11:48",
+							"raw": "{{deployment_url}}/channel-info/search?api-key={{api-key}}&created=2021-02-14T16:11:48",
 							"host": [
 								"{{deployment_url}}"
 							],
@@ -222,10 +255,6 @@
 									"key": "author",
 									"value": "asxa",
 									"disabled": true
-								},
-								{
-									"key": "created",
-									"value": "2021-02-14T16:11:48"
 								},
 								{
 									"key": "author-id",
@@ -256,6 +285,14 @@
 									"key": "topic-type",
 									"value": "error-",
 									"disabled": true
+								},
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								},
+								{
+									"key": "created",
+									"value": "2021-02-14T16:11:48"
 								}
 							]
 						}
@@ -308,13 +345,19 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}",
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"subscriptions",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -347,7 +390,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf",
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -355,6 +398,12 @@
 										"subscriptions",
 										"{{channel_address}}",
 										"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -387,7 +436,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf",
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -395,6 +444,12 @@
 										"subscriptions",
 										"{{channel_address}}",
 										"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -418,14 +473,20 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf",
+									"raw": "{{deployment_url}}/subscriptions/{{channel_address}}/{{identity-id}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"subscriptions",
 										"{{channel_address}}",
-										"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf"
+										"{{identity-id}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -458,7 +519,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/revoke/{{channel_address}}",
+									"raw": "{{deployment_url}}/subscriptions/revoke/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -466,6 +527,12 @@
 										"subscriptions",
 										"revoke",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -490,7 +557,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscriptionLink\": \"b8729dd5b5e301aaaa61124c54fdc31fd3d95ecd4096cffd6205263dffe0c53e0000000000000000:af49031fa8b734ece21b45e1\"\n}",
+									"raw": "{\n    \"subscriptionLink\": \"a9e4a8622af35565337a0e09dbd8fc097c9e8fed15e97f7a8904d0aa37cb4d8e0000000000000000:6fd514048550949bda3c6434\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -498,7 +565,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/authorize/{{channel_address}}",
+									"raw": "{{deployment_url}}/subscriptions/authorize/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -506,6 +573,12 @@
 										"subscriptions",
 										"authorize",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -538,7 +611,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}",
+									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -546,6 +619,12 @@
 										"subscriptions",
 										"request",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -586,7 +665,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}",
+									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -594,6 +673,12 @@
 										"subscriptions",
 										"request",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -610,7 +695,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}",
+									"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -618,6 +703,12 @@
 										"channel-info",
 										"channel",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -644,13 +735,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/create",
+									"raw": "{{deployment_url}}/channels/create?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"channels",
 										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -668,7 +765,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -702,6 +799,10 @@
 											"key": "end-date",
 											"value": "2021-09-22T14:36:24%2b02:00",
 											"disabled": true
+										},
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
 										}
 									]
 								}
@@ -720,7 +821,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -728,6 +829,12 @@
 										"channels",
 										"logs",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -745,7 +852,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -753,6 +860,12 @@
 										"channels",
 										"logs",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -777,7 +890,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/history/{{channel_address}}?preshared-key=9d99aab2f931cf62d3508746dde80b76",
+									"raw": "{{deployment_url}}/channels/history/{{channel_address}}?api-key={{api-key}}&preshared-key={{preshared_key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -788,8 +901,12 @@
 									],
 									"query": [
 										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										},
+										{
 											"key": "preshared-key",
-											"value": "9d99aab2f931cf62d3508746dde80b76"
+											"value": "{{preshared_key}}"
 										}
 									]
 								}
@@ -817,7 +934,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -825,6 +942,12 @@
 										"channels",
 										"logs",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -857,7 +980,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -865,6 +988,12 @@
 										"channels",
 										"logs",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -897,7 +1026,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -905,6 +1034,12 @@
 										"channels",
 										"logs",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -943,7 +1078,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/re-import/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/re-import/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -951,6 +1086,12 @@
 										"channels",
 										"re-import",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -989,7 +1130,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/re-import/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/re-import/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -997,6 +1138,12 @@
 										"channels",
 										"re-import",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1029,7 +1176,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/validate/{{channel_address}}",
+									"raw": "{{deployment_url}}/channels/validate/{{channel_address}}?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
@@ -1037,6 +1184,12 @@
 										"channels",
 										"validate",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1067,13 +1220,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create",
+									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"identities",
 										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1094,13 +1253,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create",
+									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"identities",
 										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1113,7 +1278,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"username\": \"iota-test-device\",\n  \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\"sensor\"],\n        \"controlledProperty\": [\"fillingLevel\",\"temperature\"],\n        \"controlledAsset\":[\"wastecontainer-Osuna-100\"],\n        \"ipAddress\": [\"192.14.56.78\"],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\":\"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"]\n    }\n}",
+									"raw": "{\n\t\"username\": \"logistic-device\",\n\t\"claim\": {\n\t\t\"type\": \"Device\",\n        \"category\": [\"sensor\"],\n\t\t\"controlledProperty\": [\"location\"],\n\t\t\"name\": \"VIP Logistic Device\"\n\t}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1121,13 +1286,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create",
+									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"identities",
 										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1148,13 +1319,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create",
+									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"identities",
 										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1177,13 +1354,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/identities/create",
+							"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"identities",
 								"create"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1216,14 +1399,20 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/identities/identity/did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y",
+							"raw": "{{deployment_url}}/identities/identity/{{identity_id}}?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"identities",
 								"identity",
-								"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y"
+								"{{identity_id}}"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1250,13 +1439,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/identities/identity",
+							"raw": "{{deployment_url}}/identities/identity?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"identities",
 								"identity"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1283,13 +1478,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/identities/identity",
+							"raw": "{{deployment_url}}/identities/identity?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"identities",
 								"identity"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1322,16 +1523,20 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/identities/identity/did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y?revoke-credentials=true",
+							"raw": "{{deployment_url}}/identities/identity/{{identity_id}}?api-key={{api-key}}&revoke-credentials=true",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"identities",
 								"identity",
-								"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y"
+								"{{identity_id}}"
 							],
 							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								},
 								{
 									"key": "revoke-credentials",
 									"value": "true"
@@ -1358,7 +1563,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/identities/search?username=test",
+							"raw": "{{deployment_url}}/identities/search?api-key={{api-key}}&username=test",
 							"host": [
 								"{{deployment_url}}"
 							],
@@ -1406,6 +1611,10 @@
 									"key": "subscribed-channel-ids",
 									"value": "test-address",
 									"disabled": true
+								},
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
 								},
 								{
 									"key": "username",
@@ -1465,13 +1674,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/create-credential",
+									"raw": "{{deployment_url}}/verification/create-credential?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"create-credential"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1498,13 +1713,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/create-credential",
+									"raw": "{{deployment_url}}/verification/create-credential?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"create-credential"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1537,13 +1758,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/create-credential",
+									"raw": "{{deployment_url}}/verification/create-credential?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"create-credential"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1585,13 +1812,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/revoke-credential",
+									"raw": "{{deployment_url}}/verification/revoke-credential?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"revoke-credential"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1608,13 +1841,19 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{deployment_url}}/verification/trusted-roots",
+									"raw": "{{deployment_url}}/verification/trusted-roots?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"trusted-roots"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1647,13 +1886,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/trusted-roots",
+									"raw": "{{deployment_url}}/verification/trusted-roots?api-key={{api-key}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"trusted-roots"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
 									]
 								}
 							},
@@ -1671,14 +1916,14 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/verification/trusted-roots/did:iota:H9tvjB91Lme2JMYtgLvT6KxyLYjtFGkwWGRfgjA5MkoD",
+									"raw": "{{deployment_url}}/verification/trusted-roots/{{trusted_root_id}}",
 									"host": [
 										"{{deployment_url}}"
 									],
 									"path": [
 										"verification",
 										"trusted-roots",
-										"did:iota:H9tvjB91Lme2JMYtgLvT6KxyLYjtFGkwWGRfgjA5MkoD"
+										"{{trusted_root_id}}"
 									],
 									"query": [
 										{
@@ -1711,14 +1956,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/verification/latest-document/did:iota:BCxLY1Ae4wHTZ1XxaAggqJz1zHMDo3GbJot8zW5awJC3",
+							"raw": "{{deployment_url}}/verification/latest-document/{{identity_id}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"verification",
 								"latest-document",
-								"did:iota:BCxLY1Ae4wHTZ1XxaAggqJz1zHMDo3GbJot8zW5awJC3"
+								"{{identity_id}}"
 							]
 						}
 					},
@@ -1739,13 +1984,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/verification/check-credential",
+							"raw": "{{deployment_url}}/verification/check-credential?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"verification",
 								"check-credential"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1769,14 +2020,20 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/authentication/prove-ownership/did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez",
+							"raw": "{{deployment_url}}/authentication/prove-ownership/{{identity_id}}?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"authentication",
 								"prove-ownership",
-								"did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez"
+								"{{identity_id}}"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1804,14 +2061,20 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/authentication/prove-ownership/did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez",
+							"raw": "{{deployment_url}}/authentication/prove-ownership/{{identity_id}}?api-key={{api-key}}",
 							"host": [
 								"{{deployment_url}}"
 							],
 							"path": [
 								"authentication",
 								"prove-ownership",
-								"did:iota:EC9SGQNg6o4EEYwp215w64RgDRt2w7TUNaTVeMJk7Uez"
+								"{{identity_id}}"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
 							]
 						}
 					},
@@ -1863,7 +2126,19 @@
 		},
 		{
 			"key": "channel_address",
-			"value": "b8729dd5b5e301aaaa61124c54fdc31fd3d95ecd4096cffd6205263dffe0c53e0000000000000000:a3fde347ca3c63e92b832ebe"
+			"value": "a9e4a8622af35565337a0e09dbd8fc097c9e8fed15e97f7a8904d0aa37cb4d8e0000000000000000:185ef9d8a60416929d49ba6f"
+		},
+		{
+			"key": "preshared_key",
+			"value": ""
+		},
+		{
+			"key": "identity_id",
+			"value": "did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y"
+		},
+		{
+			"key": "trusted_root_id",
+			"value": ""
 		}
 	]
 }
