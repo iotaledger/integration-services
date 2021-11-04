@@ -52,12 +52,6 @@ spec:
         env:
         - name: "SERVER_IDENTITY"
           value: "/config/server-identity.json"
-
-#        - name: "API_VERSION"
-#          valueFrom:
-#            configMapKeyRef:
-#              name: integration-service-api-config 
-#              key: API_VERSION
         - name: "DATABASE_NAME"
           valueFrom:
             configMapKeyRef:
@@ -68,16 +62,6 @@ spec:
             configMapKeyRef:
               name: integration-service-api-config 
               key: NETWORK
-#        - name: "EXPLORER"
-#          valueFrom:
-#            configMapKeyRef:
-#              name: integration-service-api-config 
-#              key: EXPLORER
-#        - name: "IOTA_PERMA_NODE"
-#          valueFrom:
-#            configMapKeyRef:
-#              name: integration-service-api-config 
-#              key: IOTA_PERMA_NODE
         - name: "DATABASE_URL"
           valueFrom:
             configMapKeyRef:
@@ -114,11 +98,6 @@ spec:
           httpGet:
             path: /info
             port: 3000
-#            httpHeaders:
-#            - name: Custom-Header
-#              value: Awesome
-#          initialDelaySeconds: 3
-#          periodSeconds: 3
         env:
         - name: "SERVER_IDENTITY"
           value: "/config/server-identity.json"

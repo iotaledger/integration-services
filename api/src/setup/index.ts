@@ -1,4 +1,4 @@
-import { writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { addTrustedRootId } from "../database/trusted-roots";
 import { IdentityJsonUpdate, CreateIdentityBody } from "../models/types/identity";
 import { Subject, CredentialTypes } from "../models/types/verification";
@@ -12,29 +12,26 @@ import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { SsiService } from "../services/ssi-service";
 import { KEY_COLLECTION_SIZE } from "../config/identity";
 import { IdentityConfig } from "../models/config";
-import { KeyResolver } from "./key-resolver";
 
 const logger = Logger.getInstance();
 
 export class KeyGenerator {
 
-    private keyResolver: KeyResolver;
     private identityConfig: IdentityConfig;
     private serverSecret: string;
-    private serverIdentityId: string;
+    private serverIdentityFile: string;
 
-    constructor(keyResolver: KeyResolver, serverSecret: string, serverIdentityId: string, identityConfig: IdentityConfig) {
+    constructor(serverSecret: string, serverIdentityFile: string, identityConfig: IdentityConfig) {
         this.serverSecret = serverSecret;
-        this.serverIdentityId = serverIdentityId;
+        this.serverIdentityFile = serverIdentityFile;
         this.identityConfig = identityConfig;
-        this.keyResolver = keyResolver;
 
         if (!this.serverSecret) {
             throw Error('A server secret must be defined to work with the API!');
         }
 
-        if (!this.serverIdentityId) {
-            throw Error('You need to specify a server identity file (SERVER_IDENTITY)');
+        if (!this.serverIdentityFile) {
+            throw Error('You need to specify a server identity file');
         }
     }
         
@@ -43,7 +40,7 @@ export class KeyGenerator {
     
         logger.log(`Checking root identity...`);
     
-        const serverIdentityId = this.keyResolver.resolve(this.serverIdentityId);
+        const serverIdentityId = this.getRootIdentity();
         if (!serverIdentityId) {
             logger.error("Root identity is missing")
             return null;
@@ -98,7 +95,7 @@ export class KeyGenerator {
     
     private async getRootIdentityFromId(serverIdentityId: string) : Promise<IdentityJsonUpdate> {
     
-        // TODO create database, documents and indexes in mongodb at the first time!
+        // TODO #254 create initial documents and indexes in mongodb if they are missing on first initialization.
         // key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
     
         const ssiService = SsiService.getInstance(this.identityConfig, logger);
@@ -117,6 +114,21 @@ export class KeyGenerator {
         return await tmpVerificationService.getIdentityFromDb(serverIdentityId);
 
     }
+
+    public getRootIdentity() : string {
+
+        if (!existsSync(this.serverIdentityFile)) {
+            throw new Error("Server identity file is missing");
+        }
+
+        const rootIdentity = JSON.parse(readFileSync(this.serverIdentityFile).toString());
+        if (!rootIdentity.root) {
+            throw new Error("root field missing in the server identity file");
+        }
+
+        return rootIdentity.root
+
+    }
     
     // Setup root identity
     async keyGeneration() {
@@ -125,7 +137,7 @@ export class KeyGenerator {
         
         // Check if root identity exists and if it is valid
         try {
-            const rootIdentity = this.keyResolver.resolve(this.serverIdentityId);
+            const rootIdentity = this.getRootIdentity();
             if (rootIdentity) {
                 logger.error("Root identity already exists: verify it, " + rootIdentity);
                 const serverIdentity = await this.getRootIdentityFromId(rootIdentity)
@@ -139,9 +151,7 @@ export class KeyGenerator {
         catch (e) {
             logger.error(e.message)
         }
-        
-        logger.log('Create identity...');
-    
+            
         const serverData: CreateIdentityBody = serverIdentityJson;
         
         const ssiService = SsiService.getInstance(this.identityConfig, logger);
@@ -151,8 +161,6 @@ export class KeyGenerator {
         logger.log('==================================================================================================');
         logger.log(`== Store this identity in the as ENV var: ${identity.doc.id} ==`);
         logger.log('==================================================================================================');
-    
-        // logger.log(JSON.stringify(identity, null, 2))
     
         // re-create the verification service with a valid server identity id
         const verificationService = new VerificationService(
@@ -192,9 +200,9 @@ export class KeyGenerator {
 
         await verificationService.verifyIdentity(subject, serverUser.identityId, serverUser.identityId);
         
-        writeFileSync(this.serverIdentityId, JSON.stringify({
+        writeFileSync(this.serverIdentityFile, JSON.stringify({
             root: serverUser.identityId,
-            identity: identity.doc
+            doc: identity.doc
         }));
     
         logger.log(`Setup Done! Your root identity is: ${serverUser.identityId}`);

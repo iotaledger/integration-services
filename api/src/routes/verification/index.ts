@@ -11,13 +11,11 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 import { ILogger } from '../../utils/logger';
 import * as _ from 'lodash';
-import { KeyResolver } from '../../setup/key-resolver';
 
 export class VerificationRoutes {
 	constructor(
 		private readonly verificationService: VerificationService,
 		private readonly authorizationService: AuthorizationService,
-		private readonly keyResolver: KeyResolver,
 		private readonly config: Config,
 		private readonly logger: ILogger
 	) {}
@@ -43,7 +41,7 @@ export class VerificationRoutes {
 
 			const vc: VerifiableCredentialJson = await this.verificationService.verifyIdentity(
 				subject,
-				this.keyResolver.resolve(this.config.serverIdentityId),
+				this.config.serverIdentityId,
 				initiatorVC?.credentialSubject?.id || requestUser.identityId
 			);
 
@@ -79,7 +77,7 @@ export class VerificationRoutes {
 				throw error;
 			}
 
-			await this.verificationService.revokeVerifiableCredential(vcp, this.keyResolver.resolve(this.config.serverIdentityId));
+			await this.verificationService.revokeVerifiableCredential(vcp, this.config.serverIdentityId);
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {

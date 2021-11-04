@@ -7,14 +7,12 @@ import { authenticationRouter, verificationRouter, channelInfoRouter, channelRou
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import * as expressWinston from 'express-winston';
-// import { checkRootIdentity, setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
 import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
-import { KeyResolver } from './setup/key-resolver';
 
 const logger = Logger.getInstance();
 
@@ -32,18 +30,18 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 	app.use(prefix, router);
 }
 
-async function hasRootIdentity(): Promise<string> {
+async function getRootIdentityId(): Promise<string> {
 
 	const dbUrl = CONFIG.databaseUrl;
 	const dbName = CONFIG.databaseName;
 	const serverSecret = CONFIG.serverSecret;
-	const serverIdentityId = CONFIG.serverIdentityId;
+	const serverIdentityFile = CONFIG.serverIdentityFile;
 
 	try {
 
 		await MongoDbService.connect(dbUrl, dbName);
 
-		const keyGenerator: KeyGenerator = new KeyGenerator(new KeyResolver(), serverSecret, serverIdentityId, CONFIG.identityConfig);
+		const keyGenerator: KeyGenerator = new KeyGenerator(serverSecret, serverIdentityFile, CONFIG.identityConfig);
 
 		const rootIdentity = await keyGenerator.checkRootIdentity();
 
@@ -62,7 +60,7 @@ async function hasRootIdentity(): Promise<string> {
 
 async function startServer() {
 
-	const rootIdentity = await hasRootIdentity();
+	const rootIdentity = await getRootIdentityId();
 
 	// setup did for server if not exists
 	if (!rootIdentity) {
@@ -110,13 +108,13 @@ else if (argv._.includes("keygen")) {
 		const dbUrl = CONFIG.databaseUrl;
 		const dbName = CONFIG.databaseName;
 		const serverSecret = CONFIG.serverSecret;
-		const serverIdentityId = CONFIG.serverIdentityId;
+		const serverIdentityFile = CONFIG.serverIdentityFile;
 	
 		try {
 
 			await MongoDbService.connect(dbUrl, dbName);
 	
-			const keyGenerator: KeyGenerator = new KeyGenerator(new KeyResolver(), serverSecret, serverIdentityId, CONFIG.identityConfig);
+			const keyGenerator: KeyGenerator = new KeyGenerator(serverSecret, serverIdentityFile, CONFIG.identityConfig);
 		
 			await keyGenerator.keyGeneration();
 	
@@ -130,9 +128,6 @@ else if (argv._.includes("keygen")) {
 	})();
 
 
-}
-else {
-	// argv._.help();
 }
 
 

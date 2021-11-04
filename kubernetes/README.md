@@ -56,6 +56,8 @@ Once deployed the Integration Service API is accessible via port forward:
 
 `kubectl port-forward svc/integration-service-api 3000:3000`
 
+In case you prefer some visual tool we suggest to use: [Kube Forwarder]([https://link](https://kube-forwarder.pixelpoint.io/)).
+
 ## Ingress controller
 
 In order to access to API from outside a cluster a ingress controller need to be deployed.

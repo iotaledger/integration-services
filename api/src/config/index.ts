@@ -1,6 +1,7 @@
 import { Config, IdentityConfig, StreamsConfig } from '../models/config';
 import isEmpty from 'lodash/isEmpty';
 import * as Identity from '@iota/identity-wasm/node';
+import { existsSync, readFileSync } from 'fs';
 
 const StreamsConfig: StreamsConfig = {
 	node: process.env.IOTA_HORNET_NODE,
@@ -24,6 +25,7 @@ export const CONFIG: Config = {
 	apiVersion: process.env.API_VERSION,
 	databaseUrl: process.env.DATABASE_URL,
 	databaseName: process.env.DATABASE_NAME,
+	serverIdentityFile: process.env.SERVER_IDENTITY_FILE,
 	serverIdentityId: process.env.SERVER_IDENTITY,
 	serverSecret: process.env.SERVER_SECRET,
 	hornetNode: process.env.IOTA_HORNET_NODE,
@@ -57,6 +59,17 @@ const assertConfig = (config: Config) => {
 			console.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
 		}
 	});
+
+	if (config.serverIdentityFile) {
+		if (existsSync(config.serverIdentityFile)) {
+			const rootIdentity = JSON.parse(readFileSync(config.serverIdentityFile).toString());
+			if (!rootIdentity.root) {
+				throw new Error('root field missing in the SERVER_IDENTITY_FILE file');
+			}
+			config.serverIdentityId = rootIdentity.root
+		}
+	}
+
 };
 
 assertConfig(CONFIG);

@@ -35,7 +35,7 @@ describe('test authentication routes', () => {
 			},
 			LoggerMock
 		);
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, { resolve: (x) => x }, config, LoggerMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
 
 		res = {
 			send: sendMock,
