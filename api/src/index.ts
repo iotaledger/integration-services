@@ -34,9 +34,7 @@ async function getRootIdentityId(config: Config): Promise<string> {
 	try {
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
-		const keyGenerator: KeyGenerator = new KeyGenerator(config);
-
-		const rootIdentity = await keyGenerator.checkRootIdentity();
+		const rootIdentity = await KeyGenerator.checkRootIdentity(config);
 
 		if (rootIdentity) {
 			return rootIdentity.doc.id;
@@ -102,11 +100,7 @@ async function keyGen(config: Config) {
 }
 
 if (argv._.includes('server')) {
-
 	startServer(CONFIG);
-
 } else if (argv._.includes('keygen')) {
-
 	keyGen(CONFIG);
-	
 }

@@ -13,7 +13,6 @@ import { SsiService } from '../services/ssi-service';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { Config } from '../models/config';
 
-
 const logger = Logger.getInstance();
 
 export class KeyGenerator {
@@ -32,23 +31,32 @@ export class KeyGenerator {
 	}
 
 	// Ensure that on the db there is the declared root identity
-	async checkRootIdentity(): Promise<IdentityJsonUpdate> {
+	static async checkRootIdentity(config: Config): Promise<IdentityJsonUpdate> {
 		logger.log(`Checking root identity...`);
-
-		const serverIdentityId = this.getRootIdentity();
+		let serverIdentityId = null;
+		try {
+			if (config.serverIdentityFile) {
+				serverIdentityId = KeyGenerator.getRootIdentity(config);
+			}
+		} catch (e) {
+			logger.error(e.message);
+		}
+		if (!serverIdentityId) {
+			serverIdentityId = config.serverIdentityId;
+		}
 		if (!serverIdentityId) {
 			logger.error('Root identity is missing');
 			return null;
 		}
 
-		const ssiService = SsiService.getInstance(this.config.identityConfig, logger);
-		const userService = new UserService(ssiService, this.config.serverSecret, logger);
+		const ssiService = SsiService.getInstance(config.identityConfig, logger);
+		const userService = new UserService(ssiService, config.serverSecret, logger);
 
 		const tmpVerificationService = new VerificationService(
 			ssiService,
 			userService,
 			{
-				serverSecret: this.config.serverSecret,
+				serverSecret: config.serverSecret,
 				serverIdentityId,
 				keyCollectionSize: KEY_COLLECTION_SIZE
 			},
@@ -105,12 +113,12 @@ export class KeyGenerator {
 		return await tmpVerificationService.getIdentityFromDb(serverIdentityId);
 	}
 
-	public getRootIdentity(): string {
-		if (!existsSync(this.config.serverIdentityFile)) {
+	public static getRootIdentity(config: Config): string {
+		if (!existsSync(config.serverIdentityFile)) {
 			throw new Error('Server identity file is missing');
 		}
 
-		const rootIdentity = JSON.parse(readFileSync(this.config.serverIdentityFile).toString());
+		const rootIdentity = JSON.parse(readFileSync(config.serverIdentityFile).toString());
 		if (!rootIdentity.root) {
 			throw new Error('root field missing in the server identity file');
 		}
@@ -124,7 +132,7 @@ export class KeyGenerator {
 
 		// Check if root identity exists and if it is valid
 		try {
-			const rootIdentity = this.getRootIdentity();
+			const rootIdentity = KeyGenerator.getRootIdentity(this.config);
 			if (rootIdentity) {
 				logger.error('Root identity already exists: verify it, ' + rootIdentity);
 				const serverIdentity = await this.getRootIdentityFromId(rootIdentity);
