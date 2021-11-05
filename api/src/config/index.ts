@@ -1,6 +1,7 @@
 import { Config, IdentityConfig, StreamsConfig } from '../models/config';
 import isEmpty from 'lodash/isEmpty';
 import * as Identity from '@iota/identity-wasm/node';
+import { existsSync, readFileSync } from 'fs';
 
 const StreamsConfig: StreamsConfig = {
 	node: process.env.IOTA_HORNET_NODE,
@@ -24,6 +25,7 @@ export const CONFIG: Config = {
 	apiVersion: process.env.API_VERSION,
 	databaseUrl: process.env.DATABASE_URL,
 	databaseName: process.env.DATABASE_NAME,
+	serverIdentityFile: process.env.SERVER_IDENTITY_FILE,
 	serverIdentityId: process.env.SERVER_IDENTITY,
 	serverSecret: process.env.SERVER_SECRET,
 	hornetNode: process.env.IOTA_HORNET_NODE,
@@ -36,16 +38,18 @@ export const CONFIG: Config = {
 };
 
 const assertConfig = (config: Config) => {
+	
 	if (config.serverSecret === '<server-secret>' || config.serverIdentityId === '<server-identity>') {
 		console.error('please replace the default values!');
 	}
+
 	if (config.serverSecret.length !== 32) {
 		throw Error('Server secret must to have a length of 32!');
 	}
 
 	// apiKey can be empty if the host decides so
 	// commitHash is set automatically during deployment
-	const optionalEnvVariables = ['apiKey', 'commitHash'];
+	const optionalEnvVariables = ['apiKey', 'commitHash', 'serverIdentityFile'];
 	Object.values(config).map((value, i) => {
 		if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
 			if (optionalEnvVariables.includes(Object.keys(config)[i])) {
@@ -55,6 +59,17 @@ const assertConfig = (config: Config) => {
 			console.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
 		}
 	});
+
+	if (config.serverIdentityFile) {
+		if (existsSync(config.serverIdentityFile)) {
+			const rootIdentity = JSON.parse(readFileSync(config.serverIdentityFile).toString());
+			if (!rootIdentity.root) {
+				throw new Error('root field missing in the SERVER_IDENTITY_FILE file');
+			}
+			config.serverIdentityId = rootIdentity.root
+		}
+	}
+
 };
 
 assertConfig(CONFIG);

@@ -33,7 +33,7 @@ export const verificationService = new VerificationService(
 	ssiService,
 	userService,
 	{
-		serverIdentityId,
+		serverIdentityId: serverIdentityId,
 		serverSecret,
 		keyCollectionSize: KEY_COLLECTION_SIZE
 	},

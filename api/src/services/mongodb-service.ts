@@ -113,6 +113,11 @@ export class MongoDbService {
 	 * @memberof MongoDbService
 	 */
 	static async connect(url: string, dbName: string): Promise<MongoClient> {
+
+		if (MongoDbService.client) {
+			return;
+		}
+		
 		return new Promise((resolve, reject) => {
 			const options: MongoClientOptions = {
 				useUnifiedTopology: true

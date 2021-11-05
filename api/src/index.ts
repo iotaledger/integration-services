@@ -7,13 +7,21 @@ import { authenticationRouter, verificationRouter, channelInfoRouter, channelRou
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
 import * as expressWinston from 'express-winston';
-import { setupApi } from './setup';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
 import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
+import yargs from 'yargs';
+import { KeyGenerator } from './setup';
+import { Config } from './models/config';
 
 const logger = Logger.getInstance();
+
+const argv = yargs
+	.command('server', 'Start the integration service API', {})
+	.command('keygen', 'Generate root identity for integration service API', {})
+	.help()
+	.alias('help', 'h').argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -22,15 +30,36 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 	app.use(prefix, router);
 }
 
-async function startServer() {
+async function getRootIdentityId(config: Config): Promise<string> {
+	try {
+		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+
+		const rootIdentity = await KeyGenerator.checkRootIdentity(config);
+
+		if (rootIdentity) {
+			return rootIdentity.doc.id;
+		}
+	} catch (e) {
+		logger.error(e.message);
+	}
+
+	return null;
+}
+
+async function startServer(config: Config) {
+	const rootIdentity = await getRootIdentityId(config);
+
 	// setup did for server if not exists
-	await setupApi();
+	if (!rootIdentity) {
+		process.exit(0);
+	}
 
 	const app = express();
-	const port = CONFIG.port;
-	const dbUrl = CONFIG.databaseUrl;
-	const dbName = CONFIG.databaseName;
-	const version = CONFIG.apiVersion;
+
+	const port = config.port;
+	const dbUrl = config.databaseUrl;
+	const dbName = config.databaseName;
+	const version = config.apiVersion;
 	const openapiSpecification = swaggerJsdoc(openApiDefinition);
 
 	app.use(express.json({ limit: '10mb' }));
@@ -55,4 +84,23 @@ async function startServer() {
 	});
 	server.setTimeout(50000);
 }
-startServer();
+
+async function keyGen(config: Config) {
+	try {
+		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+
+		const keyGenerator: KeyGenerator = new KeyGenerator(config);
+
+		await keyGenerator.keyGeneration();
+	} catch (e) {
+		logger.error(e);
+	}
+
+	process.exit();
+}
+
+if (argv._.includes('server')) {
+	startServer(CONFIG);
+} else if (argv._.includes('keygen')) {
+	keyGen(CONFIG);
+}
