@@ -14,6 +14,7 @@ import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
 import { Config } from './models/config';
+import { getServerIdentity } from './database/user';
 
 const logger = Logger.getInstance();
 
@@ -34,13 +35,16 @@ async function getRootIdentityId(config: Config): Promise<string> {
 	try {
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
-		const rootIdentity = await KeyGenerator.checkRootIdentity(config);
+		const serverIdentity = await getServerIdentity();
 
-		if (rootIdentity) {
-			return rootIdentity.doc.id;
+		if (serverIdentity) {
+			logger.log('Found server ID: ' + serverIdentity.identityId);
+			return serverIdentity.identityId;
 		}
+
+		logger.error('Server Identity ID not found');
 	} catch (e) {
-		logger.error(e.message);
+		logger.error('Error:' + e);
 	}
 
 	return null;
@@ -51,6 +55,7 @@ async function startServer(config: Config) {
 
 	// setup did for server if not exists
 	if (!rootIdentity) {
+		console.error('Run keygen to create server identity');
 		process.exit(0);
 	}
 

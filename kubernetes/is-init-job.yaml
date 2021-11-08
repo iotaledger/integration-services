@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: generate-key
+spec:
+  template:
+    spec:
+      containers:
+      - name: create-root-identity
+        image: iotaledger/integration-services:latest
+        command: ["node", "dist/index.js", "keygen"]
+        env:
+        - name: "SERVER_IDENTITY_FILE"
+          value: "/config/server-identity.json"
+        - name: "DATABASE_NAME"
+          valueFrom:
+            configMapKeyRef:
+              name: integration-service-api-config 
+              key: DATABASE_NAME
+        - name: "NETWORK"
+          valueFrom:
+            configMapKeyRef:
+              name: integration-service-api-config 
+              key: NETWORK
+        - name: "DATABASE_URL"
+          valueFrom:
+            configMapKeyRef:
+              name: integration-service-api-config 
+              key: DATABASE_URL
+        - name: "IOTA_HORNET_NODE"
+          valueFrom:
+            configMapKeyRef:
+              name: integration-service-api-config 
+              key: IOTA_HORNET_NODE
+
+        - name: "SERVER_SECRET"
+          valueFrom:
+            secretKeyRef:
+              name: integration-service-api-secrets
+              key: SERVER_SECRET
+
+        volumeMounts:
+        - mountPath: /config
+          name: root-identity
+      volumes:
+      - name: root-identity
+        persistentVolumeClaim:
+          claimName: root-identity-pvc
+      restartPolicy: Never
+  backoffLimit: 4

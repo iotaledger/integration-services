@@ -26,6 +26,11 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, plainQuery, options);
 };
 
+export const getServerIdentity = async (): Promise<UserPersistence | null> => {
+	const query = { isServerIdentity: true };
+	return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
+};
+
 export const getUser = async (identityId: string): Promise<UserPersistence | null> => {
 	const query = { _id: identityId };
 	return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
@@ -118,7 +123,9 @@ export const removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPe
 	const query = {
 		_id: vc.id
 	};
-	const filteredCredentials = currentVCs.filter((verifiableCredential) => verifiableCredential.proof.signatureValue !== vc.proof.signatureValue);
+	const filteredCredentials = currentVCs.filter(
+		(verifiableCredential) => verifiableCredential.proof.signatureValue !== vc.proof.signatureValue
+	);
 
 	const updateObject = MongoDbService.getPlainObject({
 		verifiableCredentials: filteredCredentials

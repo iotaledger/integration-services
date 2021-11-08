@@ -15,7 +15,7 @@
     "start": "npm-run-all build start-node",
     "keygen": "npm-run-all build start-keygen",
     "build-watch": "tsc --watch ",
-    "serve-nodemon": "nodemon ./dist/index",
+    "serve-nodemon": "nodemon ./dist/index server",
     "serve": "run-p build-watch serve-nodemon",
     "generate-openapi-schemas": "ts-node ./src/tools/open-api-creator/index.ts"
   },

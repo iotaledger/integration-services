@@ -169,6 +169,7 @@ export class KeyGenerator {
 		);
 
 		const serverUser = await userService.getUser(identity.doc.id);
+		console.log(serverUser);
 
 		if (!serverUser) {
 			throw new Error('server user not found!');

@@ -45,44 +45,7 @@ spec:
           echo waiting for MongoDB;
           sleep 2;
           done
-
-      - name: create-root-identity
-        image: iotaledger/integration-services:latest
-        command: ["node", "dist/index.js", "keygen"]
-        env:
-        - name: "SERVER_IDENTITY"
-          value: "/config/server-identity.json"
-        - name: "DATABASE_NAME"
-          valueFrom:
-            configMapKeyRef:
-              name: integration-service-api-config 
-              key: DATABASE_NAME
-        - name: "NETWORK"
-          valueFrom:
-            configMapKeyRef:
-              name: integration-service-api-config 
-              key: NETWORK
-        - name: "DATABASE_URL"
-          valueFrom:
-            configMapKeyRef:
-              name: integration-service-api-config 
-              key: DATABASE_URL
-        - name: "IOTA_HORNET_NODE"
-          valueFrom:
-            configMapKeyRef:
-              name: integration-service-api-config 
-              key: IOTA_HORNET_NODE
-
-        - name: "SERVER_SECRET"
-          valueFrom:
-            secretKeyRef:
-              name: integration-service-api-secrets
-              key: SERVER_SECRET
-
-        volumeMounts:
-        - mountPath: /config
-          name: root-identity
-
+          
       containers:
       - name: integration-service-api
         image: iotaledger/integration-services:latest
