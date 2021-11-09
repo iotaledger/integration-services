@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { CONFIG } from '../../config';
 import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
@@ -11,7 +10,7 @@ import { Logger } from '../../utils/logger';
 import { authorizationService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 
-const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, CONFIG, Logger.getInstance());
+const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, Logger.getInstance());
 const {
 	createVerifiableCredential,
 	checkVerifiableCredential,

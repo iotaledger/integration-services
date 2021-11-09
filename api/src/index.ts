@@ -6,6 +6,7 @@ import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
+import { SERVER_IDENTITY } from './config/server';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
@@ -37,9 +38,11 @@ async function getRootIdentityId(config: Config): Promise<string> {
 
 		const serverIdentity = await getServerIdentity();
 
-		if (serverIdentity) {
-			logger.log('Found server ID: ' + serverIdentity.identityId);
-			return serverIdentity.identityId;
+		const rootIdentity = serverIdentity?.identityId;
+
+		if (rootIdentity) {
+			logger.log('Found server ID: ' + rootIdentity);
+			return rootIdentity;
 		}
 
 		logger.error('Server Identity ID not found');
@@ -55,9 +58,11 @@ async function startServer(config: Config) {
 
 	// setup did for server if not exists
 	if (!rootIdentity) {
-		console.error('Run keygen to create server identity');
-		process.exit(0);
+		logger.error('Run keygen to create server identity');
+		process.exit(-1);
 	}
+
+	SERVER_IDENTITY.serverIdentity = rootIdentity;
 
 	const app = express();
 
@@ -87,18 +92,22 @@ async function startServer(config: Config) {
 		logger.log(`Started API Server on port ${port}`);
 		await MongoDbService.connect(dbUrl, dbName);
 	});
+
 	server.setTimeout(50000);
 }
 
 async function keyGen(config: Config) {
 	try {
+
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
 		const keyGenerator: KeyGenerator = new KeyGenerator(config);
 
 		await keyGenerator.keyGeneration();
+
 	} catch (e) {
 		logger.error(e);
+		process.exit(-1);
 	}
 
 	process.exit();
