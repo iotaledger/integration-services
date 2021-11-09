@@ -5,4 +5,3 @@ npm-debug.log
 .DS_Store
 logs
 .vscode
-**/server-identity.json

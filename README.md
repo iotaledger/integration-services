@@ -55,36 +55,32 @@ eceaab9343eb   mongo:latest   "docker-entrypoint.s…"   7 seconds ago   Up 7 se
 
 > You can connect to the api via clients like `MongoDB Compass` by using the defined connection url of the database like for instance `mongodb://root:rootpassword@0.0.0.0:27017`!
 
-### 2. Run the API
+### 2. Create root identity and run the API
 
 2.1. Make sure you are in the `/api` folder and use the following commands:
+
 ```
 npm install     # Install dependencies
-npm run keygen  # Generate root identity: output on SERVER_ENTITY file
-npm run start   # Run server
+npm run keygen  # Generate root identity (if it not exists in the database)
 ```
 
-If it was the first time the api is started, no `SERVER_IDENTITY` is defined since it was left blank previously. The api should log a newly generated identity id which needs to be used as server identity as following:
+The `keygen` phase create a root identity for the server and add it to the database.
+If a root identity already exists in the database, the process will give a notice before exit.
+When the root server identity is generated the output is like the following:
 
 ```
 Successfully connected to mongodb
-Create identity...
-==================================================================================================
-== Store this identity in the as ENV var: did:iota:BfGtLdthmzrUdgYptrZgnC4amXZBZ2C2xQMVM7Bb1cZs ==
-==================================================================================================
+Setting root identity please wait...
 Add server id as trusted root...
 Generate key collection...
 Set server identity as verified...
 Setup Done!
-Please store the generated server identity as environment variable.
-Like: SERVER_IDENTITY=did:iota:BfGtLdthmzrUdgYptrZgnC4amXZBZ2C2xQMVM7Bb1cZs
 ```
 
-2.2. Copy the `SERVER_IDENTITY` into the .env file.
-
-2.3. Run the api again using `npm run start`
+2.2. Run the api again using `npm run start`
 
 It should log that the api was started like following:
+
 ```
 Started API Server on port 3000
 Successfully connected to mongodb
