@@ -1,6 +1,6 @@
 {
-  label: "Bee Node",
-  to: "bee/getting_started/getting_started",
-  className: "icon-bee",
-  activeBaseRegex: 'bee/.*'
+  label: "Integrationm Services",
+  to: "integration-services/welcome",
+  className: "icon-integration-services",
+  activeBaseRegex: 'integration-services/.*'
 },
