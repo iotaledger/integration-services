@@ -1,0 +1,10 @@
+[
+    "@docusaurus/plugin-content-docs",
+    {
+        id: "integration-services",
+        path: "external/integration-services/documentation/docs",
+        routeBasePath: "integration-services",
+        sidebarPath: require.resolve("./external/integration-services/documentation/sidebars.js"),
+        remarkPlugins: [require("remark-code-import"), require("remark-import-partial")],
+    }
+],
