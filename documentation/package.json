@@ -1,0 +1,19 @@
+{
+  "name": "documentation",
+  "version": "0.0.0",
+  "private": "true",
+  "scripts": {
+    "start": "iota-wiki-cli start",
+    "test": "iota-wiki-cli start --dry-run",
+    "clean": "iota-wiki-cli clean",
+    "setup": "iota-wiki-cli setup"
+  },
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=14.14.0"
+  },
+  "dependencies": {
+    "iota-wiki-cli": "git+https://github.com/iota-community/iota-wiki-cli.git#v1.6.0",
+    "yarn": "^1.22.17"
+  }
+}
