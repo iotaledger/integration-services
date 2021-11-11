@@ -15,6 +15,7 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
+import * as crypto from 'crypto';
 
 streams.set_panic_hook();
 
@@ -47,9 +48,11 @@ export class StreamsService {
 		pskId: string;
 	}> {
 		try {
+			console.log("Making seed", seed)
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
+			console.log("Seed done", seed)
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			const author = Author.fromClient(client, seed, ChannelType.MultiBranch);
@@ -201,9 +204,11 @@ export class StreamsService {
 		try {
 			const annAddress = this.getChannelAddress(announcementLink);
 
+			console.log("Making seed", seed)
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
+			console.log("Seed done", seed)
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			const subscriber = Subscriber.fromClient(client, seed);
@@ -288,7 +293,7 @@ export class StreamsService {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		let seed = '';
 		for (let i = 9; i < size; i++) {
-			seed += alphabet[Math.floor(Math.random() * alphabet.length)];
+			seed += alphabet[crypto.randomInt(0, alphabet.length)]
 		}
 		return seed;
 	}
