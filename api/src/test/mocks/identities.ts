@@ -254,3 +254,24 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 	},
 	txHash: 'CETPVHOIBPNGCWQQCQALVKQQOD9B9MLMU9ZMNFZHBPEAOTMWFTVDRRBMFYIETHDWXA9GLGYWAFQRA9999'
 };
+
+export const TestCredentialMock = {
+	'@context': 'https://www.w3.org/2018/credentials/v1',
+	id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+	type: ['VerifiableCredential', 'DeviceCredential'],
+	credentialSubject: {
+		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		type: 'Device',
+		registrationDate: '2021-03-24T16:54:38+01:00',
+		username: 'test-device',
+		initiatorId: ''
+	},
+	issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+	issuanceDate: '2021-03-24T15:58:59Z',
+	proof: {
+		type: 'MerkleKeySignature2021',
+		verificationMethod: '#key-collection',
+		signatureValue:
+			'9fNqgZfFZTnt6HpyRD2yXRovijjewVTpGSzwNX4YvPb1.1117u9ibPzu8itzHAWjLdo6j7vTWdWCuvADY1oUqrJLxUmQkCnhEgJWBoASweLXoJAPYuUe8iyyYEgoaQDDTHhaL5xZQ8fK6nbw67qLo5BuTbQHiqpnintZph9TjKFep7pk6zoLMGdD.3xh4r38iiLhXyjBwdJPMqzSyrJAtSp3u3pJUGTGydyN45rTEWXfqPEDLw8ux9ttXijADTH5SAwr924Agnk2Vm3wA'
+	}
+};
