@@ -45,7 +45,7 @@ module.exports = {
       type: 'category',
       label: 'Examples',
       collapsed: true,
-      items: ['examples/create_identity', 'examples/verify_identity', 'examples/create_stream', 'examples/read_stream']
+      items: ['examples/create_identity', 'examples/issue_credential', 'examples/verify_credential', 'examples/create_stream', 'examples/read_stream']
     },
     {
       type: 'doc',
