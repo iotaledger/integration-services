@@ -48,11 +48,9 @@ export class StreamsService {
 		pskId: string;
 	}> {
 		try {
-			console.log("Making seed", seed)
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
-			console.log("Seed done", seed)
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			const author = Author.fromClient(client, seed, ChannelType.MultiBranch);
@@ -204,11 +202,9 @@ export class StreamsService {
 		try {
 			const annAddress = this.getChannelAddress(announcementLink);
 
-			console.log("Making seed", seed)
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
-			console.log("Seed done", seed)
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			const subscriber = Subscriber.fromClient(client, seed);
