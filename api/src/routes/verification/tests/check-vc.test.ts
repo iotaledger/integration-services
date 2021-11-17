@@ -10,6 +10,7 @@ import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
+import { SERVER_IDENTITY } from '../../../config/server';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -22,9 +23,7 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config: any = {
-			serverIdentityId: ServerIdentityMock.doc.id
-		};
+		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id;
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
@@ -34,12 +33,11 @@ describe('test authentication routes', () => {
 			userService,
 			{
 				serverSecret,
-				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
 			LoggerMock
 		);
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock);
 
 		res = {
 			send: sendMock,

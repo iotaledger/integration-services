@@ -5,8 +5,6 @@ export interface Config {
 	apiVersion: string;
 	databaseUrl: string;
 	databaseName: string;
-	serverIdentityFile?: string;
-	serverIdentityId: string;
 	identityConfig: IdentityConfig;
 	streamsConfig: StreamsConfig;
 	serverSecret: string;
@@ -15,6 +13,10 @@ export interface Config {
 	permaNode: string;
 	jwtExpiration: string;
 	commitHash: string;
+}
+
+export interface ServerRootConfig {
+	serverIdentity: string;
 }
 
 export interface IdentityConfig {
