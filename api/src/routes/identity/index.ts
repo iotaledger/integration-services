@@ -35,7 +35,7 @@ export class IdentityRoutes {
 		try {
 			const userSearch = this.getUserSearch(req);
 			const users = await this.userService.searchUsers(userSearch);
-			res.send(users);
+			res.status(StatusCodes.OK).send(users);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not search for the identity'));

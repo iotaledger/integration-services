@@ -117,7 +117,6 @@ export class StreamsService {
 		}
 	}
 
-	// TODO #22 finalize implementation fetch_prev_msg does not work as expected
 	async getMessage(subscription: Author | Subscriber, link: string): Promise<StreamsMessage> {
 		const address = this.getChannelAddress(link);
 		const messageResponse = await subscription.clone().receive_msg(address?.copy());
