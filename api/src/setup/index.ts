@@ -117,11 +117,7 @@ export class KeyGenerator {
 		logger.log(`Verify if root identity already exists...`);
 		const rootServerIdentities = await getServerIdentity();
 
-		if (!rootServerIdentities || rootServerIdentities.length == 0) {
-			throw new Error('Root identity is missing');
-		}
-
-		if (rootServerIdentities.length > 1) {
+		if (rootServerIdentities && rootServerIdentities.length > 1) {
 			throw new Error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
 		}
 
