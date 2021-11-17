@@ -26,7 +26,6 @@ export const ConfigMock: Config = {
 	databaseUrl: '',
 	apiVersion: '0.1',
 	port: 3000,
-	serverIdentityId: 'did:iota:1234',
 	permaNode: '',
 	hornetNode: '',
 	streamsConfig: StreamsConfigMock,

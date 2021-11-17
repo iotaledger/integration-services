@@ -3,7 +3,7 @@ import * as IdentityDocsDb from '../../../database/identity-docs';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
-import { Config, IdentityConfig } from '../../../models/config';
+import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { VerificationRoutes } from '../index';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
@@ -13,6 +13,7 @@ import { AuthorizationService } from '../../../services/authorization-service';
 import { UserType, UserRoles } from '../../../models/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { ConfigMock } from '../../../test/mocks/config';
+import { SERVER_IDENTITY } from '../../../config/server';
 
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -26,7 +27,7 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config: Config = { ...ConfigMock, serverIdentityId: ServerIdentityMock.doc.id };
+		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id;
 		const identityConfig: IdentityConfig = ConfigMock.identityConfig;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
@@ -36,12 +37,11 @@ describe('test authentication routes', () => {
 			userService,
 			{
 				serverSecret,
-				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
 			LoggerMock
 		);
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, config, LoggerMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock);
 
 		res = {
 			send: sendMock,

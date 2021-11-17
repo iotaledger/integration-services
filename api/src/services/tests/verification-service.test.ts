@@ -5,6 +5,7 @@ import { VerificationServiceConfig } from '../../models/config/services';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
 import { LoggerMock } from '../../test/mocks/logger';
+import { SERVER_IDENTITY } from '../../config/server';
 
 describe('test getKeyCollection', () => {
 	let ssiService: SsiService, userService: UserService, verificationService: VerificationService;
@@ -16,9 +17,9 @@ describe('test getKeyCollection', () => {
 		keys: [{ public: 'public-key', secret: 'secret-key' }],
 		type: ''
 	};
+	SERVER_IDENTITY.serverIdentity = 'did:iota:123'
 	const cfg: VerificationServiceConfig = {
 		serverSecret: 'very-secret-secret',
-		serverIdentityId: 'did:iota:123',
 		keyCollectionSize
 	};
 	beforeEach(() => {
@@ -48,7 +49,7 @@ describe('test getKeyCollection', () => {
 
 		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
 
-		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, cfg.serverIdentityId, cfg.serverSecret);
+		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, SERVER_IDENTITY.serverIdentity, cfg.serverSecret);
 		expect(generateKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, keyCollectionSize, {});
 		expect(saveKeyCollectionSpy).toHaveBeenCalledWith(expectedKeyCollection, 'did:iota:123', 'very-secret-secret');
 		expect(getIdentitySpy).toHaveBeenCalled();
@@ -74,7 +75,7 @@ describe('test getKeyCollection', () => {
 
 		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
 
-		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, cfg.serverIdentityId, cfg.serverSecret);
+		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, SERVER_IDENTITY.serverIdentity, cfg.serverSecret);
 		expect(generateKeyCollectionSpy).not.toHaveBeenCalled();
 		expect(saveKeyCollectionSpy).not.toHaveBeenCalled();
 		expect(getIdentitySpy).not.toHaveBeenCalled();
