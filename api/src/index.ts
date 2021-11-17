@@ -36,9 +36,20 @@ async function getRootIdentityId(config: Config): Promise<string> {
 	try {
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
-		const serverIdentity = await getServerIdentity();
+		const rootServerIdentities = await getServerIdentity();
 
-		const rootIdentity = serverIdentity?.identityId;
+		if (!rootServerIdentities || rootServerIdentities.length == 0) {
+			logger.error('Root identity is missing');
+			return null;
+		}
+
+		if (rootServerIdentities.length > 1) {
+			logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
+			return null;
+		}
+
+		const rootServerIdentity = rootServerIdentities[0];
+		const rootIdentity = rootServerIdentity?.identityId;
 
 		if (rootIdentity) {
 			logger.log('Found server ID: ' + rootIdentity);

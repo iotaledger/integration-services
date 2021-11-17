@@ -30,14 +30,19 @@ export class KeyGenerator {
 	static async checkRootIdentity(config: Config): Promise<IdentityJsonUpdate> {
 		logger.log(`Checking root identity...`);
 		
-		const rootServerIdentity = await getServerIdentity();
-	
-		const serverIdentityId = rootServerIdentity?.identityId;
-
-		if (!serverIdentityId) {
+		const rootServerIdentities = await getServerIdentity();
+		if (!rootServerIdentities || rootServerIdentities.length == 0) {
 			logger.error('Root identity is missing');
 			return null;
 		}
+
+		if (rootServerIdentities.length > 1) {
+			logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
+			return null;
+		}
+
+		const rootServerIdentity = rootServerIdentities[0];
+		const serverIdentityId = rootServerIdentity?.identityId;
 
 		SERVER_IDENTITY.serverIdentity = serverIdentityId;
 
@@ -110,8 +115,17 @@ export class KeyGenerator {
 
 		// Check if root identity exists and if it is valid
 		logger.log(`Verify if root identity already exists...`);
-		const serverIdentity = await getServerIdentity();
-		const rootIdentity = serverIdentity?.identityId;
+		const rootServerIdentities = await getServerIdentity();
+
+		if (!rootServerIdentities || rootServerIdentities.length == 0) {
+			throw new Error('Root identity is missing');
+		}
+
+		if (rootServerIdentities.length > 1) {
+			throw new Error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
+		}
+
+		const rootIdentity = rootServerIdentities[0]?.identityId;
 
 		if (rootIdentity) {
 			SERVER_IDENTITY.serverIdentity = rootIdentity;
