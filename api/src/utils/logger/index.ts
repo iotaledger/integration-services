@@ -15,10 +15,10 @@ export class Logger implements ILogger {
 			format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
 		})
 	];
-	readonly options = {
+	readonly options: winston.LoggerOptions = {
 		level: 'info',
 		format: winston.format.json(),
-		defaultMeta: { service: 'user-service' },
+		defaultMeta: { service: 'integration-services' },
 		transports: this.transports
 	};
 
@@ -39,7 +39,8 @@ export class Logger implements ILogger {
 			format: winston.format.json(),
 			headerBlacklist: ['Authorization', 'authorization', 'cookie'],
 			level: 'info',
-			winstonInstance: this.logger
+			winstonInstance: this.logger,
+			ignoredRoutes: ['/info']
 		};
 	}
 
