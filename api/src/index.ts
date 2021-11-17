@@ -20,8 +20,7 @@ const logger = Logger.getInstance();
 const argv = yargs
 	.command('server', 'Start the integration service API', {})
 	.command('keygen', 'Generate root identity for integration service API', {})
-	.help()
-	.alias('help', 'h').argv;
+	.help().argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -46,43 +45,56 @@ async function getRootIdentityId(config: Config): Promise<string> {
 	return null;
 }
 
-async function startServer(config: Config) {
-	const rootIdentity = await getRootIdentityId(config);
+process.on('uncaughtException', function (err) {
+	// clean up allocated resources
+	// log necessary error details to log files
+	logger.error(`Uncaught Exception: ${err}`);
+	process.exit(); // exit the process to avoid unknown state
+});
 
-	// setup did for server if not exists
-	if (!rootIdentity) {
+async function startServer(config: Config) {
+	try {
+		const rootIdentity = await getRootIdentityId(config);
+
+		// setup did for server if not exists
+		if (!rootIdentity) {
+			process.exit(0);
+		}
+
+		const app = express();
+
+		const port = config.port;
+		const dbUrl = config.databaseUrl;
+		const dbName = config.databaseName;
+		const version = config.apiVersion;
+		const openapiSpecification = swaggerJsdoc(openApiDefinition);
+
+		app.use(express.json({ limit: '10mb' }));
+		app.use(express.urlencoded({ limit: '10mb', extended: true }));
+		app.use(expressWinston.logger(Logger.getInstance().getExpressWinstonOptions()));
+
+		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
+
+		const prefix = `/api/${version}`;
+		useRouter(app, prefix + '/channel-info', channelInfoRouter);
+		useRouter(app, prefix + '/channels', channelRouter);
+		useRouter(app, prefix + '/subscriptions', subscriptionRouter);
+		useRouter(app, prefix + '/identities', identityRouter);
+		useRouter(app, prefix + '/authentication', authenticationRouter);
+		useRouter(app, prefix + '/verification', verificationRouter);
+		useRouter(app, '', serverInfoRouter);
+
+		app.use(errorMiddleware);
+		const server = app.listen(port, async () => {
+			logger.log(`Started API Server on port ${port}`);
+			await MongoDbService.connect(dbUrl, dbName);
+		});
+		server.setTimeout(50000);
+	} catch (e) {
+		logger.error(e.message);
+		await MongoDbService.disconnect();
 		process.exit(0);
 	}
-
-	const app = express();
-
-	const port = config.port;
-	const dbUrl = config.databaseUrl;
-	const dbName = config.databaseName;
-	const version = config.apiVersion;
-	const openapiSpecification = swaggerJsdoc(openApiDefinition);
-
-	app.use(express.json({ limit: '10mb' }));
-	app.use(express.urlencoded({ limit: '10mb', extended: true }));
-	app.use(expressWinston.logger(Logger.getInstance().getExpressWinstonOptions()));
-
-	app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
-
-	const prefix = `/api/${version}`;
-	useRouter(app, prefix + '/channel-info', channelInfoRouter);
-	useRouter(app, prefix + '/channels', channelRouter);
-	useRouter(app, prefix + '/subscriptions', subscriptionRouter);
-	useRouter(app, prefix + '/identities', identityRouter);
-	useRouter(app, prefix + '/authentication', authenticationRouter);
-	useRouter(app, prefix + '/verification', verificationRouter);
-	useRouter(app, '', serverInfoRouter);
-
-	app.use(errorMiddleware);
-	const server = app.listen(port, async () => {
-		logger.log(`Started API Server on port ${port}`);
-		await MongoDbService.connect(dbUrl, dbName);
-	});
-	server.setTimeout(50000);
 }
 
 async function keyGen(config: Config) {
@@ -95,7 +107,7 @@ async function keyGen(config: Config) {
 	} catch (e) {
 		logger.error(e);
 	}
-
+	await MongoDbService.disconnect();
 	process.exit();
 }
 
@@ -103,4 +115,6 @@ if (argv._.includes('server')) {
 	startServer(CONFIG);
 } else if (argv._.includes('keygen')) {
 	keyGen(CONFIG);
+} else {
+	yargs.showHelp();
 }
