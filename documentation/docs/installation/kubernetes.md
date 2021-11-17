@@ -8,7 +8,8 @@ The installation was tested on Kubenetes 1.21.
 
 In order to have a simple single-node kubernetes cluster we suggest to install [minikube](https://minikube.sigs.k8s.io/docs/start/).
 
-Once minikube is installed you will need to reference an IOTA Hornet Node and a MongoDB database.
+Once minikube is installed you will need to reference an IOTA Hornet Node and a MongoDB database: you can find this and all others 
+configurations in the file `kubernetes/is-config.yaml`.
 
 ### Self-service MongoDB
 
