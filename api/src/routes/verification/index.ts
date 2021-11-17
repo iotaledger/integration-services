@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
-import { Config } from '../../models/config';
 import { RevokeVerificationBody, TrustedRootBody, VerifyIdentityBody } from '../../models/types/request-response-bodies';
 import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { User, UserRoles } from '../../models/types/user';
@@ -11,12 +10,12 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { VerifiableCredentialPersistence } from '../../models/types/key-collection';
 import { ILogger } from '../../utils/logger';
 import * as _ from 'lodash';
+import { SERVER_IDENTITY } from '../../config/server';
 
 export class VerificationRoutes {
 	constructor(
 		private readonly verificationService: VerificationService,
 		private readonly authorizationService: AuthorizationService,
-		private readonly config: Config,
 		private readonly logger: ILogger
 	) {}
 
@@ -41,7 +40,7 @@ export class VerificationRoutes {
 
 			const vc: VerifiableCredentialJson = await this.verificationService.verifyIdentity(
 				subject,
-				this.config.serverIdentityId,
+				SERVER_IDENTITY.serverIdentity,
 				initiatorVC?.credentialSubject?.id || requestUser.identityId
 			);
 
@@ -77,7 +76,7 @@ export class VerificationRoutes {
 				throw error;
 			}
 
-			await this.verificationService.revokeVerifiableCredential(vcp, this.config.serverIdentityId);
+			await this.verificationService.revokeVerifiableCredential(vcp, SERVER_IDENTITY.serverIdentity);
 
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
