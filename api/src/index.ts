@@ -6,7 +6,6 @@ import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
-import { SERVER_IDENTITY } from './config/server';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
@@ -16,6 +15,7 @@ import yargs from 'yargs';
 import { KeyGenerator } from './setup';
 import { Config } from './models/config';
 import { getServerIdentity } from './database/user';
+import { SERVER_IDENTITY } from './config/server';
 
 const logger = Logger.getInstance();
 
@@ -78,6 +78,8 @@ async function startServer(config: Config) {
 		if (!rootIdentity) {
 			process.exit(0);
 		}
+
+		SERVER_IDENTITY.serverIdentity = rootIdentity;
 
 		const app = express();
 
