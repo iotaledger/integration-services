@@ -6,6 +6,7 @@ import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import { CONFIG } from './config';
+import { SERVER_IDENTITY } from './config/server';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
@@ -14,6 +15,7 @@ import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
 import { Config } from './models/config';
+import { getServerIdentity } from './database/user';
 
 const logger = Logger.getInstance();
 
@@ -33,13 +35,29 @@ async function getRootIdentityId(config: Config): Promise<string> {
 	try {
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
-		const rootIdentity = await KeyGenerator.checkRootIdentity(config);
+		const rootServerIdentities = await getServerIdentity();
+
+		if (!rootServerIdentities || rootServerIdentities.length == 0) {
+			logger.error('Root identity is missing');
+			return null;
+		}
+
+		if (rootServerIdentities.length > 1) {
+			logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
+			return null;
+		}
+
+		const rootServerIdentity = rootServerIdentities[0];
+		const rootIdentity = rootServerIdentity?.identityId;
 
 		if (rootIdentity) {
-			return rootIdentity.doc.id;
+			logger.log('Found server ID: ' + rootIdentity);
+			return rootIdentity;
 		}
+
+		logger.error('Server Identity ID not found');
 	} catch (e) {
-		logger.error(e.message);
+		logger.error('Error:' + e);
 	}
 
 	return null;
@@ -99,6 +117,7 @@ async function startServer(config: Config) {
 
 async function keyGen(config: Config) {
 	try {
+
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
 		const keyGenerator: KeyGenerator = new KeyGenerator(config);
@@ -106,6 +125,7 @@ async function keyGen(config: Config) {
 		await keyGenerator.keyGeneration();
 	} catch (e) {
 		logger.error(e);
+		process.exit(-1);
 	}
 	await MongoDbService.disconnect();
 	process.exit();
