@@ -15,6 +15,7 @@ import yargs from 'yargs';
 import { KeyGenerator } from './setup';
 import { Config } from './models/config';
 import { getServerIdentity } from './database/user';
+import { SERVER_IDENTITY } from './config/server';
 
 const logger = Logger.getInstance();
 
@@ -79,6 +80,8 @@ async function startServer(config: Config) {
 		if (!rootIdentity) {
 			process.exit(0);
 		}
+
+		SERVER_IDENTITY.serverIdentity = rootIdentity;
 
 		const app = express();
 
