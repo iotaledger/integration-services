@@ -15,6 +15,7 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
+import * as crypto from 'crypto';
 
 streams.set_panic_hook();
 
@@ -287,7 +288,7 @@ export class StreamsService {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		let seed = '';
 		for (let i = 9; i < size; i++) {
-			seed += alphabet[Math.floor(Math.random() * alphabet.length)];
+			seed += alphabet[crypto.randomInt(0, alphabet.length)]
 		}
 		return seed;
 	}
