@@ -1,0 +1,65 @@
+# Create an Identity
+
+This example will show how to create an basic identity. It is recommended to have a basic
+understading of Decentralized Identities to get the most out of this example. Have a look at our Basics section to read further about
+[Decrentralized Identities](../basics/identity).
+
+## Prerequisite
+
+1. You have to have a recent version of [Node.js](https://nodejs.org/en/) installed.
+2. This example uses [axios](https://www.npmjs.com/package/axios) for http requests. You can use whatever package you like for querying the API. If you want to follow along make sure to install axios by running `npm install axios` in your projects root.
+3. Make sure to have the API running and connected to the database. You can test this by querying [http://localhost:3000/info](http://localhost:3000/info). If it returns some information like and identityId you are ready to go.
+
+## Running the example
+
+This is a really barebones example on how to create an identity. For all possible parameter have a look at our [API Referenece](../api_reference).
+First of all a user object containg just a username is created. The user object is then posted to the `/identities/create` endpoint.
+
+```javascript
+import axios from 'axios';
+
+const createIdentity = async () => {
+  const user = { username: 'example-user' };
+  const response = await axios.post('http://localhost:3000/api/v1/identities/create', user);
+  console.log(JSON.stringify(response.data, null, 4));
+};
+
+createIdentity();
+```
+
+Output example identity:
+
+```json
+{
+  "doc": {
+    "id": "did:iota:9VoXVSn8oe2yAiHcppSzpevV9MptcMmUiDtYEjwDdEBD",
+    "authentication": [
+      {
+        "id": "did:iota:9VoXVSn8oe2yAiHcppSzpevV9MptcMmUiDtYEjwDdEBD#key",
+        "controller": "did:iota:9VoXVSn8oe2yAiHcppSzpevV9MptcMmUiDtYEjwDdEBD",
+        "type": "Ed25519VerificationKey2018"
+      }
+    ],
+    "created": "2021-11-16T08:39:12Z",
+    "updated": "2021-11-16T08:39:12Z",
+    "proof": {
+      "type": "JcsEd25519Signature2020",
+      "verificationMethod": "#key",
+      "signatureValue": "WgoRce5FWtNxS5UMqyjmdSnmEU3q3ET9XoNTySVV1BoyiLe4kC8HLCqSR8fL2ZzvREzDs47fXHaf7VXTwTYfEjQ"
+    }
+  },
+  "key": {
+    "type": "ed25519",
+    "public": "5YLhUrXqMZbu6v2PSUwThSinmiNr9Kv2FdvqhogSzWR",
+    "secret": "4wHshyqhBu7oUfKmrNH5ydr8t17m6JugAuTFQBjBiWU2",
+    "encoding": "base58"
+  },
+  "txHash": "302c3a31ee5da69b190e44cb802c96ce97503aba072d274ff9aebf99d0106fb1"
+}
+```
+
+Great, you created your first identity! You can now continue by [issueing the first credential to your identity](./issue_credential).
+
+:::warning
+Please make sure to keep your secret key private and not share it with anyone!
+:::
