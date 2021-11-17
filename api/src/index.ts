@@ -21,7 +21,6 @@ const argv = yargs
 	.command('server', 'Start the integration service API', {})
 	.command('keygen', 'Generate root identity for integration service API', {})
 	.help()
-	// .alias('help', 'h')
 	.argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
@@ -50,9 +49,7 @@ async function getRootIdentityId(config: Config): Promise<string> {
 process.on("uncaughtException", function(err) {
     // clean up allocated resources
     // log necessary error details to log files
-	console.log("ERRORE!!!");
-	console.log(err);
-
+	logger.error(`Uncaught Exception: ${err}`);
     process.exit(); // exit the process to avoid unknown state
 });
 
