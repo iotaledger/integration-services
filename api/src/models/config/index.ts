@@ -13,6 +13,7 @@ export interface Config {
 	permaNode: string;
 	jwtExpiration: string;
 	commitHash: string;
+	serverIdentity: string;
 }
 
 export interface ServerRootConfig {
