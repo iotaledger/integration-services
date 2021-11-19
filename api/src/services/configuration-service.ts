@@ -52,7 +52,7 @@ export class ConfigurationService {
 
 	constructor() {
 		this.logger = Logger.getInstance();
-		this.assertConfig(this.config);
+		this.assertConfig();
 	}
 
 	public static getInstance(): ConfigurationService {
@@ -62,9 +62,11 @@ export class ConfigurationService {
 		return ConfigurationService.instance;
 	}
 
-	assertConfig(config: Config) {
+	assertConfig() {
+		const config = this.config;
+
 		if (config.serverSecret === '<server-secret>') {
-			console.error('please replace the default values!');
+			this.logger.error('please replace the default values!');
 		}
 
 		if (config.serverSecret.length !== 32) {
@@ -80,7 +82,7 @@ export class ConfigurationService {
 					return;
 				}
 
-				console.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
+				this.logger.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
 			}
 		});
 	}
