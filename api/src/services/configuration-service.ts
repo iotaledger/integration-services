@@ -18,6 +18,7 @@ export class ConfigurationService {
 	private static instance: ConfigurationService;
 	logger: ILogger;
 	private _serverIdentityId: string;
+
 	streamsConfig: StreamsConfig = {
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
@@ -62,61 +63,6 @@ export class ConfigurationService {
 		return ConfigurationService.instance;
 	}
 
-	assertConfig() {
-		const config = this.config;
-
-		if (config.serverSecret === '<server-secret>') {
-			this.logger.error('please replace the default values!');
-		}
-
-		if (config.serverSecret.length !== 32) {
-			throw Error('Server secret must to have a length of 32!');
-		}
-
-		// apiKey can be empty if the host decides so
-		// commitHash is set automatically during deployment
-		const optionalEnvVariables = ['apiKey', 'commitHash'];
-		Object.values(config).map((value, i) => {
-			if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
-				if (optionalEnvVariables.includes(Object.keys(config)[i])) {
-					return;
-				}
-
-				this.logger.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
-			}
-		});
-	}
-
-	// Ensure that on the db there is the declared root identity
-	// async checkRootIdentity(): Promise<IdentityJsonUpdate> {
-	// 	ConfigurationService.instance.logger.log(`Checking root identity...`);
-
-	// 	const rootServerIdentities = await getServerIdentity();
-	// 	if (!rootServerIdentities || rootServerIdentities.length == 0) {
-	// 		this.logger.error('Root identity is missing');
-	// 		return null;
-	// 	}
-
-	// 	if (rootServerIdentities.length > 1) {
-	// 		this.logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
-	// 		return null;
-	// 	}
-
-	// 	const rootServerIdentity = rootServerIdentities[0];
-	// 	const serverIdentityId = rootServerIdentity?.identityId;
-
-	// 	// TODO set config
-	// 	// SERVER_IDENTITY.serverIdentity = serverIdentityId;
-	// 	this.config.serverIdentity = serverIdentityId;
-	// 	const serverIdentity = getIdentity(serverIdentityId, this.config.serverSecret);
-
-	// if (!serverIdentity) {
-	// 	throw Error('Root identity not found in database: ' + serverIdentityId);
-	// }
-
-	// 	return serverIdentity;
-	// }
-
 	public get serverIdentityId(): string {
 		return this._serverIdentityId;
 	}
@@ -151,6 +97,7 @@ export class ConfigurationService {
 			const serverIdentity = getIdentityDoc(serverIdentityId, this.config.serverSecret);
 			if (!serverIdentity) {
 				this.logger.error(`Root identity document not found in database: ${serverIdentityId}`);
+				return null;
 			}
 
 			this.serverIdentityId = serverIdentityId;
@@ -161,5 +108,30 @@ export class ConfigurationService {
 		}
 
 		return null;
+	}
+
+	private assertConfig() {
+		const config = this.config;
+
+		if (config.serverSecret === '<server-secret>') {
+			this.logger.error('please replace the default values!');
+		}
+
+		if (config.serverSecret.length !== 32) {
+			throw Error('Server secret must to have a length of 32!');
+		}
+
+		// apiKey can be empty if the host decides so
+		// commitHash is set automatically during deployment
+		const optionalEnvVariables = ['apiKey', 'commitHash'];
+		Object.values(config).map((value, i) => {
+			if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
+				if (optionalEnvVariables.includes(Object.keys(config)[i])) {
+					return;
+				}
+
+				this.logger.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
+			}
+		});
 	}
 }

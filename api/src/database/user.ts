@@ -3,10 +3,9 @@ import { MongoDbService } from '../services/mongodb-service';
 import { UserPersistence, UserRoles, UserSearch } from '../models/types/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { VerifiableCredentialJson } from '../models/types/identity';
-import { MAX_NUMBER_OF_VC } from '../config/identity';
 
 const collectionName = CollectionNames.users;
-const maxNumberOfVc = MAX_NUMBER_OF_VC;
+const maxNumberOfVc = 100;
 
 export const searchUsers = async (userSearch: UserSearch): Promise<UserPersistence[]> => {
 	const searchMaximum = 100;

@@ -1,3 +1,2 @@
 // Size must be a multiple of 2^2, 2^3, 2^4, ...
 export const KEY_COLLECTION_SIZE = 4096;
-export const MAX_NUMBER_OF_VC = 100;
