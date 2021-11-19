@@ -1,4 +1,3 @@
-import { CONFIG } from '../config';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { AuthenticationService } from '../services/authentication-service';
 import { AuthorizationService } from '../services/authorization-service';
@@ -12,9 +11,8 @@ import { VerificationService } from '../services/verification-service';
 import { Logger } from '../utils/logger';
 import { ConfigurationService } from '../services/configuration-service';
 
-const { serverSecret, identityConfig, jwtExpiration, streamsConfig } = CONFIG;
-
 const configService = ConfigurationService.getInstance();
+const { serverSecret, identityConfig, jwtExpiration, streamsConfig } = configService.config;
 export const ssiService = SsiService.getInstance(identityConfig, Logger.getInstance());
 export const authorizationService = new AuthorizationService();
 export const userService = new UserService(ssiService, serverSecret, Logger.getInstance());

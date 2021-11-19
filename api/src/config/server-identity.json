@@ -4,6 +4,6 @@
     "isServerIdentity": true,
     "claim": {
         "type": "Service",
-        "name": "Identity Service"
+        "name": "Integration Service"
     }
 }
