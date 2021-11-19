@@ -20,19 +20,39 @@ module.exports = {
       type: 'category',
       label: 'Getting Started',
       collapsed: false,
-      items: ['getting_started/requirements', 'getting_started/configuration']
+      items: [
+        'getting_started/requirements',
+        'installation/overview',
+        {
+          type: 'category',
+          label: 'Kubernetes',
+          collapsed: false,
+          items: [
+            'installation/kubernetes/local_setup',
+            'installation/kubernetes/expose_apis',
+            'installation/kubernetes/configuration'
+          ]
+        },
+        'installation/docker',
+        'installation/docker_compose'
+      ]
     },
     {
       type: 'category',
-      label: 'Installation',
+      label: 'Using Decentralized Identities',
+      collapsed: true,
+      items: ['examples/create_identity', 'examples/issue_credential', 'examples/verify_credential', 'examples/create_stream', 'examples/read_stream']
+    },
+
+    {
+      type: 'category',
+      label: 'Using Audit Trail',
       collapsed: true,
       items: [
-        'installation/overview',
-        'installation/docker',
-        'installation/docker_compose',
-        'installation/kubernetes',
-        'installation/helm',
-        'installation/port_forward'
+        'examples/create_channel',
+        'examples/subscribe_channel', 
+        'examples/authorize_subscriber', 
+        'examples/read_write_channel'
       ]
     },
     {
@@ -40,12 +60,6 @@ module.exports = {
       label: 'Basics',
       collapsed: true,
       items: ['basics/overview', 'basics/identity', 'basics/streams']
-    },
-    {
-      type: 'category',
-      label: 'Examples',
-      collapsed: true,
-      items: ['examples/create_identity', 'examples/issue_credential', 'examples/verify_credential', 'examples/create_stream', 'examples/read_stream']
     },
     {
       type: 'doc',
