@@ -6,12 +6,13 @@ import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../.
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
-import { ServerIdentityMock, TestCredentialMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
+import { TestCredentialMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
 import { IdentityConfigMock } from '../../test/mocks/config';
 import { VerificationService } from '../../services/verification-service';
+import { ConfigurationServiceMock } from '../../test/mocks/service-mocks';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -37,10 +38,10 @@ describe('test user routes', () => {
 			userService,
 			{
 				serverSecret,
-				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
-			LoggerMock
+			LoggerMock,
+			ConfigurationServiceMock
 		);
 		const authorizationService = new AuthorizationService();
 		userRoutes = new IdentityRoutes(userService, authorizationService, verificationService, LoggerMock);

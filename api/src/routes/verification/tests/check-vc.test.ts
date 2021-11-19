@@ -10,6 +10,7 @@ import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
+import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -32,12 +33,12 @@ describe('test authentication routes', () => {
 			userService,
 			{
 				serverSecret,
-				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
-			LoggerMock
+			LoggerMock,
+			ConfigurationServiceMock
 		);
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock, ConfigurationServiceMock);
 
 		res = {
 			send: sendMock,

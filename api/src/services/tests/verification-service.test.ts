@@ -5,6 +5,7 @@ import { VerificationServiceConfig } from '../../models/config/services';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
 import { LoggerMock } from '../../test/mocks/logger';
+import { ConfigurationServiceMock } from '../../test/mocks/service-mocks';
 
 describe('test getKeyCollection', () => {
 	let ssiService: SsiService, userService: UserService, verificationService: VerificationService;
@@ -18,13 +19,12 @@ describe('test getKeyCollection', () => {
 	};
 	const cfg: VerificationServiceConfig = {
 		serverSecret: 'very-secret-secret',
-		serverIdentityId: 'did:iota:123',
 		keyCollectionSize
 	};
 	beforeEach(() => {
 		ssiService = SsiService.getInstance({} as any, LoggerMock);
 		userService = new UserService(ssiService, 'very-secret-secret', LoggerMock);
-		verificationService = new VerificationService(ssiService, userService, cfg, LoggerMock);
+		verificationService = new VerificationService(ssiService, userService, cfg, LoggerMock, ConfigurationServiceMock);
 	});
 
 	it('should generate a new keycollection since index not found', async () => {
@@ -48,9 +48,13 @@ describe('test getKeyCollection', () => {
 
 		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
 
-		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, cfg.serverIdentityId, cfg.serverSecret);
+		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, ConfigurationServiceMock.serverIdentityId, cfg.serverSecret);
 		expect(generateKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, keyCollectionSize, {});
-		expect(saveKeyCollectionSpy).toHaveBeenCalledWith(expectedKeyCollection, 'did:iota:123', 'very-secret-secret');
+		expect(saveKeyCollectionSpy).toHaveBeenCalledWith(
+			expectedKeyCollection,
+			ConfigurationServiceMock.serverIdentityId,
+			'very-secret-secret'
+		);
 		expect(getIdentitySpy).toHaveBeenCalled();
 		expect(updateIdentityDocSpy).toHaveBeenCalled();
 		expect(keyCollection).toEqual(expectedKeyCollection);
@@ -74,7 +78,7 @@ describe('test getKeyCollection', () => {
 
 		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
 
-		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, cfg.serverIdentityId, cfg.serverSecret);
+		expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, ConfigurationServiceMock.serverIdentityId, cfg.serverSecret);
 		expect(generateKeyCollectionSpy).not.toHaveBeenCalled();
 		expect(saveKeyCollectionSpy).not.toHaveBeenCalled();
 		expect(getIdentitySpy).not.toHaveBeenCalled();

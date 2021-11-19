@@ -1,4 +1,3 @@
-import { ServerIdentityMock } from '../../../test/mocks/identities';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
@@ -10,6 +9,7 @@ import { AuthorizationService } from '../../../services/authorization-service';
 import { UserRoles } from '../../../models/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
+import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -30,12 +30,12 @@ describe('test authentication routes', () => {
 			userService,
 			{
 				serverSecret,
-				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
-			LoggerMock
+			LoggerMock,
+			ConfigurationServiceMock
 		);
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock, ConfigurationServiceMock);
 
 		res = {
 			send: sendMock,
