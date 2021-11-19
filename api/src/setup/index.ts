@@ -11,7 +11,7 @@ import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { SsiService } from '../services/ssi-service';
 import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { getServerIdentity } from '../database/user';
-import { ConfigurationService } from '../services/configuration-service';
+import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
 import { getIdentity } from '../database/identity-docs';
 
@@ -19,7 +19,7 @@ const logger = Logger.getInstance();
 
 export class KeyGenerator {
 	private readonly config: Config;
-	constructor(private readonly configService: ConfigurationService) {
+	constructor(private readonly configService: IConfigurationService) {
 		this.config = configService.config;
 		if (!this.config.serverSecret) {
 			throw Error('A server secret must be defined to work with the API!');
@@ -102,10 +102,10 @@ export class KeyGenerator {
 			userService,
 			{
 				serverSecret: this.config.serverSecret,
-				serverIdentityId: this.configService.serverIdentityId,
 				keyCollectionSize: KEY_COLLECTION_SIZE
 			},
-			logger
+			logger,
+			this.configService
 		);
 
 		const serverUser = await userService.getUser(identity.doc.id);

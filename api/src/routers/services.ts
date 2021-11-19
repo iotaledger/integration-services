@@ -37,8 +37,8 @@ export const verificationService = new VerificationService(
 	userService,
 	{
 		serverSecret,
-		serverIdentityId: configService.serverIdentityId,
 		keyCollectionSize: KEY_COLLECTION_SIZE
 	},
-	Logger.getInstance()
+	Logger.getInstance(),
+	configService
 );

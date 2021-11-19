@@ -6,6 +6,14 @@ import { getServerIdentity } from '../database/user';
 import { ILogger, Logger } from '../utils/logger/index';
 import { getIdentity } from '../database/identity-docs';
 
+export interface IConfigurationService {
+	serverIdentityId: string;
+	config: Config;
+	identityConfig: IdentityConfig;
+	streamsConfig: StreamsConfig;
+	getRootIdentityId(): Promise<string>;
+}
+
 export class ConfigurationService {
 	private static instance: ConfigurationService;
 	logger: ILogger;
