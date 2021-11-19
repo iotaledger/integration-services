@@ -29,5 +29,6 @@ export const ConfigMock: Config = {
 	permaNode: '',
 	hornetNode: '',
 	streamsConfig: StreamsConfigMock,
-	commitHash: ''
+	commitHash: '',
+	serverIdentity: 'serverrootidentity'
 };

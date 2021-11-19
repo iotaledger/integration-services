@@ -14,16 +14,15 @@ import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
 import { Config } from './models/config';
-import { getServerIdentity } from './database/user';
 import { SERVER_IDENTITY } from './config/server';
+import { ConfigurationService } from './services/configuration-service';
 
 const logger = Logger.getInstance();
 
 const argv = yargs
 	.command('server', 'Start the integration service API', {})
 	.command('keygen', 'Generate root identity for integration service API', {})
-	.help()
-	.argv;
+	.help().argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -32,49 +31,18 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 	app.use(prefix, router);
 }
 
-async function getRootIdentityId(config: Config): Promise<string> {
-	try {
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
-
-		const rootServerIdentities = await getServerIdentity();
-
-		if (!rootServerIdentities || rootServerIdentities.length == 0) {
-			logger.error('Root identity is missing');
-			return null;
-		}
-
-		if (rootServerIdentities.length > 1) {
-			logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
-			return null;
-		}
-
-		const rootServerIdentity = rootServerIdentities[0];
-		const rootIdentity = rootServerIdentity?.identityId;
-
-		if (rootIdentity) {
-			logger.log('Found server ID: ' + rootIdentity);
-			return rootIdentity;
-		}
-
-		logger.error('Server Identity ID not found');
-	} catch (e) {
-		logger.error('Error:' + e);
-	}
-
-	return null;
-}
-
-process.on("uncaughtException", function(err) {
-    // clean up allocated resources
-    // log necessary error details to log files
+process.on('uncaughtException', function (err) {
+	// clean up allocated resources
+	// log necessary error details to log files
 	logger.error(`Uncaught Exception: ${err}`);
-    process.exit(); // exit the process to avoid unknown state
+	process.exit(); // exit the process to avoid unknown state
 });
 
 async function startServer(config: Config) {
 	try {
-
-		const rootIdentity = await getRootIdentityId(config);
+		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+		const configService = ConfigurationService.getInstance();
+		const rootIdentity = await configService.getRootIdentityId();
 
 		// setup did for server if not exists
 		if (!rootIdentity) {
@@ -112,8 +80,7 @@ async function startServer(config: Config) {
 			await MongoDbService.connect(dbUrl, dbName);
 		});
 		server.setTimeout(50000);
-	}
-	catch (e) {
+	} catch (e) {
 		logger.error(e.message);
 		await MongoDbService.disconnect();
 		process.exit(0);
@@ -122,13 +89,11 @@ async function startServer(config: Config) {
 
 async function keyGen(config: Config) {
 	try {
-
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
 		const keyGenerator: KeyGenerator = new KeyGenerator(config);
 
 		await keyGenerator.keyGeneration();
-		
 	} catch (e) {
 		logger.error(e);
 		process.exit(-1);
@@ -141,7 +106,6 @@ if (argv._.includes('server')) {
 	startServer(CONFIG);
 } else if (argv._.includes('keygen')) {
 	keyGen(CONFIG);
-}
-else {
-	yargs.showHelp()
+} else {
+	yargs.showHelp();
 }
