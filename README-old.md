@@ -1,66 +1,46 @@
-# Docker Compose
+# **** Disclaimer ****
+This is work in progress and will evolve as IOTA core tools develop and ENSURESEC project requirements update
+# Setup the Integration Service Tools
 
-You need to install:
+## 1. Copy .env file
 
-* [docker](https://docs.docker.com/get-docker/)
-* [docker-compose](https://docs.docker.com/compose/install/)
+> This section must be done for local development start or when starting via docker.
 
-## Configuration
+Copy the `./api/.env-example` and rename it to `./api/.env`
+It contains predefined variables and some with secret values starting with < and ending with > like for instance: <db-user>
 
-You need to copy `.env-example` into `.env` and `mongo-init.js-example` into `mongo-init.js`.
+Define for the following variables a private value:
+````
+MONGO_INITDB_ROOT_USERNAME, MONGO_INITDB_ROOT_PASSWORD, DATABASE_URL, SERVER_SECRET
+````
 
-Than you need to replace `db-user`, `db-password`, `dn-name`, `server-secret` and `optional-api-key` in files `.env` and `mongo-init.js` accordingly.
+> !! For now leave the `SERVER_IDENTITY` blank or remove the complete line. !!
 
-> Important: the `server-secret` has to have a length of 32 characters
+The config should like following: (But please don't use the following values for username, password and secret in your env config.) The server secret is used to encrypt for instance the private key of the server identity but also to sign JWTs so it should be secure. 
 
-Here an example of how a `.env` file should look like:
+> Important: The SERVER_SECRET has to have a length of 32 characters!!
 
-````javascript
+````
 PORT=3000
 API_VERSION=v1
-NETWORK=main
 IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
 IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
+NETWORK=main
 EXPLORER=https://explorer.iota.org/mainnet/transaction
-
 DATABASE_NAME=integration-services
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
 DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
-
 SERVER_SECRET=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
-API_KEY=94F5BA49-12A6-4E45-A487-BF91C442276D
 ````
 
-Here an example of how a corresponding `mongo-init.js` file should look like:
+Make sure you use the same username and password for the `DATABASE_URL` as in `MONGO_INITDB_ROOT_USERNAME` & `MONGO_INITDB_ROOT_PASSWORD`.
 
-````javascript
-db.createUser(
-    {
-        user: "test",
-        pwd: "test",
-        roles: [
-            {
-                role: "readWrite",
-                db: "test"
-            }
-        ]
-    }
-);
-````
+> If you run the api through docker you need to set the ip of the machine the database is running on if you use `npm run start` you can use `0.0.0.0` as host!
 
-Make sure you use the same value for the same variable inside `.env` and `mongo-init.js`
+## 2. Local Development
 
-## Run Integration Services API
-
-You can start the Integration Services API with the following:
-
-`docker-compose up --env-file .env --build`
-
-## Local Development
-
-For local development you can start the main service with docker-compose (as before) and then use nodejs to run the api:
-remember however to define the correct `DATABASE_URL` environment variable changing `mongo` with `localhost`.
+For local development it makes sense to only use docker for the database and use nodejs to run the api.
 
 ### 1. Run MongoDB
 
@@ -75,36 +55,32 @@ eceaab9343eb   mongo:latest   "docker-entrypoint.s…"   7 seconds ago   Up 7 se
 
 > You can connect to the api via clients like `MongoDB Compass` by using the defined connection url of the database like for instance `mongodb://root:rootpassword@0.0.0.0:27017`!
 
-### 2. Run the API
+### 2. Create root identity and run the API
 
 2.1. Make sure you are in the `/api` folder and use the following commands:
+
 ```
 npm install     # Install dependencies
-npm run keygen  # Generate root identity: output on SERVER_ENTITY file
-npm run start   # Run server
+npm run keygen  # Generate root identity (if it not exists in the database)
 ```
 
-If it was the first time the api is started, no `SERVER_IDENTITY` is defined since it was left blank previously. The api should log a newly generated identity id which needs to be used as server identity as following:
+The `keygen` phase create a root identity for the server and add it to the database.
+If a root identity already exists in the database, the process will give a notice before exit.
+When the root server identity is generated the output is like the following:
 
 ```
 Successfully connected to mongodb
-Create identity...
-==================================================================================================
-== Store this identity in the as ENV var: did:iota:BfGtLdthmzrUdgYptrZgnC4amXZBZ2C2xQMVM7Bb1cZs ==
-==================================================================================================
+Setting root identity please wait...
 Add server id as trusted root...
 Generate key collection...
 Set server identity as verified...
 Setup Done!
-Please store the generated server identity as environment variable.
-Like: SERVER_IDENTITY=did:iota:BfGtLdthmzrUdgYptrZgnC4amXZBZ2C2xQMVM7Bb1cZs
 ```
 
-2.2. Copy the `SERVER_IDENTITY` into the .env file.
-
-2.3. Run the api again using `npm run start`
+2.2. Run the api again using `npm run start`
 
 It should log that the api was started like following:
+
 ```
 Started API Server on port 3000
 Successfully connected to mongodb
