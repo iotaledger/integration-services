@@ -15,6 +15,7 @@ import * as fetch from 'node-fetch';
 import { ILogger } from '../utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
+import * as crypto from 'crypto';
 
 streams.set_panic_hook();
 
@@ -116,7 +117,6 @@ export class StreamsService {
 		}
 	}
 
-	// TODO #22 finalize implementation fetch_prev_msg does not work as expected
 	async getMessage(subscription: Author | Subscriber, link: string): Promise<StreamsMessage> {
 		const address = this.getChannelAddress(link);
 		const messageResponse = await subscription.clone().receive_msg(address?.copy());
@@ -288,7 +288,7 @@ export class StreamsService {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		let seed = '';
 		for (let i = 9; i < size; i++) {
-			seed += alphabet[Math.floor(Math.random() * alphabet.length)];
+			seed += alphabet[crypto.randomInt(0, alphabet.length)]
 		}
 		return seed;
 	}

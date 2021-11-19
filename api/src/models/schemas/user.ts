@@ -8,7 +8,8 @@ export const IdentityWithoutIdFields = {
 	verifiableCredentials: Type.Optional(Type.Array(VerifiableCredentialSchema)),
 	role: Type.Optional(Type.String()),
 	claim: Type.Optional(ClaimSchema),
-	isPrivate: Type.Optional(Type.Boolean())
+	isPrivate: Type.Optional(Type.Boolean()),
+	isServerIdentity: Type.Optional(Type.Boolean())
 };
 
 export const IdentitySchema = Type.Object({

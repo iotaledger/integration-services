@@ -6,12 +6,13 @@ import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../.
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
-import { ServerIdentityMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
+import { ServerIdentityMock, TestCredentialMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
 import { IdentityConfigMock } from '../../test/mocks/config';
 import { VerificationService } from '../../services/verification-service';
+import { SERVER_IDENTITY } from '../../config/server';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -32,12 +33,12 @@ describe('test user routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
+		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id;
 		verificationService = new VerificationService(
 			ssiService,
 			userService,
 			{
 				serverSecret,
-				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
 			LoggerMock
@@ -77,6 +78,67 @@ describe('test user routes', () => {
 			await userRoutes.searchUsers(req, res, nextMock);
 
 			expect(searchUserSpy).toHaveBeenCalledWith(expectedUserSearch);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith([]);
+		});
+
+		it('should return expected users without claims and verifiable credentials from user search', async () => {
+			const expectedUserSearch: UserSearch = {
+				type: UserType.Person
+			};
+			const searchUserSpy = jest.spyOn(UserDb, 'searchUsers').mockImplementationOnce(async () => [
+				{
+					username: 'test-user1',
+					identityId: 'did:iota:1234',
+					publicKey: 'testpublickey',
+					claim: { name: 'thisnameisprivate', type: 'testtype' },
+					verifiableCredentials: [TestCredentialMock]
+				},
+				{
+					username: 'test-user2',
+					identityId: 'did:iota:12345',
+					publicKey: 'testpublickey2',
+					verifiableCredentials: [TestCredentialMock]
+				},
+				{
+					username: 'test-user3',
+					identityId: 'did:iota:12346',
+					publicKey: 'testpublickey3',
+					claim: { name: 'somehiddenname', type: 'youdontseeme' }
+				}
+			]);
+			const req: any = {
+				params: {},
+				query: {
+					type: 'Person'
+				},
+				body: null
+			};
+
+			// without credentials or claim
+			const expectedSearchResult = [
+				{
+					username: 'test-user1',
+					identityId: 'did:iota:1234',
+					publicKey: 'testpublickey'
+				},
+				{
+					username: 'test-user2',
+					identityId: 'did:iota:12345',
+					publicKey: 'testpublickey2'
+				},
+				{
+					username: 'test-user3',
+					identityId: 'did:iota:12346',
+					publicKey: 'testpublickey3'
+				}
+			];
+
+			await userRoutes.searchUsers(req, res, nextMock);
+
+			expect(searchUserSpy).toHaveBeenCalledWith(expectedUserSearch);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith(expectedSearchResult);
 		});
 	});
 

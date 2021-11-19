@@ -1,6 +1,6 @@
 {
   "name": "integration-services",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Audit log of the ensuresec project.",
   "main": "dist/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "start": "npm-run-all build start-node",
     "keygen": "npm-run-all build start-keygen",
     "build-watch": "tsc --watch ",
-    "serve-nodemon": "nodemon ./dist/index",
+    "serve-nodemon": "nodemon ./dist/index server",
     "serve": "run-p build-watch serve-nodemon",
     "generate-openapi-schemas": "ts-node ./src/tools/open-api-creator/index.ts",
     "generate-api-reference": "ts-node ./src/tools/markdown-creator/index.ts && swagger-markdown -i ./src/tools/markdown-creator/openApiSpecification.json -o ../documentation/docs/api_reference.md"

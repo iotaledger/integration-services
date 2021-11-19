@@ -11,7 +11,7 @@ import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
 import { Logger } from '../utils/logger';
 
-const { serverSecret, identityConfig, serverIdentityId, jwtExpiration, streamsConfig } = CONFIG;
+const { serverSecret, identityConfig, jwtExpiration, streamsConfig } = CONFIG;
 
 export const ssiService = SsiService.getInstance(identityConfig, Logger.getInstance());
 export const authorizationService = new AuthorizationService();
@@ -33,7 +33,6 @@ export const verificationService = new VerificationService(
 	ssiService,
 	userService,
 	{
-		serverIdentityId: serverIdentityId,
 		serverSecret,
 		keyCollectionSize: KEY_COLLECTION_SIZE
 	},

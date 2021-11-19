@@ -23,7 +23,7 @@ export class UserService {
 				return {
 					...userObj,
 					verifiableCredentials: undefined,
-					claim: !userObj.isPrivate ? userObj.claim : undefined
+					claim: undefined
 				};
 			})
 			.filter((u) => u);
@@ -116,7 +116,7 @@ export class UserService {
 		if (user == null || isEmpty(user.identityId)) {
 			throw new Error('Error when parsing the body: identityId must be provided!');
 		}
-		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role, isPrivate } = user;
+		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
 
 		const userPersistence: UserPersistence = {
 			identityId,
@@ -126,7 +126,8 @@ export class UserService {
 			claim,
 			verifiableCredentials,
 			role: role && (role as UserRoles),
-			isPrivate
+			isPrivate,
+			isServerIdentity
 		};
 
 		return userPersistence;
