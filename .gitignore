@@ -2,6 +2,7 @@ node_modules
 dist
 npm-debug.log
 .env
+mongo-init.js
 .DS_Store
 logs
 .vscode
