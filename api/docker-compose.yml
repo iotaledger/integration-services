@@ -12,7 +12,7 @@ services:
       - 27017:27017
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - mongodb_data_container:/data/db
+      # - mongodb_data_container:/data/db
 
   initialize-job:
     build: .
@@ -46,6 +46,3 @@ services:
       - initialize-job
     ports:
       - 3000:3000
-      
-volumes:
-  mongodb_data_container:
