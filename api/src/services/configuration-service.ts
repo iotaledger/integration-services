@@ -26,6 +26,7 @@ export class ConfigurationService {
 		hashEncoding: 'base58',
 		keyCollectionTag: 'key-collection'
 	};
+
 	config: Config = {
 		port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
 		apiVersion: process.env.API_VERSION,
@@ -38,8 +39,7 @@ export class ConfigurationService {
 		commitHash: process.env.COMMIT_HASH,
 		identityConfig: this.identityConfig,
 		streamsConfig: this.streamsConfig,
-		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day',
-		serverIdentity: this.serverIdentityId
+		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
 	};
 
 	public static getInstance(): ConfigurationService {
@@ -94,30 +94,26 @@ export class ConfigurationService {
 			}
 
 			const rootServerIdentity = rootServerIdentities[0];
-			const rootIdentity = rootServerIdentity?.identityId;
+			const serverIdentityId = rootServerIdentity?.identityId;
 
-			if (!rootIdentity) {
+			if (!serverIdentityId) {
 				this.logger.error('Server Identity ID not found');
 				return null;
 			}
 
 			// check if there is a valid identity-doc
-			const serverIdentity = getIdentity(rootIdentity, this.config.serverSecret);
+			const serverIdentity = getIdentity(serverIdentityId, this.config.serverSecret);
 			if (!serverIdentity) {
-				this.logger.error(`Root identity document not found in database: ${rootIdentity}`);
+				this.logger.error(`Root identity document not found in database: ${serverIdentityId}`);
 			}
 
-			this.config.serverIdentity = rootIdentity;
-			this.logger.log('Found server ID: ' + rootIdentity);
-			return rootIdentity;
+			this.serverIdentityId = serverIdentityId;
+			this.logger.log('Found server ID: ' + serverIdentityId);
+			return serverIdentityId;
 		} catch (e) {
 			this.logger.error('Error:' + e);
 		}
 
 		return null;
-	}
-
-	async getConfiguration(): Promise<Config> {
-		return this.config;
 	}
 }

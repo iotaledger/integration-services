@@ -17,8 +17,6 @@ import { Config } from './models/config';
 import { SERVER_IDENTITY } from './config/server';
 import { ConfigurationService } from './services/configuration-service';
 
-const logger = Logger.getInstance();
-
 const argv = yargs
 	.command('server', 'Start the integration service API', {})
 	.command('keygen', 'Generate root identity for integration service API', {})
@@ -26,7 +24,7 @@ const argv = yargs
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
-	messages.map((m) => logger.log(m));
+	messages.map((m) => Logger.getInstance().log(m));
 
 	app.use(prefix, router);
 }
@@ -34,14 +32,18 @@ function useRouter(app: express.Express, prefix: string, router: express.Router)
 process.on('uncaughtException', function (err) {
 	// clean up allocated resources
 	// log necessary error details to log files
-	logger.error(`Uncaught Exception: ${err}`);
+	Logger.getInstance().error(`Uncaught Exception: ${err}`);
 	process.exit(); // exit the process to avoid unknown state
 });
 
-async function startServer(config: Config) {
+async function startServer() {
 	try {
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+		const logger = Logger.getInstance();
 		const configService = ConfigurationService.getInstance();
+		const config = configService.config;
+
+		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+
 		const rootIdentity = await configService.getRootIdentityId();
 
 		// setup did for server if not exists
@@ -61,7 +63,7 @@ async function startServer(config: Config) {
 
 		app.use(express.json({ limit: '10mb' }));
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
-		app.use(expressWinston.logger(Logger.getInstance().options));
+		app.use(expressWinston.logger(logger.options));
 
 		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
@@ -81,7 +83,7 @@ async function startServer(config: Config) {
 		});
 		server.setTimeout(50000);
 	} catch (e) {
-		logger.error(e.message);
+		Logger.getInstance().error(e.message);
 		await MongoDbService.disconnect();
 		process.exit(0);
 	}
@@ -95,7 +97,7 @@ async function keyGen(config: Config) {
 
 		await keyGenerator.keyGeneration();
 	} catch (e) {
-		logger.error(e);
+		Logger.getInstance().error(e);
 		process.exit(-1);
 	}
 	await MongoDbService.disconnect();
@@ -103,7 +105,7 @@ async function keyGen(config: Config) {
 }
 
 if (argv._.includes('server')) {
-	startServer(CONFIG);
+	startServer();
 } else if (argv._.includes('keygen')) {
 	keyGen(CONFIG);
 } else {
