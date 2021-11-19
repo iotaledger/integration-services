@@ -3,13 +3,13 @@ import { IdentityConfig, StreamsConfig } from '../models/config/index';
 import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentity } from '../database/user';
-import { ILogger } from '../utils/logger/index';
+import { ILogger, Logger } from '../utils/logger/index';
 import { getIdentity } from '../database/identity-docs';
 
 export class ConfigurationService {
 	private static instance: ConfigurationService;
 	logger: ILogger;
-	serverIdentityId = '';
+	private _serverIdentityId: string;
 	streamsConfig: StreamsConfig = {
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
@@ -41,6 +41,10 @@ export class ConfigurationService {
 		streamsConfig: this.streamsConfig,
 		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
 	};
+
+	constructor() {
+		this.logger = Logger.getInstance();
+	}
 
 	public static getInstance(): ConfigurationService {
 		if (!ConfigurationService.instance) {
@@ -78,6 +82,14 @@ export class ConfigurationService {
 
 	// 	return serverIdentity;
 	// }
+
+	public get serverIdentityId(): string {
+		return this._serverIdentityId;
+	}
+
+	public set serverIdentityId(value: string) {
+		this._serverIdentityId = value;
+	}
 
 	async getRootIdentityId(): Promise<string> {
 		try {

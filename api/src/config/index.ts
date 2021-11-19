@@ -31,8 +31,7 @@ export const CONFIG: Config = {
 	commitHash: process.env.COMMIT_HASH,
 	identityConfig: IdentityConfig,
 	streamsConfig: StreamsConfig,
-	jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day',
-	serverIdentity: ''
+	jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
 };
 
 const assertConfig = (config: Config) => {

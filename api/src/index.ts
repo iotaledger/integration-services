@@ -5,7 +5,6 @@ import swaggerUi from 'swagger-ui-express';
 import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
-import { CONFIG } from './config';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
@@ -13,8 +12,6 @@ import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
-import { Config } from './models/config';
-import { SERVER_IDENTITY } from './config/server';
 import { ConfigurationService } from './services/configuration-service';
 
 const argv = yargs
@@ -50,8 +47,6 @@ async function startServer() {
 		if (!rootIdentity) {
 			process.exit(0);
 		}
-
-		SERVER_IDENTITY.serverIdentity = rootIdentity;
 
 		const app = express();
 
@@ -89,11 +84,13 @@ async function startServer() {
 	}
 }
 
-async function keyGen(config: Config) {
+async function keyGen() {
 	try {
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+		const configService = ConfigurationService.getInstance();
+		const config = configService.config;
 
-		const keyGenerator: KeyGenerator = new KeyGenerator(config);
+		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+		const keyGenerator: KeyGenerator = new KeyGenerator(configService);
 
 		await keyGenerator.keyGeneration();
 	} catch (e) {
@@ -107,7 +104,7 @@ async function keyGen(config: Config) {
 if (argv._.includes('server')) {
 	startServer();
 } else if (argv._.includes('keygen')) {
-	keyGen(CONFIG);
+	keyGen();
 } else {
 	yargs.showHelp();
 }
