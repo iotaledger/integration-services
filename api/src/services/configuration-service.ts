@@ -4,7 +4,7 @@ import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentity } from '../database/user';
 import { ILogger, Logger } from '../utils/logger/index';
-import { getIdentity } from '../database/identity-docs';
+import { getIdentityDoc } from '../database/identity-docs';
 
 export interface IConfigurationService {
 	serverIdentityId: string;
@@ -122,7 +122,7 @@ export class ConfigurationService {
 			}
 
 			// check if there is a valid identity-doc
-			const serverIdentity = getIdentity(serverIdentityId, this.config.serverSecret);
+			const serverIdentity = getIdentityDoc(serverIdentityId, this.config.serverSecret);
 			if (!serverIdentity) {
 				this.logger.error(`Root identity document not found in database: ${serverIdentityId}`);
 			}

@@ -60,7 +60,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity');
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc');
 			const revokeVerifiableCredentialSpy = jest.spyOn(ssiService, 'revokeVerifiableCredential');
 			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
@@ -99,7 +99,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
@@ -141,7 +141,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
@@ -184,7 +184,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
@@ -226,7 +226,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
@@ -270,7 +270,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
@@ -314,7 +314,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
@@ -396,7 +396,7 @@ describe('test authentication routes', () => {
 			const getVerifiableCredentialSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'getVerifiableCredential')
 				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockReturnValue(Promise.resolve(ServerIdentityMock));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));

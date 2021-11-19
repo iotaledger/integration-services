@@ -30,7 +30,6 @@ export const channelService = new ChannelService(
 	streamsConfig,
 	Logger.getInstance()
 );
-console.log('this.22222222222222222', configService.serverIdentityId);
 
 export const verificationService = new VerificationService(
 	ssiService,

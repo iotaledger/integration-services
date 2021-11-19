@@ -13,7 +13,7 @@ import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { getServerIdentity } from '../database/user';
 import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
-import { getIdentity } from '../database/identity-docs';
+import { getIdentityDoc } from '../database/identity-docs';
 
 const logger = Logger.getInstance();
 
@@ -47,13 +47,6 @@ export class KeyGenerator {
 		logger.log('Api is ready to use!');
 	}
 
-	private async getRootIdentityFromId(serverIdentityId: string): Promise<IdentityJsonUpdate> {
-		// TODO #254 create initial documents and indexes in mongodb if they are missing on first initialization.
-		// key-collection-links->linkedIdentity (unique + partial {"linkedIdentity":{"$exists":true}})
-
-		return await getIdentity(serverIdentityId, this.config.serverSecret);
-	}
-
 	// Setup root identity
 	async keyGeneration() {
 		logger.log(`Setting root identity please wait...`);
@@ -71,7 +64,7 @@ export class KeyGenerator {
 		if (serverIdentityId) {
 			this.configService.serverIdentityId = serverIdentityId;
 			logger.error('Root identity already exists: verify data');
-			const serverIdentity = await this.getRootIdentityFromId(serverIdentityId);
+			const serverIdentity = await getIdentityDoc(serverIdentityId, this.config.serverSecret);
 			if (serverIdentity) {
 				if (this.verifyIdentity(serverIdentity)) {
 					logger.log('Root identity is already defined and valid');
@@ -94,9 +87,7 @@ export class KeyGenerator {
 
 		this.configService.serverIdentityId = identity.doc.id;
 
-		console.log('this.configService.serverIdentityIdthis.configService.serverIdentityId', this.configService.serverIdentityId);
-
-		// re-create the verification service with a valid server identity id
+		// create the verification service with a valid server identity id
 		const verificationService = new VerificationService(
 			ssiService,
 			userService,

@@ -6,7 +6,7 @@ import { decrypt, encrypt } from '../utils/encryption';
 
 const collectionName = CollectionNames.identityDocsCollection;
 
-export const getIdentity = async (id: string, secret: string): Promise<IdentityJsonUpdate | null> => {
+export const getIdentityDoc = async (id: string, secret: string): Promise<IdentityJsonUpdate | null> => {
 	const query = { _id: id };
 	const identity = await MongoDbService.getDocument<IdentityJsonUpdate>(collectionName, query);
 	if (!identity) {

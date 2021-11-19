@@ -54,7 +54,7 @@ export class VerificationService {
 	}
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
-		return IdentityDocsDb.getIdentity(did, this.serverSecret);
+		return IdentityDocsDb.getIdentityDoc(did, this.serverSecret);
 	}
 
 	async verifyIdentity(subject: Subject, issuerId: string, initiatorId: string) {
@@ -87,7 +87,7 @@ export class VerificationService {
 					publicKeyBase58: keyCollection.publicKeyBase58
 				};
 
-				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 				if (!issuerIdentity) {
 					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
@@ -118,7 +118,7 @@ export class VerificationService {
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
-		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentity(this.configService.serverIdentityId, this.serverSecret);
+		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentityDoc(this.configService.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
@@ -159,7 +159,7 @@ export class VerificationService {
 			try {
 				const subjectId = vcp.vc.id;
 
-				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 				if (!issuerIdentity) {
 					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
@@ -225,7 +225,7 @@ export class VerificationService {
 		issuerId: string
 	): Promise<KeyCollectionPersistence> {
 		try {
-			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 
 			if (!issuerIdentity) {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));
