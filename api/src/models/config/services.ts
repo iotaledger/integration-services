@@ -5,4 +5,5 @@ export interface AuthenticationServiceConfig {
 export interface VerificationServiceConfig {
 	keyCollectionSize: number;
 	serverSecret: string;
+	serverIdentityId: string;
 }

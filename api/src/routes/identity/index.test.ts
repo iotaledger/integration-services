@@ -12,7 +12,6 @@ import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
 import { IdentityConfigMock } from '../../test/mocks/config';
 import { VerificationService } from '../../services/verification-service';
-import { SERVER_IDENTITY } from '../../config/server';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -33,12 +32,12 @@ describe('test user routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
-		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id;
 		verificationService = new VerificationService(
 			ssiService,
 			userService,
 			{
 				serverSecret,
+				serverIdentityId: ServerIdentityMock.doc.id,
 				keyCollectionSize: 2
 			},
 			LoggerMock
