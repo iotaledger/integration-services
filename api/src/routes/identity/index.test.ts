@@ -33,16 +33,7 @@ describe('test user routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
-		verificationService = new VerificationService(
-			ssiService,
-			userService,
-			{
-				serverSecret,
-				keyCollectionSize: 2
-			},
-			LoggerMock,
-			ConfigurationServiceMock
-		);
+		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 		const authorizationService = new AuthorizationService();
 		userRoutes = new IdentityRoutes(userService, authorizationService, verificationService, LoggerMock);
 

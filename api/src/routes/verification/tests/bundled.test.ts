@@ -11,7 +11,6 @@ import { IdentityConfigMock } from '../../../test/mocks/config';
 import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
 
 describe('test authentication routes', () => {
-	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;
@@ -24,16 +23,7 @@ describe('test authentication routes', () => {
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(
-			ssiService,
-			userService,
-			{
-				serverSecret,
-				keyCollectionSize: 2
-			},
-			LoggerMock,
-			ConfigurationServiceMock
-		);
+		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock, ConfigurationServiceMock);
 
 		res = {

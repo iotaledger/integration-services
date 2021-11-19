@@ -26,6 +26,7 @@ export class ConfigurationService {
 	};
 
 	identityConfig: IdentityConfig = {
+		keyCollectionSize: 4096, // size must be a multiple of 2^2, 2^3, 2^4, ...
 		network: process.env.NETWORK,
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,

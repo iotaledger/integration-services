@@ -1,4 +1,3 @@
-import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { AuthenticationService } from '../services/authentication-service';
 import { AuthorizationService } from '../services/authorization-service';
 import { ChannelInfoService } from '../services/channel-info-service';
@@ -29,13 +28,4 @@ export const channelService = new ChannelService(
 	Logger.getInstance()
 );
 
-export const verificationService = new VerificationService(
-	ssiService,
-	userService,
-	{
-		serverSecret,
-		keyCollectionSize: KEY_COLLECTION_SIZE
-	},
-	Logger.getInstance(),
-	configService
-);
+export const verificationService = new VerificationService(ssiService, userService, Logger.getInstance(), configService);

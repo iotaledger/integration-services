@@ -9,7 +9,6 @@ import { Logger } from '../utils/logger';
 import * as serverIdentityJson from '../config/server-identity.json';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { SsiService } from '../services/ssi-service';
-import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { getServerIdentity } from '../database/user';
 import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
@@ -88,16 +87,7 @@ export class KeyGenerator {
 		this.configService.serverIdentityId = identity.doc.id;
 
 		// create the verification service with a valid server identity id
-		const verificationService = new VerificationService(
-			ssiService,
-			userService,
-			{
-				serverSecret: this.config.serverSecret,
-				keyCollectionSize: KEY_COLLECTION_SIZE
-			},
-			logger,
-			this.configService
-		);
+		const verificationService = new VerificationService(ssiService, userService, logger, this.configService);
 
 		const serverUser = await userService.getUser(identity.doc.id);
 
