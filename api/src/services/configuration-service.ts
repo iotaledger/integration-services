@@ -3,7 +3,7 @@ import { IdentityConfig, StreamsConfig } from '../models/config/index';
 import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentity } from '../database/user';
-import { ILogger, Logger } from '../utils/logger/index';
+import { ILogger } from '../utils/logger/index';
 import { getIdentityDoc } from '../database/identity-docs';
 
 export interface IConfigurationService {
@@ -52,14 +52,14 @@ export class ConfigurationService {
 		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
 	};
 
-	constructor() {
-		this.logger = Logger.getInstance();
+	constructor(logger: ILogger) {
+		this.logger = logger;
 		this.assertConfig();
 	}
 
-	public static getInstance(): ConfigurationService {
+	public static getInstance(logger: ILogger): ConfigurationService {
 		if (!ConfigurationService.instance) {
-			ConfigurationService.instance = new ConfigurationService();
+			ConfigurationService.instance = new ConfigurationService(logger);
 		}
 		return ConfigurationService.instance;
 	}
@@ -90,7 +90,7 @@ export class ConfigurationService {
 			const serverIdentityId = rootServerIdentity?.identityId;
 
 			if (!serverIdentityId) {
-				this.logger.error('Server Identity ID not found');
+				this.logger.error('Root identity id not found');
 				return null;
 			}
 
@@ -102,7 +102,7 @@ export class ConfigurationService {
 			}
 
 			this.serverIdentityId = serverIdentityId;
-			this.logger.log('Found server ID: ' + serverIdentityId);
+			this.logger.log('Found server identity id: ' + serverIdentityId);
 			return serverIdentityId;
 		} catch (e) {
 			this.logger.error('Error:' + e);
@@ -114,11 +114,11 @@ export class ConfigurationService {
 	private assertConfig() {
 		const config = this.config;
 
-		if (config.serverSecret === '<server-secret>') {
+		if (config?.serverSecret === '<server-secret>') {
 			this.logger.error('please replace the default values!');
 		}
 
-		if (config.serverSecret.length !== 32) {
+		if (config?.serverSecret?.length !== 32) {
 			throw Error('Server secret must to have a length of 32!');
 		}
 

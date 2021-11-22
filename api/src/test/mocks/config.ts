@@ -21,14 +21,14 @@ export const IdentityConfigMock: IdentityConfig = {
 export const ConfigMock: Config = {
 	jwtExpiration: '1 day',
 	identityConfig: IdentityConfigMock,
-	apiKey: '',
+	apiKey: 'test-v1',
 	serverSecret: 'veryvery-very-very-server-secret',
-	databaseName: '',
-	databaseUrl: '',
+	databaseName: 'testdatabasename',
+	databaseUrl: 'testdatabaseurl',
 	apiVersion: '0.1',
 	port: 3000,
-	permaNode: '',
-	hornetNode: '',
+	permaNode: 'testpermanodeurl',
+	hornetNode: 'testhornetnodeurl',
 	streamsConfig: StreamsConfigMock,
 	commitHash: ''
 };
