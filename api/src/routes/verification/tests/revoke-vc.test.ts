@@ -18,7 +18,7 @@ import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
 const vcMock = DeviceIdentityMock.userData.verifiableCredentials[0];
 
 describe('test authentication routes', () => {
-	const serverSecret = 'very-secret-secret';
+	const serverSecret = ConfigurationServiceMock.config.serverSecret;
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;

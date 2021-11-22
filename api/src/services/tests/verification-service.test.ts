@@ -9,7 +9,8 @@ import { ConfigurationServiceMock } from '../../test/mocks/service-mocks';
 describe('test getKeyCollection', () => {
 	let ssiService: SsiService, userService: UserService, verificationService: VerificationService;
 	const keyCollectionIndex = 0;
-	const keyCollectionSize = 4;
+	const keyCollectionSize = ConfigurationServiceMock.identityConfig.keyCollectionSize;
+	const serverSecret = ConfigurationServiceMock.config.serverSecret;
 	const expectedKeyCollection = {
 		count: keyCollectionSize,
 		index: keyCollectionIndex,
@@ -19,7 +20,7 @@ describe('test getKeyCollection', () => {
 
 	beforeEach(() => {
 		ssiService = SsiService.getInstance({} as any, LoggerMock);
-		userService = new UserService(ssiService, 'very-secret-secret', LoggerMock);
+		userService = new UserService(ssiService, serverSecret, LoggerMock);
 		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 	});
 
@@ -50,11 +51,7 @@ describe('test getKeyCollection', () => {
 			ConfigurationServiceMock.config.serverSecret
 		);
 		expect(generateKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, keyCollectionSize, {});
-		expect(saveKeyCollectionSpy).toHaveBeenCalledWith(
-			expectedKeyCollection,
-			ConfigurationServiceMock.serverIdentityId,
-			'very-secret-secret'
-		);
+		expect(saveKeyCollectionSpy).toHaveBeenCalledWith(expectedKeyCollection, ConfigurationServiceMock.serverIdentityId, serverSecret);
 		expect(getIdentitySpy).toHaveBeenCalled();
 		expect(updateIdentityDocSpy).toHaveBeenCalled();
 		expect(keyCollection).toEqual(expectedKeyCollection);
