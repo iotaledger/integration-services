@@ -58,7 +58,7 @@ async function startServer() {
 
 		app.use(express.json({ limit: '10mb' }));
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
-		app.use(expressWinston.logger(logger.options));
+		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
 
 		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
