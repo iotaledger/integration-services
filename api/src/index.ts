@@ -36,7 +36,7 @@ process.on('uncaughtException', function (err) {
 async function startServer() {
 	try {
 		const logger = Logger.getInstance();
-		const configService = ConfigurationService.getInstance();
+		const configService = ConfigurationService.getInstance(Logger.getInstance());
 		const config = configService.config;
 
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
@@ -86,7 +86,7 @@ async function startServer() {
 
 async function keyGen() {
 	try {
-		const configService = ConfigurationService.getInstance();
+		const configService = ConfigurationService.getInstance(Logger.getInstance());
 		const config = configService.config;
 
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);

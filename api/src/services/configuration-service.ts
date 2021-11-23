@@ -2,7 +2,7 @@ import { Config } from '../models/config';
 import { IdentityConfig, StreamsConfig } from '../models/config/index';
 import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
-import { getServerIdentity } from '../database/user';
+import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
 import { getIdentityDoc } from '../database/identity-docs';
 
@@ -74,10 +74,10 @@ export class ConfigurationService {
 
 	async getRootIdentityId(): Promise<string> {
 		try {
-			const rootServerIdentities = await getServerIdentity();
+			const rootServerIdentities = await getServerIdentities();
 
 			if (!rootServerIdentities || rootServerIdentities.length == 0) {
-				this.logger.error('Root identity is missing');
+				this.logger.error('No root identity found!');
 				return null;
 			}
 
@@ -95,9 +95,10 @@ export class ConfigurationService {
 			}
 
 			// check if there is a valid identity-doc
-			const serverIdentity = getIdentityDoc(serverIdentityId, this.config.serverSecret);
+			const serverIdentity = await getIdentityDoc(serverIdentityId, this.config.serverSecret);
+
 			if (!serverIdentity) {
-				this.logger.error(`Root identity document not found in database: ${serverIdentityId}`);
+				this.logger.error(`Root identity document with id: ${serverIdentityId} not found in database!`);
 				return null;
 			}
 

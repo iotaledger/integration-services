@@ -1,6 +1,7 @@
 import { ConfigurationService } from '../services/configuration-service';
+import { Logger } from '../utils/logger/index';
 
-const { apiVersion } = ConfigurationService.getInstance().config;
+const { apiVersion } = ConfigurationService.getInstance(Logger.getInstance()).config;
 
 export const openApiDefinition = {
 	definition: {

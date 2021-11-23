@@ -25,7 +25,7 @@ export const searchUsers = async (userSearch: UserSearch): Promise<UserPersisten
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, plainQuery, options);
 };
 
-export const getServerIdentity = async (): Promise<UserPersistence[] | null> => {
+export const getServerIdentities = async (): Promise<UserPersistence[] | null> => {
 	const query = { isServerIdentity: true };
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, query);
 };

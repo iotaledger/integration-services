@@ -9,23 +9,17 @@ import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
 import { Logger } from '../utils/logger';
 import { ConfigurationService } from '../services/configuration-service';
-
-const configService = ConfigurationService.getInstance();
+const logger = Logger.getInstance();
+const configService = ConfigurationService.getInstance(logger);
 const { serverSecret, identityConfig, jwtExpiration, streamsConfig } = configService.config;
-export const ssiService = SsiService.getInstance(identityConfig, Logger.getInstance());
+export const ssiService = SsiService.getInstance(identityConfig, logger);
 export const authorizationService = new AuthorizationService();
-export const userService = new UserService(ssiService, serverSecret, Logger.getInstance());
+export const userService = new UserService(ssiService, serverSecret, logger);
 export const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret });
 
 export const channelInfoService = new ChannelInfoService(userService);
-export const streamsService = new StreamsService(streamsConfig, Logger.getInstance());
+export const streamsService = new StreamsService(streamsConfig, logger);
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
-export const channelService = new ChannelService(
-	streamsService,
-	channelInfoService,
-	subscriptionService,
-	streamsConfig,
-	Logger.getInstance()
-);
+export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig, logger);
 
-export const verificationService = new VerificationService(ssiService, userService, Logger.getInstance(), configService);
+export const verificationService = new VerificationService(ssiService, userService, logger, configService);

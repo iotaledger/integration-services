@@ -9,7 +9,7 @@ import { Logger } from '../utils/logger';
 import * as serverIdentityJson from '../config/server-identity.json';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import { SsiService } from '../services/ssi-service';
-import { getServerIdentity } from '../database/user';
+import { getServerIdentities } from '../database/user';
 import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
 import { getIdentityDoc } from '../database/identity-docs';
@@ -52,7 +52,7 @@ export class KeyGenerator {
 
 		// Check if root identity exists and if it is valid
 		logger.log(`Verify if root identity already exists...`);
-		const rootServerIdentities = await getServerIdentity();
+		const rootServerIdentities = await getServerIdentities();
 
 		if (rootServerIdentities && rootServerIdentities.length > 1) {
 			throw new Error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);

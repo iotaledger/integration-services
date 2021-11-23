@@ -15,7 +15,7 @@ const verificationRoutes = new VerificationRoutes(
 	verificationService,
 	authorizationService,
 	Logger.getInstance(),
-	ConfigurationService.getInstance()
+	ConfigurationService.getInstance(Logger.getInstance())
 );
 const {
 	createVerifiableCredential,
