@@ -16,7 +16,7 @@
 <p align="center">
   <a href="#introduction">Introduction</a> ◈
   <a href="#documentation-and-resources">Documentation & Resources</a> ◈
-  <a href="#prerequisites">Prerequisites</a>
+  <a href="#prerequisites">Prerequisites</a> ◈
   <a href="#contributing">Contributing</a>
   <!--
   <a href="#getting-started">Getting Started</a> ◈
