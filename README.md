@@ -1,12 +1,15 @@
-![banner](./.meta/identity_banner.png)
+![banner](./api/assets/Secure_Digital_Infrastructure.jpg)
 
 <p align="center">
   <a href="https://iota.stackexchange.com/" style="text-decoration:none;"><img src="https://img.shields.io/badge/StackExchange-9cf.svg?logo=stackexchange" alt="StackExchange"></a>
   <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/badge/Discord-9cf.svg?logo=discord" alt="Discord"></a>
   <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/discord/397872799483428865" alt="Discord"></a>
-  <a href="https://github.com/iotaledger/identity.rs/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/bee.svg" alt="Apache 2.0 license"></a>
+  <a href="https://github.com/iotaledger/integration-services/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/bee.svg" alt="Apache 2.0 license"></a>
+
+<!--  
   <img src="https://deps.rs/repo/github/iotaledger/identity.rs/status.svg" alt="Dependencies">
   <a href='https://coveralls.io/github/iotaledger/identity.rs?branch=dev'><img src='https://coveralls.io/repos/github/iotaledger/identity.rs/badge.svg?branch=dev' alt='Coverage Status' /></a>
+-->
 
 </p>
 
@@ -35,10 +38,11 @@ also known as Self-Sovereign Identity (SSI) and Streams techonology on the IOTA 
 
 ## Documentation and Resources
 
-- [API Reference](https://wiki.iota.org/integration-services/api_reference): Package documentation.
-- [Documentation Pages](https://wiki.iota.org/identity.rs/introduction): Supplementing documentation with context around identity and simple examples on library usage.
-- [Examples on Decentralized Identity](https://wiki.iota.org/examples/did-introduction): Practical code snippets to get you started with the decentralized identity API
-- [Examples on Decentralized Identity](https://wiki.iota.org/examples/streams-introduction): Practical code snippets to get you started with the Audit Trail API
+- [API Reference](https://wiki.iota.org/integration-services/api_reference): Integration Service API documentation.
+- [Documentation Pages](https://wiki.iota.org/integration-services/welcome): Wiki including setup API on-prem and on cloud with simple examples on service usage.
+- 
+- [Examples on Decentralized Identity](https://wiki.iota.org/integration-services/examples/intro_identity): Practical code snippets to get you started with the decentralized identity API
+- [Examples on Audit Trail](https://wiki.iota.org/integration-services/examples/intro_audittrail): Practical code snippets to get you started with the Audit Trail API
 - [IOTA Integration Service Website](https://www.iota.org/solutions/secure-digital-infrastructure): Website for a collaborative effort to provide help, guidance and spotlight to the IOTA Integration Services Community through offering feedback and introducing consistent workflows around IOTA decentralized identities and audit trails.
 
 ## Prerequisites

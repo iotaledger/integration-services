@@ -25,6 +25,15 @@ module.exports = {
         'installation/overview',
         {
           type: 'category',
+          label: 'Docker Compose',
+          collapsed: false,
+          items: [
+            'installation/docker_compose/docker_compose',
+            'installation/docker_compose/expose_apis',
+          ]
+        },
+        {
+          type: 'category',
           label: 'Kubernetes',
           collapsed: false,
           items: [
@@ -32,16 +41,20 @@ module.exports = {
             'installation/kubernetes/expose_apis',
             'installation/kubernetes/configuration'
           ]
-        },
-        'installation/docker',
-        'installation/docker_compose'
+        }
       ]
     },
     {
       type: 'category',
       label: 'Using Decentralized Identities',
       collapsed: true,
-      items: ['examples/create_identity', 'examples/issue_credential', 'examples/verify_credential', 'examples/create_stream', 'examples/read_stream']
+      items: [
+        'examples/intro_identity', 
+        'examples/create_identity', 
+        'examples/issue_credential', 
+        'examples/verify_credential', 
+        'examples/create_stream', 
+        'examples/read_stream']
     },
 
     {
@@ -49,6 +62,7 @@ module.exports = {
       label: 'Using Audit Trail',
       collapsed: true,
       items: [
+        'examples/intro_audittrail', 
         'examples/create_channel',
         'examples/subscribe_channel', 
         'examples/authorize_subscriber', 
