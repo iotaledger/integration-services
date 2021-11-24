@@ -42,13 +42,14 @@ export const openApiDefinition = {
 			}
 		],
 		servers: [
-			{
-				url: `/api/${CONFIG.apiVersion}`,
-				description: 'Local Dev'
-			},
+			
 			{
 				url: `https://ensuresec.solutions.iota.org/api/v0.1`,
 				description: 'Deployed Dev'
+			},
+			{
+				url: `/api/${CONFIG.apiVersion}`,
+				description: 'Local Dev'
 			}
 		],
 		components: {
