@@ -45,11 +45,13 @@ jobs:
           npm i
           fi
       - name: Setup Wiki
+        run: |
           npm run setup
           cd local-wiki/iota-wiki
           yarn
           cd ../../
       - name: Build Wiki
+        run: |
           npm test
       - name: Release to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
