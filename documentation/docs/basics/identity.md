@@ -1,6 +1,11 @@
 # IOTA Identity
 
+IOTA Identity provides a digital identity anchored on the Tangle and verifiable credentials (VC) 
+that are attachable to that identity. Think a university student (Identity owner) and his degree (VC).
+
+<!--
 The concepts of Decentralized Identities will not be explained in depth in this wiki. Below we provide some resources to get you started.
+-->
 
 ## Wiki
 

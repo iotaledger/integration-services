@@ -32,7 +32,7 @@ Current values are:
 
 ### Number of replicas
 
-You can setup initial number of replicas in the `.spec.replicas` field in `kubernetes/is-deployment` file.
+You can setup initial number of replicas in the `.spec.replicas` field in `kubernetes/is-deployment.yaml` file.
 
 ### Ingress Hostname
 
