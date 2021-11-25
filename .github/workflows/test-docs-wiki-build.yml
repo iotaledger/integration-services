@@ -5,10 +5,7 @@ on:
     branches:
       - 'master'
       - 'develop'
-  pull_request:
-      branches:
-        - 'master'
-        - 'develop'
+      - '298-begin-wiki-skeleton'
 jobs:
   checks:
     if: github.event_name == 'pull_request'
@@ -44,7 +41,7 @@ jobs:
           sed -i "s+baseUrl: '/',+baseUrl: '/integration-services/',+g" docusaurus.config.js
           yarn build
   gh-release:
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
