@@ -17,7 +17,6 @@ services:
       API_VERSION: v1
       DATABASE_NAME: e-commerce-audit-log
       IOTA_PERMA_NODE: https://nodes.iota.org:443
-      NETWORK: main
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
       SERVER_IDENTITY: ${SERVER_IDENTITY}

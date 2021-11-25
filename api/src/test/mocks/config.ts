@@ -9,8 +9,6 @@ export const StreamsConfigMock: StreamsConfig = {
 export const IdentityConfigMock: IdentityConfig = {
 	keyCollectionTag: 'key-collection',
 	keyCollectionSize: 2,
-	explorer: '',
-	network: 'test',
 	node: '',
 	permaNode: '',
 	keyType: 0,
