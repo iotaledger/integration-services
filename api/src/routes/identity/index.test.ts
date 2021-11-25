@@ -6,13 +6,13 @@ import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../.
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
-import { ServerIdentityMock, TestCredentialMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
+import { TestCredentialMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
 import { getDateFromString, getDateStringFromDate } from '../../utils/date';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
 import { IdentityConfigMock } from '../../test/mocks/config';
 import { VerificationService } from '../../services/verification-service';
-import { SERVER_IDENTITY } from '../../config/server';
+import { ConfigurationServiceMock } from '../../test/mocks/service-mocks';
 
 describe('test user routes', () => {
 	const serverSecret = 'very-secret-secret';
@@ -33,16 +33,7 @@ describe('test user routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService as any, serverSecret, LoggerMock);
-		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id;
-		verificationService = new VerificationService(
-			ssiService,
-			userService,
-			{
-				serverSecret,
-				keyCollectionSize: 2
-			},
-			LoggerMock
-		);
+		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 		const authorizationService = new AuthorizationService();
 		userRoutes = new IdentityRoutes(userService, authorizationService, verificationService, LoggerMock);
 

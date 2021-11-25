@@ -9,8 +9,14 @@ import { VerificationRoutes } from '../../routes/verification';
 import { Logger } from '../../utils/logger';
 import { authorizationService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
+import { ConfigurationService } from '../../services/configuration-service';
 
-const verificationRoutes = new VerificationRoutes(verificationService, authorizationService, Logger.getInstance());
+const verificationRoutes = new VerificationRoutes(
+	verificationService,
+	authorizationService,
+	Logger.getInstance(),
+	ConfigurationService.getInstance(Logger.getInstance())
+);
 const {
 	createVerifiableCredential,
 	checkVerifiableCredential,

@@ -1,4 +1,7 @@
-import { CONFIG } from '../config';
+import { ConfigurationService } from '../services/configuration-service';
+import { Logger } from '../utils/logger/index';
+
+const { apiVersion } = ConfigurationService.getInstance(Logger.getInstance()).config;
 
 export const openApiDefinition = {
 	definition: {
@@ -43,7 +46,7 @@ export const openApiDefinition = {
 		],
 		servers: [
 			{
-				url: `/api/${CONFIG.apiVersion}`,
+				url: `/api/${apiVersion}`,
 				description: 'Local Dev'
 			},
 			{

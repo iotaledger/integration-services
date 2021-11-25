@@ -1,4 +1,3 @@
-import { KEY_COLLECTION_SIZE } from '../config/identity';
 import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
 import {
 	CredentialSubject,
@@ -14,12 +13,11 @@ import * as KeyCollectionDb from '../database/key-collection';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as IdentityDocsDb from '../database/identity-docs';
 import * as TrustedRootsDb from '../database/trusted-roots';
-import { VerificationServiceConfig } from '../models/config/services';
 import { JsonldGenerator } from '../utils/jsonld';
 import { Subject } from '../models/types/verification';
 import { ILogger } from '../utils/logger';
 import { ILock, Lock } from '../utils/lock';
-import { SERVER_IDENTITY } from '../config/server';
+import { IConfigurationService } from './configuration-service';
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identity found for issuerId: ${issuerId}`;
@@ -30,20 +28,19 @@ export class VerificationService {
 	constructor(
 		private readonly ssiService: SsiService,
 		private readonly userService: UserService,
-		verificationServiceConfig: VerificationServiceConfig,
-		private readonly logger: ILogger
+		private readonly logger: ILogger,
+		private readonly configService: IConfigurationService
 	) {
-		const { serverSecret, keyCollectionSize } = verificationServiceConfig;
-		this.serverSecret = serverSecret;
-		this.keyCollectionSize = keyCollectionSize;
+		this.serverSecret = this.configService.config.serverSecret;
+		this.keyCollectionSize = this.configService.identityConfig.keyCollectionSize;
 		this.lock = Lock.getInstance();
 	}
 
 	async getKeyCollection(keyCollectionIndex: number) {
-		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, SERVER_IDENTITY.serverIdentity, this.serverSecret);
+		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.configService.serverIdentityId, this.serverSecret);
 		if (!keyCollection) {
-			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.keyCollectionSize, SERVER_IDENTITY.serverIdentity);
-			const res = await KeyCollectionDb.saveKeyCollection(keyCollection, SERVER_IDENTITY.serverIdentity, this.serverSecret);
+			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.keyCollectionSize, this.configService.serverIdentityId);
+			const res = await KeyCollectionDb.saveKeyCollection(keyCollection, this.configService.serverIdentityId, this.serverSecret);
 
 			if (!res?.result.n) {
 				throw new Error('could not save keycollection!');
@@ -53,7 +50,7 @@ export class VerificationService {
 	}
 
 	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
-		return IdentityDocsDb.getIdentity(did, this.serverSecret);
+		return IdentityDocsDb.getIdentityDoc(did, this.serverSecret);
 	}
 
 	async verifyIdentity(subject: Subject, issuerId: string, initiatorId: string) {
@@ -75,18 +72,18 @@ export class VerificationService {
 					}
 				};
 
-				const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(SERVER_IDENTITY.serverIdentity);
+				const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
 				const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
 				const keyCollection = await this.getKeyCollection(keyCollectionIndex);
-				const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(SERVER_IDENTITY.serverIdentity);
-				const keyIndex = nextCredentialIndex % KEY_COLLECTION_SIZE;
+				const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+				const keyIndex = nextCredentialIndex % this.keyCollectionSize;
 				const keyCollectionJson: KeyCollectionJson = {
 					type: keyCollection.type,
 					keys: keyCollection.keys,
 					publicKeyBase58: keyCollection.publicKeyBase58
 				};
 
-				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 				if (!issuerIdentity) {
 					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
@@ -105,7 +102,7 @@ export class VerificationService {
 						initiatorId,
 						isRevoked: false
 					},
-					SERVER_IDENTITY.serverIdentity
+					this.configService.serverIdentityId
 				);
 
 				await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
@@ -117,7 +114,7 @@ export class VerificationService {
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
-		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentity(SERVER_IDENTITY.serverIdentity, this.serverSecret);
+		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentityDoc(this.configService.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
@@ -158,12 +155,12 @@ export class VerificationService {
 			try {
 				const subjectId = vcp.vc.id;
 
-				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 				if (!issuerIdentity) {
 					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
 				const keyCollectionIndex = this.getKeyCollectionIndex(vcp.index);
-				const keyIndex = vcp.index % KEY_COLLECTION_SIZE;
+				const keyIndex = vcp.index % this.keyCollectionSize;
 
 				const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
 				await this.updateDatabaseIdentityDoc(res.docUpdate);
@@ -173,7 +170,7 @@ export class VerificationService {
 					return;
 				}
 
-				await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, SERVER_IDENTITY.serverIdentity);
+				await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.configService.serverIdentityId);
 				await this.userService.removeUserVC(vcp.vc);
 
 				return res;
@@ -212,7 +209,7 @@ export class VerificationService {
 		await this.userService.addUserVC(vc);
 	}
 
-	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / KEY_COLLECTION_SIZE);
+	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
 
 	private async updateDatabaseIdentityDoc(docUpdate: DocumentJsonUpdate) {
 		await IdentityDocsDb.updateIdentityDoc(docUpdate);
@@ -224,7 +221,7 @@ export class VerificationService {
 		issuerId: string
 	): Promise<KeyCollectionPersistence> {
 		try {
-			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentity(issuerId, this.serverSecret);
+			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 
 			if (!issuerIdentity) {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));
