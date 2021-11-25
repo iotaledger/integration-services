@@ -2,7 +2,7 @@ name: deploy
 
 on:
   pull_request:
-    branches: [docs/addTestAndDeployAction]
+    branches: [master]
   push:
     branches: [docs/addTestAndDeployAction]
 
