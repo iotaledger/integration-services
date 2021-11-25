@@ -15,6 +15,7 @@ import {
 	FindOneOptions,
 	CommonOptions
 } from 'mongodb';
+import { ClientEncryption } from 'mongodb-client-encryption';
 import { Logger } from '../utils/logger';
 
 const logger = Logger.getInstance();
@@ -29,6 +30,7 @@ type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
  */
 export class MongoDbService {
 	public static client: MongoClient;
+	static clientEncryption: ClientEncryption;
 	public static db: Db;
 
 	private static getCollection(collectionName: string): Collection | null {
@@ -44,7 +46,11 @@ export class MongoDbService {
 		return collection.findOne(query, options);
 	}
 
-	static async getDocuments<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T[] | null> {
+	static async getDocuments<T>(
+		collectionName: string,
+		query: FilterQuery<T>,
+		options?: WithoutProjection<FindOneOptions<T>>
+	): Promise<T[] | null> {
 		const collection = MongoDbService.getCollection(collectionName);
 		return collection.find(query, options).toArray();
 	}
@@ -55,15 +61,39 @@ export class MongoDbService {
 		options?: CollectionInsertOneOptions
 	): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.insertOne(data, options);
+
+		// TODO add field with encrypted fields and then encrypt only these specific ones
+		const keyId = await MongoDbService.clientEncryption.createDataKey('local');
+
+		const encryptedData = MongoDbService.clientEncryption.encrypt('value', {
+			keyId,
+			algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'
+		});
+
+		const merged = {
+			...data,
+			encryptedData
+		};
+
+		return collection.insertOne(merged, options);
 	}
 
-	static async insertDocuments(collectionName: string, data: any, options?: CollectionInsertManyOptions): Promise<InsertWriteOpResult<any>> {
+	static async insertDocuments(
+		collectionName: string,
+		data: any,
+		options?: CollectionInsertManyOptions
+	): Promise<InsertWriteOpResult<any>> {
 		const collection = MongoDbService.getCollection(collectionName);
+
 		return collection.insertMany(data, options);
 	}
 
-	static async updateDocument(collectionName: string, query: any, update: any, options?: UpdateOneOptions): Promise<UpdateWriteOpResult | null> {
+	static async updateDocument(
+		collectionName: string,
+		query: any,
+		update: any,
+		options?: UpdateOneOptions
+	): Promise<UpdateWriteOpResult | null> {
 		const collection = MongoDbService.getCollection(collectionName);
 		return collection.updateOne(query, update, options);
 	}
@@ -112,17 +142,15 @@ export class MongoDbService {
 	 * @return {*}  {Promise<MongoClient>}
 	 * @memberof MongoDbService
 	 */
-	static async connect(url: string, dbName: string): Promise<MongoClient> {
-
+	static async connect(url: string, dbName: string, serverSecret: string): Promise<MongoClient> {
 		if (MongoDbService.client) {
 			return;
 		}
-		
+
 		return new Promise((resolve, reject) => {
 			const options: MongoClientOptions = {
 				useUnifiedTopology: true
 			};
-
 			MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
 				if (err != null) {
 					logger.error('could not connect to mongodb');
@@ -132,6 +160,17 @@ export class MongoDbService {
 				logger.log('Successfully connected to mongodb');
 				MongoDbService.client = client;
 				MongoDbService.db = client.db(dbName);
+
+				// TODO THIS CRASHES SINCE kmsProviders.local.key has wrong length
+				console.log('serverSecret', serverSecret);
+				MongoDbService.clientEncryption = new ClientEncryption(MongoDbService.client, {
+					keyVaultNamespace: 'client.encryption',
+					kmsProviders: {
+						local: {
+							key: serverSecret // The master key used for encryption/decryption. A 96-byte long Buffer
+						}
+					}
+				});
 
 				resolve(client);
 			});

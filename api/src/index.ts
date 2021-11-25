@@ -39,7 +39,7 @@ async function startServer() {
 		const configService = ConfigurationService.getInstance(Logger.getInstance());
 		const config = configService.config;
 
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+		await MongoDbService.connect(config.databaseUrl, config.databaseName, config.serverSecret);
 
 		const rootIdentity = await configService.getRootIdentityId();
 
@@ -74,7 +74,7 @@ async function startServer() {
 		app.use(errorMiddleware);
 		const server = app.listen(port, async () => {
 			logger.log(`Started API Server on port ${port}`);
-			await MongoDbService.connect(dbUrl, dbName);
+			await MongoDbService.connect(dbUrl, dbName, config.serverSecret);
 		});
 		server.setTimeout(50000);
 	} catch (e) {
@@ -89,7 +89,7 @@ async function keyGen() {
 		const configService = ConfigurationService.getInstance(Logger.getInstance());
 		const config = configService.config;
 
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+		await MongoDbService.connect(config.databaseUrl, config.databaseName, config.serverSecret);
 		const keyGenerator: KeyGenerator = new KeyGenerator(configService);
 
 		await keyGenerator.keyGeneration();
