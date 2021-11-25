@@ -20,7 +20,6 @@ export interface IdentityConfig {
 	network: string;
 	node: string;
 	permaNode: string;
-	explorer: string;
 	keyType: Identity.KeyType;
 	hashFunction: Identity.Digest;
 	keyCollectionTag: string;

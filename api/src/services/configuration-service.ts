@@ -30,7 +30,6 @@ export class ConfigurationService {
 		network: process.env.NETWORK,
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
-		explorer: process.env.EXPLORER,
 		keyType: Identity.KeyType.Ed25519,
 		hashFunction: Identity.Digest.Sha256,
 		hashEncoding: 'base58',

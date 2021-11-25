@@ -18,7 +18,6 @@ services:
       DATABASE_NAME: e-commerce-audit-log
       IOTA_PERMA_NODE: https://nodes.iota.org:443
       NETWORK: main
-      EXPLORER: https://explorer.iota.org/mainnet/transaction
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
       SERVER_IDENTITY: ${SERVER_IDENTITY}

@@ -24,7 +24,6 @@ API_VERSION=v1
 IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
 IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
 NETWORK=main
-EXPLORER=https://explorer.iota.org/mainnet/transaction
 DATABASE_NAME=integration-services
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
