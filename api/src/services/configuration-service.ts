@@ -117,10 +117,9 @@ export class ConfigurationService {
 			this.logger.error('please replace the default values!');
 		}
 
-		// TODO UNCOMMENT AND ADJUST LENGTH IF NEEDED
-		// if (config?.serverSecret?.length !== 32) {
-		// 	throw Error('Server secret must to have a length of 32!');
-		// }
+		if (config?.serverSecret?.length !== 32) {
+			throw Error('Server secret must to have a length of 32!');
+		}
 
 		// apiKey can be empty if the host decides so
 		// commitHash is set automatically during deployment
