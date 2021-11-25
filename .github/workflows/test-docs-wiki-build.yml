@@ -1,11 +1,14 @@
 name: deploy
 
 on:
-  pull_request:
-    branches: [master]
   push:
-    branches: [docs/addTestAndDeployAction]
-
+    branches:
+      - 'master'
+      - 'develop'
+  pull_request:
+      branches:
+        - 'master'
+        - 'develop'
 jobs:
   checks:
     if: github.event_name == 'pull_request'
