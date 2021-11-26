@@ -4,7 +4,6 @@ import { Subject, CredentialTypes } from '../models/types/verification';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
 import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
-import { Logger } from '../utils/logger';
 
 import * as serverIdentityJson from '../config/server-identity.json';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
@@ -13,12 +12,11 @@ import { getServerIdentities } from '../database/user';
 import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
 import { getIdentityDoc } from '../database/identity-docs';
-
-const logger = Logger.getInstance();
+import { ILogger } from '../utils/logger';
 
 export class KeyGenerator {
 	private readonly config: Config;
-	constructor(private readonly configService: IConfigurationService) {
+	constructor(private readonly configService: IConfigurationService, private readonly logger: ILogger) {
 		this.config = configService.config;
 		if (!this.config.serverSecret) {
 			throw Error('A server secret must be defined to work with the API!');
@@ -30,28 +28,28 @@ export class KeyGenerator {
 		// verify if secret key of the server can be used to sign and verify a challenge
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
-		logger.log('Check if server has valid keypair...');
+		this.logger.log('Check if server has valid keypair...');
 		const nonce = createNonce();
 		let verified = false;
 		try {
 			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.key.secret), nonce);
 			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), nonce, signedNonce);
 		} catch (e) {
-			logger.error('error when signing or verifying the nonce, the secret key might have changed...');
+			this.logger.error('error when signing or verifying the nonce, the secret key might have changed...');
 		}
 		if (!verified) {
 			throw Error('server keys cannot be verified!');
 		}
 
-		logger.log('Api is ready to use!');
+		this.logger.log('Api is ready to use!');
 	}
 
 	// Setup root identity
 	async keyGeneration() {
-		logger.log(`Setting root identity please wait...`);
+		this.logger.log(`Setting root identity please wait...`);
 
 		// Check if root identity exists and if it is valid
-		logger.log(`Verify if root identity already exists...`);
+		this.logger.log(`Verify if root identity already exists...`);
 		const rootServerIdentities = await getServerIdentities();
 
 		if (rootServerIdentities && rootServerIdentities.length > 1) {
@@ -62,32 +60,32 @@ export class KeyGenerator {
 
 		if (serverIdentityId) {
 			this.configService.serverIdentityId = serverIdentityId;
-			logger.error('Root identity already exists: verify data');
+			this.logger.error('Root identity already exists: verify data');
 			const serverIdentity = await getIdentityDoc(serverIdentityId, this.config.serverSecret);
 			if (serverIdentity) {
 				if (this.verifyIdentity(serverIdentity)) {
-					logger.log('Root identity is already defined and valid');
-					logger.log('No need to create a root identity');
+					this.logger.log('Root identity is already defined and valid');
+					this.logger.log('No need to create a root identity');
 				} else {
-					logger.error('Root identity malformed or not valid: ' + serverIdentityId);
-					logger.error('Database could be tampered');
+					this.logger.error('Root identity malformed or not valid: ' + serverIdentityId);
+					this.logger.error('Database could be tampered');
 				}
 			} else {
-				logger.error('Error getting data from db');
+				this.logger.error('Error getting data from db');
 			}
 			return;
 		}
 
 		const serverData: CreateIdentityBody = serverIdentityJson;
 
-		const ssiService = SsiService.getInstance(this.config.identityConfig, logger);
-		const userService = new UserService(ssiService, this.config.serverSecret, logger);
+		const ssiService = SsiService.getInstance(this.config.identityConfig, this.logger);
+		const userService = new UserService(ssiService, this.config.serverSecret, this.logger);
 		const identity = await userService.createIdentity(serverData);
 
 		this.configService.serverIdentityId = identity.doc.id;
 
 		// create the verification service with a valid server identity id
-		const verificationService = new VerificationService(ssiService, userService, logger, this.configService);
+		const verificationService = new VerificationService(ssiService, userService, this.logger, this.configService);
 
 		const serverUser = await userService.getUser(identity.doc.id);
 
@@ -95,10 +93,10 @@ export class KeyGenerator {
 			throw new Error('server user not found!');
 		}
 
-		logger.log('Add server id as trusted root...');
+		this.logger.log('Add server id as trusted root...');
 		await addTrustedRootId(serverUser.identityId);
 
-		logger.log('Generate key collection...');
+		this.logger.log('Generate key collection...');
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.identityId);
 		const keyCollectionIndex = verificationService.getKeyCollectionIndex(index);
 		const kc = await verificationService.getKeyCollection(keyCollectionIndex);
@@ -107,7 +105,7 @@ export class KeyGenerator {
 			throw new Error('could not create the keycollection!');
 		}
 
-		logger.log('Set server identity as verified...');
+		this.logger.log('Set server identity as verified...');
 		const subject: Subject = {
 			claim: serverUser.claim,
 			credentialType: CredentialTypes.VerifiedIdentityCredential,
@@ -116,6 +114,6 @@ export class KeyGenerator {
 
 		await verificationService.verifyIdentity(subject, serverUser.identityId, serverUser.identityId);
 
-		logger.log(`Setup Done!`);
+		this.logger.log(`Setup Done!`);
 	}
 }

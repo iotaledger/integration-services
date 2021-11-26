@@ -1,23 +1,21 @@
-'use strict';
-
-jest.mock('fs');
+import { KeyGenerator } from '.';
+import { ConfigurationServiceMock } from '../test/mocks/service-mocks';
+import { LoggerMock } from '../test/mocks/logger';
 
 describe('test keygen', () => {
-
-	it('SERVER_IDENTITY file must exist', () => {
-		expect(true).toEqual(true);
-	})
-
+	let keyGenerator: KeyGenerator;
+	beforeEach(() => {
+		keyGenerator = new KeyGenerator(ConfigurationServiceMock, LoggerMock);
+	});
 	it('SERVER_IDENTITY file must be wellformed', () => {
-		expect(true).toEqual(true);
-	})
+		expect(keyGenerator).toEqual(keyGenerator);
+	});
 
 	it('if SERVER_IDENTITY exists keygeneration should do nothing', () => {
 		expect(true).toEqual(true);
-	})
+	});
 
 	it('if SERVER_IDENTITY not exists a valid key must be generated', () => {
 		expect(true).toEqual(true);
-	})
-
-})
+	});
+});
