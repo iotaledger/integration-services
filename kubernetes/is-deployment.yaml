@@ -70,12 +70,6 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: PORT
-
-            - name: "API_VERSION"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: API_VERSION
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:

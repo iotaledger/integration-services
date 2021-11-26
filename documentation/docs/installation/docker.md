@@ -20,7 +20,6 @@ The config should like following: (But please don't use the following values for
 
 ````
 PORT=3000
-API_VERSION=v1
 IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
 IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
 DATABASE_NAME=integration-services

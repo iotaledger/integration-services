@@ -14,7 +14,6 @@ services:
     build: .
     environment: 
       PORT: 3000
-      API_VERSION: v1
       DATABASE_NAME: e-commerce-audit-log
       IOTA_PERMA_NODE: https://nodes.iota.org:443
       DATABASE_URL: ${DATABASE_URL}

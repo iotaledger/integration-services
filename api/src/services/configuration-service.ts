@@ -37,7 +37,7 @@ export class ConfigurationService {
 
 	config: Config = {
 		port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-		apiVersion: process.env.API_VERSION,
+		apiVersion: 'v0.1',
 		databaseUrl: process.env.DATABASE_URL,
 		databaseName: process.env.DATABASE_NAME,
 		serverSecret: process.env.SERVER_SECRET,
