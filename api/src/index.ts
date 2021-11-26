@@ -86,12 +86,11 @@ async function startServer() {
 
 async function keyGen() {
 	try {
-		const logger = Logger.getInstance();
-		const configService = ConfigurationService.getInstance(logger);
+		const configService = ConfigurationService.getInstance(Logger.getInstance());
 		const config = configService.config;
 
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
-		const keyGenerator: KeyGenerator = new KeyGenerator(configService, logger);
+		const keyGenerator: KeyGenerator = new KeyGenerator(configService);
 
 		await keyGenerator.keyGeneration();
 	} catch (e) {
