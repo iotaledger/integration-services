@@ -36,8 +36,7 @@ $ cd integration-services/api
 Deploy Kubernetes resources for Integration Service APIs:
 
 ```
-$ kubectl apply -f kubernetes/optional
-$ kubectl apply -f kubernetes
+$ kubectl apply -f kubernetes/optional -f kubernetes
 ```
 
 In few minutes, depending on resources allocated, the Integration Service API
