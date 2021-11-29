@@ -24,7 +24,7 @@ export class KeyGenerator {
 	}
 
 	// Check if identity is a valid one
-	private async verifyIdentity(serverIdentity: IdentityJsonUpdate) {
+	private async verifyIdentity(serverIdentity: IdentityJsonUpdate): Promise<boolean> {
 		// verify if secret key of the server can be used to sign and verify a challenge
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
@@ -37,11 +37,7 @@ export class KeyGenerator {
 		} catch (e) {
 			this.logger.error('error when signing or verifying the nonce, the secret key might have changed...');
 		}
-		if (!verified) {
-			throw Error('server keys cannot be verified!');
-		}
-
-		this.logger.log('Api is ready to use!');
+		return verified;
 	}
 
 	// Setup root identity
@@ -63,7 +59,8 @@ export class KeyGenerator {
 			this.logger.error('Root identity already exists: verify data');
 			const serverIdentity = await getIdentityDoc(serverIdentityId, this.config.serverSecret);
 			if (serverIdentity) {
-				if (this.verifyIdentity(serverIdentity)) {
+				const isValid = await this.verifyIdentity(serverIdentity);
+				if (isValid) {
 					this.logger.log('Root identity is already defined and valid');
 					this.logger.log('No need to create a root identity');
 				} else {
