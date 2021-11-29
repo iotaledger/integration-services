@@ -50,6 +50,7 @@ export const subscriptionRouter = Router();
  *       example: true
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Subscriptions
@@ -103,6 +104,7 @@ subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  *           summary: Example identity id (DID identifier)
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Subscriptions
@@ -145,6 +147,7 @@ subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMid
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -206,6 +209,7 @@ subscriptionRouter.post(
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -262,6 +266,7 @@ subscriptionRouter.post(
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -320,6 +325,7 @@ subscriptionRouter.post(
  *           summary: Example identity id (DID identifier)
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -396,6 +402,7 @@ subscriptionRouter.post(
  *           summary: Example identity id (DID identifier)
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -469,6 +476,7 @@ subscriptionRouter.put(
  *           summary: Example identity id (DID identifier)
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Subscription deleted
