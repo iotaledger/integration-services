@@ -5,7 +5,6 @@ import swaggerUi from 'swagger-ui-express';
 import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, verificationRouter, channelInfoRouter, channelRouter, subscriptionRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
-import { CONFIG } from './config';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from './utils/logger';
@@ -13,11 +12,7 @@ import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup';
-import { Config } from './models/config';
-import { getServerIdentity } from './database/user';
-import { SERVER_IDENTITY } from './config/server';
-
-const logger = Logger.getInstance();
+import { ConfigurationService } from './services/configuration-service';
 
 const argv = yargs
 	.command('server', 'Start the integration service API', {})
@@ -26,60 +21,32 @@ const argv = yargs
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
-	messages.map((m) => logger.log(m));
+	messages.map((m) => Logger.getInstance().log(m));
 
 	app.use(prefix, router);
-}
-
-async function getRootIdentityId(config: Config): Promise<string> {
-	try {
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
-
-		const rootServerIdentities = await getServerIdentity();
-
-		if (!rootServerIdentities || rootServerIdentities.length == 0) {
-			logger.error('Root identity is missing');
-			return null;
-		}
-
-		if (rootServerIdentities.length > 1) {
-			logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
-			return null;
-		}
-
-		const rootServerIdentity = rootServerIdentities[0];
-		const rootIdentity = rootServerIdentity?.identityId;
-
-		if (rootIdentity) {
-			logger.log('Found server ID: ' + rootIdentity);
-			return rootIdentity;
-		}
-
-		logger.error('Server Identity ID not found');
-	} catch (e) {
-		logger.error('Error:' + e);
-	}
-
-	return null;
 }
 
 process.on('uncaughtException', function (err) {
 	// clean up allocated resources
 	// log necessary error details to log files
-	logger.error(`Uncaught Exception: ${err}`);
+	Logger.getInstance().error(`Uncaught Exception: ${err}`);
 	process.exit(); // exit the process to avoid unknown state
 });
 
-async function startServer(config: Config) {
+async function startServer() {
 	try {
-		const rootIdentity = await getRootIdentityId(config);
+		const logger = Logger.getInstance();
+		const configService = ConfigurationService.getInstance(Logger.getInstance());
+		const config = configService.config;
+
+		await MongoDbService.connect(config.databaseUrl, config.databaseName);
+
+		const rootIdentity = await configService.getRootIdentityId();
 
 		// setup did for server if not exists
 		if (!rootIdentity) {
 			process.exit(0);
 		}
-
-		SERVER_IDENTITY.serverIdentity = rootIdentity;
 
 		const app = express();
 
@@ -91,7 +58,7 @@ async function startServer(config: Config) {
 
 		app.use(express.json({ limit: '10mb' }));
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
-		app.use(expressWinston.logger(Logger.getInstance().getExpressWinstonOptions()));
+		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
 
 		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
@@ -111,22 +78,23 @@ async function startServer(config: Config) {
 		});
 		server.setTimeout(50000);
 	} catch (e) {
-		logger.error(e.message);
+		Logger.getInstance().error(e.message);
 		await MongoDbService.disconnect();
 		process.exit(0);
 	}
 }
 
-async function keyGen(config: Config) {
+async function keyGen() {
 	try {
+		const configService = ConfigurationService.getInstance(Logger.getInstance());
+		const config = configService.config;
 
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
-
-		const keyGenerator: KeyGenerator = new KeyGenerator(config);
+		const keyGenerator: KeyGenerator = new KeyGenerator(configService);
 
 		await keyGenerator.keyGeneration();
 	} catch (e) {
-		logger.error(e);
+		Logger.getInstance().error(e);
 		process.exit(-1);
 	}
 	await MongoDbService.disconnect();
@@ -134,9 +102,9 @@ async function keyGen(config: Config) {
 }
 
 if (argv._.includes('server')) {
-	startServer(CONFIG);
+	startServer();
 } else if (argv._.includes('keygen')) {
-	keyGen(CONFIG);
+	keyGen();
 } else {
 	yargs.showHelp();
 }

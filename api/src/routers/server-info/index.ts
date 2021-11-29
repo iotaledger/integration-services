@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { ServerInfoRoutes } from '../../routes/server-info';
 import { Logger } from '../../utils/logger';
+import { ConfigurationService } from '../../services/configuration-service';
 
-const serverInfoRoutes = new ServerInfoRoutes(Logger.getInstance());
+const serverInfoRoutes = new ServerInfoRoutes(Logger.getInstance(), ConfigurationService.getInstance(Logger.getInstance()));
 const { getServerInfo } = serverInfoRoutes;
 export const serverInfoRouter = Router();
 

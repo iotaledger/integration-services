@@ -4,14 +4,13 @@ import { VerificationRoutes } from '../index';
 import { VerificationService } from '../../../services/verification-service';
 import { UserService } from '../../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
-import { ServerIdentityMock, UserIdentityMock } from '../../../test/mocks/identities';
+import { UserIdentityMock } from '../../../test/mocks/identities';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
-import { SERVER_IDENTITY } from '../../../config/server';
+import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
 
 describe('test authentication routes', () => {
-	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;
@@ -19,21 +18,13 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id;
+
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(
-			ssiService,
-			userService,
-			{
-				serverSecret,
-				keyCollectionSize: 2
-			},
-			LoggerMock
-		);
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock);
+		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock, ConfigurationServiceMock);
 
 		res = {
 			send: sendMock,

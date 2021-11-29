@@ -15,11 +15,8 @@ export interface Config {
 	commitHash: string;
 }
 
-export interface ServerRootConfig {
-	serverIdentity: string;
-}
-
 export interface IdentityConfig {
+	keyCollectionSize: number; // size must be a multiple of 2^2, 2^3, 2^4, ...
 	network: string;
 	node: string;
 	permaNode: string;

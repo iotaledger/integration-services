@@ -14,10 +14,10 @@ import { AuthorizationService } from '../../../services/authorization-service';
 import { UserType, UserRoles } from '../../../models/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
-import { SERVER_IDENTITY } from '../../../config/server';
+import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
 
 describe('test authentication routes', () => {
-	const serverSecret = 'very-secret-secret';
+	const serverSecret = ConfigurationServiceMock.config.serverSecret;
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService;
 	let ssiService: SsiService, verificationService: VerificationService, verificationRoutes: VerificationRoutes;
@@ -25,22 +25,14 @@ describe('test authentication routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		SERVER_IDENTITY.serverIdentity = ServerIdentityMock.doc.id
+
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService({} as any, '', LoggerMock);
 		const authorizationService = new AuthorizationService();
-		verificationService = new VerificationService(
-			ssiService,
-			userService,
-			{
-				serverSecret,
-				keyCollectionSize: 2
-			},
-			LoggerMock
-		);
+		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 
-		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock);
+		verificationRoutes = new VerificationRoutes(verificationService, authorizationService, LoggerMock, ConfigurationServiceMock);
 
 		res = {
 			send: sendMock,
@@ -193,7 +185,7 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockImplementation(async () => ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityMock);
 			const req: any = {
 				user: { identityId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
@@ -260,7 +252,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = jest
 				.spyOn(verificationService, 'checkVerifiableCredential')
 				.mockImplementation(async () => initiatorVcIsVerified);
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentity').mockImplementation(async () => ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityMock);
 			const req: any = {
 				user: { identityId: initiatorVC.id, type: UserType.Person },
 				params: {},

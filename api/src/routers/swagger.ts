@@ -1,4 +1,7 @@
-import { CONFIG } from '../config';
+import { ConfigurationService } from '../services/configuration-service';
+import { Logger } from '../utils/logger/index';
+
+const { apiVersion } = ConfigurationService.getInstance(Logger.getInstance()).config;
 
 export const openApiDefinition = {
 	definition: {
@@ -42,14 +45,13 @@ export const openApiDefinition = {
 			}
 		],
 		servers: [
-			
+			{
+				url: `/api/${apiVersion}`,
+				description: 'Local Dev'
+			},
 			{
 				url: `https://ensuresec.solutions.iota.org/api/v0.1`,
 				description: 'Deployed Dev'
-			},
-			{
-				url: `/api/${CONFIG.apiVersion}`,
-				description: 'Local Dev'
 			}
 		],
 		components: {
