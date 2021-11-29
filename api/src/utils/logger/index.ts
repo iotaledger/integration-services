@@ -1,32 +1,27 @@
 import * as winston from 'winston';
+import * as expressWinston from 'express-winston';
 
 export interface ILogger {
+	getExpressWinstonOptions(): expressWinston.LoggerOptions;
 	log(message: string): void;
 	error(message: string): void;
 }
 
 export class Logger implements ILogger {
-	readonly options = {
-		level: 'info',
-		format: winston.format.json(),
-		defaultMeta: { service: 'user-service' },
-		transports: [
-			new winston.transports.Console({
-				format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
-			}),
-			new winston.transports.File({
-				filename: `./logs/error-${new Date().getMonth() + 1}-${new Date().getFullYear()}.log`,
-				level: 'error',
-				format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
-			}),
-			new winston.transports.File({
-				filename: `./logs/combined-${new Date().getMonth() + 1}-${new Date().getFullYear()}.log`
-			})
-		]
-	};
-
 	private static instance: Logger;
 	logger: winston.Logger;
+	readonly transports: winston.transport[] = [
+		new winston.transports.Console({
+			format: winston.format.combine(winston.format.colorize(), this.alignColorsAndTime())
+		})
+	];
+	readonly options: winston.LoggerOptions = {
+		level: 'info',
+		format: winston.format.json(),
+		defaultMeta: { service: 'integration-services' },
+		transports: this.transports
+	};
+
 	private constructor() {
 		this.logger = this.createLogger();
 	}
@@ -36,6 +31,17 @@ export class Logger implements ILogger {
 			Logger.instance = new Logger();
 		}
 		return Logger.instance;
+	}
+
+	getExpressWinstonOptions(): expressWinston.LoggerOptions {
+		return {
+			transports: this.transports,
+			format: winston.format.json(),
+			headerBlacklist: ['Authorization', 'authorization', 'cookie'],
+			level: 'info',
+			winstonInstance: this.logger,
+			ignoredRoutes: ['/info']
+		};
 	}
 
 	log(message: string) {
