@@ -28,7 +28,6 @@ export class KeyGenerator {
 		// verify if secret key of the server can be used to sign and verify a challenge
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge
-		this.logger.log('Check if server has valid keypair...');
 		const nonce = createNonce();
 		let verified = false;
 		try {
