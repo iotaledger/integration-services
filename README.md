@@ -52,7 +52,6 @@ also known as Self-Sovereign Identity (SSI) and Streams techonology on the IOTA 
 
 - [Node](https://nodejs.org/) (>= 15.14.0)
 
-<!--
 ## Getting Started
 
 If you want to include IOTA Identity in your project, simply add it as a dependency in your `Cargo.toml`:

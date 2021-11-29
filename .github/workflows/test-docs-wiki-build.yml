@@ -5,7 +5,6 @@ on:
     branches:
       - 'master'
       - 'develop'
-      - '298-begin-wiki-skeleton'
 jobs:
   checks:
     if: github.event_name == 'pull_request'
