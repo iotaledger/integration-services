@@ -6,6 +6,8 @@ import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
 import { getIdentityDoc } from '../database/identity-docs';
 
+const VERSION = 'v0.1';
+
 export interface IConfigurationService {
 	serverIdentityId: string;
 	config: Config;
@@ -37,7 +39,7 @@ export class ConfigurationService {
 
 	config: Config = {
 		port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-		apiVersion: 'v0.1',
+		apiVersion: VERSION,
 		databaseUrl: process.env.DATABASE_URL,
 		databaseName: process.env.DATABASE_NAME,
 		serverSecret: process.env.SERVER_SECRET,
