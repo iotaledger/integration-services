@@ -30,7 +30,7 @@
 	},
 	"homepage": "https://github.com/iotaledger/e-commerce-audit-log#readme",
 	"dependencies": {
-		"axios": "^0.21.1",
+		"axios": "^0.21.2",
 		"bs58": "^4.0.1",
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
