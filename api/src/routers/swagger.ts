@@ -8,7 +8,7 @@ export const openApiDefinition = {
 		openapi: '3.0.0',
 		info: {
 			title: 'Integration Services API Documentation',
-			version: '1.0.0',
+			version: apiVersion,
 			description: `This is the API documentation for the Integration Services. Have a look at the repository for examples at [Github](https://github.com/iotaledger/integration-services).
             For further information on the Audit Trail GW API have a look at [Audit Trail API](https://github.com/iotaledger/integration-services/blob/master/api/usage-audit-trail-GW.md) and head to
             [SSI Bridge](https://github.com/iotaledger/integration-services/blob/master/api/usage-ssi-bridge.md) for information about the SSI Bridge.
