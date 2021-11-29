@@ -7,31 +7,31 @@ export class Client extends Base {
 
     private jwtToken?: string;
 
-    constructor(apiKey: string, baseURL?: string) {
-        super(apiKey, baseURL)
+    constructor(apiKey: string, baseURL?: string, apiVersion?: string) {
+        super(apiKey, baseURL, apiVersion)
     }
 
     async identityCreate(username: string, claim: any) {
-        return await this.post("api/v1/identities/create", {
+        return await this.post("identities/create", {
             username,
             claim
         });
     }
 
     async identityFind(identityId: string) {
-        return await this.get(`api/v1/identities/identity/${identityId}`, {}, this.jwtToken)
+        return await this.get(`identities/identity/${identityId}`, {}, this.jwtToken)
     }
 
     async identitySearch(username: string) {
-        return await this.get("api/v1/identities/search", { username }, this.jwtToken)
+        return await this.get("identities/search", { username }, this.jwtToken)
     }
 
     async identityDelete(identityId: string, revokeCredentials: boolean = false) {
-        return this.delete(`api/v1/identities/identity/${identityId}`, { "revoke-credentials": true }, this.jwtToken)
+        return this.delete(`identities/identity/${identityId}`, { "revoke-credentials": true }, this.jwtToken)
     }
 
     async credentialVerify(credential: any) {
-        return await this.post(`api/v1/verification/check-credential`, credential);
+        return await this.post(`verification/check-credential`, credential);
     }
 
     async createCredential(initiatorVC: any, targetDid: string, claim: any) {
@@ -46,15 +46,15 @@ export class Client extends Base {
             },
             initiatorVC: initiatorVC
         }
-        return await this.post("api/v1/verification/create-credential", body, this.jwtToken);
+        return await this.post("verification/create-credential", body, this.jwtToken);
     }
 
     async authorize(identity: any) {
-        const body = await this.get(`api/v1/authentication/prove-ownership/${identity?.doc?.id}`)
+        const body = await this.get(`authentication/prove-ownership/${identity?.doc?.id}`)
         const nonce = body?.nonce;
         const encodedKey = await this.getHexEncodedKey(identity?.key?.secret);
         const signedNonce = await this.signNonce(encodedKey, nonce);
-        const { jwt } = await this.post(`api/v1/authentication/prove-ownership/${identity.doc.id}`, {
+        const { jwt } = await this.post(`authentication/prove-ownership/${identity.doc.id}`, {
             signedNonce
         })
         this.jwtToken = jwt;
