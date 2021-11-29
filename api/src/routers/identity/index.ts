@@ -98,7 +98,6 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *         type: number
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Return list of existing entities.
@@ -231,7 +230,6 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *     - identities
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -317,7 +315,6 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *         example: false
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Deleted Identity.

@@ -1,176 +1,144 @@
-![banner](./api/assets/Secure_Digital_Infrastructure.jpg)
+# **** Disclaimer ****
+This is work in progress and will evolve as IOTA core tools develop and ENSURESEC project requirements update
+# Setup the Integration Service Tools
 
-<p align="center">
-  <a href="https://iota.stackexchange.com/" style="text-decoration:none;"><img src="https://img.shields.io/badge/StackExchange-9cf.svg?logo=stackexchange" alt="StackExchange"></a>
-  <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/badge/Discord-9cf.svg?logo=discord" alt="Discord"></a>
-  <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/discord/397872799483428865" alt="Discord"></a>
-  <a href="https://github.com/iotaledger/integration-services/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/bee.svg" alt="Apache 2.0 license"></a>
+## 1. Copy .env file
 
-<!--  
-  <img src="https://deps.rs/repo/github/iotaledger/identity.rs/status.svg" alt="Dependencies">
-  <a href='https://coveralls.io/github/iotaledger/identity.rs?branch=dev'><img src='https://coveralls.io/repos/github/iotaledger/identity.rs/badge.svg?branch=dev' alt='Coverage Status' /></a>
--->
+> This section must be done for local development start or when starting via docker.
 
-</p>
+Copy the `./api/.env-example` and rename it to `./api/.env`
+It contains predefined variables and some with secret values starting with < and ending with > like for instance: <db-user>
 
-<p align="center">
-  <a href="#introduction">Introduction</a> ◈
-  <a href="#documentation-and-resources">Documentation & Resources</a> ◈
-  <a href="#prerequisites">Prerequisites</a> ◈
-  <a href="#contributing">Contributing</a>
-  <!--
-  <a href="#getting-started">Getting Started</a> ◈
-  <a href="#example-creating-an-identity">Example</a> ◈
-  <a href="#roadmap-and-milestones">Roadmap</a> ◈
-  -->
-</p>
+Define for the following variables a private value:
+````
+MONGO_INITDB_ROOT_USERNAME, MONGO_INITDB_ROOT_PASSWORD, DATABASE_URL, SERVER_SECRET
+````
 
----
+> !! For now leave the `SERVER_IDENTITY` blank or remove the complete line. !!
 
-## Introduction
+The config should like following: (But please don't use the following values for username, password and secret in your env config.) The server secret is used to encrypt for instance the private key of the server identity but also to sign JWTs so it should be secure. 
 
-IOTA Integration Services is a [Node](https://nodejs.org/) microservice responsible to simplify access to decentralized digital identity, 
-also known as Self-Sovereign Identity (SSI) and Streams techonology on the IOTA tangle. 
+> Important: The SERVER_SECRET has to have a length of 32 characters!!
 
-> :warning: **WARNING** :warning:
->
-> This library is currently in its **under development** and might undergo large changes!
-> Until a formal third-party security audit has taken place, the [IOTA Foundation](https://www.iota.org/) makes no guarantees to the fitness of this library. 
-> As such, it is to be seen as **experimental** and not ready for real-world applications.
-> Nevertheless, we are very interested in feedback about user experience, design and implementation, and encourage you to reach out with any concerns or suggestions you may have.
+````
+PORT=3000
+API_VERSION=v1
+IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
+IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
+NETWORK=main
+EXPLORER=https://explorer.iota.org/mainnet/transaction
+DATABASE_NAME=integration-services
+MONGO_INITDB_ROOT_USERNAME=root
+MONGO_INITDB_ROOT_PASSWORD=rootpassword
+DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
+SERVER_SECRET=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
+````
 
-## Documentation and Resources
+Make sure you use the same username and password for the `DATABASE_URL` as in `MONGO_INITDB_ROOT_USERNAME` & `MONGO_INITDB_ROOT_PASSWORD`.
 
-- [API Reference](https://wiki.iota.org/integration-services/api_reference): Integration Service API documentation.
-- [Documentation Pages](https://wiki.iota.org/integration-services/welcome): Wiki including setup API on-prem and on cloud with simple examples on service usage.
-- 
-- [Examples on Decentralized Identity](https://wiki.iota.org/integration-services/examples/intro_identity): Practical code snippets to get you started with the decentralized identity API
-- [Examples on Audit Trail](https://wiki.iota.org/integration-services/examples/intro_audittrail): Practical code snippets to get you started with the Audit Trail API
-- [IOTA Integration Service Website](https://www.iota.org/solutions/secure-digital-infrastructure): Website for a collaborative effort to provide help, guidance and spotlight to the IOTA Integration Services Community through offering feedback and introducing consistent workflows around IOTA decentralized identities and audit trails.
+> If you run the api through docker you need to set the ip of the machine the database is running on if you use `npm run start` you can use `0.0.0.0` as host!
 
-## Prerequisites
+## 2. Local Development
 
-- [Node](https://nodejs.org/) (>= 15.14.0)
+For local development it makes sense to only use docker for the database and use nodejs to run the api.
 
-## Getting Started
+### 1. Run MongoDB
 
-If you want to include IOTA Identity in your project, simply add it as a dependency in your `Cargo.toml`:
-```rust
-[dependencies]
-identity = { git = "https://github.com/iotaledger/identity.rs", branch = "main"}
+1.1  Change the directory to the `/api` folder und use the following command: `docker-compose up -d mongodb_container` only the mongodb will be started using docker.
+
+1.2. Check the docker container
+Use `docker ps` to check whether the container is running. It should output something like:
+```
+CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                      NAMES
+eceaab9343eb   mongo:latest   "docker-entrypoint.s…"   7 seconds ago   Up 7 seconds   0.0.0.0:27017->27017/tcp   api_mongodb_1
 ```
 
-To try out the [examples](https://github.com/iotaledger/identity.rs/tree/main/examples), you can also do this:
+> You can connect to the api via clients like `MongoDB Compass` by using the defined connection url of the database like for instance `mongodb://root:rootpassword@0.0.0.0:27017`!
 
-1. Clone the repository, e.g. through `git clone https://github.com/iotaledger/identity.rs `
-2. Build the repository with `cargo build `
-3. Run your first example using `cargo run --example getting_started `
+### 2. Create root identity and run the API
 
-If you would like to build the [API Reference](https://wiki.iota.org/identity.rs/libraries/rust/api_reference) yourself from source, you can do so using:
-```rust
-cargo doc --document-private-items --no-deps --open
+2.1. Make sure you are in the `/api` folder and use the following commands:
+
+```
+npm install     # Install dependencies
+npm run keygen  # Generate root identity (if it not exists in the database)
 ```
 
-## Example: Creating an Identity
+The `keygen` phase create a root identity for the server and add it to the database.
+If a root identity already exists in the database, the process will give a notice before exit.
+When the root server identity is generated the output is like the following:
 
-*Cargo.toml*
-```rust
-[package]
-name = "iota_identity_example"
-version = "1.0.0"
-edition = "2021"
-
-[dependencies]
-identity = { git = "https://github.com/iotaledger/identity.rs", branch = "main", features = ["account"]}
-pretty_env_logger = { version = "0.4" }
-tokio = { version = "1.5", features = ["full"] }
 ```
-*main.*<span></span>*rs*
-```rust
-use std::path::PathBuf;
-
-use identity::account::Account;
-use identity::account::AccountStorage;
-use identity::account::IdentitySetup;
-use identity::account::Result;
-use identity::iota::IotaDocument;
-
-#[tokio::main]
-async fn main() -> Result<()> {
-  pretty_env_logger::init();
-
-  // The Stronghold settings for the storage.
-  let stronghold_path: PathBuf = "./example-strong.hodl".into();
-  let password: String = "my-password".into();
-
-  // Create a new identity with default settings and
-  // Stronghold as the storage.
-  let account: Account = Account::builder()
-    .storage(AccountStorage::Stronghold(stronghold_path, Some(password)))
-    .create_identity(IdentitySetup::default())
-    .await?;
-
-  println!("[Example] Local Document = {:#?}", account.document());
-
-  // Fetch the DID Document from the Tangle
-  //
-  // This is an optional step to ensure DID Document consistency.
-  let resolved: IotaDocument = account.resolve_identity().await?;
-
-  println!("[Example] Tangle Document = {:#?}", resolved);
-
-  Ok(())
-}
+Successfully connected to mongodb
+Setting root identity please wait...
+Add server id as trusted root...
+Generate key collection...
+Set server identity as verified...
+Setup Done!
 ```
-*Example output*
-```rust
-DID Document Transaction > https://explorer.iota.org/mainnet/message/de795095cc7970c2aa4efabfe9885bd07be6664219464697b4b7506d9a87fbe3
+
+2.2. Run the api again using `npm run start`
+
+It should log that the api was started like following:
+
 ```
-The output link points towards the DID Document transaction, viewable through the IOTA Tangle Explorer, see [here](https://explorer.iota.org/mainnet/message/de795095cc7970c2aa4efabfe9885bd07be6664219464697b4b7506d9a87fbe3). You can see the full DID Document as transaction payload.
+Started API Server on port 3000
+Successfully connected to mongodb
+```
 
--->
+## 3. Run all using Docker
 
-<!--
-## Roadmap and Milestones
+3.1. Start the api
 
-For detailed development progress, see the IOTA Identity development [kanban board](https://github.com/iotaledger/identity.rs/projects/3).
+The api can also be run using docker therefor use the following command:
 
-IOTA Identity is in heavy development, and will naturally change as it matures and people use it. The chart below isn't meant to be exhaustive, but rather helps to give an idea for some of the areas of development and their relative completion:
+`docker-compose up -d`
 
-#### Basic Framework
+> !! Make sure the correct ip for the mongodb is set so the docker instance of the api is able to find the mongodb instance. Normally it should be the ip of the machine instaed of 0.0.0.0 !!
 
-| Feature                   | Not started | In Research | In Development | Done | Notes                                                                |
-| :------------------------- | :---------: | :------: | :---------------: | :-:  | :-------------------------------------------------------------------- |
-| Implement IOTA DID Method | | | | :heavy_check_mark: | Finished implementation. |
-| [Verifiable Credentials](https://www.w3.org/TR/vc-data-model/) | | | | :heavy_check_mark: | Finished implementation. |
-| Account | | | :large_orange_diamond: | | Base implementation done, more features to be added. |
-| [DID Comms](https://identity.foundation/didcomm-messaging/spec/) | | | :large_orange_diamond: | | Initial version done, but more to come |
-| Identity Actor | | :large_orange_diamond: | | | |
-| Selective Disclosure | :large_orange_diamond: | | | | |
-| Zero Knowledge Proofs | | :large_orange_diamond: | | | |
-| Support Embedded Rust | | :large_orange_diamond: | | | |
-| [WASM Bindings](https://github.com/iotaledger/identity.rs/tree/main/bindings/wasm) | | | :large_orange_diamond: | | implemented for low-level APIs |
-| [Code Examples](https://github.com/iotaledger/identity.rs/tree/main/examples) | | | | :large_orange_diamond: | |
-| [API Reference](https://wiki.iota.org/identity.rs/libraries/rust/api_reference) | | | :large_orange_diamond: | | |
-| [Documentation Portal](https://wiki.iota.org/identity.rs/introduction) | | | :large_orange_diamond: | | |
+If it was the first time the api is started, no `SERVER_IDENTITY` is defined since it was left blank previously. The api should log a newly generated identity id which needs to be used as server identity as following:
 
+You can check the logs using: `docker logs api_ensuresec_api_1` or using the container id like `docker logs <container-id>` by replacing `<container-id>` with the actual id.
 
-#### Next Milestones
+```
+Successfully connected to mongodb
+Create identity...
+==================================================================================================
+== Store this identity in the as ENV var: did:iota:BfGtLdthmzrUdgYptrZgnC4amXZBZ2C2xQMVM7Bb1cZs ==
+==================================================================================================
+Add server id as trusted root...
+Generate key collection...
+Set server identity as verified...
+Setup Done!
+Please store the generated server identity as environment variable.
+Like: SERVER_IDENTITY=did:iota:BfGtLdthmzrUdgYptrZgnC4amXZBZ2C2xQMVM7Bb1cZs
+```
 
-At the current state, the framework is in beta. As the framework matures we expect to support more and more types of applications. We recommend no use in real-world applications until the consumed libraries are audited, but experimentation and Proof-of-Concept projects are encouraged at the different stages.
+3.2. Copy the `SERVER_IDENTITY` into the .env file.
 
-The next milestone is the release of version 1.0, which will stabilize the APIs, support backwards compatibility and versioned identities. This makes updating to future versions much easier. In addition it will provide full documentation coverage and the release will be audited.
+3.3. Run the docker again using `docker-compose up -d`
 
-Afterwards, we are already planning a future update containing privacy enhancing features such as Selective Disclosure and Zero Knowledge Proofs.
--->
+The docker container should log that the api was started like following:
+```
+Started API Server on port 3000
+Successfully connected to mongodb
+```
 
-## Contributing
+There should be now 2 docker container available check it using: `docker ps``
+```
+CONTAINER ID   IMAGE               COMMAND                  CREATED         STATUS         PORTS                      NAMES
+086e1549bdb3   api_ensuresec_api   "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3000->3000/tcp     api_ensuresec_api_1
+0bd35f3d5fc5   mongo:latest        "docker-entrypoint.s…"   7 seconds ago   Up 6 seconds   0.0.0.0:27017->27017/tcp   api_mongodb_container_1
+```
 
-We would love to have you help us with the development of IOTA Integration Services. Each and every contribution is greatly valued!
+## 4. API Key
 
-To contribute directly to the repository, simply fork the project, push your changes to your fork and create a pull request to get them included!
+The api supports an optional api-key which can be used to filter requests which do not know about the right key. If the key is not added or is set as an empty string the api-key won't be considered by the api. To force a check for the api-key it can be added by adding the env variable `API_KEY` to the .env file, like for instance:
+```
+API_KEY=SAMPLE-API-KEY
+```
+In this case all request must have the specified api-key as `?api-key=SAMPLE-API-KEY` query parameter like:
 
-The best place to get involved in discussions about this framework or to look for support at is the `#integration-services` channel on the [IOTA Discord](http://discord.iota.org). 
-
-
-You can also ask questions on our [Stack Exchange](https://iota.stackexchange.com/).
+```
+localhost:3000/api/v1/verification/latest-document/did:iota:2k7Spwr9yFfCTgGPArucUg3h89W6kidjqBBMMKMW4C9r?api-key=SAMPLE-API-KEY
+```

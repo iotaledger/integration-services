@@ -60,7 +60,6 @@ export const channelInfoRouter = Router();
  *         type: number
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Returns information about searched channels
@@ -147,7 +146,6 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *     - channel-info
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -208,7 +206,6 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *     - channel-info
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -279,7 +276,6 @@ channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ b
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
- *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Channel successfully deleted

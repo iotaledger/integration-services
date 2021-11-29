@@ -22,7 +22,8 @@ const logger = Logger.getInstance();
 const argv = yargs
 	.command('server', 'Start the integration service API', {})
 	.command('keygen', 'Generate root identity for integration service API', {})
-	.help().argv;
+	.help()
+	.argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -63,15 +64,16 @@ async function getRootIdentityId(config: Config): Promise<string> {
 	return null;
 }
 
-process.on('uncaughtException', function (err) {
-	// clean up allocated resources
-	// log necessary error details to log files
+process.on("uncaughtException", function(err) {
+    // clean up allocated resources
+    // log necessary error details to log files
 	logger.error(`Uncaught Exception: ${err}`);
-	process.exit(); // exit the process to avoid unknown state
+    process.exit(); // exit the process to avoid unknown state
 });
 
 async function startServer(config: Config) {
 	try {
+
 		const rootIdentity = await getRootIdentityId(config);
 
 		// setup did for server if not exists
@@ -91,7 +93,7 @@ async function startServer(config: Config) {
 
 		app.use(express.json({ limit: '10mb' }));
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
-		app.use(expressWinston.logger(Logger.getInstance().getExpressWinstonOptions()));
+		app.use(expressWinston.logger(Logger.getInstance().options));
 
 		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
@@ -110,7 +112,8 @@ async function startServer(config: Config) {
 			await MongoDbService.connect(dbUrl, dbName);
 		});
 		server.setTimeout(50000);
-	} catch (e) {
+	}
+	catch (e) {
 		logger.error(e.message);
 		await MongoDbService.disconnect();
 		process.exit(0);
@@ -125,6 +128,7 @@ async function keyGen(config: Config) {
 		const keyGenerator: KeyGenerator = new KeyGenerator(config);
 
 		await keyGenerator.keyGeneration();
+		
 	} catch (e) {
 		logger.error(e);
 		process.exit(-1);
@@ -137,6 +141,7 @@ if (argv._.includes('server')) {
 	startServer(CONFIG);
 } else if (argv._.includes('keygen')) {
 	keyGen(CONFIG);
-} else {
-	yargs.showHelp();
+}
+else {
+	yargs.showHelp()
 }

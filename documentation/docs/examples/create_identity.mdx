@@ -1,8 +1,5 @@
 # Create an Identity
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 This example will show how to create an basic identity. It is recommended to have a basic
 understading of Decentralized Identities to get the most out of this example. Have a look at our Basics section to read further about
 [Decrentralized Identities](../basics/identity).
@@ -10,103 +7,54 @@ understading of Decentralized Identities to get the most out of this example. Ha
 ## Prerequisite
 
 1. You have to have a recent version of [Node.js](https://nodejs.org/en/) installed.
-
-2. Install the api client
-
-<Tabs>
-<TabItem value="npm" label="npm">
-
-```bash
-npm install integration-services/javascript-client
-```
-
-</TabItem>
-<TabItem value="yarn" label="Yarn">
-
-```bash
-yarn add integration-services/javascript-client
-```
-
-</TabItem>
-</Tabs>
+2. This example uses [axios](https://www.npmjs.com/package/axios) for http requests. You can use whatever package you like for querying the API. If you want to follow along make sure to install axios by running `npm install axios` in your projects root.
+3. Make sure to have the API running and connected to the database. You can test this by querying [http://localhost:3000/info](http://localhost:3000/info). If it returns some information like and identityId you are ready to go.
 
 ## Running the example
 
 This is a really barebones example on how to create an identity. For all possible parameter have a look at our [API Referenece](../api_reference).
 First of all a user object containg just a username is created. The user object is then posted to the `/identities/create` endpoint.
 
-<Tabs>
-<TabItem value="js" label="JavaScript">
+```javascript
+import axios from 'axios';
 
-```js
-import { ApiClient } from './ApiClient';
-import { IdentitiesApi } from './api/IdentitiesApi';
-
-// Create the api client
-var defaultClient = ApiClient.instance;
-
-// Insert api-key if needed
-var ApiKey = defaultClient.authentications['ApiKey'];
-ApiKey.apiKey = '<INSERT_API_KEY>';
-
-// Create identities api
-var identityApi = new IdentitiesApi();
-
-// Callback function, executed when the response returns
-var callback = function (error, data, response) {
-if (error) {
-  console.error(error);
-} else {
-  console.log('API called successfully. Returned data: ', JSON.stringify(data, "", 2));
-}
+const createIdentity = async () => {
+  const user = { username: 'example-user' };
+  const response = await axios.post('http://localhost:3000/api/v1/identities/create', user);
+  console.log(JSON.stringify(response.data, null, 4));
 };
 
-// Send request to create a new identity
-identityApi.identitiesCreatePost({}, callback)
-}
+createIdentity();
 ```
-
-</TabItem>
-<TabItem value="py" label="Python">
-
-```py
-def hello_world():
-  print 'Hello, world!'
-```
-
-</TabItem>
-
-</Tabs>
 
 Output example identity:
 
 ```json
 {
   "doc": {
-    "id": "did:iota:3McmY5K9hVacUJqZD2Df9C7MB6YjD5QHrtgqk6qzkx7q",
+    "id": "did:iota:9VoXVSn8oe2yAiHcppSzpevV9MptcMmUiDtYEjwDdEBD",
     "authentication": [
       {
-        "id": "did:iota:3McmY5K9hVacUJqZD2Df9C7MB6YjD5QHrtgqk6qzkx7q#key",
-        "controller": "did:iota:3McmY5K9hVacUJqZD2Df9C7MB6YjD5QHrtgqk6qzkx7q",
-        "type": "Ed25519VerificationKey2018",
-        "publicKeyBase58": "9C6CYi9WyheG9dwd7R7PkzDDu4AJrfrowjU8J3DcvRLD"
+        "id": "did:iota:9VoXVSn8oe2yAiHcppSzpevV9MptcMmUiDtYEjwDdEBD#key",
+        "controller": "did:iota:9VoXVSn8oe2yAiHcppSzpevV9MptcMmUiDtYEjwDdEBD",
+        "type": "Ed25519VerificationKey2018"
       }
     ],
-    "created": "2021-11-24T12:34:35.000Z",
-    "updated": "2021-11-24T12:34:35.000Z",
+    "created": "2021-11-16T08:39:12Z",
+    "updated": "2021-11-16T08:39:12Z",
     "proof": {
       "type": "JcsEd25519Signature2020",
       "verificationMethod": "#key",
-      "signatureValue": "4TeMti7QmNyait92WLHP6zf62tFyz1VEPz9iXKwETcYNEEXA6auBhGLahCUhC6a85ukgsJoB7TjDk1njxWBNmjz2"
+      "signatureValue": "WgoRce5FWtNxS5UMqyjmdSnmEU3q3ET9XoNTySVV1BoyiLe4kC8HLCqSR8fL2ZzvREzDs47fXHaf7VXTwTYfEjQ"
     }
   },
   "key": {
     "type": "ed25519",
-    "public": "9C6CYi9WyheG9dwd7R7PkzDDu4AJrfrowjU8J3DcvRLD",
-    "secret": "DHFsm8dmJ7aNZ8KRFxy2z3y7wR4ybwvH9mi5Fxggp5UD",
+    "public": "5YLhUrXqMZbu6v2PSUwThSinmiNr9Kv2FdvqhogSzWR",
+    "secret": "4wHshyqhBu7oUfKmrNH5ydr8t17m6JugAuTFQBjBiWU2",
     "encoding": "base58"
   },
-  "txHash": "ab52f69c9438d66000646098979dda3e1d2e1c183621dffed08125eae24e027c"
+  "txHash": "302c3a31ee5da69b190e44cb802c96ce97503aba072d274ff9aebf99d0106fb1"
 }
 ```
 

@@ -1,51 +1,30 @@
 version: '3.7'
 services:
-
-  mongo:
+  mongodb_container:
     image: mongo:latest
-    restart: always
     environment:
-      MONGO_INITDB_DATABASE: ${DATABASE_NAME}
+      MONGO_INITDB_DATABASE: e-commerce-audit-log
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 27017:27017
     volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data_container:/data/db
-
-  initialize-job:
-    build: .
-    environment: 
-      API_VERSION: v1
-      NETWORK: main
-      DATABASE_NAME: ${DATABASE_NAME}
-      IOTA_PERMA_NODE: https://nodes.iota.org:443
-      EXPLORER: https://explorer.iota.org/mainnet/transaction
-      DATABASE_URL: ${DATABASE_URL}
-      SERVER_SECRET: ${SERVER_SECRET}
-    restart: on-failure
-    command: node dist/index.js keygen
-    depends_on: 
-      - mongo
-
-  api:
+  ensuresec_api:
     build: .
     environment: 
       PORT: 3000
       API_VERSION: v1
-      NETWORK: main
-      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_NAME: e-commerce-audit-log
       IOTA_PERMA_NODE: https://nodes.iota.org:443
+      NETWORK: main
       EXPLORER: https://explorer.iota.org/mainnet/transaction
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
-    restart: always
+      SERVER_IDENTITY: ${SERVER_IDENTITY}
     depends_on: 
-      - mongo
-      - initialize-job
+      - mongodb_container
     ports:
       - 3000:3000
-
 volumes:
   mongodb_data_container:
