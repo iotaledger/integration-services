@@ -25,6 +25,7 @@ export const channelRouter = Router();
  *     - channels
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -82,6 +83,7 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -172,6 +174,7 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *         example: 2021-09-29T13:30:00+02:00
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Returns data from the channel
@@ -255,6 +258,7 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -308,6 +312,7 @@ channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare
  *           summary: Example channel address
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
