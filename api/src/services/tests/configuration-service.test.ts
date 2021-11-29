@@ -20,7 +20,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.API_VERSION = ConfigMock.apiVersion;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -34,7 +33,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.API_VERSION = ConfigMock.apiVersion;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -54,7 +52,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.API_VERSION = ConfigMock.apiVersion;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -76,7 +73,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.API_VERSION = ConfigMock.apiVersion;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -98,7 +94,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.API_VERSION = ConfigMock.apiVersion;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -121,7 +116,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.API_VERSION = ConfigMock.apiVersion;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
