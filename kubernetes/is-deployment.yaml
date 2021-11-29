@@ -70,27 +70,11 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: PORT
-
-            - name: "API_VERSION"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: API_VERSION
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: DATABASE_NAME
-            - name: "NETWORK"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: NETWORK
-            - name: "EXPLORER"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: EXPLORER
             - name: "IOTA_PERMA_NODE"
               valueFrom:
                 configMapKeyRef:

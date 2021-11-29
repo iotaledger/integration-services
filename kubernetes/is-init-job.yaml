@@ -31,11 +31,6 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: DATABASE_NAME
-            - name: "NETWORK"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: NETWORK
             - name: "DATABASE_URL"
               valueFrom:
                 configMapKeyRef:

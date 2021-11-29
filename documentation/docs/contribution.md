@@ -1,44 +1,7 @@
-# Docker
+## Local Development
 
-## 1. Copy .env file
-
-> This section must be done for local development start or when starting via docker.
-
-Copy the `./api/.env-example` and rename it to `./api/.env`
-It contains predefined variables and some with secret values starting with < and ending with > like for instance: `<db-user>`
-
-Define for the following variables a private value:
-````
-MONGO_INITDB_ROOT_USERNAME, MONGO_INITDB_ROOT_PASSWORD, DATABASE_URL, SERVER_SECRET
-````
-
-> !! For now leave the `SERVER_IDENTITY` blank or remove the complete line. !!
-
-The config should like following: (But please don't use the following values for username, password and secret in your env config.) The server secret is used to encrypt for instance the private key of the server identity but also to sign JWTs so it should be secure. 
-
-> Important: The SERVER_SECRET has to have a length of 32 characters!!
-
-````
-PORT=3000
-API_VERSION=v1
-IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
-IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
-NETWORK=main
-EXPLORER=https://explorer.iota.org/mainnet/transaction
-DATABASE_NAME=integration-services
-MONGO_INITDB_ROOT_USERNAME=root
-MONGO_INITDB_ROOT_PASSWORD=rootpassword
-DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
-SERVER_SECRET=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
-````
-
-Make sure you use the same username and password for the `DATABASE_URL` as in `MONGO_INITDB_ROOT_USERNAME` & `MONGO_INITDB_ROOT_PASSWORD`.
-
-> If you run the api through docker you need to set the ip of the machine the database is running on if you use `npm run start` you can use `0.0.0.0` as host!
-
-## 2. Local Development
-
-For local development it makes sense to only use docker for the database and use nodejs to run the api.
+For local development you can start the main service with docker-compose (as before) and then use nodejs to run the api:
+remember however to define the correct `DATABASE_URL` environment variable changing `mongo` with `localhost`.
 
 ### 1. Run MongoDB
 

@@ -79,6 +79,7 @@ verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLate
  *     - verification
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -165,6 +166,7 @@ verificationRouter.get('/trusted-roots', apiKeyMiddleware, getTrustedRootIdentit
  *           summary: Root identity removed from the service
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       200:
  *         description: Successful removed trusted Root identity identifier.
@@ -193,6 +195,7 @@ verificationRouter.delete('/trusted-roots/:trustedRootId', apiKeyMiddleware, aut
  *     - verification
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -317,6 +320,7 @@ verificationRouter.post(
  *     - verification
  *     security:
  *       - BearerAuth: []
+ *       - ApiKey: []
  *     requestBody:
  *       content:
  *         application/json:
