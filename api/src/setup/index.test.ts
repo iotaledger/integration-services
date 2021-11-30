@@ -5,6 +5,10 @@ import * as UserDb from '../database/user';
 import * as IdentityDocs from '../database/identity-docs';
 import { ServerIdentityMock } from '../test/mocks/identities';
 import { UserService } from '../services/user-service';
+import * as TrustedRootDb from '../database/trusted-roots';
+import * as VerifiableCredentialDb from '../database/verifiable-credentials';
+import { VerificationService } from '../services/verification-service';
+import { CredentialTypes } from '../models/types/verification';
 
 describe('test keygenerator', () => {
 	let keyGenerator: KeyGenerator;
@@ -94,6 +98,43 @@ describe('test keygenerator', () => {
 		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
 
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('server user not found!');
+	});
+
+	it('should create a new serveridentity but could not create keycollection since returns null', async () => {
+		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
+		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
+		VerificationService.prototype.getKeyCollectionIndex = jest.fn();
+		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => null); // no keycollection
+
+		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
+		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
+		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
+
+		await expect(keyGenerator.keyGeneration()).rejects.toThrow('could not create the keycollection!');
+	});
+
+	it('should create a new serveridentity and successfully run the script till the end', async () => {
+		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
+		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
+		VerificationService.prototype.getKeyCollectionIndex = jest.fn();
+		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => []);
+		const verifyIdentitySpy = jest.fn();
+		VerificationService.prototype.verifyIdentity = verifyIdentitySpy;
+
+		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
+		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
+		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
+
+		await keyGenerator.keyGeneration();
+
+		const sub = {
+			claim: ServerIdentityMock.userData.claim,
+			credentialType: CredentialTypes.VerifiedIdentityCredential,
+			identityId: ServerIdentityMock.userData.identityId
+		};
+		expect(verifyIdentitySpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
 	});
 
 	afterEach(() => {
