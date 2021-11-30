@@ -1,4 +1,4 @@
-import { Client } from './client';
-import { Manager } from './manager';
+import { IdentityClient } from './clients/identityClient';
+import { Manager } from './manager/manager';
 
-export { Client, Manager };
+export { IdentityClient as Client, Manager };
