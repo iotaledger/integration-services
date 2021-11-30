@@ -68,7 +68,7 @@ describe('test keygenerator', () => {
 	});
 
 	it('should find an invalid serveridentity doc because public and secret key are not compatible', async () => {
-		let unvalidServerIdentity = { ...ServerIdentityMock };
+		const unvalidServerIdentity = { ...ServerIdentityMock };
 		unvalidServerIdentity.key.public = 'wrongpublickey'; // found identity has wrong server keypair stored
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
