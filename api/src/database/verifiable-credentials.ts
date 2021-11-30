@@ -35,10 +35,10 @@ export const getVerifiableCredential = async (vcHash: string): Promise<Verifiabl
 	return await MongoDbService.getDocument<VerifiableCredentialPersistence>(collectionName, query);
 };
 
-export const getVerifiableCredentials = async (identityId: string): Promise<VerifiableCredentialPersistence[]> => {
+export const getVerifiableCredentials = async (id: string): Promise<VerifiableCredentialPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 
-	const query = { 'vc.id': regex(identityId) };
+	const query = { 'vc.id': regex(id) };
 	return await MongoDbService.getDocuments<VerifiableCredentialPersistence>(collectionName, query);
 };
 

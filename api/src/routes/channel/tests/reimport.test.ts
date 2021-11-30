@@ -47,7 +47,7 @@ describe('test re-import route', () => {
 
 		await channelRoutes.reimport(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return bad request if no seed is provided', async () => {
@@ -75,7 +75,7 @@ describe('test re-import route', () => {
 
 		await channelRoutes.reimport(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no subscription found!'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not reimport channel data'));
 	});
@@ -100,7 +100,7 @@ describe('test re-import route', () => {
 
 		await channelRoutes.reimport(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to reimport the logs from the channel'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not reimport channel data'));
 	});
@@ -125,7 +125,7 @@ describe('test re-import route', () => {
 
 		await channelRoutes.reimport(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to reimport the logs from the channel'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not reimport channel data'));
 	});
@@ -155,7 +155,7 @@ describe('test re-import route', () => {
 
 		await channelRoutes.reimport(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('wrong seed inserted'));
@@ -189,11 +189,11 @@ describe('test re-import route', () => {
 
 		await channelRoutes.reimport(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
-		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
-		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.identityId, newSub);
+		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.id, newSub);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});

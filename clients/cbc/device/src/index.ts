@@ -8,17 +8,17 @@ const startDevice = async () => {
 	console.log('Device demo started...');
 	console.log('--------------------------------------------------------');
 	console.log('--------------------------------------------------------');
-	const { identityId, channelAddress } = await setup();
-	await checkSubscriptionState(channelAddress, identityId);
+	const { id, channelAddress } = await setup();
+	await checkSubscriptionState(channelAddress, id);
 	const measurement = (index: number) => {
 		const factor = index * 0.5;
 		return { produced: { value: factor * 30, unit: 'kWh' }, consumption: { value: factor * 20, unit: 'kWh' } };
 	};
 
-	await writeChannel({ ...measurement(1), identityId }, 'measurement');
-	await writeChannel({ ...measurement(2), identityId }, 'measurement');
-	await writeChannel({ ...measurement(3), identityId }, 'measurement');
-	await writeChannel({ ...measurement(4), identityId }, 'measurement');
+	await writeChannel({ ...measurement(1), id }, 'measurement');
+	await writeChannel({ ...measurement(2), id }, 'measurement');
+	await writeChannel({ ...measurement(3), id }, 'measurement');
+	await writeChannel({ ...measurement(4), id }, 'measurement');
 	console.log('Device demo finished :)');
 };
 

@@ -123,20 +123,20 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
 
 /**
  * @openapi
- * /identities/identity/{identityId}:
+ * /identities/identity/{id}:
  *   get:
  *     summary: Get information about a specific identity
  *     description: Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
  *     tags:
  *     - identities
  *     parameters:
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *           summary: Example identity id (DID identifier)
  *     responses:
@@ -160,7 +160,7 @@ identityRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchUsers);
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  *
  */
-identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, getUser);
+identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
 
 /**
  * @openapi
@@ -176,7 +176,7 @@ identityRouter.get('/identity/:identityId', apiKeyMiddleware, authMiddleWare, ge
  *           schema:
  *             $ref: "#/components/schemas/IdentitySchema"
  *           example:
- *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
  *             username: root-identity
  *             registrationDate: 2021-06-21T10:40:12+02:00
@@ -238,7 +238,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *           schema:
  *             $ref: "#/components/schemas/IdentitySchema"
  *           example:
- *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
  *             username: root-identity
  *             registrationDate: 2021-06-21T10:40:12+02:00
@@ -285,20 +285,20 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
 
 /**
  * @openapi
- * /identities/identity/{identityId}:
+ * /identities/identity/{id}:
  *   delete:
  *     summary: Removes an identity from the Bridge
  *     description: Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the immutable IOTA Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
  *     tags:
  *     - identities
  *     parameters:
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *           summary: Example identity id (DID identifier)
  *     - name: 'revoke-credentials'
@@ -334,4 +334,4 @@ identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ bod
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.delete('/identity/:identityId', apiKeyMiddleware, authMiddleWare, deleteUser);
+identityRouter.delete('/identity/:id', apiKeyMiddleware, authMiddleWare, deleteUser);

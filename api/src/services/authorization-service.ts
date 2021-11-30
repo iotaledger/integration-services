@@ -2,8 +2,8 @@ import { AuthorizationCheck, CredentialTypes } from '../models/types/verificatio
 import { User, UserType, UserRoles } from '../models/types/user';
 
 export class AuthorizationService {
-	isAuthorized(requestUser: User, identityId: string): AuthorizationCheck {
-		const isAuthorizedUser = this.isAuthorizedUser(requestUser.identityId, identityId);
+	isAuthorized(requestUser: User, id: string): AuthorizationCheck {
+		const isAuthorizedUser = this.isAuthorizedUser(requestUser.id, id);
 		if (!isAuthorizedUser) {
 			const isAuthorizedAdmin = this.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
@@ -13,8 +13,8 @@ export class AuthorizationService {
 		return { isAuthorized: true, error: null };
 	}
 
-	isAuthorizedUser(requestUserId: string, identityId: string): boolean {
-		return requestUserId === identityId;
+	isAuthorizedUser(requestUserId: string, id: string): boolean {
+		return requestUserId === id;
 	}
 
 	isAuthorizedAdmin(requestUser: User): boolean {

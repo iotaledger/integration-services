@@ -269,7 +269,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"identityId\": \"did:iota:3kLPuLPgJ981MpG88mgfwj67r99oxjtqGNEfMB2b8pM6\"\n}",
+							"raw": "{\n    \"id\": \"did:iota:3kLPuLPgJ981MpG88mgfwj67r99oxjtqGNEfMB2b8pM6\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

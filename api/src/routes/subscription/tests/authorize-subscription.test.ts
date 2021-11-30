@@ -19,7 +19,7 @@ describe('test authorize subscription route', () => {
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
-		identityId: 'did:iota:1234',
+		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
 		state: 'teststate',
@@ -50,7 +50,7 @@ describe('test authorize subscription route', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
 			params: {},
-			user: { identityId: undefined },
+			user: { id: undefined },
 			body: undefined // no body
 		};
 
@@ -59,16 +59,16 @@ describe('test authorize subscription route', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
 
-	it('should bad request if no identityId is provided', async () => {
+	it('should bad request if no id is provided', async () => {
 		const req: any = {
 			params: {},
-			user: { identityId: undefined }, //no identityId,
+			user: { id: undefined }, //no id,
 			body: { accessRights: AccessRights.Read }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
 	});
 
 	it('should return error if no subscription using the link is found to authorize', async () => {
@@ -76,7 +76,7 @@ describe('test authorize subscription route', () => {
 		jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
 			params: {}, // no channelAddress
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read } // no link provided so getSubscriptionByLink should return null
 		};
 
@@ -90,8 +90,8 @@ describe('test authorize subscription route', () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
 			params: {}, // no channelAddress
-			user: { identityId: 'did:iota:1234' },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			user: { id: 'did:iota:1234' },
+			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
@@ -104,8 +104,8 @@ describe('test authorize subscription route', () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => sub);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota:1234' },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			user: { id: 'did:iota:1234' },
+			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
@@ -119,7 +119,7 @@ describe('test authorize subscription route', () => {
 			accessRights: AccessRights.ReadAndWrite,
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Subscriber, // caller is not the valid author
-			identityId: authorId,
+			id: authorId,
 			isAuthorized: true,
 			state: ''
 		};
@@ -134,8 +134,8 @@ describe('test authorize subscription route', () => {
 			.mockImplementationOnce(async () => notanauthor);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota:different-as-author' },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			user: { id: 'did:iota:different-as-author' },
+			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
@@ -149,7 +149,7 @@ describe('test authorize subscription route', () => {
 			accessRights: AccessRights.ReadAndWrite,
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Author,
-			identityId: authorId,
+			id: authorId,
 			isAuthorized: true,
 			state: 'teststateofauthor'
 		};
@@ -163,13 +163,13 @@ describe('test authorize subscription route', () => {
 		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: authorId },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			user: { id: authorId },
+			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
-		expect(loggerSpy).toHaveBeenCalledWith(new Error('no author found with channelAddress: testaddress and identityId: did:iota:1234'));
+		expect(loggerSpy).toHaveBeenCalledWith(new Error('no author found with channelAddress: testaddress and id: did:iota:1234'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
 
@@ -180,7 +180,7 @@ describe('test authorize subscription route', () => {
 			accessRights: AccessRights.ReadAndWrite,
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Author,
-			identityId: authorId,
+			id: authorId,
 			isAuthorized: true,
 			state: 'teststateofauthor',
 			pskId
@@ -201,8 +201,8 @@ describe('test authorize subscription route', () => {
 			.mockImplementation(async () => ({ keyloadLink: '', sequenceLink: '' }));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: authorId },
-			body: { accessRights: AccessRights.ReadAndWrite, identityId: 'did:iota:2345' }
+			user: { id: authorId },
+			body: { accessRights: AccessRights.ReadAndWrite, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
@@ -221,7 +221,7 @@ describe('test authorize subscription route', () => {
 			accessRights: AccessRights.ReadAndWrite,
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Author,
-			identityId: authorId,
+			id: authorId,
 			isAuthorized: true,
 			state: 'teststateofauthor',
 			pskId // presharedKey is undefined
@@ -246,8 +246,8 @@ describe('test authorize subscription route', () => {
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: authorId },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			user: { id: authorId },
+			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
@@ -269,7 +269,7 @@ describe('test authorize subscription route', () => {
 			accessRights: AccessRights.ReadAndWrite,
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Author,
-			identityId: authorId,
+			id: authorId,
 			isAuthorized: true,
 			state: 'teststateofauthor',
 			pskId
@@ -295,8 +295,8 @@ describe('test authorize subscription route', () => {
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: authorId },
-			body: { accessRights: AccessRights.Read, identityId: 'did:iota:2345' }
+			user: { id: authorId },
+			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);

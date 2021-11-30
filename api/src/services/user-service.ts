@@ -33,7 +33,7 @@ export class UserService {
 		const identity = await this.ssiService.createIdentity();
 		const user: User = {
 			...createIdentityBody,
-			identityId: identity.doc.id.toString(),
+			id: identity.doc.id.toString(),
 			publicKey: identity.key.public
 		};
 
@@ -48,8 +48,8 @@ export class UserService {
 		};
 	}
 
-	async getUser(identityId: string, isAuthorizedUser?: boolean): Promise<User | null> {
-		const userPersistence = await userDb.getUser(identityId);
+	async getUser(id: string, isAuthorizedUser?: boolean): Promise<User | null> {
+		const userPersistence = await userDb.getUser(id);
 		const user = userPersistence && this.getUserObject(userPersistence);
 		const privateUserInfo: boolean = user?.isPrivate && !isAuthorizedUser;
 
@@ -67,7 +67,7 @@ export class UserService {
 	async getIdentityId(username: string): Promise<string> {
 		const userPersistence = await userDb.getUserByUsername(username);
 		const user = this.getUserObject(userPersistence);
-		return user?.identityId;
+		return user?.id;
 	}
 
 	async addUser(user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
@@ -77,7 +77,7 @@ export class UserService {
 		const validator = SchemaValidator.getInstance(this.logger);
 		validator.validateUser(user);
 
-		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.identityId);
+		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.id);
 		const publicKey = this.ssiService.getPublicKey(identityDoc);
 		if (!publicKey || !user.publicKey || publicKey !== user.publicKey) {
 			throw new Error('wrong identity provided');
@@ -104,22 +104,22 @@ export class UserService {
 		return userDb.removeUserVC(vc);
 	}
 
-	async deleteUser(identityId: string): Promise<DeleteWriteOpResultObject> {
-		return userDb.deleteUser(identityId);
+	async deleteUser(id: string): Promise<DeleteWriteOpResultObject> {
+		return userDb.deleteUser(id);
 	}
 
 	private hasValidFields(user: User): boolean {
-		return !(!user.publicKey && !user.identityId);
+		return !(!user.publicKey && !user.id);
 	}
 
 	private getUserPersistence(user: User): UserPersistence | null {
-		if (user == null || isEmpty(user.identityId)) {
-			throw new Error('Error when parsing the body: identityId must be provided!');
+		if (user == null || isEmpty(user.id)) {
+			throw new Error('Error when parsing the body: id must be provided!');
 		}
-		const { publicKey, identityId, username, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
+		const { publicKey, id, username, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
 
 		const userPersistence: UserPersistence = {
-			identityId,
+			id,
 			publicKey,
 			username,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
@@ -134,14 +134,14 @@ export class UserService {
 	}
 
 	private getUserObject(userPersistence: UserPersistence): User | null {
-		if (userPersistence == null || isEmpty(userPersistence.identityId)) {
+		if (userPersistence == null || isEmpty(userPersistence.id)) {
 			return null;
 		}
 
-		const { username, publicKey, identityId, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
+		const { username, publicKey, id, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
 
 		const user: User = {
-			identityId,
+			id,
 			publicKey,
 			username,
 			registrationDate: getDateStringFromDate(registrationDate),

@@ -15,7 +15,7 @@ export enum AccessRights {
 export const SubscriptionSchema = Type.Object({
 	type: Type.Enum(SubscriptionType),
 	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
-	identityId: Type.String({ minLength: 50, maxLength: 53 }),
+	id: Type.String({ minLength: 50, maxLength: 53 }),
 	state: Type.String(),
 	subscriptionLink: Type.Optional(Type.String()),
 	isAuthorized: Type.Boolean(),
@@ -29,7 +29,7 @@ export const SubscriptionSchema = Type.Object({
 export const SubscriptionUpdateSchema = Type.Object({
 	type: Type.Optional(Type.Enum(SubscriptionType)),
 	channelAddress: Type.Optional(Type.String({ minLength: 105, maxLength: 105 })),
-	identityId: Type.Optional(Type.String({ minLength: 50, maxLength: 53 })),
+	id: Type.Optional(Type.String({ minLength: 50, maxLength: 53 })),
 	state: Type.Optional(Type.String()),
 	subscriptionLink: Type.Optional(Type.String()),
 	isAuthorized: Type.Optional(Type.Boolean()),

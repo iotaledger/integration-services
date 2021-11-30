@@ -67,7 +67,7 @@ const initiatorVC = {
 };
 
 // TODO 2.1. add your identity here
-const identityId = 'did:iota:Hdrd2WEUzcMqHpMG9fReQbgpRjysCL2vTain345PpNCY';
+const id = 'did:iota:Hdrd2WEUzcMqHpMG9fReQbgpRjysCL2vTain345PpNCY';
 
 // TODO 2.2. add your claim about your person here
 const identityClaim = {
@@ -88,12 +88,12 @@ const examClaim = {
 
 axios.interceptors.response.use((response) => response, errFunc(issuer));
 
-export const issueCredential = async (credentialType, claim, identityId) => {
+export const issueCredential = async (credentialType, claim, id) => {
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
 
 	const body = {
 		subject: {
-			identityId,
+			id,
 			credentialType,
 			claim
 		},
@@ -117,8 +117,8 @@ export const issueCredential = async (credentialType, claim, identityId) => {
 
 async function run() {
 	try {
-		await issueCredential('BasicIdentityCredential', identityClaim, identityId);
-		await issueCredential('ExamRatingCredential', examClaim, identityId);
+		await issueCredential('BasicIdentityCredential', identityClaim, id);
+		await issueCredential('ExamRatingCredential', examClaim, id);
 	} catch (e) {
 		console.log(e);
 	}

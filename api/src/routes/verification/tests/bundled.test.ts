@@ -45,7 +45,7 @@ describe('test authentication routes', () => {
 
 			expect(getLatestIdentitySpy).not.toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
 		});
 
 		it('should return the document of the id', async () => {
@@ -54,7 +54,7 @@ describe('test authentication routes', () => {
 				.spyOn(ssiService, 'getLatestIdentityJson')
 				.mockReturnValue(Promise.resolve(UserIdentityMock as any));
 			const req: any = {
-				params: { identityId: id },
+				params: { id },
 				body: null
 			};
 

@@ -87,7 +87,7 @@ export class ConfigurationService {
 			}
 
 			const rootServerIdentity = rootServerIdentities[0];
-			const serverIdentityId = rootServerIdentity?.identityId;
+			const serverIdentityId = rootServerIdentity?.id;
 
 			if (!serverIdentityId) {
 				this.logger.error('Root identity id not found');

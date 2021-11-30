@@ -96,7 +96,7 @@ describe('test validate route', () => {
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return bad request if no channelLogs are provided', async () => {
@@ -124,7 +124,7 @@ describe('test validate route', () => {
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no subscription found!'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not validate the channel data'));
 	});
@@ -150,7 +150,7 @@ describe('test validate route', () => {
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to validate the logs from the channel'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not validate the channel data'));
 	});
@@ -178,12 +178,10 @@ describe('test validate route', () => {
 
 		await channelRoutes.validateLogs(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(loggerSpy).toHaveBeenCalledWith(
-			new Error(
-				'no author/subscriber found with channelAddress: 123456 and identityId: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm'
-			)
+			new Error('no author/subscriber found with channelAddress: 123456 and id: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
 		);
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not validate the channel data'));
 	});
@@ -234,7 +232,7 @@ describe('test validate route', () => {
 			{ isValid: true, link: 'c477ad1063fb6543522fc97026e813387e5ad939dfa3a2d413a6b881b338c7910000000000000000:55c9c94f5a485a8911b3afb9' }
 		];
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.identityId);
+		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getMessageSpy).toHaveBeenCalledTimes(3);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);

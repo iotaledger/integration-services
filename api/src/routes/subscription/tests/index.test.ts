@@ -16,7 +16,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
-		identityId: 'did:iota:1234',
+		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
 		state: 'teststate',
@@ -58,7 +58,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		const channelAddress = 'testaddress';
 		const req: any = {
 			params: { channelAddress },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: undefined
 		};
 		await subscriptionRoutes.getSubscriptions(req, res, nextMock);
@@ -74,7 +74,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		const req: any = {
 			params: { channelAddress },
 			query: { 'is-authorized': isAuthorized },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: undefined
 		};
 		await subscriptionRoutes.getSubscriptions(req, res, nextMock);
@@ -90,7 +90,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		const req: any = {
 			params: { channelAddress },
 			query: { 'is-authorized': isAuthorized },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: undefined
 		};
 		await subscriptionRoutes.getSubscriptions(req, res, nextMock);
@@ -101,26 +101,26 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 
 	it('should return bad request since params are missing', async () => {
 		const req: any = {
-			params: {}, // missing channelAddress and identityId
-			user: { identityId: 'did:iota:1234' },
+			params: {}, // missing channelAddress and id
+			user: { id: 'did:iota:1234' },
 			body: undefined
 		};
 		await subscriptionRoutes.getSubscriptionByIdentity(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return bad request since params are missing', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => subscriptionMock);
 		const channelAddress = 'did:iota:1234';
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: undefined
 		};
 		await subscriptionRoutes.getSubscriptionByIdentity(req, res, nextMock);
-		expect(subscriptionService.getSubscription).toHaveBeenCalledWith(channelAddress, identityId);
+		expect(subscriptionService.getSubscription).toHaveBeenCalledWith(channelAddress, id);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(subscriptionMock);
 	});
@@ -133,7 +133,7 @@ describe('test addSubscription route', () => {
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
-		identityId: 'did:iota:1234',
+		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
 		state: 'teststate',
@@ -162,12 +162,12 @@ describe('test addSubscription route', () => {
 	it('should return bad request since params are missing', async () => {
 		const req: any = {
 			params: {},
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.addSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress, identityId or publicKey provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress, id or publicKey provided' });
 	});
 
 	it('should return bad request since subscription has no publicKey', async () => {
@@ -175,24 +175,24 @@ describe('test addSubscription route', () => {
 		const subscriptionMockWithoutPublicKey = Object.assign({}, subscriptionMock);
 		delete subscriptionMockWithoutPublicKey.publicKey;
 		const channelAddress = '1234234234';
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMockWithoutPublicKey
 		};
 		await subscriptionRoutes.addSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress, identityId or publicKey provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress, id or publicKey provided' });
 	});
 
 	it('should return bad request since subscription has already been added', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => subscriptionMock);
 		const channelAddress = '1234234234';
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.addSubscription(req, res, nextMock);
@@ -205,10 +205,10 @@ describe('test addSubscription route', () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
 		jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockImplementation(async () => subscriptionMock);
 		const channelAddress = 'did:iota:1234';
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.addSubscription(req, res, nextMock);
@@ -223,10 +223,10 @@ describe('test addSubscription route', () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
 		jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockImplementation(async () => null);
 		const channelAddress = 'did:iota:1234';
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.addSubscription(req, res, nextMock);
@@ -243,7 +243,7 @@ describe('test updateSubscription route', () => {
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
-		identityId: 'did:iota:1234',
+		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
 		state: 'teststate',
@@ -272,12 +272,12 @@ describe('test updateSubscription route', () => {
 	it('should return bad request since params are missing', async () => {
 		const req: any = {
 			params: {},
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.updateSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
@@ -287,10 +287,10 @@ describe('test updateSubscription route', () => {
 			topics: []
 		}));
 		const channelAddress = '1234234234';
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.updateSubscription(req, res, nextMock);
@@ -298,7 +298,7 @@ describe('test updateSubscription route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'not authorized to update the subscription' });
 	});
 
-	it('should return not found since so subscription with channelAddress and identityId does not exist', async () => {
+	it('should return not found since so subscription with channelAddress and id does not exist', async () => {
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
 			channelAddress: '1234234234',
@@ -306,10 +306,10 @@ describe('test updateSubscription route', () => {
 		}));
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
 		const channelAddress = '1234234234';
-		const identityId = 'did:iota:1234';
+		const id = 'did:iota:1234';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.updateSubscription(req, res, nextMock);
@@ -328,15 +328,15 @@ describe('test updateSubscription route', () => {
 		}));
 		jest.spyOn(subscriptionService, 'updateSubscription').mockImplementation(async () => undefined);
 		const channelAddress = 'did:iota:1234';
-		const identityId = 'did:iota:1234';
+		const id = 'did:iota:1234';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.updateSubscription(req, res, nextMock);
 
-		expect(subscriptionService.updateSubscription).toHaveBeenCalledWith(channelAddress, identityId, subscriptionMock);
+		expect(subscriptionService.updateSubscription).toHaveBeenCalledWith(channelAddress, id, subscriptionMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith();
 	});
@@ -349,7 +349,7 @@ describe('test deleteSubscription route', () => {
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
-		identityId: 'did:iota:1234',
+		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
 		state: 'teststate',
@@ -378,11 +378,11 @@ describe('test deleteSubscription route', () => {
 	it('should return bad request since params are missing', async () => {
 		const req: any = {
 			params: {},
-			user: { identityId: 'did:iota:1234' }
+			user: { id: 'did:iota:1234' }
 		};
 		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
@@ -392,17 +392,17 @@ describe('test deleteSubscription route', () => {
 			channelAddress,
 			topics: []
 		}));
-		const identityId = 'did:iota:5678';
+		const id = 'did:iota:5678';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' }
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' }
 		};
 		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'not authorized to delete the subscription' });
 	});
 
-	it('should return not found since so subscription with channelAddress and identityId does not exist', async () => {
+	it('should return not found since so subscription with channelAddress and id does not exist', async () => {
 		const channelAddress = '1234234234';
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
@@ -410,10 +410,10 @@ describe('test deleteSubscription route', () => {
 			topics: []
 		}));
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => undefined);
-		const identityId = 'did:iota:1234';
+		const id = 'did:iota:1234';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
@@ -433,15 +433,15 @@ describe('test deleteSubscription route', () => {
 			channelAddress
 		}));
 		jest.spyOn(subscriptionService, 'deleteSubscription').mockImplementation(async () => undefined);
-		const identityId = 'did:iota:1234';
+		const id = 'did:iota:1234';
 		const req: any = {
-			params: { channelAddress, identityId },
-			user: { identityId: 'did:iota:1234' },
+			params: { channelAddress, id },
+			user: { id: 'did:iota:1234' },
 			body: subscriptionMock
 		};
 		await subscriptionRoutes.deleteSubscription(req, res, nextMock);
 
-		expect(subscriptionService.deleteSubscription).toHaveBeenCalledWith(channelAddress, identityId);
+		expect(subscriptionService.deleteSubscription).toHaveBeenCalledWith(channelAddress, id);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith();
 	});

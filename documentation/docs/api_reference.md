@@ -5,7 +5,7 @@ This is the API documentation for the Integration Services. Have a look at the r
 
 ## Version: 1.0.0
 
-### /authentication/prove-ownership/{identityId}
+### /authentication/prove-ownership/{id}
 
 #### GET
 ##### Summary
@@ -20,7 +20,7 @@ Request a nonce which must be signed by the private key of the client and send i
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -43,7 +43,7 @@ Get an authentication token by signing a nonce using the private key. If signatu
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -427,7 +427,7 @@ Search for identities in the system and returns a list of existing identities.
 | --- | --- |
 | BearerAuth | |
 
-### /identities/identity/{identityId}
+### /identities/identity/{id}
 
 #### GET
 ##### Summary
@@ -442,7 +442,7 @@ Get information (including attached credentials) about a specific identity using
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -465,7 +465,7 @@ Removes an identity from the Bridge. An identity can only delete itself and is n
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 | revoke-credentials | query | If true all credentials will be revoked and deleted. | No | boolean |
 | revoke-subscriptions | query | If true all subscriptions will be revoked and deleted. | No | boolean |
 
@@ -575,7 +575,7 @@ Get all subscriptions of a channel. Use the is-authorized query parameter to fil
 | --- | --- |
 | BearerAuth | |
 
-### /subscriptions/{channelAddress}/{identityId}
+### /subscriptions/{channelAddress}/{id}
 
 #### GET
 ##### Summary
@@ -591,7 +591,7 @@ Get a subscription of a channel by identity id.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -621,7 +621,7 @@ Adds an existing subscription (e.g. the subscription was not created with the ap
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -652,14 +652,14 @@ Updates an existing subscription
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | Subscription updated |
-| 400 | Missing channelAddress / identityId |
+| 400 | Missing channelAddress / id |
 | 401 | No valid api key provided/ Not authenticated |
 | 404 | No subscription found |
 | 5XX | Unexpected error |
@@ -684,14 +684,14 @@ Deletes an existing subscription
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | Subscription deleted |
-| 400 | Missing channelAddress / identityId |
+| 400 | Missing channelAddress / id |
 | 401 | No valid api key provided/ Not authenticated |
 | 404 | No subscription found |
 | 5XX | Unexpected error |
@@ -796,7 +796,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | --- | --- |
 | BearerAuth | |
 
-### /verification/latest-document/{identityId}
+### /verification/latest-document/{id}
 
 #### GET
 ##### Summary
@@ -811,7 +811,7 @@ Get the latest version of an identity document (DID) from the IOTA Tangle.
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -1011,7 +1011,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subscriptionLink | string |  | No |
-| identityId | string |  | No |
+| id | string |  | No |
 
 #### RequestSubscriptionBodySchema
 
@@ -1026,7 +1026,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subscriptionLink | string |  | No |
-| identityId | string |  | No |
+| id | string |  | No |
 
 #### RevokeVerificationBodySchema
 
@@ -1063,7 +1063,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 | credentialType | string |  | Yes |
 | claim | object |  | Yes |
 
@@ -1083,7 +1083,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 
 #### ReimportBodySchema
 
@@ -1144,7 +1144,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | ---- | ---- | ----------- | -------- |
 | type |  | _Enum:_ `"Author"`, `"Subscriber"` | Yes |
 | channelAddress | string |  | Yes |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 | state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
@@ -1160,7 +1160,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | ---- | ---- | ----------- | -------- |
 | type |  | _Enum:_ `"Author"`, `"Subscriber"` | No |
 | channelAddress | string |  | No |
-| identityId | string |  | No |
+| id | string |  | No |
 | state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
@@ -1437,7 +1437,7 @@ Service schema, see the specification at: <https://schema.org/Service>
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 | publicKey | string |  | Yes |
 | username | string |  | No |
 | registrationDate | dateTime |  | No |

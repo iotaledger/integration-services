@@ -5,7 +5,7 @@ import { AxiosRequestConfig } from 'axios';
 
 const identity = UserIdentity;
 const body: any = {
-	identityId: identity.doc.id,
+	id: identity.doc.id,
 	username: 'homework-test-person-1',
 	registrationDate: '2020-06-21T12:58:13Z',
 	claim: {

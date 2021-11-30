@@ -382,7 +382,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "    {\n        \"type\": \"Subscriber\",\n        \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": false,\n        \"state\":\"\",\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:27:37.425Z\"\n    }",
+									"raw": "    {\n        \"type\": \"Subscriber\",\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": false,\n        \"state\":\"\",\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:27:37.425Z\"\n    }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -428,7 +428,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n        \"type\": \"Subscriber\",\n        \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": true,\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:32:50.795Z\"\n    }",
+									"raw": "{\n        \"type\": \"Subscriber\",\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": true,\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:32:50.795Z\"\n    }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -511,7 +511,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n}",
+									"raw": "{\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1431,7 +1431,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"identityId\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"CDhSJKRJwqbsrVoCnBemtjB2b1uaa8SyLbQZD4mGx3M4\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-10-28T15:22:20+02:00\",\n    \"claim\": {\n        \"type\": \"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"http://person.org/leon\"\n        ]\n    },\n    \"role\": \"User\"\n}",
+							"raw": "{\n    \"id\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"CDhSJKRJwqbsrVoCnBemtjB2b1uaa8SyLbQZD4mGx3M4\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-10-28T15:22:20+02:00\",\n    \"claim\": {\n        \"type\": \"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"http://person.org/leon\"\n        ]\n    },\n    \"role\": \"User\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1470,7 +1470,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"identityId\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"otChDKcR7g25oDhGSVZhiF1241Fqh5FaSEQnNQVaH9S\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-06-01T18:05:25+02:00\",\n    \"isPrivate\":false,\n    \"role\": \"User\",\n    \"verifiableCredentials\":[]\n}",
+							"raw": "{\n    \"id\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"otChDKcR7g25oDhGSVZhiF1241Fqh5FaSEQnNQVaH9S\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-06-01T18:05:25+02:00\",\n    \"isPrivate\":false,\n    \"role\": \"User\",\n    \"verifiableCredentials\":[]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1666,7 +1666,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Person\",\n        \"name\": \"Test Engineer\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"jobTitle\": \"Software Engineer\"\n    }\n  }\n}\n",
+									"raw": "{\n  \"subject\": {\n      \"id\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Person\",\n        \"name\": \"Test Engineer\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"jobTitle\": \"Software Engineer\"\n    }\n  }\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1705,7 +1705,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VaccinationCertificate\",\n      \"claim\": {\n           \"type\":\"VaccinationCertificate\",\n           \"VaccinationType\": \"Astrazeneca\",\n           \"Location\": \"UCLH\",\n           \"BatchNoDoseOne\": \"ELO141\",\n           \"DateDoseOne\": \"03-01-2021\",\n           \"BatchNoDoseTwo\": \"ELO183\",\n           \"DateDoseTwo\": \"24-01-2021\",\n           \"name\": \"Test User\",\n           \"birthDate\":\"1980-06-21T08:38:05.988Z\"\n    }\n  }\n}\n",
+									"raw": "{\n  \"subject\": {\n      \"id\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VaccinationCertificate\",\n      \"claim\": {\n           \"type\":\"VaccinationCertificate\",\n           \"VaccinationType\": \"Astrazeneca\",\n           \"Location\": \"UCLH\",\n           \"BatchNoDoseOne\": \"ELO141\",\n           \"DateDoseOne\": \"03-01-2021\",\n           \"BatchNoDoseTwo\": \"ELO183\",\n           \"DateDoseTwo\": \"24-01-2021\",\n           \"name\": \"Test User\",\n           \"birthDate\":\"1980-06-21T08:38:05.988Z\"\n    }\n  }\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1750,7 +1750,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n        ]\n    }\n  },\n  \"initiatorVC\": {\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VerifiedIdentityCredential\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"@context\": \"https://schema.org/\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"initiatorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"jobTitle\": \"Software Engineer\",\n        \"name\": \"Test Engineer\",\n        \"type\": \"Person\"\n    },\n    \"issuer\": \"did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof\",\n    \"issuanceDate\": \"2021-06-18T11:33:59Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24\"\n    }\n}\n}\n",
+									"raw": "{\n  \"subject\": {\n      \"id\":\"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n        ]\n    }\n  },\n  \"initiatorVC\": {\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VerifiedIdentityCredential\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"@context\": \"https://schema.org/\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"initiatorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"jobTitle\": \"Software Engineer\",\n        \"name\": \"Test Engineer\",\n        \"type\": \"Person\"\n    },\n    \"issuer\": \"did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof\",\n    \"issuanceDate\": \"2021-06-18T11:33:59Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24\"\n    }\n}\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
