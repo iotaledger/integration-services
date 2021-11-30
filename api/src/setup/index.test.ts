@@ -4,6 +4,7 @@ import { LoggerMock } from '../test/mocks/logger';
 import * as UserDb from '../database/user';
 import * as IdentityDocs from '../database/identity-docs';
 import { ServerIdentityMock } from '../test/mocks/identities';
+import { UserService } from '../services/user-service';
 
 describe('test keygenerator', () => {
 	let keyGenerator: KeyGenerator;
@@ -83,6 +84,16 @@ describe('test keygenerator', () => {
 		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
 		expect(loggerErrorSpy).toHaveBeenCalledWith('error when signing or verifying the nonce, the secret key might have changed...');
 		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity malformed or not valid: ' + unvalidServerIdentity.doc.id);
+	});
+
+	it('should create a new serveridentity since none exists but user not found', async () => {
+		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
+		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => null); // no user found
+
+		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
+		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+
+		await expect(keyGenerator.keyGeneration()).rejects.toThrow('server user not found!');
 	});
 
 	afterEach(() => {
