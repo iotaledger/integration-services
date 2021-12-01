@@ -11,7 +11,7 @@ export class Base {
     private apiKey: string;
     private baseUrl = "http://ensuresec.solutions.iota.org/";
     private apiVersion: ApiVersion;
-    protected jwtToken?: string;
+    public static jwtToken?: string;
 
     constructor({apiKey, baseUrl, apiVersion}: ClientConfig) {
         this.apiKey = apiKey || "";
@@ -27,7 +27,7 @@ export class Base {
         const { jwt } = await this.post(`authentication/prove-ownership/${identity.doc.id}`, {
             signedNonce
         })
-        this.jwtToken = jwt;
+        Base.jwtToken = jwt;
     };
 
     private async signNonce(privateKey: string, nonce: string) {

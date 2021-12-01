@@ -27,10 +27,12 @@ export class Subscription extends Base {
     channelAddress: string,
     isAuthorized?: boolean,
   ): Promise<SubscriptionInternal[]> {
+    const params =
+      isAuthorized !== undefined ? { 'is-authorized': isAuthorized } : {};
     return await this.get(
       `subscriptions/${channelAddress}`,
-      { 'is-authorized': isAuthorized },
-      this.jwtToken,
+      params,
+      Base.jwtToken,
     );
   }
 
@@ -47,7 +49,7 @@ export class Subscription extends Base {
     return await this.get(
       `subscriptions/${channelAddress}/${identityId}`,
       {},
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 
@@ -64,7 +66,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/request/${channelAddress}`,
       options,
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 
@@ -81,7 +83,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/authorize/${channelAddress}`,
       subscriptionIdentifier,
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 
@@ -98,7 +100,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/revoke/${channelAddress}`,
       subscriptionIdentifier,
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 
@@ -117,7 +119,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/${channelAddress}/${identityId}`,
       subscription,
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 
@@ -136,21 +138,21 @@ export class Subscription extends Base {
     return await this.put(
       `subscriptions/${channelAddress}/${identityId}`,
       updatedSubscription,
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 
   /**
    * Deletes an existing subscription.
-   * @param channelAddress 
-   * @param identityId 
-   * @returns 
+   * @param channelAddress
+   * @param identityId
+   * @returns
    */
   async remove(channelAddress: string, identityId: string): Promise<null> {
     return await this.delete(
       `subscriptions/${channelAddress}/${identityId}`,
       {},
-      this.jwtToken,
+      Base.jwtToken,
     );
   }
 }
