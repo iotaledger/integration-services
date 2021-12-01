@@ -1,4 +1,5 @@
-// You can also unset the migrated identityId after running this script this can be done by replacing $set: {...} by: $unset: "identityId"
+// You can also unset the migrated identityId after running this script.
+// This can be done by replacing `$set: {...}` by: `$unset: "identityId"`
 
 db.getCollection('users').update(
 	// query
