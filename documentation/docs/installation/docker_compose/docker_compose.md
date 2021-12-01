@@ -29,11 +29,8 @@ Here an example of how a `.env` file should look like:
 
 ````javascript
 PORT=3000
-API_VERSION=v1
-NETWORK=main
 IOTA_PERMA_NODE=https://chrysalis-chronicle.iota.org/api/mainnet/
 IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
-EXPLORER=https://explorer.iota.org/mainnet/transaction
 
 DATABASE_NAME=integration-services
 MONGO_INITDB_ROOT_USERNAME=root
