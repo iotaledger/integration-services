@@ -1,4 +1,6 @@
-import { IdentityClient } from './clients/identityClient';
+import { Identity } from './clients/identity';
+import { Channel } from './clients/channel';
+import { Subscription } from './clients/subscription';
 import { Manager } from './manager/manager';
 
-export { IdentityClient as Client, Manager };
+export { Identity, Channel, Subscription, Manager };

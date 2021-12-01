@@ -1,23 +1,25 @@
-import { ClientConfig } from "../models/clientConfig";
+import { ClientConfig } from "../models/types/clientConfig";
 const crypto = require("crypto");
 import * as ed from 'noble-ed25519';
 import * as bs58 from 'bs58';
+import { ApiVersion } from "../models/enums";
+import { IdentityInternal, IdentityJson } from "../models/types/identity";
 const axios = require('axios').default;
 
 export class Base {
 
     private apiKey: string;
     private baseUrl = "http://ensuresec.solutions.iota.org/";
-    private apiVersion: string;
+    private apiVersion: ApiVersion;
     protected jwtToken?: string;
 
     constructor({apiKey, baseUrl, apiVersion}: ClientConfig) {
-        this.apiKey = apiKey;
+        this.apiKey = apiKey || "";
         this.baseUrl = baseUrl || "http://ensuresec.solutions.iota.org/";
-        this.apiVersion = apiVersion || "v1"
+        this.apiVersion = apiVersion || ApiVersion.v01
     }
 
-    async authorize(identity: any) {
+    async authenticate(identity: IdentityJson) {
         const body = await this.get(`authentication/prove-ownership/${identity?.doc?.id}`)
         const nonce = body?.nonce;
         const encodedKey = await this.getHexEncodedKey(identity?.key?.secret);

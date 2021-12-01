@@ -1,12 +1,11 @@
 import { Base } from './base';
-import { ClientConfig } from '../models/clientConfig';
+import { ClientConfig } from '../models/types/clientConfig';
 import { IdentityInternal, IdentityJsonUpdate, LatestIdentityJson, VerifiableCredentialJson } from '../models/types/identity';
 import { Claim, RevokeVerificationBody, TrustedRootBody } from '../models/types/request-response-bodies';
 import { User } from '../models/types/user';
-import { VerifiableCredential } from '@iota/identity-wasm/node';
 import { VerifiableCredentialInternal } from '../models/types/verification';
 
-export class IdentityClient extends Base {
+export class Identity extends Base {
   constructor(config: ClientConfig) {
     super(config);
   }
@@ -17,7 +16,7 @@ export class IdentityClient extends Base {
    * @param claim
    * @returns
    */
-  async identityCreate(
+  async create(
     username: string,
     claim: Claim,
   ): Promise<IdentityJsonUpdate> {
@@ -32,7 +31,7 @@ export class IdentityClient extends Base {
    * @param username
    * @returns
    */
-  async identitySearch(username: string): Promise<User[]> {
+  async search(username: string): Promise<User[]> {
     return await this.get('identities/search', { username }, this.jwtToken);
   }
 
@@ -41,7 +40,7 @@ export class IdentityClient extends Base {
    * @param identityId
    * @returns
    */
-  async identityFind(identityId: string): Promise<User> {
+  async find(identityId: string): Promise<User> {
     return await this.get(
       `identities/identity/${identityId}`,
       {},
@@ -54,7 +53,7 @@ export class IdentityClient extends Base {
    * @param identity
    * @returns
    */
-  async identityAdd(identity: IdentityInternal): Promise<null> {
+  async add(identity: IdentityInternal): Promise<null> {
     return this.post('identities/identity', identity, this.jwtToken);
   }
 
@@ -63,7 +62,7 @@ export class IdentityClient extends Base {
    * @param identity
    * @returns
    */
-  async updateClaim(identity: IdentityInternal): Promise<null> {
+  async update(identity: IdentityInternal): Promise<null> {
     return this.put('identities/identity', identity, this.jwtToken);
   }
 
@@ -73,7 +72,7 @@ export class IdentityClient extends Base {
    * @param revokeCredentials
    * @returns
    */
-  async identityDelete(
+  async remove(
     identityId: string,
     revokeCredentials: boolean = false,
   ): Promise<null> {

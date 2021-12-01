@@ -1,13 +1,22 @@
 {
   "name": "integration-services-node",
-  "version": "1.0.2",
+  "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
     "build": "tsc"
   },
-  "author": "mastrogiovanni <michele.mastrogiovanni@gmail.com>",
+  "author": {
+    "name": "Tim Sigl",
+    "email": "tim.sigl@iota.org"
+  },
+  "contributors": [
+    {
+      "name": "mastrogiovanni",
+      "email": "michele.mastrogiovanni@gmail.com"
+    }
+  ],
   "license": "ISC",
   "devDependencies": {
     "@types/bs58": "^4.0.1",
