@@ -75,12 +75,10 @@ export const IdentityJsonSchema = Type.Object({
 });
 
 export const DocumentJsonUpdateSchema = Type.Object({
-	doc: IdentityDocumentJsonSchema,
-	txHash: Type.String()
+	doc: IdentityDocumentJsonSchema
 });
 
 export const IdentityJsonUpdateSchema = Type.Object({
 	doc: IdentityDocumentJsonSchema,
-	key: IdentityKeyPairJsonSchema,
-	txHash: Type.String()
+	key: IdentityKeyPairJsonSchema
 });

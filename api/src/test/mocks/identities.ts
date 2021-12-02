@@ -108,8 +108,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
 		encoding: Encoding.base58
-	},
-	txHash: 'OGNVRNPA9LQKPEUQJEECRZRVMRAQA99RVTVUPIYQQGYVVFYBDRIHZGFVQQVKQHAPVGCZKMGUTZXAZ9999'
+	}
 };
 
 export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
@@ -194,8 +193,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
 		encoding: Encoding.base58
-	},
-	txHash: 'LCHPWELIWGXUSHX9YACHICTLRHVGTFHXBEQILQBCCTDDRLJTBLYHTGRT9HKOLQZQHENEHPEGYMZD99999'
+	}
 };
 
 export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
@@ -251,8 +249,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR',
 		encoding: Encoding.base58
-	},
-	txHash: 'CETPVHOIBPNGCWQQCQALVKQQOD9B9MLMU9ZMNFZHBPEAOTMWFTVDRRBMFYIETHDWXA9GLGYWAFQRA9999'
+	}
 };
 
 export const TestCredentialMock = {

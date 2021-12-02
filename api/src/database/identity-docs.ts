@@ -47,7 +47,7 @@ export const saveIdentity = async (identity: IdentityJsonUpdate, secret: string)
 };
 
 export const updateIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
-	const { doc, txHash } = docUpdate;
+	const { doc } = docUpdate;
 	if (!doc?.id) {
 		throw new Error('no valid id provided for the identity!');
 	}
@@ -57,8 +57,7 @@ export const updateIdentityDoc = async (docUpdate: DocumentJsonUpdate) => {
 
 	const update: any = {
 		$set: {
-			doc,
-			txHash
+			doc
 		}
 	};
 
