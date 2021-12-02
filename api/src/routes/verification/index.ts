@@ -22,6 +22,7 @@ export class VerificationRoutes {
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
+			// TODO rename to CreateCredentialBody
 			const verifyIdentityBody = req.body as VerifyIdentityBody;
 			const { initiatorVC, subject } = verifyIdentityBody;
 			const requestUser = req.user;

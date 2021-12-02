@@ -53,64 +53,67 @@ export class VerificationService {
 		return IdentityDocsDb.getIdentityDoc(did, this.serverSecret);
 	}
 
+	// TODO rename to issueCredential
 	async verifyIdentity(subject: Subject, issuerId: string, initiatorId: string) {
 		const key = 'credentials-' + issuerId;
+		const verify = async (release: any) => {
+			{
+				try {
+					const jsonldGen = new JsonldGenerator();
+					const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
 
-		return this.lock.acquire(key).then(async (release) => {
-			try {
-				const jsonldGen = new JsonldGenerator();
-				const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
-
-				const credential: Credential<CredentialSubject> = {
-					type: subject.credentialType,
-					id: subject.id,
-					subject: {
-						...claim,
-						type: subject.claim.type,
+					const credential: Credential<CredentialSubject> = {
+						type: subject.credentialType,
 						id: subject.id,
-						initiatorId
+						subject: {
+							...claim,
+							type: subject.claim.type,
+							id: subject.id,
+							initiatorId
+						}
+					};
+
+					const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+					const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
+					const keyCollection = await this.getKeyCollection(keyCollectionIndex);
+					const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+					const keyIndex = nextCredentialIndex % this.keyCollectionSize;
+					const keyCollectionJson: KeyCollectionJson = {
+						type: keyCollection.type,
+						keys: keyCollection.keys,
+						publicKeyBase58: keyCollection.publicKeyBase58
+					};
+
+					const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+					if (!issuerIdentity) {
+						throw new Error(this.noIssuerFoundErrMessage(issuerId));
 					}
-				};
+					const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
+						issuerIdentity,
+						credential,
+						keyCollectionJson,
+						keyCollectionIndex,
+						keyIndex
+					);
 
-				const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-				const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
-				const keyCollection = await this.getKeyCollection(keyCollectionIndex);
-				const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-				const keyIndex = nextCredentialIndex % this.keyCollectionSize;
-				const keyCollectionJson: KeyCollectionJson = {
-					type: keyCollection.type,
-					keys: keyCollection.keys,
-					publicKeyBase58: keyCollection.publicKeyBase58
-				};
+					await VerifiableCredentialsDb.addVerifiableCredential(
+						{
+							vc,
+							index: nextCredentialIndex,
+							initiatorId,
+							isRevoked: false
+						},
+						this.configService.serverIdentityId
+					);
 
-				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
-				if (!issuerIdentity) {
-					throw new Error(this.noIssuerFoundErrMessage(issuerId));
+					await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
+					return vc;
+				} finally {
+					release();
 				}
-				const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
-					issuerIdentity,
-					credential,
-					keyCollectionJson,
-					keyCollectionIndex,
-					keyIndex
-				);
-
-				await VerifiableCredentialsDb.addVerifiableCredential(
-					{
-						vc,
-						index: nextCredentialIndex,
-						initiatorId,
-						isRevoked: false
-					},
-					this.configService.serverIdentityId
-				);
-
-				await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
-				return vc;
-			} finally {
-				release();
 			}
-		});
+		};
+		return this.lock.acquire(key).then(async (release) => verify(release));
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
