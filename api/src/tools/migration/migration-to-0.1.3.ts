@@ -13,10 +13,10 @@ const migrate = async () => {
 	await MongoDbService.connect(config.databaseUrl, config.databaseName);
 	const db = MongoDbService.db;
 
-	await db.collection('users').updateMany({}, { $set: { id: '$identityId' } });
-	await db.collection('trusted-roots').updateMany({}, { $set: { id: '$identityId' } });
-	await db.collection('subscriptions').updateMany({}, { $set: { id: '$identityId' } });
-	await db.collection('channel-data').updateMany({}, { $set: { id: '$identityId' } });
+	await db.collection('users').updateMany({}, [{ $set: { id: '$identityId' } }]);
+	await db.collection('trusted-roots').updateMany({}, [{ $set: { id: '$identityId' } }]);
+	await db.collection('subscriptions').updateMany({}, [{ $set: { id: '$identityId' } }]);
+	await db.collection('channel-data').updateMany({}, [{ $set: { id: '$identityId' } }]);
 
 	await MongoDbService.disconnect();
 	console.log('migration done!');
