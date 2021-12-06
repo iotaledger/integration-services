@@ -32,7 +32,7 @@ export class Subscription extends Base {
     return await this.get(
       `subscriptions/${channelAddress}`,
       params,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -49,7 +49,7 @@ export class Subscription extends Base {
     return await this.get(
       `subscriptions/${channelAddress}/${identityId}`,
       {},
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -66,7 +66,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/request/${channelAddress}`,
       options,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -83,7 +83,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/authorize/${channelAddress}`,
       subscriptionIdentifier,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -100,7 +100,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/revoke/${channelAddress}`,
       subscriptionIdentifier,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -119,7 +119,7 @@ export class Subscription extends Base {
     return await this.post(
       `subscriptions/${channelAddress}/${identityId}`,
       subscription,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -138,7 +138,7 @@ export class Subscription extends Base {
     return await this.put(
       `subscriptions/${channelAddress}/${identityId}`,
       updatedSubscription,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -152,7 +152,7 @@ export class Subscription extends Base {
     return await this.delete(
       `subscriptions/${channelAddress}/${identityId}`,
       {},
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 }

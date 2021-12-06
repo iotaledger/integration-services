@@ -1,18 +1,17 @@
 import { MongoClient } from "mongodb";
 const crypto = require("crypto");
-// const { MongoClient } = require("mongodb");
 
 export class Manager {
 
     private client: MongoClient;
 
-    constructor(private mongoURL: string, private secretKey: string) {
+    constructor(private mongoURL: string, private databaseName: string, private secretKey: string) {
         this.client = new MongoClient(mongoURL);
     }
 
     async getRootIdentity() {
         await this.client.connect();
-        const database = this.client.db('integration-service-db');
+        const database = this.client.db(this.databaseName);
         const identities = database.collection('identity-docs');
         let identity = await identities.findOne({});
         await this.decrypt(identity, this.secretKey);
@@ -28,6 +27,10 @@ export class Manager {
         const decipher = crypto.createDecipheriv(algorithm, secret, Buffer.from(iv, 'hex'));
         const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()]);
         identity.key.secret = decrpyted.toString();
+    }
+
+    async close() {
+        await this.client.close();
     }
 
 }
