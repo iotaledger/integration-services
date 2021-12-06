@@ -3,14 +3,17 @@
 
 db.getCollection('users').update(
 	// query
-	{},
+	{
+		identityId: { $exists: true }
+	},
 	// update
 	[
 		{
 			$set: {
 				id: '$identityId'
 			}
-		}
+		},
+		{ $unset: 'identityId' }
 	],
 	// options
 	{
@@ -20,14 +23,17 @@ db.getCollection('users').update(
 );
 db.getCollection('trusted-roots').update(
 	// query
-	{},
+	{
+		identityId: { $exists: true }
+	},
 	// update
 	[
 		{
 			$set: {
 				id: '$identityId'
 			}
-		}
+		},
+		{ $unset: 'identityId' }
 	],
 	// options
 	{
@@ -37,14 +43,17 @@ db.getCollection('trusted-roots').update(
 );
 db.getCollection('subscriptions').update(
 	// query
-	{},
+	{
+		identityId: { $exists: true }
+	},
 	// update
 	[
 		{
 			$set: {
 				id: '$identityId'
 			}
-		}
+		},
+		{ $unset: 'identityId' }
 	],
 	// options
 	{
@@ -54,14 +63,17 @@ db.getCollection('subscriptions').update(
 );
 db.getCollection('channel-data').update(
 	// query
-	{},
+	{
+		identityId: { $exists: true }
+	},
 	// update
 	[
 		{
 			$set: {
 				id: '$identityId'
 			}
-		}
+		},
+		{ $unset: 'identityId' }
 	],
 	// options
 	{

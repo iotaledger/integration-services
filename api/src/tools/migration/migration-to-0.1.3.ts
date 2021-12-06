@@ -12,11 +12,30 @@ const migrate = async () => {
 
 	await MongoDbService.connect(config.databaseUrl, config.databaseName);
 	const db = MongoDbService.db;
-
-	await db.collection('users').updateMany({}, [{ $set: { id: '$identityId' } }]);
-	await db.collection('trusted-roots').updateMany({}, [{ $set: { id: '$identityId' } }]);
-	await db.collection('subscriptions').updateMany({}, [{ $set: { id: '$identityId' } }]);
-	await db.collection('channel-data').updateMany({}, [{ $set: { id: '$identityId' } }]);
+	await db.collection('users').updateMany(
+		{
+			identityId: { $exists: true }
+		},
+		[{ $set: { id: '$identityId' } }, { $unset: 'identityId' }]
+	);
+	await db.collection('trusted-roots').updateMany(
+		{
+			identityId: { $exists: true }
+		},
+		[{ $set: { id: '$identityId' } }, { $unset: 'identityId' }]
+	);
+	await db.collection('subscriptions').updateMany(
+		{
+			identityId: { $exists: true }
+		},
+		[{ $set: { id: '$identityId' } }, { $unset: 'identityId' }]
+	);
+	await db.collection('channel-data').updateMany(
+		{
+			identityId: { $exists: true }
+		},
+		[{ $set: { id: '$identityId' } }, { $unset: 'identityId' }]
+	);
 
 	await MongoDbService.disconnect();
 	console.log('migration done!');
