@@ -4,16 +4,19 @@ import { ApiVersion } from 'iota-is-client';
 import { Identity } from 'iota-is-client';
 import { IdentityInternal } from 'iota-is-client';
 
+let identity: Identity;
+
+let rootId: any;
 async function bootstrap() {
   try {
 
     let manager = new Manager(
-      'mongodb://admin:admin@localhost:27017', 
-      'integration-service-db', 
+      'mongodb://root:rootpassword@localhost:27017', 
+      'e-commerce-tools', 
       'PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa'
     );
 ​
-    let rootId = await manager.getRootIdentity();
+    rootId = await manager.getRootIdentity();
 
     await manager.close();
 ​
@@ -25,15 +28,29 @@ async function bootstrap() {
       apiVersion: ApiVersion.v1
     }
      ​
-    let api = new Identity(config);
+    identity = new Identity(config);
  ​
     // Became root identity
-    await api.authenticate(rootId);
+    await identity.authenticate(rootId);
     
-    console.log(api.jwtToken)
+    console.log(identity.jwtToken)
 
+
+    // Searching for identities
+    const user = await identity.search('tester user')
+    console.log('Search result: ', user)
+
+
+  } catch (e: any) {
+    console.log(e);
+  }
+}
+
+async function createIdentityAndCheckVCs() {
+  try {
+    
     // Get information about root identity
-    let rootIdentity = (await api.find(rootId?.doc?.id)) as IdentityInternal;
+    let rootIdentity = (await identity.find(rootId?.doc?.id)) as IdentityInternal;
     const verifiableCredentials = rootIdentity!.verifiableCredentials;
     let identityCredential = verifiableCredentials ? verifiableCredentials[0] : null
     if (!identityCredential) {
@@ -43,19 +60,19 @@ async function bootstrap() {
     console.log('Root Identity Credentials', identityCredential);
 
     // Verify the credential issued
-    let verified = await api.checkCredential(identityCredential);
+    let verified = await identity.checkCredential(identityCredential);
 
     console.log('Verification result', verified);
     ​
     // Create identity for tester
-    let userIdentity = await api.create('tester user', {
+    let userIdentity = await identity.create('tester user', {
       type: 'user'
     });
 ​
     console.log('Tester Identity', userIdentity);
 ​
     // Assign a verifiable credential to the tester as rootIdentity
-    let vc = await api.createCredential(identityCredential!, userIdentity?.doc?.id, {
+    let vc = await identity.createCredential(identityCredential!, userIdentity?.doc?.id, {
       profession: 'Professor'
     });
 
@@ -64,13 +81,17 @@ async function bootstrap() {
     console.log('Tester Verifiable Credential');
 
     // Verify the credential issued
-    let verified2 = await api.checkCredential(identityCredential);
+    let verified2 = await identity.checkCredential(identityCredential);
 
     console.log('Verification result', verified2);
-
-  } catch (e: any) {
-    console.log(e);
+  } catch(e) {
+    console.error(e)
   }
 }
 ​
-bootstrap();
+async function main() {
+  await bootstrap();
+  createIdentityAndCheckVCs();
+}
+
+main()

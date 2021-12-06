@@ -19,12 +19,12 @@ export class Base {
         this.apiVersion = apiVersion || ApiVersion.v01
     }
 
-    async authenticate(identity: any) {
-        const body = await this.get(`authentication/prove-ownership/${identity?.doc?.id}`)
+    async authenticate(identityId: string, secretKey: string) {
+        const body = await this.get(`authentication/prove-ownership/${identityId}`)
         const nonce = body?.nonce;
-        const encodedKey = await this.getHexEncodedKey(identity?.key?.secret);
+        const encodedKey = await this.getHexEncodedKey(secretKey);
         const signedNonce = await this.signNonce(encodedKey, nonce);
-        const { jwt } = await this.post(`authentication/prove-ownership/${identity.doc.id}`, {
+        const { jwt } = await this.post(`authentication/prove-ownership/${identityId}`, {
             signedNonce
         })
         this.jwtToken = jwt;

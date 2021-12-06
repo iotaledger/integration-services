@@ -10,6 +10,6 @@
   "author": "mastrogiovanni <michele.mastrogiovanni@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "iota-is-client": "0.0.4"
+    "dotenv": "^10.0.0"
   }
 }

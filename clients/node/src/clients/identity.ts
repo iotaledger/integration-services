@@ -1,6 +1,6 @@
 import { Base } from './base';
 import { ClientConfig } from '../models/types/clientConfig';
-import { IdentityInternal, IdentityJsonUpdate, LatestIdentityJson, VerifiableCredentialJson } from '../models/types/identity';
+import { IdentityInternal, IdentityJson, LatestIdentityJson, VerifiableCredentialJson } from '../models/types/identity';
 import { Claim, RevokeVerificationBody, TrustedRootBody } from '../models/types/request-response-bodies';
 import { User } from '../models/types/user';
 import { VerifiableCredentialInternal } from '../models/types/verification';
@@ -19,7 +19,7 @@ export class Identity extends Base {
   async create(
     username: string,
     claim: Claim,
-  ): Promise<IdentityJsonUpdate> {
+  ): Promise<IdentityJson> {
     return await this.post('identities/create', {
       username,
       claim,
