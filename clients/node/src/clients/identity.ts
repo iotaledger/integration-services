@@ -32,7 +32,7 @@ export class Identity extends Base {
    * @returns
    */
   async search(username: string): Promise<User[]> {
-    return await this.get('identities/search', { username }, Base.jwtToken);
+    return await this.get('identities/search', { username }, this.jwtToken);
   }
 
   /**
@@ -44,7 +44,7 @@ export class Identity extends Base {
     return await this.get(
       `identities/identity/${identityId}`,
       {},
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -54,7 +54,7 @@ export class Identity extends Base {
    * @returns
    */
   async add(identity: IdentityInternal): Promise<null> {
-    return this.post('identities/identity', identity, Base.jwtToken);
+    return this.post('identities/identity', identity, this.jwtToken);
   }
 
   /**
@@ -63,7 +63,7 @@ export class Identity extends Base {
    * @returns
    */
   async update(identity: IdentityInternal): Promise<null> {
-    return this.put('identities/identity', identity, Base.jwtToken);
+    return this.put('identities/identity', identity, this.jwtToken);
   }
 
   /**
@@ -79,7 +79,7 @@ export class Identity extends Base {
     return this.delete(
       `identities/identity/${identityId}`,
       { 'revoke-credentials': revokeCredentials },
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -101,7 +101,7 @@ export class Identity extends Base {
     return await this.post(
       'verification/trusted-roots',
       trustedAuthority,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -122,7 +122,7 @@ export class Identity extends Base {
     return await this.delete(
       `verification/trusted-roots/${trustedAuthorityId}`,
       {},
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -148,7 +148,7 @@ export class Identity extends Base {
     return await this.post(
       'verification/create-credential',
       body,
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -167,6 +167,6 @@ export class Identity extends Base {
    * @returns 
    */
   async revokeCredential(credential: RevokeVerificationBody): Promise<null> {
-    return await this.post('verification/revoke-credential', credential, Base.jwtToken);
+    return await this.post('verification/revoke-credential', credential, this.jwtToken);
   }
 }

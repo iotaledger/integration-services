@@ -1,6 +1,11 @@
-import { Identity } from './clients/identity';
-import { Channel } from './clients/channel';
-import { Subscription } from './clients/subscription';
-import { Manager } from './manager/manager';
+export { ApiVersion } from './models/enums';
 
-export { Identity, Channel, Subscription, Manager };
+export { Identity } from './clients/identity';
+
+export { Channel } from './clients/channel';
+
+export { Subscription } from './clients/subscription';
+
+export { Manager } from './manager/manager';
+
+export * from './models/types';

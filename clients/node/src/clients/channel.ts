@@ -22,7 +22,7 @@ export class Channel extends Base {
    * @returns
    */
   async create(data: CreateChannelBody): Promise<CreateChannelResponse> {
-    return await this.post('channels/create', data, Base.jwtToken);
+    return await this.post('channels/create', data, this.jwtToken);
   }
 
   /**
@@ -32,7 +32,7 @@ export class Channel extends Base {
    * @returns
    */
   async write(address: string, data: AddChannelLogBody): Promise<ChannelData> {
-    return await this.post(`channels/logs/${address}`, data, Base.jwtToken);
+    return await this.post(`channels/logs/${address}`, data, this.jwtToken);
   }
 
   /**
@@ -56,7 +56,7 @@ export class Channel extends Base {
     return await this.get(
       `channels/logs/${address}`,
       { limit, index, asc, 'start-date': startDate, 'end-date': endDate },
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -85,7 +85,7 @@ export class Channel extends Base {
     address: string,
     data: ValidateBody,
   ): Promise<ValidateResponse> {
-    return await this.post(`channels/validate/${address}`, data, Base.jwtToken);
+    return await this.post(`channels/validate/${address}`, data, this.jwtToken);
   }
 
   /**
@@ -95,7 +95,7 @@ export class Channel extends Base {
    * @returns
    */
   async reimport(address: string, data: ReimportBody): Promise<null> {
-    return await this.post(`re-import/${address}`, data, Base.jwtToken);
+    return await this.post(`re-import/${address}`, data, this.jwtToken);
   }
 
   /**
@@ -129,7 +129,7 @@ export class Channel extends Base {
         limit,
         index,
       },
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 
@@ -148,7 +148,7 @@ export class Channel extends Base {
    * @returns
    */
   async add(channel: ChannelInfo): Promise<null> {
-    return await this.post('channel-info/channel', channel, Base.jwtToken);
+    return await this.post('channel-info/channel', channel, this.jwtToken);
   }
 
   /**
@@ -157,7 +157,7 @@ export class Channel extends Base {
    * @returns
    */
   async update(channel: ChannelInfo): Promise<null> {
-    return await this.put('channel-info/channel', channel, Base.jwtToken);
+    return await this.put('channel-info/channel', channel, this.jwtToken);
   }
 
   /**
@@ -169,7 +169,7 @@ export class Channel extends Base {
     return await this.delete(
       `channel-info/channel/${address}`,
       {},
-      Base.jwtToken,
+      this.jwtToken,
     );
   }
 }
