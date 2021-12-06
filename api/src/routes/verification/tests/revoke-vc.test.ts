@@ -149,10 +149,10 @@ describe('test authentication routes', () => {
 			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, keyCollectionIndex, linkedIdentity.index);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
+			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
@@ -192,10 +192,10 @@ describe('test authentication routes', () => {
 			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, keyCollectionIndex, linkedIdentity.index);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
+			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcToRevoke);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
@@ -234,10 +234,10 @@ describe('test authentication routes', () => {
 			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, keyCollectionIndex, linkedIdentity.index);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
+			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
@@ -278,10 +278,10 @@ describe('test authentication routes', () => {
 			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, keyCollectionIndex, linkedIdentity.index);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
+			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
@@ -322,10 +322,10 @@ describe('test authentication routes', () => {
 			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, keyCollectionIndex, linkedIdentity.index);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
+			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
-			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityMock.doc.id);
+			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});
@@ -404,8 +404,8 @@ describe('test authentication routes', () => {
 			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityMock, keyCollectionIndex, linkedIdentity.index);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
+			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
 			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
