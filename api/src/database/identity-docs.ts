@@ -15,6 +15,8 @@ export const getIdentityDoc = async (id: string, secret: string): Promise<Identi
 	const decryptedIdentity: IdentityKeys = {
 		...identity,
 		key: {
+			encoding: identity.key.encoding,
+			type: identity.key.type,
 			public: identity.key.public,
 			secret: decrypt(identity.key.secret, secret)
 		}

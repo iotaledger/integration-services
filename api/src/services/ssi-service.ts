@@ -11,6 +11,7 @@ import {
 import { KeyCollectionJson } from '../models/types/key-collection';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
 import { ILogger } from '../utils/logger';
+import { IdentityKeys } from '../models/types/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -26,10 +27,10 @@ export class SsiService {
 	async generateKeyCollection(
 		keyCollectionIndex: number,
 		keyCollectionSize: number,
-		issuerIdentity: IdentityJson
+		issuerIdentity: IdentityKeys
 	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> {
 		try {
-			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.doc.id);
+			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
 			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
@@ -84,14 +85,16 @@ export class SsiService {
 	}
 
 	async createVerifiableCredential<T>(
-		issuerIdentity: IdentityJson,
+		issuerIdentity: IdentityKeys,
 		credential: Credential<T>,
 		keyCollectionJson: KeyCollectionJson,
 		keyCollectionIndex: number,
 		subjectKeyIndex: number
 	): Promise<VerifiableCredentialJson> {
 		try {
-			const { doc } = this.restoreIdentity(issuerIdentity);
+			const { document } = await this.getLatestIdentityJson(issuerIdentity.id);
+
+			const { doc } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
 			const digest = this.config.hashFunction;
 			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.getKeyCollectionTag(keyCollectionIndex));
@@ -145,12 +148,12 @@ export class SsiService {
 	}
 
 	async revokeVerifiableCredential(
-		issuerIdentity: IdentityJson,
+		issuerIdentity: IdentityKeys,
 		keyCollectionIndex: number,
 		keyIndex: number
 	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
 		try {
-			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.doc.id);
+			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
 			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), keyIndex);

@@ -10,6 +10,7 @@ import {
 	LatestIdentityJsonSchema
 } from '../schemas/identity';
 import { CreateIdentityBodySchema } from '../schemas/request-response-body/identity-bodies';
+import { Encoding } from '../schemas/identity';
 
 export interface Credential<T> {
 	id: string;
@@ -36,7 +37,9 @@ export type IdentityJson = Static<typeof IdentityJsonSchema>;
 export interface IdentityKeys {
 	id: string;
 	key: {
+		type: string;
 		public: string;
 		secret: string;
+		encoding: Encoding;
 	};
 }

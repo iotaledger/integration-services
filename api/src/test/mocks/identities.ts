@@ -1,5 +1,5 @@
 import { Encoding } from '../../models/schemas/identity';
-import { IdentityJson } from '../../models/types/identity';
+import { IdentityJson, IdentityKeys } from '../../models/types/identity';
 import { User, UserType } from '../../models/types/user';
 
 export const TestUsersMock = [
@@ -194,6 +194,11 @@ export const ServerIdentityMock: IdentityJson & { userData: User } = {
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
 		encoding: Encoding.base58
 	}
+};
+
+export const ServerIdentityKey: IdentityKeys = {
+	id: ServerIdentityMock.doc.id,
+	key: ServerIdentityMock.key
 };
 
 export const DeviceIdentityMock: IdentityJson & { userData: User } = {

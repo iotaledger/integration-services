@@ -3,7 +3,7 @@ import { ConfigurationServiceMock } from '../test/mocks/service-mocks';
 import { LoggerMock } from '../test/mocks/logger';
 import * as UserDb from '../database/user';
 import * as IdentityDocs from '../database/identity-docs';
-import { ServerIdentityMock } from '../test/mocks/identities';
+import { ServerIdentityMock, ServerIdentityKey } from '../test/mocks/identities';
 import { UserService } from '../services/user-service';
 import * as TrustedRootDb from '../database/trusted-roots';
 import * as VerifiableCredentialDb from '../database/verifiable-credentials';
@@ -50,7 +50,7 @@ describe('test keygenerator', () => {
 			.mockImplementation(async () => [
 				{ id: ServerIdentityMock.doc.id, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
 			]);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		const getIdentityDocSpy = jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityKey);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
 
@@ -68,7 +68,7 @@ describe('test keygenerator', () => {
 	});
 
 	it('should find an invalid serveridentity doc because public and secret key are not compatible', async () => {
-		const unvalidServerIdentity = { ...ServerIdentityMock };
+		const unvalidServerIdentity = { ...ServerIdentityKey };
 		unvalidServerIdentity.key.public = 'wrongpublickey'; // found identity has wrong server keypair stored
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
@@ -87,7 +87,7 @@ describe('test keygenerator', () => {
 		);
 		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
 		expect(loggerErrorSpy).toHaveBeenCalledWith('error when signing or verifying the nonce, the secret key might have changed...');
-		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity malformed or not valid: ' + unvalidServerIdentity.doc.id);
+		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity malformed or not valid: ' + unvalidServerIdentity.id);
 	});
 
 	it('should create a new serveridentity since none exists but user not found', async () => {
@@ -95,7 +95,7 @@ describe('test keygenerator', () => {
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => null); // no user found
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityKey);
 
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('server user not found!');
 	});
@@ -107,7 +107,7 @@ describe('test keygenerator', () => {
 		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => null); // no keycollection
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 
@@ -123,7 +123,7 @@ describe('test keygenerator', () => {
 		VerificationService.prototype.verifyIdentity = verifyIdentitySpy;
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 

@@ -1,12 +1,5 @@
 import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
-import {
-	CredentialSubject,
-	DocumentJsonUpdate,
-	IdentityJson,
-	IdentityJsonUpdate,
-	VerifiableCredentialJson,
-	Credential
-} from '../models/types/identity';
+import { CredentialSubject, DocumentJsonUpdate, VerifiableCredentialJson, Credential, IdentityKeys } from '../models/types/identity';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
 import * as KeyCollectionDb from '../database/key-collection';
@@ -49,7 +42,7 @@ export class VerificationService {
 		return keyCollection;
 	}
 
-	async getIdentityFromDb(did: string): Promise<IdentityJsonUpdate> {
+	async getIdentityFromDb(did: string): Promise<IdentityKeys> {
 		return IdentityDocsDb.getIdentityDoc(did, this.serverSecret);
 	}
 
@@ -84,12 +77,12 @@ export class VerificationService {
 						publicKeyBase58: keyCollection.publicKeyBase58
 					};
 
-					const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
-					if (!issuerIdentity) {
+					const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+					if (!identityKeys) {
 						throw new Error(this.noIssuerFoundErrMessage(issuerId));
 					}
 					const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
-						issuerIdentity,
+						identityKeys,
 						credential,
 						keyCollectionJson,
 						keyCollectionIndex,
@@ -106,7 +99,7 @@ export class VerificationService {
 						this.configService.serverIdentityId
 					);
 
-					await this.setUserVerified(credential.id, issuerIdentity.doc.id, vc);
+					await this.setUserVerified(credential.id, identityKeys.id, vc);
 					return vc;
 				} finally {
 					release();
@@ -117,7 +110,7 @@ export class VerificationService {
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
-		const serverIdentity: IdentityJson = await IdentityDocsDb.getIdentityDoc(this.configService.serverIdentityId, this.serverSecret);
+		const serverIdentity: IdentityKeys = await IdentityDocsDb.getIdentityDoc(this.configService.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
@@ -158,7 +151,7 @@ export class VerificationService {
 			try {
 				const subjectId = vcp.vc.id;
 
-				const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+				const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 				if (!issuerIdentity) {
 					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
@@ -224,7 +217,7 @@ export class VerificationService {
 		issuerId: string
 	): Promise<KeyCollectionPersistence> {
 		try {
-			const issuerIdentity: IdentityJsonUpdate = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+			const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
 
 			if (!issuerIdentity) {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));

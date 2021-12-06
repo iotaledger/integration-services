@@ -3,7 +3,7 @@ import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
-import { CreateIdentityBody, IdentityJson, VerifiableCredentialJson } from '../models/types/identity';
+import { CreateIdentityBody, IdentityJson, VerifiableCredentialJson, IdentityKeys } from '../models/types/identity';
 import { SchemaValidator } from '../utils/validator';
 import * as IdentityDocsDb from '../database/identity-docs';
 import { SsiService } from './ssi-service';
@@ -40,7 +40,11 @@ export class UserService {
 		await this.addUser(user);
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
-			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
+			const identityKeys: IdentityKeys = {
+				id: identity.doc.id,
+				key: identity.key
+			};
+			await IdentityDocsDb.saveIdentity(identityKeys, this.serverSecret);
 		}
 
 		return {
