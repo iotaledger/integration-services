@@ -1,5 +1,5 @@
 import { addTrustedRootId } from '../database/trusted-roots';
-import { IdentityJsonUpdate, CreateIdentityBody } from '../models/types/identity';
+import { CreateIdentityBody, IdentityKeys } from '../models/types/identity';
 import { Subject, CredentialTypes } from '../models/types/verification';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
@@ -24,7 +24,7 @@ export class KeyGenerator {
 	}
 
 	// Check if identity is a valid one
-	private async verifyIdentity(serverIdentity: IdentityJsonUpdate): Promise<boolean> {
+	private async verifyIdentity(serverIdentity: IdentityKeys): Promise<boolean> {
 		// verify if secret key of the server can be used to sign and verify a challenge
 		// if the secret key was changed the server won't be able to decrypt the secret key of the server
 		// and thus is not able to verify the challenge

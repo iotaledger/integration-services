@@ -1,5 +1,5 @@
 import { Encoding } from '../../models/schemas/identity';
-import { IdentityJsonUpdate } from '../../models/types/identity';
+import { IdentityJson } from '../../models/types/identity';
 import { User, UserType } from '../../models/types/user';
 
 export const TestUsersMock = [
@@ -54,7 +54,7 @@ export const TestUsersMock = [
 ];
 
 // returned from localhost:3000/api/v1/identities/create
-export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const UserIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		authentication: [
@@ -111,7 +111,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 	}
 };
 
-export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const ServerIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		verificationMethod: [
@@ -196,7 +196,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 	}
 };
 
-export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const DeviceIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		authentication: [

@@ -5,7 +5,6 @@ import {
 	IdentityDocument,
 	IdentityDocumentJson,
 	IdentityJson,
-	IdentityJsonUpdate,
 	VerifiableCredentialJson,
 	Credential
 } from '../models/types/identity';
@@ -27,7 +26,7 @@ export class SsiService {
 	async generateKeyCollection(
 		keyCollectionIndex: number,
 		keyCollectionSize: number,
-		issuerIdentity: IdentityJsonUpdate
+		issuerIdentity: IdentityJson
 	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> {
 		try {
 			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.doc.id);
@@ -63,7 +62,7 @@ export class SsiService {
 		}
 	}
 
-	async createIdentity(): Promise<IdentityJsonUpdate> {
+	async createIdentity(): Promise<IdentityJson> {
 		try {
 			const identity = this.generateIdentity();
 			identity.doc.sign(identity.key);
@@ -146,7 +145,7 @@ export class SsiService {
 	}
 
 	async revokeVerifiableCredential(
-		issuerIdentity: IdentityJsonUpdate,
+		issuerIdentity: IdentityJson,
 		keyCollectionIndex: number,
 		keyIndex: number
 	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {

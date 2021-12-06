@@ -23,7 +23,6 @@ import {
 	IdentityJsonSchema,
 	DocumentJsonUpdateSchema,
 	IdentityDocumentJsonSchema,
-	IdentityJsonUpdateSchema,
 	IdentityKeyPairJsonSchema,
 	LatestIdentityJsonSchema
 } from '../../models/schemas/identity';
@@ -75,7 +74,6 @@ const schemas = {
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
-	IdentityJsonUpdateSchema,
 	IdentityKeyPairJsonSchema,
 	IdentityDocumentJsonSchema,
 	LatestIdentityJsonSchema,

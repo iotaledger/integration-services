@@ -77,8 +77,3 @@ export const IdentityJsonSchema = Type.Object({
 export const DocumentJsonUpdateSchema = Type.Object({
 	doc: IdentityDocumentJsonSchema
 });
-
-export const IdentityJsonUpdateSchema = Type.Object({
-	doc: IdentityDocumentJsonSchema,
-	key: IdentityKeyPairJsonSchema
-});

@@ -7,7 +7,6 @@ import {
 	IdentityKeyPairJsonSchema,
 	DocumentJsonUpdateSchema,
 	IdentityJsonSchema,
-	IdentityJsonUpdateSchema,
 	LatestIdentityJsonSchema
 } from '../schemas/identity';
 import { CreateIdentityBodySchema } from '../schemas/request-response-body/identity-bodies';
@@ -33,4 +32,11 @@ export type LatestIdentityJson = Static<typeof LatestIdentityJsonSchema>;
 export type IdentityKeyPairJson = Static<typeof IdentityKeyPairJsonSchema>;
 export type DocumentJsonUpdate = Static<typeof DocumentJsonUpdateSchema>;
 export type IdentityJson = Static<typeof IdentityJsonSchema>;
-export type IdentityJsonUpdate = Static<typeof IdentityJsonUpdateSchema>;
+
+export interface IdentityKeys {
+	id: string;
+	key: {
+		public: string;
+		secret: string;
+	};
+}

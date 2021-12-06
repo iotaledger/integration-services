@@ -1,21 +1,21 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
-import { DocumentJsonUpdate, IdentityJsonUpdate } from '../models/types/identity';
+import { DocumentJsonUpdate, IdentityJson, IdentityKeys } from '../models/types/identity';
 import { decrypt, encrypt } from '../utils/encryption';
 
 const collectionName = CollectionNames.identityDocsCollection;
 
-export const getIdentityDoc = async (id: string, secret: string): Promise<IdentityJsonUpdate | null> => {
+export const getIdentityDoc = async (id: string, secret: string): Promise<IdentityKeys | null> => {
 	const query = { _id: id };
-	const identity = await MongoDbService.getDocument<IdentityJsonUpdate>(collectionName, query);
+	const identity = await MongoDbService.getDocument<IdentityKeys>(collectionName, query);
 	if (!identity) {
 		return identity;
 	}
-	const decryptedIdentity: IdentityJsonUpdate = {
+	const decryptedIdentity: IdentityKeys = {
 		...identity,
 		key: {
-			...identity.key,
+			public: identity.key.public,
 			secret: decrypt(identity.key.secret, secret)
 		}
 	};
@@ -23,9 +23,9 @@ export const getIdentityDoc = async (id: string, secret: string): Promise<Identi
 	return decryptedIdentity;
 };
 
-export const saveIdentity = async (identity: IdentityJsonUpdate, secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveIdentity = async (identity: IdentityKeys, secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const encryptedKey = encrypt(identity.key.secret, secret);
-	const encryptedIdentity: IdentityJsonUpdate = {
+	const encryptedIdentity: IdentityKeys = {
 		...identity,
 		key: {
 			...identity.key,
@@ -34,12 +34,12 @@ export const saveIdentity = async (identity: IdentityJsonUpdate, secret: string)
 	};
 
 	const document = {
-		_id: encryptedIdentity?.doc?.id,
+		_id: encryptedIdentity?.id,
 		...encryptedIdentity,
 		created: new Date()
 	};
 
-	const res = await MongoDbService.insertDocument<IdentityJsonUpdate>(collectionName, document);
+	const res = await MongoDbService.insertDocument<IdentityJson>(collectionName, document);
 	if (!res.result.n) {
 		throw new Error('could not save identity!');
 	}
