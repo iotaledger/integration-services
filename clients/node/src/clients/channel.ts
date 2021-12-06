@@ -18,26 +18,26 @@ export class Channel extends Base {
 
   /**
    * Create a new channel. An author can create a new channel with specific topics where other clients can subscribe to.
-   * @param data
+   * @param channelData
    * @returns
    */
-  async create(data: CreateChannelBody): Promise<CreateChannelResponse> {
-    return await this.post('channels/create', data, Base.jwtToken);
+  async create(channelData: CreateChannelBody): Promise<CreateChannelResponse> {
+    return await this.post('channels/create', channelData, Base.jwtToken);
   }
 
   /**
    * Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
-   * @param address
+   * @param channelAddress
    * @param data
    * @returns
    */
-  async write(address: string, data: AddChannelLogBody): Promise<ChannelData> {
-    return await this.post(`channels/logs/${address}`, data, Base.jwtToken);
+  async write(channelAddress: string, data: AddChannelLogBody): Promise<ChannelData> {
+    return await this.post(`channels/logs/${channelAddress}`, data, Base.jwtToken);
   }
 
   /**
    * Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
-   * @param address
+   * @param channelAddress
    * @param limit
    * @param index
    * @param asc
@@ -46,31 +46,33 @@ export class Channel extends Base {
    * @returns
    */
   async read(
-    address: string,
+    channelAddress: string,
     limit?: number,
     index?: number,
     asc = true,
     startDate?: Date,
     endDate?: Date,
   ): Promise<ChannelData[]> {
+    const param1 = startDate !== undefined ? { 'start-date': startDate } : {};
+    const param2 = endDate !== undefined ? { 'end-date': endDate } : {};
     return await this.get(
-      `channels/logs/${address}`,
-      { limit, index, asc, 'start-date': startDate, 'end-date': endDate },
+      `channels/logs/${channelAddress}`,
+      { limit, index, asc, ...param1, ...param2 },
       Base.jwtToken,
     );
   }
 
   /**
    * Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
-   * @param address
+   * @param channelAddress
    * @param presharedKey
    * @returns
    */
   async readHistory(
-    address: string,
+    channelAddress: string,
     presharedKey: string,
   ): Promise<ChannelData[]> {
-    return await this.get(`channels/history/${address}`, {
+    return await this.get(`channels/history/${channelAddress}`, {
       'preshared-key': presharedKey,
     });
   }
@@ -162,8 +164,8 @@ export class Channel extends Base {
 
   /**
    * Delete information of a channel with address channel-address. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
-   * @param address 
-   * @returns 
+   * @param address
+   * @returns
    */
   async remove(address: string): Promise<null> {
     return await this.delete(
