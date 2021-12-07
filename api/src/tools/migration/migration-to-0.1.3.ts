@@ -37,12 +37,11 @@ const migrate = async () => {
 		[{ $set: { id: '$identityId' } }, { $unset: 'identityId' }]
 	);
 
-	// since only keys are stored this collection can be renamed!
-	// TODO remove _copy
+	// since now only keys are stored this collection will be renamed!
 	const collections = await db.listCollections().toArray();
 	const collectionNames = collections.map((c) => c.name);
-	if (collectionNames.some((n) => n === 'identity-docs_copy') && !collectionNames.some((n) => n === 'identity-keys')) {
-		await db.collection('identity-docs_copy').rename('identity-keys');
+	if (collectionNames.some((n) => n === 'identity-docs') && !collectionNames.some((n) => n === 'identity-keys')) {
+		await db.collection('identity-docs').rename('identity-keys');
 		await db.collection('identity-keys').updateMany(
 			{
 				doc: { $exists: true }
@@ -55,6 +54,9 @@ const migrate = async () => {
 				},
 				{
 					$unset: 'doc'
+				},
+				{
+					$unset: 'txHash'
 				}
 			]
 		);
