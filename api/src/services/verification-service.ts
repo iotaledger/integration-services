@@ -1,5 +1,5 @@
 import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
-import { CredentialSubject, DocumentJsonUpdate, VerifiableCredentialJson, Credential, IdentityKeys } from '../models/types/identity';
+import { CredentialSubject, VerifiableCredentialJson, Credential, IdentityKeys } from '../models/types/identity';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
 import * as KeyCollectionDb from '../database/key-collection';
@@ -141,10 +141,7 @@ export class VerificationService {
 		);
 	}
 
-	async revokeVerifiableCredential(
-		vcp: VerifiableCredentialPersistence,
-		issuerId: string
-	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
+	async revokeVerifiableCredential(vcp: VerifiableCredentialPersistence, issuerId: string): Promise<{ revoked: boolean }> {
 		const key = 'credentials-' + issuerId;
 
 		return this.lock.acquire(key).then(async (release) => {
@@ -159,7 +156,6 @@ export class VerificationService {
 				const keyIndex = vcp.index % this.keyCollectionSize;
 
 				const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
-				await this.updateDatabaseIdentityDoc(res.docUpdate);
 
 				if (res.revoked !== true) {
 					this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
@@ -207,10 +203,6 @@ export class VerificationService {
 
 	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
 
-	private async updateDatabaseIdentityDoc(docUpdate: DocumentJsonUpdate) {
-		await IdentityDocsDb.updateIdentityDoc(docUpdate);
-	}
-
 	private async generateKeyCollection(
 		keyCollectionIndex: number,
 		keyCollectionSize: number,
@@ -223,12 +215,8 @@ export class VerificationService {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));
 			}
 
-			const { keyCollectionJson, docUpdate } = await this.ssiService.generateKeyCollection(
-				keyCollectionIndex,
-				keyCollectionSize,
-				issuerIdentity
-			);
-			await this.updateDatabaseIdentityDoc(docUpdate);
+			const { keyCollectionJson } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
+
 			return {
 				...keyCollectionJson,
 				count: keyCollectionSize,

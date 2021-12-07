@@ -1,13 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import {
-	DocumentJsonUpdate,
-	IdentityDocument,
-	IdentityDocumentJson,
-	IdentityJson,
-	VerifiableCredentialJson,
-	Credential
-} from '../models/types/identity';
+import { IdentityDocument, IdentityDocumentJson, IdentityJson, VerifiableCredentialJson, Credential } from '../models/types/identity';
 import { KeyCollectionJson } from '../models/types/key-collection';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
 import { ILogger } from '../utils/logger';
@@ -28,7 +21,7 @@ export class SsiService {
 		keyCollectionIndex: number,
 		keyCollectionSize: number,
 		issuerIdentity: IdentityKeys
-	): Promise<{ docUpdate: DocumentJsonUpdate; keyCollectionJson: KeyCollectionJson }> {
+	): Promise<{ keyCollectionJson: KeyCollectionJson }> {
 		try {
 			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
@@ -56,7 +49,7 @@ export class SsiService {
 				keys,
 				publicKeyBase58
 			};
-			return { docUpdate: { doc: newDoc.toJSON() }, keyCollectionJson };
+			return { keyCollectionJson };
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not generate the key collection');
@@ -151,7 +144,7 @@ export class SsiService {
 		issuerIdentity: IdentityKeys,
 		keyCollectionIndex: number,
 		keyIndex: number
-	): Promise<{ docUpdate: DocumentJsonUpdate; revoked: boolean }> {
+	): Promise<{ revoked: boolean }> {
 		try {
 			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
@@ -161,7 +154,7 @@ export class SsiService {
 			newDoc.sign(key);
 			await this.publishSignedDoc(newDoc.toJSON());
 
-			return { docUpdate: { doc: newDoc.toJSON() }, revoked: result };
+			return { revoked: result };
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not revoke the verifiable credential');

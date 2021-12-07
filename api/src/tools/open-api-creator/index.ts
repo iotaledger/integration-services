@@ -21,10 +21,8 @@ import {
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
-	DocumentJsonUpdateSchema,
 	IdentityDocumentJsonSchema,
-	IdentityKeyPairJsonSchema,
-	LatestIdentityJsonSchema
+	IdentityKeyPairJsonSchema
 } from '../../models/schemas/identity';
 import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
@@ -76,8 +74,6 @@ const schemas = {
 	IdentityJsonSchema,
 	IdentityKeyPairJsonSchema,
 	IdentityDocumentJsonSchema,
-	LatestIdentityJsonSchema,
-	DocumentJsonUpdateSchema,
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,
