@@ -5,7 +5,7 @@ import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
 import { CreateIdentityBody, IdentityJson, VerifiableCredentialJson, IdentityKeys } from '../models/types/identity';
 import { SchemaValidator } from '../utils/validator';
-import * as IdentityDocsDb from '../database/identity-docs';
+import * as IdentityDocsDb from '../database/identity-keys';
 import { SsiService } from './ssi-service';
 import { ILogger } from '../utils/logger';
 

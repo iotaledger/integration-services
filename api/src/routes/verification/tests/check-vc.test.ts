@@ -1,5 +1,5 @@
 import { DeviceIdentityMock, ServerIdentityMock, ServerIdentityKey } from '../../../test/mocks/identities';
-import * as IdentityDocsDb from '../../../database/identity-docs';
+import * as IdentityDocsDb from '../../../database/identity-keys';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';

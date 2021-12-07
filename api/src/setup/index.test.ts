@@ -2,7 +2,7 @@ import { KeyGenerator } from '.';
 import { ConfigurationServiceMock } from '../test/mocks/service-mocks';
 import { LoggerMock } from '../test/mocks/logger';
 import * as UserDb from '../database/user';
-import * as IdentityDocs from '../database/identity-docs';
+import * as IdentityDocs from '../database/identity-keys';
 import { ServerIdentityMock, ServerIdentityKey } from '../test/mocks/identities';
 import { UserService } from '../services/user-service';
 import * as TrustedRootDb from '../database/trusted-roots';

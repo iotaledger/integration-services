@@ -1,6 +1,6 @@
 import { VerificationService } from '../verification-service';
 import * as KeyCollectionDb from '../../database/key-collection';
-import * as IdentityDocsDb from '../../database/identity-docs';
+import * as IdentityDocsDb from '../../database/identity-keys';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
 import { LoggerMock } from '../../test/mocks/logger';

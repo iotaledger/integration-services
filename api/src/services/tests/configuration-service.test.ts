@@ -2,7 +2,7 @@ import { ConfigMock } from '../../test/mocks/config';
 import { ConfigurationService } from '../configuration-service';
 import { LoggerMock } from '../../test/mocks/logger';
 import * as UserDb from '../../database/user';
-import * as IdentityDocDB from '../../database/identity-docs';
+import * as IdentityDocDB from '../../database/identity-keys';
 
 describe('test configuration service', () => {
 	let loggerSpy: jest.SpyInstance;

@@ -2,7 +2,7 @@ import { CredentialSubject } from '../../../models/types/identity';
 import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock, ServerIdentityKey } from '../../../test/mocks/identities';
 import * as KeyCollectionDB from '../../../database/key-collection';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
-import * as IdentityDocsDb from '../../../database/identity-docs';
+import * as IdentityDocsDb from '../../../database/identity-keys';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';

@@ -4,7 +4,7 @@ import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
-import { getIdentityKeys } from '../database/identity-docs';
+import { getIdentityKeys } from '../database/identity-keys';
 
 const VERSION = 'v0.1';
 

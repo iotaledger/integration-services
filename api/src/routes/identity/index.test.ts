@@ -1,6 +1,6 @@
 import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
-import * as IdentityDocsDb from '../../database/identity-docs';
+import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
 import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';

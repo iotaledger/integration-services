@@ -11,7 +11,7 @@ import { SsiService } from '../services/ssi-service';
 import { getServerIdentities } from '../database/user';
 import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
-import { getIdentityKeys } from '../database/identity-docs';
+import { getIdentityKeys } from '../database/identity-keys';
 import { ILogger } from '../utils/logger';
 
 export class KeyGenerator {
