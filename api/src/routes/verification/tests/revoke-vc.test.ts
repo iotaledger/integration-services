@@ -53,7 +53,6 @@ describe('test authentication routes', () => {
 				.mockReturnValue(Promise.resolve(linkedIdentity));
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc');
 			const revokeVerifiableCredentialSpy = jest.spyOn(ssiService, 'revokeVerifiableCredential');
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -68,7 +67,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
-			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('no vc found to revoke the verification!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
@@ -94,7 +92,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -109,7 +106,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
-			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
@@ -136,7 +132,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -151,7 +146,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
@@ -179,7 +173,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -194,7 +187,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcToRevoke);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
@@ -221,7 +213,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -236,7 +227,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
@@ -265,7 +255,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -280,7 +269,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
@@ -309,7 +297,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -324,7 +311,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).toHaveBeenCalledWith(linkedIdentity, ServerIdentityKey.id);
 			expect(removeUserVcSpy).toHaveBeenCalledWith(vcMock);
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
@@ -350,7 +336,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -364,7 +349,6 @@ describe('test authentication routes', () => {
 
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(revokeVerifiableCredentialSpy).not.toHaveBeenCalled();
-			expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(removeUserVcSpy).not.toHaveBeenCalled();
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to revoke credential!'));
@@ -391,7 +375,6 @@ describe('test authentication routes', () => {
 			const revokeVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'revokeVerifiableCredential')
 				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 			const revokeVerifiableCredentialDbSpy = jest
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
@@ -406,7 +389,6 @@ describe('test authentication routes', () => {
 			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
 			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, keyCollectionIndex, linkedIdentity.index);
-			expect(updateIdentityDocSpy).toHaveBeenCalledWith(revokeResult.docUpdate);
 			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
 			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 		});

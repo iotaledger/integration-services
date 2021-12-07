@@ -26,7 +26,6 @@ describe('test getKeyCollection', () => {
 
 	it('should generate a new keycollection since index not found', async () => {
 		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve({} as any));
-		const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection').mockReturnValue(
 			Promise.resolve({
 				keyCollectionJson: {
@@ -53,7 +52,6 @@ describe('test getKeyCollection', () => {
 		expect(generateKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, keyCollectionSize, {});
 		expect(saveKeyCollectionSpy).toHaveBeenCalledWith(expectedKeyCollection, ConfigurationServiceMock.serverIdentityId, serverSecret);
 		expect(getIdentitySpy).toHaveBeenCalled();
-		expect(updateIdentityDocSpy).toHaveBeenCalled();
 		expect(keyCollection).toEqual(expectedKeyCollection);
 	});
 
@@ -68,7 +66,6 @@ describe('test getKeyCollection', () => {
 		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => {
 			return {} as any;
 		});
-		const updateIdentityDocSpy = jest.spyOn(IdentityDocsDb, 'updateIdentityDoc').mockImplementation(async () => null);
 		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection').mockImplementation(async () => null);
 		const getKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'getKeyCollection').mockReturnValue(Promise.resolve(foundKeyCollection)); // keycollection found
 		const saveKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'saveKeyCollection').mockImplementation(async () => null);
@@ -83,7 +80,6 @@ describe('test getKeyCollection', () => {
 		expect(generateKeyCollectionSpy).not.toHaveBeenCalled();
 		expect(saveKeyCollectionSpy).not.toHaveBeenCalled();
 		expect(getIdentitySpy).not.toHaveBeenCalled();
-		expect(updateIdentityDocSpy).not.toHaveBeenCalled();
 		expect(keyCollection).toEqual({ ...expectedKeyCollection, publicKeyBase58: 'testpublickeybase' });
 	});
 
