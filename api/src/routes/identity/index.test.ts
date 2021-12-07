@@ -338,7 +338,9 @@ describe('test user routes', () => {
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
 			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+			const saveIdentitySpy = jest
+				.spyOn(IdentityDocsDb, 'saveIdentityKeys')
+				.mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
@@ -364,7 +366,7 @@ describe('test user routes', () => {
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
 			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity');
+			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentityKeys');
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},

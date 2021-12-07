@@ -4,7 +4,7 @@ import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { IdentityKeys } from '../models/types/identity';
 import { decrypt, encrypt } from '../utils/encryption';
 
-const collectionName = CollectionNames.identityDocsCollection;
+const collectionName = CollectionNames.identityKeysCollection;
 
 export const getIdentityKeys = async (id: string, secret: string): Promise<IdentityKeys | null> => {
 	const query = { _id: id };
@@ -25,7 +25,7 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 	return decryptedIdentity;
 };
 
-export const saveIdentity = async (identity: IdentityKeys, secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveIdentityKeys = async (identity: IdentityKeys, secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const encryptedKey = encrypt(identity.key.secret, secret);
 	const encryptedIdentity: IdentityKeys = {
 		...identity,

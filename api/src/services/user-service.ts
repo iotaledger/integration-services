@@ -44,7 +44,7 @@ export class UserService {
 				id: identity.doc.id,
 				key: identity.key
 			};
-			await IdentityDocsDb.saveIdentity(identityKeys, this.serverSecret);
+			await IdentityDocsDb.saveIdentityKeys(identityKeys, this.serverSecret);
 		}
 
 		return {
