@@ -43,7 +43,7 @@ export class VerificationService {
 	}
 
 	async getIdentityFromDb(did: string): Promise<IdentityKeys> {
-		return IdentityDocsDb.getIdentityDoc(did, this.serverSecret);
+		return IdentityDocsDb.getIdentityKeys(did, this.serverSecret);
 	}
 
 	// TODO rename to issueCredential
@@ -77,7 +77,7 @@ export class VerificationService {
 						publicKeyBase58: keyCollection.publicKeyBase58
 					};
 
-					const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+					const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
 					if (!identityKeys) {
 						throw new Error(this.noIssuerFoundErrMessage(issuerId));
 					}
@@ -110,7 +110,7 @@ export class VerificationService {
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
-		const serverIdentity: IdentityKeys = await IdentityDocsDb.getIdentityDoc(this.configService.serverIdentityId, this.serverSecret);
+		const serverIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(this.configService.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
 		}
@@ -148,7 +148,7 @@ export class VerificationService {
 			try {
 				const subjectId = vcp.vc.id;
 
-				const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+				const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
 				if (!issuerIdentity) {
 					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
@@ -209,7 +209,7 @@ export class VerificationService {
 		issuerId: string
 	): Promise<KeyCollectionPersistence> {
 		try {
-			const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityDoc(issuerId, this.serverSecret);
+			const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
 
 			if (!issuerIdentity) {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));

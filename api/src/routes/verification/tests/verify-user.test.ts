@@ -185,7 +185,7 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityKey);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
 				user: { id: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
@@ -252,7 +252,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = jest
 				.spyOn(verificationService, 'checkVerifiableCredential')
 				.mockImplementation(async () => initiatorVcIsVerified);
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityKey);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
 				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},

@@ -25,7 +25,7 @@ describe('test getKeyCollection', () => {
 	});
 
 	it('should generate a new keycollection since index not found', async () => {
-		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve({} as any));
+		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve({} as any));
 		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection').mockReturnValue(
 			Promise.resolve({
 				keyCollectionJson: {
@@ -63,7 +63,7 @@ describe('test getKeyCollection', () => {
 			publicKeyBase58: 'testpublickeybase',
 			type: ''
 		};
-		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => {
+		const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => {
 			return {} as any;
 		});
 		const generateKeyCollectionSpy = jest.spyOn(ssiService, 'generateKeyCollection').mockImplementation(async () => null);

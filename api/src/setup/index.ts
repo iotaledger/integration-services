@@ -11,7 +11,7 @@ import { SsiService } from '../services/ssi-service';
 import { getServerIdentities } from '../database/user';
 import { IConfigurationService } from '../services/configuration-service';
 import { Config } from '../models/config/index';
-import { getIdentityDoc } from '../database/identity-docs';
+import { getIdentityKeys } from '../database/identity-docs';
 import { ILogger } from '../utils/logger';
 
 export class KeyGenerator {
@@ -56,7 +56,7 @@ export class KeyGenerator {
 		if (serverIdentityId) {
 			this.configService.serverIdentityId = serverIdentityId;
 			this.logger.error('Root identity already exists: verify data');
-			const serverIdentity = await getIdentityDoc(serverIdentityId, this.config.serverSecret);
+			const serverIdentity = await getIdentityKeys(serverIdentityId, this.config.serverSecret);
 			if (serverIdentity) {
 				const isValid = await this.verifyIdentity(serverIdentity);
 				if (isValid) {
