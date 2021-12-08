@@ -1,5 +1,4 @@
-// You can also unset the migrated identityId after running this script.
-// This can be done by replacing `$set: {...}` by: `$unset: "identityId"`
+// Before running this script in Robo3T copy the `identity-docs` collection and name it `identity-keys`
 
 db.getCollection('users').update(
 	// query
@@ -17,7 +16,7 @@ db.getCollection('users').update(
 	],
 	// options
 	{
-		multi: true, // update only one document
+		multi: true, // update several documents
 		upsert: false // insert a new document, if no existing document match the query
 	}
 );
@@ -37,7 +36,7 @@ db.getCollection('trusted-roots').update(
 	],
 	// options
 	{
-		multi: true, // update only one document
+		multi: true, // update several documents
 		upsert: false // insert a new document, if no existing document match the query
 	}
 );
@@ -57,7 +56,7 @@ db.getCollection('subscriptions').update(
 	],
 	// options
 	{
-		multi: true, // update only one document
+		multi: true, // update several documents
 		upsert: false // insert a new document, if no existing document match the query
 	}
 );
@@ -77,7 +76,33 @@ db.getCollection('channel-data').update(
 	],
 	// options
 	{
-		multi: true, // update only one document
+		multi: true, // update several documents
+		upsert: false // insert a new document, if no existing document match the query
+	}
+);
+
+db.getCollection('identity-keys').update(
+	// query
+	{
+		doc: { $exists: true }
+	},
+	// update
+	[
+		{
+			$set: {
+				id: '$doc.id'
+			}
+		},
+		{
+			$unset: 'doc'
+		},
+		{
+			$unset: 'txHash'
+		}
+	],
+	// options
+	{
+		multi: true, // update several documents
 		upsert: false // insert a new document, if no existing document match the query
 	}
 );
