@@ -11,7 +11,7 @@ import {
 import {
 	ClaimSchema,
 	RevokeVerificationBodySchema,
-	VerifyIdentityBodySchema,
+	CreateCredentialBodySchema,
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
 	SubjectBodySchema
@@ -51,7 +51,7 @@ const schemas = {
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema,
 	RevokeVerificationBodySchema,
-	VerifyIdentityBodySchema,
+	CreateCredentialBodySchema,
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
 	SubjectBodySchema,

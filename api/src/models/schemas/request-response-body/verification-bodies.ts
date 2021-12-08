@@ -13,7 +13,7 @@ export const SubjectBodySchema = Type.Object({
 	claim: ClaimSchema
 });
 
-export const VerifyIdentityBodySchema = Type.Object({
+export const CreateCredentialBodySchema = Type.Object({
 	// subjectId: Type.Optional(Type.String({ minLength: 50, maxLength: 53 })), // did
 	subject: SubjectBodySchema,
 	initiatorVC: Type.Optional(VerifiableCredentialSchema)

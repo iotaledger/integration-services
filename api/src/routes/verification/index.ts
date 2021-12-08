@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
-import { RevokeVerificationBody, TrustedRootBody, VerifyIdentityBody } from '../../models/types/request-response-bodies';
+import { RevokeVerificationBody, TrustedRootBody, CreateCredentialBody } from '../../models/types/request-response-bodies';
 import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -22,9 +22,8 @@ export class VerificationRoutes {
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			// TODO rename to CreateCredentialBody
-			const verifyIdentityBody = req.body as VerifyIdentityBody;
-			const { initiatorVC, subject } = verifyIdentityBody;
+			const createCredential = req.body as CreateCredentialBody;
+			const { initiatorVC, subject } = createCredential;
 			const requestUser = req.user;
 
 			if (!subject) {
