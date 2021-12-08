@@ -1,6 +1,6 @@
 export * from './channel-data';
 export * from './channel-info';
-export * from './clientConfig';
+export * from '../clientConfig';
 export * from './identity';
 export * from './key-collection';
 export * from './request-response-bodies';

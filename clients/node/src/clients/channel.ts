@@ -1,6 +1,6 @@
 import { ChannelData } from '../models/types/channel-data';
 import { ChannelInfo } from '../models/types/channel-info';
-import { ClientConfig } from '../models/types/clientConfig';
+import { ClientConfig } from '../models/clientConfig';
 import {
   AddChannelLogBody,
   CreateChannelBody,
@@ -8,7 +8,16 @@ import {
   ReimportBody,
   ValidateBody,
   ValidateResponse,
+  AuthorizeSubscriptionBody,
+  AuthorizeSubscriptionResponse,
+  RequestSubscriptionBody,
+  RequestSubscriptionResponse,
+  RevokeSubscriptionBody
 } from '../models/types/request-response-bodies';
+import {
+  Subscription as SubscriptionInternal,
+  SubscriptionUpdate
+} from '../models/types/subscription';
 import { Base } from './base';
 
 export class Channel extends Base {
@@ -51,14 +60,14 @@ export class Channel extends Base {
     index?: number,
     asc = true,
     startDate?: Date,
-    endDate?: Date,
+    endDate?: Date
   ): Promise<ChannelData[]> {
     const param1 = startDate !== undefined ? { 'start-date': startDate } : {};
     const param2 = endDate !== undefined ? { 'end-date': endDate } : {};
     return await this.get(
       `channels/logs/${channelAddress}`,
       { limit, index, asc, ...param1, ...param2 },
-      this.jwtToken,
+      this.jwtToken
     );
   }
 
@@ -68,12 +77,9 @@ export class Channel extends Base {
    * @param presharedKey
    * @returns
    */
-  async readHistory(
-    channelAddress: string,
-    presharedKey: string,
-  ): Promise<ChannelData[]> {
+  async readHistory(channelAddress: string, presharedKey: string): Promise<ChannelData[]> {
     return await this.get(`channels/history/${channelAddress}`, {
-      'preshared-key': presharedKey,
+      'preshared-key': presharedKey
     });
   }
 
@@ -83,10 +89,7 @@ export class Channel extends Base {
    * @param data
    * @returns
    */
-  async validate(
-    address: string,
-    data: ValidateBody,
-  ): Promise<ValidateResponse> {
+  async validate(address: string, data: ValidateBody): Promise<ValidateResponse> {
     return await this.post(`channels/validate/${address}`, data, this.jwtToken);
   }
 
@@ -118,20 +121,23 @@ export class Channel extends Base {
     created?: Date,
     latestMessage?: Date,
     limit?: number,
-    index?: number,
+    index?: number
   ): Promise<ChannelInfo[]> {
+    const param1 = topicType != undefined ? { 'topic-type': topicType } : {};
+    const param2 = topicSource != undefined ? { 'topic-source': topicSource } : {};
+    const param3 = latestMessage != undefined ? { 'latest-message': latestMessage } : {};
     return await this.get(
       'channel-info/search',
       {
         author,
-        'topic-type': topicType,
-        'topic-source': topicSource,
+        ...param1,
+        ...param2,
         created,
-        'latest-message': latestMessage,
+        ...param3,
         limit,
-        index,
+        index
       },
-      this.jwtToken,
+      this.jwtToken
     );
   }
 
@@ -168,10 +174,128 @@ export class Channel extends Base {
    * @returns
    */
   async remove(address: string): Promise<null> {
-    return await this.delete(
-      `channel-info/channel/${address}`,
-      {},
-      this.jwtToken,
+    return await this.delete(`channel-info/channel/${address}`, {}, this.jwtToken);
+  }
+
+  /**
+   * Get all subscriptions of a channel. Use the is-authorized query parameter to filter for authorized subscriptions.
+   * @param channelAddress
+   * @param isAuthorized
+   * @returns
+   */
+  async findAllSubscriptions(
+    channelAddress: string,
+    isAuthorized?: boolean
+  ): Promise<SubscriptionInternal[]> {
+    const params = isAuthorized !== undefined ? { 'is-authorized': isAuthorized } : {};
+    return await this.get(`subscriptions/${channelAddress}`, params, this.jwtToken);
+  }
+
+  /**
+   * Get a subscription of a channel by identity id.
+   * @param channelAddress
+   * @param identityId
+   * @returns
+   */
+  async findSubscription(
+    channelAddress: string,
+    identityId: string
+  ): Promise<SubscriptionInternal> {
+    return await this.get(`subscriptions/${channelAddress}/${identityId}`, {}, this.jwtToken);
+  }
+
+  /**
+   * Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from.
+   * @param channelAddress
+   * @param options
+   * @returns
+   */
+  async requestSubscription(
+    channelAddress: string,
+    options: RequestSubscriptionBody
+  ): Promise<RequestSubscriptionResponse> {
+    return await this.post(`subscriptions/request/${channelAddress}`, options, this.jwtToken);
+  }
+
+  /**
+   * Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
+   * @param channelAddress
+   * @param authorization
+   * @returns
+   */
+  async authorizeSubscription(
+    channelAddress: string,
+    subscriptionIdentifier: AuthorizeSubscriptionBody
+  ): Promise<AuthorizeSubscriptionResponse> {
+    return await this.post(
+      `subscriptions/authorize/${channelAddress}`,
+      subscriptionIdentifier,
+      this.jwtToken
     );
+  }
+
+  /**
+   * Revoke subscription to a channel. Only the author of a channel can revoke a subscription from a channel.
+   * @param channelAddress
+   * @param subscriptionIdentifier
+   * @returns
+   */
+  async revokeSubscription(
+    channelAddress: string,
+    subscriptionIdentifier: RevokeSubscriptionBody
+  ): Promise<null> {
+    return await this.post(
+      `subscriptions/revoke/${channelAddress}`,
+      subscriptionIdentifier,
+      this.jwtToken
+    );
+  }
+
+  /**
+   * Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
+   * @param channelAddress
+   * @param identityId
+   * @param subscription
+   * @returns
+   */
+  async addSubscription(
+    channelAddress: string,
+    identityId: string,
+    subscription: SubscriptionInternal
+  ): Promise<SubscriptionInternal> {
+    return await this.post(
+      `subscriptions/${channelAddress}/${identityId}`,
+      subscription,
+      this.jwtToken
+    );
+  }
+
+  /**
+   * Updates an existing subscription.
+   * @param channelAddress
+   * @param identityId
+   * @param updatedSubscription
+   * @returns
+   */
+  async updateSubscription(
+    channelAddress: string,
+    identityId: string,
+    updatedSubscription: SubscriptionUpdate
+  ): Promise<null> {
+    return await this.put(
+      `subscriptions/${channelAddress}/${identityId}`,
+      updatedSubscription,
+      this.jwtToken
+    );
+  }
+
+  /**
+   * Deletes an existing subscription.
+   * @param channelAddress
+   * @param identityId
+   * @returns
+   */
+  async removeSubscription(channelAddress: string, identityId: string): Promise<null> {
+    return await this.delete(`subscriptions/${channelAddress}/${identityId}`, {}, this.jwtToken);
   }
 }

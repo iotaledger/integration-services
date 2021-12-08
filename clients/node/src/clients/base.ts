@@ -1,8 +1,8 @@
-import { ClientConfig } from "../models/types/clientConfig";
+import { ClientConfig } from "../models/clientConfig";
 const crypto = require("crypto");
 import * as ed from 'noble-ed25519';
 import * as bs58 from 'bs58';
-import { ApiVersion } from "../models/enums";
+import { ApiVersion } from "../models/apiVersion";
 import { IdentityInternal, IdentityJson } from "../models/types/identity";
 const axios = require('axios').default;
 
@@ -19,6 +19,11 @@ export class Base {
         this.apiVersion = apiVersion || ApiVersion.v01
     }
 
+    /**
+     * Authenticates the user to the api for requests where authentication is needed
+     * @param identityId of the user to authenticate
+     * @param secretKey of the user to authenticate
+     */
     async authenticate(identityId: string, secretKey: string) {
         const body = await this.get(`authentication/prove-ownership/${identityId}`)
         const nonce = body?.nonce;
@@ -48,7 +53,7 @@ export class Base {
         return bs58.decode(base58Key).toString('hex');
     }
 
-    async post(url: string, data: any, jwtToken?: string) {
+    protected async post(url: string, data: any, jwtToken?: string) {
         let response = await axios.request({
             method: "post",
             url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
@@ -61,7 +66,7 @@ export class Base {
         return response?.data;
     }
 
-    async get(url: string, params: any = {}, jwtToken?: string) {
+    protected async get(url: string, params: any = {}, jwtToken?: string) {
         params['api-key'] = this.apiKey;
         let response = await axios.request({
             method: "get",
@@ -72,7 +77,7 @@ export class Base {
         return response?.data;
     }
 
-    async delete(url: string, params: any = {}, jwtToken?: string) {
+    protected async delete(url: string, params: any = {}, jwtToken?: string) {
         params['api-key'] = this.apiKey;
         let response = await axios.request({
             method: "delete",
@@ -83,7 +88,7 @@ export class Base {
         return response?.data;
     }
 
-    async put(url: string, data: any, jwtToken?: string) {
+    protected async put(url: string, data: any, jwtToken?: string) {
         let response = await axios.request({
             method: "put",
             url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,

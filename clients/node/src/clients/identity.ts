@@ -1,9 +1,15 @@
 import { Base } from './base';
-import { ClientConfig } from '../models/types/clientConfig';
-import { IdentityInternal, IdentityJson, LatestIdentityJson, VerifiableCredentialJson } from '../models/types/identity';
-import { Claim, RevokeVerificationBody, TrustedRootBody } from '../models/types/request-response-bodies';
-import { User } from '../models/types/user';
-import { VerifiableCredentialInternal } from '../models/types/verification';
+import { ClientConfig } from '../models/clientConfig';
+import {
+  IdentityInternal,
+  IdentityJson,
+  LatestIdentityJson,
+  VerifiableCredentialJson
+} from '../models/types/identity';
+import { Claim, RevokeVerificationBody } from '../models/types/request-response-bodies';
+import { User, UserType } from '../models/types/user';
+import { CredentialTypes, VerifiableCredentialInternal } from '../models/types/verification';
+import { searchCriteria } from '../models/searchCriteria';
 
 export class Identity extends Base {
   constructor(config: ClientConfig) {
@@ -16,13 +22,10 @@ export class Identity extends Base {
    * @param claim
    * @returns
    */
-  async create(
-    username: string,
-    claim: Claim,
-  ): Promise<IdentityJson> {
+  async create(username: string, claim: Claim): Promise<IdentityJson> {
     return await this.post('identities/create', {
       username,
-      claim,
+      claim
     });
   }
 
@@ -31,8 +34,19 @@ export class Identity extends Base {
    * @param username
    * @returns
    */
-  async search(username: string): Promise<User[]> {
-    return await this.get('identities/search', { username }, this.jwtToken);
+  async search({
+    type,
+    username,
+    registrationDate,
+    limit,
+    index
+  }: searchCriteria): Promise<User[]> {
+    const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
+    return await this.get(
+      'identities/search',
+      { type, username, ...param, limit, index },
+      this.jwtToken
+    );
   }
 
   /**
@@ -41,11 +55,7 @@ export class Identity extends Base {
    * @returns
    */
   async find(identityId: string): Promise<User> {
-    return await this.get(
-      `identities/identity/${identityId}`,
-      {},
-      this.jwtToken,
-    );
+    return await this.get(`identities/identity/${identityId}`, {}, this.jwtToken);
   }
 
   /**
@@ -70,23 +80,20 @@ export class Identity extends Base {
    * Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the immutable IOTA Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
    * @param identityId
    * @param revokeCredentials
-   * @returns
+   * @returns Null
    */
-  async remove(
-    identityId: string,
-    revokeCredentials: boolean = false,
-  ): Promise<null> {
+  async remove(identityId: string, revokeCredentials: boolean = false): Promise<null> {
     return this.delete(
       `identities/identity/${identityId}`,
       { 'revoke-credentials': revokeCredentials },
-      this.jwtToken,
+      this.jwtToken
     );
   }
 
   /**
    * Get the latest version of an identity document (DID) from the IOTA Tangle.
-   * @param identityId 
-   * @returns 
+   * @param identityId
+   * @returns
    */
   async latestDocument(identityId: string): Promise<LatestIdentityJson> {
     return await this.get(`verification/latest-document/${identityId}`);
@@ -94,77 +101,73 @@ export class Identity extends Base {
 
   /**
    * Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
-   * @param trustedAuthority 
-   * @returns 
+   * @param trustedAuthority
+   * @returns
    */
-  async addTrustedAuthority(trustedAuthority: TrustedRootBody): Promise<null> {
-    return await this.post(
-      'verification/trusted-roots',
-      trustedAuthority,
-      this.jwtToken,
-    );
+  async addTrustedAuthority(trustedRootId: string): Promise<null> {
+    return await this.post('verification/trusted-roots', { trustedRootId }, this.jwtToken);
   }
 
   /**
    * Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
-   * @returns 
+   * @returns
    */
   async getTrustedAuthorities(): Promise<string[]> {
-      return await this.get('verification/trusted-roots')
+    return await this.get('verification/trusted-roots');
   }
 
   /**
    * Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
-   * @param trustedAuthorityId 
-   * @returns 
+   * @param trustedAuthorityId
+   * @returns
    */
   async removeTrustedAuthority(trustedAuthorityId: string): Promise<null> {
-    return await this.delete(
-      `verification/trusted-roots/${trustedAuthorityId}`,
-      {},
-      this.jwtToken,
-    );
+    return await this.delete(`verification/trusted-roots/${trustedAuthorityId}`, {}, this.jwtToken);
   }
 
-/**
- * Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
- * @param initiatorVC 
- * @param targetDid 
- * @param claim 
- * @returns 
- */
-  async createCredential(initiatorVC: VerifiableCredentialInternal, targetDid: string, claim: any): Promise<VerifiableCredentialJson> {
+  /**
+   * Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
+   * @param initiatorVC
+   * @param targetDid
+   * @param claim
+   * @returns
+   */
+  async createCredential(
+    initiatorVC: VerifiableCredentialInternal,
+    targetDid: string,
+    credentialType: CredentialTypes,
+    claimType: UserType,
+    claim?: any
+  ): Promise<VerifiableCredentialJson> {
     let body = {
       subject: {
         identityId: targetDid,
-        credentialType: 'VerifiedIdentityCredential',
+        credentialType,
         claim: {
-          type: 'Person',
-          ...claim,
-        },
+          type: claimType,
+          ...claim
+        }
       },
-      initiatorVC: initiatorVC,
+      initiatorVC: initiatorVC
     };
-    return await this.post(
-      'verification/create-credential',
-      body,
-      this.jwtToken,
-    );
+    return await this.post('verification/create-credential', body, this.jwtToken);
   }
 
   /**
    * Check the verifiable credential of an identity. Validates the signed verifiable credential against the Issuer information stored onto the IOTA Tangle and checks if the issuer identity (DID) contained in the credential is from a trusted root.
-   * @param credential 
-   * @returns 
+   * @param credential
+   * @returns
    */
-  async checkCredential(credential: VerifiableCredentialInternal): Promise<{isVerified: boolean}> {
+  async checkCredential(
+    credential: VerifiableCredentialInternal
+  ): Promise<{ isVerified: boolean }> {
     return await this.post('verification/check-credential', credential);
   }
 
   /**
    * Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins (with verified identities) or the identity owner itself can do that.
-   * @param credential 
-   * @returns 
+   * @param credential
+   * @returns
    */
   async revokeCredential(credential: RevokeVerificationBody): Promise<null> {
     return await this.post('verification/revoke-credential', credential, this.jwtToken);

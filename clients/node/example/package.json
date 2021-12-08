@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts",
+    "example-1": "ts-node 1-CreateIdentityAndCredential.ts",
+    "example-2": "ts-node 2-UpdateUser.ts",
+    "example-3": "ts-node 3-DeleteUser.ts",
+    "example-4": "ts-node 4-TrustedAuthorities.ts",
+    "example-5": "ts-node 5-CreateChannel.ts",
+    "example-6": "ts-node 6-AuthorizeOthersToChannel.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mastrogiovanni <michele.mastrogiovanni@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.4.0"
   }
 }

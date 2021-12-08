@@ -3,10 +3,12 @@ import {
   Manager,
   ApiVersion,
   ClientConfig,
-  IdentityInternal,
   IdentityJson,
+  CredentialTypes,
+  UserType
 } from 'integration-services-node';
 import * as dotenv from 'dotenv';
+import {} from '../lib/models/credentialType';
 dotenv.config();
 
 let identity: Identity;
@@ -18,7 +20,7 @@ async function setup() {
     const manager = new Manager(
       process.env.MONGO_URL!,
       process.env.DB_NAME!,
-      process.env.SECRET_KEY!,
+      process.env.SECRET_KEY!
     );
     // Get root identity directly from db
     rootIdentityWithKeys = await manager.getRootIdentity();
@@ -26,19 +28,16 @@ async function setup() {
 
     // Configure api access
     const config: ClientConfig = {
-      apiKey: process.env.API_KEY,
+      apiKey: process.env.API_KEY!,
       baseUrl: process.env.API_URL,
-      apiVersion: ApiVersion.v1,
+      apiVersion: ApiVersion.v1
     };
 
     // Create new Identity API
     identity = new Identity(config);
 
     // Authenticate as the root identity
-    await identity.authenticate(
-      rootIdentityWithKeys.doc.id,
-      rootIdentityWithKeys.key.secret,
-    );
+    await identity.authenticate(rootIdentityWithKeys.doc.id, rootIdentityWithKeys.key.secret);
   } catch (e) {
     console.error(e);
   }
@@ -54,19 +53,21 @@ async function createIdentityAndCheckVCs() {
 
   // Create identity for user
   const userIdentity = await identity.create('User', {
-    type: 'User',
+    type: 'User'
   });
 
   console.log('~~~~~~~~~~~~~~~~');
   console.log('Created user identity: ', userIdentity);
   console.log('~~~~~~~~~~~~~~~~');
   // Assign a verifiable credential to the user as rootIdentity
-  let userCredential = await identity.createCredential(
+  const userCredential = await identity.createCredential(
     identityCredential,
     userIdentity?.doc?.id,
+    CredentialTypes.BasicIdentityCredential,
+    UserType.Person,
     {
-      profession: 'Professor',
-    },
+      profession: 'Professor'
+    }
   );
 
   console.log('Created credential: ', userCredential);
@@ -77,23 +78,9 @@ async function createIdentityAndCheckVCs() {
   console.log('Verification result: ', verified);
 }
 
-async function searchIdentityAndUpdate() {
-  // Search for identities with username 'User' in it
-  const identities = await identity.search('User');
-  const userIdentity = identities[0];
-  console.log(userIdentity);
-
-  // Update the claim of the identity
-  await identity.update({
-    ...userIdentity,
-    username: 'NewUser',
-  });
-}
-
 async function main() {
   await setup();
   await createIdentityAndCheckVCs();
-  await searchIdentityAndUpdate();
 }
 
 main();

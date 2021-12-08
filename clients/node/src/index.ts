@@ -1,10 +1,8 @@
-export { ApiVersion } from './models/enums';
+export { ApiVersion } from './models/apiVersion';
 
 export { Identity } from './clients/identity';
 
 export { Channel } from './clients/channel';
-
-export { Subscription } from './clients/subscription';
 
 export { Manager } from './manager/manager';
 

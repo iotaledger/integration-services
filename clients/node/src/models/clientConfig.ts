@@ -1,4 +1,4 @@
-import { ApiVersion } from "../enums";
+import { ApiVersion } from "./apiVersion";
 
 export type ClientConfig = {
   apiKey?: string,
