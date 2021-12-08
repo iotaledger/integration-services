@@ -1,7 +1,7 @@
 {
   "name": "integration-services-node",
   "version": "0.0.1",
-  "description": "",
+  "description": "The is the node.js client for the integration services api",
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
@@ -17,6 +17,10 @@
       "email": "michele.mastrogiovanni@gmail.com"
     }
   ],
+  "repository": {
+    "url": "https://github.com/iotaledger/integration-services",
+    "type": "git"
+  },
   "license": "ISC",
   "devDependencies": {
     "@types/bs58": "^4.0.1",

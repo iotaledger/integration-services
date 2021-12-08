@@ -3,20 +3,24 @@ const crypto = require("crypto");
 import * as ed from 'noble-ed25519';
 import * as bs58 from 'bs58';
 import { ApiVersion } from "../models/apiVersion";
-import { IdentityInternal, IdentityJson } from "../models/types/identity";
 const axios = require('axios').default;
 
-export class Base {
+/**
+ * This is the base client used as a parent class for all clients
+ * using the integration services api.
+ */
+export abstract class BaseClient {
 
     private apiKey: string;
-    private baseUrl = "http://ensuresec.solutions.iota.org/";
+    private baseUrl: string;
     private apiVersion: ApiVersion;
     public jwtToken?: string;
 
-    constructor({apiKey, baseUrl, apiVersion}: ClientConfig) {
+    // Default config is a local api without an api key
+    constructor({apiKey, baseUrl, apiVersion}: ClientConfig = {}) {
         this.apiKey = apiKey || "";
-        this.baseUrl = baseUrl || "http://ensuresec.solutions.iota.org/";
-        this.apiVersion = apiVersion || ApiVersion.v01
+        this.baseUrl = baseUrl || "http://127.0.0.1:3000";
+        this.apiVersion = apiVersion || ApiVersion.v1
     }
 
     /**

@@ -1,4 +1,4 @@
-import { Base } from './base';
+import { BaseClient } from './base';
 import { ClientConfig } from '../models/clientConfig';
 import {
   IdentityInternal,
@@ -11,21 +11,25 @@ import { User, UserType } from '../models/types/user';
 import { CredentialTypes, VerifiableCredentialInternal } from '../models/types/verification';
 import { searchCriteria } from '../models/searchCriteria';
 
-export class Identity extends Base {
-  constructor(config: ClientConfig) {
+export class IdentityClient extends BaseClient {
+  constructor(config: ClientConfig = {}) {
     super(config);
   }
 
   /**
    * Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
    * @param username
+   * @param claimType defaults to UserType.Person
    * @param claim
    * @returns
    */
-  async create(username: string, claim: Claim): Promise<IdentityJson> {
+  async create(username?: string, claimType = UserType.Person, claim?: any ): Promise<IdentityJson> {
     return await this.post('identities/create', {
       username,
-      claim
+      claim : {
+        ...claim,
+        type: claimType
+      }
     });
   }
 

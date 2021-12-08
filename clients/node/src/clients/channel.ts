@@ -18,10 +18,10 @@ import {
   Subscription as SubscriptionInternal,
   SubscriptionUpdate
 } from '../models/types/subscription';
-import { Base } from './base';
+import { BaseClient } from './base';
 
-export class Channel extends Base {
-  constructor(config: ClientConfig) {
+export class ChannelClient extends BaseClient {
+  constructor(config: ClientConfig = {}) {
     super(config);
   }
 
@@ -212,7 +212,7 @@ export class Channel extends Base {
    */
   async requestSubscription(
     channelAddress: string,
-    options: RequestSubscriptionBody
+    options?: RequestSubscriptionBody
   ): Promise<RequestSubscriptionResponse> {
     return await this.post(`subscriptions/request/${channelAddress}`, options, this.jwtToken);
   }

@@ -1,27 +1,7 @@
-import { Identity, ApiVersion, ClientConfig, Channel } from 'integration-services-node';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { IdentityClient, ChannelClient } from 'integration-services-node';
 
-let channel: Channel;
-let identity: Identity;
-
-async function setup() {
-  try {
-    // Configure api access
-    const config: ClientConfig = {
-      apiKey: process.env.API_KEY!,
-      baseUrl: process.env.API_URL,
-      apiVersion: ApiVersion.v1
-    };
-
-    // Create new Channel API
-    channel = new Channel(config);
-    // Create Identity API for authentication
-    identity = new Identity(config);
-  } catch (e) {
-    console.error(e);
-  }
-}
+const channel = new ChannelClient();
+const identity = new IdentityClient();
 
 async function createChannel() {
   // Create a new user. The user is used for authentication only.
@@ -58,9 +38,5 @@ async function createChannel() {
   });
 }
 
-async function main() {
-  await setup();
-  await createChannel();
-}
+createChannel();
 
-main();

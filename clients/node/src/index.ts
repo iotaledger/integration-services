@@ -1,8 +1,8 @@
 export { ApiVersion } from './models/apiVersion';
 
-export { Identity } from './clients/identity';
+export { IdentityClient } from './clients/identity';
 
-export { Channel } from './clients/channel';
+export { ChannelClient } from './clients/channel';
 
 export { Manager } from './manager/manager';
 
