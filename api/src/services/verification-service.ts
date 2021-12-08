@@ -46,10 +46,9 @@ export class VerificationService {
 		return IdentityDocsDb.getIdentityKeys(did, this.serverSecret);
 	}
 
-	// TODO rename to issueCredential
-	async verifyIdentity(subject: Subject, issuerId: string, initiatorId: string) {
+	async issueVerifiableCredential(subject: Subject, issuerId: string, initiatorId: string) {
 		const key = 'credentials-' + issuerId;
-		const verify = async (release: any) => {
+		const issueCredential = async (release: any) => {
 			{
 				try {
 					const jsonldGen = new JsonldGenerator();
@@ -106,7 +105,7 @@ export class VerificationService {
 				}
 			}
 		};
-		return this.lock.acquire(key).then(async (release) => verify(release));
+		return this.lock.acquire(key).then(async (release) => issueCredential(release));
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {

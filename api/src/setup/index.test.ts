@@ -119,8 +119,8 @@ describe('test keygenerator', () => {
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
 		VerificationService.prototype.getKeyCollectionIndex = jest.fn();
 		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => []);
-		const verifyIdentitySpy = jest.fn();
-		VerificationService.prototype.verifyIdentity = verifyIdentitySpy;
+		const issueCredentialSpy = jest.fn();
+		VerificationService.prototype.issueVerifiableCredential = issueCredentialSpy;
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
@@ -134,7 +134,7 @@ describe('test keygenerator', () => {
 			credentialType: CredentialTypes.VerifiedIdentityCredential,
 			id: ServerIdentityMock.userData.id
 		};
-		expect(verifyIdentitySpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
+		expect(issueCredentialSpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
 	});
 
 	afterEach(() => {

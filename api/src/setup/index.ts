@@ -108,7 +108,7 @@ export class KeyGenerator {
 			id: serverUser.id
 		};
 
-		await verificationService.verifyIdentity(subject, serverUser.id, serverUser.id);
+		await verificationService.issueVerifiableCredential(subject, serverUser.id, serverUser.id);
 
 		this.logger.log(`Setup Done!`);
 	}

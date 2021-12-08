@@ -39,7 +39,7 @@ export class VerificationRoutes {
 				throw error;
 			}
 
-			const vc: VerifiableCredentialJson = await this.verificationService.verifyIdentity(
+			const vc: VerifiableCredentialJson = await this.verificationService.issueVerifiableCredential(
 				subject,
 				this.configService.serverIdentityId,
 				initiatorVC?.credentialSubject?.id || requestUser.id
