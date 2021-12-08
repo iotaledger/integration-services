@@ -7,5 +7,6 @@ export const enum CollectionNames {
 	identityKeysCollection = 'identity-keys',
 	verifiableCredentials = 'verifiable-credentials',
 	auth = 'auth',
+	concurrencyLocks = 'concurrency-locks',
 	trustedRoots = 'trusted-roots'
 }
