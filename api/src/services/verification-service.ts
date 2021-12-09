@@ -48,7 +48,7 @@ export class VerificationService {
 
 	async issueVerifiableCredential(subject: Subject, issuerId: string, initiatorId: string) {
 		const key = 'credentials-' + issuerId;
-		const issueCredential = async (release: any) => {
+		return this.lock.acquire(key).then(async (release) => {
 			{
 				try {
 					const jsonldGen = new JsonldGenerator();
@@ -104,8 +104,7 @@ export class VerificationService {
 					release();
 				}
 			}
-		};
-		return this.lock.acquire(key).then(async (release) => issueCredential(release));
+		});
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
