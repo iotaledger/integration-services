@@ -48,64 +48,61 @@ export class VerificationService {
 
 	async issueVerifiableCredential(subject: Subject, issuerId: string, initiatorId: string) {
 		const key = 'credentials-' + issuerId;
-		const issueCredential = async (release: any) => {
-			{
-				try {
-					const jsonldGen = new JsonldGenerator();
-					const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
+		return this.lock.acquire(key).then(async (release) => {
+			try {
+				const jsonldGen = new JsonldGenerator();
+				const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
 
-					const credential: Credential<CredentialSubject> = {
-						type: subject.credentialType,
+				const credential: Credential<CredentialSubject> = {
+					type: subject.credentialType,
+					id: subject.id,
+					subject: {
+						...claim,
+						type: subject.claim.type,
 						id: subject.id,
-						subject: {
-							...claim,
-							type: subject.claim.type,
-							id: subject.id,
-							initiatorId
-						}
-					};
-
-					const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-					const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
-					const keyCollection = await this.getKeyCollection(keyCollectionIndex);
-					const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-					const keyIndex = nextCredentialIndex % this.keyCollectionSize;
-					const keyCollectionJson: KeyCollectionJson = {
-						type: keyCollection.type,
-						keys: keyCollection.keys,
-						publicKeyBase58: keyCollection.publicKeyBase58
-					};
-
-					const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
-					if (!identityKeys) {
-						throw new Error(this.noIssuerFoundErrMessage(issuerId));
+						initiatorId
 					}
-					const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
-						identityKeys,
-						credential,
-						keyCollectionJson,
-						keyCollectionIndex,
-						keyIndex
-					);
+				};
 
-					await VerifiableCredentialsDb.addVerifiableCredential(
-						{
-							vc,
-							index: nextCredentialIndex,
-							initiatorId,
-							isRevoked: false
-						},
-						this.configService.serverIdentityId
-					);
+				const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+				const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
+				const keyCollection = await this.getKeyCollection(keyCollectionIndex);
+				const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+				const keyIndex = nextCredentialIndex % this.keyCollectionSize;
+				const keyCollectionJson: KeyCollectionJson = {
+					type: keyCollection.type,
+					keys: keyCollection.keys,
+					publicKeyBase58: keyCollection.publicKeyBase58
+				};
 
-					await this.setUserVerified(credential.id, identityKeys.id, vc);
-					return vc;
-				} finally {
-					release();
+				const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
+				if (!identityKeys) {
+					throw new Error(this.noIssuerFoundErrMessage(issuerId));
 				}
+				const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
+					identityKeys,
+					credential,
+					keyCollectionJson,
+					keyCollectionIndex,
+					keyIndex
+				);
+
+				await VerifiableCredentialsDb.addVerifiableCredential(
+					{
+						vc,
+						index: nextCredentialIndex,
+						initiatorId,
+						isRevoked: false
+					},
+					this.configService.serverIdentityId
+				);
+
+				await this.setUserVerified(credential.id, identityKeys.id, vc);
+				return vc;
+			} finally {
+				release();
 			}
-		};
-		return this.lock.acquire(key).then(async (release) => issueCredential(release));
+		});
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
