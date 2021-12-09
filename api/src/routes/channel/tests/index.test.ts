@@ -41,7 +41,7 @@ describe('test channel routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const req: any = {
 				params: {},
-				user: { identityId: undefined },
+				user: { id: undefined },
 				body: undefined // no body
 			};
 
@@ -50,22 +50,22 @@ describe('test channel routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the channel'));
 		});
 
-		it('should bad request if no identityId is provided', async () => {
+		it('should bad request if no id is provided', async () => {
 			const req: any = {
 				params: {},
-				user: { identityId: undefined }, //no identityId,
+				user: { id: undefined }, //no id,
 				body: {}
 			};
 
 			await channelRoutes.createChannel(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
 		});
 
 		it('should create and return a channel for the user', async () => {
 			const req: any = {
 				params: {},
-				user: { identityId: 'did:iota:1234' },
+				user: { id: 'did:iota:1234' },
 				body: { topics: [], seed: 'verysecretseed' }
 			};
 
@@ -77,7 +77,7 @@ describe('test channel routes', () => {
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
-				identityId: 'did:iota:1234',
+				id: 'did:iota:1234',
 				publicKey: 'testpublickey',
 				pskId: '',
 				sequenceLink: ''
@@ -119,7 +119,7 @@ describe('test channel routes', () => {
 			const pskId = 'testpskid';
 			const req: any = {
 				params: {},
-				user: { identityId: 'did:iota:1234' },
+				user: { id: 'did:iota:1234' },
 				body: { topics: [], presharedKey, hasPresharedKey: true }
 			};
 
@@ -131,7 +131,7 @@ describe('test channel routes', () => {
 				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
-				identityId: 'did:iota:1234',
+				id: 'did:iota:1234',
 				pskId,
 				publicKey: '',
 				sequenceLink: ''
@@ -170,34 +170,34 @@ describe('test channel routes', () => {
 	});
 
 	describe('test getLogs channel route', () => {
-		it('should return bad request if no identityId is provided', async () => {
+		it('should return bad request if no id is provided', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
-				user: { identityId: undefined }, //no identityId,
+				user: { id: undefined }, //no id,
 				body: {}
 			};
 
 			await channelRoutes.getLogs(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 		});
 
 		it('should return bad request if no channelAddress is provided', async () => {
 			const req: any = {
 				params: {}, // no channelAddress
-				user: { identityId: 'did:iota:1234' },
+				user: { id: 'did:iota:1234' },
 				body: {}
 			};
 
 			await channelRoutes.getLogs(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 		});
 
 		it('should return bad request if startDate is after endDate', async () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
-				user: { identityId: 'did:iota:1234' },
+				user: { id: 'did:iota:1234' },
 				body: {},
 				query: { 'start-date': '2021-09-29T10:00:00+02:00', 'end-date': '2021-09-28T10:00:00+02:00' }
 			};

@@ -36,7 +36,7 @@ describe('test request subscription route', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
 			params: {},
-			user: { identityId: undefined },
+			user: { id: undefined },
 			body: undefined // no body
 		};
 
@@ -45,36 +45,36 @@ describe('test request subscription route', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not request the subscription'));
 	});
 
-	it('should bad request if no identityId is provided', async () => {
+	it('should bad request if no id is provided', async () => {
 		const req: any = {
 			params: {},
-			user: { identityId: undefined }, //no identityId,
+			user: { id: undefined }, //no id,
 			body: { accessRights: AccessRights.Read }
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return bad request since no channelAddress is provided', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
 			params: {}, // no channelAddress
-			user: { identityId: 'did:iota1234' },
+			user: { id: 'did:iota1234' },
 			body: { accessRights: AccessRights.Read }
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or identityId provided' });
+		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
 	it('should return bad request since already a subscription is requested', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota1234' },
+			user: { id: 'did:iota1234' },
 			body: { accessRights: AccessRights.Read }
 		};
 
@@ -88,7 +88,7 @@ describe('test request subscription route', () => {
 		const foundSubscription: Subscription = {
 			accessRights: AccessRights.Read,
 			channelAddress: 'testaddress',
-			identityId: 'did:iota:1234',
+			id: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
 			state: 'teststate',
@@ -111,7 +111,7 @@ describe('test request subscription route', () => {
 		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read }
 		};
 
@@ -141,7 +141,7 @@ describe('test request subscription route', () => {
 		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read }
 		};
 
@@ -150,7 +150,7 @@ describe('test request subscription route', () => {
 		const expectedSubscription: Subscription = {
 			accessRights: AccessRights.Read,
 			channelAddress: 'testaddress',
-			identityId: 'did:iota:1234',
+			id: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
 			state: 'teststate',
@@ -185,7 +185,7 @@ describe('test request subscription route', () => {
 		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Audit, presharedKey }
 		};
 
@@ -193,7 +193,7 @@ describe('test request subscription route', () => {
 
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
-			identityId: 'did:iota:1234',
+			id: 'did:iota:1234',
 			publicKey: 'testpublickey',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
@@ -232,7 +232,7 @@ describe('test request subscription route', () => {
 		}));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
-			user: { identityId: 'did:iota:1234' },
+			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.ReadAndWrite, presharedKey } // should not consider these ReadAndWrite rights if subscription request has presharedKey
 		};
 
@@ -240,7 +240,7 @@ describe('test request subscription route', () => {
 
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
-			identityId: 'did:iota:1234',
+			id: 'did:iota:1234',
 			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,

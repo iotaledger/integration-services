@@ -21,8 +21,8 @@ export const getSubscriptionsByAuthorization = async (channelAddress: string, is
 	return MongoDbService.getDocuments<Subscription>(collectionName, query);
 };
 
-export const getSubscription = async (channelAddress: string, identityId: string): Promise<Subscription | null> => {
-	const query = { _id: getIndex(identityId, channelAddress) };
+export const getSubscription = async (channelAddress: string, id: string): Promise<Subscription | null> => {
+	const query = { _id: getIndex(id, channelAddress) };
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
@@ -38,7 +38,7 @@ export const getSubscriptionByPublicKey = async (channelAddress: string, publicK
 
 export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
 	const document = {
-		_id: getIndex(subscription.identityId, subscription.channelAddress),
+		_id: getIndex(subscription.id, subscription.channelAddress),
 		...subscription,
 		created: new Date()
 	};
@@ -48,11 +48,11 @@ export const addSubscription = async (subscription: Subscription): Promise<Inser
 
 export const updateSubscription = async (
 	channelAddress: string,
-	identityId: string,
+	id: string,
 	subscriptionUpdate: SubscriptionUpdate
 ): Promise<UpdateWriteOpResult> => {
-	const query = { _id: getIndex(identityId, channelAddress) };
-	// updates on channelAddress, publicKey, identityId and type are not allowed
+	const query = { _id: getIndex(id, channelAddress) };
+	// updates on channelAddress, publicKey, id and type are not allowed
 	const { state, subscriptionLink, isAuthorized, accessRights, keyloadLink, sequenceLink, pskId } = subscriptionUpdate;
 	const plainUpdate = MongoDbService.getPlainObject({
 		state,
@@ -63,21 +63,21 @@ export const updateSubscription = async (
 		sequenceLink,
 		pskId
 	});
-	
+
 	const update = {
 		$set: { ...plainUpdate }
 	};
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const removeSubscription = async (channelAddress: string, identityId: string): Promise<DeleteWriteOpResultObject> => {
-	const query = { _id: getIndex(identityId, channelAddress) };
+export const removeSubscription = async (channelAddress: string, id: string): Promise<DeleteWriteOpResultObject> => {
+	const query = { _id: getIndex(id, channelAddress) };
 	return MongoDbService.removeDocument(collectionName, query);
 };
 
-export const updateSubscriptionState = async (channelAddress: string, identityId: string, state: string): Promise<UpdateWriteOpResult> => {
+export const updateSubscriptionState = async (channelAddress: string, id: string, state: string): Promise<UpdateWriteOpResult> => {
 	const query = {
-		_id: getIndex(identityId, channelAddress)
+		_id: getIndex(id, channelAddress)
 	};
 	const update = {
 		$set: {
@@ -91,14 +91,14 @@ export const updateSubscriptionState = async (channelAddress: string, identityId
 
 export const setSubscriptionAuthorization = async (
 	channelAddress: string,
-	identityId: string,
+	id: string,
 	isAuthorized: boolean,
 	keyloadLink: string,
 	sequenceLink: string
 ): Promise<UpdateWriteOpResult> => {
 	const query = {
 		channelAddress,
-		identityId
+		id
 	};
 	const update = {
 		$set: {

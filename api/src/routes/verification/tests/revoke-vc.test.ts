@@ -58,7 +58,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: identityToRevoke },
+				user: { id: identityToRevoke },
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -99,7 +99,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:4321' }, // different request user id than initiatorId
+				user: { id: 'did:iota:4321' }, // different request user id than initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -141,7 +141,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:1234' }, // same request user id as initiatorId
+				user: { id: 'did:iota:1234' }, // same request user id as initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -184,7 +184,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' }, // same request user id as linkedIdentity / subject id
+				user: { id: 'did:iota:CkPB6oBoPqewFmZGMNXmb47hZ6P2ymhaX8iFnLbD82YN' }, // same request user id as linkedIdentity / subject id
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -226,7 +226,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin }, // user is an admin
+				user: { id: 'did:iota:11223344', role: UserRoles.Admin }, // user is an admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -270,7 +270,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
+				user: { id: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -314,7 +314,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
+				user: { id: 'did:iota:11223344', role: UserRoles.Admin, type: UserType.Person }, // user is an admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -355,7 +355,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:11223344', role: UserRoles.Manager, type: UserType.Person }, // user is an org admin
+				user: { id: 'did:iota:11223344', role: UserRoles.Manager, type: UserType.Person }, // user is an org admin
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -396,7 +396,7 @@ describe('test authentication routes', () => {
 				.spyOn(KeyCollectionLinksDB, 'revokeVerifiableCredential')
 				.mockImplementation(async () => null);
 			const req: any = {
-				user: { identityId: 'did:iota:1234', type: UserType.Person }, // same request user id as initiatorId
+				user: { id: 'did:iota:1234', type: UserType.Person }, // same request user id as initiatorId
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};

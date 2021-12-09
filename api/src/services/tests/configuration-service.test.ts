@@ -57,7 +57,7 @@ describe('test configuration service', () => {
 
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [{ identityId: 'did:iota:1234', publicKey: 'testpublickey' }]);
+			.mockImplementation(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
 		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
@@ -78,7 +78,7 @@ describe('test configuration service', () => {
 
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [{ identityId: null, publicKey: 'testpublickey' }]); // no valid id
+			.mockImplementation(async () => [{ id: null, publicKey: 'testpublickey' }]); // no valid id
 		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
@@ -98,8 +98,8 @@ describe('test configuration service', () => {
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
 		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => [
-			{ identityId: 'did:iota:1234', publicKey: 'testpublickey' },
-			{ identityId: 'did:iota:123456', publicKey: 'testpublickey2' }
+			{ id: 'did:iota:1234', publicKey: 'testpublickey' },
+			{ id: 'did:iota:123456', publicKey: 'testpublickey2' }
 		]); // two root identities
 		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
 
@@ -121,7 +121,7 @@ describe('test configuration service', () => {
 
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [{ identityId: 'did:iota:1234', publicKey: 'testpublickey' }]);
+			.mockImplementation(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
 		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => {
 			return {} as any;
 		});

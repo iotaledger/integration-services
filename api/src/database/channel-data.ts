@@ -6,11 +6,11 @@ import { ChannelLogRequestOptions } from '../models/types/channel-info';
 import { decrypt, encrypt } from '../utils/encryption';
 
 const collectionName = CollectionNames.channelData;
-const getIndex = (link: string, identityId: string) => `${link}-${identityId}`;
+const getIndex = (link: string, id: string) => `${link}-${id}`;
 
 export const getChannelData = async (
 	channelAddress: string,
-	identityId: string,
+	id: string,
 	options: ChannelLogRequestOptions,
 	secret: string
 ): Promise<ChannelData[]> => {
@@ -21,7 +21,7 @@ export const getChannelData = async (
 	const createdFilter = startDate || endDate ? { 'log.created': { ...startFilter, ...endFilter } } : {};
 	const query = {
 		channelAddress,
-		identityId,
+		id,
 		...createdFilter
 	};
 	const skip = index > 0 ? index * limit : 0;
@@ -38,20 +38,15 @@ export const getChannelData = async (
 	});
 };
 
-export const addChannelData = async (
-	channelAddress: string,
-	identityId: string,
-	channelData: ChannelData[],
-	secret: string
-): Promise<void> => {
+export const addChannelData = async (channelAddress: string, id: string, channelData: ChannelData[], secret: string): Promise<void> => {
 	const imported = getDateStringFromDate(new Date());
 
 	const documents = channelData.map((data) => {
 		const encryptedPayload = encrypt(JSON.stringify(data.log.payload), secret);
 		return {
-			_id: getIndex(data.link, identityId),
+			_id: getIndex(data.link, id),
 			channelAddress,
-			identityId,
+			id,
 			imported,
 			link: data.link,
 			messageId: data.messageId,
@@ -68,7 +63,7 @@ export const addChannelData = async (
 	}
 };
 
-export const removeChannelData = async (channelAddress: string, identityId: string): Promise<void> => {
-	const query = { channelAddress, identityId };
+export const removeChannelData = async (channelAddress: string, id: string): Promise<void> => {
+	const query = { channelAddress, id };
 	await MongoDbService.removeDocuments(collectionName, query);
 };

@@ -1,18 +1,18 @@
 import { CONFIG } from '../config/config';
 import { axiosClient } from '../utils/client';
 
-export const checkSubscriptionState = async (channelAddress: string, identityId: string) => {
+export const checkSubscriptionState = async (channelAddress: string, id: string) => {
 	console.log('Checking subscription state...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
-	const res = await axiosClient.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}/${identityId}${apiKey}`);
+	const res = await axiosClient.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}/${id}${apiKey}`);
 
 	if (res?.status === 200) {
 		if (res.data === '') {
 			await requestSubscription(channelAddress);
-			console.log(`Subscription requested. Please authorize via identity id: ${identityId}`);
+			console.log(`Subscription requested. Please authorize via identity id: ${id}`);
 			process.exit();
 		} else if (!res.data.isAuthorized) {
-			console.log(`Subscription already requested. Please authorize via identity id: ${identityId}`);
+			console.log(`Subscription already requested. Please authorize via identity id: ${id}`);
 			process.exit();
 		} else if (res.data.isAuthorized) {
 			console.log('Subscription authorized!');

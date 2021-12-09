@@ -38,7 +38,7 @@ describe('test authentication routes', () => {
 		it('should return trusted roots.', async () => {
 			const getTrustedRootIdsSpy = jest
 				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
-				.mockReturnValue(Promise.resolve([{ identityId: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }]));
+				.mockReturnValue(Promise.resolve([{ id: 'did:iota:7boYqeGX34Kpukr84N2wwaKcJLkMwiZDCXbTpggxnec9' }]));
 			const req: any = {
 				params: {},
 				body: null

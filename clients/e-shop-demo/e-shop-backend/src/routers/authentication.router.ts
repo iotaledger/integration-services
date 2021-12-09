@@ -3,6 +3,6 @@ import { getJWT, getNonce } from '../routes/authentication.route';
 
 export const authenticationRouter = Router();
 
-authenticationRouter.get('/nonce/:identityId', getNonce);
+authenticationRouter.get('/nonce/:id', getNonce);
 
-authenticationRouter.post('/authenticate/:identityId', getJWT);
+authenticationRouter.post('/authenticate/:id', getJWT);

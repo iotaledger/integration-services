@@ -44,14 +44,14 @@ export class IdentityRoutes {
 
 	getUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
-			const identityId = _.get(req, 'params.identityId');
+			const id = _.get(req, 'params.id');
 
-			if (_.isEmpty(identityId)) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
+			if (_.isEmpty(id)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no id provided' });
 			}
 
-			const { isAuthorized } = this.authorizationService.isAuthorized(req.user, identityId);
-			const user = await this.userService.getUser(identityId, isAuthorized);
+			const { isAuthorized } = this.authorizationService.isAuthorized(req.user, id);
+			const user = await this.userService.getUser(id, isAuthorized);
 			res.send(user);
 		} catch (error) {
 			this.logger.error(error);
@@ -79,7 +79,7 @@ export class IdentityRoutes {
 		try {
 			const user = req.body;
 
-			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, user.identityId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, user.id);
 			if (!isAuthorized) {
 				throw error;
 			}
@@ -99,23 +99,23 @@ export class IdentityRoutes {
 
 	deleteUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
-			const identityId = _.get(req, 'params.identityId');
+			const id = _.get(req, 'params.id');
 			const revokeCredentials: boolean = <string>req?.query?.['revoke-credentials'] === 'true';
 
-			if (_.isEmpty(identityId)) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
+			if (_.isEmpty(id)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no id provided' });
 			}
 
-			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, identityId);
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, id);
 			if (!isAuthorized) {
 				throw error;
 			}
 
 			if (revokeCredentials) {
-				await this.verificationService.revokeVerifiableCredentials(identityId);
+				await this.verificationService.revokeVerifiableCredentials(id);
 			}
 
-			await this.userService.deleteUser(identityId);
+			await this.userService.deleteUser(id);
 			res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);

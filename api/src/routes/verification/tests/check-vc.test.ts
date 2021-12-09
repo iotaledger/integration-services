@@ -87,7 +87,7 @@ describe('test authentication routes', () => {
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const getTrustedRootIdsSpy = jest
 				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
-				.mockReturnValue(Promise.resolve([{ identityId: 'did:iota:123noissuer' }]));
+				.mockReturnValue(Promise.resolve([{ id: 'did:iota:123noissuer' }]));
 
 			const req: any = {
 				params: {},
@@ -111,7 +111,7 @@ describe('test authentication routes', () => {
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const getTrustedRootIdsSpy = jest
 				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
-				.mockReturnValue(Promise.resolve([{ identityId: ServerIdentityMock.doc.id }]));
+				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.doc.id }]));
 
 			const req: any = {
 				params: {},
@@ -134,7 +134,7 @@ describe('test authentication routes', () => {
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockReturnValue(Promise.resolve(ServerIdentityMock));
 			const getTrustedRootIdsSpy = jest
 				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
-				.mockReturnValue(Promise.resolve([{ identityId: ServerIdentityMock.doc.id }]));
+				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.doc.id }]));
 
 			const req: any = {
 				params: {},

@@ -27,13 +27,13 @@ export const serverInfoRouter = Router();
  *               properties:
  *                 commitHash:
  *                   type: string
- *                 identityId:
+ *                 id:
  *                   type: string
  *                 version:
  *                   type: string
  *               required:
  *                 - commitHash
- *                 - identityId
+ *                 - id
  *                 - version
  *       5XX:
  *         description: Unexpected error

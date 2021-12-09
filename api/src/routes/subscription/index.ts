@@ -19,16 +19,16 @@ export class SubscriptionRoutes {
 	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const paramChannelAddress = _.get(req, 'params.channelAddress');
-			const paramIdentityId = _.get(req, 'params.identityId');
+			const paramIdentityId = _.get(req, 'params.id');
 			const subscription = req.body as Subscription;
-			const { channelAddress, identityId, publicKey } = subscription;
+			const { channelAddress, id, publicKey } = subscription;
 
 			// paramChannelAddress and paramIdentityId are just used for REST completeness
 			if (!paramChannelAddress || !paramIdentityId || !publicKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress, identityId or publicKey provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress, id or publicKey provided' });
 			}
 
-			let existingSubscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			let existingSubscription = await this.subscriptionService.getSubscription(channelAddress, id);
 			if (existingSubscription) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'subscription already added' });
 			}
@@ -49,16 +49,16 @@ export class SubscriptionRoutes {
 	updateSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const subscriberId = _.get(req, 'params.identityId');
-			const userIdentityId = req.user.identityId;
+			const subscriberId = _.get(req, 'params.id');
+			const userIdentityId = req.user.id;
 			const subscriptionUpdate = req.body as SubscriptionUpdate;
 
 			if (!channelAddress || !subscriberId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
 			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
-			
+
 			// updating is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
 				return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'not authorized to update the subscription' });
@@ -81,11 +81,11 @@ export class SubscriptionRoutes {
 	deleteSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const subscriberId = _.get(req, 'params.identityId');
-			const userIdentityId = req.user.identityId;
+			const subscriberId = _.get(req, 'params.id');
+			const userIdentityId = req.user.id;
 
 			if (!channelAddress || !subscriberId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
 			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
@@ -133,12 +133,12 @@ export class SubscriptionRoutes {
 	getSubscriptionByIdentity = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const identityId = _.get(req, 'params.identityId');
-			if (!channelAddress || !identityId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+			const id = _.get(req, 'params.id');
+			if (!channelAddress || !id) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
-			const subscriptions = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			const subscriptions = await this.subscriptionService.getSubscription(channelAddress, id);
 			return res.status(StatusCodes.OK).send(subscriptions);
 		} catch (error) {
 			this.logger.error(error);
@@ -150,10 +150,10 @@ export class SubscriptionRoutes {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { seed, accessRights, presharedKey } = req.body as RequestSubscriptionBody;
-			const subscriberId = req.user.identityId;
+			const subscriberId = req.user.id;
 
 			if (!subscriberId || !channelAddress) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
 			const subscription = await this.subscriptionService.getSubscription(channelAddress, subscriberId);
@@ -179,12 +179,12 @@ export class SubscriptionRoutes {
 	revokeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
-			const authorId = req.user?.identityId;
+			const authorId = req.user?.id;
 			const body = req.body as AuthorizeSubscriptionBody;
-			const { subscriptionLink, identityId } = body;
+			const { subscriptionLink, id } = body;
 
 			if (!authorId || !channelAddress) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
 			const authorSubscription = await this.subscriptionService.getSubscription(channelAddress, authorId);
@@ -195,8 +195,8 @@ export class SubscriptionRoutes {
 
 			// check if subscription exists to revoke
 			let subscription: Subscription;
-			if (!subscriptionLink && identityId) {
-				subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			if (!subscriptionLink && id) {
+				subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 			} else {
 				subscription = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
 			}
@@ -218,16 +218,16 @@ export class SubscriptionRoutes {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const body = req.body as AuthorizeSubscriptionBody;
-			const { subscriptionLink, identityId } = body;
-			const authorId = req.user?.identityId;
+			const { subscriptionLink, id } = body;
+			const authorId = req.user?.id;
 			let subscription: Subscription = undefined;
 
 			if (!authorId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no id provided' });
 			}
 
-			if (!subscriptionLink && identityId) {
-				subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+			if (!subscriptionLink && id) {
+				subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 			} else {
 				subscription = await this.subscriptionService.getSubscriptionByLink(subscriptionLink);
 			}

@@ -51,7 +51,7 @@ export class KeyGenerator {
 			throw new Error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
 		}
 
-		const serverIdentityId = rootServerIdentities[0]?.identityId;
+		const serverIdentityId = rootServerIdentities[0]?.id;
 
 		if (serverIdentityId) {
 			this.configService.serverIdentityId = serverIdentityId;
@@ -90,10 +90,10 @@ export class KeyGenerator {
 		}
 
 		this.logger.log('Add server id as trusted root...');
-		await addTrustedRootId(serverUser.identityId);
+		await addTrustedRootId(serverUser.id);
 
 		this.logger.log('Generate key collection...');
-		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.identityId);
+		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.id);
 		const keyCollectionIndex = verificationService.getKeyCollectionIndex(index);
 		const kc = await verificationService.getKeyCollection(keyCollectionIndex);
 
@@ -105,10 +105,10 @@ export class KeyGenerator {
 		const subject: Subject = {
 			claim: serverUser.claim,
 			credentialType: CredentialTypes.VerifiedIdentityCredential,
-			identityId: serverUser.identityId
+			id: serverUser.id
 		};
 
-		await verificationService.verifyIdentity(subject, serverUser.identityId, serverUser.identityId);
+		await verificationService.verifyIdentity(subject, serverUser.id, serverUser.id);
 
 		this.logger.log(`Setup Done!`);
 	}

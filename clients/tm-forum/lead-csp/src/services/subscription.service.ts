@@ -16,7 +16,7 @@ const authorizeSubscription = async (channelAddress: string, subsciptionLink: st
 	}
 };
 
-export const checkSubscriptionState = async (channelAddress: string, identityId: string) => {
+export const checkSubscriptionState = async (channelAddress: string, id: string) => {
 	console.log('Checking subscription state...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
@@ -24,7 +24,7 @@ export const checkSubscriptionState = async (channelAddress: string, identityId:
 	if (res.status === 200) {
 		const subscriptions = res.data;
 
-		const subscription = subscriptions.find((subscription: any) => subscription.identityId === identityId);
+		const subscription = subscriptions.find((subscription: any) => subscription.id === id);
 
 		if (subscription && !subscription.isAuthorized) {
 			await authorizeSubscription(channelAddress, subscription.subscriptionLink);

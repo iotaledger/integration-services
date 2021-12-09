@@ -63,11 +63,11 @@ export class VerificationService {
 
 				const credential: Credential<CredentialSubject> = {
 					type: subject.credentialType,
-					id: subject.identityId,
+					id: subject.id,
 					subject: {
 						...claim,
 						type: subject.claim.type,
-						id: subject.identityId,
+						id: subject.id,
 						initiatorId
 					}
 				};
@@ -126,8 +126,8 @@ export class VerificationService {
 		return isVerified;
 	}
 
-	async revokeVerifiableCredentials(identityId: string) {
-		const credentials = await VerifiableCredentialsDb.getVerifiableCredentials(identityId);
+	async revokeVerifiableCredentials(id: string) {
+		const credentials = await VerifiableCredentialsDb.getVerifiableCredentials(id);
 		if (!credentials || credentials.length === 0) {
 			return;
 		}
@@ -191,7 +191,7 @@ export class VerificationService {
 			throw new Error('no trusted roots found!');
 		}
 
-		return trustedRoots.map((root) => root.identityId);
+		return trustedRoots.map((root) => root.id);
 	}
 
 	async addTrustedRootId(trustedRootId: string) {
@@ -202,7 +202,7 @@ export class VerificationService {
 		return TrustedRootsDb.removeTrustedRootId(trustedRootId);
 	}
 
-	async setUserVerified(identityId: string, issuerId: string, vc: VerifiableCredentialJson) {
+	async setUserVerified(id: string, issuerId: string, vc: VerifiableCredentialJson) {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}

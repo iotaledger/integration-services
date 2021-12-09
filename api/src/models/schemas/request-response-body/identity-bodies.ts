@@ -7,5 +7,5 @@ export const CreateIdentityBodySchema = Type.Object({
 });
 
 export const UpdateIdentityBodySchema = Type.Object({
-	identityId: Type.String({ minLength: 50, maxLength: 53 }) // did
+	id: Type.String({ minLength: 50, maxLength: 53 }) // did
 });

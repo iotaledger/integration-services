@@ -3,12 +3,12 @@ import { AccessRights } from '../subscription';
 
 export const AuthorizeSubscriptionBodySchema = Type.Object({
 	subscriptionLink: Type.Optional(Type.String({ minLength: 1 })),
-	identityId: Type.Optional(Type.String({ minLength: 1 }))
+	id: Type.Optional(Type.String({ minLength: 1 }))
 });
 
 export const RevokeSubscriptionBodySchema = Type.Object({
 	subscriptionLink: Type.Optional(Type.String({ minLength: 1 })),
-	identityId: Type.Optional(Type.String({ minLength: 1 }))
+	id: Type.Optional(Type.String({ minLength: 1 }))
 });
 
 export const RequestSubscriptionBodySchema = Type.Object({
