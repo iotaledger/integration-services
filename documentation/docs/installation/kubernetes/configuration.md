@@ -2,11 +2,10 @@
 
 In this section are reported all the configuration parameters that can be used. 
 All values must be changed before deployment. 
-In case a deployment is already running you can apply again your configuration and run again the following commands:
+In case a deployment is already running you can apply again your configuration and run again the following command:
 
 ```
-$ kubectl apply -f integration-services/kubernetes/optional
-$ kubectl apply -f integration-services/kubernetes
+$ kubectl apply -f kubernetes/optional -f kubernetes/
 ```
 
 ### Database

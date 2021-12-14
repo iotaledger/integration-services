@@ -2,7 +2,7 @@
 
 Once the service is deployed in the Kubernetes cluster and ready to serve requests there are different way to access to the APIs.
 
-## Minikube Ingress
+## Minikube Nginx Ingress
 
 In minikube you can install Nginx Ingress Controller with the following:
 
