@@ -1,5 +1,5 @@
 import { ChannelData } from '../models/types/channel-data';
-import { ChannelInfo } from '../models/types/channel-info';
+import { ChannelInfo, ChannelInfoSearch } from '../models/types/channel-info';
 import { ClientConfig } from '../models/clientConfig';
 import {
   AddChannelLogBody,
@@ -56,19 +56,33 @@ export class ChannelClient extends BaseClient {
    */
   async read(
     channelAddress: string,
-    limit?: number,
-    index?: number,
-    asc = true,
-    startDate?: Date,
-    endDate?: Date
+    channelOptions?: {
+      limit?: number;
+      index?: number;
+      asc?: boolean;
+      startDate?: Date;
+      endDate?: Date;
+    }
   ): Promise<ChannelData[]> {
+    const { limit, index, asc, startDate, endDate } = channelOptions || {};
     const param1 = startDate !== undefined ? { 'start-date': startDate } : {};
     const param2 = endDate !== undefined ? { 'end-date': endDate } : {};
-    return await this.get(
+    const param3 = asc !== undefined ? { asc } : { asc: true };
+    const channelData: any[] = await this.get(
       `channels/logs/${channelAddress}`,
-      { limit, index, asc, ...param1, ...param2 },
+      { limit, index, param3, ...param1, ...param2 },
       this.jwtToken
     );
+    // Temporary fix to replace null values with undefined
+    // TODO: fix this in backend
+    return channelData.map((data) => {
+      Object.keys(data?.log).forEach((key) => {
+        if (data?.log[key] === null) {
+          data.log[key] = undefined;
+        }
+      });
+      return data ;
+    }) as any[];
   }
 
   /**
@@ -114,18 +128,13 @@ export class ChannelClient extends BaseClient {
    * @param index
    * @returns
    */
-  async search(
-    author?: string,
-    topicType?: string,
-    topicSource?: string,
-    created?: Date,
-    latestMessage?: Date,
-    limit?: number,
-    index?: number
-  ): Promise<ChannelInfo[]> {
-    const param1 = topicType != undefined ? { 'topic-type': topicType } : {};
-    const param2 = topicSource != undefined ? { 'topic-source': topicSource } : {};
-    const param3 = latestMessage != undefined ? { 'latest-message': latestMessage } : {};
+  async search(searchCriteria: ChannelInfoSearch): Promise<ChannelInfo[]> {
+    const { author, authorId, topicType, topicSource, created, latestMessage, limit, index } =
+      searchCriteria;
+    const param1 = topicType !== undefined ? { 'topic-type': topicType } : {};
+    const param2 = topicSource !== undefined ? { 'topic-source': topicSource } : {};
+    const param3 = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
+    const param4 = authorId !== undefined ? { 'author-id': authorId } : {};
     return await this.get(
       'channel-info/search',
       {
@@ -134,6 +143,7 @@ export class ChannelClient extends BaseClient {
         ...param2,
         created,
         ...param3,
+        ...param4,
         limit,
         index
       },
