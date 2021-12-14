@@ -28,9 +28,7 @@ async function trustedAuthorities() {
   await identity.authenticate(rootIdentityWithKeys.doc.id, rootIdentityWithKeys.key.secret);
 
   // Create an identity for a driver to issue him a driving license
-  const driverIdentity = await identity.create('Driver', {
-    type: 'User'
-  });
+  const driverIdentity = await identity.create('Driver');
 
   //Get root identity to issue an credential for the new driver
   const rootIdentity = await identity.find(rootIdentityWithKeys?.doc?.id);

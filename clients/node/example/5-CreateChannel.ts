@@ -5,7 +5,7 @@ const identity = new IdentityClient();
 
 async function createChannel() {
   // Create a new user. The user is used for authentication only.
-  const user = await identity.create('User', { type: 'User' });
+  const user = await identity.create('User');
   // Authenticate as the user
   await channel.authenticate(user.doc.id, user.key.secret);
 
