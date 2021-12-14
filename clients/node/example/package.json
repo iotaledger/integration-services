@@ -1,7 +1,7 @@
 {
-  "name": "example",
-  "version": "1.0.0",
-  "description": "",
+  "name": "is-client-examples",
+  "version": "0.0.1",
+  "description": "Examples on how to use the node.js client for the integration services.",
   "scripts": {
     "example-1": "ts-node 1-CreateIdentityAndCredential.ts",
     "example-2": "ts-node 2-UpdateUser.ts",
@@ -11,7 +11,16 @@
     "example-6": "ts-node 6-AuthorizeToChannel.ts",
     "example-7": "ts-node 7-SearchChannelAndValidateData.ts"
   },
-  "author": "mastrogiovanni <michele.mastrogiovanni@gmail.com>",
+  "author": {
+    "name": "Tim Sigl",
+    "email": "tim.sigl@iota.org"
+  },
+  "contributors": [
+    {
+      "name": "Mastrogiovanni",
+      "email": "michele.mastrogiovanni@gmail.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "dotenv": "^10.0.0"

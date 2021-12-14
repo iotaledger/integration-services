@@ -6,7 +6,7 @@ import {
   UserType
 } from 'integration-services-node';
 import * as dotenv from 'dotenv';
-import { externalDriverCredential1, externalDriverCredential2 } from './externalData';
+import { externalDriverCredential1 } from './externalData';
 dotenv.config();
 
 const identity = new IdentityClient();

@@ -6,7 +6,6 @@ import {
   UserType
 } from 'integration-services-node';
 import * as dotenv from 'dotenv';
-import {} from '../lib/models/credentialType';
 dotenv.config();
 
 const identity = new IdentityClient();
