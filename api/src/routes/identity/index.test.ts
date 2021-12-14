@@ -1,6 +1,6 @@
 import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
-import * as IdentityDocsDb from '../../database/identity-docs';
+import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
 import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
@@ -338,7 +338,9 @@ describe('test user routes', () => {
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
 			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+			const saveIdentitySpy = jest
+				.spyOn(IdentityDocsDb, 'saveIdentityKeys')
+				.mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
@@ -364,7 +366,7 @@ describe('test user routes', () => {
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
 			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity');
+			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentityKeys');
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
@@ -385,7 +387,7 @@ describe('test user routes', () => {
 			await userRoutes.createIdentity(req, res, nextMock);
 			expect(identitySpy).toHaveBeenCalledWith();
 			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
-			expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock, serverSecret);
+			expect(saveIdentitySpy).toHaveBeenCalledWith({ id: UserIdentityMock.doc.id, key: UserIdentityMock.key }, serverSecret);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
 		});

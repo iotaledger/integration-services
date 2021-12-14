@@ -3,9 +3,9 @@ import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
-import { CreateIdentityBody, IdentityJsonUpdate, VerifiableCredentialJson } from '../models/types/identity';
+import { CreateIdentityBody, IdentityJson, VerifiableCredentialJson, IdentityKeys } from '../models/types/identity';
 import { SchemaValidator } from '../utils/validator';
-import * as IdentityDocsDb from '../database/identity-docs';
+import * as IdentityDocsDb from '../database/identity-keys';
 import { SsiService } from './ssi-service';
 import { ILogger } from '../utils/logger';
 
@@ -29,7 +29,7 @@ export class UserService {
 			.filter((u) => u);
 	}
 
-	async createIdentity(createIdentityBody: CreateIdentityBody): Promise<IdentityJsonUpdate> {
+	async createIdentity(createIdentityBody: CreateIdentityBody): Promise<IdentityJson> {
 		const identity = await this.ssiService.createIdentity();
 		const user: User = {
 			...createIdentityBody,
@@ -40,7 +40,11 @@ export class UserService {
 		await this.addUser(user);
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
-			await IdentityDocsDb.saveIdentity(identity, this.serverSecret);
+			const identityKeys: IdentityKeys = {
+				id: identity.doc.id,
+				key: identity.key
+			};
+			await IdentityDocsDb.saveIdentityKeys(identityKeys, this.serverSecret);
 		}
 
 		return {

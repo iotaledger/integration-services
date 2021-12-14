@@ -11,7 +11,7 @@ import {
 import {
 	ClaimSchema,
 	RevokeVerificationBodySchema,
-	VerifyIdentityBodySchema,
+	CreateCredentialBodySchema,
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
 	SubjectBodySchema
@@ -21,11 +21,8 @@ import {
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
-	DocumentJsonUpdateSchema,
 	IdentityDocumentJsonSchema,
-	IdentityJsonUpdateSchema,
-	IdentityKeyPairJsonSchema,
-	LatestIdentityJsonSchema
+	IdentityKeyPairJsonSchema
 } from '../../models/schemas/identity';
 import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
 import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
@@ -54,7 +51,7 @@ const schemas = {
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema,
 	RevokeVerificationBodySchema,
-	VerifyIdentityBodySchema,
+	CreateCredentialBodySchema,
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
 	SubjectBodySchema,
@@ -75,11 +72,8 @@ const schemas = {
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
-	IdentityJsonUpdateSchema,
 	IdentityKeyPairJsonSchema,
 	IdentityDocumentJsonSchema,
-	LatestIdentityJsonSchema,
-	DocumentJsonUpdateSchema,
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,

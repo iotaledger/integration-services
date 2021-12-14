@@ -1,8 +1,8 @@
 import { CredentialSubject } from '../../../models/types/identity';
-import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock } from '../../../test/mocks/identities';
+import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock, ServerIdentityKey } from '../../../test/mocks/identities';
 import * as KeyCollectionDB from '../../../database/key-collection';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
-import * as IdentityDocsDb from '../../../database/identity-docs';
+import * as IdentityDocsDb from '../../../database/identity-keys';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
@@ -185,7 +185,7 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
 				user: { id: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
@@ -231,7 +231,7 @@ describe('test authentication routes', () => {
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-				ServerIdentityMock,
+				ServerIdentityKey,
 				expectedCredential,
 				expectedKeyCollection,
 				keyCollectionIndex,
@@ -252,7 +252,7 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = jest
 				.spyOn(verificationService, 'checkVerifiableCredential')
 				.mockImplementation(async () => initiatorVcIsVerified);
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
 				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
@@ -300,7 +300,7 @@ describe('test authentication routes', () => {
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-				ServerIdentityMock,
+				ServerIdentityKey,
 				expectedCredential,
 				expectedKeyCollection,
 				keyCollectionIndex,

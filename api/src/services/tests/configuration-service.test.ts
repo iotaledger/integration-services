@@ -2,7 +2,7 @@ import { ConfigMock } from '../../test/mocks/config';
 import { ConfigurationService } from '../configuration-service';
 import { LoggerMock } from '../../test/mocks/logger';
 import * as UserDb from '../../database/user';
-import * as IdentityDocDB from '../../database/identity-docs';
+import * as IdentityDocDB from '../../database/identity-keys';
 
 describe('test configuration service', () => {
 	let loggerSpy: jest.SpyInstance;
@@ -37,13 +37,13 @@ describe('test configuration service', () => {
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
 		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
 		await configService.getRootIdentityId();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalledWith();
-		expect(getIdentityDocSpy).not.toHaveBeenCalled();
+		expect(getIdentityKeysSpy).not.toHaveBeenCalled();
 		expect(loggerSpy).toHaveBeenCalledWith('No root identity found!');
 	});
 
@@ -58,13 +58,13 @@ describe('test configuration service', () => {
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementation(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
 		await configService.getRootIdentityId();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalledWith();
-		expect(getIdentityDocSpy).toHaveBeenCalledWith('did:iota:1234', ConfigMock.serverSecret);
+		expect(getIdentityKeysSpy).toHaveBeenCalledWith('did:iota:1234', ConfigMock.serverSecret);
 		expect(loggerSpy).toHaveBeenCalledWith('Root identity document with id: did:iota:1234 not found in database!');
 	});
 
@@ -79,13 +79,13 @@ describe('test configuration service', () => {
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementation(async () => [{ id: null, publicKey: 'testpublickey' }]); // no valid id
-		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
 		await configService.getRootIdentityId();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalledWith();
-		expect(getIdentityDocSpy).not.toHaveBeenCalled();
+		expect(getIdentityKeysSpy).not.toHaveBeenCalled();
 		expect(loggerSpy).toHaveBeenCalledWith('Root identity id not found');
 	});
 
@@ -101,13 +101,13 @@ describe('test configuration service', () => {
 			{ id: 'did:iota:1234', publicKey: 'testpublickey' },
 			{ id: 'did:iota:123456', publicKey: 'testpublickey2' }
 		]); // two root identities
-		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => null);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
 		await configService.getRootIdentityId();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalledWith();
-		expect(getIdentityDocSpy).not.toHaveBeenCalled();
+		expect(getIdentityKeysSpy).not.toHaveBeenCalled();
 		expect(loggerSpy).toHaveBeenCalledWith('Database is in bad state: found 2 root identities');
 	});
 
@@ -122,7 +122,7 @@ describe('test configuration service', () => {
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementation(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocDB, 'getIdentityDoc').mockImplementation(async () => {
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => {
 			return {} as any;
 		});
 
@@ -130,7 +130,7 @@ describe('test configuration service', () => {
 		const id = await configService.getRootIdentityId();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalledWith();
-		expect(getIdentityDocSpy).toHaveBeenCalledWith('did:iota:1234', ConfigMock.serverSecret);
+		expect(getIdentityKeysSpy).toHaveBeenCalledWith('did:iota:1234', ConfigMock.serverSecret);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(id).toEqual('did:iota:1234');
 	});

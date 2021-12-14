@@ -3,7 +3,7 @@ import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
-	VerifyIdentityBodySchema
+	CreateCredentialBodySchema
 } from '../../models/schemas/request-response-body/verification-bodies';
 import { VerificationRoutes } from '../../routes/verification';
 import { Logger } from '../../utils/logger';
@@ -247,7 +247,7 @@ verificationRouter.post(
 	'/create-credential',
 	apiKeyMiddleware,
 	authMiddleWare,
-	validate({ body: VerifyIdentityBodySchema }),
+	validate({ body: CreateCredentialBodySchema }),
 	createVerifiableCredential
 );
 

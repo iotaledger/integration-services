@@ -2,8 +2,8 @@ import { KeyGenerator } from '.';
 import { ConfigurationServiceMock } from '../test/mocks/service-mocks';
 import { LoggerMock } from '../test/mocks/logger';
 import * as UserDb from '../database/user';
-import * as IdentityDocs from '../database/identity-docs';
-import { ServerIdentityMock } from '../test/mocks/identities';
+import * as IdentityDocs from '../database/identity-keys';
+import { ServerIdentityMock, ServerIdentityKey } from '../test/mocks/identities';
 import { UserService } from '../services/user-service';
 import * as TrustedRootDb from '../database/trusted-roots';
 import * as VerifiableCredentialDb from '../database/verifiable-credentials';
@@ -32,13 +32,13 @@ describe('test keygenerator', () => {
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementationOnce(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => null);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => null);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 
 		await keyGenerator.keyGeneration();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalled();
-		expect(getIdentityDocSpy).toHaveBeenCalledWith('did:iota:1234', 'veryvery-very-very-server-secret');
+		expect(getIdentityKeysSpy).toHaveBeenCalledWith('did:iota:1234', 'veryvery-very-very-server-secret');
 		expect(loggerSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
 		expect(loggerSpy).toHaveBeenCalledWith('Error getting data from db');
 	});
@@ -50,14 +50,14 @@ describe('test keygenerator', () => {
 			.mockImplementation(async () => [
 				{ id: ServerIdentityMock.doc.id, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
 			]);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
 
 		await keyGenerator.keyGeneration();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalled();
-		expect(getIdentityDocSpy).toHaveBeenCalledWith(
+		expect(getIdentityKeysSpy).toHaveBeenCalledWith(
 			'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 			'veryvery-very-very-server-secret'
 		);
@@ -68,26 +68,26 @@ describe('test keygenerator', () => {
 	});
 
 	it('should find an invalid serveridentity doc because public and secret key are not compatible', async () => {
-		const unvalidServerIdentity = { ...ServerIdentityMock };
+		const unvalidServerIdentity = { ...ServerIdentityKey };
 		unvalidServerIdentity.key.public = 'wrongpublickey'; // found identity has wrong server keypair stored
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementationOnce(async () => [
 				{ id: ServerIdentityMock.doc.id, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
 			]);
-		const getIdentityDocSpy = jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => unvalidServerIdentity);
+		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => unvalidServerIdentity);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 
 		await keyGenerator.keyGeneration();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalled();
-		expect(getIdentityDocSpy).toHaveBeenCalledWith(
+		expect(getIdentityKeysSpy).toHaveBeenCalledWith(
 			'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 			'veryvery-very-very-server-secret'
 		);
 		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
 		expect(loggerErrorSpy).toHaveBeenCalledWith('error when signing or verifying the nonce, the secret key might have changed...');
-		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity malformed or not valid: ' + unvalidServerIdentity.doc.id);
+		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity malformed or not valid: ' + unvalidServerIdentity.id);
 	});
 
 	it('should create a new serveridentity since none exists but user not found', async () => {
@@ -95,7 +95,7 @@ describe('test keygenerator', () => {
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => null); // no user found
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('server user not found!');
 	});
@@ -107,7 +107,7 @@ describe('test keygenerator', () => {
 		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => null); // no keycollection
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 
@@ -119,11 +119,11 @@ describe('test keygenerator', () => {
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
 		VerificationService.prototype.getKeyCollectionIndex = jest.fn();
 		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => []);
-		const verifyIdentitySpy = jest.fn();
-		VerificationService.prototype.verifyIdentity = verifyIdentitySpy;
+		const issueCredentialSpy = jest.fn();
+		VerificationService.prototype.issueVerifiableCredential = issueCredentialSpy;
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
-		jest.spyOn(IdentityDocs, 'getIdentityDoc').mockImplementationOnce(async () => ServerIdentityMock);
+		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 
@@ -134,7 +134,7 @@ describe('test keygenerator', () => {
 			credentialType: CredentialTypes.VerifiedIdentityCredential,
 			id: ServerIdentityMock.userData.id
 		};
-		expect(verifyIdentitySpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
+		expect(issueCredentialSpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
 	});
 
 	afterEach(() => {

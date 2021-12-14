@@ -1,5 +1,5 @@
 import { Encoding } from '../../models/schemas/identity';
-import { IdentityJsonUpdate } from '../../models/types/identity';
+import { IdentityJson, IdentityKeys } from '../../models/types/identity';
 import { User, UserType } from '../../models/types/user';
 
 export const TestUsersMock = [
@@ -54,7 +54,7 @@ export const TestUsersMock = [
 ];
 
 // returned from localhost:3000/api/v1/identities/create
-export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const UserIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		authentication: [
@@ -108,11 +108,10 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
 		encoding: Encoding.base58
-	},
-	txHash: 'OGNVRNPA9LQKPEUQJEECRZRVMRAQA99RVTVUPIYQQGYVVFYBDRIHZGFVQQVKQHAPVGCZKMGUTZXAZ9999'
+	}
 };
 
-export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const ServerIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		verificationMethod: [
@@ -194,11 +193,15 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
 		encoding: Encoding.base58
-	},
-	txHash: 'LCHPWELIWGXUSHX9YACHICTLRHVGTFHXBEQILQBCCTDDRLJTBLYHTGRT9HKOLQZQHENEHPEGYMZD99999'
+	}
 };
 
-export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const ServerIdentityKey: IdentityKeys = {
+	id: ServerIdentityMock.doc.id,
+	key: ServerIdentityMock.key
+};
+
+export const DeviceIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		authentication: [
@@ -251,8 +254,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR',
 		encoding: Encoding.base58
-	},
-	txHash: 'CETPVHOIBPNGCWQQCQALVKQQOD9B9MLMU9ZMNFZHBPEAOTMWFTVDRRBMFYIETHDWXA9GLGYWAFQRA9999'
+	}
 };
 
 export const TestCredentialMock = {
