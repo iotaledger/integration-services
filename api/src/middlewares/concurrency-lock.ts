@@ -6,11 +6,10 @@ import { Logger } from '../utils/logger/index';
 
 export const concurrencyLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	const user = req?.user;
+	if (!user || !user.id) {
+		return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'no user id provided!' });
+	}
 	try {
-		if (!user || !user.id) {
-			return res.status(StatusCodes.UNAUTHORIZED).send({ error: 'no user id provided!' });
-		}
-
 		const lock = await getLock(user.id, lockName);
 
 		if (lock) {
@@ -29,7 +28,7 @@ export const concurrencyLock = (lockName: string) => async (req: AuthenticatedRe
 
 export const releaseConcurrencyLock = async (id: string, lockName: string) => {
 	const response = await removeLock(id, lockName);
-	if (response.result.n === 0) {
+	if (!response?.result?.n || response?.result?.n === 0) {
 		Logger.getInstance().error('could not release the lock!');
 	}
 };
