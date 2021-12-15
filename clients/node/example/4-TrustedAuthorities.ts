@@ -1,16 +1,12 @@
-import {
-  IdentityClient,
-  Manager,
-  IdentityJson,
-  CredentialTypes,
-  UserType
-} from 'integration-services-node';
-import * as dotenv from 'dotenv';
-import { externalDriverCredential1 } from './externalData';
-dotenv.config();
+import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'integration-services-node';
 
-const identity = new IdentityClient();
-let rootIdentityWithKeys: IdentityJson;
+import { externalDriverCredential1 } from './externalData';
+
+import { defaultConfig } from './configuration';
+
+const identity = new IdentityClient(defaultConfig);
+
+let rootIdentityWithKeys: IdentityKeys;
 
 async function setup() {
   // Create db connection
@@ -23,16 +19,17 @@ async function setup() {
   rootIdentityWithKeys = await manager.getRootIdentity();
   await manager.close();
 }
+
 async function trustedAuthorities() {
   // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.doc.id, rootIdentityWithKeys.key.secret);
+  await identity.authenticate(rootIdentityWithKeys?.id, rootIdentityWithKeys?.key?.secret);
 
   // Create an identity for a driver to issue him a driving license
   const driverIdentity = await identity.create('Driver');
 
   //Get root identity to issue an credential for the new driver
-  const rootIdentity = await identity.find(rootIdentityWithKeys?.doc?.id);
-  console.log(`Root identity's id: `, rootIdentity.identityId);
+  const rootIdentity = await identity.find(rootIdentityWithKeys?.id);
+  console.log(`Root identity's id: `, rootIdentity.id);
 
   // Get root identity's credential to create new credentials
   // @ts-ignore: Object is possibly 'null'.

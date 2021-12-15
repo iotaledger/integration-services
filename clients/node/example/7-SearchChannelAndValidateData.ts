@@ -1,10 +1,11 @@
 import { IdentityClient, ChannelClient } from 'integration-services-node';
-import { AccessRights } from '../lib/models/schemas/subscription';
+
+import { defaultConfig } from './configuration';
 
 // In this example we will use two instances of the ChannelClient() both will authenticate a different user.
-const ownerClient = new ChannelClient();
-const userClient = new ChannelClient();
-const identity = new IdentityClient();
+const ownerClient = new ChannelClient(defaultConfig);
+const userClient = new ChannelClient(defaultConfig);
+const identity = new IdentityClient(defaultConfig);
 
 async function searchChannelAndValidateData() {
   // Creating a channel owner who creates the channel and a channel user who will be authorized to read the channel

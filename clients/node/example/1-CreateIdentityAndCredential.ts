@@ -1,15 +1,9 @@
-import {
-  IdentityClient,
-  Manager,
-  IdentityJson,
-  CredentialTypes,
-  UserType
-} from 'integration-services-node';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'integration-services-node';
 
-const identity = new IdentityClient();
-let rootIdentityWithKeys: IdentityJson;
+import { defaultConfig } from './configuration';
+
+const identity = new IdentityClient(defaultConfig);
+let rootIdentityWithKeys: IdentityKeys;
 
 async function setup() {
   // Create db connection
@@ -25,14 +19,16 @@ async function setup() {
 
 async function createIdentityAndCheckVCs() {
   // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.doc.id, rootIdentityWithKeys.key.secret);
+  await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
 
   //Get root identity
-  const rootIdentity = await identity.find(rootIdentityWithKeys?.doc?.id);
+  const rootIdentity = await identity.find(rootIdentityWithKeys?.id);
 
   // Get root identy's VC
   // @ts-ignore: Object is possibly 'null'.
   const identityCredential = rootIdentity!.verifiableCredentials[0];
+
+  console.log("Identity Credential of Root", identityCredential);
 
   // Create identity for user
   const userIdentity = await identity.create('User');

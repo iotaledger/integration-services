@@ -1,10 +1,9 @@
-import { IdentityClient, Manager, IdentityJson } from 'integration-services-node';
-import * as dotenv from 'dotenv';
-import { searchCriteria } from '../src/models/searchCriteria';
-dotenv.config();
+import { searchCriteria, IdentityClient, Manager, IdentityKeys } from 'integration-services-node';
 
-let identity = new IdentityClient();
-let rootIdentityWithKeys: IdentityJson;
+import { defaultConfig } from './configuration';
+
+let identity = new IdentityClient(defaultConfig);
+let rootIdentityWithKeys: IdentityKeys;
 
 async function setup() {
   // Create db connection
@@ -20,7 +19,7 @@ async function setup() {
 
 async function searchIdentityAndDelete() {
   // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.doc.id, rootIdentityWithKeys.key.secret);
+  await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
 
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
   const search: searchCriteria = { registrationDate: yesterday };
@@ -31,11 +30,11 @@ async function searchIdentityAndDelete() {
     // Take the first identities of the searched identities
     const userIdentity = identities[0];
     // Remove the user and also revoke the user's credentials
-    await identity.remove(userIdentity.identityId, true);
-    console.log(`Successfully deleted identity with id: ${userIdentity.identityId}`);
+    await identity.remove(userIdentity.id, true);
+    console.log(`Successfully deleted identity with id: ${userIdentity.id}`);
 
     // Although the user is removed from the bridge the user's identity document can still be retrieved from the tangle
-    const recoveredIdentity = await identity.latestDocument(userIdentity.identityId);
+    const recoveredIdentity = await identity.latestDocument(userIdentity.id);
     console.log('Identity document: ', recoveredIdentity);
   } else {
     console.log('Could not find identities with given search criteria.');

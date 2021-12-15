@@ -1,11 +1,16 @@
 import { IdentityClient, ChannelClient } from 'integration-services-node';
 
-const channel = new ChannelClient();
-const identity = new IdentityClient();
+import { defaultConfig } from './configuration';
+
+const channel = new ChannelClient(defaultConfig);
+const identity = new IdentityClient(defaultConfig);
 
 async function createChannel() {
   // Create a new user. The user is used for authentication only.
   const user = await identity.create('User');
+
+  console.log("User", user);
+
   // Authenticate as the user
   await channel.authenticate(user.doc.id, user.key.secret);
 
@@ -13,6 +18,8 @@ async function createChannel() {
   const logChannel = await channel.create({
     topics: [{ type: 'example-data', source: 'data-creator' }]
   });
+
+  console.log("Log Channel", logChannel);
 
   // The channel address is used to read and write to channels
   const channelAddress = logChannel.channelAddress;

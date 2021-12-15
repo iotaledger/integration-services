@@ -1,10 +1,9 @@
-import { IdentityClient, Manager, IdentityJson } from 'integration-services-node';
-import * as dotenv from 'dotenv';
-import { searchCriteria } from '../src/models/searchCriteria';
-dotenv.config();
+import { searchCriteria, IdentityClient, Manager, IdentityKeys } from 'integration-services-node';
 
-const identity = new IdentityClient();
-let rootIdentityWithKeys: IdentityJson;
+import { defaultConfig } from './configuration';
+
+const identity = new IdentityClient(defaultConfig);
+let rootIdentityWithKeys: IdentityKeys;
 
 async function setup() {
   // Create db connection
@@ -20,11 +19,14 @@ async function setup() {
 
 async function searchIdentityAndUpdate() {
   // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.doc.id, rootIdentityWithKeys.key.secret);
+  await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
 
   // Search for identities with username 'User' in it
   const search: searchCriteria = { username: 'User' };
   const identities = await identity.search(search);
+
+  console.log("Found those identities:");
+  console.log(JSON.stringify(identities, null, 2));
 
   if (identities && identities[0]) {
     // Take the first identities of the searched identities
@@ -34,7 +36,7 @@ async function searchIdentityAndUpdate() {
       ...userIdentity,
       username: 'NewUser'
     });
-    console.log(`Successfully updated identity with id: ${userIdentity.identityId}`);
+    console.log(`Successfully updated identity with id: ${userIdentity.id}`);
   } else {
     console.log('Could not find identities with given search criteria.');
   }
