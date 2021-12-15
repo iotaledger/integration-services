@@ -29,14 +29,13 @@ Clone the project:
 
 ```
 $ git clone https://github.com/iotaledger/integration-services.git
-
-$ cd integration-services/api
+$ cd integration-services
 ```
 
 Deploy Kubernetes resources for Integration Service APIs:
 
 ```
-$ kubectl apply -f kubernetes/optional -f kubernetes
+$ kubectl apply -f kubernetes/optional -f kubernetes/
 ```
 
 In few minutes, depending on resources allocated, the Integration Service API

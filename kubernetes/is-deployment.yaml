@@ -48,7 +48,7 @@ spec:
 
       containers:
         - name: integration-service-api
-          image: iotaledger/integration-services:latest
+          image: iotaledger/integration-services:develop
           imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
@@ -104,11 +104,3 @@ spec:
           ports:
             - protocol: TCP
               containerPort: 3000
-          volumeMounts:
-            - mountPath: /config
-              name: root-identity
-
-      volumes:
-        - name: root-identity
-          persistentVolumeClaim:
-            claimName: root-identity-pvc
