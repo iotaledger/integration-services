@@ -14,6 +14,10 @@ export interface AuthenticatedRequest extends Express.Request {
 	user: User;
 }
 
+export interface LockedRequest extends AuthenticatedRequest {
+	releaseLock: () => Promise<void>;
+}
+
 export interface AuthorizationCheck {
 	isAuthorized: boolean;
 	error?: Error | null;

@@ -10,6 +10,7 @@ import { Logger } from '../../utils/logger';
 import { authorizationService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { ConfigurationService } from '../../services/configuration-service';
+import { concurrencyLock } from '../../middlewares/concurrency-lock';
 
 const verificationRoutes = new VerificationRoutes(
 	verificationService,
@@ -248,6 +249,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: CreateCredentialBodySchema }),
+	concurrencyLock('create-credential', false),
 	createVerifiableCredential
 );
 
