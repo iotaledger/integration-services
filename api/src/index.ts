@@ -11,7 +11,7 @@ import { Logger } from './utils/logger';
 import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
-import { KeyGenerator } from './setup';
+import { KeyGenerator } from './setup/key-generator';
 import { ConfigurationService } from './services/configuration-service';
 
 const argv = yargs
