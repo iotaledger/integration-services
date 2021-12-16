@@ -17,6 +17,7 @@ export const concurrencyLock = (lockName: string) => async (req: AuthenticatedRe
 		}
 
 		await insertLock(user.id, lockName);
+
 		next();
 	} catch (e) {
 		return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
