@@ -1,5 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
 import { CollectionNames } from '../database/constants';
 import { MongoDbService } from '../services/mongodb-service';
 
@@ -18,10 +16,3 @@ export class DatabaseSeeder {
 		await MongoDbService.disconnect();
 	}
 }
-
-const config = {
-	databaseUrl: process.env.DATABASE_URL,
-	databaseName: process.env.DATABASE_NAME
-};
-const dbSeeder = new DatabaseSeeder(config.databaseUrl, config.databaseName);
-dbSeeder.seed();

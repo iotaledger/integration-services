@@ -13,9 +13,11 @@ import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { KeyGenerator } from './setup/key-generator';
 import { ConfigurationService } from './services/configuration-service';
+import { DatabaseSeeder } from './setup/database-seeder';
 
 const argv = yargs
 	.command('server', 'Start the integration service API', {})
+	.command('seed', 'Generate indexes for the database', {})
 	.command('keygen', 'Generate root identity for integration service API', {})
 	.help().argv;
 
@@ -102,10 +104,27 @@ async function keyGen() {
 	process.exit();
 }
 
+async function seedDb() {
+	try {
+		const logger = Logger.getInstance();
+		const configService = ConfigurationService.getInstance(logger);
+		const config = configService.config;
+
+		const databaseSeeder: DatabaseSeeder = new DatabaseSeeder(config.databaseUrl, config.databaseName);
+		await databaseSeeder.seed();
+	} catch (e) {
+		Logger.getInstance().error(e);
+		process.exit(-1);
+	}
+	process.exit();
+}
+
 if (argv._.includes('server')) {
 	startServer();
 } else if (argv._.includes('keygen')) {
 	keyGen();
+} else if (argv._.includes('seed')) {
+	seedDb();
 } else {
 	yargs.showHelp();
 }
