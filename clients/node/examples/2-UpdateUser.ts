@@ -17,8 +17,6 @@ async function searchIdentityAndUpdate() {
   // Authenticate as the root identity
   await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
 
-
-
   // Search for identities with username 'User' in it
   const search: searchCriteria = { username: 'User' };
   const identities = await identity.search(search);
