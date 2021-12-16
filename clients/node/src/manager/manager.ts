@@ -1,28 +1,50 @@
 import { MongoClient } from 'mongodb';
-import { IdentityInternal, IdentityJson } from '../models/types';
+import { ManagerConfig } from '../models/managerConfig';
+import { IdentityKeys } from '../models/types';
 const crypto = require('crypto');
 
 export class Manager {
   private client: MongoClient;
+  private connected: boolean;
 
-  constructor(
-    private mongoURL: string,
-    private databaseName: string,
-    private secretKey: string,
-  ) {
-    this.client = new MongoClient(mongoURL);
+  constructor(private config: ManagerConfig) {
+    this.client = new MongoClient(this.config.mongoURL);
+    this.connected = false;
   }
 
-  async getRootIdentity(): Promise<IdentityJson> {
+  private async tryConnect() {
+    if (this.connected) {
+      return
+    }
     await this.client.connect();
-    const database = this.client.db(this.databaseName);
-    const identities = database.collection('identity-docs');
-    let identity = await identities.findOne<IdentityJson>({});
-    await database
-      .collection('users')
-      .updateOne({ isServerIdentity: true }, { $set: { role: 'Admin' } });
-    await this.decrypt(identity, this.secretKey);
+    this.connected = true;
+  }
+
+  async getRootIdentity(): Promise<IdentityKeys> {
+    this.tryConnect();
+    const database = this.client.db(this.config.databaseName);
+    const users = database.collection("users");
+    const rootUser = await users.findOne({ isServerIdentity: true });
+    const identities = database.collection('identity-keys');
+    let identity = await identities.findOne<IdentityKeys>({
+      id: rootUser?.id
+    });
+    await this.decrypt(identity, this.config.secretKey);
     return identity!;
+  }
+
+  async setRole(id: string, role: string): Promise<boolean> {
+    this.tryConnect();
+    const database = this.client.db(this.config.databaseName);
+    const users = database.collection("users");
+    const user = await users.findOneAndUpdate({
+      id
+    }, {
+      $set: { role }
+    }, {
+      upsert: false
+    })
+    return !!user
   }
 
   private decrypt(identity: any, secret: string) {

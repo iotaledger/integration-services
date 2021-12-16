@@ -8,7 +8,7 @@ export const ClaimSchema = Type.Object({
 	type: Type.Union([Type.Enum(UserType), Type.String({ minLength: 3 })])
 });
 export const SubjectBodySchema = Type.Object({
-	identityId: Type.String({ minLength: 50, maxLength: 53 }), // did
+	id: Type.String({ minLength: 50, maxLength: 53 }), // did
 	credentialType: Type.String(),
 	claim: ClaimSchema
 });

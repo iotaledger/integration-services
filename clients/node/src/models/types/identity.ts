@@ -36,3 +36,8 @@ export type IdentityKeyPairJson = Static<typeof IdentityKeyPairJsonSchema>;
 export type DocumentJsonUpdate = Static<typeof DocumentJsonUpdateSchema>;
 export type IdentityJson = Static<typeof IdentityJsonSchema>;
 export type IdentityJsonUpdate = Static<typeof IdentityJsonUpdateSchema>;
+
+export interface IdentityKeys {
+	id: string;
+	key: IdentityKeyPairJson;
+}

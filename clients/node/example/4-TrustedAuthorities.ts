@@ -2,7 +2,7 @@ import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from
 
 import { externalDriverCredential1 } from './externalData';
 
-import { defaultConfig } from './configuration';
+import { defaultConfig, defaultManagerConfig } from './configuration';
 
 const identity = new IdentityClient(defaultConfig);
 
@@ -10,13 +10,10 @@ let rootIdentityWithKeys: IdentityKeys;
 
 async function setup() {
   // Create db connection
-  const manager = new Manager(
-    process.env.MONGO_URL!,
-    process.env.DB_NAME!,
-    process.env.SECRET_KEY!
-  );
+  const manager = new Manager(defaultManagerConfig);
   // Get root identity directly from db
   rootIdentityWithKeys = await manager.getRootIdentity();
+  console.log("Root", rootIdentityWithKeys);
   await manager.close();
 }
 

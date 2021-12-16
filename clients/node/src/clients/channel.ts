@@ -204,14 +204,14 @@ export class ChannelClient extends BaseClient {
   /**
    * Get a subscription of a channel by identity id.
    * @param channelAddress
-   * @param identityId
+   * @param id
    * @returns
    */
   async findSubscription(
     channelAddress: string,
-    identityId: string
+    id: string
   ): Promise<SubscriptionInternal> {
-    return await this.get(`subscriptions/${channelAddress}/${identityId}`, {}, this.jwtToken);
+    return await this.get(`subscriptions/${channelAddress}/${id}`, {}, this.jwtToken);
   }
 
   /**
@@ -264,17 +264,17 @@ export class ChannelClient extends BaseClient {
   /**
    * Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
    * @param channelAddress
-   * @param identityId
+   * @param id
    * @param subscription
    * @returns
    */
   async addSubscription(
     channelAddress: string,
-    identityId: string,
+    id: string,
     subscription: SubscriptionInternal
   ): Promise<SubscriptionInternal> {
     return await this.post(
-      `subscriptions/${channelAddress}/${identityId}`,
+      `subscriptions/${channelAddress}/${id}`,
       subscription,
       this.jwtToken
     );
@@ -283,17 +283,17 @@ export class ChannelClient extends BaseClient {
   /**
    * Updates an existing subscription.
    * @param channelAddress
-   * @param identityId
+   * @param id
    * @param updatedSubscription
    * @returns
    */
   async updateSubscription(
     channelAddress: string,
-    identityId: string,
+    id: string,
     updatedSubscription: SubscriptionUpdate
   ): Promise<null> {
     return await this.put(
-      `subscriptions/${channelAddress}/${identityId}`,
+      `subscriptions/${channelAddress}/${id}`,
       updatedSubscription,
       this.jwtToken
     );
@@ -302,10 +302,10 @@ export class ChannelClient extends BaseClient {
   /**
    * Deletes an existing subscription.
    * @param channelAddress
-   * @param identityId
+   * @param id
    * @returns
    */
-  async removeSubscription(channelAddress: string, identityId: string): Promise<null> {
-    return await this.delete(`subscriptions/${channelAddress}/${identityId}`, {}, this.jwtToken);
+  async removeSubscription(channelAddress: string, id: string): Promise<null> {
+    return await this.delete(`subscriptions/${channelAddress}/${id}`, {}, this.jwtToken);
   }
 }

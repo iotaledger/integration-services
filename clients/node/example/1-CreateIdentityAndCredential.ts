@@ -1,23 +1,21 @@
 import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'integration-services-node';
 
-import { defaultConfig } from './configuration';
+import { defaultConfig, defaultManagerConfig } from './configuration';
 
 const identity = new IdentityClient(defaultConfig);
 let rootIdentityWithKeys: IdentityKeys;
 
 async function setup() {
   // Create db connection
-  const manager = new Manager(
-    process.env.MONGO_URL!,
-    process.env.DB_NAME!,
-    process.env.SECRET_KEY!
-  );
+  const manager = new Manager(defaultManagerConfig);
+
   // Get root identity directly from db
   rootIdentityWithKeys = await manager.getRootIdentity();
   await manager.close();
 }
 
 async function createIdentityAndCheckVCs() {
+
   // Authenticate as the root identity
   await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
 

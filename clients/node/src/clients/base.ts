@@ -20,7 +20,7 @@ export abstract class BaseClient {
   constructor({ apiKey, baseUrl, apiVersion }: ClientConfig = {}) {
     this.apiKey = apiKey || '';
     this.baseUrl = baseUrl || 'http://127.0.0.1:3000';
-    this.apiVersion = apiVersion || ApiVersion.v1;
+    this.apiVersion = apiVersion || ApiVersion.v01;
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
@@ -29,15 +29,15 @@ export abstract class BaseClient {
 
   /**
    * Authenticates the user to the api for requests where authentication is needed
-   * @param identityId of the user to authenticate
+   * @param id of the user to authenticate
    * @param secretKey of the user to authenticate
    */
-  async authenticate(identityId: string, secretKey: string) {
-    const body = await this.get(`authentication/prove-ownership/${identityId}`);
+  async authenticate(id: string, secretKey: string) {
+    const body = await this.get(`authentication/prove-ownership/${id}`);
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
     const signedNonce = await this.signNonce(encodedKey, nonce);
-    const { jwt } = await this.post(`authentication/prove-ownership/${identityId}`, {
+    const { jwt } = await this.post(`authentication/prove-ownership/${id}`, {
       signedNonce
     });
     this.jwtToken = jwt;

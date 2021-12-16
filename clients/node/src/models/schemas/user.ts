@@ -13,7 +13,7 @@ export const IdentityWithoutIdFields = {
 };
 
 export const IdentitySchema = Type.Object({
-	identityId: Type.String({ minLength: 50, maxLength: 53 }), // did
+	id: Type.String({ minLength: 50, maxLength: 53 }), // did
 	publicKey: Type.String({ minLength: 10 }),
 	...IdentityWithoutIdFields
 });

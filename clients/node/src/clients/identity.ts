@@ -55,11 +55,11 @@ export class IdentityClient extends BaseClient {
 
   /**
    * Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
-   * @param identityId
+   * @param id
    * @returns
    */
-  async find(identityId: string): Promise<User> {
-    return await this.get(`identities/identity/${identityId}`, {}, this.jwtToken);
+  async find(id: string): Promise<User> {
+    return await this.get(`identities/identity/${id}`, {}, this.jwtToken);
   }
 
   /**
@@ -82,13 +82,13 @@ export class IdentityClient extends BaseClient {
 
   /**
    * Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the immutable IOTA Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
-   * @param identityId
+   * @param id
    * @param revokeCredentials
    * @returns Null
    */
-  async remove(identityId: string, revokeCredentials: boolean = false): Promise<null> {
+  async remove(id: string, revokeCredentials: boolean = false): Promise<null> {
     return this.delete(
-      `identities/identity/${identityId}`,
+      `identities/identity/${id}`,
       { 'revoke-credentials': revokeCredentials },
       this.jwtToken
     );
@@ -96,11 +96,11 @@ export class IdentityClient extends BaseClient {
 
   /**
    * Get the latest version of an identity document (DID) from the IOTA Tangle.
-   * @param identityId
+   * @param id
    * @returns
    */
-  async latestDocument(identityId: string): Promise<LatestIdentityJson> {
-    return await this.get(`verification/latest-document/${identityId}`);
+  async latestDocument(id: string): Promise<LatestIdentityJson> {
+    return await this.get(`verification/latest-document/${id}`);
   }
 
   /**
@@ -145,7 +145,7 @@ export class IdentityClient extends BaseClient {
   ): Promise<VerifiableCredentialJson> {
     let body = {
       subject: {
-        identityId: targetDid,
+        id: targetDid,
         credentialType,
         claim: {
           type: claimType,
