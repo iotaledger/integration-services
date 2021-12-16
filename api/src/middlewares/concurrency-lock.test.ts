@@ -37,12 +37,10 @@ describe('test authentication middleware', () => {
 		const getLockSpy = jest
 			.spyOn(ConcurrencyLockDb, 'getLock')
 			.mockImplementationOnce(async () => ({ id: UserIdentityMock.userData.id, lock: lockName, created: new Date('01-01-2021') }));
-		const removeLockSpy = jest.spyOn(ConcurrencyLockDb, 'removeLock').mockImplementationOnce(async () => null);
 
 		await concurrencyLock(lockName)(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', 'revoke-credential');
-		expect(removeLockSpy).toHaveBeenCalledWith('did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', 'revoke-credential');
+		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.LOCKED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'resource already in use, try it again!' });
 	});
@@ -54,17 +52,11 @@ describe('test authentication middleware', () => {
 
 		const getLockSpy = jest.spyOn(ConcurrencyLockDb, 'getLock').mockImplementationOnce(async () => null);
 		const insertLockSpy = jest.spyOn(ConcurrencyLockDb, 'insertLock').mockImplementationOnce(async () => null);
-		const removeLockSpy = jest.spyOn(ConcurrencyLockDb, 'removeLock').mockImplementationOnce(async () => ({
-			result: {
-				n: 1
-			}
-		}));
 
 		await concurrencyLock(lockName)(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', 'revoke-credential');
-		expect(insertLockSpy).toHaveBeenCalledWith('did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', 'revoke-credential');
-		expect(removeLockSpy).toHaveBeenCalledWith('did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', 'revoke-credential');
+		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
 		expect(nextMock).toHaveBeenCalledWith();
 	});
 });

@@ -18,8 +18,6 @@ export const concurrencyLock = (lockName: string, considerUserId = true) => asyn
 	const lock = considerUserId ? `${lockName}-${user.id}` : lockName;
 
 	try {
-		console.log('lock', lock);
-
 		const existingLock = await getLock(lock);
 
 		if (existingLock) {
@@ -29,7 +27,7 @@ export const concurrencyLock = (lockName: string, considerUserId = true) => asyn
 		await insertLock(lock);
 		(req as LockedRequest).releaseLock = releaseConcurrencyLock(lock);
 	} catch (e) {
-		releaseConcurrencyLock(lock)();
+		await releaseConcurrencyLock(lock)();
 		return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
 	}
 

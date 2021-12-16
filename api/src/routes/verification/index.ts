@@ -50,8 +50,6 @@ export class VerificationRoutes {
 			this.logger.error(error);
 			next(new Error('could not create the verifiable credential'));
 		} finally {
-			console.log('RELEASE THE LOCK');
-
 			await req.releaseLock();
 		}
 	};
