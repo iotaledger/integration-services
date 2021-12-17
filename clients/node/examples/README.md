@@ -25,7 +25,7 @@ Some of the examples requires to use a trusted root identity or an identity with
 
 We setup such identity using the root identity generated when the API is deployed and give it the Admin role.
 
-This is preliminary operation that need to be performed before launching all the tests:
+This is preliminary operation that need to be performed before launching some the tests:
 
 `npm run example-0`
 
