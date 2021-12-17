@@ -21,7 +21,7 @@ async function searchIdentityAndUpdate() {
   const search: searchCriteria = { username: 'User' };
   const identities = await identity.search(search);
 
-  console.log("Found those identities:");
+  console.log("Found the following identities:");
   console.log(JSON.stringify(identities, null, 2));
 
   if (identities && identities[0]) {
