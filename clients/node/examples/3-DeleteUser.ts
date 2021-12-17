@@ -30,7 +30,7 @@ async function searchIdentityAndDelete() {
 
   if (identities) {
 
-    let erasableIdentities = identities.filter(item => !item.isServerIdentity)
+    const erasableIdentities = identities.filter(item => !item.isServerIdentity)
 
     if (erasableIdentities.length > 0) {
 
