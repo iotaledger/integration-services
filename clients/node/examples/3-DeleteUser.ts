@@ -26,7 +26,7 @@ async function searchIdentityAndDelete() {
   // Search for identities that have been created yesterday or later (today)
   const identities = await identity.search(search);
 
-  console.log("Found following identities", identities)
+  console.log("Found the following identities", identities)
 
   if (identities) {
 
