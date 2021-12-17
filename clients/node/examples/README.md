@@ -53,7 +53,7 @@ In this example you authenticate yourself using the root identity to:
 In this example you authenticate yourself using the root identity to:
 * create a new identity
 * remove it from Integration Services
-* verify that the identity already exists on the Tangle
+* verify that the identity still exists on the Tangle
 
 ## Trusted Authorities
 
