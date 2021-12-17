@@ -87,7 +87,7 @@ In this example you:
 * `Owner` create a channel and write data on it
 * `User` try to read but fails (because it has no access)
 * `User` request subscription
-* `Owner` find unapproed subscription and approves it
+* `Owner` find unapproved subscription and approves it
 * `User` send data to the channel
 * `Owner` is able to read data (second message sent by `User`) from that channel
 
