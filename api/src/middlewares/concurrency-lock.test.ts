@@ -18,19 +18,9 @@ describe('test authentication middleware', () => {
 		nextMock = jest.fn();
 	});
 
-	it('request has no user in request', async () => {
-		const req: any = {
-			// no user available
-		};
-
-		await basicLock(lockName)(req, res, nextMock);
-
-		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no user id provided!' });
-	});
-
 	it('lock already exists', async () => {
 		const req: any = {
+			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData
 		};
 
@@ -40,13 +30,14 @@ describe('test authentication middleware', () => {
 
 		await basicLock(lockName)(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.LOCKED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'resource already in use, try it again!' });
 	});
 
 	it('will create and release a lock', async () => {
 		const req: any = {
+			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData
 		};
 
@@ -55,8 +46,14 @@ describe('test authentication middleware', () => {
 
 		await basicLock(lockName)(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
-		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential');
+		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential');
 		expect(nextMock).toHaveBeenCalledWith();
+	});
+	// TODO add tests for channelLock
+
+	afterEach(() => {
+		jest.clearAllMocks();
+		jest.resetAllMocks();
 	});
 });

@@ -89,6 +89,7 @@ describe('test validate route', () => {
 
 	it('should return bad request if no channelAddress is provided', async () => {
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: {},
 			user: TestUsersMock[0],
 			body: {}
@@ -101,6 +102,7 @@ describe('test validate route', () => {
 
 	it('should return bad request if no channelLogs are provided', async () => {
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress: '123456' },
 			user: TestUsersMock[0],
 			body: [] // empty channelLogs
@@ -115,6 +117,7 @@ describe('test validate route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: logs
@@ -133,6 +136,7 @@ describe('test validate route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: logs
@@ -159,6 +163,7 @@ describe('test validate route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: logs
@@ -190,6 +195,7 @@ describe('test validate route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: logs

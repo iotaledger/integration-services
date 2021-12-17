@@ -35,6 +35,7 @@ describe('test request subscription route', () => {
 	it('should call nextMock if no body is provided', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: {},
 			user: { id: undefined },
 			body: undefined // no body
@@ -47,6 +48,7 @@ describe('test request subscription route', () => {
 
 	it('should bad request if no id is provided', async () => {
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: {},
 			user: { id: undefined }, //no id,
 			body: { accessRights: AccessRights.Read }
@@ -60,6 +62,7 @@ describe('test request subscription route', () => {
 	it('should return bad request since no channelAddress is provided', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: {}, // no channelAddress
 			user: { id: 'did:iota1234' },
 			body: { accessRights: AccessRights.Read }
@@ -73,6 +76,7 @@ describe('test request subscription route', () => {
 	it('should return bad request since already a subscription is requested', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota1234' },
 			body: { accessRights: AccessRights.Read }
@@ -110,6 +114,7 @@ describe('test request subscription route', () => {
 			seed: 'testseed'
 		}));
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read }
@@ -140,6 +145,7 @@ describe('test request subscription route', () => {
 			seed: 'testseed'
 		}));
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read }
@@ -184,6 +190,7 @@ describe('test request subscription route', () => {
 			pskId: 'testpskid'
 		}));
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Audit, presharedKey }
@@ -231,6 +238,7 @@ describe('test request subscription route', () => {
 			pskId: 'testpskid'
 		}));
 		const req: any = {
+			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.ReadAndWrite, presharedKey } // should not consider these ReadAndWrite rights if subscription request has presharedKey
