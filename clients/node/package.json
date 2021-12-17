@@ -1,6 +1,6 @@
 {
   "name": "iota-is-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "node.js sdk for the IOTA's Integration Services API",
   "main": "lib/index.js",
   "types": "lib",
