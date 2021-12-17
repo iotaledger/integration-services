@@ -65,7 +65,7 @@ export class VerificationRoutes {
 		}
 	};
 
-	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+	revokeVerifiableCredential = async (req: LockedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const revokeBody = req.body as RevokeVerificationBody;
 			const requestUser = req.user;
@@ -85,6 +85,8 @@ export class VerificationRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not revoke the verifiable credential'));
+		} finally {
+			await req.releaseLock();
 		}
 	};
 
