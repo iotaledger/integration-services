@@ -249,7 +249,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: CreateCredentialBodySchema }),
-	concurrencyLock('create-credential', false),
+	concurrencyLock('credential-lock', false),
 	createVerifiableCredential
 );
 
@@ -351,5 +351,6 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeVerificationBodySchema }),
+	concurrencyLock('credential-lock', false),
 	revokeVerifiableCredential
 );
