@@ -20,6 +20,7 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - run: cd clients/node && npm ci
+      - run: cd clients/node && npm run build
       - run: cd clients/node && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
