@@ -1,7 +1,7 @@
 {
-  "name": "integration-services-node",
+  "name": "iota-is-sdk",
   "version": "0.0.1",
-  "description": "The is the node.js client for the integration services api",
+  "description": "node.js sdk for the IOTA's Integration Services API",
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
