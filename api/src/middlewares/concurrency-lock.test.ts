@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { concurrencyLock } from './concurrency-lock';
+import { basicLock } from './concurrency-lock';
 import { UserIdentityMock } from '../test/mocks/identities';
 import * as ConcurrencyLockDb from '../database/concurrency-lock';
 
@@ -23,7 +23,7 @@ describe('test authentication middleware', () => {
 			// no user available
 		};
 
-		await concurrencyLock(lockName)(req, res, nextMock);
+		await basicLock(lockName)(req, res, nextMock);
 
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'no user id provided!' });
@@ -38,7 +38,7 @@ describe('test authentication middleware', () => {
 			.spyOn(ConcurrencyLockDb, 'getLock')
 			.mockImplementationOnce(async () => ({ id: UserIdentityMock.userData.id, lock: lockName, created: new Date('01-01-2021') }));
 
-		await concurrencyLock(lockName)(req, res, nextMock);
+		await basicLock(lockName)(req, res, nextMock);
 
 		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.LOCKED);
@@ -53,7 +53,7 @@ describe('test authentication middleware', () => {
 		const getLockSpy = jest.spyOn(ConcurrencyLockDb, 'getLock').mockImplementationOnce(async () => null);
 		const insertLockSpy = jest.spyOn(ConcurrencyLockDb, 'insertLock').mockImplementationOnce(async () => null);
 
-		await concurrencyLock(lockName)(req, res, nextMock);
+		await basicLock(lockName)(req, res, nextMock);
 
 		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
 		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');

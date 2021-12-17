@@ -9,6 +9,7 @@ import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelInfoService, subscriptionService } from '../services';
+import { channelLock } from '../../middlewares/concurrency-lock';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, Logger.getInstance());
 const {
@@ -186,6 +187,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RequestSubscriptionBodySchema }),
+	channelLock('channel-lock'),
 	requestSubscription
 );
 
@@ -243,6 +245,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: AuthorizeSubscriptionBodySchema }),
+	channelLock('channel-lock'),
 	authorizeSubscription
 );
 
@@ -293,6 +296,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeSubscriptionBodySchema }),
+	channelLock('channel-lock'),
 	revokeSubscription
 );
 
