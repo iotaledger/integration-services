@@ -66,7 +66,7 @@ async function searchChannelAndValidateData() {
   // Now try to validate the manipulated data
   const validationResult2 = await userClient.validate(channelAddress, results);
 
-  // If the validation fails like in this case the original date is included in the validation result
+  // If the validation fails like in this case the original data is included in the validation result
   console.log(
     'Validation result with manipulated data: ',
     JSON.stringify(validationResult2, null, 4)
