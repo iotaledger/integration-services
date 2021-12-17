@@ -25,7 +25,7 @@ Some of the examples requires to use a trusted root identity or an identity with
 
 We setup such identity using the root identity generated when the API is deployed and give it the Admin role.
 
-This is preliminary operation that need to be performed before launching all the tests:
+This is preliminary operation that need to be performed before launching some the tests:
 
 `npm run example-0`
 
@@ -53,7 +53,7 @@ In this example you authenticate yourself using the root identity to:
 In this example you authenticate yourself using the root identity to:
 * create a new identity
 * remove it from Integration Services
-* verify that the identity already exists on the Tangle
+* verify that the identity still exists on the Tangle
 
 ## Trusted Authorities
 
@@ -87,7 +87,7 @@ In this example you:
 * `Owner` create a channel and write data on it
 * `User` try to read but fails (because it has no access)
 * `User` request subscription
-* `Owner` find unapproed subscription and approves it
+* `Owner` find unapproved subscription and approves it
 * `User` send data to the channel
 * `Owner` is able to read data (second message sent by `User`) from that channel
 

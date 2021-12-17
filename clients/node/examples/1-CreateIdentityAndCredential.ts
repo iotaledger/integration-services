@@ -34,7 +34,8 @@ async function createIdentityAndCheckVCs() {
   console.log('~~~~~~~~~~~~~~~~');
   console.log('Created user identity: ', userIdentity);
   console.log('~~~~~~~~~~~~~~~~');
-  // Assign a verifiable credential to the user as rootIdentity
+  // Assign a verifiable credential to the user as rootIdentity.
+  // With the BasicIdentityCredential the user is not allowed to issue further credentials
   const userCredential = await identity.createCredential(
     identityCredential,
     userIdentity?.doc?.id,
