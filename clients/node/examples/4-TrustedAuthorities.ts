@@ -13,7 +13,6 @@ async function setup() {
   const manager = new Manager(defaultManagerConfig);
   // Get root identity directly from db
   rootIdentityWithKeys = await manager.getRootIdentity();
-  console.log("Root", rootIdentityWithKeys);
   await manager.close();
 }
 

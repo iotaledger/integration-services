@@ -1,4 +1,4 @@
-import { Manager, IdentityKeys } from 'iota-is-sdk';
+import { Manager, IdentityKeys, UserRoles } from 'iota-is-sdk';
 
 import { defaultManagerConfig } from './configuration';
 
@@ -10,7 +10,7 @@ async function setup() {
     // Get root identity directly from db
     let rootIdentityWithKeys: IdentityKeys = await manager.getRootIdentity();
 
-    await manager.setRole(rootIdentityWithKeys.id, "Admin");
+    await manager.setRole(rootIdentityWithKeys.id, UserRoles.Admin);
 
     await manager.close();
 }

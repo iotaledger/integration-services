@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { ManagerConfig } from '../models/managerConfig';
-import { IdentityKeys } from '../models/types';
+import { IdentityKeys, UserRoles } from '../models/types';
 const crypto = require('crypto');
 
 export class Manager {
@@ -33,7 +33,7 @@ export class Manager {
     return identity!;
   }
 
-  async setRole(id: string, role: string): Promise<boolean> {
+  async setRole(id: string, role: UserRoles): Promise<boolean> {
     this.tryConnect();
     const database = this.client.db(this.config.databaseName);
     const users = database.collection("users");

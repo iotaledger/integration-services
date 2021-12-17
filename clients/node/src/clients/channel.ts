@@ -31,7 +31,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async create(data: CreateChannelBody): Promise<CreateChannelResponse> {
-    return await this.post('channels/create', data, this.jwtToken);
+    return await this.post('channels/create', data);
   }
 
   /**
@@ -41,7 +41,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async write(address: string, data: AddChannelLogBody): Promise<ChannelData> {
-    return await this.post(`channels/logs/${address}`, data, this.jwtToken);
+    return await this.post(`channels/logs/${address}`, data);
   }
 
   /**
@@ -70,8 +70,7 @@ export class ChannelClient extends BaseClient {
     const param3 = asc !== undefined ? { asc } : { asc: true };
     const channelData: any[] = await this.get(
       `channels/logs/${channelAddress}`,
-      { limit, index, param3, ...param1, ...param2 },
-      this.jwtToken
+      { limit, index, param3, ...param1, ...param2 }
     );
     // Temporary fix to replace null values with undefined
     // TODO: fix this in backend
@@ -104,7 +103,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async validate(address: string, data: ValidateBody): Promise<ValidateResponse> {
-    return await this.post(`channels/validate/${address}`, data, this.jwtToken);
+    return await this.post(`channels/validate/${address}`, data);
   }
 
   /**
@@ -114,7 +113,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async reimport(address: string, data: ReimportBody): Promise<null> {
-    return await this.post(`re-import/${address}`, data, this.jwtToken);
+    return await this.post(`re-import/${address}`, data);
   }
 
   /**
@@ -146,8 +145,7 @@ export class ChannelClient extends BaseClient {
         ...param4,
         limit,
         index
-      },
-      this.jwtToken
+      }
     );
   }
 
@@ -166,7 +164,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async add(channel: ChannelInfo): Promise<null> {
-    return await this.post('channel-info/channel', channel, this.jwtToken);
+    return await this.post('channel-info/channel', channel);
   }
 
   /**
@@ -175,7 +173,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async update(channel: ChannelInfo): Promise<null> {
-    return await this.put('channel-info/channel', channel, this.jwtToken);
+    return await this.put('channel-info/channel', channel);
   }
 
   /**
@@ -184,7 +182,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async remove(address: string): Promise<null> {
-    return await this.delete(`channel-info/channel/${address}`, {}, this.jwtToken);
+    return await this.delete(`channel-info/channel/${address}`, {});
   }
 
   /**
@@ -198,7 +196,7 @@ export class ChannelClient extends BaseClient {
     isAuthorized?: boolean
   ): Promise<SubscriptionInternal[]> {
     const params = isAuthorized !== undefined ? { 'is-authorized': isAuthorized } : {};
-    return await this.get(`subscriptions/${channelAddress}`, params, this.jwtToken);
+    return await this.get(`subscriptions/${channelAddress}`, params);
   }
 
   /**
@@ -211,7 +209,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     id: string
   ): Promise<SubscriptionInternal> {
-    return await this.get(`subscriptions/${channelAddress}/${id}`, {}, this.jwtToken);
+    return await this.get(`subscriptions/${channelAddress}/${id}`, {});
   }
 
   /**
@@ -224,7 +222,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     options?: RequestSubscriptionBody
   ): Promise<RequestSubscriptionResponse> {
-    return await this.post(`subscriptions/request/${channelAddress}`, options, this.jwtToken);
+    return await this.post(`subscriptions/request/${channelAddress}`, options);
   }
 
   /**
@@ -239,8 +237,7 @@ export class ChannelClient extends BaseClient {
   ): Promise<AuthorizeSubscriptionResponse> {
     return await this.post(
       `subscriptions/authorize/${channelAddress}`,
-      subscriptionIdentifier,
-      this.jwtToken
+      subscriptionIdentifier
     );
   }
 
@@ -256,8 +253,7 @@ export class ChannelClient extends BaseClient {
   ): Promise<null> {
     return await this.post(
       `subscriptions/revoke/${channelAddress}`,
-      subscriptionIdentifier,
-      this.jwtToken
+      subscriptionIdentifier
     );
   }
 
@@ -275,8 +271,7 @@ export class ChannelClient extends BaseClient {
   ): Promise<SubscriptionInternal> {
     return await this.post(
       `subscriptions/${channelAddress}/${id}`,
-      subscription,
-      this.jwtToken
+      subscription
     );
   }
 
@@ -294,8 +289,7 @@ export class ChannelClient extends BaseClient {
   ): Promise<null> {
     return await this.put(
       `subscriptions/${channelAddress}/${id}`,
-      updatedSubscription,
-      this.jwtToken
+      updatedSubscription
     );
   }
 
@@ -306,6 +300,6 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async removeSubscription(channelAddress: string, id: string): Promise<null> {
-    return await this.delete(`subscriptions/${channelAddress}/${id}`, {}, this.jwtToken);
+    return await this.delete(`subscriptions/${channelAddress}/${id}`, {});
   }
 }

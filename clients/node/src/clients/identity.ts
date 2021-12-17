@@ -48,8 +48,7 @@ export class IdentityClient extends BaseClient {
     const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
     return await this.get(
       'identities/search',
-      { type, username, ...param, limit, index },
-      this.jwtToken
+      { type, username, ...param, limit, index }
     );
   }
 
@@ -59,7 +58,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async find(id: string): Promise<User> {
-    return await this.get(`identities/identity/${id}`, {}, this.jwtToken);
+    return await this.get(`identities/identity/${id}`, {});
   }
 
   /**
@@ -68,7 +67,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async add(identity: IdentityInternal): Promise<null> {
-    return this.post('identities/identity', identity, this.jwtToken);
+    return this.post('identities/identity', identity);
   }
 
   /**
@@ -77,7 +76,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async update(identity: IdentityInternal): Promise<null> {
-    return this.put('identities/identity', identity, this.jwtToken);
+    return this.put('identities/identity', identity);
   }
 
   /**
@@ -89,8 +88,7 @@ export class IdentityClient extends BaseClient {
   async remove(id: string, revokeCredentials: boolean = false): Promise<null> {
     return this.delete(
       `identities/identity/${id}`,
-      { 'revoke-credentials': revokeCredentials },
-      this.jwtToken
+      { 'revoke-credentials': revokeCredentials }
     );
   }
 
@@ -109,7 +107,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async addTrustedAuthority(trustedRootId: string): Promise<null> {
-    return await this.post('verification/trusted-roots', { trustedRootId }, this.jwtToken);
+    return await this.post('verification/trusted-roots', { trustedRootId });
   }
 
   /**
@@ -126,7 +124,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async removeTrustedAuthority(trustedAuthorityId: string): Promise<null> {
-    return await this.delete(`verification/trusted-roots/${trustedAuthorityId}`, {}, this.jwtToken);
+    return await this.delete(`verification/trusted-roots/${trustedAuthorityId}`, {});
   }
 
   /**
@@ -154,7 +152,7 @@ export class IdentityClient extends BaseClient {
       },
       initiatorVC: initiatorVC
     };
-    return await this.post('verification/create-credential', body, this.jwtToken);
+    return await this.post('verification/create-credential', body);
   }
 
   /**
@@ -174,6 +172,6 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async revokeCredential(credential: RevokeVerificationBody): Promise<null> {
-    return await this.post('verification/revoke-credential', credential, this.jwtToken);
+    return await this.post('verification/revoke-credential', credential);
   }
 }

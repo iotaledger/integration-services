@@ -13,7 +13,7 @@ export abstract class BaseClient {
   private apiKey: string;
   private baseUrl: string;
   private apiVersion: ApiVersion;
-  public jwtToken?: string;
+  private jwtToken?: string;
   private instance: AxiosInstance;
 
   // Default config is a local api without an api key
@@ -61,7 +61,7 @@ export abstract class BaseClient {
     return bs58.decode(base58Key).toString('hex');
   }
 
-  protected async post(url: string, data: any, jwtToken?: string) {
+  protected async post(url: string, data: any) {
     let response = await this.instance.request({
       method: 'post',
       url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
@@ -69,34 +69,34 @@ export abstract class BaseClient {
         'api-key': this.apiKey
       },
       data,
-      headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
+      headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
     return response?.data;
   }
 
-  protected async get(url: string, params: any = {}, jwtToken?: string) {
+  protected async get(url: string, params: any = {}) {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'get',
       url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
       params,
-      headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
+      headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
     return response?.data;
   }
 
-  protected async delete(url: string, params: any = {}, jwtToken?: string) {
+  protected async delete(url: string, params: any = {}) {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'delete',
       url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
       params,
-      headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
+      headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
     return response?.data;
   }
 
-  protected async put(url: string, data: any, jwtToken?: string) {
+  protected async put(url: string, data: any) {
     let response = await this.instance.request({
       method: 'put',
       url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
@@ -104,7 +104,7 @@ export abstract class BaseClient {
         'api-key': this.apiKey
       },
       data,
-      headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
+      headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
     return response?.data;
   }
