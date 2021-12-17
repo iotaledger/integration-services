@@ -1,4 +1,4 @@
-import { ApiVersion, ManagerConfig, ClientConfig } from 'integration-services-node';
+import { ApiVersion, ManagerConfig, ClientConfig } from 'iota-is-sdk';
 
 import * as dotenv from 'dotenv';
 dotenv.config();

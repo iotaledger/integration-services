@@ -1,4 +1,4 @@
-import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'integration-services-node';
+import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'iota-is-sdk';
 
 import { externalDriverCredential1 } from './externalData';
 

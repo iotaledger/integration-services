@@ -13,7 +13,7 @@ This is the node.js SDK for easy usability of the Integration Services API.
 
 Latest Release: this version matches the main branch of this repository, is stable and will have changelogs.
 ```bash
-npm install @iota/is-sdk
+npm install iota-is-sdk
 ```
 
 ## Build

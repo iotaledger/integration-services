@@ -1,4 +1,4 @@
-import { Manager, IdentityKeys } from 'integration-services-node';
+import { Manager, IdentityKeys } from 'iota-is-sdk';
 
 import { defaultManagerConfig } from './configuration';
 

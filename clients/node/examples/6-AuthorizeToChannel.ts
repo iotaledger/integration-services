@@ -1,4 +1,4 @@
-import { AccessRights, IdentityClient, ChannelClient } from 'integration-services-node';
+import { AccessRights, IdentityClient, ChannelClient } from 'iota-is-sdk';
 
 import { defaultConfig } from './configuration';
 

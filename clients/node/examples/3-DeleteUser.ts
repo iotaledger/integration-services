@@ -1,4 +1,4 @@
-import { searchCriteria, IdentityClient, Manager, IdentityKeys } from 'integration-services-node';
+import { searchCriteria, IdentityClient, Manager, IdentityKeys } from 'iota-is-sdk';
 
 import { defaultConfig, defaultManagerConfig } from './configuration';
 
