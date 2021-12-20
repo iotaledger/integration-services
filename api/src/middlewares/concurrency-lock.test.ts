@@ -56,7 +56,7 @@ describe('test authentication middleware', () => {
 			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData
 		};
-		await expect(channelLock(lockName)(req, res, nextMock)).rejects.toThrow('no channelAddress provided!');
+		await expect(channelLock(req, res, nextMock)).rejects.toThrow('no channelAddress provided!');
 	});
 
 	it('no user provided', async () => {
@@ -66,7 +66,7 @@ describe('test authentication middleware', () => {
 				channelAddress: 'testaddress'
 			}
 		};
-		await expect(channelLock(lockName)(req, res, nextMock)).rejects.toThrow('no user id provided!');
+		await expect(channelLock(req, res, nextMock)).rejects.toThrow('no user id provided!');
 	});
 
 	it('will create and release a chnanel lock', async () => {
@@ -81,10 +81,10 @@ describe('test authentication middleware', () => {
 		const getLockSpy = jest.spyOn(ConcurrencyLockDb, 'getLock').mockImplementationOnce(async () => null);
 		const insertLockSpy = jest.spyOn(ConcurrencyLockDb, 'insertLock').mockImplementationOnce(async () => null);
 
-		await channelLock(lockName)(req, res, nextMock);
+		await channelLock(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
-		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(getLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(insertLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
 		expect(nextMock).toHaveBeenCalledWith();
 	});
 

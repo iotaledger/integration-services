@@ -187,7 +187,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RequestSubscriptionBodySchema }),
-	channelLock('channel-lock'),
+	channelLock,
 	requestSubscription
 );
 
@@ -245,7 +245,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: AuthorizeSubscriptionBodySchema }),
-	channelLock('channel-lock'),
+	channelLock,
 	authorizeSubscription
 );
 
@@ -296,7 +296,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeSubscriptionBodySchema }),
-	channelLock('channel-lock'),
+	channelLock,
 	revokeSubscription
 );
 

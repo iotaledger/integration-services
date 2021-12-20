@@ -127,7 +127,7 @@ channelRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: AddChannelLogBodySchema }),
-	channelLock('channel-lock'),
+	channelLock,
 	addLogs
 );
 
@@ -205,7 +205,7 @@ channelRouter.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, channelLock('channel-lock'), getLogs);
+channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, channelLock, getLogs);
 
 /**
  * @openapi
@@ -303,7 +303,7 @@ channelRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: ValidateBodySchema }),
-	channelLock('channel-lock'),
+	channelLock,
 	validateLogs
 );
 
@@ -363,6 +363,6 @@ channelRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: ReimportBodySchema }),
-	channelLock('channel-lock'),
+	channelLock,
 	reimport
 );

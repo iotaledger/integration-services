@@ -5,6 +5,11 @@ import { StatusCodes } from 'http-status-codes';
 import { Logger } from '../utils/logger/index';
 import _ from 'lodash';
 
+export enum ConcurrecnyLocks {
+	ChannelLock = 'channel-lock',
+	CredentialLock = 'credential-lock'
+}
+
 const concurrencyLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	try {
 		const existingLock = await getLock(lockName);
@@ -32,7 +37,7 @@ const releaseConcurrencyLock = (lockName: string) => async () => {
 
 export const basicLock = concurrencyLock;
 
-export const channelLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const channelLock = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	const channelAddress = _.get(req, 'params.channelAddress');
 	if (!channelAddress) {
 		throw new Error('no channelAddress provided!');
@@ -42,7 +47,7 @@ export const channelLock = (lockName: string) => async (req: AuthenticatedReques
 		throw new Error('no user id provided!');
 	}
 
-	const lock = `${lockName}-${channelAddress}-${userId}`;
+	const lock = `${ConcurrecnyLocks.ChannelLock}-${channelAddress}-${userId}`;
 
 	return concurrencyLock(lock)(req, res, next);
 };
