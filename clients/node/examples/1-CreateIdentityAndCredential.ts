@@ -1,32 +1,24 @@
-import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'iota-is-sdk';
-
-import { defaultConfig, defaultManagerConfig } from './configuration';
-
-const identity = new IdentityClient(defaultConfig);
-let rootIdentityWithKeys: IdentityKeys;
-
-async function setup() {
-  // Create db connection
-  const manager = new Manager(defaultManagerConfig);
-
-  // Get root identity directly from db
-  rootIdentityWithKeys = await manager.getRootIdentity();
-  await manager.close();
-}
+import { IdentityClient, CredentialTypes, UserType, IdentityJson } from 'iota-is-sdk';
+import { defaultConfig } from './configuration';
+import { readFileSync } from 'fs';
 
 async function createIdentityAndCheckVCs() {
 
-  // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
+  const identity = new IdentityClient(defaultConfig);
 
-  //Get root identity
-  const rootIdentity = await identity.find(rootIdentityWithKeys?.id);
+  // Recover the admin identity
+  const adminIdentity = JSON.parse(readFileSync("./adminIdentity.json").toString()) as IdentityJson;
 
-  // Get root identy's VC
-  // @ts-ignore: Object is possibly 'null'.
-  const identityCredential = rootIdentity!.verifiableCredentials[0];
+  // Authenticate as the admin identity
+  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
 
-  console.log("Identity Credential of Root", identityCredential);
+  // Get admin identity data
+  const adminIdentityPublic = await identity.find(adminIdentity.doc.id);
+
+  // Get admin identy's VC
+  const identityCredential = adminIdentityPublic?.verifiableCredentials?.[0];
+
+  console.log("Identity Credential of Admin", identityCredential);
 
   // Create identity for user
   const userIdentity = await identity.create('User');
@@ -52,11 +44,7 @@ async function createIdentityAndCheckVCs() {
   const verified = await identity.checkCredential(userCredential);
 
   console.log('Verification result: ', verified);
+ 
 }
 
-async function main() {
-  await setup();
-  await createIdentityAndCheckVCs();
-}
-
-main();
+createIdentityAndCheckVCs();

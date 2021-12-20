@@ -1,21 +1,16 @@
-import { searchCriteria, IdentityClient, Manager, IdentityKeys } from 'iota-is-sdk';
-
-import { defaultConfig, defaultManagerConfig } from './configuration';
-
-let identity = new IdentityClient(defaultConfig);
-let rootIdentityWithKeys: IdentityKeys;
-
-async function setup() {
-  // Create db connection
-  const manager = new Manager(defaultManagerConfig);
-  // Get root identity directly from db
-  rootIdentityWithKeys = await manager.getRootIdentity();
-  await manager.close();
-}
+import { searchCriteria, IdentityClient, IdentityJson } from 'iota-is-sdk';
+import { defaultConfig } from './configuration';
+import { readFileSync } from 'fs';
 
 async function searchIdentityAndDelete() {
+
+  const identity = new IdentityClient(defaultConfig);
+
+  // Recover the admin identity
+  const adminIdentity = JSON.parse(readFileSync("./adminIdentity.json").toString()) as IdentityJson;
+
   // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
+  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
 
   const userIdentity = await identity.create('Username');
 
@@ -54,9 +49,4 @@ async function searchIdentityAndDelete() {
   }
 }
 
-async function main() {
-  await setup();
-  await searchIdentityAndDelete();
-}
-
-main();
+searchIdentityAndDelete();

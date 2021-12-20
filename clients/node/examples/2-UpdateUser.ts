@@ -1,24 +1,20 @@
-import { searchCriteria, IdentityClient, Manager, IdentityKeys } from 'iota-is-sdk';
-
-import { defaultConfig, defaultManagerConfig } from './configuration';
-
-const identity = new IdentityClient(defaultConfig);
-let rootIdentityWithKeys: IdentityKeys;
-
-async function setup() {
-  // Create db connection
-  const manager = new Manager(defaultManagerConfig);
-  // Get root identity directly from db
-  rootIdentityWithKeys = await manager.getRootIdentity();
-  await manager.close();
-}
+import { searchCriteria, IdentityClient, IdentityJson } from 'iota-is-sdk';
+import { defaultConfig } from './configuration';
+import { readFileSync } from 'fs';
 
 async function searchIdentityAndUpdate() {
-  // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys.id, rootIdentityWithKeys.key.secret);
+
+  const identity = new IdentityClient(defaultConfig);
+
+  // Recover the admin identity
+  const adminIdentity = JSON.parse(readFileSync("./adminIdentity.json").toString()) as IdentityJson;
+
+  // Authenticate as the admin identity
+  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
 
   // Search for identities with username 'User' in it
   const search: searchCriteria = { username: 'User' };
+
   const identities = await identity.search(search);
 
   console.log("Found the following identities:");
@@ -38,9 +34,5 @@ async function searchIdentityAndUpdate() {
   }
 }
 
-async function main() {
-  await setup();
-  await searchIdentityAndUpdate();
-}
+searchIdentityAndUpdate();
 
-main();

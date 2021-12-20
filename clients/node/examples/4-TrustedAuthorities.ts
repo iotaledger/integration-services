@@ -1,35 +1,28 @@
-import { IdentityClient, Manager, CredentialTypes, UserType, IdentityKeys } from 'iota-is-sdk';
-
+import { IdentityClient, CredentialTypes, UserType, IdentityJson } from 'iota-is-sdk';
+import { defaultConfig } from './configuration';
+import { readFileSync } from 'fs';
 import { externalDriverCredential1 } from './externalData';
 
-import { defaultConfig, defaultManagerConfig } from './configuration';
-
-const identity = new IdentityClient(defaultConfig);
-
-let rootIdentityWithKeys: IdentityKeys;
-
-async function setup() {
-  // Create db connection
-  const manager = new Manager(defaultManagerConfig);
-  // Get root identity directly from db
-  rootIdentityWithKeys = await manager.getRootIdentity();
-  await manager.close();
-}
-
 async function trustedAuthorities() {
-  // Authenticate as the root identity
-  await identity.authenticate(rootIdentityWithKeys?.id, rootIdentityWithKeys?.key?.secret);
+
+  const identity = new IdentityClient(defaultConfig);
+
+  // Recover the admin identity
+  const adminIdentity = JSON.parse(readFileSync("./adminIdentity.json").toString()) as IdentityJson;
+
+  // Authenticate as the admin identity
+  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
 
   // Create an identity for a driver to issue him a driving license
   const driverIdentity = await identity.create('Driver');
 
   //Get root identity to issue an credential for the new driver
-  const rootIdentity = await identity.find(rootIdentityWithKeys?.id);
-  console.log(`Root identity's id: `, rootIdentity.id);
+  const adminIdentityPublic = await identity.find(adminIdentity.doc.id);
+  console.log(`Root identity's id: `, adminIdentityPublic.id);
 
   // Get root identity's credential to create new credentials
   // @ts-ignore: Object is possibly 'null'.
-  const identityCredential = rootIdentity!.verifiableCredentials[0];
+  const identityCredential = adminIdentityPublic!.verifiableCredentials[0];
 
   // List all trusted authorities, currently only one authority is trusted for issuing credentials
   const trustedAuthorities = await identity.getTrustedAuthorities();
@@ -80,9 +73,4 @@ async function trustedAuthorities() {
   await identity.removeTrustedAuthority(externalTrustedAuthority);
 }
 
-async function main() {
-  await setup();
-  await trustedAuthorities();
-}
-
-main();
+trustedAuthorities();

@@ -135,7 +135,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async createCredential(
-    initiatorVC: VerifiableCredentialInternal,
+    initiatorVC: VerifiableCredentialInternal | undefined,
     targetDid: string,
     credentialType: CredentialTypes,
     claimType: UserType,
