@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { basicLock } from './concurrency-lock';
+import { basicLock, channelLock } from './concurrency-lock';
 import { UserIdentityMock } from '../test/mocks/identities';
 import * as ConcurrencyLockDb from '../database/concurrency-lock';
 
@@ -50,7 +50,43 @@ describe('test authentication middleware', () => {
 		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential');
 		expect(nextMock).toHaveBeenCalledWith();
 	});
-	// TODO add tests for channelLock
+
+	it('no channelAddress provided', async () => {
+		const req: any = {
+			releaseLock: jest.fn(),
+			user: UserIdentityMock.userData
+		};
+		await expect(channelLock(lockName)(req, res, nextMock)).rejects.toThrow('no channelAddress provided!');
+	});
+
+	it('no user provided', async () => {
+		const req: any = {
+			releaseLock: jest.fn(),
+			params: {
+				channelAddress: 'testaddress'
+			}
+		};
+		await expect(channelLock(lockName)(req, res, nextMock)).rejects.toThrow('no user id provided!');
+	});
+
+	it('will create and release a chnanel lock', async () => {
+		const req: any = {
+			releaseLock: jest.fn(),
+			user: UserIdentityMock.userData,
+			params: {
+				channelAddress: 'testaddress'
+			}
+		};
+
+		const getLockSpy = jest.spyOn(ConcurrencyLockDb, 'getLock').mockImplementationOnce(async () => null);
+		const insertLockSpy = jest.spyOn(ConcurrencyLockDb, 'insertLock').mockImplementationOnce(async () => null);
+
+		await channelLock(lockName)(req, res, nextMock);
+
+		expect(getLockSpy).toHaveBeenCalledWith('revoke-credential-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(insertLockSpy).toHaveBeenCalledWith('revoke-credential-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(nextMock).toHaveBeenCalledWith();
+	});
 
 	afterEach(() => {
 		jest.clearAllMocks();
