@@ -114,126 +114,102 @@ export class SubscriptionService {
 		subscription: Subscription,
 		authorId: string
 	): Promise<{ keyloadLink: string; sequenceLink: string }> {
-		const lockKey = channelAddress + authorId;
+		const authorSub = await this.getSubscription(channelAddress, authorId);
+		const { publicKey, subscriptionLink, id } = subscription;
+		const pskId = authorSub.pskId;
+		const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
 
-		return this.lock.acquire(lockKey).then(async (release) => {
-			try {
-				const authorSub = await this.getSubscription(channelAddress, authorId);
-				const { publicKey, subscriptionLink, id } = subscription;
-				const pskId = authorSub.pskId;
-				const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
+		if (!streamsAuthor) {
+			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
+		}
 
-				if (!streamsAuthor) {
-					throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
-				}
+		const authorPubKey = streamsAuthor.clone().get_public_key();
+		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
+		const existingSubscriptions: Subscription[] = subscriptions
+			? subscriptions.filter(
+					(s: Subscription) =>
+						s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			  )
+			: [];
+		const existingSubscriptionKeys = existingSubscriptions.map((s: Subscription) => s?.publicKey).filter((pubkey: string) => pubkey);
 
-				const authorPubKey = streamsAuthor.clone().get_public_key();
-				const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
-				const existingSubscriptions = subscriptions
-					? subscriptions.filter(
-							(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-					  )
-					: [];
-				const existingSubscriptionKeys = existingSubscriptions.map((s) => s?.publicKey).filter((pubkey) => pubkey);
+		// fetch prev logs before syncing state
+		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id);
 
-				// fetch prev logs before syncing state
-				await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id);
+		// authorize new subscription and add existing public keys to the new branch
+		await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
+		const { keyloadLink, sequenceLink } = await this.sendKeyload({
+			channelAddress,
+			anchor: channelAddress,
+			publicKeys: [publicKey, authorPubKey, ...existingSubscriptionKeys],
+			streamsAuthor,
+			authorId: authorSub.id,
+			id,
+			pskId
+		});
 
-				// authorize new subscription and add existing public keys to the new branch
-				await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
-				const { keyloadLink, sequenceLink } = await this.sendKeyload({
+		// create new keyloads for existing branches including the newly added subscription public key
+		await Promise.all(
+			existingSubscriptions.map(async (sub) => {
+				await this.sendKeyload({
 					channelAddress,
-					anchor: channelAddress,
-					publicKeys: [publicKey, authorPubKey, ...existingSubscriptionKeys],
+					anchor: sub?.sequenceLink || channelAddress,
+					publicKeys: [...existingSubscriptionKeys, authorPubKey, publicKey],
 					streamsAuthor,
 					authorId: authorSub.id,
-					id,
+					id: sub.id,
 					pskId
 				});
+			})
+		);
 
-				// create new keyloads for existing branches including the newly added subscription public key
-				await Promise.all(
-					existingSubscriptions.map(async (sub) => {
-						await this.sendKeyload({
-							channelAddress,
-							anchor: sub?.sequenceLink || channelAddress,
-							publicKeys: [...existingSubscriptionKeys, authorPubKey, publicKey],
-							streamsAuthor,
-							authorId: authorSub.id,
-							id: sub.id,
-							pskId
-						});
-					})
-				);
+		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
 
-				await this.updateSubscriptionState(
-					channelAddress,
-					authorSub.id,
-					this.streamsService.exportSubscription(streamsAuthor, this.password)
-				);
-
-				return { keyloadLink, sequenceLink };
-			} finally {
-				release();
-			}
-		});
+		return { keyloadLink, sequenceLink };
 	}
 
 	async revokeSubscription(channelAddress: string, subscription: Subscription, authorSub: Subscription): Promise<void> {
-		const authorId = authorSub.id;
-		const lockKey = channelAddress + authorId;
+		const { publicKey } = subscription;
+		const pskId = authorSub.pskId;
+		const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
 
-		return this.lock.acquire(lockKey).then(async (release) => {
-			try {
-				const { publicKey } = subscription;
-				const pskId = authorSub.pskId;
-				const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
+		if (!streamsAuthor) {
+			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
+		}
 
-				if (!streamsAuthor) {
-					throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
-				}
+		const authorPubKey = streamsAuthor.clone().get_public_key();
+		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
+		const existingSubscriptions = subscriptions
+			? subscriptions.filter(
+					(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			  )
+			: [];
 
-				const authorPubKey = streamsAuthor.clone().get_public_key();
-				const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
-				const existingSubscriptions = subscriptions
-					? subscriptions.filter(
-							(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-					  )
-					: [];
+		// remove revoked public key
+		const filteredSubscriptionKeys = existingSubscriptions.map((s) => s?.publicKey).filter((pubkey) => pubkey && pubkey !== publicKey);
 
-				// remove revoked public key
-				const filteredSubscriptionKeys = existingSubscriptions.map((s) => s?.publicKey).filter((pubkey) => pubkey && pubkey !== publicKey);
+		// fetch prev logs before syncing state
+		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id);
 
-				// fetch prev logs before syncing state
-				await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id);
-
-				// add new keyload message to existing branches but not including the revoked publicKey...
-				await Promise.all(
-					existingSubscriptions.map(async (sub) => {
-						return await this.sendKeyload({
-							channelAddress,
-							anchor: sub?.sequenceLink || channelAddress,
-							publicKeys: [...filteredSubscriptionKeys, authorPubKey],
-							streamsAuthor,
-							authorId: authorSub.id,
-							id: sub.id,
-							pskId
-						});
-					})
-				);
-
-				await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
-				await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
-
-				await this.updateSubscriptionState(
+		// add new keyload message to existing branches but not including the revoked publicKey...
+		await Promise.all(
+			existingSubscriptions.map(async (sub) => {
+				return await this.sendKeyload({
 					channelAddress,
-					authorSub.id,
-					this.streamsService.exportSubscription(streamsAuthor, this.password)
-				);
-			} finally {
-				release();
-			}
-		});
+					anchor: sub?.sequenceLink || channelAddress,
+					publicKeys: [...filteredSubscriptionKeys, authorPubKey],
+					streamsAuthor,
+					authorId: authorSub.id,
+					id: sub.id,
+					pskId
+				});
+			})
+		);
+
+		await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
+		await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
+
+		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
 	}
 
 	private async sendKeyload(params: {

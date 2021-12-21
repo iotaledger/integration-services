@@ -9,14 +9,12 @@ import * as TrustedRootsDb from '../database/trusted-roots';
 import { JsonldGenerator } from '../utils/jsonld';
 import { Subject } from '../models/types/verification';
 import { ILogger } from '../utils/logger';
-import { ILock, Lock } from '../utils/lock';
 import { IConfigurationService } from './configuration-service';
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identity found for issuerId: ${issuerId}`;
 	private readonly serverSecret: string;
 	private readonly keyCollectionSize: number;
-	private readonly lock: ILock;
 
 	constructor(
 		private readonly ssiService: SsiService,
@@ -26,7 +24,6 @@ export class VerificationService {
 	) {
 		this.serverSecret = this.configService.config.serverSecret;
 		this.keyCollectionSize = this.configService.identityConfig.keyCollectionSize;
-		this.lock = Lock.getInstance();
 	}
 
 	async getKeyCollection(keyCollectionIndex: number) {
@@ -47,62 +44,55 @@ export class VerificationService {
 	}
 
 	async issueVerifiableCredential(subject: Subject, issuerId: string, initiatorId: string) {
-		const key = 'credentials-' + issuerId;
-		return this.lock.acquire(key).then(async (release) => {
-			try {
-				const jsonldGen = new JsonldGenerator();
-				const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
+		const jsonldGen = new JsonldGenerator();
+		const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
 
-				const credential: Credential<CredentialSubject> = {
-					type: subject.credentialType,
-					id: subject.id,
-					subject: {
-						...claim,
-						type: subject.claim.type,
-						id: subject.id,
-						initiatorId
-					}
-				};
-
-				const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-				const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
-				const keyCollection = await this.getKeyCollection(keyCollectionIndex);
-				const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-				const keyIndex = nextCredentialIndex % this.keyCollectionSize;
-				const keyCollectionJson: KeyCollectionJson = {
-					type: keyCollection.type,
-					keys: keyCollection.keys,
-					publicKeyBase58: keyCollection.publicKeyBase58
-				};
-
-				const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
-				if (!identityKeys) {
-					throw new Error(this.noIssuerFoundErrMessage(issuerId));
-				}
-				const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
-					identityKeys,
-					credential,
-					keyCollectionJson,
-					keyCollectionIndex,
-					keyIndex
-				);
-
-				await VerifiableCredentialsDb.addVerifiableCredential(
-					{
-						vc,
-						index: nextCredentialIndex,
-						initiatorId,
-						isRevoked: false
-					},
-					this.configService.serverIdentityId
-				);
-
-				await this.setUserVerified(credential.id, identityKeys.id, vc);
-				return vc;
-			} finally {
-				release();
+		const credential: Credential<CredentialSubject> = {
+			type: subject.credentialType,
+			id: subject.id,
+			subject: {
+				...claim,
+				type: subject.claim.type,
+				id: subject.id,
+				initiatorId
 			}
-		});
+		};
+
+		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+		const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
+		const keyCollection = await this.getKeyCollection(keyCollectionIndex);
+		const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
+		const keyIndex = nextCredentialIndex % this.keyCollectionSize;
+		const keyCollectionJson: KeyCollectionJson = {
+			type: keyCollection.type,
+			keys: keyCollection.keys,
+			publicKeyBase58: keyCollection.publicKeyBase58
+		};
+
+		const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
+		if (!identityKeys) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
+		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
+			identityKeys,
+			credential,
+			keyCollectionJson,
+			keyCollectionIndex,
+			keyIndex
+		);
+
+		await VerifiableCredentialsDb.addVerifiableCredential(
+			{
+				vc,
+				index: nextCredentialIndex,
+				initiatorId,
+				isRevoked: false
+			},
+			this.configService.serverIdentityId
+		);
+
+		await this.setUserVerified(credential.id, identityKeys.id, vc);
+		return vc;
 	}
 
 	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
@@ -138,34 +128,27 @@ export class VerificationService {
 	}
 
 	async revokeVerifiableCredential(vcp: VerifiableCredentialPersistence, issuerId: string): Promise<{ revoked: boolean }> {
-		const key = 'credentials-' + issuerId;
+		const subjectId = vcp.vc.id;
 
-		return this.lock.acquire(key).then(async (release) => {
-			try {
-				const subjectId = vcp.vc.id;
+		const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
+		if (!issuerIdentity) {
+			throw new Error(this.noIssuerFoundErrMessage(issuerId));
+		}
 
-				const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
-				if (!issuerIdentity) {
-					throw new Error(this.noIssuerFoundErrMessage(issuerId));
-				}
-				const keyCollectionIndex = this.getKeyCollectionIndex(vcp.index);
-				const keyIndex = vcp.index % this.keyCollectionSize;
+		const keyCollectionIndex = this.getKeyCollectionIndex(vcp.index);
+		const keyIndex = vcp.index % this.keyCollectionSize;
 
-				const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
+		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
 
-				if (res.revoked !== true) {
-					this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
-					return;
-				}
+		if (res.revoked !== true) {
+			this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
+			return;
+		}
 
-				await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.configService.serverIdentityId);
-				await this.userService.removeUserVC(vcp.vc);
+		await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.configService.serverIdentityId);
+		await this.userService.removeUserVC(vcp.vc);
 
-				return res;
-			} finally {
-				release();
-			}
-		});
+		return res;
 	}
 
 	async getLatestDocument(did: string) {

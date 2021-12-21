@@ -11,7 +11,7 @@ spec:
         - name: create-root-identity
           image: iotaledger/integration-services:develop
           imagePullPolicy: IfNotPresent
-          command: ["node", "dist/index.js", "keygen"]
+          command: ["node", "dist/index.js", "setup-api"]
           env:
             - name: "SERVER_IDENTITY_FILE"
               value: "/config/server-identity.json"

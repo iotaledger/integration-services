@@ -1,4 +1,4 @@
-import { KeyGenerator } from '.';
+import { KeyGenerator } from './key-generator';
 import { ConfigurationServiceMock } from '../test/mocks/service-mocks';
 import { LoggerMock } from '../test/mocks/logger';
 import * as UserDb from '../database/user';
