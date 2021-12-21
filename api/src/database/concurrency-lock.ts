@@ -1,12 +1,13 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId, DeleteWriteOpResultObject } from 'mongodb';
+import { ConcurrencyLock } from '../models/types/concurrency';
 
 const collectionName = CollectionNames.concurrencyLocks;
 
-export const getLock = async (lock: string): Promise<{ id: string; lock: string; created: Date } | null> => {
+export const getLock = async (lock: string): Promise<ConcurrencyLock | null> => {
 	const query = { _id: lock };
-	return MongoDbService.getDocument<{ id: string; lock: string; created: Date }>(collectionName, query);
+	return MongoDbService.getDocument<ConcurrencyLock>(collectionName, query);
 };
 
 export const insertLock = async (lock: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
@@ -16,7 +17,7 @@ export const insertLock = async (lock: string): Promise<InsertOneWriteOpResult<W
 		created: new Date()
 	};
 
-	const res = await MongoDbService.insertDocument<{ id: string; lock: string; created: Date }>(collectionName, document);
+	const res = await MongoDbService.insertDocument<ConcurrencyLock>(collectionName, document);
 	if (!res.result.n) {
 		throw new Error('could not add the lock!');
 	}

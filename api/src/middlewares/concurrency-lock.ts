@@ -4,13 +4,9 @@ import { getLock, insertLock, removeLock } from '../database/concurrency-lock';
 import { StatusCodes } from 'http-status-codes';
 import { Logger } from '../utils/logger/index';
 import _ from 'lodash';
+import { ConcurrencyLocks } from '../models/types/concurrency';
 
-export enum ConcurrecnyLocks {
-	ChannelLock = 'channel-lock',
-	CredentialLock = 'credential-lock'
-}
-
-const concurrencyLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const basicLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	const responseCompleted = async () => {
 		// we do not listen for close since we need to keep the lock until the request to the tangle has been finished.
 		// otherwise the client could close the request before and we would release the lock too early.
@@ -43,8 +39,6 @@ const releaseConcurrencyLock = (lockName: string) => async () => {
 	}
 };
 
-export const basicLock = concurrencyLock;
-
 export const channelLock = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	const channelAddress = _.get(req, 'params.channelAddress');
 	if (!channelAddress) {
@@ -55,7 +49,7 @@ export const channelLock = async (req: AuthenticatedRequest, res: Response, next
 		throw new Error('no user id provided!');
 	}
 
-	const lock = `${ConcurrecnyLocks.ChannelLock}-${channelAddress}-${userId}`;
+	const lock = `${ConcurrencyLocks.ChannelLock}-${channelAddress}-${userId}`;
 
-	return concurrencyLock(lock)(req, res, next);
+	return basicLock(lock)(req, res, next);
 };

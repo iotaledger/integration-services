@@ -10,7 +10,8 @@ import { Logger } from '../../utils/logger';
 import { authorizationService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { ConfigurationService } from '../../services/configuration-service';
-import { basicLock, ConcurrecnyLocks } from '../../middlewares/concurrency-lock';
+import { basicLock } from '../../middlewares/concurrency-lock';
+import { ConcurrencyLocks } from '../../models/types/concurrency';
 
 const verificationRoutes = new VerificationRoutes(
 	verificationService,
@@ -249,7 +250,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: CreateCredentialBodySchema }),
-	basicLock(ConcurrecnyLocks.CredentialLock),
+	basicLock(ConcurrencyLocks.CredentialLock),
 	createVerifiableCredential
 );
 
@@ -351,6 +352,6 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeVerificationBodySchema }),
-	basicLock(ConcurrecnyLocks.CredentialLock),
+	basicLock(ConcurrencyLocks.CredentialLock),
 	revokeVerifiableCredential
 );
