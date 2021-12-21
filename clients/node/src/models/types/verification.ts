@@ -9,16 +9,13 @@ export enum CredentialTypes {
 	'BasicIdentityCredential' = 'BasicIdentityCredential'
 }
 
-export type Subject = Static<typeof SubjectBodySchema>;
-
 export type VerifiableCredentialInternal = Static<typeof VerifiableCredentialSchema>;
+
+
+export type Subject = Static<typeof SubjectBodySchema>;
 
 export interface AuthenticatedRequest extends Express.Request {
 	user: User;
-}
-
-export interface LockedRequest extends AuthenticatedRequest {
-	releaseLock: () => Promise<void>;
 }
 
 export interface AuthorizationCheck {

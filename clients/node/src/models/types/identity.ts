@@ -5,7 +5,10 @@ import {
 	VerifiableCredentialSubjectSchema,
 	IdentityDocumentJsonSchema,
 	IdentityKeyPairJsonSchema,
-	IdentityJsonSchema
+	DocumentJsonUpdateSchema,
+	IdentityJsonSchema,
+	IdentityJsonUpdateSchema,
+	LatestIdentityJsonSchema
 } from '../schemas/identity';
 import { CreateIdentityBodySchema } from '../schemas/request-response-body/identity-bodies';
 import { IdentitySchema } from '../schemas/user';
@@ -28,8 +31,11 @@ export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>
 export type CredentialSubject = Static<typeof VerifiableCredentialSubjectSchema>;
 
 export type IdentityDocumentJson = Static<typeof IdentityDocumentJsonSchema>;
+export type LatestIdentityJson = Static<typeof LatestIdentityJsonSchema>;
 export type IdentityKeyPairJson = Static<typeof IdentityKeyPairJsonSchema>;
+export type DocumentJsonUpdate = Static<typeof DocumentJsonUpdateSchema>;
 export type IdentityJson = Static<typeof IdentityJsonSchema>;
+export type IdentityJsonUpdate = Static<typeof IdentityJsonUpdateSchema>;
 
 export interface IdentityKeys {
 	id: string;
