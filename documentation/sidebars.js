@@ -46,6 +46,15 @@ module.exports = {
     },
     {
       type: 'category',
+      label: 'Examples',
+      collapsed: true,
+      items: [
+        'examples/index',
+        'examples/create-identity-and-credentials'
+      ]
+    },
+    {
+      type: 'category',
       label: 'Using Decentralized Identities',
       collapsed: true,
       items: [
@@ -56,7 +65,6 @@ module.exports = {
         'examples/create_stream', 
         'examples/read_stream']
     },
-
     {
       type: 'category',
       label: 'Using Audit Trail',
