@@ -11,6 +11,12 @@ export enum ConcurrecnyLocks {
 }
 
 const concurrencyLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+	const afterResponse = async () => {
+		res.removeListener('finish', afterResponse);
+		await releaseConcurrencyLock(lockName)(); // release the lock after next() is finished
+	};
+	res.on('finish', afterResponse);
+
 	try {
 		const existingLock = await getLock(lockName);
 
