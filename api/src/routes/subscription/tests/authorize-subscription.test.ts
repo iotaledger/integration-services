@@ -49,7 +49,6 @@ describe('test authorize subscription route', () => {
 	it('should call nextMock if no body is provided', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {},
 			user: { id: undefined },
 			body: undefined // no body
@@ -62,7 +61,6 @@ describe('test authorize subscription route', () => {
 
 	it('should bad request if no id is provided', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {},
 			user: { id: undefined }, //no id,
 			body: { accessRights: AccessRights.Read }
@@ -77,7 +75,6 @@ describe('test authorize subscription route', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {}, // no channelAddress
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read } // no link provided so getSubscriptionByLink should return null
@@ -92,7 +89,6 @@ describe('test authorize subscription route', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {}, // no channelAddress
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
@@ -107,7 +103,6 @@ describe('test authorize subscription route', () => {
 		const sub = { ...subscriptionMock, isAuthorized: true };
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => sub);
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
@@ -138,7 +133,6 @@ describe('test authorize subscription route', () => {
 			.mockImplementationOnce(async () => sub)
 			.mockImplementationOnce(async () => notanauthor);
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:different-as-author' },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
@@ -168,7 +162,6 @@ describe('test authorize subscription route', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
@@ -207,7 +200,6 @@ describe('test authorize subscription route', () => {
 			.spyOn(streamsService, 'sendKeyload')
 			.mockImplementation(async () => ({ keyloadLink: '', sequenceLink: '' }));
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
 			body: { accessRights: AccessRights.ReadAndWrite, id: 'did:iota:2345' }
@@ -253,7 +245,6 @@ describe('test authorize subscription route', () => {
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }
@@ -303,7 +294,6 @@ describe('test authorize subscription route', () => {
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' }

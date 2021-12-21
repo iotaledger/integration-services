@@ -172,7 +172,6 @@ describe('test channel routes', () => {
 	describe('test getLogs channel route', () => {
 		it('should return bad request if no id is provided', async () => {
 			const req: any = {
-				releaseLock: jest.fn(),
 				params: { channelAddress: '12345' },
 				user: { id: undefined }, //no id,
 				body: {}
@@ -185,7 +184,6 @@ describe('test channel routes', () => {
 
 		it('should return bad request if no channelAddress is provided', async () => {
 			const req: any = {
-				releaseLock: jest.fn(),
 				params: {}, // no channelAddress
 				user: { id: 'did:iota:1234' },
 				body: {}
@@ -198,7 +196,6 @@ describe('test channel routes', () => {
 
 		it('should return bad request if startDate is after endDate', async () => {
 			const req: any = {
-				releaseLock: jest.fn(),
 				params: { channelAddress: '12345' },
 				user: { id: 'did:iota:1234' },
 				body: {},

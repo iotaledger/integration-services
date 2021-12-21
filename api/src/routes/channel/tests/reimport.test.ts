@@ -40,7 +40,6 @@ describe('test re-import route', () => {
 
 	it('should return bad request if no channelAddress is provided', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {},
 			user: TestUsersMock[0],
 			body: {}
@@ -53,7 +52,6 @@ describe('test re-import route', () => {
 
 	it('should return bad request if no seed is provided', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: '123456' },
 			user: TestUsersMock[0],
 			body: {}
@@ -68,7 +66,6 @@ describe('test re-import route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: { seed: 'testseeddontusethis' }
@@ -87,7 +84,6 @@ describe('test re-import route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: { seed: 'testseeddontusethis' }
@@ -113,7 +109,6 @@ describe('test re-import route', () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: { seed: 'testseeddontusethis' }
@@ -140,7 +135,6 @@ describe('test re-import route', () => {
 		const user = TestUsersMock[0];
 		const seed = 'testseeddontusethis';
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: { seed }
@@ -173,7 +167,6 @@ describe('test re-import route', () => {
 		const user = TestUsersMock[0];
 		const seed = 'testseeddontusethis';
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user,
 			body: { seed }

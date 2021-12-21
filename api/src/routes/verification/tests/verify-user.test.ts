@@ -60,7 +60,6 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: 'WRONGUSERID' },
 				params: {},
 				body: {
@@ -84,7 +83,6 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: initiatorVC.id },
 				params: {},
 				body: {
@@ -111,7 +109,6 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: initiatorVC.id },
 				params: {},
 				body: {
@@ -135,7 +132,6 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[1]; // this credential is from type SomeBasicCredential
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
@@ -165,7 +161,6 @@ describe('test authentication routes', () => {
 				.spyOn(verificationService, 'checkVerifiableCredential')
 				.mockImplementation(async () => initiatorVcIsVerified);
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
@@ -192,7 +187,6 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
 				body: {
@@ -260,7 +254,6 @@ describe('test authentication routes', () => {
 				.mockImplementation(async () => initiatorVcIsVerified);
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
-				releaseLock: jest.fn(),
 				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {

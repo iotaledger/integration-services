@@ -11,6 +11,7 @@ describe('test authentication middleware', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		res = {
+			on: jest.fn(),
 			send: sendMock,
 			sendStatus: sendStatusMock,
 			status: jest.fn(() => res)

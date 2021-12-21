@@ -64,7 +64,6 @@ describe('test revoke subscription route', () => {
 	it('should call nextMock if no body is provided', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {},
 			user: { id: undefined },
 			body: undefined // no body
@@ -77,7 +76,6 @@ describe('test revoke subscription route', () => {
 
 	it('should bad request if no id is provided', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {},
 			user: { id: undefined }, //no id,
 			body: {}
@@ -92,7 +90,6 @@ describe('test revoke subscription route', () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => null); // no author found to authorize
 		jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockImplementation(async () => null); // no subscription found to authorize
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:2345' },
 			body: {}
@@ -111,7 +108,6 @@ describe('test revoke subscription route', () => {
 			.mockImplementationOnce(async () => null); // no subscription found to authorize
 		const getSubscriptionByLinkSpy = jest.spyOn(subscriptionService, 'getSubscriptionByLink').mockReturnValue(null); // no subscription found to authorize
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:2345' },
 			body: { subscriptionLink: 'wrongsubscriptionlink' }
@@ -131,7 +127,6 @@ describe('test revoke subscription route', () => {
 			.mockImplementationOnce(async () => subscriptionMock);
 		const revokeSubscriptionSpy = jest.spyOn(subscriptionService, 'revokeSubscription').mockImplementation(async () => null);
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { id: 'did:iota:2345' }
@@ -150,7 +145,6 @@ describe('test revoke subscription route', () => {
 			.mockImplementationOnce(async () => subscriptionMock);
 		jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no author
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { id: 'did:iota:2345' }
@@ -185,7 +179,6 @@ describe('test revoke subscription route', () => {
 			.mockImplementation(async () => [authorSubscriptionMock, subscriptionMock]);
 
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: { channelAddress },
 			user: { id: 'did:iota:1234' },
 			body: { id: 'did:iota:2345' }
