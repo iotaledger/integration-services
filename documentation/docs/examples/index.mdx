@@ -1,0 +1,86 @@
+# Introduction
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This example will show how to create an basic identity. 
+It is recommended to have a basic understading of Decentralized Identities to get the most out of this example. 
+Have a look at our Basics section to read further about
+[Decrentralized Identities](../basics/identity).
+
+## Prerequisite
+
+1. You have to have a recent version of [Node.js](https://nodejs.org/en/) installed.
+
+2. Install the api client
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install iota-is-sdk
+```
+
+</TabItem>
+<TabItem value="yarn" label="Yarn">
+
+```bash
+yarn add iota-is-sdk
+```
+
+</TabItem>
+</Tabs>
+
+## Clients
+
+The sdk defines two kind of clients:
+* `IdentityClient`: to access features related to management of decentralyzed identities
+* `ChannelClient`: to access features of Audit Trail
+
+You can import them and config using a `ClientConfig` object:
+
+```js
+
+import { ClientConfig, IdentityClient, ChannelClient } from 'iota-is-sdk';
+
+const config: ClientConfig = {
+    apiKey: process.env.API_KEY,        // Deployed Integration Services API KEY
+    baseUrl: process.env.API_URL,       // URL of the Integration Services API 
+    apiVersion: ApiVersion.v01
+};
+
+...
+const identityClient = new IdentityClient(config);
+...
+
+...
+const channelClient = new ChannelClient(config);
+...
+
+
+```
+
+## Authorization
+
+Integration Services features requires to be authorized by a given decentralyzed identity.
+Under the hood Integration Services uses a JWT token based authorization mechanism: 
+the client makes an handshake digitally signing a nonce with its identity's private key.
+
+If you have an Identity you can authorize your client with the following:
+
+```js
+    await identity.authenticate(identity.doc.id, identity.key.secret);
+```
+
+The identity could be obtained with the following:
+
+```js
+    import { IdentityJson } from 'iota-is-sdk';
+    ...
+    const identity = await identityClient.create('User') as IdentityJson;
+```
+
+and it does not require to be authenticated.
+
+## Admin role
+
