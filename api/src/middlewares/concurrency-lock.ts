@@ -12,13 +12,13 @@ export enum ConcurrecnyLocks {
 
 const concurrencyLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	const responseCompleted = async () => {
+		// we do not listen for close since we need to keep the lock until the request to the tangle has been finished.
+		// otherwise the client could close the request and we would release the lock to early.
 		res.removeListener('finish', responseCompleted);
-		res.removeListener('close', responseCompleted);
 
 		await releaseConcurrencyLock(lockName)(); // release the lock after next() is finished
 	};
 	res.on('finish', responseCompleted);
-	res.on('close', responseCompleted);
 
 	try {
 		const existingLock = await getLock(lockName);
