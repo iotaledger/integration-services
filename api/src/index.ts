@@ -11,15 +11,10 @@ import { Logger } from './utils/logger';
 import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
-import { KeyGenerator } from './setup/key-generator';
 import { ConfigurationService } from './services/configuration-service';
-import { DatabaseSeeder } from './setup/database-seeder';
+import { SetupManager } from './setup/setup-manager';
 
-const argv = yargs
-	.command('server', 'Start the integration service API', {})
-	.command('seed', 'Generate indexes for the database', {})
-	.command('keygen', 'Generate root identity for integration service API', {})
-	.help().argv;
+const argv = yargs.command('server', 'Start the integration service API', {}).command('setup-api', 'Setups the API', {}).help().argv;
 
 function useRouter(app: express.Express, prefix: string, router: express.Router) {
 	const messages = router.stack.map((r) => `${Object.keys(r?.route?.methods)?.[0].toUpperCase()}  ${prefix}${r?.route?.path}`);
@@ -86,32 +81,10 @@ async function startServer() {
 	}
 }
 
-async function keyGen() {
+async function setupApi() {
 	try {
-		const logger = Logger.getInstance();
-		const configService = ConfigurationService.getInstance(logger);
-		const config = configService.config;
-
-		await MongoDbService.connect(config.databaseUrl, config.databaseName);
-		const keyGenerator: KeyGenerator = new KeyGenerator(configService, logger);
-
-		await keyGenerator.keyGeneration();
-	} catch (e) {
-		Logger.getInstance().error(e);
-		process.exit(-1);
-	}
-	await MongoDbService.disconnect();
-	process.exit();
-}
-
-async function seedDb() {
-	try {
-		const logger = Logger.getInstance();
-		const configService = ConfigurationService.getInstance(logger);
-		const config = configService.config;
-
-		const databaseSeeder: DatabaseSeeder = new DatabaseSeeder(config.databaseUrl, config.databaseName);
-		await databaseSeeder.seed();
+		const setupManager = new SetupManager();
+		await setupManager.runSetup();
 	} catch (e) {
 		Logger.getInstance().error(e);
 		process.exit(-1);
@@ -121,10 +94,8 @@ async function seedDb() {
 
 if (argv._.includes('server')) {
 	startServer();
-} else if (argv._.includes('keygen')) {
-	keyGen();
-} else if (argv._.includes('seed')) {
-	seedDb();
+} else if (argv._.includes('setup-api')) {
+	setupApi();
 } else {
 	yargs.showHelp();
 }

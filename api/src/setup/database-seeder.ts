@@ -1,18 +1,22 @@
 import { CollectionNames } from '../database/constants';
-import { MongoDbService } from '../services/mongodb-service';
+import { Db } from 'mongodb';
+import { ILogger } from '../utils/logger/index';
+
+export interface IDatabaseSeeder {
+	seed(): void;
+}
 
 export class DatabaseSeeder {
-	constructor(private readonly url: string, private readonly dbName: string) {}
-	async seed() {
+	constructor(private readonly logger: ILogger) {}
+	async seed(db: Db) {
 		const expireAfterSeconds = 55;
-		await MongoDbService.connect(this.url, this.dbName);
-		const concurrencyCollection = MongoDbService.db.collection(CollectionNames.concurrencyLocks);
+		const concurrencyCollection = db.collection(CollectionNames.concurrencyLocks);
 
 		const indexExists = await concurrencyCollection.indexExists('created_1');
 		if (indexExists) {
 			await concurrencyCollection.dropIndex('created_1');
 		}
 		await concurrencyCollection.createIndex({ created: 1 }, { expireAfterSeconds });
-		await MongoDbService.disconnect();
+		this.logger.log('Database successfully seeded.');
 	}
 }
