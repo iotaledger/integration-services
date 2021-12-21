@@ -1,4 +1,4 @@
-![banner](./api/assets/Secure_Digital_Infrastructure.jpg)
+![banner](./api/assets/Secure_Digital_Infrastructure.png)
 
 <p align="center">
   <a href="https://iota.stackexchange.com/" style="text-decoration:none;"><img src="https://img.shields.io/badge/StackExchange-9cf.svg?logo=stackexchange" alt="StackExchange"></a>
