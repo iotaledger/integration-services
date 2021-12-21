@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
-import { AuthenticatedRequest, LockedRequest } from '../../models/types/verification';
+import { AuthenticatedRequest } from '../../models/types/verification';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { AddChannelLogBody, CreateChannelBody, ReimportBody, ValidateBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
@@ -29,7 +29,7 @@ export class ChannelRoutes {
 		}
 	};
 
-	getLogs = async (req: LockedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+	getLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;
@@ -58,8 +58,6 @@ export class ChannelRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not get the logs'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 
@@ -84,7 +82,7 @@ export class ChannelRoutes {
 		}
 	};
 
-	addLogs = async (req: LockedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;
@@ -103,12 +101,10 @@ export class ChannelRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not add the logs'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 
-	reimport = async (req: LockedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+	reimport = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;
@@ -128,12 +124,10 @@ export class ChannelRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not reimport channel data'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 
-	validateLogs = async (req: LockedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+	validateLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;
@@ -152,8 +146,6 @@ export class ChannelRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not validate the channel data'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 }

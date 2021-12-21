@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import { AuthenticatedRequest, LockedRequest } from '../models/types/verification';
+import { AuthenticatedRequest } from '../models/types/verification';
 import { getLock, insertLock, removeLock } from '../database/concurrency-lock';
 import { StatusCodes } from 'http-status-codes';
 import { Logger } from '../utils/logger/index';
@@ -25,7 +25,6 @@ const concurrencyLock = (lockName: string) => async (req: AuthenticatedRequest, 
 		}
 
 		await insertLock(lockName);
-		(req as LockedRequest).releaseLock = releaseConcurrencyLock(lockName);
 	} catch (e) {
 		await releaseConcurrencyLock(lockName)();
 		return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);

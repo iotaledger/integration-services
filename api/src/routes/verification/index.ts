@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
 import { RevokeVerificationBody, TrustedRootBody, CreateCredentialBody } from '../../models/types/request-response-bodies';
-import { AuthenticatedRequest, AuthorizationCheck, Subject, LockedRequest } from '../../models/types/verification';
+import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
@@ -20,7 +20,7 @@ export class VerificationRoutes {
 		private readonly configService: IConfigurationService
 	) {}
 
-	createVerifiableCredential = async (req: LockedRequest, res: Response, next: NextFunction): Promise<void> => {
+	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const createCredential = req.body as CreateCredentialBody;
 			const { initiatorVC, subject } = createCredential;
@@ -49,8 +49,6 @@ export class VerificationRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not create the verifiable credential'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 
@@ -65,7 +63,7 @@ export class VerificationRoutes {
 		}
 	};
 
-	revokeVerifiableCredential = async (req: LockedRequest, res: Response, next: NextFunction): Promise<void> => {
+	revokeVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const revokeBody = req.body as RevokeVerificationBody;
 			const requestUser = req.user;
@@ -85,8 +83,6 @@ export class VerificationRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not revoke the verifiable credential'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 

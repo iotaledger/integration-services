@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as _ from 'lodash';
 import { SubscriptionService } from '../../services/subscription-service';
-import { AuthenticatedRequest, LockedRequest } from '../../models/types/verification';
+import { AuthenticatedRequest } from '../../models/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '../../models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { Subscription, SubscriptionUpdate } from '../../models/types/subscription';
@@ -146,7 +146,7 @@ export class SubscriptionRoutes {
 		}
 	};
 
-	requestSubscription = async (req: LockedRequest, res: Response, next: NextFunction) => {
+	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const { seed, accessRights, presharedKey } = req.body as RequestSubscriptionBody;
@@ -173,12 +173,10 @@ export class SubscriptionRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not request the subscription'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 
-	revokeSubscription = async (req: LockedRequest, res: Response, next: NextFunction) => {
+	revokeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const authorId = req.user?.id;
@@ -213,12 +211,10 @@ export class SubscriptionRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not revoke the subscription'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 
-	authorizeSubscription = async (req: LockedRequest, res: Response, next: NextFunction) => {
+	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 			const body = req.body as AuthorizeSubscriptionBody;
@@ -254,8 +250,6 @@ export class SubscriptionRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not authorize the subscription'));
-		} finally {
-			await req.releaseLock();
 		}
 	};
 }

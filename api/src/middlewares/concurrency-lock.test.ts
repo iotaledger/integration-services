@@ -20,7 +20,6 @@ describe('test authentication middleware', () => {
 
 	it('lock already exists', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData
 		};
 
@@ -37,7 +36,6 @@ describe('test authentication middleware', () => {
 
 	it('will create and release a lock', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData
 		};
 
@@ -53,7 +51,6 @@ describe('test authentication middleware', () => {
 
 	it('no channelAddress provided', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData
 		};
 		await expect(channelLock(req, res, nextMock)).rejects.toThrow('no channelAddress provided!');
@@ -61,7 +58,6 @@ describe('test authentication middleware', () => {
 
 	it('no user provided', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			params: {
 				channelAddress: 'testaddress'
 			}
@@ -71,7 +67,6 @@ describe('test authentication middleware', () => {
 
 	it('will create and release a chnanel lock', async () => {
 		const req: any = {
-			releaseLock: jest.fn(),
 			user: UserIdentityMock.userData,
 			params: {
 				channelAddress: 'testaddress'
