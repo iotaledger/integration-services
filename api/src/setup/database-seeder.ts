@@ -2,6 +2,8 @@ import { CollectionNames } from '../database/constants';
 import { Db } from 'mongodb';
 import { ILogger } from '../utils/logger/index';
 
+const LOCK_EXPIRATION_TIME_SEC = 55;
+
 export interface IDatabaseSeeder {
 	seed(): void;
 }
@@ -9,14 +11,8 @@ export interface IDatabaseSeeder {
 export class DatabaseSeeder {
 	constructor(private readonly logger: ILogger) {}
 	async seed(db: Db) {
-		const expireAfterSeconds = 55;
 		const concurrencyCollection = db.collection(CollectionNames.concurrencyLocks);
-
-		const indexExists = await concurrencyCollection.indexExists('created_1');
-		if (indexExists) {
-			await concurrencyCollection.dropIndex('created_1');
-		}
-		await concurrencyCollection.createIndex({ created: 1 }, { expireAfterSeconds });
+		await concurrencyCollection.createIndex({ created: 1 }, { expireAfterSeconds: LOCK_EXPIRATION_TIME_SEC });
 		this.logger.log('Database successfully seeded.');
 	}
 }
