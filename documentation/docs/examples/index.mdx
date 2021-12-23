@@ -62,25 +62,46 @@ const channelClient = new ChannelClient(config);
 
 ## Authorization
 
-Integration Services features requires to be authorized by a given decentralyzed identity.
+Integration Services API requires to be authenticated with a decentralyzed identity.
 Under the hood Integration Services uses a JWT token based authorization mechanism: 
 the client makes an handshake digitally signing a nonce with its identity's private key.
+
+The identity could be obtained with the following (no auth required):
+
+```js
+    import { IdentityJson } from 'iota-is-sdk';
+
+    ...
+
+    // did-core specifications: https://www.w3.org/TR/did-core/
+    const identity = await identityClient.create('User') as IdentityJson;
+```
 
 If you have an Identity you can authorize your client with the following:
 
 ```js
-    await identity.authenticate(identity.doc.id, identity.key.secret);
+    const identity = // ... DID json object ...
+
+    await identityClient.authenticate(identity.doc.id, identity.key.secret);
 ```
 
-The identity could be obtained with the following:
+# How to run examples
 
-```js
-    import { IdentityJson } from 'iota-is-sdk';
-    ...
-    const identity = await identityClient.create('User') as IdentityJson;
+In order to launch examples you need:
+
+* get Integration Service API's endpoint (set `API_KEY` and `API_URL` in `.env` file)
+* get MongoDB endpoint for the API (set `MONGO_URL`, `DB_NAME` and `SECRET_KEY` in `.env` file)
+* execute `npm run example-0`:
+
+```bash
+    cd clients/node/examples
+
+    npm install
+
+    npm run example-0
 ```
 
-and it does not require to be authenticated.
+This will create a decentralized identity and will save it in `adminIdentity.json`.
+The example will assign `Admin` role to this identity  
 
-## Admin role
 
