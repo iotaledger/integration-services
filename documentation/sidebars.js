@@ -50,6 +50,7 @@ module.exports = {
       collapsed: true,
       items: [
         'examples/index',
+        'examples/how-to-run-examples',
         'examples/create-identity-and-credentials'
       ]
     },
