@@ -7,7 +7,7 @@ export const Config = {
 };
 
 export const AuditorIdentity = {
-	username: 'frama-c-log-auditor',
+	username: 'frama-c-log-auditor-' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Service',
 		name: 'Frama C Log Auditor',
