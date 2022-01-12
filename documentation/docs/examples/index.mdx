@@ -68,11 +68,11 @@ the API returns a JWT token to authorize further requests.
 You can get an identity with the following (no auth required):
 
 ```js
-    import { IdentityJson } from 'iota-is-sdk';
+import { IdentityJson } from 'iota-is-sdk';
 
-    ...
+...
 
-    const identity = await identityClient.create('User') as IdentityJson;
+const identity = await identityClient.create('User') as IdentityJson;
 ```
 
 The generated identity is stored on the IOTA Tangle and follows [did-core specifications](https://www.w3.org/TR/did-core/).
@@ -110,7 +110,7 @@ It is a JSON file like the following:
 If you have a JSON Identity you can authorize your client with the following:
 
 ```js
-    const identity = // ... did-core json object ...
+const identity = // ... did-core json object ...
 
-    await identityClient.authenticate(identity.doc.id, identity.key.secret);
+await identityClient.authenticate(identity.doc.id, identity.key.secret);
 ```

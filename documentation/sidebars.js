@@ -51,31 +51,13 @@ module.exports = {
       items: [
         'examples/index',
         'examples/how-to-run-examples',
-        'examples/create-identity-and-credentials'
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Using Decentralized Identities',
-      collapsed: true,
-      items: [
-        'examples/intro_identity', 
-        'examples/create_identity', 
-        'examples/issue_credential', 
-        'examples/verify_credential', 
-        'examples/create_stream', 
-        'examples/read_stream']
-    },
-    {
-      type: 'category',
-      label: 'Using Audit Trail',
-      collapsed: true,
-      items: [
-        'examples/intro_audittrail', 
-        'examples/create_channel',
-        'examples/subscribe_channel', 
-        'examples/authorize_subscriber', 
-        'examples/read_write_channel'
+        'examples/create-identity-and-credentials',
+        'examples/update-users',
+        'examples/delete-users',
+        'examples/trusted-authorities',
+        'examples/create-channel',
+        'examples/authorize-to-channel',
+        'examples/search-channel-and-validate-data'
       ]
     },
     {
