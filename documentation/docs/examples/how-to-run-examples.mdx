@@ -1,23 +1,41 @@
-# How to run examples
+---
+image: /img/logo/integration_services.png
+description: This section will guide you on how to install, configure and run the examples.
+keywords:
+- examples
+- node
+- npm
+- integration services api
+---
 
-In the `clients/node/examples` directory you can find many examples related to the management of
-identities and channels. 
+# How To Run Examples
 
-We will go in deep in next sections to describe each example.
+You can find many examples related to managing identities and channels in the [clients/node/examples](https://github.com/iotaledger/integration-services/tree/develop/clients/node/examples) directory.
 
-In order to launch examples you need to perform a preparation task:
+The next sections will describe each example in detail.
 
-* get Integration Service API's endpoint (set `API_KEY` and `API_URL` in `.env` file)
-* get MongoDB endpoint for the API (set `MONGO_URL`, `DB_NAME` and `SECRET_KEY` in `.env` file)
-* execute `npm run example-0`:
+## Running Examples
 
+In order to run examples, you will need to:
+
+1. Get Integration Service API's endpoint by setting the `API_KEY` and `API_URL` in `.env` file.
+2. Get the MongoDB endpoint for the API by setting `MONGO_URL`, `DB_NAME` and `SECRET_KEY` in `.env` file.
+3. Execute `npm run example-0`.
+
+### Install the Examples
+
+You can install the examples by going into your local `clients/node/examples` directory and running `npm install`.
 ```bash
 cd clients/node/examples
 npm install
 ```
 
-Fill `.env` file with references to the API and Database endpoints.
-If you started locally the API using [kubernetes](../installation/kubernetes/local_setup) getting started you can write 
+### Update the .env File
+
+1. Set Integration Service API's endpoint by setting the `API_KEY` and `API_URL` in `.env` file.
+2. Set the MongoDB endpoint for the API by setting `MONGO_URL`, `DB_NAME` and `SECRET_KEY` in `.env` file.
+
+If you started the API locally using [kubernetes](../installation/kubernetes/local_setup), you can write
 the following `.env` file:
 
 ```bash
@@ -28,13 +46,13 @@ API_KEY=94F5BA49-12B6-4E45-A487-BF91C442276D
 API_URL=http://localhost:3000
 ```
 
-Finally run the `example-0` to create a decentralized identity with `Admin` role 
-that will be used in the other examples
+### Run Example 0
+
+Once you have completed the previous steps, you can run [example-0](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/0-MakeRootIdentityAdmin.ts) to create a decentralized identity with `Admin` role
+that will be used in the other examples using the following command:
 
 ```bash
 npm run example-0
 ```
 
-The admin identity is saved in `adminIdentity.json`.
-
-
+The admin identity will be saved in `adminIdentity.json`.

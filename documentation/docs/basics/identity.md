@@ -1,13 +1,19 @@
+---
+image: /img/use-case-1.png
+description: IOTA Identity provides a digital identity anchored on the Tangle and verifiable credentials (VC) that are attachable to said identity.
+keywords:
+- IOTA Identity basics
+- validate university degree
+- validate patient data
+---
 # IOTA Identity
 
-IOTA Identity provides a digital identity anchored on the Tangle and verifiable credentials (VC) 
-that are attachable to that identity. Think a university student (Identity owner) and his degree (VC).
+IOTA Identity provides a digital identity anchored on the Tangle and verifiable credentials (VC) 
+that are attachable to said identity. For example, a university student could use this to [validate his degree](https://wiki.iota.org/identity.rs/tutorials/validate_university_degree), or it could be applied in combination with [IOTA Streams](streams.md) to validate a patients prescriptions and medical data as illustrated bellow.
 
-![alt text](../../static/img/use-case-1.png "Title")
+[![Validate patient data](/img/use-case-1.png "Validate patient data")](/img/use-case-1.png)
 
-<!--
-The concepts of Decentralized Identities will not be explained in depth in this wiki. Below we provide some resources to get you started.
--->
+The concepts of Decentralized Identities will not be explained in depth in this wiki.  You can find more information on IOTA Identity in the following resources:
 
 ## Wiki
 

@@ -1,8 +1,17 @@
+---
+image: /img/logo/integration_services.png
+description: IOTA Streams offers auditable encrypted data streams for any industry, ensuring data has not been modified throughout the industry data pipeline.channels.
+keywords:
+- channels
+- authorize channel
+- subscribe channel
+- read channel
+---
 # IOTA Streams
 
-IOTA Streams offers auditable encrypted data streams for any industry, ensuring data has not been modified throughout the industry data pipeline.
+IOTA Streams offers auditable encrypted data streams for any industry, ensuring data has not been modified throughout the industry data pipeline.
 
-TODO: check resource and add more
+You can find more information on IOTA streams in the following resources:
 
 ## Wiki
 

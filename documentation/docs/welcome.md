@@ -1,38 +1,49 @@
+---
+image: /img/logo/integration_services.png
+description: The IOTA Integration Services implement a high-level API for common interactions with Decentralized Identities and Data Streams.
+keywords:
+- integration services
+- decentralized identity
+- streams
+- use cases
+- audit trail gateway
+- Self-Sovereign Identity Bridge
+---
 # Welcome
 
-Currently under the “Integration Services” umbrella, we have two tools developed, 
-the IOTA Audit Trail gateway and the Self-Sovereign Identity Bridge. 
+The IOTA Integration Services implement a high-level API for common interactions with Decentralized Identities and Data
+Streams based on the [IOTA Identity]('https://wiki.iota.org/identity.rs/introduction')
+and [IOTA Streams]('https://wiki.iota.org/streams/welcome') libraries, facilitating the integration of IOTA into
+existing digital infrastructure.
 
-The Audit trail GW allows third-party entities to easily log and share immutable information, 
-while other authorized third parties can access this information and verify its integrity and authenticity. 
+The solutions developed by the Integration Services are domain agnostic and can be applied to several use cases, ranging
+from e-commerce to healthcare and beyond.
 
-The Self-Sovereign Identity Bridge enables the creation, issuing, and verification 
-of trusted self-sovereign decentralized identities and credentials. 
+## IOTA Audit Trail Gateway
 
-These solutions have been built as “domain agnostic”, and can be applied to use cases from e-commerce to healthcare and far beyond. 
+The Audit Trail Gateway allows third-party entities to easily log and share immutable information, while other
+authorized third parties can access this information and verify its integrity and authenticity.
 
-<!--
-The IOTA Integration Services implements a high-level API for common interactions with Decentralized Identities and Data Streams. The Integration Services abstract from technical details of the IOTA [Identity]('https://wiki.iota.org/identity.rs/introduction') and IOTA [Streams]('https://wiki.iota.org/streams/welcome') libraries and facilitates the integration of IOTA into existing digital infrastructure.
--->
+## Self-Sovereign Identity Bridge
 
-## What you will find here
+The Self-Sovereign Identity Bridge enables the creation, issuing, and verification of trusted self-sovereign
+decentralized identities and credentials.
 
-This documentation has eight sections. 
+## What You Will Find
 
-1. **Getting started**: all the resources to get you started
-2. **Using Decentralized Identities**: examples on creating and managing decentralized identities and verifiable credentials
-3. **Using Audit Trail**: examples on creating and managing secure channels
-4. **Basics**: use cases about the core technology and principles
-5. **API Reference**: detailed specification of all endpoints
-6. **Troubleshooting**: instructions on how to resolve your issues
-7. **FAQ**: answers to the most common problems
-8. **Contribute**: find ways to help the project
+This documentation has eight sections.
 
-<!--
-5. **Installation**: different ways of installing the integration service
-6. **Examples**: practical coding examples
-11. **Contact**: contact information
--->
+1. [Getting started](getting_started/overview): All the resources you need to get started.
+2. **Using Decentralized Identities**: Examples on creating and managing decentralized identities and verifiable
+   credentials.
+3. **Using Audit Trail**: Examples on creating and managing secure channels.
+4. **Basics**: Use cases about the core technology and principles.
+5. **API Reference**: Detailed specification of all endpoints.
+6. **Troubleshooting**: Instructions on how to resolve any issues you may encounter while using the services.
+7. **FAQ**: Answers to the most common doubts.
+8. **Contribute**: Find ways to help the project.
 
 ## Join the discussion
-If you are seeking a place for discussion about this library, or in need for support head to our [Discord](https://discord.gg/iota) channel #integration-services.
+
+If you are looking for a place to discuss this library, or are in need of support head to
+our [Discord channel](https://discord.gg/iota) #integration-services.

@@ -1,8 +1,19 @@
+---
+image: /img/logo/integration_services.png
+description: Contribute to the IOTA Integration Services by reporting a bug, suggesting a feature, contributing to the documentation or sharing your knowledge with others.
+keywords:
+- contribute
+- github
+- Report a bug
+- Suggest a new feature
+- Contribute to the documentation
+- discord
+---
 # Contribute
 
-**Thanks for thinking about contributing to the project! We have the following ways that you can contribute.**
+**Thanks for thinking about contributing to the project! You can contribute using the following channels.**
 
-## Contribute to the project's GitHub repository
+## Contribute to the Project's GitHub Repository
 
 All the code is open source and hosted on [GitHub](https://github.com/iotaledger/integration-services) where you can do the following:
 
@@ -10,13 +21,13 @@ All the code is open source and hosted on [GitHub](https://github.com/iotaledger
 - Suggest a new feature
 - Contribute to the documentation
 
-## Contribute to the documentation
+## Contribute to the Documentation
 
 This documentation is also open source and hosted on GitHub.
 
-If you want to contribute new documentation or fix an error, see the [contribution guidelines](https://github.com/iotaledger/documentation/blob/develop/.github/CONTRIBUTING.md).
+If you want to contribute new documentation or fix an error, please follow the [contribution guidelines](https://github.com/iotaledger/documentation/blob/develop/.github/CONTRIBUTING.md).
 
-## Share your knowledge
+## Share Your Knowledge
 
 Helping others is an important part of any open source ecosystem.
 

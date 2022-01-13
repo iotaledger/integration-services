@@ -1,18 +1,31 @@
+---
+image: /img/logo/integration_services.png
+description: The example-2 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then searches for a user and then updates said user's username.
+keywords:
+- search for users
+- update user
+- example
+- manage identity
+---
+
+
 # Update Users
 
 The [example-2](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/2-UpdateUser.ts)
-script authenticates a Integration Service client to manage Identities using the Admin identity created in [example-0](./how-to-run-examples) and then performs the following tasks:
+script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](how-to-run-examples) and then performs the following tasks:
 
-* search a user
-* update its username 
+1. Search for a user.
+2. Update said user's username. 
 
-You can run the example with the following:
+You can run the example with the following command:
 
 ```bash
 npm run example-2
 ```
 
-## Search a user
+## Search for a User
+
+You can search for a user by the `username` field with the following script:
 
 ```js
 // Search for identities with username 'User' in it
