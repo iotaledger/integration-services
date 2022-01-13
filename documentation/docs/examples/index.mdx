@@ -1,0 +1,116 @@
+# Introduction
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+You the following pages you will learn how to use Integration Services sdk.
+The sdk makes easy to manage decentralized identities and secure channels (Audit Trail).
+
+It is recommended to have a basic understading of Decentralized Identities 
+to get the most out of the following examples.
+Have a look at our Basics section to read further about [Decrentralized Identities](../basics/identity).
+
+## Install
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install iota-is-sdk
+```
+
+</TabItem>
+<TabItem value="yarn" label="Yarn">
+
+```bash
+yarn add iota-is-sdk
+```
+
+</TabItem>
+</Tabs>
+
+## Clients
+
+You can use two different clients:
+* `IdentityClient`: to manage decentralyzed identities (create identity, issue/revoke verifiable credentials...)
+* `ChannelClient`: to access features of Audit Trail (create a channel, subscribe/approve access to a channel, read/write on a channel...)
+
+You can import them and config using a `ClientConfig` object:
+
+```js
+
+import { ClientConfig, IdentityClient, ChannelClient } from 'iota-is-sdk';
+
+const config: ClientConfig = {
+    apiKey: process.env.API_KEY,        // Deployed Integration Services API KEY
+    baseUrl: process.env.API_URL,       // URL of the Integration Services API 
+    apiVersion: ApiVersion.v01
+};
+
+...
+const identityClient = new IdentityClient(config);
+...
+
+...
+const channelClient = new ChannelClient(config);
+...
+
+
+```
+
+## Authorization
+
+In order to work with Integration Services API you need to be authenticated with a decentralyzed identity.
+Under the hood Integration Services uses a JWT token based authorization mechanism: 
+the client get a nonce from the API and return it signed by the identity's private key: 
+the API returns a JWT token to authorize further requests. 
+
+You can get an identity with the following (no auth required):
+
+```js
+import { IdentityJson } from 'iota-is-sdk';
+
+...
+
+const identity = await identityClient.create('User') as IdentityJson;
+```
+
+The generated identity is stored on the IOTA Tangle and follows [did-core specifications](https://www.w3.org/TR/did-core/).
+It is a JSON file like the following:
+
+```json
+{
+  "doc": {
+    "id": "did:iota:3q4mW831dfbbSP2j5Lf4FPTKXFjEv2ykyPjuVrd1FHss",
+    "authentication": [
+      {
+        "id": "did:iota:3q4mW831dfbbSP2j5Lf4FPTKXFjEv2ykyPjuVrd1FHss#key",
+        "controller": "did:iota:3q4mW831dfbbSP2j5Lf4FPTKXFjEv2ykyPjuVrd1FHss",
+        "type": "Ed25519VerificationKey2018",
+        "publicKeyBase58": "5LT5yjaykKeTqYuqmCELE7xUyN9z4WEN5CKxdWmrU5g5"
+      }
+    ],
+    "created": "2021-12-20T10:43:00Z",
+    "updated": "2021-12-20T10:43:00Z",
+    "proof": {
+      "type": "JcsEd25519Signature2020",
+      "verificationMethod": "#key",
+      "signatureValue": "ktusPiZd5whHTHsJJwSiSbfhmAGypdkTgLFQt4USvVg91WJLYNhEzshcBCvr9Cr42heyB249TvZHVrdGVAYds6s"
+    }
+  },
+  "key": {
+    "type": "ed25519",
+    "public": "5LT5yjaykKeTqYuqmCELE7xUyN9z4WEN5CKxdWmrU5g5",
+    "secret": "9Arv8HTAu3JjLvBhst6deMaULvBc3e7w2WiseEL4BESC",
+    "encoding": "base58"
+  }
+}
+```
+
+If you have a JSON Identity you can authorize your client with the following:
+
+```js
+const identity = // ... did-core json object ...
+
+await identityClient.authenticate(identity.doc.id, identity.key.secret);
+```

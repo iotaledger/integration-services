@@ -1,0 +1,40 @@
+# How to run examples
+
+In the `clients/node/examples` directory you can find many examples related to the management of
+identities and channels. 
+
+We will go in deep in next sections to describe each example.
+
+In order to launch examples you need to perform a preparation task:
+
+* get Integration Service API's endpoint (set `API_KEY` and `API_URL` in `.env` file)
+* get MongoDB endpoint for the API (set `MONGO_URL`, `DB_NAME` and `SECRET_KEY` in `.env` file)
+* execute `npm run example-0`:
+
+```bash
+cd clients/node/examples
+npm install
+```
+
+Fill `.env` file with references to the API and Database endpoints.
+If you started locally the API using [kubernetes](../installation/kubernetes/local_setup) getting started you can write 
+the following `.env` file:
+
+```bash
+MONGO_URL=mongodb://admin:admin@localhost:27017
+DB_NAME=integration-service-db
+SECRET_KEY=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
+API_KEY=94F5BA49-12B6-4E45-A487-BF91C442276D
+API_URL=http://localhost:3000
+```
+
+Finally run the `example-0` to create a decentralized identity with `Admin` role 
+that will be used in the other examples
+
+```bash
+npm run example-0
+```
+
+The admin identity is saved in `adminIdentity.json`.
+
+
