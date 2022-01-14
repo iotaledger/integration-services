@@ -5,6 +5,7 @@ import { IdentityRoutes } from '../../routes/identity';
 import { Logger } from '../../utils/logger';
 import { authorizationService, userService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const identityRoutes = new IdentityRoutes(userService, authorizationService, verificationService, Logger.getInstance());
 const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
@@ -58,7 +59,7 @@ export const identityRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentityBodySchema }), createIdentity);
+identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentityBodySchema }), mongodbSanitizer, createIdentity);
 
 /**
  * @openapi
@@ -219,7 +220,7 @@ identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySchema }), addUser);
+identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySchema }), mongodbSanitizer, addUser);
 
 /**
  * @openapi
@@ -281,7 +282,14 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.put('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: UpdateIdentityBodySchema }), updateUser);
+identityRouter.put(
+	'/identity',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: UpdateIdentityBodySchema }),
+	mongodbSanitizer,
+	updateUser
+);
 
 /**
  * @openapi

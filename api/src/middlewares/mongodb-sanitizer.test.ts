@@ -34,7 +34,7 @@ describe('test mongodb sanitizer middleware', () => {
 		};
 
 		mongodbSanitizer(req, res, nextMock);
-		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key prefix.' });
 	});
 	it('should return error since $ in deepest field name', async () => {
 		const req: any = {
@@ -47,7 +47,7 @@ describe('test mongodb sanitizer middleware', () => {
 		};
 
 		mongodbSanitizer(req, res, nextMock);
-		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key prefix.' });
 	});
 	it('should return error since $ in deepest array field name', async () => {
 		const req: any = {
@@ -60,7 +60,7 @@ describe('test mongodb sanitizer middleware', () => {
 		};
 
 		mongodbSanitizer(req, res, nextMock);
-		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key prefix.' });
 	});
 	it('should return error since $ in lowest field name of array body', async () => {
 		const req: any = {
@@ -77,6 +77,6 @@ describe('test mongodb sanitizer middleware', () => {
 		};
 
 		mongodbSanitizer(req, res, nextMock);
-		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key prefix.' });
 	});
 });

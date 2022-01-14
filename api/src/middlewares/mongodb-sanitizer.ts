@@ -10,7 +10,7 @@ export const mongodbSanitizer = (req: Request, res: Response, next: NextFunction
 	const val = hasBadCharacter(body, BAD_CHAR);
 
 	if (val) {
-		return res.status(StatusCodes.BAD_REQUEST).send({ error: `${BAD_CHAR} is not allowed as key` });
+		return res.status(StatusCodes.BAD_REQUEST).send({ error: `${BAD_CHAR} is not allowed as key prefix.` });
 	}
 
 	next();

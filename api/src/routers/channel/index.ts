@@ -10,6 +10,7 @@ import { Logger } from '../../utils/logger';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelLock } from '../../middlewares/concurrency-lock';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
 const { addLogs, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
@@ -62,7 +63,14 @@ export const channelRouter = Router();
  *                 error:
  *                   type: string
  */
-channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
+channelRouter.post(
+	'/create',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: CreateChannelBodySchema }),
+	mongodbSanitizer,
+	createChannel
+);
 
 /**
  * @openapi
@@ -127,6 +135,7 @@ channelRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: AddChannelLogBodySchema }),
+	mongodbSanitizer,
 	channelLock,
 	addLogs
 );
@@ -303,6 +312,7 @@ channelRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: ValidateBodySchema }),
+	mongodbSanitizer,
 	channelLock,
 	validateLogs
 );
@@ -363,6 +373,7 @@ channelRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: ReimportBodySchema }),
+	mongodbSanitizer,
 	channelLock,
 	reimport
 );
