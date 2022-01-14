@@ -23,6 +23,34 @@ describe('test mongodb sanitizer middleware', () => {
 		mongodbSanitizer(req, res, nextMock);
 		expect(nextMock).toHaveBeenCalled();
 	});
+
+	it('should call nextMock for body which is null', async () => {
+		const req: any = {
+			body: null
+		};
+
+		mongodbSanitizer(req, res, nextMock);
+		expect(nextMock).toHaveBeenCalled();
+	});
+
+	it('should call nextMock for empty body', async () => {
+		const req: any = {
+			body: {}
+		};
+
+		mongodbSanitizer(req, res, nextMock);
+		expect(nextMock).toHaveBeenCalled();
+	});
+
+	it('should call nextMock for body with a key of value null', async () => {
+		const req: any = {
+			body: { key: null }
+		};
+
+		mongodbSanitizer(req, res, nextMock);
+		expect(nextMock).toHaveBeenCalled();
+	});
+
 	it('should return error since $ in highest field name', async () => {
 		const req: any = {
 			body: {
