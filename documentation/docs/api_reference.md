@@ -1,5 +1,5 @@
 ---
-image: /img/logo/integration_services.png
+image: /img/integration-services/logo/integration_services.png
 description: API Reference documentation for the integration Services.
 keywords:
 - API Reference

@@ -1,5 +1,5 @@
 ---
-image: /img/logo/integration_services.png
+image: /img/integration-services/logo/integration_services.png
 description: The example-2 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then searches for a user and then updates said user's username.
 keywords:
 - search for users

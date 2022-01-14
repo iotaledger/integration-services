@@ -1,5 +1,5 @@
 ---
-image: /img/logo/integration_services.png
+image: /img/integration-services/logo/integration_services.png
 description: The example-6 script creates 2 identities, and later uses them to demonstrate how to authorize channel subscriptions, subscribe to a channel and read from channels.
 keywords:
 - channels

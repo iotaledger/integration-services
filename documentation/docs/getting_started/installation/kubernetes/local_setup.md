@@ -1,5 +1,5 @@
 ---
-image: /img/logo/integration_services.png
+image: /img/integration-services/logo/integration_services.png
 description: This section will guide you in installing and deploying the Integration Service API on a Kubernetes cluster.
 keywords:
 - install integration services

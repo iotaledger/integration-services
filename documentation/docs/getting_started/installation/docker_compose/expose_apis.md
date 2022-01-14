@@ -1,5 +1,5 @@
 ---
-image: /img/logo/integration_services.png
+image: /img/integration-services/logo/integration_services.png
 description: When you execute docker-compose it will run a database, setup job and service on the current host. The ports `3000` and `27017` will be exposed on the current host.
 keywords:
 - expose API

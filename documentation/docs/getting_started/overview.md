@@ -1,5 +1,5 @@
 ---
-image: /img/logo/integration_services.png
+image: /img/integration-services/logo/integration_services.png
 description: You can install the Integration Services using Kubernetes or Docker-Compose. 
 keywords:
 - install
