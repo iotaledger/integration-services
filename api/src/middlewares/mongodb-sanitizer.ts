@@ -1,11 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import * as _ from 'lodash';
+import { StatusCodes } from 'http-status-codes';
 
 export const mongodbSanitizer = (req: Request, res: Response, next: NextFunction) => {
 	const body = req.body;
 
 	const val = hasBadCharacter(body);
-	console.log('val ', val);
+
+	if (val) {
+		return res.status(StatusCodes.BAD_REQUEST).send({ error: '$ is not allowed as key' });
+	}
 
 	next();
 };

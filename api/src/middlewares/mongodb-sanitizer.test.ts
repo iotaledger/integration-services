@@ -1,12 +1,11 @@
-import { hasBadCharacter } from './mongodb-sanitizer';
+import { mongodbSanitizer } from './mongodb-sanitizer';
 
 describe('test mongodb sanitizer middleware', () => {
-	//let nextMock: any;
-	let res: any, sendMock: any, sendStatusMock: any;
+	let nextMock: any, res: any, sendMock: any, sendStatusMock: any;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
-		//nextMock = jest.fn();
+		nextMock = jest.fn();
 		res = {
 			send: sendMock,
 			sendStatus: sendStatusMock,
@@ -14,17 +13,30 @@ describe('test mongodb sanitizer middleware', () => {
 		};
 	});
 
-	it('should call nextmock!', async () => {
+	it('should call nextMock since it is a valid body!', async () => {
 		const req: any = {
 			body: {
 				x: 1
 			}
 		};
 
-		const x = hasBadCharacter(req.body);
-		expect(x).toEqual(false);
+		mongodbSanitizer(req, res, nextMock);
+		expect(nextMock).toHaveBeenCalled();
 	});
-	it('should call nextmock2!', async () => {
+	it('should return error since $ in highest field name', async () => {
+		const req: any = {
+			body: {
+				$x: {
+					y: 22,
+					z: { d: 3 }
+				}
+			}
+		};
+
+		mongodbSanitizer(req, res, nextMock);
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
+	});
+	it('should return error since $ in deepest field name', async () => {
 		const req: any = {
 			body: {
 				x: {
@@ -34,10 +46,10 @@ describe('test mongodb sanitizer middleware', () => {
 			}
 		};
 
-		const x = hasBadCharacter(req.body);
-		expect(x).toEqual(true);
+		mongodbSanitizer(req, res, nextMock);
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
 	});
-	it('should call nextmock3!', async () => {
+	it('should return error since $ in deepest array field name', async () => {
 		const req: any = {
 			body: {
 				x: {
@@ -47,24 +59,24 @@ describe('test mongodb sanitizer middleware', () => {
 			}
 		};
 
-		const x = hasBadCharacter(req.body);
-		expect(x).toEqual(true);
+		mongodbSanitizer(req, res, nextMock);
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
 	});
-	it('should call nextmock4!', async () => {
+	it('should return error since $ in lowest field name of array body', async () => {
 		const req: any = {
 			body: [
 				{
 					x: [
 						{
 							y: 22,
-							z: [{ $d: 3 }]
+							z: [[[{ $d: 3 }]]]
 						}
 					]
 				}
 			]
 		};
 
-		const x = hasBadCharacter(req.body);
-		expect(x).toEqual(true);
+		mongodbSanitizer(req, res, nextMock);
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key' });
 	});
 });
