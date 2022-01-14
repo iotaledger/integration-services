@@ -34,16 +34,16 @@ decentralized identities and credentials.
 This documentation has eight sections.
 
 1. [Getting started](getting_started/overview): All the resources you need to get started.
-2. **Using Decentralized Identities**: Examples on creating and managing decentralized identities and verifiable
-   credentials.
-3. **Using Audit Trail**: Examples on creating and managing secure channels.
-4. **Basics**: Use cases about the core technology and principles.
-5. **API Reference**: Detailed specification of all endpoints.
-6. **Troubleshooting**: Instructions on how to resolve any issues you may encounter while using the services.
-7. **FAQ**: Answers to the most common doubts.
-8. **Contribute**: Find ways to help the project.
+2. [Examples](examples/introduction): Examples on creating and managing decentralized identities, verifiable
+   credentials, and channels.
+3. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
+4. [API Reference](api_reference): Detailed specification of all endpoints.
+5. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
+6. [FAQ](faq): Answers to the most common doubts.
+7. [Contribute](contribute): Find ways to help the project.
+7. [Contact](contact): Get in touch with the Integration Services team.
 
-## Join the discussion
+## Join the Discussion
 
 If you are looking for a place to discuss this library, or are in need of support head to
 our [Discord channel](https://discord.gg/iota) #integration-services.
