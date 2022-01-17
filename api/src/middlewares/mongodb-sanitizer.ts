@@ -38,4 +38,5 @@ const hasBadCharacter = (data: any, character: string): boolean => {
 	return false;
 };
 
-const recursiveCall = (values: any, char: string): boolean => values.map((val: any) => hasBadCharacter(val, char)).some((v: boolean) => v);
+const recursiveCall = (values: any, char: string): boolean =>
+	values ? values.map((val: any) => hasBadCharacter(val, char)).some((v: boolean) => v) : false;
