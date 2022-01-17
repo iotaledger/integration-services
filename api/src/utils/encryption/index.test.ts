@@ -48,6 +48,8 @@ describe('test encryption', () => {
 
 		const nonce = createNonce();
 		const signed = await signNonce(prvKey, nonce);
+		console.log('signed', signed);
+
 		const isVerified = await verifySignedNonce(pubKey, nonce, signed);
 		expect(isVerified).toBe(true);
 	});
@@ -55,14 +57,14 @@ describe('test encryption', () => {
 	it('verify signed challenge using a wrong public key should return false', async () => {
 		const keypair = {
 			type: 'ed25519',
-			public: 'HmvXxyyzaA9B5CMp6', // wrong public key used!
+			public: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTT', // wrong public key used!
 			secret: 'DizmPAxTct7rAxzDXEdSJB4Ni8HRwJ71vrRxLmy3H499'
 		};
 		const prvKey = getHexEncodedKey(keypair.secret);
 		const pubKey = getHexEncodedKey(keypair.public);
 
 		expect(prvKey).toBe('bd0e5f2291ba549f162b3b692738bf711d3d4fd582dcbba1473bab0df81cce64');
-		expect(pubKey).toBe('0378e976dd46ae01ac7520c933');
+		expect(pubKey).toBe('f93d13cee076a3660d5bd212719654a3c50c9575ae8f19de2c9a0155f3891fe6');
 
 		const challenge = createNonce();
 		const signed = await signNonce(prvKey, challenge);
@@ -74,12 +76,12 @@ describe('test encryption', () => {
 		const keypair = {
 			type: 'ed25519',
 			public: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
-			secret: 'DizmPAxTct7rAxzDXEd' // wrong private key used!
+			secret: 'DizmPAxTct7rAxzDXEdSJB4Ni8HRwJ71vrRxLmy3H492' // wrong private key used!
 		};
 		const prvKey = getHexEncodedKey(keypair.secret);
 		const pubKey = getHexEncodedKey(keypair.public);
 
-		expect(prvKey).toBe('229c56832429000cf9e8051b6fde');
+		expect(prvKey).toBe('bd0e5f2291ba549f162b3b692738bf711d3d4fd582dcbba1473bab0df81cce5d');
 		expect(pubKey).toBe('f93d13cee076a3660d5bd212719654a3c50c9575ae8f19de2c9a0155f3891fea');
 
 		const challenge = createNonce();
