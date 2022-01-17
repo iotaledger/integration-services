@@ -12,6 +12,7 @@ import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { ConfigurationService } from '../../services/configuration-service';
 import { basicLock } from '../../middlewares/concurrency-lock';
 import { ConcurrencyLocks } from '../../models/types/concurrency';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const verificationRoutes = new VerificationRoutes(
 	verificationService,
@@ -110,6 +111,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: TrustedRootBodySchema }),
+	mongodbSanitizer,
 	addTrustedRootIdentity
 );
 
@@ -250,6 +252,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: CreateCredentialBodySchema }),
+	mongodbSanitizer,
 	basicLock(ConcurrencyLocks.CredentialLock),
 	createVerifiableCredential
 );
@@ -310,6 +313,7 @@ verificationRouter.post(
 	'/check-credential',
 	apiKeyMiddleware,
 	validate({ body: VerifiableCredentialBodySchema }),
+	mongodbSanitizer,
 	checkVerifiableCredential
 );
 
@@ -352,6 +356,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeVerificationBodySchema }),
+	mongodbSanitizer,
 	basicLock(ConcurrencyLocks.CredentialLock),
 	revokeVerifiableCredential
 );

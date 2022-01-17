@@ -4,6 +4,7 @@ import { AuthenticationRoutes } from '../../routes/authentication';
 import { Logger } from '../../utils/logger';
 import { authenticationService } from '../services';
 import { apiKeyMiddleware, validate } from '../middlewares';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, Logger.getInstance());
 const { getNonce, proveOwnership } = authenticationRoutes;
@@ -109,4 +110,10 @@ authenticationRouter.get('/prove-ownership/:id', apiKeyMiddleware, getNonce);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-authenticationRouter.post('/prove-ownership/:id', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+authenticationRouter.post(
+	'/prove-ownership/:id',
+	apiKeyMiddleware,
+	mongodbSanitizer,
+	validate({ body: ProveOwnershipPostBodySchema }),
+	proveOwnership
+);
