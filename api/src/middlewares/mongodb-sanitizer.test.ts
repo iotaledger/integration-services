@@ -51,6 +51,15 @@ describe('test mongodb sanitizer middleware', () => {
 		expect(nextMock).toHaveBeenCalled();
 	});
 
+	it('should call nextMock for body with a $ in key and value null', async () => {
+		const req: any = {
+			body: { $unvalid: null }
+		};
+
+		mongodbSanitizer(req, res, nextMock);
+		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key prefix.' });
+	});
+
 	it('should return error since $ in highest field name', async () => {
 		const req: any = {
 			body: {
@@ -90,6 +99,7 @@ describe('test mongodb sanitizer middleware', () => {
 		mongodbSanitizer(req, res, nextMock);
 		expect(res.send).toHaveBeenCalledWith({ error: '$ is not allowed as key prefix.' });
 	});
+
 	it('should return error since $ in lowest field name of array body', async () => {
 		const req: any = {
 			body: [
@@ -97,7 +107,7 @@ describe('test mongodb sanitizer middleware', () => {
 					x: [
 						{
 							y: 22,
-							z: [[[{ $d: 3 }]]]
+							z: [[[{ $d: 3 }]], null]
 						}
 					]
 				}

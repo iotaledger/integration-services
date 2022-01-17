@@ -17,6 +17,10 @@ export const mongodbSanitizer = (req: Request, res: Response, next: NextFunction
 };
 
 const hasBadCharacter = (data: any, character: string): boolean => {
+	if (data == null) {
+		return false;
+	}
+
 	if (_.isObject(data)) {
 		const keys = Object.keys(data);
 		const numberOfBadChars = keys?.filter((k) => k.startsWith(character))?.length;
