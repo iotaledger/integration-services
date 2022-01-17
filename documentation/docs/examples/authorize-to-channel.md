@@ -41,7 +41,7 @@ const { subscriptionLink } = await userClient.requestSubscription(channelAddress
 
 ## Authorize a Subscription
 
-In order to allow `userClient` to read and write on that channel, its subscription need to be authorized as shown in the following script:
+In order to allow `userClient` to read and write on that channel, its subscription needs to be authorized as shown in the following script:
 
 ```js
 // Find subscriptions to the channel that are not already authorized.

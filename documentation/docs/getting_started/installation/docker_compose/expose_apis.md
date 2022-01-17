@@ -16,7 +16,7 @@ When you execute docker-compose it will run a database, setup job and service on
 The ports `3000` and `27017` will be exposed on the current host:
 
 - `27017` is the MongoDB port: You can use it to access to the database for development purpose using the username,
-  password and database you configured in your `.env` file.
+  password, and database you configured in your `.env` file.
 - `3000` is the port that will serve the Integration Service APIs.
 
 You can check if Integration Services API is up and running by running the following command:

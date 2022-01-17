@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: The example-3 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates a new identity, removes it from Integration Services, verifies that the identity still exists on the Tangle.
+description: The example-3 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates a new identity, removes it from Integration Services, and verifies that the identity still exists on the Tangle.
 keywords:
 - delete users
 - retrieve identity from tangle
@@ -16,9 +16,9 @@ keywords:
 The [example-3](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/3-DeleteUser.ts)
 script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](how-to-run-examples) and then performs the following tasks:
 
-1. Create a new identity.
-2. Remove it from Integration Services.
-3. Verify that the identity still exists on the Tangle.
+1. Creates a new identity.
+2. Removes it from Integration Services.
+3. Verifies that the identity still exists on the Tangle.
 
 You can run the example with the following command:
 

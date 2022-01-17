@@ -14,8 +14,8 @@ keywords:
 The [example-7](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/5-SearchChannelAndValidateData.ts)
 script is similar to previous example ([Authorize Channel](authorize-to-channel)) that creates a channel as `Owner` and authorizes a `User` to write on it but:
 
-1. `Owner` send some data on the channel.
-2. `User` receive data and *modifies it*.
+1. `Owner` sends some data on the channel.
+2. `User` receives data and *modifies it*.
 3. `User` validates the tampered data. However, the API will recognize that data are not valid by using the Tangle and data signatures (i.e. signatures not match). 
 
 You can run the example with the following command:

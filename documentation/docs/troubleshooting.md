@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: Troubleshoot any problems you may be having by joining our discord, creating a GitHub issue or reviewing our Frequently Asked Questions.
+description: Troubleshoot any problems you may be having by joining our discord, creating a GitHub issue, or reviewing our Frequently Asked Questions.
 keywords:
 - channels
 - authorize channel

@@ -12,9 +12,9 @@ keywords:
 The [example-5](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/5-CreateChannel.ts)
 script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](how-to-run-examples) and then performs the following tasks:
 
-1. Create a channel.
-2. Write data on the channel.
-3. Read data from the channel
+1. Creates a channel.
+2. Writes data on the channel.
+3. Reads data from the channel
 
 You can run the example with the following command:
 
