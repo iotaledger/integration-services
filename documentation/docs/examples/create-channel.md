@@ -1,19 +1,30 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: The example-5 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates a channel, writes data on the channel, reads data from the channel.
+keywords:
+- create channel
+- read channel
+- write channel
+- example
+---
 # Create Channel
 
 The [example-5](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/5-CreateChannel.ts)
-script authenticates a Integration Service client to manage Identities using the Admin identity created in [example-0](./how-to-run-examples) and then performs the following tasks:
+script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](how-to-run-examples) and then performs the following tasks:
 
-* create a channel
-* write data on the channel
-* read data from the channel
+1. Creates a channel.
+2. Writes data on the channel.
+3. Reads data from the channel
 
-You can run the example with the following:
+You can run the example with the following command:
 
 ```bash
 npm run example-5
 ```
 
 ## Create Channel
+
+You can create a channel using the following script:
 
 ```js
 // The owner creates a channel where he/she want to publish data of type 'example-data'.
@@ -23,6 +34,8 @@ const { channelAddress } = await ownerClient.create({
 ```
 
 ## Write on a Channel
+
+You can write on a channel using the following script:
 
 ```js
 await channel.write(channelAddress, {
@@ -35,6 +48,8 @@ await channel.write(channelAddress, {
 ```
 
 ## Read from a Channel
+
+You can read from a channel using the following script:
 
 ```js
 const channelData = await channel.read(channelAddress);
