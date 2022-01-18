@@ -4,6 +4,7 @@ import { ChannelData } from '../models/types/channel-data';
 import { getDateStringFromDate } from '../utils/date';
 import { ChannelLogRequestOptions } from '../models/types/channel-info';
 import { decrypt, encrypt } from '../utils/encryption';
+import * as _ from 'lodash';
 
 const collectionName = CollectionNames.channelData;
 const getIndex = (link: string, id: string) => `${link}-${id}`;
@@ -51,7 +52,7 @@ export const addChannelData = async (channelAddress: string, id: string, channel
 			link: data.link,
 			messageId: data.messageId,
 			log: {
-				...data.log,
+				..._.omitBy(data.log, _.isUndefined),
 				payload: encryptedPayload
 			}
 		};

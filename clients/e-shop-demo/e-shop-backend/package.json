@@ -22,7 +22,7 @@
 	],
 	"author": "Dominic Zettl (IOTA Foundation)",
 	"contributors": [
-	  "Tim Sigl (IOTA Foundation) <tim.sigl@iota.org>"
+		"Tim Sigl (IOTA Foundation) <tim.sigl@iota.org>"
 	],
 	"license": "Apache-2.0",
 	"bugs": {

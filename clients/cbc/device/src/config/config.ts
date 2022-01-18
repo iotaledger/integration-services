@@ -6,7 +6,7 @@ export const CONFIG: Config = {
 };
 
 export const DeviceIdentity = {
-	username: 'construction-device-1',
+	username: 'construction-device-' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Device',
 		category: ['sensor'],

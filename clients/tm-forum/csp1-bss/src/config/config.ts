@@ -8,7 +8,7 @@ export const CONFIG: Config = {
 };
 
 export const CreateCsp1Identity = {
-	username: 'Csp1Identity',
+	username: 'Csp1Identity-' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Service',
 		name: 'TMForum Csp1Identity',
