@@ -14,8 +14,6 @@ async function setup() {
 
     await manager.setRole(rootIdentity.doc.id, UserRoles.Admin);
 
-    await manager.close();
-
     await identity.authenticate(rootIdentity.doc.id, rootIdentity.key.secret);
 
     await identity.createCredential(
