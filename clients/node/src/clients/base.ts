@@ -43,7 +43,7 @@ export abstract class BaseClient {
     this.jwtToken = jwt;
   }
 
-  private async signNonce(privateKey: string, nonce: string) {
+  private async signNonce(privateKey: string, nonce: string): Promise<string> {
     if (nonce?.length !== 40) {
       throw new Error('nonce must have a length of 40 characters!');
     }
@@ -51,7 +51,7 @@ export abstract class BaseClient {
     return await ed.sign(hash, privateKey);
   }
 
-  private async hashNonce(nonce: string) {
+  private async hashNonce(nonce: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(nonce);
     return crypto.createHash('sha256').update(data).digest('hex');
