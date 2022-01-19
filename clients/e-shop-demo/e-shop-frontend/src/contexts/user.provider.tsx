@@ -5,6 +5,7 @@ const UserProvider = ({ children }: any) => {
 	const [authenticated, setAuthenticated] = useState<boolean>();
 	const [credential, setCredential] = useState<object>();
 	const [isVerified, setIsVerified] = useState<boolean>();
+	const [useOwnCredential, setUseOwnCredential] = useState<boolean>();
 
 	useEffect(() => {
 		const localStorage = window.localStorage;
@@ -25,6 +26,10 @@ const UserProvider = ({ children }: any) => {
 		console.log('Updated verified: ', isVerified);
 	}, [isVerified]);
 
+	useEffect(() => {
+		console.log('Updated use own credential', useOwnCredential)
+	}, [useOwnCredential])
+
 	return (
 		<UserContext.Provider
 			value={{
@@ -33,7 +38,9 @@ const UserProvider = ({ children }: any) => {
 				credential,
 				setCredential,
 				isVerified,
-				setIsVerified
+				setIsVerified,
+				useOwnCredential,
+				setUseOwnCredential
 			}}
 		>
 			{children}
