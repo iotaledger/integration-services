@@ -1,16 +1,28 @@
+---
+image: /img/logo/integration_services.png
+description: The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
+keywords:
+- integration services sdk
+- sdk
+- decentralized identity
+- yarn
+- npm
+---
+
 # Introduction
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-You the following pages you will learn how to use Integration Services sdk.
-The sdk makes easy to manage decentralized identities and secure channels (Audit Trail).
+The following sections  will guide you in how to use the [Integration Services SDK](https://www.npmjs.com/package/iota-is-sdk).
+The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
 
-It is recommended to have a basic understading of Decentralized Identities 
+You should have a basic understanding of [Decentralized Identities](../basics/identity)
 to get the most out of the following examples.
-Have a look at our Basics section to read further about [Decrentralized Identities](../basics/identity).
 
 ## Install
+
+You can install the Integration Services SDK using [npm](https://npmjs.com/) or [yarn](https://yarnpkg.com/).
 
 <Tabs>
 <TabItem value="npm" label="npm">
@@ -31,11 +43,28 @@ yarn add iota-is-sdk
 
 ## Clients
 
-You can use two different clients:
-* `IdentityClient`: to manage decentralyzed identities (create identity, issue/revoke verifiable credentials...)
-* `ChannelClient`: to access features of Audit Trail (create a channel, subscribe/approve access to a channel, read/write on a channel...)
+The Integration Services SDK has two different clients you can use:
 
-You can import them and config using a `ClientConfig` object:
+### IdentityClient
+
+You can use `IdentityClient` to manage decentralized identities. This includes, but is not limited to:
+
+* [Creating an identity and verifiable credentials](create-identity-and-credentials)
+* [Updating users](update-users)
+* [Deleting users](delete-users)
+* [Adding Trusted Authorities](trusted-authorities)
+
+
+### ChannelClient
+
+You can use the `ChannelClient` to access Audit Trail features. These include, but are not limited to:
+
+* [Creating a channel](create-channel)
+* [Subscribing or approving access to a channel](authorize-to-channel#subscribe-to-a-channel)
+* [Reading and Writing on a channel](create-channel#write-on-a-channel)
+
+
+You can import and configure these clients using a `ClientConfig` object:
 
 ```js
 
@@ -60,16 +89,17 @@ const channelClient = new ChannelClient(config);
 
 ## Authorization
 
-In order to work with Integration Services API you need to be authenticated with a decentralyzed identity.
-Under the hood Integration Services uses a JWT token based authorization mechanism: 
-the client get a nonce from the API and return it signed by the identity's private key: 
-the API returns a JWT token to authorize further requests. 
+In order to work with Integration Services API, you will need to be authenticated with a decentralized identity.
 
-You can get an identity with the following (no auth required):
+The Integration Services use a JWT token based authorization mechanism which behaves in the following manner:
+
+1. The client gets a nonce from the API and returns it signed by the identity's private key.
+2. The API returns a JWT token to authorize any subsequent requests.
+
+You can get an identity using the following script (no auth required):
 
 ```js
 import { IdentityJson } from 'iota-is-sdk';
-
 ...
 
 const identity = await identityClient.create('User') as IdentityJson;
@@ -107,7 +137,7 @@ It is a JSON file like the following:
 }
 ```
 
-If you have a JSON Identity you can authorize your client with the following:
+If you have a JSON Identity, you can authorize your client with the script:
 
 ```js
 const identity = // ... did-core json object ...
