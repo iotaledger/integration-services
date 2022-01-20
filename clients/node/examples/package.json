@@ -24,7 +24,8 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "iota-is-sdk": "^0.0.9"
   },
   "devDependencies": {
     "ts-node": "^10.4.0"
