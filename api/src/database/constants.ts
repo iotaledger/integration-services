@@ -4,8 +4,9 @@ export const enum CollectionNames {
 	subscriptions = 'subscriptions',
 	users = 'users',
 	keyCollection = 'key-collection',
-	identityDocsCollection = 'identity-docs',
+	identityKeysCollection = 'identity-keys',
 	verifiableCredentials = 'verifiable-credentials',
 	auth = 'auth',
+	concurrencyLocks = 'concurrency-locks',
 	trustedRoots = 'trusted-roots'
 }

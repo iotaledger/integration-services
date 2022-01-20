@@ -3,15 +3,15 @@ import { MongoDbService } from '../services/mongodb-service';
 
 const collectionName = CollectionNames.trustedRoots;
 
-export const getTrustedRootIds = async (): Promise<{ identityId: string }[]> => {
+export const getTrustedRootIds = async (): Promise<{ id: string }[]> => {
 	const query = {};
-	return await MongoDbService.getDocuments<{ identityId: string }>(collectionName, query);
+	return await MongoDbService.getDocuments<{ id: string }>(collectionName, query);
 };
 
-export const addTrustedRootId = async (identityId: string) => {
+export const addTrustedRootId = async (id: string) => {
 	const document = {
-		_id: identityId,
-		identityId,
+		_id: id,
+		id,
 		created: new Date()
 	};
 
@@ -21,8 +21,8 @@ export const addTrustedRootId = async (identityId: string) => {
 	}
 };
 
-export const removeTrustedRootId = async (identityId: string) => {
-	const query = { _id: identityId };
+export const removeTrustedRootId = async (id: string) => {
+	const query = { _id: id };
 	const res = await MongoDbService.removeDocument(collectionName, query);
 	if (!res?.result.n) {
 		throw new Error('could not remove the trusted root from the db');

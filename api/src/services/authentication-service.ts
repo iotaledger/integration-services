@@ -13,21 +13,21 @@ export class AuthenticationService {
 		private readonly config: AuthenticationServiceConfig
 	) {}
 
-	async getNonce(identityId: string) {
+	async getNonce(id: string) {
 		const nonce = createNonce();
-		await AuthDb.upsertNonce(identityId, nonce);
+		await AuthDb.upsertNonce(id, nonce);
 		return nonce;
 	}
 
-	async authenticate(signedNonce: string, identityId: string) {
-		let user: User = await this.userService.getUser(identityId);
+	async authenticate(signedNonce: string, id: string) {
+		let user: User = await this.userService.getUser(id);
 
 		if (!user) {
-			const doc = await this.ssiService.getLatestIdentityDoc(identityId);
+			const doc = await this.ssiService.getLatestIdentityDoc(id);
 			const publicKey = this.ssiService.getPublicKey(doc);
 			if (publicKey) {
 				user = {
-					identityId,
+					id,
 					publicKey,
 					role: UserRoles.User
 				};
@@ -35,9 +35,9 @@ export class AuthenticationService {
 		}
 
 		if (!user) {
-			throw new Error(`no identity with id: ${identityId} found!`);
+			throw new Error(`no identity with id: ${id} found!`);
 		}
-		const { nonce } = await AuthDb.getNonce(identityId);
+		const { nonce } = await AuthDb.getNonce(id);
 		const publicKey = getHexEncodedKey(user.publicKey);
 
 		const verified = await verifySignedNonce(publicKey, nonce, signedNonce);

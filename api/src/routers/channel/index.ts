@@ -9,6 +9,8 @@ import { ChannelRoutes } from '../../routes/channel';
 import { Logger } from '../../utils/logger';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
+import { channelLock } from '../../middlewares/concurrency-lock';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
 const { addLogs, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
@@ -61,7 +63,14 @@ export const channelRouter = Router();
  *                 error:
  *                   type: string
  */
-channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body: CreateChannelBodySchema }), createChannel);
+channelRouter.post(
+	'/create',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: CreateChannelBodySchema }),
+	mongodbSanitizer,
+	createChannel
+);
 
 /**
  * @openapi
@@ -121,7 +130,15 @@ channelRouter.post('/create', apiKeyMiddleware, authMiddleWare, validate({ body:
  *                 error:
  *                   type: string
  */
-channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: AddChannelLogBodySchema }), addLogs);
+channelRouter.post(
+	'/logs/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: AddChannelLogBodySchema }),
+	mongodbSanitizer,
+	channelLock,
+	addLogs
+);
 
 /**
  * @openapi
@@ -197,7 +214,7 @@ channelRouter.post('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, va
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, getLogs);
+channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, channelLock, getLogs);
 
 /**
  * @openapi
@@ -290,7 +307,15 @@ channelRouter.get('/history/:channelAddress', apiKeyMiddleware, getHistory);
  *                 error:
  *                   type: string
  */
-channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ValidateBodySchema }), validateLogs);
+channelRouter.post(
+	'/validate/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: ValidateBodySchema }),
+	mongodbSanitizer,
+	channelLock,
+	validateLogs
+);
 
 /**
  * @openapi
@@ -343,4 +368,12 @@ channelRouter.post('/validate/:channelAddress', apiKeyMiddleware, authMiddleWare
  *                 error:
  *                   type: string
  */
-channelRouter.post('/re-import/:channelAddress', apiKeyMiddleware, authMiddleWare, validate({ body: ReimportBodySchema }), reimport);
+channelRouter.post(
+	'/re-import/:channelAddress',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: ReimportBodySchema }),
+	mongodbSanitizer,
+	channelLock,
+	reimport
+);

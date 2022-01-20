@@ -9,6 +9,8 @@ import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelInfoService, subscriptionService } from '../services';
+import { channelLock } from '../../middlewares/concurrency-lock';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, Logger.getInstance());
 const {
@@ -77,7 +79,7 @@ subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, get
 
 /**
  * @openapi
- * /subscriptions/{channelAddress}/{identityId}:
+ * /subscriptions/{channelAddress}/{id}:
  *   get:
  *     summary: Get a subscription by identity id.
  *     description: Get a subscription of a channel by identity id.
@@ -93,13 +95,13 @@ subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *           summary: Example identity id (DID identifier)
  *     security:
@@ -125,7 +127,7 @@ subscriptionRouter.get('/:channelAddress', apiKeyMiddleware, authMiddleWare, get
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-subscriptionRouter.get('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
+subscriptionRouter.get('/:channelAddress/:id', apiKeyMiddleware, authMiddleWare, getSubscriptionByIdentity);
 
 /**
  * @openapi
@@ -186,6 +188,8 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RequestSubscriptionBodySchema }),
+	mongodbSanitizer,
+	channelLock,
 	requestSubscription
 );
 
@@ -243,6 +247,8 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: AuthorizeSubscriptionBodySchema }),
+	mongodbSanitizer,
+	channelLock,
 	authorizeSubscription
 );
 
@@ -293,12 +299,14 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeSubscriptionBodySchema }),
+	mongodbSanitizer,
+	channelLock,
 	revokeSubscription
 );
 
 /**
  * @openapi
- * /subscriptions/{channelAddress}/{identityId}:
+ * /subscriptions/{channelAddress}/{id}:
  *   post:
  *     summary: Adds an existing subscription
  *     description: Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
@@ -314,13 +322,13 @@ subscriptionRouter.post(
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *           summary: Example identity id (DID identifier)
  *     security:
@@ -334,7 +342,7 @@ subscriptionRouter.post(
  *           example:
  *             type: Subscriber
  *             channelAddress: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
- *             identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *             id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *             state: exampleState
  *             isAuthorized: false
  *             accessRights: ReadAndWrite
@@ -366,16 +374,17 @@ subscriptionRouter.post(
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 subscriptionRouter.post(
-	'/:channelAddress/:identityId',
+	'/:channelAddress/:id',
 	apiKeyMiddleware,
 	validate({ body: SubscriptionSchema }),
 	authMiddleWare,
+	mongodbSanitizer,
 	addSubscription
 );
 
 /**
  * @openapi
- * /subscriptions/{channelAddress}/{identityId}:
+ * /subscriptions/{channelAddress}/{id}:
  *   put:
  *     summary: Updates an existing subscription
  *     description: Updates an existing subscription
@@ -391,13 +400,13 @@ subscriptionRouter.post(
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *           summary: Example identity id (DID identifier)
  *     security:
@@ -415,7 +424,7 @@ subscriptionRouter.post(
  *       200:
  *         description: Subscription updated
  *       400:
- *         description: Missing channelAddress / identityId
+ *         description: Missing channelAddress / id
  *         content:
  *           application/json:
  *             schema:
@@ -440,16 +449,17 @@ subscriptionRouter.post(
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 subscriptionRouter.put(
-	'/:channelAddress/:identityId',
+	'/:channelAddress/:id',
 	apiKeyMiddleware,
 	validate({ body: SubscriptionUpdateSchema }),
 	authMiddleWare,
+	mongodbSanitizer,
 	updateSubscription
 );
 
 /**
  * @openapi
- * /subscriptions/{channelAddress}/{identityId}:
+ * /subscriptions/{channelAddress}/{id}:
  *   delete:
  *     summary: Deletes subscription
  *     description: Deletes an existing subscription
@@ -465,13 +475,13 @@ subscriptionRouter.put(
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *           summary: Example identity id (DID identifier)
  *     security:
@@ -481,7 +491,7 @@ subscriptionRouter.put(
  *       200:
  *         description: Subscription deleted
  *       400:
- *         description: Missing channelAddress / identityId
+ *         description: Missing channelAddress / id
  *         content:
  *           application/json:
  *             schema:
@@ -505,4 +515,4 @@ subscriptionRouter.put(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-subscriptionRouter.delete('/:channelAddress/:identityId', apiKeyMiddleware, authMiddleWare, deleteSubscription);
+subscriptionRouter.delete('/:channelAddress/:id', apiKeyMiddleware, authMiddleWare, deleteSubscription);

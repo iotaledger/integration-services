@@ -1,8 +1,8 @@
 import { CredentialSubject } from '../../../models/types/identity';
-import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock } from '../../../test/mocks/identities';
+import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock, ServerIdentityKey } from '../../../test/mocks/identities';
 import * as KeyCollectionDB from '../../../database/key-collection';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
-import * as IdentityDocsDb from '../../../database/identity-docs';
+import * as IdentityDocsDb from '../../../database/identity-keys';
 import { SsiService } from '../../../services/ssi-service';
 import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
@@ -55,16 +55,16 @@ describe('test authentication routes', () => {
 			addUserVCSpy = jest.spyOn(userService, 'addUserVC').mockImplementation(() => null);
 		});
 
-		it('should not verify since different identityId in request', async () => {
+		it('should not verify since different id in request', async () => {
 			const subject = TestUsersMock[0];
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
-				user: { identityId: 'WRONGUSERID' },
+				user: { id: 'WRONGUSERID' },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -83,11 +83,11 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
-				user: { identityId: initiatorVC.id },
+				user: { id: initiatorVC.id },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -109,11 +109,11 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = DeviceIdentityMock.userData.verifiableCredentials[0];
 			const req: any = {
-				user: { identityId: initiatorVC.id },
+				user: { id: initiatorVC.id },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -132,11 +132,11 @@ describe('test authentication routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[1]; // this credential is from type SomeBasicCredential
 			const req: any = {
-				user: { identityId: initiatorVC.id, type: UserType.Person },
+				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -161,11 +161,11 @@ describe('test authentication routes', () => {
 				.spyOn(verificationService, 'checkVerifiableCredential')
 				.mockImplementation(async () => initiatorVcIsVerified);
 			const req: any = {
-				user: { identityId: initiatorVC.id, type: UserType.Person },
+				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -185,13 +185,13 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
-				user: { identityId: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
+				user: { id: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -201,12 +201,12 @@ describe('test authentication routes', () => {
 
 			const credentialSubject: CredentialSubject = {
 				type: subject.type,
-				id: subject.identityId,
+				id: subject.id,
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
 				type: 'VerifiedIdentityCredential',
-				id: subject.identityId,
+				id: subject.id,
 				subject: {
 					...credentialSubject,
 					'@context': 'https://schema.org/',
@@ -231,7 +231,7 @@ describe('test authentication routes', () => {
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-				ServerIdentityMock,
+				ServerIdentityKey,
 				expectedCredential,
 				expectedKeyCollection,
 				keyCollectionIndex,
@@ -252,13 +252,13 @@ describe('test authentication routes', () => {
 			const checkVerifiableCredentialSpy = jest
 				.spyOn(verificationService, 'checkVerifiableCredential')
 				.mockImplementation(async () => initiatorVcIsVerified);
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityDoc').mockImplementation(async () => ServerIdentityMock);
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
-				user: { identityId: initiatorVC.id, type: UserType.Person },
+				user: { id: initiatorVC.id, type: UserType.Person },
 				params: {},
 				body: {
 					subject: {
-						identityId: subject.identityId,
+						id: subject.id,
 						credentialType: 'VerifiedIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
@@ -268,18 +268,18 @@ describe('test authentication routes', () => {
 
 			const credentialSubject: CredentialSubject = {
 				type: subject.type,
-				id: subject.identityId,
+				id: subject.id,
 				initiatorId: initiatorVC.id
 			};
 			const expectedCredential: any = {
 				type: 'VerifiedIdentityCredential',
-				id: subject.identityId,
+				id: subject.id,
 				subject: {
 					...credentialSubject,
 					'@context': ['https://smartdatamodels.org/context.jsonld'],
 					type: 'Device',
 					...subject.claim,
-					id: subject.identityId
+					id: subject.id
 				}
 			};
 			const expectedKeyCollection = {
@@ -300,7 +300,7 @@ describe('test authentication routes', () => {
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-				ServerIdentityMock,
+				ServerIdentityKey,
 				expectedCredential,
 				expectedKeyCollection,
 				keyCollectionIndex,

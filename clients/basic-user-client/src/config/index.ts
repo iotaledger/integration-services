@@ -59,7 +59,7 @@ export const ServerIdentity = {
 		encoding: 'base58'
 	},
 	userData: {
-		identityId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+		id: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
 		publicKey: 'GmNyvaJESvUgLL42Zo5Lar1QRN9rDTBtxC4wMbNC7S4w',
 		username: 'iota-service-test',
 		type: 'Service',

@@ -13,7 +13,7 @@ import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
-	VerifyIdentityBodySchema
+	CreateCredentialBodySchema
 } from '../schemas/request-response-body/verification-bodies';
 import { CreateChannelResponseSchema } from '../schemas/request-response-body/channel-bodies';
 import {
@@ -44,6 +44,6 @@ export type RequestSubscriptionResponse = Static<typeof RequestSubscriptionRespo
 export type AuthorizeSubscriptionResponse = Static<typeof AuthorizeSubscriptionResponseSchema>;
 
 export type VerifiableCredentialBody = Static<typeof VerifiableCredentialBodySchema>;
-export type VerifyIdentityBody = Static<typeof VerifyIdentityBodySchema>;
+export type CreateCredentialBody = Static<typeof CreateCredentialBodySchema>;
 export type RevokeVerificationBody = Static<typeof RevokeVerificationBodySchema>;
 export type TrustedRootBody = Static<typeof TrustedRootBodySchema>;

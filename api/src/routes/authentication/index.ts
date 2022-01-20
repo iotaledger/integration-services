@@ -10,13 +10,13 @@ export class AuthenticationRoutes {
 	getNonce = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const identityId = req.params && decodeParam(<string>req.params['identityId']);
+			const id = req.params && decodeParam(<string>req.params['id']);
 
-			if (!identityId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
+			if (!id) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no id provided' });
 			}
 
-			const nonce = await this.authenticationService.getNonce(identityId);
+			const nonce = await this.authenticationService.getNonce(id);
 			res.status(StatusCodes.OK).send({ nonce });
 		} catch (error) {
 			this.logger.error(error);
@@ -27,15 +27,15 @@ export class AuthenticationRoutes {
 	proveOwnership = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const identityId = req.params && decodeParam(<string>req.params['identityId']);
+			const id = req.params && decodeParam(<string>req.params['id']);
 			const body: ProveOwnershipPostBody = req.body;
 			const signedNonce = body?.signedNonce;
 
-			if (!signedNonce || !identityId) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no signedNonce or identityId provided' });
+			if (!signedNonce || !id) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no signedNonce or id provided' });
 			}
 
-			const jwt = await this.authenticationService.authenticate(signedNonce, identityId);
+			const jwt = await this.authenticationService.authenticate(signedNonce, id);
 			return res.status(StatusCodes.OK).send({ jwt });
 		} catch (error) {
 			this.logger.error(error);

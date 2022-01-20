@@ -7,7 +7,7 @@ export const CONFIG: Config = {
 };
 
 export const LeadCspIdentity = {
-	username: 'LeadCspIdentity',
+	username: 'LeadCspIdentity-' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Service',
 		name: 'TMForum LeadCspIdentity',

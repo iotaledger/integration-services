@@ -16,6 +16,7 @@ import {
 	CommonOptions
 } from 'mongodb';
 import { Logger } from '../utils/logger';
+import * as _ from 'lodash';
 
 const logger = Logger.getInstance();
 type WithoutProjection<T> = T & { fields?: undefined; projection?: undefined };
@@ -44,7 +45,11 @@ export class MongoDbService {
 		return collection.findOne(query, options);
 	}
 
-	static async getDocuments<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T[] | null> {
+	static async getDocuments<T>(
+		collectionName: string,
+		query: FilterQuery<T>,
+		options?: WithoutProjection<FindOneOptions<T>>
+	): Promise<T[] | null> {
 		const collection = MongoDbService.getCollection(collectionName);
 		return collection.find(query, options).toArray();
 	}
@@ -54,18 +59,30 @@ export class MongoDbService {
 		data: any,
 		options?: CollectionInsertOneOptions
 	): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
+		const ommitedData: any = _.omitBy(data, _.isUndefined);
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.insertOne(data, options);
+		return collection.insertOne(ommitedData, options);
 	}
 
-	static async insertDocuments(collectionName: string, data: any, options?: CollectionInsertManyOptions): Promise<InsertWriteOpResult<any>> {
+	static async insertDocuments(
+		collectionName: string,
+		data: any[],
+		options?: CollectionInsertManyOptions
+	): Promise<InsertWriteOpResult<any>> {
+		const ommitedData: any = data.map((d) => _.omitBy(d, _.isUndefined));
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.insertMany(data, options);
+		return collection.insertMany(ommitedData, options);
 	}
 
-	static async updateDocument(collectionName: string, query: any, update: any, options?: UpdateOneOptions): Promise<UpdateWriteOpResult | null> {
+	static async updateDocument(
+		collectionName: string,
+		query: any,
+		update: any,
+		options?: UpdateOneOptions
+	): Promise<UpdateWriteOpResult | null> {
+		const ommitedUpdate: any = _.omitBy(update, _.isUndefined);
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.updateOne(query, update, options);
+		return collection.updateOne(query, ommitedUpdate, options);
 	}
 
 	static async removeDocument(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
@@ -113,11 +130,10 @@ export class MongoDbService {
 	 * @memberof MongoDbService
 	 */
 	static async connect(url: string, dbName: string): Promise<MongoClient> {
-
 		if (MongoDbService.client) {
 			return;
 		}
-		
+
 		return new Promise((resolve, reject) => {
 			const options: MongoClientOptions = {
 				useUnifiedTopology: true

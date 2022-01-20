@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { VerifiableCredentialJson } from '../../models/types/identity';
 import { VerificationService } from '../../services/verification-service';
-import { RevokeVerificationBody, TrustedRootBody, VerifyIdentityBody } from '../../models/types/request-response-bodies';
+import { RevokeVerificationBody, TrustedRootBody, CreateCredentialBody } from '../../models/types/request-response-bodies';
 import { AuthenticatedRequest, AuthorizationCheck, Subject } from '../../models/types/verification';
 import { User, UserRoles } from '../../models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
@@ -22,15 +22,15 @@ export class VerificationRoutes {
 
 	createVerifiableCredential = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const verifyIdentityBody = req.body as VerifyIdentityBody;
-			const { initiatorVC, subject } = verifyIdentityBody;
+			const createCredential = req.body as CreateCredentialBody;
+			const { initiatorVC, subject } = createCredential;
 			const requestUser = req.user;
 
 			if (!subject) {
 				throw new Error('no valid subject!');
 			}
 
-			if (!requestUser.identityId && !initiatorVC?.credentialSubject?.id) {
+			if (!requestUser.id && !initiatorVC?.credentialSubject?.id) {
 				throw new Error('no initiator id could be found!');
 			}
 
@@ -39,10 +39,10 @@ export class VerificationRoutes {
 				throw error;
 			}
 
-			const vc: VerifiableCredentialJson = await this.verificationService.verifyIdentity(
+			const vc: VerifiableCredentialJson = await this.verificationService.issueVerifiableCredential(
 				subject,
 				this.configService.serverIdentityId,
-				initiatorVC?.credentialSubject?.id || requestUser.identityId
+				initiatorVC?.credentialSubject?.id || requestUser.id
 			);
 
 			res.status(StatusCodes.OK).send(vc);
@@ -89,10 +89,10 @@ export class VerificationRoutes {
 	getLatestDocument = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const did = req.params && decodeParam(<string>req.params['identityId']);
+			const did = req.params && decodeParam(<string>req.params['id']);
 
 			if (!did) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no identityId provided' });
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no id provided' });
 			}
 
 			const doc = await this.verificationService.getLatestDocument(did);
@@ -150,8 +150,8 @@ export class VerificationRoutes {
 	};
 
 	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
-		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.vc.id);
-		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.identityId, kci.initiatorId);
+		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.id, kci.vc.id);
+		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.id, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
 			const isAuthorizedAdmin = this.authorizationService.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
@@ -173,7 +173,7 @@ export class VerificationRoutes {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
 
-			if (requestUser.identityId !== initiatorVC.credentialSubject.id || requestUser.identityId !== initiatorVC.id) {
+			if (requestUser.id !== initiatorVC.credentialSubject.id || requestUser.id !== initiatorVC.id) {
 				return { isAuthorized: false, error: new Error('user id of request does not concur with the initiatorVC user id!') };
 			}
 

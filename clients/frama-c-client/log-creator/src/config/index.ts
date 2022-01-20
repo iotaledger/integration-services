@@ -7,7 +7,7 @@ export const Config = {
 };
 
 export const CreatorIdentity = {
-	username: 'frama-c-log-creator',
+	username: 'frama-c-log-creator-' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Service',
 		name: 'Frama C Log Creator',

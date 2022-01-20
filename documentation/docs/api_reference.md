@@ -1,13 +1,25 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: API Reference documentation for the integration Services.
+keywords:
+- API Reference
+- models
+- endpoints
+- v1.0.0
+---
 # Integration Services API Documentation
 This is the API documentation for the Integration Services. Have a look at the repository for examples at [Github](https://github.com/iotaledger/integration-services).
             For further information on the Audit Trail GW API have a look at [Audit Trail API](https://github.com/iotaledger/integration-services/blob/master/api/usage-audit-trail-GW.md) and head to
             [SSI Bridge](https://github.com/iotaledger/integration-services/blob/master/api/usage-ssi-bridge.md) for information about the SSI Bridge.
 
-## Version: 1.0.0
+## Version: 1.0.0 
 
-### /authentication/prove-ownership/{identityId}
+## Endpoints
+
+### /authentication/prove-ownership/{id}
 
 #### GET
+
 ##### Summary
 
 Request a nonce which must be signed by the private key
@@ -20,7 +32,7 @@ Request a nonce which must be signed by the private key of the client and send i
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -43,7 +55,7 @@ Get an authentication token by signing a nonce using the private key. If signatu
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -427,7 +439,7 @@ Search for identities in the system and returns a list of existing identities.
 | --- | --- |
 | BearerAuth | |
 
-### /identities/identity/{identityId}
+### /identities/identity/{id}
 
 #### GET
 ##### Summary
@@ -442,7 +454,7 @@ Get information (including attached credentials) about a specific identity using
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -465,7 +477,7 @@ Removes an identity from the Bridge. An identity can only delete itself and is n
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 | revoke-credentials | query | If true all credentials will be revoked and deleted. | No | boolean |
 | revoke-subscriptions | query | If true all subscriptions will be revoked and deleted. | No | boolean |
 
@@ -575,7 +587,7 @@ Get all subscriptions of a channel. Use the is-authorized query parameter to fil
 | --- | --- |
 | BearerAuth | |
 
-### /subscriptions/{channelAddress}/{identityId}
+### /subscriptions/{channelAddress}/{id}
 
 #### GET
 ##### Summary
@@ -591,7 +603,7 @@ Get a subscription of a channel by identity id.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -621,7 +633,7 @@ Adds an existing subscription (e.g. the subscription was not created with the ap
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -652,14 +664,14 @@ Updates an existing subscription
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | Subscription updated |
-| 400 | Missing channelAddress / identityId |
+| 400 | Missing channelAddress / id |
 | 401 | No valid api key provided/ Not authenticated |
 | 404 | No subscription found |
 | 5XX | Unexpected error |
@@ -684,14 +696,14 @@ Deletes an existing subscription
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | Subscription deleted |
-| 400 | Missing channelAddress / identityId |
+| 400 | Missing channelAddress / id |
 | 401 | No valid api key provided/ Not authenticated |
 | 404 | No subscription found |
 | 5XX | Unexpected error |
@@ -796,7 +808,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | --- | --- |
 | BearerAuth | |
 
-### /verification/latest-document/{identityId}
+### /verification/latest-document/{id}
 
 #### GET
 ##### Summary
@@ -811,7 +823,7 @@ Get the latest version of an identity document (DID) from the IOTA Tangle.
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| identityId | path |  | Yes | string |
+| id | path |  | Yes | string |
 
 ##### Responses
 
@@ -963,15 +975,15 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | --- | --- |
 | BearerAuth | |
 
-### Models
+## Models
 
-#### ProveOwnershipPostBodySchema
+### ProveOwnershipPostBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | signedNonce | string |  | Yes |
 
-#### CreateChannelBodySchema
+### CreateChannelBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -981,7 +993,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | seed | string | If left empty the api will generate a seed automatically. Always store your seed otherwise the data can not be reimported. | No |
 | presharedKey | string | If the channel has a preshared key (hasPresharedKey=true) but non is defined here the presharedKey will be generated by the api. | No |
 
-#### AddChannelLogBodySchema
+### AddChannelLogBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -991,7 +1003,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | publicPayload |  | Public available payload. | No |
 | payload |  | Payload is stored encrypted in the channel. | No |
 
-#### ChannelDataSchema
+### ChannelDataSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1000,20 +1012,20 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | messageId | string | Message id can be used to search for the message in an IOTA explorer. | No |
 | log | object |  | Yes |
 
-#### ValidateBodySchema
+### ValidateBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | ValidateBodySchema | array |  |  |
 
-#### AuthorizeSubscriptionBodySchema
+### AuthorizeSubscriptionBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subscriptionLink | string |  | No |
-| identityId | string |  | No |
+| id | string |  | No |
 
-#### RequestSubscriptionBodySchema
+### RequestSubscriptionBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1021,27 +1033,27 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | accessRights |  | _Enum:_ `"Audit"`, `"Read"`, `"Write"`, `"ReadAndWrite"` | No |
 | presharedKey | string |  | No |
 
-#### RevokeSubscriptionBodySchema
+### RevokeSubscriptionBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subscriptionLink | string |  | No |
-| identityId | string |  | No |
+| id | string |  | No |
 
-#### RevokeVerificationBodySchema
+### RevokeVerificationBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | signatureValue | string |  | Yes |
 
-#### VerifyIdentityBodySchema
+### VerifyIdentityBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subject | object |  | Yes |
 | initiatorVC | object |  | No |
 
-#### VerifiableCredentialBodySchema
+### VerifiableCredentialBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1053,21 +1065,21 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | issuanceDate | dateTime |  | Yes |
 | proof | object |  | Yes |
 
-#### TrustedRootBodySchema
+### TrustedRootBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | trustedRootId | string |  | Yes |
 
-#### SubjectBodySchema
+### SubjectBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 | credentialType | string |  | Yes |
 | claim | object |  | Yes |
 
-#### CreateIdentityBodySchema
+### CreateIdentityBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1079,20 +1091,20 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | claim | object |  | No |
 | isPrivate | boolean |  | No |
 
-#### UpdateIdentityBodySchema
+### UpdateIdentityBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 
-#### ReimportBodySchema
+### ReimportBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | seed | string |  | No |
 | subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
 
-#### CreateChannelResponseSchema
+### CreateChannelResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1100,32 +1112,32 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | channelAddress | string |  | Yes |
 | presharedKey | string |  | No |
 
-#### AuthorizeSubscriptionResponseSchema
+### AuthorizeSubscriptionResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | keyloadLink | string |  | Yes |
 
-#### RequestSubscriptionResponseSchema
+### RequestSubscriptionResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | seed | string | Auto generated seed. Make sure you store the seed since the API will not store it. You can reuse your seed for different channels. | Yes |
 | subscriptionLink | string |  | Yes |
 
-#### ValidateResponseSchema
+### ValidateResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | ValidateResponseSchema | array |  |  |
 
-#### ErrorResponseSchema
+### ErrorResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | error | string |  | Yes |
 
-#### ChannelInfoSearchSchema
+### ChannelInfoSearchSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1138,13 +1150,13 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | limit | number |  | No |
 | index | number |  | No |
 
-#### SubscriptionSchema
+### SubscriptionSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type |  | _Enum:_ `"Author"`, `"Subscriber"` | Yes |
 | channelAddress | string |  | Yes |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 | state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
@@ -1154,13 +1166,13 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | sequenceLink | string |  | No |
 | pskId | string |  | No |
 
-#### SubscriptionUpdateSchema
+### SubscriptionUpdateSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type |  | _Enum:_ `"Author"`, `"Subscriber"` | No |
 | channelAddress | string |  | No |
-| identityId | string |  | No |
+| id | string |  | No |
 | state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
@@ -1170,13 +1182,13 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | sequenceLink | string |  | No |
 | pskId | string |  | No |
 
-#### ClaimSchema
+### ClaimSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type |  |  | Yes |
 
-#### ChannelInfoSchema
+### ChannelInfoSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1187,14 +1199,14 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
 
-#### TopicSchema
+### TopicSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type | string |  | Yes |
 | source | string |  | Yes |
 
-#### VerifiableCredentialSubjectSchema
+### VerifiableCredentialSubjectSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1202,7 +1214,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | type | string |  | Yes |
 | initiatorId | string |  | No |
 
-#### VerifiableCredentialSchema
+### VerifiableCredentialSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1214,14 +1226,14 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | issuanceDate | dateTime |  | Yes |
 | proof | object |  | Yes |
 
-#### IdentityJsonSchema
+### IdentityJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | doc | object |  | Yes |
 | key | object |  | Yes |
 
-#### IdentityJsonUpdateSchema
+### IdentityJsonUpdateSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1229,7 +1241,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | key | object |  | Yes |
 | txHash | string |  | Yes |
 
-#### IdentityKeyPairJsonSchema
+### IdentityKeyPairJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1238,7 +1250,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | secret | string |  | Yes |
 | encoding |  | _Enum:_ `"base16"`, `"base58"`, `"base64"` | Yes |
 
-#### IdentityDocumentJsonSchema
+### IdentityDocumentJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1251,21 +1263,21 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | immutable | boolean |  | Yes |
 | proof | object |  | Yes |
 
-#### LatestIdentityJsonSchema
+### LatestIdentityJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | document | object |  | Yes |
 | messageId | string |  | Yes |
 
-#### DocumentJsonUpdateSchema
+### DocumentJsonUpdateSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | doc | object |  | Yes |
 | txHash | string |  | Yes |
 
-#### DeviceSchema
+### DeviceSchema
 
 Device schema, see the specification at: <https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md> or <https://github.com/smart-data-models/dataModel.Device/blob/master/DeviceModel/doc/spec.md> or <https://petstore.swagger.io/?url=https://smart-data-models.github.io/dataModel.Device/Device/swagger.yaml#/ngsi-ld/get_ngsi_ld_v1_entities>
 
@@ -1315,7 +1327,7 @@ Device schema, see the specification at: <https://github.com/smart-data-models/d
 | supportedProtocol |  | _Enum:_ `"3g"`, `"bluetooth"`, `"bluetooth LE"`, `"cat-m"`, `"coap"`, `"ec-gsm-iot"`, `"gprs"`, `"http"`, `"lwm2m"`, `"lora"`, `"lte-m"`, `"mqtt"`, `"nb-iot"`, `"onem2m"`, `"sigfox"`, `"ul20"`, `"websocket"` | No |
 | value |  |  | No |
 
-#### OrganizationSchema
+### OrganizationSchema
 
 Organization schema, see the specification at: <https://schema.org/Organization>
 
@@ -1339,7 +1351,7 @@ Organization schema, see the specification at: <https://schema.org/Organization>
 | telephone | string |  | No |
 | vatID | string |  | No |
 
-#### PersonSchema
+### PersonSchema
 
 Person schema, see the specification at: <https://schema.org/Person>
 
@@ -1368,7 +1380,7 @@ Person schema, see the specification at: <https://schema.org/Person>
 | nationality | string |  | No |
 | telephone | string |  | No |
 
-#### ProductSchema
+### ProductSchema
 
 Product schema, see the specification at: <https://schema.org/Product>
 
@@ -1408,7 +1420,7 @@ Product schema, see the specification at: <https://schema.org/Product>
 | weight |  |  | No |
 | width |  |  | No |
 
-#### ServiceSchema
+### ServiceSchema
 
 Service schema, see the specification at: <https://schema.org/Service>
 
@@ -1433,11 +1445,11 @@ Service schema, see the specification at: <https://schema.org/Service>
 | serviceType | string |  | No |
 | termsOfService | string |  | No |
 
-#### IdentitySchema
+### IdentitySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| identityId | string |  | Yes |
+| id | string |  | Yes |
 | publicKey | string |  | Yes |
 | username | string |  | No |
 | registrationDate | dateTime |  | No |
@@ -1446,19 +1458,19 @@ Service schema, see the specification at: <https://schema.org/Service>
 | claim | object |  | No |
 | isPrivate | boolean |  | No |
 
-#### IdentityIdSchema
+### IdentityIdSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | IdentityIdSchema | string |  |  |
 
-#### NonceSchema
+### NonceSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | nonce | string |  | Yes |
 
-#### ChannelAddressSchema
+### ChannelAddressSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

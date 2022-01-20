@@ -4,6 +4,7 @@ import { ChannelInfoRoutes } from '../../routes/channel-info';
 import { Logger } from '../../utils/logger';
 import { authorizationService, channelInfoService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, Logger.getInstance());
 const { getChannelInfo, addChannelInfo, updateChannelInfo, deleteChannelInfo, searchChannelInfo } = channelInfoRoutes;
@@ -196,7 +197,14 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *                 error:
  *                   type: string
  */
-channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), addChannelInfo);
+channelInfoRouter.post(
+	'/channel',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: ChannelInfoSchema }),
+	mongodbSanitizer,
+	addChannelInfo
+);
 
 /**
  * @openapi
@@ -257,7 +265,14 @@ channelInfoRouter.post('/channel', apiKeyMiddleware, authMiddleWare, validate({ 
  *                 error:
  *                   type: string
  */
-channelInfoRouter.put('/channel', apiKeyMiddleware, authMiddleWare, validate({ body: ChannelInfoSchema }), updateChannelInfo);
+channelInfoRouter.put(
+	'/channel',
+	apiKeyMiddleware,
+	authMiddleWare,
+	validate({ body: ChannelInfoSchema }),
+	mongodbSanitizer,
+	updateChannelInfo
+);
 
 /**
  * @openapi

@@ -16,16 +16,15 @@ services:
 
   initialize-job:
     build: .
-    environment: 
-      API_VERSION: v1
-      NETWORK: main
+    environment:
+      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
-      IOTA_PERMA_NODE: https://nodes.iota.org:443
-      EXPLORER: https://explorer.iota.org/mainnet/transaction
+      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
+      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
     restart: on-failure
-    command: node dist/index.js keygen
+    command: node dist/index.js setup-api
     depends_on: 
       - mongo
 
@@ -33,11 +32,9 @@ services:
     build: .
     environment: 
       PORT: 3000
-      API_VERSION: v1
-      NETWORK: main
       DATABASE_NAME: ${DATABASE_NAME}
-      IOTA_PERMA_NODE: https://nodes.iota.org:443
-      EXPLORER: https://explorer.iota.org/mainnet/transaction
+      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
+      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
     restart: always

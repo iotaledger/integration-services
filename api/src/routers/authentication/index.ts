@@ -4,6 +4,7 @@ import { AuthenticationRoutes } from '../../routes/authentication';
 import { Logger } from '../../utils/logger';
 import { authenticationService } from '../services';
 import { apiKeyMiddleware, validate } from '../middlewares';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, Logger.getInstance());
 const { getNonce, proveOwnership } = authenticationRoutes;
@@ -11,20 +12,20 @@ const { getNonce, proveOwnership } = authenticationRoutes;
 export const authenticationRouter = Router();
 /**
  * @openapi
- * /authentication/prove-ownership/{identityId}:
+ * /authentication/prove-ownership/{id}:
  *   get:
  *     summary: Request a nonce which must be signed by the private key
  *     description: Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
  *     tags:
  *     - authentication
  *     parameters:
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *           summary: Example identity id (DID identifier)
  *     responses:
@@ -47,24 +48,24 @@ export const authenticationRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNonce);
+authenticationRouter.get('/prove-ownership/:id', apiKeyMiddleware, getNonce);
 
 /**
  * @openapi
- * /authentication/prove-ownership/{identityId}:
+ * /authentication/prove-ownership/{id}:
  *   post:
  *     summary: Get an authentication token by signing a nonce
  *     description: Get an authentication token by signing a nonce using the private key. If signature is verified, a JWT string will be returned in the response. The nonce can be received from GET /prove-ownership/{identity-id} endpoint. The JWT is used for any future API interaction.
  *     tags:
  *     - authentication
  *     parameters:
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *           summary: Example identity id (DID identifier)
  *     requestBody:
@@ -109,4 +110,10 @@ authenticationRouter.get('/prove-ownership/:identityId', apiKeyMiddleware, getNo
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-authenticationRouter.post('/prove-ownership/:identityId', apiKeyMiddleware, validate({ body: ProveOwnershipPostBodySchema }), proveOwnership);
+authenticationRouter.post(
+	'/prove-ownership/:id',
+	apiKeyMiddleware,
+	mongodbSanitizer,
+	validate({ body: ProveOwnershipPostBodySchema }),
+	proveOwnership
+);

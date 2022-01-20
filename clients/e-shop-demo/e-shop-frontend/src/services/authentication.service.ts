@@ -1,14 +1,14 @@
 import { client, setAuthHeader } from '../utils/axios-client';
 
-export const generateNonce = async (identityId: any): Promise<string> => {
-	const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/nonce/${identityId}`;
+export const generateNonce = async (id: any): Promise<string> => {
+	const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/nonce/${id}`;
 	const response = await client.get(url);
 	return response.data.nonce;
 };
 
-export const authenticate = async (signedNonce: string, identityId: string): Promise<boolean> => {
+export const authenticate = async (signedNonce: string, id: string): Promise<boolean> => {
 	try {
-		const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/authenticate/${identityId}`;
+		const url = `${process.env.REACT_APP_E_SHOP_BACKEND_URL}/authenticate/${id}`;
 		const response = await client.post(url, JSON.stringify({ signedNonce }));
 		const jwt = response.data.jwt;
 		setAuthHeader(jwt);

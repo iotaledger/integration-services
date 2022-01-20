@@ -1,6 +1,6 @@
 {
   "name": "integration-services",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Audit log of the ensuresec project.",
   "main": "dist/index.js",
   "scripts": {
@@ -11,9 +11,9 @@
     "test": "jest --detectOpenHandles",
     "test-watch": "npm run test -- --watchAll",
     "start-node": "node dist/index.js server",
-    "start-keygen": "node dist/index.js keygen",
+    "start-setup-api": "node dist/index.js setup-api",
     "start": "npm-run-all build start-node",
-    "keygen": "npm-run-all build start-keygen",
+    "setup-api": "npm-run-all build start-setup-api",
     "build-watch": "tsc --watch ",
     "serve-nodemon": "nodemon ./dist/index server",
     "serve": "run-p build-watch serve-nodemon",
@@ -43,6 +43,7 @@
   "dependencies": {
     "@iota/identity-wasm": "0.3.5",
     "@iota/streams": "^0.1.2",
+    "@noble/ed25519": "^1.4.0",
     "@sinclair/typebox": "^0.12.8",
     "ajv": "^8.3.0",
     "ajv-formats": "^2.1.0",
@@ -57,10 +58,9 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "mongodb": "^3.6.4",
-    "noble-ed25519": "^1.0.3",
     "node-fetch": "^2.6.1",
     "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.1.6",
+    "swagger-ui-express": "^4.3.0",
     "winston": "^3.3.3",
     "yargs": "^17.2.1"
   },
@@ -84,7 +84,7 @@
     "nodemon": "^2.0.7",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
-    "ts-jest": "^27.0.5",
+    "ts-jest": "^27.0.7",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
     "typescript": "^4.1.3"

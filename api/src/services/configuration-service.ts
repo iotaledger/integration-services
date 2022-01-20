@@ -4,7 +4,9 @@ import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
-import { getIdentityDoc } from '../database/identity-docs';
+import { getIdentityKeys } from '../database/identity-keys';
+
+const VERSION = 'v0.1';
 
 export interface IConfigurationService {
 	serverIdentityId: string;
@@ -27,10 +29,8 @@ export class ConfigurationService {
 
 	identityConfig: IdentityConfig = {
 		keyCollectionSize: 4096, // size must be a multiple of 2^2, 2^3, 2^4, ...
-		network: process.env.NETWORK,
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
-		explorer: process.env.EXPLORER,
 		keyType: Identity.KeyType.Ed25519,
 		hashFunction: Identity.Digest.Sha256,
 		hashEncoding: 'base58',
@@ -39,7 +39,7 @@ export class ConfigurationService {
 
 	config: Config = {
 		port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
-		apiVersion: process.env.API_VERSION,
+		apiVersion: VERSION,
 		databaseUrl: process.env.DATABASE_URL,
 		databaseName: process.env.DATABASE_NAME,
 		serverSecret: process.env.SERVER_SECRET,
@@ -87,7 +87,7 @@ export class ConfigurationService {
 			}
 
 			const rootServerIdentity = rootServerIdentities[0];
-			const serverIdentityId = rootServerIdentity?.identityId;
+			const serverIdentityId = rootServerIdentity?.id;
 
 			if (!serverIdentityId) {
 				this.logger.error('Root identity id not found');
@@ -95,7 +95,7 @@ export class ConfigurationService {
 			}
 
 			// check if there is a valid identity-doc
-			const serverIdentity = await getIdentityDoc(serverIdentityId, this.config.serverSecret);
+			const serverIdentity = await getIdentityKeys(serverIdentityId, this.config.serverSecret);
 
 			if (!serverIdentity) {
 				this.logger.error(`Root identity document with id: ${serverIdentityId} not found in database!`);

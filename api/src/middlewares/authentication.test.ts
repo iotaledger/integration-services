@@ -64,7 +64,7 @@ describe('test authentication middleware', () => {
 				authorization: 'Bearer ' + wrongUserJwt
 			}
 		};
-		// jwt from: { user: { id: 'NEEDS TO BE CALLED identityId' }
+		// jwt from: { user: { id: 'NEEDS TO BE CALLED id' }
 		isAuth(serverSecret)(req, res, nextMock);
 
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
@@ -80,12 +80,12 @@ describe('test authentication middleware', () => {
 				authorization: 'Bearer ' + validJwt
 			}
 		};
-		// jwt from: { user: { identityId: 'did:iota:123456' } }
+		// jwt from: { user: { id: 'did:iota:123456' } }
 		expect(req.user).toBeUndefined();
 
 		isAuth(serverSecret)(req, res, nextMock);
 
-		expect(req.user).toEqual({ identityId: 'did:iota:123456' });
+		expect(req.user).toEqual({ id: 'did:iota:123456' });
 		expect(nextMock).toHaveBeenCalledWith();
 	});
 });

@@ -3,26 +3,15 @@ kind: Job
 metadata:
   name: generate-key
 spec:
+  backoffLimit: 4
   template:
     spec:
-      initContainers:
-        - name: cleanup-identity
-          image: busybox:1.28
-          args:
-            - /bin/sh
-            - -c
-            - >
-              set -x;
-              rm -rf /config/server-identity.json
-          volumeMounts:
-            - mountPath: /config
-              name: root-identity
-
+      restartPolicy: OnFailure
       containers:
         - name: create-root-identity
-          image: iotaledger/integration-services:latest
+          image: iotaledger/integration-services:develop
           imagePullPolicy: IfNotPresent
-          command: ["node", "dist/index.js", "keygen"]
+          command: ["node", "dist/index.js", "setup-api"]
           env:
             - name: "SERVER_IDENTITY_FILE"
               value: "/config/server-identity.json"
@@ -31,11 +20,6 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: DATABASE_NAME
-            - name: "NETWORK"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: NETWORK
             - name: "DATABASE_URL"
               valueFrom:
                 configMapKeyRef:
@@ -57,14 +41,3 @@ spec:
                 secretKeyRef:
                   name: integration-service-api-secrets
                   key: SERVER_SECRET
-
-          volumeMounts:
-            - mountPath: /config
-              name: root-identity
-
-      volumes:
-        - name: root-identity
-          persistentVolumeClaim:
-            claimName: root-identity-pvc
-      restartPolicy: OnFailure
-  backoffLimit: 4

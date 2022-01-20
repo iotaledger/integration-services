@@ -17,10 +17,8 @@ export interface Config {
 
 export interface IdentityConfig {
 	keyCollectionSize: number; // size must be a multiple of 2^2, 2^3, 2^4, ...
-	network: string;
 	node: string;
 	permaNode: string;
-	explorer: string;
 	keyType: Identity.KeyType;
 	hashFunction: Identity.Digest;
 	keyCollectionTag: string;

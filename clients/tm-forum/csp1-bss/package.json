@@ -9,8 +9,7 @@
     "build": "npm-run-all prettier tsc lint",
     "tsc": "tsc",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-    "prettier": "npx prettier --write ./src",
-    "test": "jest"
+    "prettier": "npx prettier --write ./src"
   },
   "repository": {
     "type": "git",
@@ -34,28 +33,25 @@
   },
   "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
+    "@noble/ed25519": "1.5.0",
     "ajv": "^8.6.2",
     "ajv-formats": "^2.1.0",
-    "axios": "^0.21.1",
+    "axios": "^0.24.0",
     "bs58": "^4.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "http-status-codes": "^2.1.4",
-    "noble-ed25519": "^1.2.5"
+    "http-status-codes": "^2.1.4"
   },
   "devDependencies": {
     "@types/bs58": "^4.0.1",
     "@types/express": "^4.17.13",
-    "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
     "eslint": "^7.18.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "jest": "^26.6.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
-    "ts-jest": "^26.5.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.1.3"
   }

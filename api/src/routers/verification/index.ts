@@ -3,13 +3,16 @@ import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
-	VerifyIdentityBodySchema
+	CreateCredentialBodySchema
 } from '../../models/schemas/request-response-body/verification-bodies';
 import { VerificationRoutes } from '../../routes/verification';
 import { Logger } from '../../utils/logger';
 import { authorizationService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { ConfigurationService } from '../../services/configuration-service';
+import { basicLock } from '../../middlewares/concurrency-lock';
+import { ConcurrencyLocks } from '../../models/types/concurrency';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const verificationRoutes = new VerificationRoutes(
 	verificationService,
@@ -31,20 +34,20 @@ export const verificationRouter = Router();
 
 /**
  * @openapi
- * /verification/latest-document/{identityId}:
+ * /verification/latest-document/{id}:
  *   get:
  *     summary: Get the latest version of an identity document (DID)
  *     description: Get the latest version of an identity document (DID) from the IOTA Tangle.
  *     tags:
  *     - verification
  *     parameters:
- *     - name: identityId
+ *     - name: id
  *       in: path
  *       required: true
  *       schema:
  *         $ref: '#/components/schemas/IdentityIdSchema'
  *       examples:
- *         identityId:
+ *         id:
  *           value: did:iota:3tqQeyDeEmjjSgAWGa99qmhYgrse9mEX89QqgSwsrrWy
  *           summary: Example identity id (DID identifier)
  *     responses:
@@ -67,7 +70,7 @@ export const verificationRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-verificationRouter.get('/latest-document/:identityId', apiKeyMiddleware, getLatestDocument);
+verificationRouter.get('/latest-document/:id', apiKeyMiddleware, getLatestDocument);
 
 /**
  * @openapi
@@ -108,6 +111,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: TrustedRootBodySchema }),
+	mongodbSanitizer,
 	addTrustedRootIdentity
 );
 
@@ -203,7 +207,7 @@ verificationRouter.delete('/trusted-roots/:trustedRootId', apiKeyMiddleware, aut
  *             $ref: "#/components/schemas/VerifyIdentityBodySchema"
  *           example:
  *             subject:
- *               identityId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *               credentialType: VerifiableCredential
  *               claim:
  *                 type: Service
@@ -247,7 +251,9 @@ verificationRouter.post(
 	'/create-credential',
 	apiKeyMiddleware,
 	authMiddleWare,
-	validate({ body: VerifyIdentityBodySchema }),
+	validate({ body: CreateCredentialBodySchema }),
+	mongodbSanitizer,
+	basicLock(ConcurrencyLocks.CredentialLock),
 	createVerifiableCredential
 );
 
@@ -307,6 +313,7 @@ verificationRouter.post(
 	'/check-credential',
 	apiKeyMiddleware,
 	validate({ body: VerifiableCredentialBodySchema }),
+	mongodbSanitizer,
 	checkVerifiableCredential
 );
 
@@ -349,5 +356,7 @@ verificationRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeVerificationBodySchema }),
+	mongodbSanitizer,
+	basicLock(ConcurrencyLocks.CredentialLock),
 	revokeVerifiableCredential
 );

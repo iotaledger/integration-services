@@ -1,6 +1,6 @@
 import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
-import * as IdentityDocsDb from '../../database/identity-docs';
+import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
 import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../../models/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
@@ -80,20 +80,20 @@ describe('test user routes', () => {
 			const searchUserSpy = jest.spyOn(UserDb, 'searchUsers').mockImplementationOnce(async () => [
 				{
 					username: 'test-user1',
-					identityId: 'did:iota:1234',
+					id: 'did:iota:1234',
 					publicKey: 'testpublickey',
 					claim: { name: 'thisnameisprivate', type: 'testtype' },
 					verifiableCredentials: [TestCredentialMock]
 				},
 				{
 					username: 'test-user2',
-					identityId: 'did:iota:12345',
+					id: 'did:iota:12345',
 					publicKey: 'testpublickey2',
 					verifiableCredentials: [TestCredentialMock]
 				},
 				{
 					username: 'test-user3',
-					identityId: 'did:iota:12346',
+					id: 'did:iota:12346',
 					publicKey: 'testpublickey3',
 					claim: { name: 'somehiddenname', type: 'youdontseeme' }
 				}
@@ -110,17 +110,17 @@ describe('test user routes', () => {
 			const expectedSearchResult = [
 				{
 					username: 'test-user1',
-					identityId: 'did:iota:1234',
+					id: 'did:iota:1234',
 					publicKey: 'testpublickey'
 				},
 				{
 					username: 'test-user2',
-					identityId: 'did:iota:12345',
+					id: 'did:iota:12345',
 					publicKey: 'testpublickey2'
 				},
 				{
 					username: 'test-user3',
-					identityId: 'did:iota:12346',
+					id: 'did:iota:12346',
 					publicKey: 'testpublickey3'
 				}
 			];
@@ -142,12 +142,12 @@ describe('test user routes', () => {
 
 			await userRoutes.getUser(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
 		});
 		it('should return expected user', async () => {
 			const date = getDateFromString('2021-02-12T14:58:05+01:00');
 			const user: UserPersistence = {
-				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+				id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
@@ -155,7 +155,7 @@ describe('test user routes', () => {
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
 				user: TestUsersMock[0]
 			};
@@ -164,7 +164,7 @@ describe('test user routes', () => {
 
 			expect(getUserSpy).toHaveBeenCalledTimes(1);
 			expect(sendMock).toHaveBeenCalledWith({
-				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+				id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
 				claim: { type: 'Person', firstName: 'Tom', lastName: 'Tomson' },
@@ -176,7 +176,7 @@ describe('test user routes', () => {
 			const requestUser = TestUsersMock[0];
 			const date = getDateFromString('2021-02-12T14:58:05+01:00');
 			const user: UserPersistence = {
-				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+				id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
@@ -185,13 +185,13 @@ describe('test user routes', () => {
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
 				user: requestUser
 			};
 
 			const expectedResponse: User = {
-				identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+				id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
 				claim: undefined, // claim is undefined since user id and requester is different
@@ -208,7 +208,7 @@ describe('test user routes', () => {
 			const requestUser = TestUsersMock[0];
 			const date = getDateFromString('2021-02-12T14:58:05+01:00');
 			const user: UserPersistence = {
-				identityId: requestUser.identityId,
+				id: requestUser.id,
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
@@ -217,13 +217,13 @@ describe('test user routes', () => {
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
-				params: { identityId: requestUser.identityId }, // same identityId as requestUser
+				params: { id: requestUser.id }, // same id as requestUser
 				body: null,
 				user: requestUser
 			};
 
 			const expectedResponse: User = {
-				identityId: requestUser.identityId,
+				id: requestUser.id,
 				publicKey: 'my-public-key-1',
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim, // claim is not undefined since is the same user
@@ -242,7 +242,7 @@ describe('test user routes', () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null,
 				user: TestUsersMock[0]
 			};
@@ -258,7 +258,7 @@ describe('test user routes', () => {
 
 	describe('test POST user', () => {
 		const validBody: User = {
-			identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', // must be same as in UserIdentityMock.id
+			id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4', // must be same as in UserIdentityMock.id
 			publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm', // must be same as in UserIdentityMock publicKeyBase58
 			username: 'first-user',
 			claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Sonson' } as IdentityClaim,
@@ -338,7 +338,9 @@ describe('test user routes', () => {
 	describe('test create-identity route', () => {
 		it('should send result for valid body', async () => {
 			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+			const saveIdentitySpy = jest
+				.spyOn(IdentityDocsDb, 'saveIdentityKeys')
+				.mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
@@ -350,7 +352,7 @@ describe('test user routes', () => {
 
 			const exptectedUser = {
 				claim: { type: 'Person', firstName: 'Mister', lastName: 'Subscriber' },
-				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
 			};
@@ -364,7 +366,7 @@ describe('test user routes', () => {
 
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
 			const identitySpy = jest.spyOn(ssiService, 'createIdentity').mockImplementationOnce(async () => UserIdentityMock);
-			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentity');
+			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentityKeys');
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 			const req: any = {
 				params: {},
@@ -378,14 +380,14 @@ describe('test user routes', () => {
 			const exptectedUser = {
 				claim: { type: 'Person', firstName: 'Mister', lastName: 'Subscriber' },
 				storeIdentity: true,
-				identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 				publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 				username: 'test-username'
 			};
 			await userRoutes.createIdentity(req, res, nextMock);
 			expect(identitySpy).toHaveBeenCalledWith();
 			expect(userSpy).toHaveBeenCalledWith(exptectedUser);
-			expect(saveIdentitySpy).toHaveBeenCalledWith(UserIdentityMock, serverSecret);
+			expect(saveIdentitySpy).toHaveBeenCalledWith({ id: UserIdentityMock.doc.id, key: UserIdentityMock.key }, serverSecret);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
 		});
@@ -393,7 +395,7 @@ describe('test user routes', () => {
 
 	describe('test PUT user', () => {
 		const validBody: User = {
-			identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
+			id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4',
 			publicKey: 'my-public-key-1',
 			username: 'first-user',
 			claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Sonson' } as IdentityClaim,
@@ -414,7 +416,7 @@ describe('test user routes', () => {
 			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 0 } } as any));
 
 			const req: any = {
-				user: { identityId: validBody.identityId },
+				user: { id: validBody.id },
 				params: {},
 				body: validBody
 			};
@@ -431,7 +433,7 @@ describe('test user routes', () => {
 			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
-				user: { identityId: 'did:iota:123456789' }, // different request identityId than user to update
+				user: { id: 'did:iota:123456789' }, // different request id than user to update
 				params: {},
 				body: validBody
 			};
@@ -447,7 +449,7 @@ describe('test user routes', () => {
 			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
-				user: { identityId: validBody.identityId },
+				user: { id: validBody.id },
 				params: {},
 				body: validBody
 			};
@@ -464,7 +466,7 @@ describe('test user routes', () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
-				user: { identityId: validBody.identityId },
+				user: { id: validBody.id },
 				params: {},
 				body: validBody
 			};
@@ -487,7 +489,7 @@ describe('test user routes', () => {
 
 			await userRoutes.deleteUser(req, res, nextMock);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'no identityId provided' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
 		});
 
 		it('is not authorized to delete different user', async () => {
@@ -495,8 +497,8 @@ describe('test user routes', () => {
 			const deleteUserSpy = jest.spyOn(UserDb, 'deleteUser');
 
 			const req: any = {
-				user: { identityId: 'did:iota:123456789' },
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				user: { id: 'did:iota:123456789' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null
 			};
 
@@ -514,8 +516,8 @@ describe('test user routes', () => {
 				.mockImplementation(async () => null);
 
 			const req: any = {
-				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				user: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null
 			};
 
@@ -533,8 +535,8 @@ describe('test user routes', () => {
 				.mockImplementation(async () => null);
 
 			const req: any = {
-				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				user: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				query: { 'revoke-credentials': 'true' }, // revoke-credentials is true so it should be called
 				body: null
 			};
@@ -552,8 +554,8 @@ describe('test user routes', () => {
 				throw new Error('Test error');
 			});
 			const req: any = {
-				user: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
-				params: { identityId: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				user: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
+				params: { id: 'did:iota:2QQd1DN1ZjnXnvSAaAjk1VveBNUYDw7eE9bTTCC4RbG4' },
 				body: null
 			};
 			await userRoutes.deleteUser(req, res, nextMock);

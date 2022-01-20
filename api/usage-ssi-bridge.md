@@ -136,7 +136,7 @@ _Body:_
 _Response:_
 ```
 {
-    "identityId": string,
+    "id": string,
     "publicKey": string,
     "username": string,
     "registrationDate": string,
@@ -224,7 +224,7 @@ _Body:_
 
 ```
 {
-    "identityId": string,
+    "id": string,
     "publicKey": string,
     "username": string,
     "type": string,
@@ -261,7 +261,7 @@ _Body:_
 
 ```
 {
-    "identityId": string,
+    "id": string,
     "publicKey": string,
     "username": string,
     "registrationDate": string,
@@ -396,7 +396,7 @@ _Body:_
 ```
 {
     "subject": {
-        "identityId": string,
+        "id": string,
         "credentialType": string,
         "claim": { // the claim will become the credentialSubject
             "type": string,
@@ -610,7 +610,7 @@ A created identity can be used to authenticatem the user linked to it, to a numb
 
 - get('/identities/search')
 - put('/identities/identity')
-- delete('/identities/identity/:identityId')
+- delete('/identities/identity/:id')
 - post('/verification/create-credential')
 - post('/verification/revoke-credential')
 
@@ -627,7 +627,7 @@ As described in the sequence diagram the user willing to authenticate with a giv
 <!-- it is described below and by comments in code -->
 
 ```
-import * as ed from 'noble-ed25519';
+import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 
 // Decode a base58 key and encode it as hex key. (Needed for signNonce & verifySignedNonce)
@@ -641,7 +641,8 @@ const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).d
 // Sign a nonce using the private key.
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
 	const hash = hashNonce(nonce);
-	return await ed.sign(hash, privateKey);
+	const signedHash = await ed.sign(hash, privateKey);
+	return ed.Signature.fromHex(signedHash).toHex();
 };
 ```
 
@@ -760,12 +761,12 @@ In this case we use the DID of the device as subject to verify. Furthermore, if 
 
 <!-- must be requested by an identity different from the subject <- this is true that is why the initiator of a verification must provide its own credential so the api is able to check wether this person is trusted or not who wants to create a credential for someone else. -->
 
-This verifiable credential is stored by the API Bridge and can be requested at the GET `/identities/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential of the initiator must be part of the request body, if the verification request is not initiated by an admin. The verifiable credentialof the initiator can be added in the `initiatorVC` field. The request must also contain a `subject` field where details about the identity to verify are added, like the `identityId`, the type of the credential in `credentialType` but also the `claim` of the identity which acquires information about the identity.
+This verifiable credential is stored by the API Bridge and can be requested at the GET `/identities/identity/{identity-id}` API. How to request the verifiable credential at the API will be described in section 4. As discussed, the verifiable credential of the initiator must be part of the request body, if the verification request is not initiated by an admin. The verifiable credentialof the initiator can be added in the `initiatorVC` field. The request must also contain a `subject` field where details about the identity to verify are added, like the `id`, the type of the credential in `credentialType` but also the `claim` of the identity which acquires information about the identity.
 
 ```
 {
   "subject": {
-      "identityId":"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt", // id of the device which the credential shall be created for
+      "id":"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt", // id of the device which the credential shall be created for
       "credentialType": "VerifiedIdentityCredential",
       "claim": {
         "type": "Device",
@@ -874,7 +875,7 @@ It checks if the verifiable credential of the initiator is valid (signed by a va
 
 After an identity is verified, in this case a device identity, an authorised user now can request to access information about the identity by using its DID. Among the various attributes, one can request if the identity has been verified by checking its verifiable credentials of the `verifiableCredentials` array attached to the identity. Each verifiable credential stores attributes of the identity, however some of these credentials might have been revoked. To check whether the requested verifiable credential is still valid and not revoked the request in section 5 can be used.
 
-Identity credentials can be requested using the identity DID in the identityId of a GET request of the following API. 
+Identity credentials can be requested using the identity DID in the id of a GET request of the following API. 
 
 https://ensuresec.solutions.iota.org/api/v0.1/identities/identity/did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt
 
@@ -882,7 +883,7 @@ The response contains now all information of the device like for instance its us
 
 ```
 {
-    "identityId": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
+    "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
     "publicKey": "4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR",
     "username": "iota-test-device",
     "registrationDate": "2021-06-18T13:35:26+02:00",
@@ -971,7 +972,7 @@ Simply insert the verifiable credential one wish to check into the body of the P
 
 ```
 {
-    "identityId": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
+    "id": "did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt",
     "publicKey": "4jYw13y25JgbFk9RnNwUVC2Y3qkT8DRFBqXLEHwkFvjR",
     "username": "iota-test-device",
     "registrationDate": "2021-06-18T13:35:26+02:00",

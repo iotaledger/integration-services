@@ -31,14 +31,14 @@ export class ChannelService {
 	}
 
 	async create(params: {
-		identityId: string;
+		id: string;
 		topics: Topic[];
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
 		subscriptionPassword?: string;
 	}): Promise<CreateChannelResponse> {
-		const { presharedKey, seed, hasPresharedKey, identityId, topics } = params;
+		const { presharedKey, seed, hasPresharedKey, id, topics } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -51,7 +51,7 @@ export class ChannelService {
 		}
 
 		const subscription: Subscription = {
-			identityId,
+			id,
 			type: SubscriptionType.Author,
 			channelAddress: res.channelAddress,
 			subscriptionLink: res.channelAddress,
@@ -67,7 +67,7 @@ export class ChannelService {
 		await this.subscriptionService.addSubscription(subscription);
 		await this.channelInfoService.addChannelInfo({
 			topics,
-			authorId: identityId,
+			authorId: id,
 			channelAddress: res.channelAddress
 		});
 
@@ -78,25 +78,21 @@ export class ChannelService {
 		};
 	}
 
-	async fetchLogs(channelAddress: string, identityId: string, sub: Author | Subscriber): Promise<ChannelData[]> {
+	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber): Promise<ChannelData[]> {
 		if (!sub) {
-			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 		}
 		const messages = await this.streamsService.getMessages(sub);
 
 		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(
-			channelAddress,
-			identityId,
-			this.streamsService.exportSubscription(sub, this.password)
-		);
+		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, this.password));
 
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
 		if (channelData?.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, identityId, channelData, this.password);
+			await ChannelDataDb.addChannelData(channelAddress, id, channelData, this.password);
 		}
 
 		return channelData;
@@ -109,12 +105,12 @@ export class ChannelService {
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
 
-	async getLogs(channelAddress: string, identityId: string, options: ChannelLogRequestOptions) {
-		const lockKey = channelAddress + identityId;
+	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions) {
+		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
 				}
@@ -125,21 +121,21 @@ export class ChannelService {
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 
-				await this.fetchLogs(channelAddress, identityId, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, identityId, options, this.password);
+				await this.fetchLogs(channelAddress, id, sub);
+				return await ChannelDataDb.getChannelData(channelAddress, id, options, this.password);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async addLogs(channelAddress: string, identityId: string, channelLog: ChannelLog): Promise<ChannelData> {
-		const lockKey = channelAddress + identityId;
+	async addLogs(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
-				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -149,7 +145,7 @@ export class ChannelService {
 				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
-					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 				}
 				const { accessRights, keyloadLink } = subscription;
 
@@ -162,7 +158,7 @@ export class ChannelService {
 					}
 				} else {
 					// fetch prev logs before writing new data to the channel
-					await this.fetchLogs(channelAddress, identityId, sub);
+					await this.fetchLogs(channelAddress, id, sub);
 				}
 
 				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(log);
@@ -170,11 +166,11 @@ export class ChannelService {
 
 				// store newly added log
 				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log };
-				await ChannelDataDb.addChannelData(channelAddress, identityId, [newLog], this.password);
+				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], this.password);
 
 				await this.subscriptionService.updateSubscriptionState(
 					channelAddress,
-					identityId,
+					id,
 					this.streamsService.exportSubscription(sub, this.password)
 				);
 				return newLog;
@@ -184,12 +180,12 @@ export class ChannelService {
 		});
 	}
 
-	async reimport(channelAddress: string, identityId: string, _seed: string, _subscriptionPassword?: string): Promise<void> {
-		const lockKey = channelAddress + identityId;
+	async reimport(channelAddress: string, id: string, _seed: string, _subscriptionPassword?: string): Promise<void> {
+		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
 				if (!subscription || !subscription?.keyloadLink || !subscription.publicKey) {
 					throw new Error('no subscription found!');
@@ -208,20 +204,20 @@ export class ChannelService {
 					throw new Error('wrong seed inserted');
 				}
 
-				await ChannelDataDb.removeChannelData(channelAddress, identityId);
-				await this.fetchLogs(channelAddress, identityId, newSub);
+				await ChannelDataDb.removeChannelData(channelAddress, id);
+				await this.fetchLogs(channelAddress, id, newSub);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async validate(channelAddress: string, identityId: string, logs: ChannelData[]): Promise<ValidateResponse> {
-		const lockKey = channelAddress + identityId;
+	async validate(channelAddress: string, id: string, logs: ChannelData[]): Promise<ValidateResponse> {
+		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const subscription = await this.subscriptionService.getSubscription(channelAddress, identityId);
+				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
 				// TODO check when no publicKey is needed....
 				if (!subscription || !subscription?.keyloadLink) {
@@ -236,13 +232,13 @@ export class ChannelService {
 				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
 
 				if (!sub) {
-					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and identityId: ${identityId}`);
+					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 				}
 				await sub.clone().sync_state();
 
 				const streamsMessages = await Promise.all(
 					logs.map(async (log) => {
-						const key = 'get-message-' + channelAddress + identityId;
+						const key = 'get-message-' + channelAddress + id;
 						return await this.lock.acquire(key).then(async (release) => {
 							try {
 								return await this.streamsService.getMessage(sub.clone(), log?.link);

@@ -194,7 +194,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => ({ result: { n: 0 } } as any));
 
 		const req: any = {
-			user: { identityId: validBody.authorId },
+			user: { id: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -211,7 +211,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
-			user: { identityId: 'did:iota:123456' },
+			user: { id: 'did:iota:123456' },
 			params: {},
 			body: validBody
 		};
@@ -227,7 +227,7 @@ describe('test POST channelInfo', () => {
 		const addChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'addChannelInfo').mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
-			user: { identityId: validBody.authorId },
+			user: { id: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -243,7 +243,7 @@ describe('test POST channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { identityId: validBody.authorId },
+			user: { id: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -316,7 +316,7 @@ describe('test PUT channelInfo', () => {
 			.mockImplementation(async () => ({ result: { n: 0 } } as UpdateWriteOpResult));
 
 		const req: any = {
-			user: { identityId: validBody.authorId },
+			user: { id: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -334,7 +334,7 @@ describe('test PUT channelInfo', () => {
 			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
 
 		const req: any = {
-			user: { identityId: validBody.authorId },
+			user: { id: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -352,7 +352,7 @@ describe('test PUT channelInfo', () => {
 			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
 
 		const req: any = {
-			user: { identityId: 'did:iota:123456' }, // different identityId as authorId
+			user: { id: 'did:iota:123456' }, // different id as authorId
 			params: {},
 			body: validBody
 		};
@@ -370,7 +370,7 @@ describe('test PUT channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { identityId: validBody.authorId },
+			user: { id: validBody.authorId },
 			params: {},
 			body: validBody
 		};
@@ -436,7 +436,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => ({} as any)); // no valid channel
 
 		const req: any = {
-			identityId: 'did:iota:1234567', // wrong identityid
+			id: 'did:iota:1234567', // wrong identityid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -455,7 +455,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelInfo').mockReturnValue(null); // channel is null
 
 		const req: any = {
-			identityId: 'did:iota:1234567', // wrong identityid
+			id: 'did:iota:1234567', // wrong identityid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -474,7 +474,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
 
 		const req: any = {
-			user: { identityId: 'did:iota:1234567' }, // wrong identityid
+			user: { id: 'did:iota:1234567' }, // wrong identityid
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -492,7 +492,7 @@ describe('test DELETE channelInfo', () => {
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channel);
 
 		const req: any = {
-			user: { identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same identityId as authorId of channel
+			user: { id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same id as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};
@@ -511,7 +511,7 @@ describe('test DELETE channelInfo', () => {
 			throw new Error('Test error');
 		});
 		const req: any = {
-			user: { identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same identityId as authorId of channel
+			user: { id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu' }, // same id as authorId of channel
 			params: { channelAddress: 'test-address' },
 			body: null
 		};

@@ -30,8 +30,8 @@ export const getServerIdentities = async (): Promise<UserPersistence[] | null> =
 	return await MongoDbService.getDocuments<UserPersistence>(collectionName, query);
 };
 
-export const getUser = async (identityId: string): Promise<UserPersistence | null> => {
-	const query = { _id: identityId };
+export const getUser = async (id: string): Promise<UserPersistence | null> => {
+	const query = { _id: id };
 	return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
 };
 
@@ -51,7 +51,7 @@ export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpRe
 	}
 
 	const document = {
-		_id: user.identityId,
+		_id: user.id,
 		...user,
 		registrationDate: new Date(),
 		role: UserRoles.User
@@ -62,12 +62,12 @@ export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpRe
 
 export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpResult> => {
 	const query = {
-		_id: user.identityId
+		_id: user.id
 	};
 
 	const { username, claim, verifiableCredentials, isPrivate } = user;
 
-	if (verifiableCredentials?.some((vc) => vc?.id !== user.identityId)) {
+	if (verifiableCredentials?.some((vc) => vc?.id !== user.id)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
 	}
 
@@ -144,7 +144,7 @@ export const removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPe
 	};
 };
 
-export const deleteUser = async (identityId: string): Promise<DeleteWriteOpResultObject> => {
-	const query = { _id: identityId };
+export const deleteUser = async (id: string): Promise<DeleteWriteOpResultObject> => {
+	const query = { _id: id };
 	return MongoDbService.removeDocument(collectionName, query);
 };

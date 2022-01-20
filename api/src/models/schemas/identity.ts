@@ -57,11 +57,6 @@ export const IdentityDocumentJsonSchema = Type.Object({
 	})
 });
 
-export const LatestIdentityJsonSchema = Type.Object({
-	document: IdentityDocumentJsonSchema,
-	messageId: Type.String()
-});
-
 export const IdentityKeyPairJsonSchema = Type.Object({
 	type: Type.String(),
 	public: Type.String(),
@@ -72,15 +67,4 @@ export const IdentityKeyPairJsonSchema = Type.Object({
 export const IdentityJsonSchema = Type.Object({
 	doc: IdentityDocumentJsonSchema,
 	key: IdentityKeyPairJsonSchema
-});
-
-export const DocumentJsonUpdateSchema = Type.Object({
-	doc: IdentityDocumentJsonSchema,
-	txHash: Type.String()
-});
-
-export const IdentityJsonUpdateSchema = Type.Object({
-	doc: IdentityDocumentJsonSchema,
-	key: IdentityKeyPairJsonSchema,
-	txHash: Type.String()
 });

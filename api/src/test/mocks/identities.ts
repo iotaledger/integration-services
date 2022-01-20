@@ -1,11 +1,11 @@
 import { Encoding } from '../../models/schemas/identity';
-import { IdentityJsonUpdate } from '../../models/types/identity';
+import { IdentityJson, IdentityKeys } from '../../models/types/identity';
 import { User, UserType } from '../../models/types/user';
 
 export const TestUsersMock = [
 	{
 		_id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
+		id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'Device',
@@ -30,7 +30,7 @@ export const TestUsersMock = [
 		}
 	},
 	{
-		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
+		id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'second-user',
 		type: 'Person',
 		registrationDate: '2021-03-15T10:29:56+01:00',
@@ -40,7 +40,7 @@ export const TestUsersMock = [
 		}
 	},
 	{
-		identityId: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
+		id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		username: 'another-iota-user',
 		firstName: 'Jon',
 		lastName: 'Keen',
@@ -54,7 +54,7 @@ export const TestUsersMock = [
 ];
 
 // returned from localhost:3000/api/v1/identities/create
-export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const UserIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		authentication: [
@@ -75,7 +75,7 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		}
 	},
 	userData: {
-		identityId: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		claim: { type: 'Person', firstName: 'Tom', lastName: 'Sonson' },
@@ -108,11 +108,10 @@ export const UserIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
 		encoding: Encoding.base58
-	},
-	txHash: 'OGNVRNPA9LQKPEUQJEECRZRVMRAQA99RVTVUPIYQQGYVVFYBDRIHZGFVQQVKQHAPVGCZKMGUTZXAZ9999'
+	}
 };
 
-export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const ServerIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		verificationMethod: [
@@ -142,7 +141,7 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		}
 	},
 	userData: {
-		identityId: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
 		registrationDate: '2021-03-24T15:38:43+01:00',
@@ -194,11 +193,15 @@ export const ServerIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
 		encoding: Encoding.base58
-	},
-	txHash: 'LCHPWELIWGXUSHX9YACHICTLRHVGTFHXBEQILQBCCTDDRLJTBLYHTGRT9HKOLQZQHENEHPEGYMZD99999'
+	}
 };
 
-export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
+export const ServerIdentityKey: IdentityKeys = {
+	id: ServerIdentityMock.doc.id,
+	key: ServerIdentityMock.key
+};
+
+export const DeviceIdentityMock: IdentityJson & { userData: User } = {
 	doc: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		authentication: [
@@ -219,7 +222,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		}
 	},
 	userData: {
-		identityId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
 		registrationDate: '2021-03-24T16:54:38+01:00',
@@ -251,8 +254,7 @@ export const DeviceIdentityMock: IdentityJsonUpdate & { userData: User } = {
 		public: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR',
 		encoding: Encoding.base58
-	},
-	txHash: 'CETPVHOIBPNGCWQQCQALVKQQOD9B9MLMU9ZMNFZHBPEAOTMWFTVDRRBMFYIETHDWXA9GLGYWAFQRA9999'
+	}
 };
 
 export const TestCredentialMock = {
