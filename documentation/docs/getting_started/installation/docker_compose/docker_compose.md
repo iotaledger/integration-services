@@ -45,7 +45,8 @@ and rename it as `mongo-init.js`.
 After you have done this, replace `db-user`, `db-password`, `dn-name`, `server-secret` and `optional-api-key` in the
 newly created `.env` and `mongo-init.js` files accordingly.
 
-:::Danger Important The `server-secret` must be 32 characters length
+:::danger
+Important The `server-secret` must be 32 characters length
 :::
 
 Here is an example of how a `.env` file should look like:
@@ -81,7 +82,8 @@ db.createUser(
 );
 ````
 
-:::note Make sure that you use the same value for the same variables inside `.env` and `mongo-init.js`
+:::note
+Make sure that you use the same value for the same variables inside `.env` and `mongo-init.js`
 :::
 
 ## Run Integration Services API
