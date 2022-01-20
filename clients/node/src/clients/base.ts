@@ -48,7 +48,8 @@ export abstract class BaseClient {
       throw new Error('nonce must have a length of 40 characters!');
     }
     const hash = await this.hashNonce(nonce);
-    return await ed.sign(hash, privateKey);
+    const signedHash = await ed.sign(hash, privateKey);
+    return ed.Signature.fromHex(signedHash).toHex();
   }
 
   private async hashNonce(nonce: string): Promise<string> {
