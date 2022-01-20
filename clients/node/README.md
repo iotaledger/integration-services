@@ -7,7 +7,7 @@ This is the node.js SDK for easy usability of the Integration Services API.
 * A recent version of Node.js
 * A reference to an instance of the [Integration Services API](https://github.com/iotaledger/integration-services)
 
-## [Examples](https://github.com/iotaledger/integration-services/tree/develop/clients/node/examples#readme)
+## [Examples](https://github.com/iotaledger/integration-services/tree/master/clients/node/examples#readme)
 
 ## Install the library:
 
