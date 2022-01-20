@@ -58,12 +58,6 @@ The service allows to manage subscriptions to a specific channel. Identities can
 
 
 
-<!-- update figure name if we decide to call it GW--> 
-<!-- delete information from a channel/not to a channel-->
-
-
-<!-- perhaps we need to explain the data model -->
-
 ### Channel Service 
 __Prefix:__ `/api/v1/channels`
 
