@@ -1,5 +1,5 @@
 {
-  "name": "@iota/is-shared-modules",
+  "name": "@iota-is/shared-modules",
   "version": "0.1.0",
   "description": "Shared modules of the Integration Service.",
   "main": "index.js",
