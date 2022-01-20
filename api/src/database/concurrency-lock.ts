@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId, DeleteWriteOpResultObject } from 'mongodb';
-import { ConcurrencyLock } from '../models/types/concurrency';
+import { ConcurrencyLock } from '@iota-is/shared-modules/models/types/concurrency';
 
 const collectionName = CollectionNames.concurrencyLocks;
 

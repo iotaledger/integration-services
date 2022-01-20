@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoSearch } from '../../models/types/channel-info';
+import { ChannelInfo, ChannelInfoSearch } from '@iota-is/shared-modules/models/types/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
-import { AuthenticatedRequest } from '../../models/types/verification';
+import { AuthenticatedRequest } from '@iota-is/shared-modules/models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 import { ILogger } from '../../utils/logger';
 

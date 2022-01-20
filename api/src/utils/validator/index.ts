@@ -1,5 +1,11 @@
-import { DeviceSchema, OrganizationSchema, PersonSchema, ProductSchema, ServiceSchema } from '../../models/schemas/user-types';
-import { User, UserType } from '../../models/types/user';
+import {
+	DeviceSchema,
+	OrganizationSchema,
+	PersonSchema,
+	ProductSchema,
+	ServiceSchema
+} from '@iota-is/shared-modules/models/schemas/user-types';
+import { User, UserType } from '@iota-is/shared-modules/models/types/user';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { ILogger } from '../logger';

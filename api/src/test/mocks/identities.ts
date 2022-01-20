@@ -1,6 +1,6 @@
-import { Encoding } from '../../models/schemas/identity';
-import { IdentityJson, IdentityKeys } from '../../models/types/identity';
-import { User, UserType } from '../../models/types/user';
+import { Encoding } from '@iota-is/shared-modules/models/schemas/identity';
+import { IdentityJson, IdentityKeys } from '@iota-is/shared-modules/models/types/identity';
+import { User, UserType } from '@iota-is/shared-modules/models/types/user';
 
 export const TestUsersMock = [
 	{

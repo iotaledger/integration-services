@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ChannelInfoSchema } from '../../models/schemas/channel-info';
+import { ChannelInfoSchema } from '@iota-is/shared-modules/models/schemas/channel-info';
 import { ChannelInfoRoutes } from '../../routes/channel-info';
 import { Logger } from '../../utils/logger';
 import { authorizationService, channelInfoService } from '../services';

@@ -1,6 +1,9 @@
 import { Router } from 'express';
-import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
-import { IdentitySchema } from '../../models/schemas/user';
+import {
+	CreateIdentityBodySchema,
+	UpdateIdentityBodySchema
+} from '@iota-is/shared-modules/models/schemas/request-response-body/identity-bodies';
+import { IdentitySchema } from '@iota-is/shared-modules/models/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
 import { Logger } from '../../utils/logger';
 import { authorizationService, userService, verificationService } from '../services';
