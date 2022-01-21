@@ -1,13 +1,6 @@
 name: Publish Package to npmjs
 on:
-  push:
-    branches: [ master ]
-    paths: 
-      - "clients/**"
-      - ".github/workflows/publish-node-sdk-npmjs.yml"
-
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
