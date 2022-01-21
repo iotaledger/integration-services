@@ -14,9 +14,6 @@ const CheckoutWithIota = () => {
 			<VerifyCredential></VerifyCredential>
 			{isVerified && (
 				<>
-					<MessageBox type="success" show={true}>
-						Credential successful verified
-					</MessageBox>
 					<CheckoutStepHeading>Authenticate credential</CheckoutStepHeading>
 					<AuthenticateCredential></AuthenticateCredential>
 				</>

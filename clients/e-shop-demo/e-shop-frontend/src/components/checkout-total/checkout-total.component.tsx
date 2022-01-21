@@ -1,5 +1,7 @@
 import { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CartContext } from '../../contexts/cart.provider';
+import { TourContext } from '../../contexts/tour.provider';
 import { UserContext } from '../../contexts/user.provider';
 import { Button } from '../../global.styles';
 import { Item } from '../../models/item.model';
@@ -11,6 +13,7 @@ import { CheckoutTotalContainer } from './checkout-total.styles';
 const CheckoutTotal = () => {
 	const { items, emptyCart } = useContext(CartContext);
 	const [showOrderPlaceMessage, setShowOrderPlacedMessage] = useState(false);
+	const [hasCheckedOut, setHasCheckedOut] = useState<boolean>(false);
 	const cartHasAgeRestrictedItems = !!items.find((item: any) => item.item.ageRestricted === true);
 	const { authenticated, isVerified, setIsVerified } = useContext(UserContext);
 
@@ -18,6 +21,7 @@ const CheckoutTotal = () => {
 		setIsVerified(false);
 		emptyCart();
 		showOrderMessage();
+		setHasCheckedOut(true);
 	};
 
 	const showOrderMessage = () => {
@@ -46,8 +50,17 @@ const CheckoutTotal = () => {
 			</div>
 			{items.length !== 0 && cartHasAgeRestrictedItems && <CheckoutWithIota></CheckoutWithIota>}
 
-			{showCheckoutButton && <Button onClick={onCheckout}>Checkout</Button>}
-			<MessageBox type="success" show={showOrderPlaceMessage}>
+			{showCheckoutButton && (
+				<Button className="checkoutButton" onClick={onCheckout}>
+					Checkout
+				</Button>
+			)}
+			{hasCheckedOut && (
+				<Link to="/">
+					<Button>Restart tour</Button>
+				</Link>
+			)}
+			<MessageBox className="orderPlaced" type="success" show={showOrderPlaceMessage}>
 				Your order has been placed!
 			</MessageBox>
 		</CheckoutTotalContainer>

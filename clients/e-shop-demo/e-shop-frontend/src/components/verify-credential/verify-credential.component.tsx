@@ -8,13 +8,15 @@ import Form from 'react-bootstrap/Form';
 import credentialJson from '../../data/credential.json';
 import credentialUnderAge from '../../data/credential_under_age.json';
 import { Rings } from 'react-loader-spinner';
+import { TourContext } from '../../contexts/tour.provider';
 
 const VerifyCredential = () => {
 	const inputRef = useRef<any>();
 	const [ageRestrictionError, setAgeRestrictionError] = useState<boolean>();
 	const [credentialFile, setCredentialFile] = useState<any>();
-	const { setCredential, setIsVerified, setUseOwnCredential, useOwnCredential } = useContext(UserContext);
+	const { setCredential, setIsVerified, setUseOwnCredential, useOwnCredential, authenticated } = useContext(UserContext);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { setStep, setRun } = useContext(TourContext);
 
 	const onVerify = async () => {
 		setIsLoading(true);
@@ -25,6 +27,17 @@ const VerifyCredential = () => {
 		setIsVerified(verified);
 		setCredential(credentialFile);
 		setIsLoading(false);
+		if (!overAgeRestriction) {
+			setStep(6);
+			setRun(true);
+
+		} else if (overAgeRestriction && authenticated) {
+			setStep(10);
+			setRun(true);
+		} else {
+			setStep(7);
+			setRun(true);
+		}
 	};
 
 	const onFileChange = async (file: File) => {
@@ -38,14 +51,18 @@ const VerifyCredential = () => {
 	const onCredentialChange = (event: any) => {
 		setIsVerified(false);
 		setCredential(undefined);
-		setAgeRestrictionError(false);
+		setAgeRestrictionError(undefined);
 		const value = event.target.value;
 		if (value === 'under') {
 			setCredentialFile(credentialUnderAge);
 			setUseOwnCredential(false);
+			setStep(5);
+			setRun(true);
 		} else if (value === 'above') {
 			setCredentialFile(credentialJson);
 			setUseOwnCredential(false);
+			setStep(5);
+			setRun(true);
 		} else if (event.target.value === 'own') {
 			setUseOwnCredential(true);
 		}
@@ -56,8 +73,12 @@ const VerifyCredential = () => {
 			<CheckoutStepHeading>Verify credential</CheckoutStepHeading>
 			<Form.Select onChange={(event: any) => onCredentialChange(event)}>
 				<option>Choose your credential</option>
-				<option value="under">Underage credential</option>
-				<option value="above">Above age credential</option>
+				<option className="underAgeCredential" value="under">
+					Underage credential
+				</option>
+				<option className="overAgeCredential" value="above">
+					Adult credential
+				</option>
 				<option value="own">Use your own credential</option>
 			</Form.Select>
 			{useOwnCredential && (
@@ -68,13 +89,18 @@ const VerifyCredential = () => {
 			)}
 			{credentialFile && (
 				<>
-					<SmallButton onClick={onVerify}>Verify</SmallButton>
+					<SmallButton className="verifyButton" onClick={onVerify}>
+						Verify
+					</SmallButton>
 					{isLoading && <Rings height="50" width="50" color="#d6cbd3" arialLabel="loading" />}
 				</>
 			)}
 
-			<MessageBox type="danger" show={ageRestrictionError === true}>
+			<MessageBox className='credentialAgeRestriction' type="danger" show={ageRestrictionError === true}>
 				Credential is under age restriction!
+			</MessageBox>
+			<MessageBox className='credentialVerified' type="success" show={ageRestrictionError === false}>
+				Credential successful verified
 			</MessageBox>
 		</>
 	);
