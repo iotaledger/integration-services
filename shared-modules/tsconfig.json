@@ -1,16 +1,12 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		"noImplicitAny": true,
-		"lib": ["dom", "es2015", "es2015.iterable"],
 		"esModuleInterop": true,
 		"module": "commonjs",
-		"moduleResolution": "node",
-		"noUnusedLocals": true,
-		"typeRoots": ["node_modules/@types", "types"],
-		"outDir": "dist",
-		"resolveJsonModule": true,
-		"allowJs": true,
+		"target": "es2015",
+		"declaration": true,
+		"outDir": "./dist",
+		"baseUrl": ".",
+		"sourceMap": true
 	},
-	"include": ["src"]
+	"include": ["src/**/*"]
 }
