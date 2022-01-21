@@ -1,13 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ChannelService } from '../../services/channel-service';
-import { AuthenticatedRequest } from '@iota-is/shared-modules/models/types/verification';
+import { AuthenticatedRequest } from '@iota-is/shared-modules/src/models/types/verification';
 import { get as lodashGet, isEmpty } from 'lodash';
-import { AddChannelLogBody, CreateChannelBody, ReimportBody, ValidateBody } from '@iota-is/shared-modules/models/types/request-response-bodies';
+import {
+	AddChannelLogBody,
+	CreateChannelBody,
+	ReimportBody,
+	ValidateBody
+} from '@iota-is/shared-modules/src/models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { getDateFromString } from '../../utils/date';
 import { compareAsc } from 'date-fns';
-import { ChannelLogRequestOptions } from '@iota-is/shared-modules/models/types/channel-info';
+import { ChannelLogRequestOptions } from '@iota-is/shared-modules/src/models/types/channel-info';
 
 export class ChannelRoutes {
 	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}

@@ -12,5 +12,5 @@
 		"resolveJsonModule": true,
 		"allowJs": true,
 	},
-	"include": ["models"]
+	"include": ["src"]
 }

@@ -1,9 +1,14 @@
-import { User, UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/models/types/user';
+import { User, UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/src/models/types/user';
 import * as userDb from '../database/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { getDateFromString, getDateStringFromDate } from '../utils/date';
 import isEmpty from 'lodash/isEmpty';
-import { CreateIdentityBody, IdentityJson, VerifiableCredentialJson, IdentityKeys } from '@iota-is/shared-modules/models/types/identity';
+import {
+	CreateIdentityBody,
+	IdentityJson,
+	VerifiableCredentialJson,
+	IdentityKeys
+} from '@iota-is/shared-modules/src/models/types/identity';
 import { SchemaValidator } from '../utils/validator';
 import * as IdentityDocsDb from '../database/identity-keys';
 import { SsiService } from './ssi-service';

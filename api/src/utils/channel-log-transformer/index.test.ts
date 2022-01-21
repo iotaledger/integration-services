@@ -1,5 +1,5 @@
 import { ChannelLogTransformer, IPayload } from '.';
-import { ChannelData, ChannelLog } from '@iota-is/shared-modules/models/types/channel-data';
+import { ChannelData, ChannelLog } from '@iota-is/shared-modules/src/models/types/channel-data';
 import { StreamsMessage } from '../../services/streams-service';
 
 describe('test ChannelLogTransformer', () => {

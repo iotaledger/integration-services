@@ -4,8 +4,8 @@ import {
 	PersonSchema,
 	ProductSchema,
 	ServiceSchema
-} from '@iota-is/shared-modules/models/schemas/user-types';
-import { User, UserType } from '@iota-is/shared-modules/models/types/user';
+} from '@iota-is/shared-modules/src/models/schemas/user-types';
+import { User, UserType } from '@iota-is/shared-modules/src/models/types/user';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { ILogger } from '../logger';

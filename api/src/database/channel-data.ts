@@ -1,8 +1,8 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { ChannelData } from '@iota-is/shared-modules/models/types/channel-data';
+import { ChannelData } from '@iota-is/shared-modules/src/models/types/channel-data';
 import { getDateStringFromDate } from '../utils/date';
-import { ChannelLogRequestOptions } from '@iota-is/shared-modules/models/types/channel-info';
+import { ChannelLogRequestOptions } from '@iota-is/shared-modules/src/models/types/channel-info';
 import { decrypt, encrypt } from '../utils/encryption';
 import * as _ from 'lodash';
 

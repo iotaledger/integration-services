@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
-import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/models/types/subscription';
+import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/src/models/types/subscription';
 
 // Subscription documents keeps information about a subscription a user in regard of a channel
 const collectionName = CollectionNames.subscriptions;

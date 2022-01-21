@@ -1,6 +1,6 @@
-import { Encoding } from '@iota-is/shared-modules/models/schemas/identity';
-import { IdentityJson, IdentityKeys } from '@iota-is/shared-modules/models/types/identity';
-import { User, UserType } from '@iota-is/shared-modules/models/types/user';
+import { Encoding } from '@iota-is/shared-modules/src/models/schemas/identity';
+import { IdentityJson, IdentityKeys } from '@iota-is/shared-modules/src/models/types/identity';
+import { User, UserType } from '@iota-is/shared-modules/src/models/types/user';
 
 export const TestUsersMock = [
 	{
@@ -54,7 +54,7 @@ export const TestUsersMock = [
 ];
 
 // returned from localhost:3000/api/v1/identities/create
-export const UserIdentityMock: IdentityJson & { userData: User } = {
+export const UserIdentityMock = {
 	doc: {
 		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		authentication: [
@@ -109,9 +109,9 @@ export const UserIdentityMock: IdentityJson & { userData: User } = {
 		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
 		encoding: Encoding.base58
 	}
-};
+} as IdentityJson & { userData: User };
 
-export const ServerIdentityMock: IdentityJson & { userData: User } = {
+export const ServerIdentityMock = {
 	doc: {
 		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 		verificationMethod: [
@@ -194,14 +194,14 @@ export const ServerIdentityMock: IdentityJson & { userData: User } = {
 		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
 		encoding: Encoding.base58
 	}
-};
+} as IdentityJson & { userData: User };
 
 export const ServerIdentityKey: IdentityKeys = {
 	id: ServerIdentityMock.doc.id,
 	key: ServerIdentityMock.key
 };
 
-export const DeviceIdentityMock: IdentityJson & { userData: User } = {
+export const DeviceIdentityMock = {
 	doc: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		authentication: [
@@ -255,7 +255,7 @@ export const DeviceIdentityMock: IdentityJson & { userData: User } = {
 		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR',
 		encoding: Encoding.base58
 	}
-};
+} as IdentityJson & { userData: User };
 
 export const TestCredentialMock = {
 	'@context': 'https://www.w3.org/2018/credentials/v1',

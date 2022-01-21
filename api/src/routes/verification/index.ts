@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { VerifiableCredentialJson } from '@iota-is/shared-modules/models/types/identity';
+import { VerifiableCredentialJson } from '@iota-is/shared-modules/src/models/types/identity';
 import { VerificationService } from '../../services/verification-service';
 import {
 	RevokeVerificationBody,
 	TrustedRootBody,
 	CreateCredentialBody
-} from '@iota-is/shared-modules/models/types/request-response-bodies';
-import { AuthenticatedRequest, AuthorizationCheck, Subject } from '@iota-is/shared-modules/models/types/verification';
-import { User, UserRoles } from '@iota-is/shared-modules/models/types/user';
+} from '@iota-is/shared-modules/src/models/types/request-response-bodies';
+import { AuthenticatedRequest, AuthorizationCheck, Subject } from '@iota-is/shared-modules/src/models/types/verification';
+import { User, UserRoles } from '@iota-is/shared-modules/src/models/types/user';
 import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
-import { VerifiableCredentialPersistence } from '@iota-is/shared-modules/models/types/key-collection';
+import { VerifiableCredentialPersistence } from '@iota-is/shared-modules/src/models/types/key-collection';
 import { ILogger } from '../../utils/logger';
 import * as _ from 'lodash';
 import { IConfigurationService } from '../../services/configuration-service';
