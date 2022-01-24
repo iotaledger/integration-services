@@ -32,8 +32,7 @@ also known as Self-Sovereign Identity (SSI) and Streams techonology on the IOTA 
 
 - [API Reference](https://wiki.iota.org/integration-services/api_reference): Integration Service API documentation.
 - [Documentation Pages](https://wiki.iota.org/integration-services/welcome): Wiki including setup API on-prem and on cloud with simple examples on service usage.
-- [Examples on Decentralized Identity](https://wiki.iota.org/integration-services/examples/intro_identity): Practical code snippets to get you started with the decentralized identity API
-- [Examples on Audit Trail](https://wiki.iota.org/integration-services/examples/intro_audittrail): Practical code snippets to get you started with the Audit Trail API
+- [Examples](https://wiki.iota.org/integration-services/examples/introduction): Practical code snippets to get you started with the decentralized Identity API and Audit Trail API
 - [IOTA Integration Service Website](https://www.iota.org/solutions/secure-digital-infrastructure): Website for a collaborative effort to provide help, guidance and spotlight to the IOTA Integration Services Community through offering feedback and introducing consistent workflows around IOTA decentralized identities and audit trails.
 
 ## Contributing
