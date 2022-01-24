@@ -12,7 +12,7 @@ const start = () => {
 	app.use(authenticationRouter);
 	app.use(verificationRouter);
 
-	const port = process.env.PORT || 3000;
+	const port = process.env.PORT || 3005;
 	app.listen(port, () => {
 		console.log(`App running on port ${port}`);
 	});
