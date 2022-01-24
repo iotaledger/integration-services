@@ -21,7 +21,7 @@ const AuthenticateCredential = () => {
 			auth = await authSignedNonce(signedNonce, identityId);
 		} else {
 			const secretKey = process.env.REACT_APP_SECRET_KEY;
-			if (secretKey == null || secretKey == 'place-secret-key-here') {
+			if (secretKey == null) {
 				console.log('Please set secret key in environment vars');
 				process.exit();
 			}
