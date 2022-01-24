@@ -1,2 +1,0 @@
-# Authorize a subscriber
-

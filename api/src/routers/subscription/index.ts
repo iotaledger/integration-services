@@ -10,6 +10,7 @@ import { Logger } from '../../utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelInfoService, subscriptionService } from '../services';
 import { channelLock } from '../../middlewares/concurrency-lock';
+import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, Logger.getInstance());
 const {
@@ -187,6 +188,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RequestSubscriptionBodySchema }),
+	mongodbSanitizer,
 	channelLock,
 	requestSubscription
 );
@@ -245,6 +247,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: AuthorizeSubscriptionBodySchema }),
+	mongodbSanitizer,
 	channelLock,
 	authorizeSubscription
 );
@@ -296,6 +299,7 @@ subscriptionRouter.post(
 	apiKeyMiddleware,
 	authMiddleWare,
 	validate({ body: RevokeSubscriptionBodySchema }),
+	mongodbSanitizer,
 	channelLock,
 	revokeSubscription
 );
@@ -369,7 +373,14 @@ subscriptionRouter.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-subscriptionRouter.post('/:channelAddress/:id', apiKeyMiddleware, validate({ body: SubscriptionSchema }), authMiddleWare, addSubscription);
+subscriptionRouter.post(
+	'/:channelAddress/:id',
+	apiKeyMiddleware,
+	validate({ body: SubscriptionSchema }),
+	authMiddleWare,
+	mongodbSanitizer,
+	addSubscription
+);
 
 /**
  * @openapi
@@ -442,6 +453,7 @@ subscriptionRouter.put(
 	apiKeyMiddleware,
 	validate({ body: SubscriptionUpdateSchema }),
 	authMiddleWare,
+	mongodbSanitizer,
 	updateSubscription
 );
 

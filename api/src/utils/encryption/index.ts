@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import * as ed from 'noble-ed25519';
+import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 
 export const createNonce = (): string => {
@@ -17,7 +17,8 @@ export const signNonce = async (privateKey: string, nonce: string): Promise<stri
 		throw new Error('nonce must have a length of 40 characters!');
 	}
 	const hash = hashNonce(nonce);
-	return await ed.sign(hash, privateKey);
+	const signedHash = await ed.sign(hash, privateKey);
+	return ed.Signature.fromHex(signedHash).toHex();
 };
 
 export const verifySignedNonce = async (publicKey: string, nonce: string, signature: string): Promise<boolean> => {

@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     const channelAddress= Config.channelAddress
     const presharedKey = Config.presharedKey
-    const url = `/api/v1/channels/history/${channelAddress}?preshared-key=${presharedKey}`
+    const url = `/api/v0.1/channels/history/${channelAddress}?preshared-key=${presharedKey}`
   
     const getChannelAsync = async () => {
       console.log('requesting channel data');

@@ -627,7 +627,7 @@ As described in the sequence diagram the user willing to authenticate with a giv
 <!-- it is described below and by comments in code -->
 
 ```
-import * as ed from 'noble-ed25519';
+import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 
 // Decode a base58 key and encode it as hex key. (Needed for signNonce & verifySignedNonce)
@@ -641,7 +641,8 @@ const hashNonce = (nonce: string) => crypto.createHash('sha256').update(nonce).d
 // Sign a nonce using the private key.
 export const signNonce = async (privateKey: string, nonce: string): Promise<string> => {
 	const hash = hashNonce(nonce);
-	return await ed.sign(hash, privateKey);
+	const signedHash = await ed.sign(hash, privateKey);
+	return ed.Signature.fromHex(signedHash).toHex();
 };
 ```
 

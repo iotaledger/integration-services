@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import * as ed from "noble-ed25519";
+import * as ed from "@noble/ed25519";
 import bs58 from "bs58";
 import readline from "readline";
 
@@ -39,7 +39,7 @@ const getHexEncodedKey = (base58Key) => {
 
 const signNonce = async (secretKey, nonce) => {
   if (nonce.length !== 40) {
-    print("nonce does not match length of 40 characters!");
+    console.log("nonce does not match length of 40 characters!");
     process.exit();
   }
   const hash = crypto
@@ -47,5 +47,6 @@ const signNonce = async (secretKey, nonce) => {
     .update(nonce)
     .digest()
     .toString("hex");
-  return await ed.sign(hash, secretKey);
+  const signedHash = await ed.sign(hash, secretKey);
+  return ed.Signature.fromHex(signedHash).toHex();
 };

@@ -14,7 +14,7 @@ const errFunc = async (error: any) => {
 	if (error?.response?.status === 401 && !originalRequest._retry) {
 		originalRequest._retry = true;
 		const token = await getBearerToken();
-		logAuditorClient.defaults.headers.common['Authorization'] = token;
+		logAuditorClient.defaults.headers.common['Authorization'] = token as string;
 		originalRequest.headers['Authorization'] = token;
 		return axios(originalRequest);
 	}
