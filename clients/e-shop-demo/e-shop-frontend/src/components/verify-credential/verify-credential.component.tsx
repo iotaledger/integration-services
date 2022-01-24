@@ -92,7 +92,7 @@ const VerifyCredential = () => {
 					<SmallButton className="verifyButton" onClick={onVerify}>
 						Verify
 					</SmallButton>
-					{isLoading && <Rings height="50" width="50" color="#d6cbd3" arialLabel="loading" />}
+					{isLoading && <Rings height="50" width="50" color="#d6cbd3"/>}
 				</>
 			)}
 
