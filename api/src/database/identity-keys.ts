@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
-import { IdentityKeys } from '@iota-is/shared-modules/src/models/types/identity';
+import { IdentityKeys } from '@iota-is/shared-modules/lib/types/identity';
 import { decrypt, encrypt } from '../utils/encryption';
 
 const collectionName = CollectionNames.identityKeysCollection;

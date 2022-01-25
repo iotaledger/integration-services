@@ -2,7 +2,7 @@ import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
 import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
-import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '@iota-is/shared-modules/src/models/types/user';
+import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '@iota-is/shared-modules/lib/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
