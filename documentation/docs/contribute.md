@@ -25,7 +25,7 @@ All the code is open source and hosted on [GitHub](https://github.com/iotaledger
 
 This documentation is also open source and hosted on GitHub.
 
-If you want to contribute new documentation or fix an error, please follow the [contribution guidelines](https://github.com/iotaledger/documentation/blob/develop/.github/CONTRIBUTING.md).
+If you want to contribute new documentation or fix an error, please follow the [contribution guidelines](https://github.com/iotaledger/documentation/blob/master/.github/CONTRIBUTING.md).
 
 ## Share Your Knowledge
 

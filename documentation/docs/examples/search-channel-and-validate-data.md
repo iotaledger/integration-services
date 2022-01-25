@@ -11,7 +11,7 @@ keywords:
 
 # Search Channel and Validate Data
 
-The [example-7](https://github.com/iotaledger/integration-services/blob/develop/clients/node/examples/5-SearchChannelAndValidateData.ts)
+The [example-7](https://github.com/iotaledger/integration-services/blob/master/clients/node/examples/5-SearchChannelAndValidateData.ts)
 script is similar to previous example ([Authorize Channel](authorize-to-channel)) that creates a channel as `Owner` and authorizes a `User` to write on it but:
 
 1. `Owner` sends some data on the channel.
