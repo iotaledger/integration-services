@@ -1,4 +1,5 @@
-export * from './types';
+// TODO check why they are here
+// export * from './types';
 
 export * from './searchCriteria';
 
@@ -8,4 +9,4 @@ export * from './managerConfig';
 
 export * from './apiVersion';
 
-export * from './schemas/subscription';
+// export * from './schemas/subscription';

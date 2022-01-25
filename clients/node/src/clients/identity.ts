@@ -3,13 +3,16 @@ import { ClientConfig } from '../models/clientConfig';
 import {
   IdentityInternal,
   IdentityJson,
-  LatestIdentityJson,
   VerifiableCredentialJson
-} from '../models/types/identity';
-import { Claim, RevokeVerificationBody } from '../models/types/request-response-bodies';
-import { User, UserType } from '../models/types/user';
-import { CredentialTypes, VerifiableCredentialInternal } from '../models/types/verification';
+} from '@iota-is/shared-modules/lib/types/identity';
+import { RevokeVerificationBody } from '@iota-is/shared-modules/lib/types/request-response-bodies';
+import { User, UserType } from '@iota-is/shared-modules/lib/types/user';
+import {
+  CredentialTypes,
+  VerifiableCredentialInternal
+} from '@iota-is/shared-modules/lib/types/verification';
 import { searchCriteria } from '../models/searchCriteria';
+import { IdentityDocumentJson } from '../../../../shared-modules/src/models/types/identity';
 
 export class IdentityClient extends BaseClient {
   constructor(config: ClientConfig = {}) {
@@ -23,10 +26,10 @@ export class IdentityClient extends BaseClient {
    * @param claim
    * @returns
    */
-  async create(username?: string, claimType = UserType.Person, claim?: any ): Promise<IdentityJson> {
+  async create(username?: string, claimType = UserType.Person, claim?: any): Promise<IdentityJson> {
     return await this.post('identities/create', {
       username,
-      claim : {
+      claim: {
         ...claim,
         type: claimType
       }
@@ -46,10 +49,7 @@ export class IdentityClient extends BaseClient {
     index
   }: searchCriteria): Promise<User[]> {
     const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
-    return await this.get(
-      'identities/search',
-      { type, username, ...param, limit, index }
-    );
+    return await this.get('identities/search', { type, username, ...param, limit, index });
   }
 
   /**
@@ -86,10 +86,7 @@ export class IdentityClient extends BaseClient {
    * @returns Null
    */
   async remove(id: string, revokeCredentials: boolean = false): Promise<null> {
-    return this.delete(
-      `identities/identity/${id}`,
-      { 'revoke-credentials': revokeCredentials }
-    );
+    return this.delete(`identities/identity/${id}`, { 'revoke-credentials': revokeCredentials });
   }
 
   /**
@@ -97,7 +94,7 @@ export class IdentityClient extends BaseClient {
    * @param id
    * @returns
    */
-  async latestDocument(id: string): Promise<LatestIdentityJson> {
+  async latestDocument(id: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
     return await this.get(`verification/latest-document/${id}`);
   }
 
