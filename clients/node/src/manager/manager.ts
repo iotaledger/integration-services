@@ -2,8 +2,6 @@ import { MongoClient } from 'mongodb';
 import { ManagerConfig } from '../models/managerConfig';
 import { UserRoles } from '@iota-is/shared-modules/lib/types/user';
 
-const crypto = require('crypto');
-
 export class Manager {
   private client: MongoClient;
   private connected: boolean;
@@ -12,9 +10,6 @@ export class Manager {
     this.client = new MongoClient(this.config.mongoURL);
     this.connected = false;
   }
-
-  /*
-   */
 
   async setRole(id: string, role: UserRoles): Promise<boolean> {
     this.tryConnect();
