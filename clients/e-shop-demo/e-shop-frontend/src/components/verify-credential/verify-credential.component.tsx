@@ -14,50 +14,55 @@ const VerifyCredential = () => {
 	const inputRef = useRef<any>();
 	const [ageRestrictionError, setAgeRestrictionError] = useState<boolean>();
 	const [credentialFile, setCredentialFile] = useState<any>();
-	const { setCredential, setIsVerified, setUseOwnCredential, useOwnCredential, authenticated } = useContext(UserContext);
+	const { setCredential, setIsVerified, isVerified, setUseOwnCredential, useOwnCredential, authenticated } = useContext(UserContext);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const { setStep, setRun } = useContext(TourContext);
 
 	const onVerify = async () => {
 		setIsLoading(true);
-		setIsVerified(false);
+		setIsVerified(undefined);
 		const verified = await verifyCredential(credentialFile);
 		const overAgeRestriction = isOverAgeRestriction(credentialFile);
 		setAgeRestrictionError(!overAgeRestriction);
 		setIsVerified(verified);
 		setCredential(credentialFile);
 		setIsLoading(false);
+		// User is not over 18
 		if (!overAgeRestriction) {
 			setStep(6);
 			setRun(true);
 
-		} else if (overAgeRestriction && authenticated) {
+			// User is over 18 and already authenticated
+		} else if (overAgeRestriction && authenticated && !useOwnCredential) {
 			setStep(10);
 			setRun(true);
-		} else {
+			// User is over 18 and has to authenticate
+		} else if (overAgeRestriction && !authenticated && !useOwnCredential) {
 			setStep(7);
 			setRun(true);
+			// The tour will stop if the user decides to use its own credentials
+		} else if (useOwnCredential) {
+			setRun(false);
 		}
 	};
 
 	const onFileChange = async (file: File) => {
 		const credential = await readFile(file as File);
 		setCredentialFile(credential);
-		setIsVerified(false);
+		setIsVerified(undefined);
 		setCredential(undefined);
 		setAgeRestrictionError(false);
 	};
 
 	const onCredentialChange = (event: any) => {
-		setIsVerified(false);
+		setIsVerified(undefined);
 		setCredential(undefined);
 		setAgeRestrictionError(undefined);
 		const value = event.target.value;
 		if (value === 'under') {
 			setCredentialFile(credentialUnderAge);
 			setUseOwnCredential(false);
-			setStep(5);
-			setRun(true);
+			setRun(false);
 		} else if (value === 'above') {
 			setCredentialFile(credentialJson);
 			setUseOwnCredential(false);
@@ -92,14 +97,14 @@ const VerifyCredential = () => {
 					<SmallButton className="verifyButton" onClick={onVerify}>
 						Verify
 					</SmallButton>
-					{isLoading && <Rings height="50" width="50" color="#d6cbd3"/>}
+					{isLoading && <Rings height="50" width="50" color="#d6cbd3" />}
 				</>
 			)}
 
-			<MessageBox className='credentialAgeRestriction' type="danger" show={ageRestrictionError === true}>
-				Credential is under age restriction!
+			<MessageBox className="credentialAgeRestriction" type="danger" show={ageRestrictionError === true || isVerified === false}>
+				Credential is under age restriction or invalid!
 			</MessageBox>
-			<MessageBox className='credentialVerified' type="success" show={ageRestrictionError === false}>
+			<MessageBox className="credentialVerified" type="success" show={ageRestrictionError === false && isVerified === true}>
 				Credential successful verified
 			</MessageBox>
 		</>

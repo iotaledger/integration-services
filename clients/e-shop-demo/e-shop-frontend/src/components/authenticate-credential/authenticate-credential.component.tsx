@@ -16,15 +16,11 @@ const AuthenticateCredential = () => {
 	const onAuthenticate = async () => {
 		setAuthError(false);
 		const identityId = credential.id;
+		const secretKey = process.env.REACT_APP_SECRET_KEY!!;
 		let auth: boolean;
 		if (useOwnCredential) {
 			auth = await authSignedNonce(signedNonce, identityId);
 		} else {
-			const secretKey = process.env.REACT_APP_SECRET_KEY;
-			if (secretKey == null) {
-				console.log('Please set secret key in environment vars');
-				process.exit();
-			}
 			const signedNonce = await authSecretKey(identityId, secretKey);
 			auth = await authSignedNonce(signedNonce, identityId);
 		}
@@ -32,8 +28,8 @@ const AuthenticateCredential = () => {
 		setAuthError(!auth);
 		setAuthenticated(auth);
 		if (auth === true) {
-			setStep(9)
-			setRun(true)
+			setStep(9);
+			setRun(true);
 		}
 	};
 
@@ -50,16 +46,16 @@ const AuthenticateCredential = () => {
 							</Form.Group>
 						</>
 					)}
-					<SmallButton className='authenticateButton' style={{ marginLeft: 0 }} onClick={onAuthenticate}>
+					<SmallButton className="authenticateButton" style={{ marginLeft: 0 }} onClick={onAuthenticate}>
 						Authenticate
 					</SmallButton>
 				</>
 			)}
-			<MessageBox className='credentialSuccessful' type="success" show={authenticated}>
+			<MessageBox className="credentialSuccessful" type="success" show={authenticated}>
 				Credential successful authenticated
 			</MessageBox>
 
-			<MessageBox className='credentialError' type="danger" show={authError}>
+			<MessageBox className="credentialError" type="danger" show={authError}>
 				Could not authenticate credential
 			</MessageBox>
 		</>
