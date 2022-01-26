@@ -16,7 +16,7 @@ const CheckoutTotal = () => {
 	const { authenticated, isVerified, setIsVerified } = useContext(UserContext);
 
 	const onCheckout = () => {
-		setIsVerified(false);
+		setIsVerified(undefined);
 		emptyCart();
 		showOrderMessage();
 		setHasCheckedOut(true);
