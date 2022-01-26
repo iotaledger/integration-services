@@ -6,9 +6,9 @@ export const CartContext = createContext({} as any);
 const CartProvider = ({ children }: any) => {
 	const [items, setItems] = useState<any[]>([]);
 
-	useEffect(() => {
-		console.log(`Updated Items: `, items);
-	}, [items]);
+	// useEffect(() => {
+	// 	console.log(`Updated Items: `, items);
+	// }, [items]);
 
 	const addToCart = (item: Item) => {
 		setItems([...items, { item, index: items.length }]);

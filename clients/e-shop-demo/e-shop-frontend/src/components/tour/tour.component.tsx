@@ -36,7 +36,6 @@ const Tour = () => {
 	const handleJoyrideCallback = (data: CallBackProps) => {
 		const { status, index, lifecycle } = data;
 		const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
-		console.log('Step', index, items);
 
         // Continue with next step when the previous one is finished
 		if (lifecycle === 'complete') {
