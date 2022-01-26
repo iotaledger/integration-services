@@ -14,22 +14,6 @@ const UserProvider = ({ children }: any) => {
 		setAuthenticated(auth);
 	}, []);
 
-	// useEffect(() => {
-	// 	console.log('Updated authentication: ', authenticated);
-	// }, [authenticated]);
-
-	// useEffect(() => {
-	// 	console.log('Updated credential: ', credential);
-	// }, [credential]);
-
-	// useEffect(() => {
-	// 	console.log('Updated verified: ', isVerified);
-	// }, [isVerified]);
-
-	useEffect(() => {
-		console.log('Updated use own credential', useOwnCredential)
-	}, [useOwnCredential])
-
 	return (
 		<UserContext.Provider
 			value={{
