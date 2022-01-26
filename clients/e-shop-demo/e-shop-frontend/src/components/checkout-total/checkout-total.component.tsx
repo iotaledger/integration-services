@@ -1,10 +1,8 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../../contexts/cart.provider';
-import { TourContext } from '../../contexts/tour.provider';
 import { UserContext } from '../../contexts/user.provider';
 import { Button } from '../../global.styles';
-import { Item } from '../../models/item.model';
 import { CheckoutHeading } from '../../pages/checkout/checkout.styles';
 import CheckoutWithIota from '../checkout-iota/checkout-iota.component';
 import MessageBox from '../message-box/message-box.component';

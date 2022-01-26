@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { UserContext } from '../../contexts/user.provider';
-import { Input, SmallButton } from '../../global.styles';
+import { SmallButton } from '../../global.styles';
 import { authSignedNonce, authSecretKey } from '../../services/authentication.service';
 import GenerateNonce from '../generate-nonce/generate-nonce.component';
 import MessageBox from '../message-box/message-box.component';
