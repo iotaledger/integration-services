@@ -5,27 +5,29 @@ on:
   push:
     branches:
       - 'master'
+    paths: 
+      - "documentation/**"
+      - ".github/workflows/test-docs-wiki-build.yml"
+  pull_request:
+    branches:
+      - 'master'
       - 'develop'
+    paths: 
+      - "documentation/**"
+      - ".github/workflows/test-docs-wiki-build.yml"
 jobs:
   checks:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
       - name: Install dependencies
         run: |
           cd documentation
-          if [ -e package-lock.json ]; then
-          npm ci
-          else
-          npm i
-          fi
-          pwd
+          npm install
       - name: Setup Wiki
         run: |
           cd documentation
@@ -44,19 +46,14 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
       - name: Install dependencies
         run: |
           cd documentation
-          if [ -e package-lock.json ]; then
-          npm ci
-          else
-          npm i
-          fi
-          pwd
+          npm install
       - name: Setup Wiki
         run: |
           cd documentation

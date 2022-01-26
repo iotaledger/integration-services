@@ -5,10 +5,10 @@ import { Item as ItemModel } from '../../models/item.model';
 import { Card, CardHeading, CardImage, CardText } from './item.styles';
 
 const Item = ({ item }: any) => {
-	const { name, imageUrl, price } = item as ItemModel;
+	const { name, imageUrl, price, ageRestricted } = item as ItemModel;
 	const { addToCart } = useContext(CartContext);
 	return (
-		<Card>
+		<Card className={'ageRestricted'+ageRestricted}>
 			<CardHeading>{name}</CardHeading>
 			<CardImage src={imageUrl}></CardImage>
 			<CardText>Price: {price}€</CardText>
