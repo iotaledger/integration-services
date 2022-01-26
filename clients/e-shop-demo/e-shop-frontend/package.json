@@ -77,9 +77,9 @@
 		"@types/bs58": "^4.0.1",
 		"@types/react-router-dom": "^5.1.8",
 		"@types/styled-components": "^5.1.14",
-		"process": "^0.11.10",
 		"@typescript-eslint/eslint-plugin": "^5.0.0",
 		"@typescript-eslint/parser": "^5.0.0",
-		"eslint": "^8.1.0"
+		"eslint": "^8.1.0",
+		"process": "^0.11.10"
 	}
 }
