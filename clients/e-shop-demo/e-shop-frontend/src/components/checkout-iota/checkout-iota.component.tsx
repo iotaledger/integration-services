@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { CheckoutStepHeading, CheckoutWithIotaContainer, CheckoutWithIotaContainerHeading } from './checkout-iota.styles';
 import { UserContext } from '../../contexts/user.provider';
 import AuthenticateCredential from '../authenticate-credential/authenticate-credential.component';
-import MessageBox from '../message-box/message-box.component';
 import VerifyCredential from '../verify-credential/verify-credential.component';
 
 const CheckoutWithIota = () => {
@@ -14,9 +13,6 @@ const CheckoutWithIota = () => {
 			<VerifyCredential></VerifyCredential>
 			{isVerified && (
 				<>
-					<MessageBox type="success" show={true}>
-						Credential successful verified
-					</MessageBox>
 					<CheckoutStepHeading>Authenticate credential</CheckoutStepHeading>
 					<AuthenticateCredential></AuthenticateCredential>
 				</>

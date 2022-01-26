@@ -17,5 +17,5 @@ export const CheckoutWithIotaContainerHeading = styled.h3`
 `;
 
 export const CheckoutStepHeading = styled.h4`
-	margin-bottom: 10px;
+	margin: 15px 0 10px 0;
 `;

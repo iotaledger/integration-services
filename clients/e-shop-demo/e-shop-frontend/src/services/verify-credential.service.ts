@@ -2,10 +2,14 @@ import { client } from '../utils/axios-client';
 
 export const readFile = (file: File): Promise<unknown> => {
 	return new Promise((resolve, reject) => {
-		const fileReader = new FileReader();
-		fileReader.onload = () => resolve(JSON.parse(fileReader.result as string));
-		fileReader.onerror = () => reject;
-		fileReader.readAsText(file);
+		try {
+			const fileReader = new FileReader();
+			fileReader.onload = () => resolve(JSON.parse(fileReader.result as string));
+			fileReader.onerror = () => reject;
+			fileReader.readAsText(file);
+		} catch(e: any) {
+			reject();
+		}
 	});
 };
 

@@ -5,6 +5,7 @@ const UserProvider = ({ children }: any) => {
 	const [authenticated, setAuthenticated] = useState<boolean>();
 	const [credential, setCredential] = useState<object>();
 	const [isVerified, setIsVerified] = useState<boolean>();
+	const [useOwnCredential, setUseOwnCredential] = useState<boolean>();
 
 	useEffect(() => {
 		const localStorage = window.localStorage;
@@ -12,18 +13,6 @@ const UserProvider = ({ children }: any) => {
 		const auth = jwt ? true : false;
 		setAuthenticated(auth);
 	}, []);
-
-	useEffect(() => {
-		console.log('Updated authentication: ', authenticated);
-	}, [authenticated]);
-
-	useEffect(() => {
-		console.log('Updated credential: ', credential);
-	}, [credential]);
-
-	useEffect(() => {
-		console.log('Updated verified: ', isVerified);
-	}, [isVerified]);
 
 	return (
 		<UserContext.Provider
@@ -33,7 +22,9 @@ const UserProvider = ({ children }: any) => {
 				credential,
 				setCredential,
 				isVerified,
-				setIsVerified
+				setIsVerified,
+				useOwnCredential,
+				setUseOwnCredential
 			}}
 		>
 			{children}

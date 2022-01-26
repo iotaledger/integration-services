@@ -1,4 +1,4 @@
-import { randomSecretKey } from '../../../../clients/summer-school-client/src/utils/encryption/index';
+import { randomSecretKey } from '../../utils/encryption';
 
 const scrt = randomSecretKey();
 
