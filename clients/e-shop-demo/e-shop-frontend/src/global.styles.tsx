@@ -26,6 +26,7 @@ export const Button = styled.button`
 
 export const SmallButton = styled(Button)`
 	padding: 10px 20px;
+	margin-left: 0;
 `;
 
 export const Background = styled.div`

@@ -4,7 +4,7 @@ import Item from '../../components/item/item.component';
 
 const ItemList = () => {
 	return (
-		<ItemsContainer>
+		<ItemsContainer className="tourProducts">
 			{items.map((item) => {
 				return <Item key={item.id} item={item}></Item>;
 			})}

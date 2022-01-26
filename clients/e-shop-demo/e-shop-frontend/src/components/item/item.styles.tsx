@@ -10,6 +10,7 @@ export const Card = styled.div`
 
 export const CardHeading = styled.h3`
 	text-align: center;
+  margin-top: 15px;
 `;
 
 export const CardImage = styled.img`
