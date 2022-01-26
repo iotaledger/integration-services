@@ -21,12 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd documentation
-          if [ -e package-lock.json ]; then
-          npm ci
-          else
-          npm i
-          fi
-          pwd
+          npm install
       - name: Setup Wiki
         run: |
           cd documentation
