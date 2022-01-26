@@ -6,6 +6,9 @@ on:
     branches:
       - 'master'
       - 'develop'
+    paths: 
+      - "documentation/**"
+      - ".github/workflows/test-docs-wiki-build.yml"
 jobs:
   checks:
     if: github.event_name == 'pull_request'
@@ -18,7 +21,12 @@ jobs:
       - name: Install dependencies
         run: |
           cd documentation
-          npm install
+          if [ -e package-lock.json ]; then
+          npm ci
+          else
+          npm i
+          fi
+          pwd
       - name: Setup Wiki
         run: |
           cd documentation
