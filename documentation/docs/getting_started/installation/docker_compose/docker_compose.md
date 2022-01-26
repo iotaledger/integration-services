@@ -50,10 +50,11 @@ Important The `server-secret` must be 32 characters length
 :::
 
 
-> You can create a server-secret using the following command:
-> ```
-> npm run generate-secret
->```
+:::tip You can create a server secret using the following command 
+```
+npm run generate-secret
+```
+:::
 
 Here is an example of how a `.env` file should look like:
 
