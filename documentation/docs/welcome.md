@@ -11,6 +11,8 @@ keywords:
 ---
 # Welcome
 
+![Integration Services](../static/img/integration-services/logo/integration_services.png)
+
 The IOTA Integration Services implement a high-level API for common interactions with Decentralized Identities and Data
 Streams based on the [IOTA Identity]('https://wiki.iota.org/identity.rs/introduction')
 and [IOTA Streams]('https://wiki.iota.org/streams/welcome') libraries, facilitating the integration of IOTA into
