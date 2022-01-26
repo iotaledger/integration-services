@@ -46,6 +46,7 @@ Important The `server-secret` must be 32 characters length
 :::
 
 :::tip You can create a server secret using the following command:
+```
 npm run generate-secret
 ```
 :::
@@ -87,9 +88,24 @@ db.createUser(
 Make sure that you use the same value for the same variables inside `.env` and `mongo-init.js`
 :::
 
+## Start the Service
 
+### Start the MongoDB
 
-## Setup Integration Services API
+After you have added the `.env` and `mongo-init.js` you can start the mongodb in the root folder of `/api` by running the following command:
+
+```
+docker-compose up -d mongo
+```
+
+This must only be run once to start the MongoDB you can always check if the MongoDB container is running by running `docker ps` which should generate a similar output as:
+
+```
+CONTAINER ID   IMAGE         COMMAND                  CREATED        STATUS       PORTS                                              NAMES
+f15ab2571369   mongo:latest  "docker-entrypoint.s…"   7 weeks ago    Up 7 weeks   0.0.0.0:27017->27017/tcp, :::27017->27017/tcp      api_mongo_1
+```
+
+### Setup Integration Services API
 
 The setup will install all external dependencies and build the service. If you are starting the API for the first time, you should run `setup-api` to set up a root identity for the service and the database. 
 
@@ -98,7 +114,7 @@ npm install
 npm run build
 npm run setup-api
 ```
-## Run Integration Services API
+### Run Integration Services API
 
 After you have set up your API, you can use the following command to start the API:
 
