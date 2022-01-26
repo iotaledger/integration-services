@@ -79,7 +79,7 @@ npm run setup-api
 ```
 ## Run Integration Services API
 
-After you ran the setup you can use the following command to start the api:
+After you have set up your API, you can use the following command to start the API:
 
 ```
 npm run start
