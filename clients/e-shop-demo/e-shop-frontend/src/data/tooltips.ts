@@ -5,7 +5,7 @@ export const steps: Step[] = [
 	{
 		title: "Let's begin",
 		target: 'body',
-		content: 'This demo will show you how to verify your age in an online shop with a Verifiable Credential that is linked to your Identity.',
+		content: 'This demo will show you how to verify your age in an online shop with a Verifiable Credential that is linked to your identity.',
 		placement: 'center'
 	},
 	// Tour 1
@@ -40,7 +40,8 @@ export const steps: Step[] = [
 	{
 		title: 'Checkout',
 		target: '.verifyButton',
-		content: 'Verify your credential. By verifying your credential the online shop can check your age and proof that the credential was not manipulated.',
+		content:
+			'Verify your credential. By verifying your credential the online shop can check your age and proof that the credential was not manipulated.',
 		placement: 'bottom'
 	},
 	// Tour 6 (credential not over 18)
@@ -69,16 +70,14 @@ export const steps: Step[] = [
 	{
 		title: 'Checkout',
 		target: '.credentialSuccessful',
-		content:
-			'You confirmed that the credential belongs to your Identity. You can now proceed to checkout.',
+		content: 'You confirmed that the credential belongs to your Identity. You can now proceed to checkout.',
 		placement: 'bottom'
 	},
 	// Tour 10
 	{
 		title: 'Checkout',
 		target: '.checkoutButton',
-		content:
-			'Checkout your cart to finish the tour.',
+		content: 'Checkout your cart to finish the tour.',
 		placement: 'bottom'
 	}
 ];
