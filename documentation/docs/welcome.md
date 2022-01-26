@@ -1,5 +1,5 @@
 ---
-image: /img/integration-services/integration_services_welcome.png
+image: ../static/img/integration-services/logo/integration_services.png
 description: The IOTA Integration Services implement a high-level API for common interactions with Decentralized Identities and Data Streams.
 keywords:
 - integration services
@@ -11,7 +11,7 @@ keywords:
 ---
 # Welcome
 
-![Integration Services](/img/integration-services/integration_services_welcome.png)
+![Integration Services](../static/img/integration-services/logo/integration_services.png)
 
 The IOTA Integration Services implement a high-level API for common interactions with Decentralized Identities and Data
 Streams based on the [IOTA Identity]('https://wiki.iota.org/identity.rs/introduction')
