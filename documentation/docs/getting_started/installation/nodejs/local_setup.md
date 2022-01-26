@@ -69,7 +69,8 @@ API_KEY=94F5BA49-12A6-4E45-A487-BF91C442276D
 
 
 ## Setup Integration Services API
-The setup will install all external dependencies and build the service. In order to setup a root identity for the service and setup the database `setup-api` must be run when starting the api for the first time. 
+
+The setup will install all external dependencies and build the service. If you are starting the API for the first time, you should run `setup-api` to set up a root identity for the service and the database. 
 
 ```
 npm install
