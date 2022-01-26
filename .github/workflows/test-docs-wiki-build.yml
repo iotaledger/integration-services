@@ -2,6 +2,12 @@ name: Deploy & test docs
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+    paths: 
+      - "documentation/**"
+      - ".github/workflows/test-docs-wiki-build.yml"
   pull_request:
     branches:
       - 'master'
