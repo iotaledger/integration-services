@@ -10,6 +10,6 @@ export const verifyCredential = async (req: any, res: Response, next: NextFuncti
 		return res.status(StatusCodes.OK).send(response?.data);
 	} catch (error) {
 		console.log(error);
-		next('could not authenticate');
+		next('could not verify');
 	}
 };

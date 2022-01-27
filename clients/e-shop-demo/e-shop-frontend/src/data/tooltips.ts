@@ -33,7 +33,7 @@ export const steps: Step[] = [
 	{
 		title: 'Checkout',
 		target: '.form-select',
-		content: 'Select one of the example credentials to verify your age. In a real-world scenario the credential would be provided by your wallet.',
+		content: 'Select one of the example credentials to verify your age. In a real-world scenario the credential would be provided by your wallet, ie., after issued by a bank',
 		placement: 'bottom'
 	},
 	// Tour 5
@@ -48,7 +48,7 @@ export const steps: Step[] = [
 	{
 		title: 'Checkout',
 		target: '.credentialAgeRestriction',
-		content: 'The credential proofs that you are under the age of 18 and not allowed to buy liquor. Try the adult credential.',
+		content: 'The credential proofs that you are under the age of 18 or submitted an invalid credential and are not allowed to buy liquor. Try the adult credential.',
 		placement: 'bottom'
 	},
 	// Tour 7 (credential  over 18)
@@ -63,7 +63,7 @@ export const steps: Step[] = [
 		title: 'Checkout',
 		target: '.authenticateButton',
 		content:
-			'Next you have to verify that the credential you are using is really yours. Normally this is done by signing the credential with your secret key. For demo purposes we are doing the authentication for you.',
+			'Next you have to verify that you are the owner of the credential. Normally this is done by signing the credential with your secret key. For demo purposes we are doing the authentication for you.',
 		placement: 'bottom'
 	},
 	// Tour 9
