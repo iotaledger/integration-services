@@ -288,7 +288,7 @@ export class StreamsService {
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		let seed = '';
 		for (let i = 9; i < size; i++) {
-			seed += alphabet[crypto.randomInt(0, alphabet.length)]
+			seed += alphabet[crypto.randomInt(0, alphabet.length)];
 		}
 		return seed;
 	}
