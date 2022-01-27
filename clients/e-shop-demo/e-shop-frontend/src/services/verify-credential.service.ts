@@ -4,10 +4,17 @@ export const readFile = (file: File): Promise<unknown> => {
 	return new Promise((resolve, reject) => {
 		try {
 			const fileReader = new FileReader();
-			fileReader.onload = () => resolve(JSON.parse(fileReader.result as string));
+			fileReader.onload = () => {
+				try {
+					const result = JSON.parse(fileReader.result as string);
+					resolve(result);
+				} catch (e: any) {
+					resolve(JSON.parse('{"error": "No valid json selected" }'));
+				}
+			};
 			fileReader.onerror = () => reject;
 			fileReader.readAsText(file);
-		} catch(e: any) {
+		} catch (e: any) {
 			reject();
 		}
 	});
@@ -21,7 +28,7 @@ export const verifyCredential = async (credential: any): Promise<boolean> => {
 		return isVerified;
 	} catch (error) {
 		console.log(error);
-		return false;
+		throw new Error("Could not verify credential");
 	}
 };
 

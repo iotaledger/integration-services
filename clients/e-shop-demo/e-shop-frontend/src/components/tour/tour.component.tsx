@@ -4,6 +4,7 @@ import { CartContext } from '../../contexts/cart.provider';
 import { steps } from '../../data/tooltips';
 import { useLocation } from 'react-router-dom';
 import { TourContext } from '../../contexts/tour.provider';
+import ErrorBoundary from '../error-boundary/error-boundary.component';
 
 const Tour = () => {
 	const [allowClicks, setAllowClicks] = useState<boolean>(true);
@@ -73,6 +74,7 @@ const Tour = () => {
 	};
 
 	return (
+		<ErrorBoundary>
 		<Joyride
 			callback={handleJoyrideCallback}
 			continuous={true}
@@ -90,6 +92,7 @@ const Tour = () => {
 			spotlightClicks={allowClicks}
 			stepIndex={step}
 		/>
+		</ErrorBoundary>
 	);
 };
 
