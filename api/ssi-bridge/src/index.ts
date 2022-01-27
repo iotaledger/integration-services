@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import swaggerUi from 'swagger-ui-express';
 import { errorMiddleware } from './middlewares/error';
-import { authenticationRouter, verificationRouter, subscriptionRouter, identityRouter } from './routers';
+import { authenticationRouter, verificationRouter, identityRouter } from './routers';
 import { MongoDbService } from './services/mongodb-service';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -60,7 +60,6 @@ async function startServer() {
 		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
 		const prefix = `/api/${version}`;
-		useRouter(app, prefix + '/subscriptions', subscriptionRouter);
 		useRouter(app, prefix + '/identities', identityRouter);
 		useRouter(app, prefix + '/authentication', authenticationRouter);
 		useRouter(app, prefix + '/verification', verificationRouter);
