@@ -39,7 +39,7 @@
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/iotaledger/integration-services/issues"
-  },f
+  },
   "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
     "@iota-is/shared-modules": "file:./shared-modules",
