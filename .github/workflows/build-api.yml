@@ -34,7 +34,7 @@ jobs:
       # build local package in advance
       - name: Build shared modules
         run: |
-          cd shared-modules
+          cd api/shared-modules
           npm install
           npm run build
       - name: Build api
