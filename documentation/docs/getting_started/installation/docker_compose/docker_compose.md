@@ -98,7 +98,7 @@ Make sure that you use the same value for the same variables inside `.env` and `
 You can start the Integration Services API by running the following command:
 
 ```bash
-docker-compose up --env-file .env --build
+docker-compose --env-file .env up --build
 ```
 
 
