@@ -6,7 +6,6 @@ export interface Config {
 	databaseUrl: string;
 	databaseName: string;
 	identityConfig: IdentityConfig;
-	streamsConfig: StreamsConfig;
 	serverSecret: string;
 	apiKey: string | undefined;
 	hornetNode: string;
@@ -23,10 +22,4 @@ export interface IdentityConfig {
 	hashFunction: Identity.Digest;
 	keyCollectionTag: string;
 	hashEncoding: 'base16' | 'base58' | 'base64';
-}
-
-export interface StreamsConfig {
-	statePassword: string;
-	node: string;
-	permaNode: string;
 }

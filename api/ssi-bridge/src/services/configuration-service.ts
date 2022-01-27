@@ -1,5 +1,5 @@
 import { Config } from '../models/config';
-import { IdentityConfig, StreamsConfig } from '../models/config/index';
+import { IdentityConfig } from '../models/config/index';
 import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentities } from '../database/user';
@@ -12,7 +12,6 @@ export interface IConfigurationService {
 	serverIdentityId: string;
 	config: Config;
 	identityConfig: IdentityConfig;
-	streamsConfig: StreamsConfig;
 	getRootIdentityId(): Promise<string>;
 }
 
@@ -20,12 +19,6 @@ export class ConfigurationService {
 	private static instance: ConfigurationService;
 	logger: ILogger;
 	private _serverIdentityId: string;
-
-	streamsConfig: StreamsConfig = {
-		node: process.env.IOTA_HORNET_NODE,
-		permaNode: process.env.IOTA_PERMA_NODE,
-		statePassword: process.env.SERVER_SECRET
-	};
 
 	identityConfig: IdentityConfig = {
 		keyCollectionSize: 4096, // size must be a multiple of 2^2, 2^3, 2^4, ...
@@ -48,7 +41,6 @@ export class ConfigurationService {
 		apiKey: process.env.API_KEY,
 		commitHash: process.env.COMMIT_HASH,
 		identityConfig: this.identityConfig,
-		streamsConfig: this.streamsConfig,
 		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
 	};
 

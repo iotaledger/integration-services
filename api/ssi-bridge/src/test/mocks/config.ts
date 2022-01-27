@@ -1,10 +1,4 @@
-import { Config, IdentityConfig, StreamsConfig } from '../../models/config';
-
-export const StreamsConfigMock: StreamsConfig = {
-	node: '',
-	permaNode: '',
-	statePassword: 'veryvery-very-very-server-secret'
-};
+import { Config, IdentityConfig } from '../../models/config';
 
 export const IdentityConfigMock: IdentityConfig = {
 	keyCollectionTag: 'key-collection',
@@ -27,6 +21,5 @@ export const ConfigMock: Config = {
 	port: 3000,
 	permaNode: 'testpermanodeurl',
 	hornetNode: 'testhornetnodeurl',
-	streamsConfig: StreamsConfigMock,
 	commitHash: ''
 };
