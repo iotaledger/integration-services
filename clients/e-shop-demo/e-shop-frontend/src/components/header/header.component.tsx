@@ -30,7 +30,7 @@ const Header = () => {
 				{authenticated && <HeaderButton onClick={() => logout()}>Logout</HeaderButton>}
 
 				<Link to="/checkout">
-					<HeaderButton>Cart ({items.length})</HeaderButton>
+					<HeaderButton className='cartButton'>Cart ({items.length})</HeaderButton>
 				</Link>
 			</div>
 		</HeaderWrapper>
