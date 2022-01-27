@@ -1,7 +1,7 @@
 {
-  "name": "integration-services",
+  "name": "ssi-bridge",
   "version": "0.1.3",
-  "description": "Audit log of the ensuresec project.",
+  "description": "Self Sovereign Identity Bridge of the Integration Services.",
   "main": "dist/index.js",
   "scripts": {
     "build-tsc": "tsc --project ./",
@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
-    "@iota-is/shared-modules": "file:./shared-modules",
+    "@iota-is/shared-modules": "file:../shared-modules",
     "@iota/identity-wasm": "0.3.5",
     "@iota/streams": "^0.1.2",
     "@noble/ed25519": "^1.4.0",
