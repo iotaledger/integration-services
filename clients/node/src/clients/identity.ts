@@ -12,7 +12,7 @@ import {
   VerifiableCredentialInternal
 } from '@iota-is/shared-modules/lib/types/verification';
 import { searchCriteria } from '../models/searchCriteria';
-import { IdentityDocumentJson } from '../../../../shared-modules/src/models/types/identity';
+import { IdentityDocumentJson } from '@iota-is/shared-modules/src/models/types/identity';
 
 export class IdentityClient extends BaseClient {
   constructor(config: ClientConfig = {}) {
