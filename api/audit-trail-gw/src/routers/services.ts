@@ -6,7 +6,6 @@ import { SsiService } from '../services/ssi-service';
 import { StreamsService } from '../services/streams-service';
 import { SubscriptionService } from '../services/subscription-service';
 import { UserService } from '../services/user-service';
-import { VerificationService } from '../services/verification-service';
 import { Logger } from '../utils/logger';
 import { ConfigurationService } from '../services/configuration-service';
 
@@ -23,5 +22,3 @@ export const channelInfoService = new ChannelInfoService(userService);
 export const streamsService = new StreamsService(streamsConfig, logger);
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
 export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig, logger);
-
-export const verificationService = new VerificationService(ssiService, userService, logger, configService);
