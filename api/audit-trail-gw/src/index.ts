@@ -38,13 +38,6 @@ async function startServer() {
 
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
-		const rootIdentity = await configService.getRootIdentityId();
-
-		// setup did for server if not exists
-		if (!rootIdentity) {
-			process.exit(0);
-		}
-
 		const app = express();
 
 		const port = config.port;

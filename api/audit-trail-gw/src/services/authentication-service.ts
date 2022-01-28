@@ -1,4 +1,3 @@
-import { UserService } from './user-service';
 import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
 import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
@@ -7,11 +6,7 @@ import { SsiService } from './ssi-service';
 import { User, UserRoles } from '@iota-is/shared-modules/lib/types/user';
 
 export class AuthenticationService {
-	constructor(
-		private readonly userService: UserService,
-		private readonly ssiService: SsiService,
-		private readonly config: AuthenticationServiceConfig
-	) {}
+	constructor(private readonly ssiService: SsiService, private readonly config: AuthenticationServiceConfig) {}
 
 	async getNonce(id: string) {
 		const nonce = createNonce();
@@ -20,10 +15,9 @@ export class AuthenticationService {
 	}
 
 	async authenticate(signedNonce: string, id: string) {
-		let user: User = await this.userService.getUser(id);
-
-		if (!user) {
-			const doc = await this.ssiService.getLatestIdentityDoc(id);
+		const doc = await this.ssiService.getLatestIdentityDoc(id);
+		let user: User = undefined;
+		if (!doc) {
 			const publicKey = this.ssiService.getPublicKey(doc);
 			if (publicKey) {
 				user = {

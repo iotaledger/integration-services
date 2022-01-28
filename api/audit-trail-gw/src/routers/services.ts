@@ -15,8 +15,8 @@ const { serverSecret, identityConfig, jwtExpiration, streamsConfig } = configSer
 
 export const ssiService = SsiService.getInstance(identityConfig, logger);
 export const authorizationService = new AuthorizationService();
-export const userService = new UserService(ssiService, serverSecret, logger);
-export const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret });
+export const userService = new UserService();
+export const authenticationService = new AuthenticationService(ssiService, { jwtExpiration, serverSecret });
 
 export const channelInfoService = new ChannelInfoService(userService);
 export const streamsService = new StreamsService(streamsConfig, logger);

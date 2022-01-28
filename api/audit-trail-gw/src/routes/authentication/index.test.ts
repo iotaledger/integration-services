@@ -1,6 +1,5 @@
 import { AuthenticationRoutes } from './index';
 import { AuthenticationService } from '../../services/authentication-service';
-import { UserService } from '../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
 import * as AuthDb from '../../database/auth';
 import { User } from '@iota-is/shared-modules/lib/types/user';
@@ -16,7 +15,7 @@ const validUserMock = UserIdentityMock.userData;
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let userService: UserService, ssiService: SsiService;
+	let ssiService: SsiService;
 	let authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
 	beforeEach(() => {
 		sendMock = jest.fn();
@@ -24,8 +23,7 @@ describe('test authentication routes', () => {
 		nextMock = jest.fn();
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
-		userService = new UserService(ssiService, serverSecret, LoggerMock);
-		authenticationService = new AuthenticationService(userService, ssiService, {
+		authenticationService = new AuthenticationService(ssiService, {
 			jwtExpiration: '2 days',
 			serverSecret
 		});
@@ -39,9 +37,6 @@ describe('test authentication routes', () => {
 	});
 
 	it('getNonce - should return bad request because no id provided.', async () => {
-		const userMock: User = null;
-
-		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
 		const upsertNonceSpy = jest.spyOn(AuthDb, 'upsertNonce').mockImplementation(async () => null);
 		const req: any = {
 			params: { id: null },
@@ -50,7 +45,6 @@ describe('test authentication routes', () => {
 
 		await authenticationRoutes.getNonce(req, res, nextMock);
 
-		expect(getUserSpy).not.toHaveBeenCalled();
 		expect(upsertNonceSpy).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 		expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
@@ -97,7 +91,6 @@ describe('test authentication routes', () => {
 	it('auth - should return the jwt for identity not in db but on tangle', async () => {
 		const verified = true;
 		const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
-		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
 		const getLatestIdentityJsonSpy = jest.spyOn(ssiService, 'getLatestIdentityJson').mockImplementation(async () => {
 			return { document: UserIdentityMock.doc, messageId: '' };
 		});
@@ -112,7 +105,6 @@ describe('test authentication routes', () => {
 
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getLatestIdentityJsonSpy).toHaveBeenCalledWith(id);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
@@ -126,9 +118,7 @@ describe('test authentication routes', () => {
 
 	it('auth - should throw error since no user found', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		const userMock: User = null;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementationOnce(async () => userMock);
 		const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementationOnce(async () => null);
 		const req: any = {
 			params: { id },
@@ -137,7 +127,6 @@ describe('test authentication routes', () => {
 
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getLatestIdentitySpy).toHaveBeenCalledWith(id);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error(`no identity with id: ${id} found!`));
 		expect(nextMock).toHaveBeenCalledWith(new Error(`could not prove the ownership`));
@@ -146,10 +135,8 @@ describe('test authentication routes', () => {
 	it('auth - should throw error for a nonce which is verified=false', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const verified = false;
-		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 
-		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ id, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
@@ -161,7 +148,6 @@ describe('test authentication routes', () => {
 
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
@@ -176,7 +162,6 @@ describe('test authentication routes', () => {
 		const verified = true;
 		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43', id: userMock.id }));
@@ -188,7 +173,6 @@ describe('test authentication routes', () => {
 
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
-		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',

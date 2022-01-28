@@ -2,9 +2,7 @@ import { Config } from '../models/config';
 import { IdentityConfig, StreamsConfig } from '../models/config/index';
 import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
-import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
-import { getIdentityKeys } from '../database/identity-keys';
 
 const VERSION = 'v0.1';
 
@@ -70,46 +68,6 @@ export class ConfigurationService {
 
 	public set serverIdentityId(value: string) {
 		this._serverIdentityId = value;
-	}
-
-	async getRootIdentityId(): Promise<string> {
-		try {
-			const rootServerIdentities = await getServerIdentities();
-
-			if (!rootServerIdentities || rootServerIdentities.length == 0) {
-				this.logger.error('No root identity found!');
-				return null;
-			}
-
-			if (rootServerIdentities.length > 1) {
-				this.logger.error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
-				return null;
-			}
-
-			const rootServerIdentity = rootServerIdentities[0];
-			const serverIdentityId = rootServerIdentity?.id;
-
-			if (!serverIdentityId) {
-				this.logger.error('Root identity id not found');
-				return null;
-			}
-
-			// check if there is a valid identity-doc
-			const serverIdentity = await getIdentityKeys(serverIdentityId, this.config.serverSecret);
-
-			if (!serverIdentity) {
-				this.logger.error(`Root identity document with id: ${serverIdentityId} not found in database!`);
-				return null;
-			}
-
-			this.serverIdentityId = serverIdentityId;
-			this.logger.log('Found server identity id: ' + serverIdentityId);
-			return serverIdentityId;
-		} catch (e) {
-			this.logger.error('Error:' + e);
-		}
-
-		return null;
 	}
 
 	private assertConfig() {
