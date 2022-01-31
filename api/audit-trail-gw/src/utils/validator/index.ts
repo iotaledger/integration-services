@@ -8,7 +8,7 @@ import {
 import { User, UserType } from '@iota-is/shared-modules/lib/types/user';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
-import { ILogger } from '../logger';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
 
 export class SchemaValidator {
 	private static instance: SchemaValidator;

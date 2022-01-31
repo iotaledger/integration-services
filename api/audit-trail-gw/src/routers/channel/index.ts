@@ -6,7 +6,7 @@ import {
 	ValidateBodySchema
 } from '@iota-is/shared-modules/lib/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
-import { Logger } from '../../utils/logger';
+import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelLock } from '../../middlewares/concurrency-lock';

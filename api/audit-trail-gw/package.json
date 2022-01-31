@@ -45,7 +45,7 @@
     "@iota-is/shared-modules": "file:../shared-modules",
     "@iota/identity-wasm": "0.3.5",
     "@iota/streams": "^0.1.2",
-    "@noble/ed25519": "^1.4.0",
+    "@noble/ed25519": "^1.5.2",
     "@sinclair/typebox": "^0.12.8",
     "ajv": "^8.3.0",
     "ajv-formats": "^2.1.0",
@@ -55,7 +55,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-json-validator-middleware": "^2.1.1",
-    "express-winston": "^4.1.0",
+    "express-winston": "^4.2.0",
     "http-status-codes": "^2.1.4",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
@@ -63,7 +63,7 @@
     "node-fetch": "^2.6.7",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
-    "winston": "^3.3.3",
+    "winston": "^3.5.0",
     "yargs": "^17.2.1"
   },
   "devDependencies": {

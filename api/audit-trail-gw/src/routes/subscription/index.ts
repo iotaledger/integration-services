@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { SubscriptionService } from '../../services/subscription-service';
 import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/types/verification';
 import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '@iota-is/shared-modules/lib/types/request-response-bodies';
-import { ILogger } from '../../utils/logger';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
 import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/lib/types/subscription';
 import { SubscriptionType } from '@iota-is/shared-modules/lib/schemas/subscription';
 import { ChannelInfoService } from '../../services/channel-info-service';

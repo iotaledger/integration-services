@@ -13,7 +13,7 @@ import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { getDateStringFromDate } from '../utils/date';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
-import { ILogger } from '../utils/logger';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
 
 export class ChannelService {
 	private readonly password: string;

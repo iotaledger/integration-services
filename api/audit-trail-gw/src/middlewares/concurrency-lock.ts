@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/types/verification';
 import { getLock, insertLock, removeLock } from '../database/concurrency-lock';
 import { StatusCodes } from 'http-status-codes';
-import { Logger } from '../utils/logger/index';
+import { Logger } from '@iota-is/shared-modules/lib/utils/logger/index';
 import _ from 'lodash';
 import { ConcurrencyLocks } from '@iota-is/shared-modules/lib/types/concurrency';
 

@@ -6,7 +6,7 @@ import {
 } from '@iota-is/shared-modules/lib/schemas/request-response-body/subscription-bodies';
 import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota-is/shared-modules/lib/schemas/subscription';
 import { SubscriptionRoutes } from '../../routes/subscription';
-import { Logger } from '../../utils/logger';
+import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelInfoService, subscriptionService } from '../services';
 import { channelLock } from '../../middlewares/concurrency-lock';

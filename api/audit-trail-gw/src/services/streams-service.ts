@@ -12,7 +12,7 @@ import streams, {
 	MsgId
 } from '@iota/streams/node/streams_wasm';
 import * as fetch from 'node-fetch';
-import { ILogger } from '../utils/logger';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '../utils/text';
 import * as crypto from 'crypto';

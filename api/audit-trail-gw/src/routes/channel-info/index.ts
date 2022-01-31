@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
 import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
-import { ILogger } from '../../utils/logger';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
 
 export class ChannelInfoRoutes {
 	constructor(

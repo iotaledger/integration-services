@@ -7,7 +7,7 @@ import { authenticationRouter, channelInfoRouter, channelRouter, subscriptionRou
 import { MongoDbService } from './services/mongodb-service';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
-import { Logger } from './utils/logger';
+import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
 import { openApiDefinition } from './routers/swagger';
 import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';

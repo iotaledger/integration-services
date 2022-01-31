@@ -2,7 +2,7 @@ import { Config } from '../models/config';
 import { IdentityConfig, StreamsConfig } from '../models/config/index';
 import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
-import { ILogger } from '../utils/logger/index';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger/index';
 
 const VERSION = 'v0.1';
 

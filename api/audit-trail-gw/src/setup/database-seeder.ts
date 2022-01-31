@@ -1,6 +1,6 @@
 import { CollectionNames } from '../database/constants';
 import { Db } from 'mongodb';
-import { ILogger } from '../utils/logger/index';
+import { ILogger } from '@iota-is/shared-modules/lib/utils/logger/index';
 
 const LOCK_EXPIRATION_TIME_SEC = 55;
 

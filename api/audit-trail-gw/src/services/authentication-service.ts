@@ -1,4 +1,4 @@
-import { createNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
+import { createNonce, getHexEncodedKey, verifySignedNonce } from '@iota-is/shared-modules/lib/utils/encryption';
 import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
