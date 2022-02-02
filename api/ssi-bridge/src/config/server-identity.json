@@ -1,0 +1,9 @@
+{
+    "storeIdentity": true,
+    "username": "root-identity",
+    "isServerIdentity": true,
+    "claim": {
+        "type": "Service",
+        "name": "Integration Service"
+    }
+}
