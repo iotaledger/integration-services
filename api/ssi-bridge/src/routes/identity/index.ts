@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserSearch, UserType } from '@iota-is/shared-modules/lib/types/user';
+import { UserSearch, UserType } from '@iota-is/shared-modules/lib/models/types/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
-import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/types/verification';
+import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
-import { CreateIdentityBody } from '@iota-is/shared-modules/lib/types/identity';
-import { IdentitySchemaBody } from '@iota-is/shared-modules/lib/types/request-response-bodies';
+import { CreateIdentityBody } from '@iota-is/shared-modules/lib/models/types/identity';
+import { IdentitySchemaBody } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { VerificationService } from '../../services/verification-service';
 

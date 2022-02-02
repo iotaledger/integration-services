@@ -2,11 +2,11 @@ import { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as _ from 'lodash';
 import { SubscriptionService } from '../../services/subscription-service';
-import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/types/verification';
-import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '@iota-is/shared-modules/lib/types/request-response-bodies';
+import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/models/types/verification';
+import { AuthorizeSubscriptionBody, RequestSubscriptionBody } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
 import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
-import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/lib/types/subscription';
-import { SubscriptionType } from '@iota-is/shared-modules/lib/schemas/subscription';
+import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/lib/models/types/subscription';
+import { SubscriptionType } from '@iota-is/shared-modules/lib/models/schemas/subscription';
 import { ChannelInfoService } from '../../services/channel-info-service';
 
 export class SubscriptionRoutes {

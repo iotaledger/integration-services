@@ -1,4 +1,7 @@
-import { ProveOwnershipPostBodySchema, NonceSchema } from '@iota-is/shared-modules/lib/schemas/request-response-body/authentication-bodies';
+import {
+	ProveOwnershipPostBodySchema,
+	NonceSchema
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
 import {
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
@@ -7,7 +10,7 @@ import {
 	ReimportBodySchema,
 	ValidateBodySchema,
 	ValidateResponseSchema
-} from '@iota-is/shared-modules/lib/schemas/request-response-body/channel-bodies';
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/channel-bodies';
 import {
 	ClaimSchema,
 	RevokeVerificationBodySchema,
@@ -15,41 +18,41 @@ import {
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
 	SubjectBodySchema
-} from '@iota-is/shared-modules/lib/schemas/request-response-body/verification-bodies';
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/verification-bodies';
 import {
 	ChannelInfoSchema,
 	ChannelInfoSearchSchema,
 	TopicSchema,
 	ChannelAddressSchema
-} from '@iota-is/shared-modules/lib/schemas/channel-info';
+} from '@iota-is/shared-modules/lib/models/schemas/channel-info';
 import {
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
 	IdentityDocumentJsonSchema,
 	IdentityKeyPairJsonSchema
-} from '@iota-is/shared-modules/lib/schemas/identity';
+} from '@iota-is/shared-modules/lib/models/schemas/identity';
 import {
 	CreateIdentityBodySchema,
 	UpdateIdentityBodySchema
-} from '@iota-is/shared-modules/lib/schemas/request-response-body/identity-bodies';
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/identity-bodies';
 import {
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,
 	ProductSchema,
 	ServiceSchema
-} from '@iota-is/shared-modules/lib/schemas/user-types';
-import { IdentitySchema } from '@iota-is/shared-modules/lib/schemas/user';
+} from '@iota-is/shared-modules/lib/models/schemas/user-types';
+import { IdentitySchema } from '@iota-is/shared-modules/lib/models/schemas/user';
 import {
 	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionResponseSchema,
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema
-} from '@iota-is/shared-modules/lib/schemas/request-response-body/subscription-bodies';
-import { ErrorResponseSchema, IdentityIdSchema } from '@iota-is/shared-modules/lib/schemas/request-response-body/misc-bodies';
-import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota-is/shared-modules/lib/schemas/subscription';
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/subscription-bodies';
+import { ErrorResponseSchema, IdentityIdSchema } from '@iota-is/shared-modules/lib/models/schemas/request-response-body/misc-bodies';
+import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota-is/shared-modules/lib/models/schemas/subscription';
 import fs from 'fs';
 
 /**

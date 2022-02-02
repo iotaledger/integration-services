@@ -4,7 +4,7 @@ import {
 	CreateChannelBodySchema,
 	ReimportBodySchema,
 	ValidateBodySchema
-} from '@iota-is/shared-modules/lib/schemas/request-response-body/channel-bodies';
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/channel-bodies';
 import { ChannelRoutes } from '../../routes/channel';
 import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
 import { channelService } from '../services';

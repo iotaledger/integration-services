@@ -1,6 +1,6 @@
 import { addTrustedRootId } from '../database/trusted-roots';
-import { CreateIdentityBody, IdentityKeys } from '@iota-is/shared-modules/lib/types/identity';
-import { Subject, CredentialTypes } from '@iota-is/shared-modules/lib/types/verification';
+import { CreateIdentityBody, IdentityKeys } from '@iota-is/shared-modules/lib/models/types/identity';
+import { Subject, CredentialTypes } from '@iota-is/shared-modules/lib/models/types/verification';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
 import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';

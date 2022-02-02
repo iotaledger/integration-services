@@ -3,7 +3,7 @@ import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
 import { SsiService } from './ssi-service';
-import { User, UserRoles } from '@iota-is/shared-modules/lib/types/user';
+import { User, UserRoles } from '@iota-is/shared-modules/lib/models/types/user';
 
 export class AuthenticationService {
 	constructor(private readonly ssiService: SsiService, private readonly config: AuthenticationServiceConfig) {}

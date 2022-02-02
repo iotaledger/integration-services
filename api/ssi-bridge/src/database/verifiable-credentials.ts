@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { VerifiableCredentialPersistence } from '@iota-is/shared-modules/lib/types/key-collection';
+import { VerifiableCredentialPersistence } from '@iota-is/shared-modules/lib/models/types/key-collection';
 
 const collectionName = CollectionNames.verifiableCredentials;
 const getIndex = (serverId: string, index: number) => `${serverId}-${index}`;

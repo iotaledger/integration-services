@@ -1,8 +1,8 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/lib/types/user';
+import { UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/lib/models/types/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
-import { VerifiableCredentialJson } from '@iota-is/shared-modules/lib/types/identity';
+import { VerifiableCredentialJson } from '@iota-is/shared-modules/lib/models/types/identity';
 
 const collectionName = CollectionNames.users;
 const maxNumberOfVc = 100;

@@ -1,4 +1,4 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/types/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';

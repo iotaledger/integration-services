@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
-import { AccessRights, SubscriptionType } from '@iota-is/shared-modules/lib/schemas/subscription';
-import { Subscription } from '@iota-is/shared-modules/lib/types/subscription';
+import { AccessRights, SubscriptionType } from '@iota-is/shared-modules/lib/models/schemas/subscription';
+import { Subscription } from '@iota-is/shared-modules/lib/models/types/subscription';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';

@@ -3,8 +3,8 @@ import {
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema
-} from '@iota-is/shared-modules/lib/schemas/request-response-body/subscription-bodies';
-import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota-is/shared-modules/lib/schemas/subscription';
+} from '@iota-is/shared-modules/lib/models/schemas/request-response-body/subscription-bodies';
+import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota-is/shared-modules/lib/models/schemas/subscription';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';

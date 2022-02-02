@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence } from '@iota-is/shared-modules/lib/types/user';
+import { UserPersistence } from '@iota-is/shared-modules/lib/models/types/user';
 
 const collectionName = CollectionNames.users;
 
