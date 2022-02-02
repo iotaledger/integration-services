@@ -3,7 +3,7 @@ import { CreateIdentityBody, IdentityKeys } from '@iota-is/shared-modules/lib/mo
 import { Subject, CredentialTypes } from '@iota-is/shared-modules/lib/models/types/verification';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
-import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from '../utils/encryption';
+import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from '@iota-is/shared-modules/lib/utils/encryption';
 
 import * as serverIdentityJson from '../config/server-identity.json';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
