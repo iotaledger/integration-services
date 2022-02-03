@@ -1,7 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -27,7 +26,7 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 	return await MongoDbService.getDocuments<ChannelInfoPersistence>(collectionName, plainQuery, options);
 };
 
-export const addChannelInfo = async (channelInfo: ChannelInfoPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const addChannelInfo = async (channelInfo: ChannelInfoPersistence) => {
 	const document = {
 		_id: channelInfo.channelAddress,
 		...channelInfo,
@@ -70,7 +69,7 @@ export const addChannelSubscriberId = async (channelAddress: string, subscriberI
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const deleteChannelInfo = async (channelAddress: string): Promise<DeleteWriteOpResultObject> => {
+export const deleteChannelInfo = async (channelAddress: string) => {
 	const query = { _id: channelAddress };
 	return MongoDbService.removeDocument(collectionName, query);
 };

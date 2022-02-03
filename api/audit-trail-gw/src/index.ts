@@ -4,7 +4,7 @@ dotenv.config();
 import swaggerUi from 'swagger-ui-express';
 import { errorMiddleware } from './middlewares/error';
 import { authenticationRouter, channelInfoRouter, channelRouter, subscriptionRouter } from './routers';
-import { MongoDbService } from './services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Logger } from '@iota-is/shared-modules/lib/utils/logger';

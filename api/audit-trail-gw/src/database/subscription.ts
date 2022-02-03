@@ -1,6 +1,5 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, WithId } from 'mongodb';
 import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/lib/models/types/subscription';
 
 // Subscription documents keeps information about a subscription a user in regard of a channel
@@ -36,7 +35,7 @@ export const getSubscriptionByPublicKey = async (channelAddress: string, publicK
 	return MongoDbService.getDocument<Subscription>(collectionName, query);
 };
 
-export const addSubscription = async (subscription: Subscription): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const addSubscription = async (subscription: Subscription) => {
 	const document = {
 		_id: getIndex(subscription.id, subscription.channelAddress),
 		...subscription,
@@ -66,7 +65,7 @@ export const updateSubscription = async (channelAddress: string, id: string, sub
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const removeSubscription = async (channelAddress: string, id: string): Promise<DeleteWriteOpResultObject> => {
+export const removeSubscription = async (channelAddress: string, id: string) => {
 	const query = { _id: getIndex(id, channelAddress) };
 	return MongoDbService.removeDocument(collectionName, query);
 };
