@@ -3,7 +3,6 @@ export const enum CollectionNames {
 	channelData = 'channel-data',
 	subscriptions = 'subscriptions',
 	users = 'users',
-	keyCollection = 'key-collection',
 	auth = 'auth',
 	concurrencyLocks = 'concurrency-locks'
 }
