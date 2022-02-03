@@ -91,9 +91,11 @@ describe('test authentication routes', () => {
 	it('auth - should return the jwt for identity not in db but on tangle', async () => {
 		const verified = true;
 		const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
-		const getLatestIdentityJsonSpy = jest.spyOn(ssiService, 'getLatestIdentityJson').mockImplementation(async () => {
-			return { document: UserIdentityMock.doc, messageId: '' };
+		const getLatestIdentityJsonSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementationOnce(async () => {
+			return UserIdentityMock.doc as any;
 		});
+		jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(() => UserIdentityMock.key.public);
+
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ id, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
@@ -116,10 +118,12 @@ describe('test authentication routes', () => {
 		expect(res.send).toHaveBeenCalled();
 	});
 
-	it('auth - should throw error since no user found', async () => {
+	it('auth - should throw error since no public key found', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 		const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementationOnce(async () => null);
+		jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(() => undefined);
+
 		const req: any = {
 			params: { id },
 			body: { signedNonce: 'SIGNED_NONCE' }
@@ -136,7 +140,10 @@ describe('test authentication routes', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const verified = false;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-
+		jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementationOnce(async () => {
+			return UserIdentityMock.doc as any;
+		});
+		jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(() => UserIdentityMock.key.public);
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ id, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
@@ -162,6 +169,7 @@ describe('test authentication routes', () => {
 		const verified = true;
 		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
+		jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(() => UserIdentityMock.key.public);
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43', id: userMock.id }));
