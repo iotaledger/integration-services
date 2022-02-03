@@ -1,7 +1,7 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+import { DeleteWriteOpResultObject, InsertOneWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -38,7 +38,7 @@ export const addChannelInfo = async (channelInfo: ChannelInfoPersistence): Promi
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence): Promise<UpdateWriteOpResult> => {
+export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence) => {
 	const query = {
 		_id: channelInfo.channelAddress
 	};
@@ -52,7 +52,7 @@ export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence): P
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const addChannelSubscriberId = async (channelAddress: string, subscriberId: string): Promise<UpdateWriteOpResult> => {
+export const addChannelSubscriberId = async (channelAddress: string, subscriberId: string) => {
 	const currChannel = await getChannelInfo(channelAddress);
 	if (!currChannel) {
 		throw new Error(`could not find channel with address ${channelAddress}`);

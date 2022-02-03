@@ -1,6 +1,6 @@
 import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+import { DeleteWriteOpResultObject, InsertOneWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
 import { getDateFromString, getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
@@ -38,12 +38,12 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
 	}
 
-	async updateChannelTopic(channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> {
+	async updateChannelTopic(channelInfo: ChannelInfo) {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
 		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
 	}
 
-	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> {
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 

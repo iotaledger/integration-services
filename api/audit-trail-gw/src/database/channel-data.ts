@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { ChannelData } from '@iota-is/shared-modules/lib/models/types/channel-data';
 import { getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
 import { ChannelLogRequestOptions } from '@iota-is/shared-modules/lib/models/types/channel-info';

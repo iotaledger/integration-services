@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
+import { DeleteWriteOpResultObject, InsertOneWriteOpResult, WithId } from 'mongodb';
 import { Subscription, SubscriptionUpdate } from '@iota-is/shared-modules/lib/models/types/subscription';
 
 // Subscription documents keeps information about a subscription a user in regard of a channel
@@ -46,11 +46,7 @@ export const addSubscription = async (subscription: Subscription): Promise<Inser
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateSubscription = async (
-	channelAddress: string,
-	id: string,
-	subscriptionUpdate: SubscriptionUpdate
-): Promise<UpdateWriteOpResult> => {
+export const updateSubscription = async (channelAddress: string, id: string, subscriptionUpdate: SubscriptionUpdate) => {
 	const query = { _id: getIndex(id, channelAddress) };
 	// updates on channelAddress, publicKey, id and type are not allowed
 	const { state, subscriptionLink, isAuthorized, accessRights, keyloadLink, sequenceLink, pskId } = subscriptionUpdate;
@@ -75,7 +71,7 @@ export const removeSubscription = async (channelAddress: string, id: string): Pr
 	return MongoDbService.removeDocument(collectionName, query);
 };
 
-export const updateSubscriptionState = async (channelAddress: string, id: string, state: string): Promise<UpdateWriteOpResult> => {
+export const updateSubscriptionState = async (channelAddress: string, id: string, state: string) => {
 	const query = {
 		_id: getIndex(id, channelAddress)
 	};
@@ -95,7 +91,7 @@ export const setSubscriptionAuthorization = async (
 	isAuthorized: boolean,
 	keyloadLink: string,
 	sequenceLink: string
-): Promise<UpdateWriteOpResult> => {
+) => {
 	const query = {
 		channelAddress,
 		id

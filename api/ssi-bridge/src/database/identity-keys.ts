@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { IdentityKeys } from '@iota-is/shared-modules/lib/models/types/identity';
 import { decrypt, encrypt } from '@iota-is/shared-modules/lib/utils/encryption';

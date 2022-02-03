@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/lib/models/types/user';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { VerifiableCredentialJson } from '@iota-is/shared-modules/lib/models/types/identity';

@@ -1,6 +1,6 @@
 import { DatabaseSeeder } from './database-seeder';
 import { Logger } from '@iota-is/shared-modules/lib/utils/logger/index';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { ConfigurationService } from '../services/configuration-service';
 
 export class SetupManager {
@@ -13,7 +13,7 @@ export class SetupManager {
 
 		// seed the database with indexes
 		const dbSeeder = new DatabaseSeeder(logger);
-		await dbSeeder.seed(MongoDbService.db);
+		await dbSeeder.seed();
 
 		await MongoDbService.disconnect();
 	}

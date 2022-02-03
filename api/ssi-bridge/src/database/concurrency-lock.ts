@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
 import { InsertOneWriteOpResult, WithId, DeleteWriteOpResultObject } from 'mongodb';
 import { ConcurrencyLock } from '@iota-is/shared-modules/lib/models/types/concurrency';
 
