@@ -3,7 +3,7 @@ import { ChannelInfo, ChannelInfoSearch } from '@iota-is/shared-modules/lib/mode
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { getDateFromString } from '../../utils/date';
+import { getDateFromString } from '@iota-is/shared-modules/lib/utils/text';
 import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';

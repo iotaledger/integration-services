@@ -11,7 +11,7 @@ import { StreamsConfig } from '../models/config';
 import { CreateChannelResponse, ValidateResponse } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
-import { getDateStringFromDate } from '../utils/date';
+import { getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
 

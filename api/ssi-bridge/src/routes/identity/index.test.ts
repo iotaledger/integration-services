@@ -7,7 +7,7 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
 import { TestCredentialMock, TestUsersMock, UserIdentityMock } from '../../test/mocks/identities';
-import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { getDateFromString, getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
 import { StatusCodes } from 'http-status-codes';
 import { LoggerMock } from '../../test/mocks/logger';
 import { IdentityConfigMock } from '../../test/mocks/config';

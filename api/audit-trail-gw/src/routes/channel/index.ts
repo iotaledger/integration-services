@@ -10,7 +10,7 @@ import {
 	ValidateBody
 } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
 import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
-import { getDateFromString } from '../../utils/date';
+import { getDateFromString } from '@iota-is/shared-modules/lib/utils/text';
 import { compareAsc } from 'date-fns';
 import { ChannelLogRequestOptions } from '@iota-is/shared-modules/lib/models/types/channel-info';
 

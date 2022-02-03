@@ -2,7 +2,7 @@ import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is
 import * as ChannelInfoDb from '../database/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
-import { getDateFromString, getDateStringFromDate } from '../utils/date';
+import { getDateFromString, getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {

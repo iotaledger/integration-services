@@ -3,7 +3,7 @@ import { UserSearch, UserType } from '@iota-is/shared-modules/lib/models/types/u
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { getDateFromString } from '../../utils/date';
+import { getDateFromString } from '@iota-is/shared-modules/lib/utils/text';
 import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
 import { CreateIdentityBody } from '@iota-is/shared-modules/lib/models/types/identity';
