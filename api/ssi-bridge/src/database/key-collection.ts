@@ -1,6 +1,5 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
-import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { KeyCollectionPersistence } from '@iota-is/shared-modules/lib/models/types/key-collection';
 import { decrypt, encrypt } from '@iota-is/shared-modules/lib/utils/encryption';
 
@@ -25,11 +24,7 @@ export const getKeyCollection = async (index: number, serverId: string, secret: 
 	return decryptedKC;
 };
 
-export const saveKeyCollection = async (
-	kcp: KeyCollectionPersistence,
-	serverId: string,
-	secret: string
-): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveKeyCollection = async (kcp: KeyCollectionPersistence, serverId: string, secret: string) => {
 	const encryptedKC: KeyCollectionPersistence = {
 		...kcp,
 		keys: kcp.keys.map((key) => {

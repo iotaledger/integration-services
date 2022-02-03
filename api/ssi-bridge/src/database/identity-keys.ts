@@ -1,6 +1,5 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
-import { InsertOneWriteOpResult, WithId } from 'mongodb';
 import { IdentityKeys } from '@iota-is/shared-modules/lib/models/types/identity';
 import { decrypt, encrypt } from '@iota-is/shared-modules/lib/utils/encryption';
 
@@ -25,7 +24,7 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 	return decryptedIdentity;
 };
 
-export const saveIdentityKeys = async (identity: IdentityKeys, secret: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const saveIdentityKeys = async (identity: IdentityKeys, secret: string) => {
 	const encryptedKey = encrypt(identity.key.secret, secret);
 	const encryptedIdentity: IdentityKeys = {
 		...identity,
