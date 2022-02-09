@@ -28,7 +28,7 @@ individuals, objects) identities using a network of trust approach.
 
 The Bridge also allows Issuers to issue Verifiable Credentials for selected identity Owners identified by a
 decentralized identity, and said Owners to present them to Verifiers. Verifiers can use
-the [E-commerce-SSI Bridge APIs](API-definition.md) to verify credentials authenticity. This requires verifying that a
+the [E-commerce-SSI Bridge APIs](API-definition.md) to verify a credential's authenticity. This requires verifying that a
 credential contains the identifier (DID) of the owner presenting it and that an authorized Issuer signs it. This process
 requires access to information stored on a ledger.
 
@@ -38,7 +38,7 @@ lifecycle of decentralized identities and verifiable credentials.
 ![Interaction between Issuer, Owner, Verifier, and the ledger](/img/integration-services/issuer-owner-verifier-interaction.png)
 
 The IOTA Ecommerce-SSI Bridge provides an abstraction layer through REST APIs that allows entities to create
-decentralized identities (DIDs), verify them, attach verifiable credentials and verify them.
+decentralized identities (DIDs), verify them, attach verifiable credentials and verify those credentials.
 
 The figure below shows the envisioned system architecture within the full set of IOTA Integration Services developed for
 the ENSURESEC project.

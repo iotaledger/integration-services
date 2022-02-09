@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/diagrams/ecommerce-audit-trail-bridge.jpeg
-description:  In the context of e-commerce and the ENSURESEC project, you can use the Audit Trail Gateway to share immutable and auditable data and events and guarantee the Immutability of Large Data Sets.
+description: In the context of e-commerce and the ENSURESEC project, you can use the Audit Trail Gateway to share immutable and auditable data and events and guarantee the Immutability of Large Data Sets.
 keywords:
 - API definition
 - auditable data

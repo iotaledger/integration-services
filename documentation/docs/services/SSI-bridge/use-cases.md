@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description:  In the context of e-commerce and the ENSURESEC project, you can use the SSI-Bridge to verify identities for products, customer, sellers, and clients.   
+description: In the context of e-commerce and the ENSURESEC project, you can use the SSI-Bridge to verify identities for products, customer, sellers, and clients.   
 keywords:
 - ecommerce
 - scanner device
@@ -34,11 +34,11 @@ and threats or frauds in the distribution chain.
 5. When a courier hands over the delivery, the scanner device uses the Ecommerce-SSI Bridge to present its credential to
    the e-commerce operator.
 6. The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was only handled by an authorized
-   courier, nor it was stolen or diverted in transit. This is possible because of the verification of the device
+   courier, nor was it stolen or diverted in transit. This is possible because of the verification of the device
    handling the scanning of the delivery.
 7. (optional) The customer can acquire the courier’s scanner device credential in the form of a QR code. The QR code
    can be read using a mobile phone and the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery
-   company authorized by the e-commerce operator. This allows verifying authentic deliveries.
+   company authorized by the e-commerce operator. This allows for verifying authentic deliveries.
 
 ### Customer Identity and Delivery Verification
 
@@ -51,10 +51,9 @@ customer and avoid threats and frauds in the distribution chain.
 3. The e-commerce site uses the Ecommerce-SSI Bridge to issue a proof of purchase credential to the customer, which is
    saved to the customer’s phone.
 4. The customer receives the product delivery and presents the credential in a QR code to the courier scanner.
-5. The courier acquires the credential and uses the Ecommerce-Bridge to verify its authenticity. The delivery is safely
+5. The courier acquires the credential and uses the Ecommerce-SSI Bridge to verify its authenticity. The delivery is safely
    handed over to the right customer.
-6. (optional) The customer acquires the courier’s scanner credential (
-   see [ Delivery Company Identity and Scanners Verification]( #delivery-company-identity-and-scanners-verification))
+6. (optional) The customer acquires the courier’s scanner credential (see [ Delivery Company Identity and Scanners Verification]( #delivery-company-identity-and-scanners-verification))
    and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorized delivery company assuring the customer
    knows the delivery is legitimate.
 
@@ -72,14 +71,14 @@ compliance and reduce liability for e-commerce and small sellers.
 2. A customer creates a decentralized identity (DID) using a mobile application which could be a standalone credential
    wallet or an e-commerce shopping app.
 3. The customer requests an Issuer (e.g., the bank) to issue a credential stating their age.
-4. The issuer uses previously verified information about the user held on local record and the Ecommerce-SSI Bridge to
+4. The Issuer uses previously verified information about the user held on local record and the Ecommerce-SSI Bridge to
    create and issue a Verifiable Credential to the customer.
 5. The customer (namely Owner) downloads the credential in their app using a credential wallet.
 6. The customer purchases an item that requires age verification on an e-commerce site.
 7. The customer provides their credential to the e-commerce website using the Ecommerce-SSI Bridge.
 8. The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorize the purchase.
 
-_A similar scenario can be applied in the online purchase of dedicated drugs for specific health conditions. A GP could
+_A similar scenario can be applied in the online purchase of dedicated drugs for specific health conditions. A general practitioner could
 issue a credential to the customer stating their condition._
 
 ### Seller Identity Verification
@@ -87,9 +86,9 @@ issue a credential to the customer stating their condition._
 **Problem**: Verify a seller's identity. This verification would reduce small sellers' compliance burden and reputation
 risks.
 
-1. An e-commerce site allows an employee which the seller previously authorized to create a decentralized identity (DID
+1. An e-commerce site allows an employee, which the seller previously authorized, to create a decentralized identity (DID
    for organization) using the Ecommerce-SSI Bridge.
-2. The seller requests an Issuer (e.g., its bank) to issue a credential stating its Know Your Customer(KYC) status.
+2. The seller requests an Issuer (e.g., its bank) to issue a credential stating its Know Your Customer (KYC) status.
 3. The seller presents the credentials to the e-commerce site operator using the Ecommerce-SSI Bridge.
 4. The e-commerce site operator verifies the seller’s credentials using the Ecommerce-SSI Bridge and allows the seller
    to trade on its marketplace
@@ -103,7 +102,7 @@ risks.
 2. The e-commerce site allows the seller to create and sign an authenticity credential associated with a given product
    identity using the Ecommerce-SSI Bridge.
 3. A user app allows a customer to obtain the product authenticity credential. The customer could achieve this by
-   scanning a QR from an e-commerce site, or it can even be directly attached to a purchased product.
+   scanning a QR code from an e-commerce site, or it can even be directly attached to a purchased product.
 4. A user app allows the customer to verify the signature of the product authenticity credential using the Ecommerce-SSI
    Bridge, allowing verification of the seller's identity.
 

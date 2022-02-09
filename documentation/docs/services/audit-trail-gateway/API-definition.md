@@ -17,7 +17,7 @@ The Audit Trail GW implementation provides the following services:
 
 ## Channel Service
 
-You can use this service to create new channels in the tangle. The identity creating the channel becomes the channel’s
+You can use this service to create new channels in the Tangle. The identity creating the channel becomes the channel’s
 author. The author can read all messages and write data into the channel. Authorized subscribers can also use this
 service to read and write from/to the channel (see [Subscription Service](#subscription-service)).
 
