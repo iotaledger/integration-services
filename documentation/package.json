@@ -10,7 +10,7 @@
   },
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=14.14.0"
+    "node": ">=16.14.0"
   },
   "dependencies": {
     "iota-wiki-cli": "git+https://github.com/iota-community/iota-wiki-cli.git#v1.6.0",
