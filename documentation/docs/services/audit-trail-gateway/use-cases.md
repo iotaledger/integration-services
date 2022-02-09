@@ -41,7 +41,7 @@ You could implement the following workflow:
 
 ## Assuring the Immutability of Large Data Sets
 
-This scenario includes storing and sharing data across an organizations' data sets maintained in large data lakes while
+This scenario includes storing and sharing information across an organizations' data sets maintained in large data lakes while
 guaranteeing that the data sets have not been altered over time or passed to unauthorized parties.
 
 In this case, a channel’s Author and writer subscribers first index the data sets, hash them and store the hash in the

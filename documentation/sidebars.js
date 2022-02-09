@@ -23,7 +23,7 @@ module.exports = {
             items: [
                 {
                     type: "category",
-                    label: "Audit Trail Gateway ",
+                    label: "Audit Trail Gateway",
                     items: [
                         {
                             type: "doc",
@@ -36,7 +36,7 @@ module.exports = {
                 },
                 {
                     type: "category",
-                    label: "SSI Bridge ",
+                    label: "SSI Bridge",
                     items: [
                         {
                             type: "doc",

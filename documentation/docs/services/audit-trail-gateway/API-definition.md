@@ -40,8 +40,8 @@ __Prefix:__ `/api/{{version}}/channel-info`
 ## Subscription Service
 
 You can use this service to manage subscriptions to a specific channel. Identities can subscribe to a specific channel
-identified by a unique channel address. The channel's author can then decide whether to authorize the identity to read
-or write from/to the channel. The channel’s author can still revoke access to the channel at any time. This service can
+identified by a unique channel address. The channel's author can then decide whether to authorize the identity to read from the channel
+or write to it. The channel’s author can still revoke access to the channel at any time. This service can
 also list all authorized subscriptions to a channel.
 
 __Prefix:__ `/api/{{version}}/subscription`

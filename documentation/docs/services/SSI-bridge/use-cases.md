@@ -27,14 +27,14 @@ and threats or frauds in the distribution chain.
 2. An e-commerce operator verifies the delivery company’s organization identity and uses the Bridge to issue a
    credential for the company to deliver on their behalf. The credential contains the company organization DID and is
    signed by the e-commerce operator’s private key which had been previously associated with the operator’s identity.
-3. The authorized employee of the verified delivery company registers a DID for each scanner (i.e., android scanners)
+3. The authorized employee of the verified delivery company registers a DID for each scanner (i.e. android scanners)
    used by the company couriers.
 4. The authorized employee uses the Ecommerce-SSI Bridge to issue authorization credentials to the scanner devices used
    to handle deliveries. These credentials are stored locally in the scanner devices.
 5. When a courier hands over the delivery, the scanner device uses the Ecommerce-SSI Bridge to present its credential to
    the e-commerce operator.
 6. The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was only handled by an authorized
-   courier, nor was it stolen or diverted in transit. This is possible because of the verification of the device
+   courier, and it was not stolen or diverted in transit. This is possible because of the verification of the device
    handling the scanning of the delivery.
 7. (optional) The customer can acquire the courier’s scanner device credential in the form of a QR code. The QR code
    can be read using a mobile phone and the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery
@@ -70,7 +70,7 @@ compliance and reduce liability for e-commerce and small sellers.
 1. An authorized bank employee registers an organization decentralized identity (DID) for its bank.
 2. A customer creates a decentralized identity (DID) using a mobile application which could be a standalone credential
    wallet or an e-commerce shopping app.
-3. The customer requests an Issuer (e.g., the bank) to issue a credential stating their age.
+3. The customer requests an Issuer (e.g. a bank) to issue a credential stating their age.
 4. The Issuer uses previously verified information about the user held on local record and the Ecommerce-SSI Bridge to
    create and issue a Verifiable Credential to the customer.
 5. The customer (namely Owner) downloads the credential in their app using a credential wallet.
@@ -88,7 +88,7 @@ risks.
 
 1. An e-commerce site allows an employee, which the seller previously authorized, to create a decentralized identity (DID
    for organization) using the Ecommerce-SSI Bridge.
-2. The seller requests an Issuer (e.g., its bank) to issue a credential stating its Know Your Customer (KYC) status.
+2. The seller requests an Issuer (e.g. its bank) to issue a credential stating its Know Your Customer (KYC) status.
 3. The seller presents the credentials to the e-commerce site operator using the Ecommerce-SSI Bridge.
 4. The e-commerce site operator verifies the seller’s credentials using the Ecommerce-SSI Bridge and allows the seller
    to trade on its marketplace
