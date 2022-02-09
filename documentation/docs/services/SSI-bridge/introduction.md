@@ -43,7 +43,7 @@ decentralized identities (DIDs), verify them, attach verifiable credentials and 
 The figure below shows the envisioned system architecture within the full set of IOTA Integration Services developed for
 the ENSURESEC project.
 
-![IOTA-Tools-Architecture](/img/integration-services/architechture-integration.png)
+![IOTA-Tools-Architecture](/img/integration-services/architecture-integration.png)
 
 You can find examples of how the Bridge could be used in the context of e-commerce ecosystems
 to [secure goods distribution](use-cases.md#secure-goods-distribution)
