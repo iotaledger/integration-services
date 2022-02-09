@@ -19,10 +19,10 @@ Ecommerce-SSI Bridge to implement the following workflows.
 
 ### Delivery Company Identity and Scanners Verification
 
-**Problem**: Protection of a Delivery. Company X wants to protect its goods from being handled by unauthorized carriers
+**Problem**: Protection of a Delivery. Company X wants to protect its goods from being handled by unauthorized carriers,
 and threats or frauds in the distribution chain.
 
-1. An authorized employee of delivery **company X** uses the Ecommerce-SSI Bridge to register
+1. An authorized employee of delivery company X uses the Ecommerce-SSI Bridge to register
    an [identity (DID)](https://wiki.iota.org/identity.rs/decentralized_identifiers/overview) for their organization.
 2. An e-commerce operator verifies the delivery company’s organization identity and uses the Bridge to issue a
    credential for the company to deliver on their behalf. The credential contains the company organization DID and is
@@ -42,7 +42,7 @@ and threats or frauds in the distribution chain.
 
 ### Customer Identity and Delivery Verification
 
-**Problem**: Proof of Collection. Customers and e-commerce sites want to guarantee goods are collected by the right
+**Problem**: Proof of Collection. Customers and e-commerce providers want to guarantee goods are collected by the right
 customer and avoid threats and frauds in the distribution chain.
 
 1. A customer creates a decentralized identity (DID) using a mobile application. This application can be a standalone
@@ -57,8 +57,8 @@ customer and avoid threats and frauds in the distribution chain.
    and uses the Ecommerce-SSI Bridge to verify that it belongs to an authorized delivery company assuring the customer
    knows the delivery is legitimate.
 
-_The two scenarios above become even more interesting in the case of automated (i.e., drones) delivery and could even
-include product identification._
+The two scenarios above become even more interesting in the case of automated (i.e., drones) delivery and could even
+include product identification.
 
 ## Secure E-commerce Sales
 
@@ -67,7 +67,7 @@ include product identification._
 **Problem**: Verify a customer’s identity and avoid collecting and storing personal information. This would increase
 compliance and reduce liability for e-commerce and small sellers.
 
-1. An authorized bank employee registers an _organization_ decentralized identity (DID) for its bank.
+1. An authorized bank employee registers an organization decentralized identity (DID) for its bank.
 2. A customer creates a decentralized identity (DID) using a mobile application which could be a standalone credential
    wallet or an e-commerce shopping app.
 3. The customer requests an Issuer (e.g., the bank) to issue a credential stating their age.
@@ -78,8 +78,8 @@ compliance and reduce liability for e-commerce and small sellers.
 7. The customer provides their credential to the e-commerce website using the Ecommerce-SSI Bridge.
 8. The e-commerce site uses the Ecommerce-SSI Bridge to verify the credential and authorize the purchase.
 
-_A similar scenario can be applied in the online purchase of dedicated drugs for specific health conditions. A general practitioner could
-issue a credential to the customer stating their condition._
+A similar scenario can be applied in the online purchase of dedicated drugs for specific health conditions. A general practitioner could
+issue a credential to the customer stating their condition.
 
 ### Seller Identity Verification
 

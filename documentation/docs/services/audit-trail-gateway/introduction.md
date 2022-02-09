@@ -19,8 +19,8 @@ can always read and write messages in the channel.
 :::caution Important 
 
 The Audit Trail GW currently integrates the [Ecommerce-SSI bridge](../SSI-bridge/introduction.md)
-to identify and authorize subscribers. **This means anyone interacting with the audit trail must create their
-own [Identity](../../basics/identity.md) before.**
+to identify and authorize subscribers. This means anyone interacting with the audit trail must create their
+own [Identity](../../basics/identity.md) beforehand.
 
 In the future, you will be able to remove this dependency and deploy the Audit Trail and Gateway in the presence of
 other (centralized) Accounting, Authentication, and Authorization (AAA) systems.

@@ -21,15 +21,15 @@ public keys are used to anchor off-chain Verifiable Credentials ([VCs](https://w
 certificates containing identity attributes and signed by an Issuer identity using its private key.
 
 The Issuer itself is an entity with its own decentralized identity. The SSI Bridge allows an identified trust root to
-verify users' identities. Verified identities can then propagate this verification to other entities (organizations,
-individuals, objects) identities using a network of trust approach.
+verify users' identities. Verified identities can then propagate this verification to organizations,
+individuals, or objects identities using a network of trust approach.
 
 ![network-of-trust](/img/integration-services/arch/network-of-trust.jpeg)
 
-The Bridge also allows Issuers to issue Verifiable Credentials for selected identity Owners identified by a
+The Bridge also allows Issuers to issue Verifiable Credentials for selected Identity Owners identified by a
 decentralized identity, and said Owners to present them to Verifiers. Verifiers can use
-the [E-commerce-SSI Bridge APIs](API-definition.md) to verify a credential's authenticity. This requires verifying that a
-credential contains the identifier (DID) of the owner presenting it and that an authorized Issuer signs it. This process
+the [Ecommerce-SSI Bridge APIs](API-definition.md) to verify a credential's authenticity. This requires verifying that a
+credential contains the identifier (DID) of the Owner presenting it and that an authorized Issuer signs it. This process
 requires access to information stored on a ledger.
 
 The following image illustrates the interaction between the Issuer, Owner, Verifier, and the ledger to manage the

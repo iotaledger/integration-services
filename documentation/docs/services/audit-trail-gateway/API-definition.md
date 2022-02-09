@@ -28,8 +28,11 @@ __Prefix:__ `/api/{{version}}/channels`
 You can use this service to search for one or more channels stored by the API. It can query for all the channels created
 by a specific identity or topic. It also allows you to keep or remove any channel from the database.
 
-:::info When you remove a channel from your database, it **will not be removed from the ledger** since data on the
+:::info 
+
+When you remove a channel from your database, it **will not be removed from the ledger** since data on the
 Tangle is immutable. The service will only remove the index from your database.
+
 :::
 
 __Prefix:__ `/api/{{version}}/channel-info`

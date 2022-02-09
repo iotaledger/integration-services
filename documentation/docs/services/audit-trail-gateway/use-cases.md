@@ -18,11 +18,11 @@ to share immutable and auditable data and events and guarantee the Immutability 
 
 ## Sharing Immutable and Auditable Data and Events
 
-This scenario involves a small amount of data that a channel *Author* and *writer subscribers* want to share with *
-reader subscribers*. All the information is stored in the Audit Trail, and channel reader subscribers can verify its
+This scenario involves a small amount of data that a channel Author and writer subscribers want to share with 
+reader subscribers. All the information is stored in the Audit Trail, and channel reader subscribers can verify its
 source (identity of the writer subscribers).
 
-One example of this scenario is _sharing threat information_ detected by a sensor on a critical e-commerce
+One example of this scenario is sharing threat information detected by a sensor on a critical e-commerce
 infrastructure to alert all other systems connected to the same infrastructure.
 
 You could implement the following workflow:
@@ -39,7 +39,7 @@ You could implement the following workflow:
 6. The **device Z** uses the GW APIs to add data to **channel A**.
 7. **Tool C** is automatically notified of new data coming from **device Z**.
 
-## Guaranteeing the Immutability of Large Data Sets
+## Assuring the Immutability of Large Data Sets
 
 This scenario includes storing and sharing data across an organizations' data sets maintained in large data lakes while
 guaranteeing that the data sets have not been altered over time or passed to unauthorized parties.
