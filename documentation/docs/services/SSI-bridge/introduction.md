@@ -13,7 +13,7 @@ keywords:
 ## Concept and Logic Architecture
 
 The Ecommerce-SSI Bridge allows you to create [Self-Sovereign Identities](../../basics/identity.md), linking
-Decentralized Identifiers (DIDs) to their specification ([DID Documents](https://www.w3.org/TR/did-core/).
+Decentralized Identifiers (DIDs) to their specification ([DID Documents](https://www.w3.org/TR/did-core/)).
 
 DIDs are public/private key pairs that can be created for organizations, individuals, and objects. Each identity is
 represented by a unique public key immutably stored onto the ledger (in our case, the IOTA Tangle). Identities and

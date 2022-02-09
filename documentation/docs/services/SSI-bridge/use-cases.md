@@ -36,7 +36,7 @@ and threats or frauds in the distribution chain.
 6. The e-commerce operator uses the Ecommerce-SSI Bridge to verify that the parcel was only handled by an authorized
    courier, nor it was stolen or diverted in transit. This is possible because of the verification of the device
    handling the scanning of the delivery.
-7. (optional) The customer can acquire the courier’s scanner device credential (in the form of a QR code. The QR code
+7. (optional) The customer can acquire the courier’s scanner device credential in the form of a QR code. The QR code
    can be read using a mobile phone and the Ecommerce-SSI Bridge to verify that the scanner device belongs to a delivery
    company authorized by the e-commerce operator. This allows verifying authentic deliveries.
 
