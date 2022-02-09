@@ -33,6 +33,7 @@ jobs:
           cd documentation
           export config=$(cat EXTERNAL_DOCS_CONFIG)
           npm run setup
+          rsync -av --progress ./static ./local-wiki/iota-wiki/static
           cd ../
           rsync -av --progress ./ ./documentation/local-wiki/iota-wiki/external/integration-services --exclude .git --exclude node_modules --exclude local-wiki
           cd documentation/local-wiki/iota-wiki
