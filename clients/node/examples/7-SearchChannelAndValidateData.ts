@@ -10,8 +10,10 @@ const identity = new IdentityClient(defaultConfig);
 async function searchChannelAndValidateData() {
   // Creating a channel owner who creates the channel and a channel user who will be authorized to read the channel
   console.log('Creating user...');
-  const channelOwner = await identity.create('Owner');
-  const channelUser = await identity.create('User');
+  const ownerUsername = 'Owner-' + Math.ceil(Math.random() * 100000);
+  const subscriberUsername = 'Subscriber-' + Math.ceil(Math.random() * 100000);
+  const channelOwner = await identity.create(ownerUsername);
+  const channelUser = await identity.create(subscriberUsername);
 
   // We will use two instances of the channel api client. One is getting authorized by the owner and the other one by the user.
   await ownerClient.authenticate(channelOwner.doc.id, channelOwner.key.secret);
