@@ -12,7 +12,7 @@ import { Rings } from 'react-loader-spinner';
 import { TourContext } from '../../contexts/tour.provider';
 import { VcDisplay } from './verify-credential.styles';
 
-const VerifyCredential = () => {
+const VerifyCredential = ({showCredential}: {showCredential: boolean}) => {
 	const inputRef = useRef<any>();
 	const [ageRestrictionError, setAgeRestrictionError] = useState<boolean>();
 	const [credentialFile, setCredentialFile] = useState<any>();
@@ -41,16 +41,16 @@ const VerifyCredential = () => {
 		if (!overAgeRestriction && verified === false) {
 			setErrorMessage('Credential is under age restriction or invalid!');
 			setStep(6);
-			setRun(true);		
-		// User is over 18 but credential is invalid
+			setRun(true);
+			// User is over 18 but credential is invalid
 		} else if (overAgeRestriction && verified === false) {
 			setErrorMessage('Credential is invalid!');
 			setStep(6);
-			setRun(true);	
+			setRun(true);
 			// Cannot reach server
 		} else if (verified === undefined) {
 			setErrorMessage('Cannot reach server, try again.');
-			setRun(false);	
+			setRun(false);
 			// User is over 18 and already authenticated
 		} else if (overAgeRestriction && authenticated && !useOwnCredential && verified) {
 			setStep(10);
@@ -66,11 +66,15 @@ const VerifyCredential = () => {
 	};
 
 	const onFileChange = async (file: File) => {
-		const credential = await readFile(file as File);
-		setCredentialFile(credential);
-		setIsVerified(undefined);
-		setCredential(undefined);
-		setAgeRestrictionError(false);
+		try {
+			const credential = await readFile(file as File);
+			setCredentialFile(credential);
+			setIsVerified(undefined);
+			setCredential(undefined);
+			setAgeRestrictionError(false);
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	const onCredentialChange = (event: any) => {
@@ -110,7 +114,7 @@ const VerifyCredential = () => {
 				</option>
 				<option className="overAgeCredential" value="above">
 					Adult credential
-				</option>		
+				</option>
 				<option value="own">Use your own credential</option>
 			</Form.Select>
 			{useOwnCredential && (
@@ -135,7 +139,7 @@ const VerifyCredential = () => {
 			<MessageBox className="credentialVerified" type="success" show={ageRestrictionError === false && isVerified === true}>
 				Credential successful verified
 			</MessageBox>
-			{credentialFile && (
+			{(credentialFile && showCredential) && (
 				<VcDisplay>
 					<b>Selected Verifiable Credential:</b>
 					<hr></hr>

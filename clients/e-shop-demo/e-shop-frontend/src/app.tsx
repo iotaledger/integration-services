@@ -6,6 +6,10 @@ import Checkout from './pages/checkout/checkout.component';
 import ItemList from './pages/item-list/item-list.component';
 import Tour from './components/tour/tour.component';
 import TourProvider from './contexts/tour.provider';
+import { CaixaLogo, Logo, LogoContainer, LogoText } from './app.styles';
+import iotaLogo from './assets/iota_logo.png';
+import ensuresecLogo from './assets/ensuresec_logo.png';
+import caixaLogo from './assets/caixa_logo.png';
 
 const App = () => {
 	const sk = process.env.REACT_APP_SECRET_KEY;
@@ -27,6 +31,12 @@ const App = () => {
 							<Route exact path="/" component={ItemList}></Route>
 							<Route path="/checkout" component={Checkout}></Route>
 						</Switch>
+						<LogoContainer>
+							<LogoText>This demo was produced for Ensuresec project by the IOTA Foundation and in collaboration with Caixa Bank</LogoText>
+							<Logo src={iotaLogo} style={{'height': '100px', 'paddingBottom': '10px'}}></Logo>
+							<Logo src={ensuresecLogo}></Logo>
+							<CaixaLogo src={caixaLogo}></CaixaLogo>
+						</LogoContainer>
 					</Router>
 				</TourProvider>
 			</CartProvider>

@@ -12,6 +12,7 @@ const Tour = () => {
 	const { items } = useContext(CartContext);
 	let helpers: StoreHelpers;
 	const location = useLocation();
+	const RUN_TOUR = false
 
 	useEffect(() => {
 		if (items.length > 0 && step === 3) {
@@ -24,13 +25,13 @@ const Tour = () => {
 		if (path === '/checkout' && items.length > 0) {
             // If items in cart continue with step 4
 			setStep(4);
-			setRun(true);
+			setRun(RUN_TOUR);
         } else if (path === '/checkout') {
 			setRun(false);
         } else if (path === '/') {
             // Restart tour on home page
 			setStep(0);
-            setRun(true);
+            setRun(RUN_TOUR);
 		}
 	}, [location]);
 
