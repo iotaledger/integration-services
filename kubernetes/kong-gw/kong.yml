@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: integration-service-gw
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$2
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: audit-trail-gw-ms
+            port:
+              number: 3000
+---
+# todo this should later link to the docs and info microservices
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: integration-service-others
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /info
+        pathType: Prefix
+        backend:
+          service:
+            name: audit-trail-gw-ms
+            port:
+              number: 3000
+      - path: /docs
+        pathType: Prefix
+        backend:
+          service:
+            name: audit-trail-gw-ms
+            port:
+              number: 3000
