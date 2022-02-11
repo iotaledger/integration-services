@@ -9,8 +9,8 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: create-root-identity
-          image: iotaledger/integration-services:develop
-          imagePullPolicy: IfNotPresent
+          image: ssi-bridge-ms
+          imagePullPolicy: Never
           command: ["node", "dist/index.js", "setup-api"]
           env:
             - name: "SERVER_IDENTITY_FILE"

@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-trail-gw-ms
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: audit-trail-gw-ms
+  template:
+    metadata:
+      labels:
+        app: audit-trail-gw-ms
+    spec:
+      initContainers:
+        - name: wait-for-hornet
+          image: busybox:1.28
+          args:
+            - /bin/sh
+            - -c
+            - >
+              set -x;
+              until nslookup $IOTA_HORNET_NODE | sed -e 's/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/';
+              do 
+              echo waiting for Hornet;
+              sleep 2;
+              done
+          env:
+            - name: "IOTA_HORNET_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: IOTA_HORNET_NODE
+
+        - name: wait-for-mongo
+          image: busybox:1.28
+          args:
+            - /bin/sh
+            - -c
+            - >
+              set -x;
+              until nslookup "mongodb-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local";
+              do 
+              echo waiting for MongoDB;
+              sleep 2;
+              done
+      containers:
+        - name: audit-trail-gw-ms
+          image: audit-trail-gw-ms
+          imagePullPolicy: Never
+          command: ["node", "dist/index.js", "server"]
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "250m"
+            limits:
+              memory: "250Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /info
+              port: 3000
+          env:
+            - name: "PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: PORT_AUDIT
+            - name: "DATABASE_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: DATABASE_NAME
+            - name: "IOTA_PERMA_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: IOTA_PERMA_NODE
+            - name: "DATABASE_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: DATABASE_URL
+            - name: "IOTA_HORNET_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: IOTA_HORNET_NODE
+            - name: "SERVER_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: SERVER_SECRET
+            - name: "API_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: API_KEY
+          ports:
+            - protocol: TCP
+              containerPort: 3000

@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: integration-service-api
+  name: ssi-bridge-ms
 spec:
-  replicas: 5
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: integration-service-api
+      app: ssi-bridge-ms
   template:
     metadata:
       labels:
-        app: integration-service-api
+        app: ssi-bridge-ms
     spec:
       initContainers:
         - name: wait-for-hornet
@@ -45,11 +45,10 @@ spec:
               echo waiting for MongoDB;
               sleep 2;
               done
-
       containers:
-        - name: integration-service-api
-          image: iotaledger/integration-services:develop
-          imagePullPolicy: IfNotPresent
+        - name: ssi-bridge-ms
+          image: ssi-bridge-ms
+          imagePullPolicy: Never
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:
@@ -61,7 +60,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /info
-              port: 3000
+              port: 3001
           env:
             - name: "SERVER_IDENTITY_FILE"
               value: "/config/server-identity.json"
@@ -69,7 +68,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: integration-service-api-config
-                  key: PORT
+                  key: PORT_SSI
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:
@@ -103,4 +102,4 @@ spec:
                   key: API_KEY
           ports:
             - protocol: TCP
-              containerPort: 3000
+              containerPort: 3001
