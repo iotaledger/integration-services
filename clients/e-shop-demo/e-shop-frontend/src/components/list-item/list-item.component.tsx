@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { CartContext } from '../../contexts/cart.provider';
 import { Button } from '../../global.styles';
 import { Item as ItemModel } from '../../models/item.model';
-import { Card, CardHeading, CardImage, CardText } from './item.styles';
+import { Card, CardHeading, CardImage, CardText } from './list-item.styles';
 
 const Item = ({ item }: any) => {
 	const { name, imageUrl, price, ageRestricted } = item as ItemModel;
@@ -10,7 +10,7 @@ const Item = ({ item }: any) => {
 	return (
 		<Card className={'ageRestricted'+ageRestricted}>
 			<CardHeading>{name}</CardHeading>
-			<CardImage src={imageUrl}></CardImage>
+			<CardImage src={`${process.env.PUBLIC_URL}/assets/${imageUrl}`}></CardImage>
 			<CardText>Price: {price}€</CardText>
 			<Button onClick={() => addToCart(item)}>Add to cart</Button>
 		</Card>

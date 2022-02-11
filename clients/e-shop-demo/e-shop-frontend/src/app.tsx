@@ -32,7 +32,7 @@ const App = () => {
 							<Route path="/checkout" component={Checkout}></Route>
 						</Switch>
 						<LogoContainer>
-							<LogoText>This demo was produced for Ensuresec project by the IOTA Foundation and in collaboration with Caixa Bank</LogoText>
+							<LogoText>This demo was produced for Ensuresec project by the IOTA Foundation and in collaboration with Caixa Bank.</LogoText>
 							<Logo src={iotaLogo} style={{'height': '100px', 'paddingBottom': '10px'}}></Logo>
 							<Logo src={ensuresecLogo}></Logo>
 							<CaixaLogo src={caixaLogo}></CaixaLogo>

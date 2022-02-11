@@ -10,9 +10,9 @@ import credentialUnderAge from '../../data/credential_under_age.json';
 import credentialNotTrusted from '../../data/credential_not_trusted_root.json';
 import { Rings } from 'react-loader-spinner';
 import { TourContext } from '../../contexts/tour.provider';
-import { VcDisplay } from './verify-credential.styles';
+import CredentialDisplay from '../credential-display/credential-display.component';
 
-const VerifyCredential = ({showCredential}: {showCredential: boolean}) => {
+const VerifyCredential = ({ showCredential }: { showCredential: boolean }) => {
 	const inputRef = useRef<any>();
 	const [ageRestrictionError, setAgeRestrictionError] = useState<boolean>();
 	const [credentialFile, setCredentialFile] = useState<any>();
@@ -82,22 +82,31 @@ const VerifyCredential = ({showCredential}: {showCredential: boolean}) => {
 		setCredential(undefined);
 		setAgeRestrictionError(undefined);
 		setErrorMessage(undefined);
-		const value = event.target.value;
-		if (value === 'under') {
-			setCredentialFile(credentialUnderAge);
-			setUseOwnCredential(false);
-			setRun(false);
-		} else if (value === 'above') {
-			setCredentialFile(credentialJson);
-			setUseOwnCredential(false);
-			setStep(5);
-			setRun(true);
-		} else if (value === 'notTrusted') {
-			setCredentialFile(credentialNotTrusted);
-			setUseOwnCredential(false);
-			setRun(false);
-		} else if (event.target.value === 'own') {
-			setUseOwnCredential(true);
+		const selectedCredential = event.target.value;
+		switch (selectedCredential) {
+			case 'under': {
+				setCredentialFile(credentialUnderAge);
+				setUseOwnCredential(false);
+				setRun(false);
+				break;
+			}
+			case 'above': {
+				setCredentialFile(credentialJson);
+				setUseOwnCredential(false);
+				setStep(5);
+				setRun(true);
+				break;
+			}
+			case 'notTrusted': {
+				setCredentialFile(credentialNotTrusted);
+				setUseOwnCredential(false);
+				setRun(false);
+				break;
+			}
+			case 'own': {
+				setUseOwnCredential(true);
+				break;
+			}
 		}
 	};
 
@@ -139,13 +148,7 @@ const VerifyCredential = ({showCredential}: {showCredential: boolean}) => {
 			<MessageBox className="credentialVerified" type="success" show={ageRestrictionError === false && isVerified === true}>
 				Credential successful verified
 			</MessageBox>
-			{(credentialFile && showCredential) && (
-				<VcDisplay>
-					<b>Selected Verifiable Credential:</b>
-					<hr></hr>
-					{JSON.stringify(credentialFile, null, 4)}
-				</VcDisplay>
-			)}
+			<CredentialDisplay credentialFile={credentialFile} showCredential={showCredential}></CredentialDisplay>
 		</>
 	);
 };

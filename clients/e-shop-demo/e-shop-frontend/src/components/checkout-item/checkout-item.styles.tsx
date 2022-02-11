@@ -14,6 +14,9 @@ export const CheckoutItemImage = styled.img`
 	width: 35px;
 	height: auto;
 	margin-left: 10px;
+	@media screen and (max-width:450px) {
+		display: none;
+	}
 `;
 
 export const CheckoutItemName = styled.span`

@@ -5,6 +5,7 @@ export const CheckoutTotalContainer = styled.div`
 	min-width: 400px;
 	padding: 20px;
 	flex: 1;
+	border-radius: 5px;
 	@media screen and (max-width: 600px) {
 		min-width: unset;
 	}

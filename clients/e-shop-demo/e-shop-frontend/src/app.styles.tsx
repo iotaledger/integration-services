@@ -6,6 +6,7 @@ export const LogoContainer = styled.div`
 	flex-wrap: wrap;
 	gap: 30px;
 	margin: 50px 70px;
+	justify-content: start;
 	@media only screen and (max-width: 600px) {
 		justify-content: center;
 	}
@@ -25,7 +26,8 @@ export const CaixaLogo = styled(Logo)`
 `
 
 export const LogoText = styled.p`
-	padding: 20px;
+	padding: 20px 0;
 	width: 300px;
 	align-self: center;
+	text-align: justify;
 `;

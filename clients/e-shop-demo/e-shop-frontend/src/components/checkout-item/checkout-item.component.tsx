@@ -11,7 +11,7 @@ const CheckoutItem = ({ item }: any) => {
 	return (
 		<>
 			<CheckoutItemContainer>
-				<CheckoutItemImage src={imageUrl}></CheckoutItemImage>
+				<CheckoutItemImage src={`${process.env.PUBLIC_URL}/assets/${imageUrl}`}></CheckoutItemImage>
 				<CheckoutItemName>{name}</CheckoutItemName>
 				<CheckoutItemName>{price} €</CheckoutItemName>
 				{ageRestricted && <span style={{ fontSize: 'x-large' }}>&#128286;</span>}

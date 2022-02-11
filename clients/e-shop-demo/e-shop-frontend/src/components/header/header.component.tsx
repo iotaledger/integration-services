@@ -1,4 +1,4 @@
-import { HeaderButton, HeaderHeading, HeaderItem, HeaderLink, HeaderWrapper } from './header.styles';
+import { HeaderButton, HeaderHeading, HeaderItem, HeaderLink, HeaderRight, HeaderWrapper } from './header.styles';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { CartContext } from '../../contexts/cart.provider';
@@ -25,12 +25,12 @@ const Header = () => {
 		
 
 			<HeaderHeading style={{ flex: '1 1 0px' }}>{title}</HeaderHeading>
-			<div>
+			<HeaderRight>
 				{authenticated && <HeaderItem onClick={() => logout()}>Logout</HeaderItem>}
 
 					<HeaderLink to="/checkout" className='cartButton'>Cart ({items.length})</HeaderLink>
 	
-			</div>
+			</HeaderRight>
 		</HeaderWrapper>
 	);
 };

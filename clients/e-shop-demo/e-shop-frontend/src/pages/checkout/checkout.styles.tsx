@@ -7,6 +7,10 @@ export const CheckoutContainer = styled.div`
 	margin: 20px 70px;
 	gap: 20px;
 	flex-wrap: wrap;
+	
+	@media screen and (max-width: 600px) {
+		margin: 20px 5px;
+	}
 `;
 
 export const CheckoutItemsContainer = styled.div`
@@ -15,6 +19,7 @@ export const CheckoutItemsContainer = styled.div`
 	padding: 20px;
 	flex: 1;
 	min-width: 400px;
+	border-radius: 5px;
 	background-color: ${(props) => props.theme.secondaryLight};
 	@media screen and (max-width: 600px) {
 		min-width: unset;

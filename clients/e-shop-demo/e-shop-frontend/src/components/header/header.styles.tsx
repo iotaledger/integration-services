@@ -10,7 +10,7 @@ export const HeaderWrapper = styled.div`
 	align-items: center;
 `;
 
-const headeItemBaseStyle = css`
+const headerItemBaseStyle = css`
 	color: white;
 	padding: 10px;
 	margin: 10px;
@@ -26,11 +26,11 @@ const headeItemBaseStyle = css`
 	}
 `;
 export const HeaderItem = styled.div`
-	${headeItemBaseStyle}
+	${headerItemBaseStyle}
 `;
 
 export const HeaderLink = styled(Link)`
-	${headeItemBaseStyle}
+	${headerItemBaseStyle}
 `;
 
 export const HeaderButton = styled(Button)`
@@ -40,4 +40,13 @@ export const HeaderButton = styled(Button)`
 export const HeaderHeading = styled.h3`
 	color: white;
 	font-size: x-large;
+	@media screen and (max-width:450px) {
+		display: none;
+	}
 `;
+
+export const HeaderRight = styled.div`
+	display: flex;
+	justify-content: end;
+
+`
