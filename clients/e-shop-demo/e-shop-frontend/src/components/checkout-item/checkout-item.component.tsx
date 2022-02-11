@@ -15,7 +15,7 @@ const CheckoutItem = ({ item }: any) => {
 				<CheckoutItemName>{name}</CheckoutItemName>
 				<CheckoutItemName>{price} €</CheckoutItemName>
 				{ageRestricted && <span style={{ fontSize: 'x-large' }}>&#128286;</span>}
-				<SmallButton onClick={() => removeFromCart(item.index)}>X</SmallButton>
+				<SmallButton style={{'marginLeft': 'auto'}} onClick={() => removeFromCart(item.index)}>X</SmallButton>
 			</CheckoutItemContainer>
 		</>
 	);
