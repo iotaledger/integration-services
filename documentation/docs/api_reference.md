@@ -842,7 +842,7 @@ Adds Trusted Root identity identifiers (DIDs)
 
 ##### Description
 
-Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
+Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their verifiable credentials (VCs) are automatically trusted when checking at the Bridge.
 
 ##### Responses
 
@@ -865,7 +865,7 @@ Returns a list of Trusted Root identity identifiers (DIDs)
 
 ##### Description
 
-Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
+Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their verifiable credentials (VCs) are automatically trusted when checking at the Bridge.
 
 ##### Responses
 
@@ -884,7 +884,7 @@ Remove Trusted Root identity identifiers (DIDs)
 
 ##### Description
 
-Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
+Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their verifiable credentials (VCs) are automatically trusted when checking at the Bridge.
 
 ##### Parameters
 
