@@ -9,7 +9,7 @@ const GenerateNonce = () => {
 	useEffect(() => {
 		async function getNonce() {
 			const identityId = credential?.id;
-			identityId && setNonce(await generateNonce(identityId));	
+			identityId && setNonce(await generateNonce(identityId));
 		}
 		getNonce();
 	}, [credential]);

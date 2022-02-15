@@ -6,7 +6,7 @@ export const theme = {
 	secondaryLight: '#696f76', // body copy
 	accent: '#603f98', // blueberry
 	accentDarker: '#4c3279', // blueberry 20% darker
-	background: '#c4c4c4' // light gray
+	background: '#ffffff' // white
 };
 
 export const Button = styled.button`

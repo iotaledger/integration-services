@@ -11,8 +11,8 @@ export const Card = styled.div`
 
 export const CardHeading = styled.h3`
 	text-align: center;
-  margin-top: 15px;
-  color: white;
+	margin-top: 15px;
+	color: white;
 `;
 
 export const CardImage = styled.img`
@@ -23,7 +23,7 @@ export const CardImage = styled.img`
 
 export const CardText = styled.p`
 	text-align: center;
-  padding: 10px;
-  color: white;
-  font-weight: 500;
+	padding: 10px;
+	color: white;
+	font-weight: 500;
 `;

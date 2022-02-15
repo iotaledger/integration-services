@@ -8,7 +8,7 @@ const Item = ({ item }: any) => {
 	const { name, imageUrl, price, ageRestricted } = item as ItemModel;
 	const { addToCart } = useContext(CartContext);
 	return (
-		<Card className={'ageRestricted'+ageRestricted}>
+		<Card className={'ageRestricted' + ageRestricted}>
 			<CardHeading>{name}</CardHeading>
 			<CardImage src={`${process.env.PUBLIC_URL}/assets/${imageUrl}`}></CardImage>
 			<CardText>Price: {price}€</CardText>

@@ -4,8 +4,7 @@ import { SmallButton } from '../../global.styles';
 import { Item } from '../../models/item.model';
 import { CheckoutItemContainer, CheckoutItemImage, CheckoutItemName, CheckoutItemPrice } from './checkout-item.styles';
 
-const CheckoutItem = ({ item }: {item: Item}) => {
-
+const CheckoutItem = ({ item }: { item: Item }) => {
 	const { id, name, price, ageRestricted, imageUrl } = item;
 	const { removeFromCart } = useContext(CartContext);
 

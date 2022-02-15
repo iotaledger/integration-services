@@ -15,7 +15,7 @@ const Checkout = () => {
 					return <CheckoutItem key={item.id} item={item}></CheckoutItem>;
 				})}
 				{/* If there are no items in cart, display fake item */}
-				{items.length === 0 && <CheckoutItem key={1}  item={{'name': 'No items', 'imageUrl': undefined, 'price': 0, 'ageRestricted': false}}></CheckoutItem>}
+				{items.length === 0 && <CheckoutItem key={1} item={{ name: 'No items', imageUrl: undefined, price: 0, ageRestricted: false }}></CheckoutItem>}
 			</CheckoutItemsContainer>
 			<CheckoutTotal></CheckoutTotal>
 		</CheckoutContainer>

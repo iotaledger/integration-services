@@ -12,7 +12,7 @@ const Tour = () => {
 	const { items } = useContext(CartContext);
 	let helpers: StoreHelpers;
 	const location = useLocation();
-	const RUN_TOUR = false
+	const RUN_TOUR = true;
 
 	useEffect(() => {
 		if (items.length > 0 && step === 3) {
@@ -23,15 +23,15 @@ const Tour = () => {
 	useEffect(() => {
 		const path = location.pathname;
 		if (path === '/checkout' && items.length > 0) {
-            // If items in cart continue with step 4
+			// If items in cart continue with step 4
 			setStep(4);
 			setRun(RUN_TOUR);
-        } else if (path === '/checkout') {
+		} else if (path === '/checkout') {
 			setRun(false);
-        } else if (path === '/') {
-            // Restart tour on home page
+		} else if (path === '/') {
+			// Restart tour on home page
 			setStep(0);
-            setRun(RUN_TOUR);
+			setRun(RUN_TOUR);
 		}
 	}, [location]);
 
@@ -39,32 +39,32 @@ const Tour = () => {
 		const { status, index, lifecycle } = data;
 		const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
-        // Continue with next step when the previous one is finished
+		// Continue with next step when the previous one is finished
 		if (lifecycle === 'complete') {
 			setStep(index + 1);
 		}
 
-        // Stop tour when last step is reached
+		// Stop tour when last step is reached
 		if (finishedStatuses.includes(status)) {
 			setRun(false);
 		}
 
-        // Waiting with the tour until the user has selected some items
+		// Waiting with the tour until the user has selected some items
 		if (index === 2 && lifecycle === 'complete' && items.length === 0) {
 			setRun(false);
 		}
 
-        // Disallow clicks to make tour more 'intuitive'
+		// Disallow clicks to make tour more 'intuitive'
 		if ([3].includes(index)) {
 			setAllowClicks(false);
 		}
 
-        // Allow clicks again to make tour more 'intuitive'
+		// Allow clicks again to make tour more 'intuitive'
 		if ([5].includes(index)) {
 			setAllowClicks(false);
 		}
 
-        // Stop tour and wait for requests to finish
+		// Stop tour and wait for requests to finish
 		if ([3, 4, 5, 8].includes(index) && lifecycle === 'complete') {
 			setRun(false);
 		}
@@ -76,23 +76,23 @@ const Tour = () => {
 
 	return (
 		<ErrorBoundary>
-		<Joyride
-			callback={handleJoyrideCallback}
-			continuous={true}
-			getHelpers={getHelpers}
-			run={run}
-			scrollToFirstStep={true}
-			showProgress={false}
-			showSkipButton={false}
-			steps={steps}
-			styles={{
-				options: {
-					zIndex: 10000
-				}
-			}}
-			spotlightClicks={allowClicks}
-			stepIndex={step}
-		/>
+			<Joyride
+				callback={handleJoyrideCallback}
+				continuous={true}
+				getHelpers={getHelpers}
+				run={run}
+				scrollToFirstStep={true}
+				showProgress={false}
+				showSkipButton={false}
+				steps={steps}
+				styles={{
+					options: {
+						zIndex: 10000
+					}
+				}}
+				spotlightClicks={allowClicks}
+				stepIndex={step}
+			/>
 		</ErrorBoundary>
 	);
 };

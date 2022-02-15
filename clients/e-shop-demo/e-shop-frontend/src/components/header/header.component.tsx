@@ -10,19 +10,20 @@ const Header = () => {
 	const location = useLocation();
 	const pageName = location.pathname.split('/')[1];
 
-
 	const title = pageName ? pageName.toUpperCase() : 'Shop';
 	return (
 		<HeaderWrapper>
-			<HeaderLink to="/" style={{ flex: '1 1 0px' }}>E-Shop</HeaderLink>
-		
+			<HeaderLink to="/" style={{ flex: '1 1 0px' }}>
+				E-Shop
+			</HeaderLink>
 
 			<HeaderHeading style={{ flex: '1 1 0px' }}>{title}</HeaderHeading>
 			<HeaderRight>
 				{authenticated && <HeaderItem onClick={logout}>Logout</HeaderItem>}
 
-					<HeaderLink to="/checkout" className='cartButton'>Cart ({items.length})</HeaderLink>
-	
+				<HeaderLink to="/checkout" className="cartButton">
+					Cart ({items.length})
+				</HeaderLink>
 			</HeaderRight>
 		</HeaderWrapper>
 	);

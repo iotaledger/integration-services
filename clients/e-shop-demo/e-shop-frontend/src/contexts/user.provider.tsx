@@ -18,7 +18,7 @@ const UserProvider = ({ children }: any) => {
 	const logout = () => {
 		setAuthenticated(false);
 		removeAuthHeader();
-	}
+	};
 
 	return (
 		<UserContext.Provider

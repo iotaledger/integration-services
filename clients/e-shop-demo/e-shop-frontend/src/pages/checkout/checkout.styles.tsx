@@ -7,7 +7,7 @@ export const CheckoutContainer = styled.div`
 	margin: 20px 70px;
 	gap: 20px;
 	flex-wrap: wrap;
-	
+
 	@media screen and (max-width: 600px) {
 		margin: 20px 5px;
 	}
@@ -32,7 +32,7 @@ export const CheckoutHeading = styled.h2`
 	text-align: center;
 `;
 
-export const CheckoutTotal= styled.div`
+export const CheckoutTotal = styled.div`
 	background-color: ${(props) => props.theme.brown};
 	min-width: 400px;
 	padding: 20px;
