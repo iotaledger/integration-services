@@ -1,7 +1,7 @@
 import { searchCriteria, IdentityClient, IdentityJson } from 'iota-is-sdk';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
-import _ from 'lodash';
+
 async function searchIdentityAndUpdate() {
   const identity = new IdentityClient(defaultConfig);
 
@@ -11,8 +11,15 @@ async function searchIdentityAndUpdate() {
   // Authenticate as the admin identity
   await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
 
+  const username = 'MyUser-' + Math.ceil(Math.random() * 100000);
+  const userIdentity = await identity.create(username);
+
+  console.log('~~~~~~~~~~~~~~~~');
+  console.log('Created user identity: ', userIdentity);
+  console.log('~~~~~~~~~~~~~~~~');
+
   // Search for identities with username 'User' in it
-  const search: searchCriteria = { username: 'User-' };
+  const search: searchCriteria = { username: 'MyUser-' };
 
   const identities = await identity.search(search);
 
@@ -30,7 +37,7 @@ async function searchIdentityAndUpdate() {
 
     console.log('userIdentiy', userIdentity);
 
-    const newUsername = 'New' + userIdentity.username;
+    const newUsername = 'Updated' + userIdentity.username;
 
     // Update the claim of the identity with a new username
     await identity.update({
