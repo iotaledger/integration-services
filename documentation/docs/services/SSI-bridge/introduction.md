@@ -12,12 +12,12 @@ keywords:
 
 ## Concept and Logic Architecture
 
-The Ecommerce-SSI Bridge allows you to create [Self-Sovereign Identities](../../basics/identity.md), linking
-Decentralized Identifiers (DIDs) to their specification ([DID Documents](https://www.w3.org/TR/did-core/)).
+The Ecommerce-SSI Bridge allows you to create [self-sovereign identities](../../basics/identity.md), linking
+decentralized identifiers (DIDs) to their specification ([DID Documents](https://www.w3.org/TR/did-core/)).
 
 DIDs are public/private key pairs that can be created for organizations, individuals, and objects. Each identity is
 represented by a unique public key immutably stored onto the ledger (in our case, the IOTA Tangle). Identities and
-public keys are used to anchor off-chain Verifiable Credentials ([VCs](https://www.w3.org/TR/vc-data-model/)),
+public keys are used to anchor off-chain verifiable credentials ([VCs](https://www.w3.org/TR/vc-data-model/)),
 certificates containing identity attributes and signed by an Issuer identity using its private key.
 
 The Issuer itself is an entity with its own decentralized identity. The SSI Bridge allows an identified trust root to
@@ -26,7 +26,7 @@ individuals, or objects identities using a network of trust approach.
 
 ![network-of-trust](/img/integration-services/arch/network-of-trust.jpeg)
 
-The Bridge also allows Issuers to issue Verifiable Credentials for selected Identity Owners identified by a
+The Bridge also allows Issuers to issue verifiable credentials for selected Identity Owners identified by a
 decentralized identity, and said Owners to present them to Verifiers. Verifiers can use
 the [Ecommerce-SSI Bridge APIs](API-definition.md) to verify a credential's authenticity. This requires verifying that a
 credential contains the identifier (DID) of the Owner presenting it and that an authorized Issuer signs it. This process

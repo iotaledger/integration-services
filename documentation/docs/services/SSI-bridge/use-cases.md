@@ -72,7 +72,7 @@ compliance and reduce liability for e-commerce and small sellers.
    wallet or an e-commerce shopping app.
 3. The customer requests an Issuer (e.g. a bank) to issue a credential stating their age.
 4. The Issuer uses previously verified information about the user held on local record and the Ecommerce-SSI Bridge to
-   create and issue a Verifiable Credential to the customer.
+   create and issue a verifiable credential to the customer.
 5. The customer (namely Owner) downloads the credential in their app using a credential wallet.
 6. The customer purchases an item that requires age verification on an e-commerce site.
 7. The customer provides their credential to the e-commerce website using the Ecommerce-SSI Bridge.
