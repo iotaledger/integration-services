@@ -14,7 +14,7 @@ const CheckoutTotal = () => {
 	const [showOrderPlaceMessage, setShowOrderPlacedMessage] = useState(false);
 	const [hasCheckedOut, setHasCheckedOut] = useState<boolean>(false);
 	const cartHasAgeRestrictedItems = !!items.find((item: any) => item.item.ageRestricted === true);
-	const { authenticated, isVerified, setIsVerified } = useContext(UserContext);
+	const { authenticated, isVerified, setIsVerified, logout } = useContext(UserContext);
 
 	const onCheckout = () => {
 		setIsVerified(undefined);
@@ -45,7 +45,7 @@ const CheckoutTotal = () => {
 			)}
 			{hasCheckedOut && (
 				<Link to="/">
-					<Button>Restart tour</Button>
+					<Button onClick={logout}>Restart tour</Button>
 				</Link>
 			)}
 			<MessageBox className="orderPlaced" type="success" show={showOrderPlaceMessage}>

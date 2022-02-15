@@ -16,13 +16,17 @@ const headerItemBaseStyle = css`
 	margin: 10px;
 	text-decoration: none;
 	font-weight: 600;
+	cursor: pointer;
 
-	&:hover,
 	&:visited,
 	&:focus,
 	&:link,
 	&:active {
 		color: white;
+	}
+
+	&:hover {
+		color: ${(props) => props.theme.background};
 	}
 `;
 export const HeaderItem = styled.div`
@@ -40,7 +44,7 @@ export const HeaderButton = styled(Button)`
 export const HeaderHeading = styled.h3`
 	color: white;
 	font-size: x-large;
-	@media screen and (max-width:450px) {
+	@media screen and (max-width: 450px) {
 		display: none;
 	}
 `;
@@ -48,5 +52,4 @@ export const HeaderHeading = styled.h3`
 export const HeaderRight = styled.div`
 	display: flex;
 	justify-content: end;
-
-`
+`;

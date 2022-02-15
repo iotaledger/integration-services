@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CheckoutStepHeading, CheckoutWithIotaContainer, CheckoutWithIotaContainerHeading } from './checkout-iota.styles';
 import { UserContext } from '../../contexts/user.provider';
 import AuthenticateCredential from '../authenticate-credential/authenticate-credential.component';
@@ -8,6 +8,19 @@ import { Form } from 'react-bootstrap';
 const CheckoutWithIota = () => {
 	const { isVerified } = useContext(UserContext);
 	const [showCredential, setShowCredential] = useState(false);
+	const [credentialButtonDisabled, setCredentialButtonDisabled] = useState(false);
+
+	// Hide credential display and disable toggle button on smaller screens
+	useEffect(() => {
+		window.addEventListener('resize', () => {
+			if (window.innerWidth < 600) {
+				showCredential && setShowCredential(false);
+				!credentialButtonDisabled && setCredentialButtonDisabled(true);
+			} else {
+				credentialButtonDisabled && setCredentialButtonDisabled(false);
+			}
+		});
+	}, []);
 
 	return (
 		<CheckoutWithIotaContainer>
@@ -19,7 +32,15 @@ const CheckoutWithIota = () => {
 					<AuthenticateCredential></AuthenticateCredential>
 				</>
 			)}
-			<Form.Check onChange={(_event) => setShowCredential(!showCredential)} style={{'marginTop': '20px'}} checked={showCredential} type="switch" id="custom-switch" label="Show credential" />
+			<Form.Check
+				onChange={(_event) => setShowCredential(!showCredential)}
+				style={{ marginTop: '20px' }}
+				checked={showCredential}
+				disabled={credentialButtonDisabled}
+				type="switch"
+				id="custom-switch"
+				label="Show credential"
+			/>
 		</CheckoutWithIotaContainer>
 	);
 };
