@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { CartContext } from '../../contexts/cart.provider';
 import { UserContext } from '../../contexts/user.provider';
 import { Button } from '../../global.styles';
+import { Item } from '../../models/item.model';
 import { CheckoutHeading } from '../../pages/checkout/checkout.styles';
 import CheckoutWithIota from '../checkout-iota/checkout-iota.component';
 import CheckoutTotalMessage from '../checkout-total-message/checkout-total-message.component';
@@ -13,7 +14,7 @@ const CheckoutTotal = () => {
 	const { items, emptyCart } = useContext(CartContext);
 	const [showOrderPlaceMessage, setShowOrderPlacedMessage] = useState(false);
 	const [hasCheckedOut, setHasCheckedOut] = useState<boolean>(false);
-	const cartHasAgeRestrictedItems = !!items.find((item: any) => item.item.ageRestricted === true);
+	const cartHasAgeRestrictedItems = !!items.find((item: Item) => item.ageRestricted === true);
 	const { authenticated, isVerified, setIsVerified, logout } = useContext(UserContext);
 
 	const onCheckout = () => {
