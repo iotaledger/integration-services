@@ -7,9 +7,10 @@ const identity = new IdentityClient(defaultConfig);
 
 async function createChannel() {
   // Create a new user. The user is used for authentication only.
-  const user = await identity.create('User');
+  const username = 'User-' + Math.ceil(Math.random() * 100000);
+  const user = await identity.create(username);
 
-  console.log("User", user);
+  console.log('User', user);
 
   // Authenticate as the user
   await channel.authenticate(user.doc.id, user.key.secret);
@@ -19,7 +20,7 @@ async function createChannel() {
     topics: [{ type: 'example-data', source: 'data-creator' }]
   });
 
-  console.log("Log Channel", logChannel);
+  console.log('Log Channel', logChannel);
 
   // The channel address is used to read and write to channels
   const channelAddress = logChannel.channelAddress;
