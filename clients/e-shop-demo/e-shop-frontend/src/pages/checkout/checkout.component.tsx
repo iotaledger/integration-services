@@ -13,7 +13,8 @@ const Checkout = () => {
 				{items.map((item: any, index: number) => {
 					return <CheckoutItem key={index} index item={item}></CheckoutItem>;
 				})}
-				{items.length === 0 && <p>No items in cart</p>}
+				{/* If there are no items in cart, display fake item */}
+				{items.length === 0 && <CheckoutItem key={1} index item={{'index': 0, 'item': {'name': 'No items', 'imageUrl': undefined, 'price': 0, 'ageRestricted': false}}}></CheckoutItem>}
 			</CheckoutItemsContainer>
 			<CheckoutTotal></CheckoutTotal>
 		</CheckoutContainer>

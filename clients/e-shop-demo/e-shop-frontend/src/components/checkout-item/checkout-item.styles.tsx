@@ -8,6 +8,10 @@ export const CheckoutItemContainer = styled.div`
 	align-items: center;
 	border-radius: 3px;
 	box-shadow: 5px 5px 16px 0px rgba(0, 0, 0, 0.4);
+
+	@media screen and (max-width:450px) {
+		margin: 5px 0;
+	}
 `;
 
 export const CheckoutItemImage = styled.img`

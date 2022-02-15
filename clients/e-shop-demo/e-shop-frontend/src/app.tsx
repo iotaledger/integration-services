@@ -10,6 +10,7 @@ import { CaixaLogo, Logo, LogoContainer, LogoText } from './app.styles';
 import iotaLogo from './assets/iota_logo.png';
 import ensuresecLogo from './assets/ensuresec_logo.png';
 import caixaLogo from './assets/caixa_logo.png';
+import euLogo from './assets/eu_logo.svg'
 
 const App = () => {
 	const sk = process.env.REACT_APP_SECRET_KEY;
@@ -36,6 +37,7 @@ const App = () => {
 							<Logo src={iotaLogo} style={{'height': '100px', 'paddingBottom': '10px'}}></Logo>
 							<Logo src={ensuresecLogo}></Logo>
 							<CaixaLogo src={caixaLogo}></CaixaLogo>
+							<Logo style={{'backgroundColor': 'white', 'margin': '5px', 'padding': '5px'}} src={euLogo}></Logo>
 						</LogoContainer>
 					</Router>
 				</TourProvider>
