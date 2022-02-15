@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../../contexts/cart.provider';
 import { UserContext } from '../../contexts/user.provider';
@@ -16,6 +16,7 @@ const CheckoutTotal = () => {
 	const [hasCheckedOut, setHasCheckedOut] = useState<boolean>(false);
 	const cartHasAgeRestrictedItems = !!items.find((item: Item) => item.ageRestricted === true);
 	const { authenticated, isVerified, setIsVerified, logout } = useContext(UserContext);
+	const timeout = useRef<any>();
 
 	const onCheckout = () => {
 		setIsVerified(undefined);
@@ -26,10 +27,17 @@ const CheckoutTotal = () => {
 
 	const showOrderMessage = () => {
 		setShowOrderPlacedMessage(true);
-		setTimeout(() => {
+		timeout.current = setTimeout(() => {
 			setShowOrderPlacedMessage(false);
 		}, 4000);
 	};
+
+	// Clear timeout when user leaves page before 4s have been passed to prevent update on an unmounted component
+	useEffect(() => {
+		return () => {
+			clearTimeout(timeout.current);
+		};
+	}, []);
 
 	const showCheckoutButton = (isVerified && authenticated) || (!cartHasAgeRestrictedItems && items.length !== 0);
 

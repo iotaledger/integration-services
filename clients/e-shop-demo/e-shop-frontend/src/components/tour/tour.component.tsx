@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import Joyride, { CallBackProps, STATUS, StoreHelpers } from 'react-joyride';
+import Joyride, { CallBackProps, STATUS } from 'react-joyride';
 import { CartContext } from '../../contexts/cart.provider';
 import { steps } from '../../data/tooltips';
 import { useLocation } from 'react-router-dom';
@@ -10,7 +10,6 @@ const Tour = () => {
 	const [allowClicks, setAllowClicks] = useState<boolean>(true);
 	const { step, setStep, run, setRun } = useContext(TourContext);
 	const { items } = useContext(CartContext);
-	let helpers: StoreHelpers;
 	const location = useLocation();
 	const RUN_TOUR = true;
 
@@ -70,16 +69,11 @@ const Tour = () => {
 		}
 	};
 
-	const getHelpers = (tempHelpers: StoreHelpers) => {
-		helpers = tempHelpers;
-	};
-
 	return (
 		<ErrorBoundary>
 			<Joyride
 				callback={handleJoyrideCallback}
 				continuous={true}
-				getHelpers={getHelpers}
 				run={run}
 				scrollToFirstStep={true}
 				showProgress={false}
