@@ -19,12 +19,19 @@ export class IdentityRoutes {
 		private readonly logger: ILogger
 	) {}
 
-	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	createIdentity = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const createIdentityBody: CreateIdentityBody = req.body;
+
+			const user = await this.userService.getIdentityId(createIdentityBody.username);
+
+			if (user) {
+				return res.status(StatusCodes.CONFLICT).send({ error: 'user already exists' });
+			}
+
 			const identity = await this.userService.createIdentity(createIdentityBody);
 
-			res.status(StatusCodes.CREATED).send(identity);
+			return res.status(StatusCodes.CREATED).send(identity);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not create the identity'));
@@ -62,6 +69,13 @@ export class IdentityRoutes {
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const user = req.body as IdentitySchemaBody;
+
+			const existingUser = await this.userService.getIdentityId(user.username);
+
+			if (existingUser) {
+				return res.status(StatusCodes.CONFLICT).send({ error: 'user already exists' });
+			}
+
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {

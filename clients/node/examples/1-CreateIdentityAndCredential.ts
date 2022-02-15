@@ -3,11 +3,10 @@ import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
 async function createIdentityAndCheckVCs() {
-
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync("./adminIdentity.json").toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
 
   // Authenticate as the admin identity
   await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
@@ -18,10 +17,11 @@ async function createIdentityAndCheckVCs() {
   // Get admin identy's VC
   const identityCredential = adminIdentityPublic?.verifiableCredentials?.[0];
 
-  console.log("Identity Credential of Admin", identityCredential);
+  console.log('Identity Credential of Admin', identityCredential);
 
   // Create identity for user
-  const userIdentity = await identity.create('User');
+  const username = 'User-' + Math.ceil(Math.random() * 100000);
+  const userIdentity = await identity.create(username);
 
   console.log('~~~~~~~~~~~~~~~~');
   console.log('Created user identity: ', userIdentity);
@@ -44,7 +44,6 @@ async function createIdentityAndCheckVCs() {
   const verified = await identity.checkCredential(userCredential);
 
   console.log('Verification result: ', verified);
- 
 }
 
 createIdentityAndCheckVCs();
