@@ -2,7 +2,7 @@ import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
 import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
-import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '../../models/types/user';
+import { UserPersistence, UserType, User, UserSearch, IdentityClaim } from '@iota-is/shared-modules/lib/types/user';
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
@@ -36,6 +36,7 @@ describe('test user routes', () => {
 		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 		const authorizationService = new AuthorizationService();
 		userRoutes = new IdentityRoutes(userService, authorizationService, verificationService, LoggerMock);
+		jest.spyOn(userService, 'getIdentityId').mockImplementation(() => null);
 
 		res = {
 			send: sendMock,

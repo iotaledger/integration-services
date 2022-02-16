@@ -1,5 +1,9 @@
-import { KeyCollectionJson, KeyCollectionPersistence, VerifiableCredentialPersistence } from '../models/types/key-collection';
-import { CredentialSubject, VerifiableCredentialJson, Credential, IdentityKeys } from '../models/types/identity';
+import {
+	KeyCollectionJson,
+	KeyCollectionPersistence,
+	VerifiableCredentialPersistence
+} from '@iota-is/shared-modules/lib/types/key-collection';
+import { CredentialSubject, VerifiableCredentialJson, Credential, IdentityKeys } from '@iota-is/shared-modules/lib/types/identity';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
 import * as KeyCollectionDb from '../database/key-collection';
@@ -7,7 +11,7 @@ import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as IdentityDocsDb from '../database/identity-keys';
 import * as TrustedRootsDb from '../database/trusted-roots';
 import { JsonldGenerator } from '../utils/jsonld';
-import { Subject } from '../models/types/verification';
+import { Subject } from '@iota-is/shared-modules/lib/types/verification';
 import { ILogger } from '../utils/logger';
 import { IConfigurationService } from './configuration-service';
 

@@ -16,6 +16,11 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+      # build local package in advance
+      - run: |
+          cd shared-modules
+          npm install
+          npm run build
       - run: cd clients/node && npm ci
       - run: cd clients/node && npm run build
       - run: cd clients/node && npm publish

@@ -1,4 +1,4 @@
-import { CredentialSubject } from '../../../models/types/identity';
+import { CredentialSubject } from '@iota-is/shared-modules/lib/types/identity';
 import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock, ServerIdentityKey } from '../../../test/mocks/identities';
 import * as KeyCollectionDB from '../../../database/key-collection';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
@@ -11,7 +11,7 @@ import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
 import { KeyCollectionMock } from '../../../test/mocks/key-collection';
 import { AuthorizationService } from '../../../services/authorization-service';
-import { UserType, UserRoles } from '../../../models/types/user';
+import { UserType, UserRoles } from '@iota-is/shared-modules/lib/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
 import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';

@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserSearch, UserType } from '../../models/types/user';
+import { UserSearch, UserType } from '@iota-is/shared-modules/lib/types/user';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 import { getDateFromString } from '../../utils/date';
-import { AuthenticatedRequest } from '../../models/types/verification';
+import { AuthenticatedRequest } from '@iota-is/shared-modules/lib/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
-import { CreateIdentityBody } from '../../models/types/identity';
-import { IdentitySchemaBody } from '../../models/types/request-response-bodies';
+import { CreateIdentityBody } from '@iota-is/shared-modules/lib/types/identity';
+import { IdentitySchemaBody } from '@iota-is/shared-modules/lib/types/request-response-bodies';
 import { ILogger } from '../../utils/logger';
 import { VerificationService } from '../../services/verification-service';
 
@@ -19,12 +19,19 @@ export class IdentityRoutes {
 		private readonly logger: ILogger
 	) {}
 
-	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	createIdentity = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const createIdentityBody: CreateIdentityBody = req.body;
+
+			const user = await this.userService.getIdentityId(createIdentityBody.username);
+
+			if (user) {
+				return res.status(StatusCodes.CONFLICT).send({ error: 'user already exists' });
+			}
+
 			const identity = await this.userService.createIdentity(createIdentityBody);
 
-			res.status(StatusCodes.CREATED).send(identity);
+			return res.status(StatusCodes.CREATED).send(identity);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not create the identity'));
@@ -62,6 +69,13 @@ export class IdentityRoutes {
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const user = req.body as IdentitySchemaBody;
+
+			const existingUser = await this.userService.getIdentityId(user.username);
+
+			if (existingUser) {
+				return res.status(StatusCodes.CONFLICT).send({ error: 'user already exists' });
+			}
+
 			const result = await this.userService.addUser(user);
 
 			if (!result?.result?.n) {

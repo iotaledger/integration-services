@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { ProveOwnershipPostBodySchema } from '../../models/schemas/request-response-body/authentication-bodies';
+// import { ProveOwnershipPostBodySchema } from '@iota-is/shared-modules/lib/schemas/request-response-body/authentication-bodies';
 import { AuthenticationRoutes } from '../../routes/authentication';
 import { Logger } from '../../utils/logger';
 import { authenticationService } from '../services';
-import { apiKeyMiddleware, validate } from '../middlewares';
+import { apiKeyMiddleware } from '../middlewares';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, Logger.getInstance());
@@ -114,6 +114,6 @@ authenticationRouter.post(
 	'/prove-ownership/:id',
 	apiKeyMiddleware,
 	mongodbSanitizer,
-	validate({ body: ProveOwnershipPostBodySchema }),
+	//validate({ body: ProveOwnershipPostBodySchema }),
 	proveOwnership
 );

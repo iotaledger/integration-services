@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '../services/mongodb-service';
-import { ChannelInfoPersistence, ChannelInfoSearch } from '../models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/types/channel-info';
 import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 
 const collectionName = CollectionNames.channelInfo;

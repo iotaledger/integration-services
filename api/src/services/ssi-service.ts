@@ -1,10 +1,10 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { IdentityDocument, IdentityDocumentJson, IdentityJson, VerifiableCredentialJson, Credential } from '../models/types/identity';
-import { KeyCollectionJson } from '../models/types/key-collection';
+import { IdentityDocumentJson, IdentityJson, VerifiableCredentialJson, Credential } from '@iota-is/shared-modules/lib/types/identity';
+import { KeyCollectionJson } from '@iota-is/shared-modules/lib/types/key-collection';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
 import { ILogger } from '../utils/logger';
-import { IdentityKeys } from '../models/types/identity';
+import { IdentityKeys } from '@iota-is/shared-modules/lib/types/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -210,7 +210,7 @@ export class SsiService {
 
 	generateIdentity() {
 		try {
-			const { doc, key } = new Document(this.config.keyType, Identity.Network.mainnet().toString()) as IdentityDocument;
+			const { doc, key } = new Document(this.config.keyType, Identity.Network.mainnet().toString()) as any;
 
 			return {
 				doc,

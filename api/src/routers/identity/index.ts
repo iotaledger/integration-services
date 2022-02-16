@@ -1,6 +1,9 @@
 import { Router } from 'express';
-import { CreateIdentityBodySchema, UpdateIdentityBodySchema } from '../../models/schemas/request-response-body/identity-bodies';
-import { IdentitySchema } from '../../models/schemas/user';
+import {
+	CreateIdentityBodySchema,
+	UpdateIdentityBodySchema
+} from '@iota-is/shared-modules/lib/schemas/request-response-body/identity-bodies';
+import { IdentitySchema } from '@iota-is/shared-modules/lib/schemas/user';
 import { IdentityRoutes } from '../../routes/identity';
 import { Logger } from '../../utils/logger';
 import { authorizationService, userService, verificationService } from '../services';
@@ -45,7 +48,7 @@ export const identityRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/IdentityJsonUpdateSchema"
+ *               $ref: "#/components/schemas/CreateIdentityBodySchema"
  *       401:
  *         description: No valid api key provided
  *         content:

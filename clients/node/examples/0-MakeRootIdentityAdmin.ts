@@ -1,31 +1,37 @@
-import { Manager, UserRoles, IdentityClient, IdentityJson, CredentialTypes, UserType } from 'iota-is-sdk';
+import {
+  Manager,
+  UserRoles,
+  IdentityClient,
+  IdentityJson,
+  CredentialTypes,
+  UserType
+} from 'iota-is-sdk';
 import { defaultConfig, defaultManagerConfig } from './configuration';
 import { writeFileSync } from 'fs';
 
 async function setup() {
+  const identity = new IdentityClient(defaultConfig);
 
-    const identity = new IdentityClient(defaultConfig);
+  const username = 'Admin-' + Math.ceil(Math.random() * 100000);
+  const rootIdentity = (await identity.create(username)) as IdentityJson;
 
-    const rootIdentity = await identity.create('User') as IdentityJson;
+  writeFileSync('adminIdentity.json', JSON.stringify(rootIdentity, null, 2));
 
-    writeFileSync("adminIdentity.json", JSON.stringify(rootIdentity, null, 2));
+  const manager = new Manager(defaultManagerConfig);
 
-    const manager = new Manager(defaultManagerConfig);
+  await manager.setRole(rootIdentity.doc.id, UserRoles.Admin);
 
-    await manager.setRole(rootIdentity.doc.id, UserRoles.Admin);
+  await identity.authenticate(rootIdentity.doc.id, rootIdentity.key.secret);
 
-    await identity.authenticate(rootIdentity.doc.id, rootIdentity.key.secret);
+  await identity.createCredential(
+    undefined,
+    rootIdentity?.doc?.id,
+    CredentialTypes.VerifiedIdentityCredential,
+    UserType.Service,
+    {}
+  );
 
-    await identity.createCredential(
-        undefined,
-        rootIdentity?.doc?.id,
-        CredentialTypes.VerifiedIdentityCredential,
-        UserType.Service,
-        {}
-    );
-
-    console.log("Identity created: " + rootIdentity.doc.id)
-
+  console.log('Identity created: ' + rootIdentity.doc.id);
 }
 
 setup();

@@ -1,8 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { ManagerConfig } from '../models/managerConfig';
-import { UserRoles } from '../models/types';
-
-const crypto = require('crypto');
+import { UserRoles } from '@iota-is/shared-modules/lib/types/user';
 
 export class Manager {
   private client: MongoClient;
@@ -13,27 +11,28 @@ export class Manager {
     this.connected = false;
   }
 
-  /*
-  */
-
   async setRole(id: string, role: UserRoles): Promise<boolean> {
     this.tryConnect();
     const database = this.client.db(this.config.databaseName);
-    const users = database.collection("users");
-    const user = await users.findOneAndUpdate({
-      id
-    }, {
-      $set: { role }
-    }, {
-      upsert: false
-    })
+    const users = database.collection('users');
+    const user = await users.findOneAndUpdate(
+      {
+        id
+      },
+      {
+        $set: { role }
+      },
+      {
+        upsert: false
+      }
+    );
     await this.close();
-    return !!user
+    return !!user;
   }
 
   private async tryConnect() {
     if (this.connected) {
-      return
+      return;
     }
     await this.client.connect();
     this.connected = true;

@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as TrustedRootsDb from '../../../database/trusted-roots';
 import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
-import { UserRoles } from '../../../models/types/user';
+import { UserRoles } from '@iota-is/shared-modules/lib/types/user';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
 import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';

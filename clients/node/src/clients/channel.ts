@@ -1,5 +1,5 @@
-import { ChannelData } from '../models/types/channel-data';
-import { ChannelInfo, ChannelInfoSearch } from '../models/types/channel-info';
+import { ChannelData } from '@iota-is/shared-modules/lib/types/channel-data';
+import { ChannelInfo, ChannelInfoSearch } from '@iota-is/shared-modules/lib/types/channel-info';
 import { ClientConfig } from '../models/clientConfig';
 import {
   AddChannelLogBody,
@@ -13,11 +13,11 @@ import {
   RequestSubscriptionBody,
   RequestSubscriptionResponse,
   RevokeSubscriptionBody
-} from '../models/types/request-response-bodies';
+} from '@iota-is/shared-modules/lib/types/request-response-bodies';
 import {
   Subscription as SubscriptionInternal,
   SubscriptionUpdate
-} from '../models/types/subscription';
+} from '@iota-is/shared-modules/lib/types/subscription';
 import { BaseClient } from './base';
 
 export class ChannelClient extends BaseClient {
@@ -68,10 +68,13 @@ export class ChannelClient extends BaseClient {
     const param1 = startDate !== undefined ? { 'start-date': startDate } : {};
     const param2 = endDate !== undefined ? { 'end-date': endDate } : {};
     const param3 = asc !== undefined ? { asc } : { asc: true };
-    const channelData: any[] = await this.get(
-      `channels/logs/${channelAddress}`,
-      { limit, index, param3, ...param1, ...param2 }
-    );
+    const channelData: any[] = await this.get(`channels/logs/${channelAddress}`, {
+      limit,
+      index,
+      param3,
+      ...param1,
+      ...param2
+    });
     // Temporary fix to replace null values with undefined
     // TODO: fix this in backend
     return channelData.map((data) => {
@@ -80,7 +83,7 @@ export class ChannelClient extends BaseClient {
           data.log[key] = undefined;
         }
       });
-      return data ;
+      return data;
     }) as any[];
   }
 
@@ -134,19 +137,16 @@ export class ChannelClient extends BaseClient {
     const param2 = topicSource !== undefined ? { 'topic-source': topicSource } : {};
     const param3 = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
     const param4 = authorId !== undefined ? { 'author-id': authorId } : {};
-    return await this.get(
-      'channel-info/search',
-      {
-        author,
-        ...param1,
-        ...param2,
-        created,
-        ...param3,
-        ...param4,
-        limit,
-        index
-      }
-    );
+    return await this.get('channel-info/search', {
+      author,
+      ...param1,
+      ...param2,
+      created,
+      ...param3,
+      ...param4,
+      limit,
+      index
+    });
   }
 
   /**
@@ -205,10 +205,7 @@ export class ChannelClient extends BaseClient {
    * @param id
    * @returns
    */
-  async findSubscription(
-    channelAddress: string,
-    id: string
-  ): Promise<SubscriptionInternal> {
+  async findSubscription(channelAddress: string, id: string): Promise<SubscriptionInternal> {
     return await this.get(`subscriptions/${channelAddress}/${id}`, {});
   }
 
@@ -235,10 +232,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     subscriptionIdentifier: AuthorizeSubscriptionBody
   ): Promise<AuthorizeSubscriptionResponse> {
-    return await this.post(
-      `subscriptions/authorize/${channelAddress}`,
-      subscriptionIdentifier
-    );
+    return await this.post(`subscriptions/authorize/${channelAddress}`, subscriptionIdentifier);
   }
 
   /**
@@ -251,10 +245,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     subscriptionIdentifier: RevokeSubscriptionBody
   ): Promise<null> {
-    return await this.post(
-      `subscriptions/revoke/${channelAddress}`,
-      subscriptionIdentifier
-    );
+    return await this.post(`subscriptions/revoke/${channelAddress}`, subscriptionIdentifier);
   }
 
   /**
@@ -269,10 +260,7 @@ export class ChannelClient extends BaseClient {
     id: string,
     subscription: SubscriptionInternal
   ): Promise<SubscriptionInternal> {
-    return await this.post(
-      `subscriptions/${channelAddress}/${id}`,
-      subscription
-    );
+    return await this.post(`subscriptions/${channelAddress}/${id}`, subscription);
   }
 
   /**
@@ -287,10 +275,7 @@ export class ChannelClient extends BaseClient {
     id: string,
     updatedSubscription: SubscriptionUpdate
   ): Promise<null> {
-    return await this.put(
-      `subscriptions/${channelAddress}/${id}`,
-      updatedSubscription
-    );
+    return await this.put(`subscriptions/${channelAddress}/${id}`, updatedSubscription);
   }
 
   /**
