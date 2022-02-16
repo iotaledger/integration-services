@@ -36,6 +36,7 @@ describe('test user routes', () => {
 		verificationService = new VerificationService(ssiService, userService, LoggerMock, ConfigurationServiceMock);
 		const authorizationService = new AuthorizationService();
 		userRoutes = new IdentityRoutes(userService, authorizationService, verificationService, LoggerMock);
+		jest.spyOn(userService, 'getIdentityId').mockImplementation(() => null);
 
 		res = {
 			send: sendMock,

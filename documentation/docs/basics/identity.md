@@ -13,7 +13,7 @@ that are attachable to said identity. For example, a university student could us
 
 [![Validate patient data](../../static/img/integration-services/use-case-1.png "Validate patient data")](../../static/img/integration-services/use-case-1.png)
 
-The concepts of Decentralized Identities will not be explained in depth in this wiki. You can find more information on IOTA Identity in the following resources:
+The concepts of decentralized identities will not be explained in depth in this wiki. You can find more information on IOTA Identity in the following resources:
 
 ## Wiki
 

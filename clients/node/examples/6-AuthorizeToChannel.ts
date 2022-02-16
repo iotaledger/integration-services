@@ -10,8 +10,10 @@ const identity = new IdentityClient(defaultConfig);
 async function authorizeOthersToChannel() {
   // Creating a channel owner who creates the channel and a channel user who will be authorized to read the channel
   console.log('Creating user...');
-  const channelOwner = await identity.create('Owner');
-  const channelUser = await identity.create('User');
+  const ownerUsername = 'Owner-' + Math.ceil(Math.random() * 100000);
+  const subscriberUsername = 'Subscriber-' + Math.ceil(Math.random() * 100000);
+  const channelOwner = await identity.create(ownerUsername);
+  const channelUser = await identity.create(subscriberUsername);
 
   // We will use two instances of the channel api client. One is getting authorized by the owner and the other one by the user.
   await ownerClient.authenticate(channelOwner.doc.id, channelOwner.key.secret);
@@ -40,16 +42,18 @@ async function authorizeOthersToChannel() {
     accessRights: AccessRights.ReadAndWrite
   });
 
-  console.log("Subscription Link:", subscriptionLink)
+  console.log('Subscription Link:', subscriptionLink);
 
   // Find subscriptions to the channel that are not already authorized.
   const subscriptions = await ownerClient.findAllSubscriptions(channelAddress, false);
 
-  console.log("Subscriptions Found:", subscriptions);
+  console.log('Subscriptions Found:', subscriptions);
 
-  const unauthorizedSubscriptions = subscriptions.filter(subscription => !subscription.isAuthorized)
+  const unauthorizedSubscriptions = subscriptions.filter(
+    (subscription) => !subscription.isAuthorized
+  );
 
-  console.log('Unauthorized subscriptions:');
+  console.log('Unauthorized subscriptions:', unauthorizedSubscriptions);
 
   for (const subscription of unauthorizedSubscriptions) {
     console.log(`Authorizing subscription: ${subscription.id}...`);
@@ -57,7 +61,7 @@ async function authorizeOthersToChannel() {
     const keyloadLink = await ownerClient.authorizeSubscription(channelAddress, {
       id: channelUser.doc.id
     });
-    console.log("Subscription Keyload Link:", keyloadLink)
+    console.log('Subscription Keyload Link:', keyloadLink);
   }
 
   // Writing data to channel as the channel owner. Make sure to authorize potential channel readers beforehand.
@@ -67,8 +71,9 @@ async function authorizeOthersToChannel() {
   });
 
   // Reading the channel as the user
+  console.log('reading as subscriber...');
   const channelData = await userClient.read(channelAddress);
-  console.log('First channel data log: ', channelData[0].log.payload);
+  console.log('First channel data log: ', channelData?.[0]?.log?.payload);
 }
 
 authorizeOthersToChannel();

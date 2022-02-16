@@ -48,7 +48,7 @@ export const identityRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/IdentityJsonUpdateSchema"
+ *               $ref: "#/components/schemas/CreateIdentityBodySchema"
  *       401:
  *         description: No valid api key provided
  *         content:

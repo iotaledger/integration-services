@@ -4,17 +4,17 @@ import { readFileSync } from 'fs';
 import { externalDriverCredential1 } from './externalData';
 
 async function trustedAuthorities() {
-
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync("./adminIdentity.json").toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
 
   // Authenticate as the admin identity
   await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
 
   // Create an identity for a driver to issue him a driving license
-  const driverIdentity = await identity.create('Driver');
+  const username = 'Driver-' + Math.ceil(Math.random() * 100000);
+  const driverIdentity = await identity.create(username);
 
   //Get root identity to issue an credential for the new driver
   const adminIdentityPublic = await identity.find(adminIdentity.doc.id);

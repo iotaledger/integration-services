@@ -9,7 +9,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: create-root-identity
-          image: iotaledger/integration-services:develop
+          image: iotaledger/integration-services:v0.1.3
           imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "setup-api"]
           env:
