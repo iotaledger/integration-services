@@ -48,7 +48,7 @@ spec:
 
       containers:
         - name: integration-service-api
-          image: iotaledger/integration-services:develop
+          image: iotaledger/integration-services:v0.1.3
           imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
