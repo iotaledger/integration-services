@@ -1,8 +1,4 @@
 import {
-	ProveOwnershipPostBodySchema,
-	NonceSchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
-import {
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
 	CreateChannelResponseSchema,
@@ -12,38 +8,11 @@ import {
 	ValidateResponseSchema
 } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/channel-bodies';
 import {
-	ClaimSchema,
-	RevokeVerificationBodySchema,
-	CreateCredentialBodySchema,
-	VerifiableCredentialBodySchema,
-	TrustedRootBodySchema,
-	SubjectBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/verification-bodies';
-import {
 	ChannelInfoSchema,
 	ChannelInfoSearchSchema,
 	TopicSchema,
 	ChannelAddressSchema
 } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
-import {
-	VerifiableCredentialSubjectSchema,
-	VerifiableCredentialSchema,
-	IdentityJsonSchema,
-	IdentityDocumentJsonSchema,
-	IdentityKeyPairJsonSchema
-} from '@iota/is-shared-modules/lib/models/schemas/identity';
-import {
-	CreateIdentityBodySchema,
-	UpdateIdentityBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/identity-bodies';
-import {
-	DeviceSchema,
-	OrganizationSchema,
-	PersonSchema,
-	ProductSchema,
-	ServiceSchema
-} from '@iota/is-shared-modules/lib/models/schemas/user-types';
-import { IdentitySchema } from '@iota/is-shared-modules/lib/models/schemas/user';
 import {
 	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
@@ -59,7 +28,6 @@ import fs from 'fs';
  * If new schemas have been created / changed just add them to the schemas object and run script: `generate-openapi-schemas`
  */
 const schemas = {
-	ProveOwnershipPostBodySchema,
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
 	ChannelDataSchema,
@@ -67,13 +35,6 @@ const schemas = {
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema,
-	RevokeVerificationBodySchema,
-	CreateCredentialBodySchema,
-	VerifiableCredentialBodySchema,
-	TrustedRootBodySchema,
-	SubjectBodySchema,
-	CreateIdentityBodySchema,
-	UpdateIdentityBodySchema,
 	ReimportBodySchema,
 	CreateChannelResponseSchema,
 	AuthorizeSubscriptionResponseSchema,
@@ -83,22 +44,9 @@ const schemas = {
 	ChannelInfoSearchSchema,
 	SubscriptionSchema,
 	SubscriptionUpdateSchema,
-	ClaimSchema,
 	ChannelInfoSchema,
 	TopicSchema,
-	VerifiableCredentialSubjectSchema,
-	VerifiableCredentialSchema,
-	IdentityJsonSchema,
-	IdentityKeyPairJsonSchema,
-	IdentityDocumentJsonSchema,
-	DeviceSchema,
-	OrganizationSchema,
-	PersonSchema,
-	ProductSchema,
-	ServiceSchema,
-	IdentitySchema,
 	IdentityIdSchema,
-	NonceSchema,
 	ChannelAddressSchema
 };
 

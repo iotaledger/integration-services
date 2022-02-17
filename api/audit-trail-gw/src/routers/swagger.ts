@@ -16,18 +16,6 @@ export const openApiDefinition = {
 		},
 		tags: [
 			{
-				name: 'identities',
-				description: 'Manage decentralized identities'
-			},
-			{
-				name: 'authentication',
-				description: 'Authenticate and authorize identities to the Bridge'
-			},
-			{
-				name: 'verification',
-				description: 'Create and verifiy credentials'
-			},
-			{
 				name: 'channel-info',
 				description: 'Get information about a channel '
 			},
