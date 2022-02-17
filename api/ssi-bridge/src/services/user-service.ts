@@ -1,13 +1,13 @@
-import { User, UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/lib/models/types/user';
+import { User, UserPersistence, UserRoles, UserSearch } from '@iota/is-shared-modules/lib/models/types/user';
 import * as userDb from '../database/user';
-import { getDateFromString, getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
 import {
 	CreateIdentityBody,
 	IdentityJson,
 	VerifiableCredentialJson,
 	IdentityKeys
-} from '@iota-is/shared-modules/lib/models/types/identity';
+} from '@iota/is-shared-modules/lib/models/types/identity';
 import { SchemaValidator } from '../utils/validator';
 import * as IdentityDocsDb from '../database/identity-keys';
 import { SsiService } from './ssi-service';

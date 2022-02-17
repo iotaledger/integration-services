@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ProveOwnershipPostBody } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
+import { ProveOwnershipPostBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import { AuthenticationService } from '../../services/authentication-service';
-import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
+import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 
 export class AuthenticationRoutes {
 	constructor(private readonly authenticationService: AuthenticationService, private readonly logger: ILogger) {}

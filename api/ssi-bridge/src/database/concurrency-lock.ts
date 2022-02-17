@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
-import { ConcurrencyLock } from '@iota-is/shared-modules/lib/models/types/concurrency';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
+import { ConcurrencyLock } from '@iota/is-shared-modules/lib/models/types/concurrency';
 
 const collectionName = CollectionNames.concurrencyLocks;
 
