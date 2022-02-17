@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: audit-trail-gw-ms
 spec:
+  # TODO adjust after merging
   replicas: 1
   revisionHistoryLimit: 3
   selector:
@@ -47,6 +48,7 @@ spec:
               done
       containers:
         - name: audit-trail-gw-ms
+          # TODO adjust after services are deployed on docker
           image: audit-trail-gw-ms
           imagePullPolicy: Never
           command: ["node", "dist/index.js", "server"]

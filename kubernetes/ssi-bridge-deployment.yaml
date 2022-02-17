@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: ssi-bridge-ms
 spec:
+  # TODO adjust after merging
   replicas: 1
   revisionHistoryLimit: 3
   selector:
@@ -47,6 +48,7 @@ spec:
               done
       containers:
         - name: ssi-bridge-ms
+          # TODO adjust after services are deployed on docker
           image: ssi-bridge-ms
           imagePullPolicy: Never
           command: ["node", "dist/index.js", "server"]
