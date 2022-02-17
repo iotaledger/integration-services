@@ -7,7 +7,6 @@ import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
-import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
@@ -15,16 +14,15 @@ import { AuthorMock } from '../../../test/mocks/streams';
 describe('test channel routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let channelService: ChannelService, channelRoutes: ChannelRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService;
 
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
-		userService = new UserService();
 		streamsService = new StreamsService(config, LoggerMock);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
