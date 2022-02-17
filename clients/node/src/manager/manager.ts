@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { ManagerConfig } from '../models/managerConfig';
-import { UserRoles } from '@iota-is/shared-modules/lib/types/user';
+import { UserRoles } from '@iota-is/shared-modules/lib/models/types/user';
 
 export class Manager {
   private client: MongoClient;

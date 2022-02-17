@@ -37,8 +37,13 @@ jobs:
           cd api/shared-modules
           npm install
           npm run build
-      - name: Build api
+      - name: Build audit-trail-gw
         run: |
-          cd api
+          cd api/audit-trail-gw
+          npm install
+          npm run build
+      - name: Build ssi-bridge
+        run: |
+          cd api/ssi-bridge
           npm install
           npm run build
