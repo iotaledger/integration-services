@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: integration-service-api-config
 data:
-  PORT_AUDIT: "3000"
+  PORT_AUDIT: "3002"
   PORT_SSI: "3001"
   DATABASE_NAME: integration-service-db
   IOTA_PERMA_NODE: https://chrysalis-chronicle.iota.org/api/mainnet/

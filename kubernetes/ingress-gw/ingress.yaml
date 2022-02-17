@@ -14,21 +14,21 @@ spec:
           service:
             name: audit-trail-gw-ms
             port:
-              number: 3000
+              number: 3002
       - path: /api(/|$)(.*)/channels
         pathType: Prefix
         backend:
           service:
             name: audit-trail-gw-ms
             port:
-              number: 3000
+              number: 3002
       - path: /api(/|$)(.*)/subscriptions
         pathType: Prefix
         backend:
           service:
             name: audit-trail-gw-ms
             port:
-              number: 3000
+              number: 3002
       - path: /api(/|$)(.*)/authentication
         pathType: Prefix
         backend:
@@ -66,11 +66,11 @@ spec:
           service:
             name: audit-trail-gw-ms
             port:
-              number: 3000
+              number: 3002
       - path: /docs
         pathType: Prefix
         backend:
           service:
             name: audit-trail-gw-ms
             port:
-              number: 3000
+              number: 3002

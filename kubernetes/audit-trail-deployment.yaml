@@ -60,7 +60,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /info
-              port: 3000
+              port: 3002
           env:
             - name: "PORT"
               valueFrom:
@@ -99,4 +99,4 @@ spec:
                   key: API_KEY
           ports:
             - protocol: TCP
-              containerPort: 3000
+              containerPort: 3002
