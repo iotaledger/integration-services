@@ -17,7 +17,6 @@ export interface IConfigurationService {
 export class ConfigurationService {
 	private static instance: ConfigurationService;
 	logger: ILogger;
-	private _serverIdentityId: string;
 
 	streamsConfig: StreamsConfig = {
 		node: process.env.IOTA_HORNET_NODE,
@@ -46,8 +45,7 @@ export class ConfigurationService {
 		apiKey: process.env.API_KEY,
 		commitHash: process.env.COMMIT_HASH,
 		identityConfig: this.identityConfig,
-		streamsConfig: this.streamsConfig,
-		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
+		streamsConfig: this.streamsConfig
 	};
 
 	constructor(logger: ILogger) {
@@ -60,14 +58,6 @@ export class ConfigurationService {
 			ConfigurationService.instance = new ConfigurationService(logger);
 		}
 		return ConfigurationService.instance;
-	}
-
-	public get serverIdentityId(): string {
-		return this._serverIdentityId;
-	}
-
-	public set serverIdentityId(value: string) {
-		this._serverIdentityId = value;
 	}
 
 	private assertConfig() {

@@ -17,7 +17,6 @@ export const IdentityConfigMock: IdentityConfig = {
 };
 
 export const ConfigMock: Config = {
-	jwtExpiration: '1 day',
 	identityConfig: IdentityConfigMock,
 	apiKey: 'test-v1',
 	serverSecret: 'veryvery-very-very-server-secret',

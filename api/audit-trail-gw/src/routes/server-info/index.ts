@@ -12,13 +12,11 @@ export class ServerInfoRoutes {
 			const config = this.configService.config;
 			const hostname = os.hostname();
 			const commitHash = config.commitHash || 'not defined';
-			const id = this.configService.serverIdentityId || 'not defined';
 			const version = config.apiVersion || 'not defined';
 
 			res.status(StatusCodes.OK).send({
 				commitHash,
 				hostname,
-				id,
 				version
 			});
 		} catch (error) {

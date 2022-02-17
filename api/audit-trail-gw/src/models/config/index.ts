@@ -11,7 +11,6 @@ export interface Config {
 	apiKey: string | undefined;
 	hornetNode: string;
 	permaNode: string;
-	jwtExpiration: string;
 	commitHash: string;
 }
 
