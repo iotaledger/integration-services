@@ -6,7 +6,7 @@ import { SsiService } from '../services/ssi-service';
 import { StreamsService } from '../services/streams-service';
 import { SubscriptionService } from '../services/subscription-service';
 import { UserService } from '../services/user-service';
-import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
+import { Logger } from '@iota/is-shared-modules/lib/utils/logger';
 import { ConfigurationService } from '../services/configuration-service';
 
 const logger = Logger.getInstance();

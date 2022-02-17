@@ -1,8 +1,8 @@
-import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
 import { UserService } from '../../services/user-service';
-import { getDateFromString, getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';

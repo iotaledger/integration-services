@@ -1,10 +1,10 @@
 import { UserService } from './user-service';
-import { createNonce, getHexEncodedKey, verifySignedNonce } from '@iota-is/shared-modules/lib/utils/encryption';
+import { createNonce, getHexEncodedKey, verifySignedNonce } from '@iota/is-shared-modules/lib/utils/encryption';
 import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
 import { SsiService } from './ssi-service';
-import { User, UserRoles } from '@iota-is/shared-modules/lib/models/types/user';
+import { User, UserRoles } from '@iota/is-shared-modules/lib/models/types/user';
 
 export class AuthenticationService {
 	constructor(

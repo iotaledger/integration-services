@@ -1,5 +1,5 @@
 import { ConfigurationService } from '../services/configuration-service';
-import { Logger } from '@iota-is/shared-modules/lib/utils/logger/index';
+import { Logger } from '@iota/is-shared-modules/lib/utils/logger/index';
 
 const { apiVersion } = ConfigurationService.getInstance(Logger.getInstance()).config;
 

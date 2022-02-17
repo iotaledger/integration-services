@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { ProveOwnershipPostBodySchema } from '@iota-is/shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
+import { ProveOwnershipPostBodySchema } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
 import { AuthenticationRoutes } from '../../routes/authentication';
-import { Logger } from '@iota-is/shared-modules/lib/utils/logger';
+import { Logger } from '@iota/is-shared-modules/lib/utils/logger';
 import { authenticationService } from '../services';
 import { apiKeyMiddleware, validate } from '../middlewares';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';

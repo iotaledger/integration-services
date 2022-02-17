@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota-is/shared-modules/lib/services/mongodb-service';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
 
 const collectionName = CollectionNames.trustedRoots;
 

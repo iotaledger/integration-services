@@ -1,19 +1,19 @@
 import { Author, Subscriber } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
-import { Subscription } from '@iota-is/shared-modules/lib/models/types/subscription';
-import { AccessRights, SubscriptionType } from '@iota-is/shared-modules/lib/models/schemas/subscription';
-import { ChannelLogRequestOptions, Topic } from '@iota-is/shared-modules/lib/models/types/channel-info';
+import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
+import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+import { ChannelLogRequestOptions, Topic } from '@iota/is-shared-modules/lib/models/types/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
-import { ChannelData, ChannelLog } from '@iota-is/shared-modules/lib/models/types/channel-data';
+import { ChannelData, ChannelLog } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import { StreamsConfig } from '../models/config';
-import { CreateChannelResponse, ValidateResponse } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
+import { CreateChannelResponse, ValidateResponse } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
-import { getDateStringFromDate } from '@iota-is/shared-modules/lib/utils/text';
+import { getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
-import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
+import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 
 export class ChannelService {
 	private readonly password: string;
