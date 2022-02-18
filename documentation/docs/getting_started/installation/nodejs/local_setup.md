@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: This section will guide in setting up the Integration Service API using NodeJs.
+description: This section will guide in setting up the Integration Service API using Node.js.
 keywords:
 - nodejs
 - setup API
@@ -10,7 +10,7 @@ keywords:
 
 # Local Setup
 
-This section will guide in setting up the Integration Service API using NodeJs.
+This section will guide in setting up the Integration Service API using Node.js.
 
 ## Requirements
 

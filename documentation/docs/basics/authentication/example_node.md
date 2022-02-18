@@ -1,0 +1,235 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: This section will show you an example on how to authenticate using Node.js
+keywords:
+- authentication
+- jwt
+- nonce
+- not-authenticated
+- 401
+- nodejs
+- javascript
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Node.js
+
+In this example you will learn how to authenticate your identity using Node.js. We opted to use `Axios` as the HTTP client, `bs58` to decode Base58 and `@noble/ed25519` to sign the nonce. You can use any preferred package as long as it accomplishes the same result. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) first before starting this example.
+
+We created an identity for you to follow along with the example: 
+
+```js
+{
+    identityId: 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF',
+    secretKey: '5N3SxG4UzVDpNe4LyDoZyb6bSgE9tk3pE2XP5znXo5bF'
+}
+```
+
+## Prerequisites 
+
+* Recent version on [Node.js](https://nodejs.org/en/download/)
+
+## Installation
+
+Newer versions might work but the examples are tested with the following installation:
+
+<Tabs>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install @noble/ed25519@1.5.1
+```
+
+```bash
+npm install bs58@4.0.1
+```
+
+```bash
+npm install axios@0.21.4
+```
+
+</TabItem>
+<TabItem value="yarn" label="Yarn">
+
+```bash
+yarn add @noble/ed25519@1.5.1
+```
+
+```bash
+yarn add bs58@4.0.1
+```
+
+```bash
+yarn add axios@0.21.4
+```
+
+</TabItem>
+</Tabs>
+
+## Authentication flow
+### 1. Request a nonce
+First, request a nonce and supply your identity id.
+
+:::info
+The current API version (in this example `v0.1`) can be looked up using the [http://localhost:3000/info](http://localhost:3000/info) endpoint.
+:::
+```js title="./authenticate.js"
+import axios from 'axios';
+
+const requestNonce = async () => {
+  const identityId = 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF';
+  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`
+  const request = await axios.get(url);
+  console.log(request.data);
+};
+
+requestNonce();
+```
+
+The returned response body  will look like this JSON object.
+```json
+{ nonce: '3eaf8814caa842d94fdb96fc26d02f7c339e65ff' }
+```
+
+### 2. Hash the nonce
+Now the nonce is getting hashed. The Node API's [createHash()](https://nodejs.org/api/crypto.html#hashupdatedata-inputencoding) function is used to hash the nonce with the SHA-256 hash function and convert it to hexadecimal.
+```js title="./authenticate.js"
+import crypto from 'crypto';
+
+const hashNonce = () => {
+  const nonce = '3eaf8814caa842d94fdb96fc26d02f7c339e65ff';
+
+  const hashedNonce = crypto.createHash('sha256').update(nonce).digest('hex');
+  console.log(hashedNonce);
+};
+
+hashNonce();
+```
+The nonce used generated the following hash:
+```
+6d748f209e5af1f5b8825f7822d6659c45c874076cd2b3337c7861fd94cd3ba5
+```
+
+### 3. Sign the hashed nonce
+Your secret key is encoded in Base58 and has to be decoded first. Afterwards the nonce is signed with your encoded secret key and saved as a hexadecimal string.
+:::danger
+Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/welcome) to store your secret keys securely.
+:::
+
+```js title="./authenticate.js"
+import * as ed from '@noble/ed25519';
+import bs58 from 'bs58';
+
+const signNonce = async () => {
+  const hashedNonce = '6d748f209e5af1f5b8825f7822d6659c45c874076cd2b3337c7861fd94cd3ba5';
+  const secretKey = '5N3SxG4UzVDpNe4LyDoZyb6bSgE9tk3pE2XP5znXo5bF';
+  
+  const encodedSecretKey = bs58.decode(secretKey).toString('hex');
+  const signedNonceArray = await ed.sign(hashedNonce, encodedSecretKey);
+  const signedNonce = ed.Signature.fromHex(signedNonceArray).toHex();
+  console.log(signedNonce);
+};
+
+signNonce();
+```
+
+The nonce and secret key used generated the following signed nonce:
+```
+270c2e502c5c753e39159683981e452444f81a10d798f56406a9c471d672a5ede1792cb7f97d4f9c9efeec7bf35577dd1f8482afca7e3710291868a65bf91e07
+```
+
+### 4. Request the JWT
+The last step is to request the JWT. Use the following code snippet with your signed nonce in the request body.
+```js title="./authenticate.js"
+import axios from 'axios';
+
+const requestJWT = async () => {
+  const identityId = 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF';
+  const body = {
+    signedNonce:
+      '270c2e502c5c753e39159683981e452444f81a10d798f56406a9c471d672a5ede1792cb7f97d4f9c9efeec7bf35577dd1f8482afca7e3710291868a65bf91e07'
+  };
+  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+
+  const request = await axios.post(url, body);
+  console.log(request.data);
+};
+
+requestJWT();
+```
+
+The returned JSON body will contain the JWT:
+```json
+{
+  jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6OEJBbVVxQWc0YVVqVjNUOVdVaFBwRG5GVmJKU2sxNm9MeUZxM20zZTYyTUYiLCJwdWJsaWNLZXkiOiI3WFRYVlJ5M0cxTVhjbURrejJiUUNiV3B2OEF6b1FSZ3hHdjVtRG0xRkoxdCIsInVzZXJuYW1lIjoiVGltMTIzNDUiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMi0xOFQwNzo0ODo0NSswMTowMCIsImNsYWltIjp7InR5cGUiOiJQZXJzb24ifSwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjQ1MTc3OTg1LCJleHAiOjE2NDUyNjQzODV9.-O2UpPyfWOvtLV2cUF9fPVhgCGDCVwFU9zXrpn_uKU0'
+}
+```
+
+### 5. Set JWT as Axios header
+When using Axios the JWT can easily be set as a default header used in every request. This step may differ depending on your preferred HTTP client library.
+```js title="./authenticate.js"
+import axios from 'axios';
+
+const setAxiosHeader = () => {
+  const jwt =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6OEJBbVVxQWc0YVVqVjNUOVdVaFBwRG5GVmJKU2sxNm9MeUZxM20zZTYyTUYiLCJwdWJsaWNLZXkiOiI3WFRYVlJ5M0cxTVhjbURrejJiUUNiV3B2OEF6b1FSZ3hHdjVtRG0xRkoxdCIsInVzZXJuYW1lIjoiVGltMTIzNDUiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMi0xOFQwNzo0ODo0NSswMTowMCIsImNsYWltIjp7InR5cGUiOiJQZXJzb24ifSwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjQ1MTc3OTg1LCJleHAiOjE2NDUyNjQzODV9.-O2UpPyfWOvtLV2cUF9fPVhgCGDCVwFU9zXrpn_uKU0';
+
+  axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+};
+
+setAxiosHeader();
+```
+##  Putting it all together
+This is the final code using all function together to request a JWT.
+The code can also be found at this repository: [https://github.com/Schereo/is-authentication](https://github.com/Schereo/is-authentication).
+
+```js title="./authenticate.js"
+import axios from 'axios';
+import * as ed from '@noble/ed25519';
+import bs58 from 'bs58';
+import crypto from 'crypto';
+
+const requestNonce = async (identityId) => {
+  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+  const request = await axios.get(url);
+  return request.data.nonce;
+};
+
+const hashNonce = (nonce) => {
+  const hashedNonce = crypto.createHash('sha256').update(nonce).digest('hex');
+  return hashedNonce;
+};
+
+const signNonce = async (hashedNonce, secretKey) => {
+  const encodedSecretKey = bs58.decode(secretKey).toString('hex');
+  const signedNonceArray = await ed.sign(hashedNonce, encodedSecretKey);
+  const signedNonce = ed.Signature.fromHex(signedNonceArray).toHex();
+  return signedNonce;
+};
+
+const requestJwt = async (identityId, signedNonce) => {
+  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+  const request = await axios.post(url, { signedNonce });
+  return request.data.jwt;
+};
+
+const setAxiosHeader = (jwt) => {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+};
+
+const authenticate = async (identityId, secretKey) => {
+  const nonce = await requestNonce(identityId);
+  const hashedNonce = hashNonce(nonce);
+  const signedNonce = await signNonce(hashedNonce, secretKey);
+  const jwt = await requestJwt(identityId, signedNonce);
+  setAxiosHeader(jwt);
+};
+
+const identityId = 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF';
+const secretKey = '5N3SxG4UzVDpNe4LyDoZyb6bSgE9tk3pE2XP5znXo5bF';
+authenticate(identityId, secretKey);
+
+```
+

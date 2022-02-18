@@ -57,7 +57,7 @@ module.exports = {
                 "getting_started/overview",
                 {
                     type: "category",
-                    label: "NodeJs",
+                    label: "Node.js",
                     items: ["getting_started/installation/nodejs/local_setup"],
                 },
                 {
@@ -99,7 +99,13 @@ module.exports = {
             type: "category",
             label: "Basics",
             collapsed: true,
-            items: ["basics/identity", "basics/streams"],
+            items: ["basics/identity", "basics/streams", {
+
+                type: "category",
+                label: "Authentication",
+                items: ["basics/authentication/authentication", "basics/authentication/example_node"],
+            
+            }],
         },
         {
             type: "doc",
