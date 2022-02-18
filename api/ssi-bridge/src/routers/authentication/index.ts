@@ -1,5 +1,4 @@
 import { Router } from 'express';
-// import { ProveOwnershipPostBodySchema } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
 import { AuthenticationRoutes } from '../../routes/authentication';
 import { Logger } from '../../utils/logger';
 import { authenticationService } from '../services';
