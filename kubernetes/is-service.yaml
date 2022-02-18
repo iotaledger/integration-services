@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: audit-trail-gw-ms
+  name: audit-trail-gw
 spec:
   selector:
-    app: audit-trail-gw-ms
+    app: audit-trail-gw
   ports:
     - protocol: TCP
       port: 3002
@@ -13,10 +13,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssi-bridge-ms
+  name: ssi-bridge
 spec:
   selector:
-    app: ssi-bridge-ms
+    app: ssi-bridge
   ports:
     - protocol: TCP
       port: 3001

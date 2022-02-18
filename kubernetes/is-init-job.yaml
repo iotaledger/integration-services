@@ -9,7 +9,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: create-root-identity
-          image: ssi-bridge-ms
+          image: ssi-bridge
           imagePullPolicy: Never
           command: ["node", "dist/index.js", "setup-api"]
           env:

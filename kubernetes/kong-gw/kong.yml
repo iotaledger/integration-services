@@ -13,42 +13,42 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw-ms
+            name: audit-trail-gw
             port:
               number: 3002
       - path: /api(/|$)(.*)/channels
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw-ms
+            name: audit-trail-gw
             port:
               number: 3002
       - path: /api(/|$)(.*)/subscriptions
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw-ms
+            name: audit-trail-gw
             port:
               number: 3002
       - path: /api(/|$)(.*)/authentication
         pathType: Prefix
         backend:
           service:
-            name: ssi-bridge-ms
+            name: ssi-bridge
             port:
               number: 3001
       - path: /api(/|$)(.*)/identities
         pathType: Prefix
         backend:
           service:
-            name: ssi-bridge-ms
+            name: ssi-bridge
             port:
               number: 3001
       - path: /api(/|$)(.*)/verification
         pathType: Prefix
         backend:
           service:
-            name: ssi-bridge-ms
+            name: ssi-bridge
             port:
               number: 3001
 ---
@@ -66,13 +66,13 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw-ms
+            name: audit-trail-gw
             port:
               number: 3002
       - path: /docs
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw-ms
+            name: audit-trail-gw
             port:
               number: 3002
