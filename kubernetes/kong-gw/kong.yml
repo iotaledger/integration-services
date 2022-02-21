@@ -52,7 +52,7 @@ spec:
             port:
               number: 3001
 ---
-# todo this should later link to the docs and info microservices
+# TODO#415 this should later link to the docs and info of each microservice
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
