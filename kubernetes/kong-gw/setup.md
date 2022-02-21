@@ -88,3 +88,11 @@ ssi-bridge-bc7f94d79-4vz7p                 1/1     Running                      
 ```
 curl -i http://127.0.0.1/ssi-bridge/info
 ```
+
+---
+
+## Shut down the cluster
+
+```
+kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
+```

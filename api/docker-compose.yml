@@ -26,11 +26,38 @@ services:
     command: node dist/index.js setup-api
     depends_on: 
       - mongo
+  
+  traefik:
+    image: "traefik:v2.6"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
 
   audit-trail-gw:
     build:
       dockerfile: Dockerfile-audit-trail-gw
       context: ./
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
     environment: 
       PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
@@ -42,6 +69,8 @@ services:
     depends_on: 
       - mongo
       - initialize-job
+      - traefik
+      - whoami
     ports:
       - 3000:3000
 
@@ -49,6 +78,10 @@ services:
     build:
       dockerfile: Dockerfile-ssi-bridge
       context: ./
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
     environment: 
       PORT: 3001
       DATABASE_NAME: ${DATABASE_NAME}
@@ -60,6 +93,8 @@ services:
     depends_on: 
       - mongo
       - initialize-job
+      - traefik
+      - whoami
     ports:
       - 3001:3001
 
