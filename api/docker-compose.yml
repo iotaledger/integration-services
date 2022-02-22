@@ -12,20 +12,6 @@ services:
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data_container:/data/db
-
-  initialize-job:
-    build: .
-    environment:
-      PORT: 3000
-      DATABASE_NAME: ${DATABASE_NAME}
-      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
-      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
-      DATABASE_URL: ${DATABASE_URL}
-      SERVER_SECRET: ${SERVER_SECRET}
-    restart: on-failure
-    command: node dist/index.js setup-api
-    depends_on: 
-      - mongo
   
   traefik:
     image: "traefik:v2.6"
@@ -42,13 +28,22 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  whoami:
-    image: "traefik/whoami"
-    container_name: "simple-service"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+  initialize-audit-trail:
+    build:
+      dockerfile: Dockerfile-audit-trail-gw
+      context: ./
+    environment:
+      PORT: 3002
+      DATABASE_NAME: ${DATABASE_NAME}
+      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
+      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
+      DATABASE_URL: ${DATABASE_URL}
+      SERVER_SECRET: ${SERVER_SECRET}
+    restart: on-failure
+    command: node dist/index.js setup-api
+    depends_on: 
+      - mongo
+      - traefik
 
   audit-trail-gw:
     build:
@@ -56,10 +51,11 @@ services:
       context: ./
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.audittrailgw.entrypoints=web"
+      - "traefik.http.routers.audittrailgw.rule=Host(`localhost:3002`)"
+#      - "traefik.http.routers.audittrailgw.rule=Path(`/info`)"
     environment: 
-      PORT: 3000
+      PORT: 3002
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -68,20 +64,37 @@ services:
     restart: always
     depends_on: 
       - mongo
-      - initialize-job
+      - initialize-audit-trail
       - traefik
-      - whoami
     ports:
-      - 3000:3000
+      - 3002:3002
 
+  initialize-ssi-bridge:
+    build:
+      dockerfile: Dockerfile-ssi-bridge
+      context: ./
+    environment:
+      PORT: 3001
+      DATABASE_NAME: ${DATABASE_NAME}
+      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
+      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
+      DATABASE_URL: ${DATABASE_URL}
+      SERVER_SECRET: ${SERVER_SECRET}
+    restart: on-failure
+    command: node dist/index.js setup-api
+    depends_on: 
+      - mongo
+  
   ssi-bridge:
     build:
       dockerfile: Dockerfile-ssi-bridge
       context: ./
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.ssibridge.entrypoints=web"
+      - "traefik.http.routers.ssibridge.rule=PathPrefix(`/api/`)"
+      - "traefik.http.routers.ssibridge.rule=Host(`localhost:3001`)"
+      - "traefik.http.routers.ssibridge.rule=Path(`/info`)"
     environment: 
       PORT: 3001
       DATABASE_NAME: ${DATABASE_NAME}
@@ -92,9 +105,8 @@ services:
     restart: always
     depends_on: 
       - mongo
-      - initialize-job
+      - initialize-ssi-bridge
       - traefik
-      - whoami
     ports:
       - 3001:3001
 
