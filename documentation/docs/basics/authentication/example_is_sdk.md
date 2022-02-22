@@ -20,7 +20,7 @@ import TabItem from '@theme/TabItem';
 
 In this example you will learn how to authenticate your identity using our own **IOTA IS-SDK** npm package. This will be the easiest way to authenticate your identity since we are handling decoding, hashing and signing directly in the package itself. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) for better understanding on how we authenticate users.
 
-We created an identity for you to follow along with the example: 
+This example uses the following identity: 
 
 ```js
 {
