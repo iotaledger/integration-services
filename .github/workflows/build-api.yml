@@ -9,9 +9,6 @@ on:
     branches: [ master, develop ]
     paths: 
       - "api/**"
-      - "api/audit-trail-gw/**"
-      - "api/ssi-bridge/**"
-      - "api/shared-modules/**"
       - ".github/workflows/build-api.yml"
 
 
