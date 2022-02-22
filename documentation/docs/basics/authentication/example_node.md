@@ -34,7 +34,9 @@ This example uses the following identity:
 ### Required Packages 
 
 
-Newer versions might work but the examples are tested with the following installation:
+This example uses `Axios` as the HTTP client, `bs58` to decode Base58, and [@noble/ed25519](https://www.npmjs.com/package/noble-ed25519) to sign the nonce. However, you can use any package as long as it accomplishes the same result.
+
+Newer versions may work, but the examples were tested with the following versions:
 
 <Tabs>
 <TabItem value="npm" label="npm">
