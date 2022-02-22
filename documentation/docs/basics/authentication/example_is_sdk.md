@@ -52,7 +52,7 @@ yarn add iota-is-sdk
 </TabItem>
 </Tabs>
 
-## Authentication flow
+## Authentication Workflow
 
 :::info
 The current API version (in this example `v0.1`) can be looked up using the [http://localhost:3000/info](http://localhost:3000/info) endpoint.
