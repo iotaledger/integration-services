@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 # Node.js
 
-In this example you will learn how to authenticate your identity using Node.js. We opted to use `Axios` as the HTTP client, `bs58` to decode Base58 and `@noble/ed25519` to sign the nonce. You can use any preferred package as long as it accomplishes the same result. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) first before starting this example.
+In this example you will learn how to authenticate your identity using Node.js. We opted to use `Axios` as the HTTP client, `bs58` to decode Base58 and `@noble/ed25519` to sign the nonce. You can use any preferred package as long as it accomplishes the same result. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) for better understanding how we authenticate users.
 
 We created an identity for you to follow along with the example: 
 
@@ -183,7 +183,7 @@ setAxiosHeader();
 ```
 ##  Putting it all together
 This is the final code using all function together to request a JWT.
-The code can also be found at this repository: [https://github.com/Schereo/is-authentication](https://github.com/Schereo/is-authentication).
+The code can also be found at this repository: [https://github.com/Schereo/is-node-authentication](https://github.com/Schereo/is-node-authentication).
 
 ```js title="./authenticate.js"
 import axios from 'axios';
