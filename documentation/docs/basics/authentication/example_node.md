@@ -18,7 +18,7 @@ import TabItem from '@theme/TabItem';
 
 In this example, you will learn to authenticate your identity using Node.js. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) so you can fully understand the [Authentication Workflow](https://wiki.iota.org/integration-services/authentication#authentication-workflow).
 
-We created an identity for you to follow along with the example: 
+This example uses the following identity: 
 
 ```js
 {
