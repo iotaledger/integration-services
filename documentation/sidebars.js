@@ -81,6 +81,24 @@ module.exports = {
     },
     {
       type: 'category',
+      label: 'Basics',
+      collapsed: true,
+      items: [
+        {
+          type: 'category',
+          label: 'Authentication',
+          items: [
+            'basics/authentication/concept',
+            'basics/authentication/example_node',
+            'basics/authentication/example_is_sdk'
+          ]
+        },
+        'basics/identity',
+        'basics/streams'
+      ]
+    },
+    {
+      type: 'category',
       label: 'Examples',
       collapsed: true,
       items: [
@@ -93,24 +111,6 @@ module.exports = {
         'examples/create-channel',
         'examples/authorize-to-channel',
         'examples/search-channel-and-validate-data'
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Basics',
-      collapsed: true,
-      items: [
-        'basics/identity',
-        'basics/streams',
-        {
-          type: 'category',
-          label: 'Authentication',
-          items: [
-            'basics/authentication/authentication',
-            'basics/authentication/example_node',
-            'basics/authentication/example_is_sdk'
-          ]
-        }
       ]
     },
     {
