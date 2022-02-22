@@ -29,7 +29,7 @@ This example uses the following identity:
 
 ## Prerequisites 
 
-* Recent version of [Node.js](https://nodejs.org/en/download/)
+* A recent version of [Node.js](https://nodejs.org/en/download/) (>14.19.0).
 
 ## Installation
 
