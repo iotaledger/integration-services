@@ -31,7 +31,8 @@ This example uses the following identity:
 
 * A recent version of [Node.js](https://nodejs.org/en/download/) (>14.19.0).
 
-## Installation
+### Required Packages 
+
 
 Newer versions might work but the examples are tested with the following installation:
 
