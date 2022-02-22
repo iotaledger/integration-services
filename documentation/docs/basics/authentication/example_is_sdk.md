@@ -62,7 +62,7 @@ The current API version (in this example `v0.1`) can be looked up using the [htt
 Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/welcome) to store your secret keys securely.
 :::
 
-Depending on the functionality you are going to use it might be sufficient to only authenticate the `IdentityClient()` or the `ChannelClient()`.
+Depending on the functionality you are going to use, it may be sufficient to only authenticate the `IdentityClient()` or the `ChannelClient()`.
 Each of the clients has it's own authentication state i.e. when you authenticate on the `IdentityClient()` you are not automatically authenticated on the `ChannelClient()`.
 
 ```js title="./authenticate.js
