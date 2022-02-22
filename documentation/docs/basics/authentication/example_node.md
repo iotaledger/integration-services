@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 # Node.js
 
-In this example you will learn how to authenticate your identity using Node.js. We opted to use `Axios` as the HTTP client, `bs58` to decode Base58 and `@noble/ed25519` to sign the nonce. You can use any preferred package as long as it accomplishes the same result. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) for better understanding on how we authenticate users.
+In this example, you will learn to authenticate your identity using Node.js. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) so you can fully understand the [Authentication Workflow](https://wiki.iota.org/integration-services/authentication#authentication-workflow).
 
 We created an identity for you to follow along with the example: 
 
