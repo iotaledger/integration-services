@@ -10,6 +10,7 @@ keywords:
 - nodejs
 - is-sdk
 - npm
+- how to
 ---
 
 import Tabs from '@theme/Tabs';
