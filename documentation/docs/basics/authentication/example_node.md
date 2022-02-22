@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: This section will show you an example on how to authenticate using Node.js
+description: This section will show you an example on how to authenticate using Node.js.
 keywords:
 - authentication
 - jwt
@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 # Node.js
 
-In this example you will learn how to authenticate your identity using Node.js. We opted to use `Axios` as the HTTP client, `bs58` to decode Base58 and `@noble/ed25519` to sign the nonce. You can use any preferred package as long as it accomplishes the same result. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) for better understanding how we authenticate users.
+In this example you will learn how to authenticate your identity using Node.js. We opted to use `Axios` as the HTTP client, `bs58` to decode Base58 and `@noble/ed25519` to sign the nonce. You can use any preferred package as long as it accomplishes the same result. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) for better understanding on how we authenticate users.
 
 We created an identity for you to follow along with the example: 
 
@@ -29,7 +29,7 @@ We created an identity for you to follow along with the example:
 
 ## Prerequisites 
 
-* Recent version on [Node.js](https://nodejs.org/en/download/)
+* Recent version of [Node.js](https://nodejs.org/en/download/)
 
 ## Installation
 
@@ -88,8 +88,8 @@ const requestNonce = async () => {
 requestNonce();
 ```
 
-The returned response body  will look like this JSON object.
-```json
+The returned response body  will look like this .js object.
+```js
 { nonce: '3eaf8814caa842d94fdb96fc26d02f7c339e65ff' }
 ```
 
@@ -160,15 +160,15 @@ const requestJWT = async () => {
 requestJWT();
 ```
 
-The returned JSON body will contain the JWT:
-```json
+The returned js object will contain the JWT:
+```js
 {
   jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6OEJBbVVxQWc0YVVqVjNUOVdVaFBwRG5GVmJKU2sxNm9MeUZxM20zZTYyTUYiLCJwdWJsaWNLZXkiOiI3WFRYVlJ5M0cxTVhjbURrejJiUUNiV3B2OEF6b1FSZ3hHdjVtRG0xRkoxdCIsInVzZXJuYW1lIjoiVGltMTIzNDUiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMi0wMi0xOFQwNzo0ODo0NSswMTowMCIsImNsYWltIjp7InR5cGUiOiJQZXJzb24ifSwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjQ1MTc3OTg1LCJleHAiOjE2NDUyNjQzODV9.-O2UpPyfWOvtLV2cUF9fPVhgCGDCVwFU9zXrpn_uKU0'
 }
 ```
 
 ### 5. Set JWT as Axios header
-When using Axios the JWT can easily be set as a default header used in every request. This step may differ depending on your preferred HTTP client library.
+When using Axios the JWT can easily be set as a default header that will be used in every subsequent request. This step may differ depending on your preferred HTTP client library.
 ```js title="./authenticate.js"
 import axios from 'axios';
 
@@ -182,7 +182,7 @@ const setAxiosHeader = () => {
 setAxiosHeader();
 ```
 ##  Putting it all together
-This is the final code using all function together to request a JWT.
+This is the final code using all functions together to request a JWT.
 The code can also be found at this repository: [https://github.com/Schereo/is-node-authentication](https://github.com/Schereo/is-node-authentication).
 
 ```js title="./authenticate.js"
