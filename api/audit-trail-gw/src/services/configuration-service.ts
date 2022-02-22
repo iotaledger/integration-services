@@ -28,6 +28,7 @@ export class ConfigurationService {
 		databaseUrl: process.env.DATABASE_URL,
 		databaseName: process.env.DATABASE_NAME,
 		serverSecret: process.env.SERVER_SECRET,
+		jwtSecret: process.env.JWT_SECRET,
 		hornetNode: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
 		apiKey: process.env.API_KEY,
