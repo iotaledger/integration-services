@@ -88,4 +88,4 @@ const secretKey = '5N3SxG4UzVDpNe4LyDoZyb6bSgE9tk3pE2XP5znXo5bF';
 authenticate(identityId, secretKey);
 ```
 
-The code can also be found at this repository: [https://github.com/Schereo/is-sdk-authentication](https://github.com/Schereo/is-sdk-authentication).
+You can find the complete code example at this repository: [https://github.com/Schereo/is-sdk-authentication](https://github.com/Schereo/is-sdk-authentication).
