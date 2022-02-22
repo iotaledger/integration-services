@@ -63,7 +63,7 @@ Never save your secret key in plain text in your code. Use local environment var
 :::
 
 Depending on the functionality you are going to use, it may be sufficient to only authenticate the `IdentityClient()` or the `ChannelClient()`.
-Each of the clients has it's own authentication state i.e. when you authenticate on the `IdentityClient()` you are not automatically authenticated on the `ChannelClient()`.
+Each of the clients has its authentication state. This means that when you authenticate on the `IdentityClient()`, you are not automatically authenticated on the `ChannelClient()`.
 
 ```js title="./authenticate.js
 import { IdentityClient, ChannelClient, ApiVersion } from 'iota-is-sdk';
