@@ -279,6 +279,7 @@ describe('test updateSubscription route', () => {
 	it('should return unauthorized since userIdentityId and subscriberId, userIdentityId and authorId do not match', async () => {
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
+			name: 'test-name',
 			channelAddress: '1234234234',
 			topics: []
 		}));
@@ -297,6 +298,7 @@ describe('test updateSubscription route', () => {
 	it('should return not found since so subscription with channelAddress and id does not exist', async () => {
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
+			name: 'test-name',
 			channelAddress: '1234234234',
 			topics: []
 		}));
@@ -316,6 +318,7 @@ describe('test updateSubscription route', () => {
 	it('should return ok', async () => {
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
+			name: 'test-name',
 			channelAddress: '1234234234',
 			topics: []
 		}));
@@ -384,6 +387,7 @@ describe('test deleteSubscription route', () => {
 		const channelAddress = '1234234234';
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
+			name: 'test-name',
 			channelAddress,
 			topics: []
 		}));
@@ -401,6 +405,7 @@ describe('test deleteSubscription route', () => {
 		const channelAddress = '1234234234';
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
+			name: 'test-name',
 			channelAddress,
 			topics: []
 		}));
@@ -420,6 +425,7 @@ describe('test deleteSubscription route', () => {
 		const channelAddress = 'did:iota:1234';
 		jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			authorId: 'did:iota:91011',
+			name: 'test-name',
 			channelAddress,
 			topics: []
 		}));
