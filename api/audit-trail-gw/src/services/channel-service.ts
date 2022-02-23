@@ -14,6 +14,8 @@ import { ILock, Lock } from '../utils/lock';
 import { getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
+import { searchChannelInfo } from '../database/channel-info';
+import { isEmpty } from 'lodash';
 
 export class ChannelService {
 	private readonly password: string;
@@ -77,6 +79,11 @@ export class ChannelService {
 			presharedKey: res.presharedKey,
 			seed: res.seed
 		};
+	}
+
+	async channelExists(name: string): Promise<boolean> {
+		const channel = await searchChannelInfo({ name });
+		return !isEmpty(channel);
 	}
 
 	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber): Promise<ChannelData[]> {
