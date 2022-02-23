@@ -37,7 +37,6 @@ export class ChannelService {
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
-		subscriptionPassword?: string;
 	}): Promise<CreateChannelResponse> {
 		const { name, presharedKey, seed, hasPresharedKey, id, topics } = params;
 		let key = presharedKey;
