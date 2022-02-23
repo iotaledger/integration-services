@@ -9,8 +9,11 @@ export const ChannelAddressSchema = Type.String({ minLength: 105, maxLength: 105
 
 export const ChannelInfoSchema = Type.Object({
 	channelAddress: Type.String({ minLength: 105, maxLength: 105 }),
-	name: Type.Optional(Type.String({
-		description: 'Optional channel name. A channel can be searched by its name.'
+	name: Type.String({
+		description: 'A channel can be searched by its name.'
+	}),
+	description: Type.Optional(Type.String({
+		description: 'An optional description of the channel.'
 	})),
 	authorId: Type.String({ minLength: 50, maxLength: 53 }),
 	subscriberIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
