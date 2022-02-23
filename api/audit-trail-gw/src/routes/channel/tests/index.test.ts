@@ -64,7 +64,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { id: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', name: 'test-channel', subscriptionPassword: 'verysecretpassword' }
+				body: { topics: [], seed: 'verysecretseed', name: 'test-channel' }
 			};
 
 			const expectedSubscription: Subscription = {
