@@ -1,13 +1,12 @@
-import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
 import { UserService } from '../../services/user-service';
-import { getDateFromString, getDateStringFromDate } from '../../utils/date';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';
 import { StatusCodes } from 'http-status-codes';
-import { UpdateWriteOpResult } from 'mongodb';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -313,7 +312,7 @@ describe('test PUT channelInfo', () => {
 	it('should return 404 since no channel updated', async () => {
 		const updateChannelTopicSpy = jest
 			.spyOn(ChannelInfoDb, 'updateChannelTopic')
-			.mockImplementation(async () => ({ result: { n: 0 } } as UpdateWriteOpResult));
+			.mockImplementation(async () => ({ result: { n: 0 } } as any));
 
 		const req: any = {
 			user: { id: validBody.authorId },
@@ -331,7 +330,7 @@ describe('test PUT channelInfo', () => {
 	it('should update expected channel info', async () => {
 		const updateChannelTopicSpy = jest
 			.spyOn(ChannelInfoDb, 'updateChannelTopic')
-			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
+			.mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
 			user: { id: validBody.authorId },
@@ -349,7 +348,7 @@ describe('test PUT channelInfo', () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const updateChannelTopicSpy = jest
 			.spyOn(ChannelInfoDb, 'updateChannelTopic')
-			.mockImplementation(async () => ({ result: { n: 1 } } as UpdateWriteOpResult));
+			.mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
 			user: { id: 'did:iota:123456' }, // different id as authorId

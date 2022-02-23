@@ -5,11 +5,11 @@ import {
 	IdentityJson,
 	VerifiableCredentialJson,
 	Credential
-} from '@iota-is/shared-modules/lib/models/types/identity';
-import { KeyCollectionJson } from '@iota-is/shared-modules/lib/models/types/key-collection';
+} from '@iota/is-shared-modules/lib/models/types/identity';
+import { KeyCollectionJson } from '@iota/is-shared-modules/lib/models/types/key-collection';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
-import { ILogger } from '@iota-is/shared-modules/lib/utils/logger';
-import { IdentityKeys } from '@iota-is/shared-modules/lib/models/types/identity';
+import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
+import { IdentityKeys } from '@iota/is-shared-modules/lib/models/types/identity';
 
 export class SsiService {
 	private static instance: SsiService;

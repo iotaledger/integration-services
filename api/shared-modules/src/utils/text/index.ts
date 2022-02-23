@@ -1,3 +1,13 @@
+import { parseISO, formatISO } from 'date-fns';
+
+export const getDateFromString = (dateString: string): Date | undefined => {
+	return dateString ? parseISO(dateString) : undefined;
+};
+
+export const getDateStringFromDate = (date: Date): string | null | undefined => {
+	return date && formatISO(date);
+};
+
 export function toBytes(str: string): Uint8Array {
 	const bytes = new Uint8Array(str.length);
 	for (let i = 0; i < str.length; ++i) {

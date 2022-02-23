@@ -1,6 +1,6 @@
 import { CollectionNames } from '../database/constants';
-import { Db } from 'mongodb';
 import { ILogger } from '../utils/logger/index';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
 
 const LOCK_EXPIRATION_TIME_SEC = 55;
 
@@ -10,7 +10,8 @@ export interface IDatabaseSeeder {
 
 export class DatabaseSeeder {
 	constructor(private readonly logger: ILogger) {}
-	async seed(db: Db) {
+	async seed() {
+		const db = MongoDbService.db;
 		const concurrencyCollection = db.collection(CollectionNames.concurrencyLocks);
 		await concurrencyCollection.createIndex({ created: 1 }, { expireAfterSeconds: LOCK_EXPIRATION_TIME_SEC });
 

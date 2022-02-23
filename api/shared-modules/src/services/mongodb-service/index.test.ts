@@ -1,4 +1,4 @@
-import { MongoDbService } from './mongodb-service';
+import { MongoDbService } from './';
 
 describe('test MongoDbService', () => {
 	it('getPlainObject should not return values with null or undefined!', () => {

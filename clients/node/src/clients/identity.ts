@@ -4,15 +4,15 @@ import {
   IdentityInternal,
   IdentityJson,
   VerifiableCredentialJson
-} from '@iota-is/shared-modules/lib/models/types/identity';
-import { RevokeVerificationBody } from '@iota-is/shared-modules/lib/models/types/request-response-bodies';
-import { User, UserType } from '@iota-is/shared-modules/lib/models/types/user';
+} from '@iota/is-shared-modules/lib/models/types/identity';
+import { RevokeVerificationBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import { User, UserType } from '@iota/is-shared-modules/lib/models/types/user';
 import {
   CredentialTypes,
   VerifiableCredentialInternal
-} from '@iota-is/shared-modules/lib/models/types/verification';
+} from '@iota/is-shared-modules/lib/models/types/verification';
 import { searchCriteria } from '../models/searchCriteria';
-import { IdentityDocumentJson } from '@iota-is/shared-modules/src/models/types/identity';
+import { IdentityDocumentJson } from '@iota/is-shared-modules/src/models/types/identity';
 
 export class IdentityClient extends BaseClient {
   constructor(config: ClientConfig = {}) {

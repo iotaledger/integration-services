@@ -1,7 +1,7 @@
 import { DatabaseSeeder } from './database-seeder';
 import { KeyGenerator } from './key-generator';
 import { Logger } from '../utils/logger/index';
-import { MongoDbService } from '../services/mongodb-service';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
 import { ConfigurationService } from '../services/configuration-service';
 
 export class SetupManager {
@@ -14,7 +14,7 @@ export class SetupManager {
 
 		// seed the database with indexes
 		const dbSeeder = new DatabaseSeeder(logger);
-		await dbSeeder.seed(MongoDbService.db);
+		await dbSeeder.seed();
 
 		// create keys for root identity if not exists
 		const keyGenerator = new KeyGenerator(configService, logger);

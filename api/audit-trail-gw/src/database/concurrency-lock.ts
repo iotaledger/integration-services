@@ -1,7 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
-import { InsertOneWriteOpResult, WithId, DeleteWriteOpResultObject } from 'mongodb';
-import { ConcurrencyLock } from '@iota-is/shared-modules/lib/models/types/concurrency';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
+import { ConcurrencyLock } from '@iota/is-shared-modules/lib/models/types/concurrency';
 
 const collectionName = CollectionNames.concurrencyLocks;
 
@@ -10,7 +9,7 @@ export const getLock = async (lock: string): Promise<ConcurrencyLock | null> => 
 	return MongoDbService.getDocument<ConcurrencyLock>(collectionName, query);
 };
 
-export const insertLock = async (lock: string): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const insertLock = async (lock: string) => {
 	const document = {
 		_id: lock,
 		lock,
@@ -24,7 +23,7 @@ export const insertLock = async (lock: string): Promise<InsertOneWriteOpResult<W
 	return res;
 };
 
-export const removeLock = async (lock: string): Promise<DeleteWriteOpResultObject> => {
+export const removeLock = async (lock: string) => {
 	const query = { _id: lock };
 	return MongoDbService.removeDocument(collectionName, query);
 };

@@ -1,14 +1,13 @@
-import { User, UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/lib/models/types/user';
+import { User, UserPersistence, UserRoles, UserSearch } from '@iota/is-shared-modules/lib/models/types/user';
 import * as userDb from '../database/user';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
-import { getDateFromString, getDateStringFromDate } from '../utils/date';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
 import {
 	CreateIdentityBody,
 	IdentityJson,
 	VerifiableCredentialJson,
 	IdentityKeys
-} from '@iota-is/shared-modules/lib/models/types/identity';
+} from '@iota/is-shared-modules/lib/models/types/identity';
 import { SchemaValidator } from '../utils/validator';
 import * as IdentityDocsDb from '../database/identity-keys';
 import { SsiService } from './ssi-service';
@@ -79,7 +78,7 @@ export class UserService {
 		return user?.id;
 	}
 
-	async addUser(user: User): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
+	async addUser(user: User) {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
 		}
@@ -100,7 +99,7 @@ export class UserService {
 		return res;
 	}
 
-	async updateUser(user: User): Promise<UpdateWriteOpResult> {
+	async updateUser(user: User) {
 		const userPersistence = this.getUserPersistence(user);
 		return userDb.updateUser(userPersistence);
 	}
@@ -113,7 +112,7 @@ export class UserService {
 		return userDb.removeUserVC(vc);
 	}
 
-	async deleteUser(id: string): Promise<DeleteWriteOpResultObject> {
+	async deleteUser(id: string) {
 		return userDb.deleteUser(id);
 	}
 

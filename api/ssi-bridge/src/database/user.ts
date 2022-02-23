@@ -1,8 +1,7 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '../services/mongodb-service';
-import { UserPersistence, UserRoles, UserSearch } from '@iota-is/shared-modules/lib/models/types/user';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
-import { VerifiableCredentialJson } from '@iota-is/shared-modules/lib/models/types/identity';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
+import { UserPersistence, UserRoles, UserSearch } from '@iota/is-shared-modules/lib/models/types/user';
+import { VerifiableCredentialJson } from '@iota/is-shared-modules/lib/models/types/identity';
 
 const collectionName = CollectionNames.users;
 const maxNumberOfVc = 100;
@@ -45,7 +44,7 @@ export const getUserByUsername = async (username: string): Promise<UserPersisten
 	return await MongoDbService.getDocument<UserPersistence>(collectionName, query);
 };
 
-export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpResult<WithId<unknown>>> => {
+export const addUser = async (user: UserPersistence) => {
 	if (user.verifiableCredentials?.length >= maxNumberOfVc) {
 		throw new Error(`You can't add more than ${maxNumberOfVc} verifiable credentials to a user!`);
 	}
@@ -60,7 +59,7 @@ export const addUser = async (user: UserPersistence): Promise<InsertOneWriteOpRe
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateUser = async (user: UserPersistence): Promise<UpdateWriteOpResult> => {
+export const updateUser = async (user: UserPersistence) => {
 	const query = {
 		_id: user.id
 	};
@@ -144,7 +143,7 @@ export const removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPe
 	};
 };
 
-export const deleteUser = async (id: string): Promise<DeleteWriteOpResultObject> => {
+export const deleteUser = async (id: string) => {
 	const query = { _id: id };
 	return MongoDbService.removeDocument(collectionName, query);
 };

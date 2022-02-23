@@ -15,7 +15,7 @@ import {
 	FindOneOptions,
 	CommonOptions
 } from 'mongodb';
-import { Logger } from '../utils/logger';
+import { Logger } from '../../utils/logger';
 import * as _ from 'lodash';
 
 const logger = Logger.getInstance();
@@ -32,46 +32,46 @@ export class MongoDbService {
 	public static client: MongoClient;
 	public static db: Db;
 
-	private static getCollection(collectionName: string): Collection | null {
+	private static getCollection(collectionName: string): Collection | undefined {
 		if (!MongoDbService.db) {
 			logger.error('Database not found!');
-			return null;
+			return undefined;
 		}
 		return MongoDbService.db.collection(collectionName);
 	}
 
 	static async getDocument<T>(collectionName: string, query: FilterQuery<T>, options?: WithoutProjection<FindOneOptions<T>>): Promise<T> {
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.findOne(query, options);
+		return collection?.findOne(query, options);
 	}
 
 	static async getDocuments<T>(
 		collectionName: string,
 		query: FilterQuery<T>,
 		options?: WithoutProjection<FindOneOptions<T>>
-	): Promise<T[] | null> {
+	): Promise<T[] | undefined> {
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.find(query, options).toArray();
+		return collection?.find(query, options).toArray();
 	}
 
 	static async insertDocument<T>(
 		collectionName: string,
 		data: any,
 		options?: CollectionInsertOneOptions
-	): Promise<InsertOneWriteOpResult<WithId<T>> | null> {
+	): Promise<InsertOneWriteOpResult<WithId<T>> | undefined> {
 		const ommitedData: any = _.omitBy(data, _.isUndefined);
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.insertOne(ommitedData, options);
+		return collection?.insertOne(ommitedData, options);
 	}
 
 	static async insertDocuments(
 		collectionName: string,
 		data: any[],
 		options?: CollectionInsertManyOptions
-	): Promise<InsertWriteOpResult<any>> {
+	): Promise<InsertWriteOpResult<any> | undefined> {
 		const ommitedData: any = data.map((d) => _.omitBy(d, _.isUndefined));
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.insertMany(ommitedData, options);
+		return collection?.insertMany(ommitedData, options);
 	}
 
 	static async updateDocument(
@@ -79,20 +79,24 @@ export class MongoDbService {
 		query: any,
 		update: any,
 		options?: UpdateOneOptions
-	): Promise<UpdateWriteOpResult | null> {
+	): Promise<UpdateWriteOpResult | undefined> {
 		const ommitedUpdate: any = _.omitBy(update, _.isUndefined);
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.updateOne(query, ommitedUpdate, options);
+		return collection?.updateOne(query, ommitedUpdate, options);
 	}
 
-	static async removeDocument(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
+	static async removeDocument(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject | undefined> {
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.deleteOne(query, options);
+		return collection?.deleteOne(query, options);
 	}
 
-	static async removeDocuments(collectionName: string, query: any, options?: CommonOptions): Promise<DeleteWriteOpResultObject> {
+	static async removeDocuments(
+		collectionName: string,
+		query: any,
+		options?: CommonOptions
+	): Promise<DeleteWriteOpResultObject | undefined> {
 		const collection = MongoDbService.getCollection(collectionName);
-		return collection.deleteMany(query, options);
+		return collection?.deleteMany(query, options);
 	}
 
 	/**
@@ -129,15 +133,15 @@ export class MongoDbService {
 	 * @return {*}  {Promise<MongoClient>}
 	 * @memberof MongoDbService
 	 */
-	static async connect(url: string, dbName: string): Promise<MongoClient> {
+	static async connect(url: string, dbName: string): Promise<MongoClient | undefined> {
 		if (MongoDbService.client) {
-			return;
+			return undefined;
 		}
 
 		return new Promise((resolve, reject) => {
 			const options: MongoClientOptions = {
 				useUnifiedTopology: true
-			};
+			} as MongoClientOptions;
 
 			MongoClient.connect(url, options, function (err: Error, client: MongoClient) {
 				if (err != null) {

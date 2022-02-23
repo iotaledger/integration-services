@@ -1,8 +1,7 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota-is/shared-modules/lib/models/types/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
-import { DeleteWriteOpResultObject, InsertOneWriteOpResult, UpdateWriteOpResult, WithId } from 'mongodb';
 import { UserService } from './user-service';
-import { getDateFromString, getDateStringFromDate } from '../utils/date';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {
@@ -33,21 +32,21 @@ export class ChannelInfoService {
 		return channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
 	}
 
-	async addChannelInfo(channelInfo: ChannelInfo): Promise<InsertOneWriteOpResult<WithId<unknown>>> {
+	async addChannelInfo(channelInfo: ChannelInfo) {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
 	}
 
-	async updateChannelTopic(channelInfo: ChannelInfo): Promise<UpdateWriteOpResult> {
+	async updateChannelTopic(channelInfo: ChannelInfo) {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
 		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
 	}
 
-	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string): Promise<UpdateWriteOpResult> {
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 
-	async deleteChannelInfo(channelAddress: string): Promise<DeleteWriteOpResultObject> {
+	async deleteChannelInfo(channelAddress: string) {
 		return ChannelInfoDb.deleteChannelInfo(channelAddress);
 	}
 
