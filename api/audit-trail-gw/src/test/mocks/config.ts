@@ -9,6 +9,7 @@ export const StreamsConfigMock: StreamsConfig = {
 export const ConfigMock: Config = {
 	apiKey: 'test-v1',
 	serverSecret: 'veryvery-very-very-server-secret',
+	jwtSecret: 'veryvery-very-very-server-secret',
 	databaseName: 'testdatabasename',
 	databaseUrl: 'testdatabaseurl',
 	apiVersion: '0.1',
