@@ -27,6 +27,8 @@ describe('test Search user', () => {
 
 	it('should call searchChannelInfo with expected search', async () => {
 		const expectedChannelInfoSearch: ChannelInfoSearch = {
+			authorId: 'did:iota:test1234',
+			name: 'test-channel',
 			topicType: 'test-topic',
 			topicSource: 'test-source',
 			limit: 1,
@@ -39,6 +41,8 @@ describe('test Search user', () => {
 		const req: any = {
 			params: {},
 			query: {
+				'author-id': 'did:iota:test1234',
+				name: 'test-channel',
 				'topic-type': 'test-topic',
 				'topic-source': 'test-source',
 				limit: '1',

@@ -2,6 +2,9 @@ import { Type } from '@sinclair/typebox';
 import { TopicSchema } from '../channel-info';
 
 export const CreateChannelBodySchema = Type.Object({
+	name: Type.Optional(Type.String({
+		description: 'Optional channel name. A channel can be searched by its name.'
+	})),
 	subscriptionPassword: Type.Optional(
 		Type.String({
 			minLength: 8,
