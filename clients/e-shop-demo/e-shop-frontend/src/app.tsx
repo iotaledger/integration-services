@@ -11,6 +11,7 @@ import iotaLogo from './assets/iota_logo.png';
 import ensuresecLogo from './assets/ensuresec_logo.png';
 import caixaLogo from './assets/caixa_logo.png';
 import euLogo from './assets/eu_logo.svg';
+import SwitchTour from './components/switch-tour/switch-tour.component';
 
 const App = () => {
 	const sk = process.env.REACT_APP_SECRET_KEY;
@@ -43,6 +44,7 @@ const App = () => {
 								883242.
 							</EuText>
 						</LogoContainer>
+						<SwitchTour></SwitchTour>
 					</Router>
 				</TourProvider>
 			</CartProvider>

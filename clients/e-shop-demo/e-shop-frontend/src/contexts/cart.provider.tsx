@@ -10,9 +10,11 @@ const CartProvider = ({ children }: any) => {
 		setItems([...items, item]);
 	};
 
-	const removeFromCart = (id: number) => {
-		const filteredItems = items.filter((item) => item.id !== id);
-		setItems(filteredItems);
+	const removeFromCart = (listIndex: number) => {
+		// A copy is needed to not splice the original array
+		const itemsCopy = [...items];
+		itemsCopy.splice(listIndex, 1);
+		setItems(itemsCopy);
 	};
 
 	const emptyCart = () => {
