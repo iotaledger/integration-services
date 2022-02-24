@@ -12,15 +12,20 @@ const CheckoutWithIota = () => {
 
 	// Hide credential display and disable toggle button on smaller screens
 	useEffect(() => {
+		checkWindowSize();
 		window.addEventListener('resize', () => {
-			if (window.innerWidth < 600) {
-				showCredential && setShowCredential(false);
-				!credentialButtonDisabled && setCredentialButtonDisabled(true);
-			} else {
-				credentialButtonDisabled && setCredentialButtonDisabled(false);
-			}
+			checkWindowSize();
 		});
 	}, []);
+
+	const checkWindowSize = () => {
+		if (window.innerWidth < 600) {
+			showCredential && setShowCredential(false);
+			!credentialButtonDisabled && setCredentialButtonDisabled(true);
+		} else {
+			credentialButtonDisabled && setCredentialButtonDisabled(false);
+		}
+	};
 
 	return (
 		<CheckoutWithIotaContainer>

@@ -16,7 +16,8 @@ const GenerateNonce = () => {
 
 	return nonce ? (
 		<>
-			<p>
+			<p style={{'wordBreak': 'break-all',
+    'whiteSpace': 'normal'}}>
 				Generated nonce: <b>{nonce}</b>
 			</p>
 			<p>Sign this nonce with your secret key using the provided tool.</p>

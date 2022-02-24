@@ -11,7 +11,6 @@ const Tour = () => {
 	const { step, setStep, run, setRun } = useContext(TourContext);
 	const { items } = useContext(CartContext);
 	const location = useLocation();
-	const RUN_TOUR = true;
 
 	useEffect(() => {
 		if (items.length > 0 && step === 3) {
@@ -24,13 +23,13 @@ const Tour = () => {
 		if (path === '/checkout' && items.length > 0) {
 			// If items in cart continue with step 4
 			setStep(4);
-			setRun(RUN_TOUR);
+			setRun(true);
 		} else if (path === '/checkout') {
 			setRun(false);
 		} else if (path === '/') {
 			// Restart tour on home page
 			setStep(0);
-			setRun(RUN_TOUR);
+			setRun(true);
 		}
 	}, [location]);
 
@@ -75,9 +74,10 @@ const Tour = () => {
 				callback={handleJoyrideCallback}
 				continuous={true}
 				run={run}
-				scrollToFirstStep={true}
+				scrollToFirstStep={false}
 				showProgress={false}
 				showSkipButton={false}
+				disableScrolling={true}
 				steps={steps}
 				styles={{
 					options: {

@@ -11,11 +11,13 @@ const Checkout = () => {
 		<CheckoutContainer>
 			<CheckoutItemsContainer>
 				<CheckoutHeading>Cart</CheckoutHeading>
-				{items.map((item: Item) => {
-					return <CheckoutItem key={item.id} item={item}></CheckoutItem>;
+				{items.map((item: Item, index: number) => {
+					return <CheckoutItem key={index} listIndex={index} item={item}></CheckoutItem>;
 				})}
 				{/* If there are no items in cart, display fake item */}
-				{items.length === 0 && <CheckoutItem key={1} item={{ name: 'No items', imageUrl: undefined, price: 0, ageRestricted: false }}></CheckoutItem>}
+				{items.length === 0 && (
+					<CheckoutItem key={1} listIndex={0} item={{ name: 'No items', imageUrl: undefined, price: 0, ageRestricted: false }}></CheckoutItem>
+				)}
 			</CheckoutItemsContainer>
 			<CheckoutTotal></CheckoutTotal>
 		</CheckoutContainer>
