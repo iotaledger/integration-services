@@ -44,7 +44,7 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.createChannel(req, res, nextMock);
-			expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'name' of undefined"));
+			expect(loggerSpy).toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the channel'));
 		});
 

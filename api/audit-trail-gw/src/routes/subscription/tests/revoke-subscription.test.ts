@@ -68,7 +68,7 @@ describe('test revoke subscription route', () => {
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
-		expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'subscriptionLink' of undefined"));
+		expect(loggerSpy).toHaveBeenCalled();
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the subscription'));
 	});
 

@@ -53,7 +53,7 @@ describe('test authorize subscription route', () => {
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
-		expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'subscriptionLink' of undefined"));
+		expect(loggerSpy).toHaveBeenCalled();
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
 
