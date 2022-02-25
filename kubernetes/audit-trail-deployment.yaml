@@ -62,13 +62,8 @@ spec:
           readinessProbe:
             httpGet:
               path: /info
-              port: 3002
+              port: 3000
           env:
-            - name: "PORT"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: PORT_AUDIT
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:
@@ -101,4 +96,4 @@ spec:
                   key: API_KEY
           ports:
             - protocol: TCP
-              containerPort: 3002
+              containerPort: 3000
