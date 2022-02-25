@@ -52,8 +52,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audittrailgw.entrypoints=web"
-      - "traefik.http.routers.audittrailgw.rule=Host(`localhost:3002`)"
-#      - "traefik.http.routers.audittrailgw.rule=Path(`/info`)"
+      - "traefik.http.routers.audittrailgw_ch.rule=PathPrefix(`/api/v0.1/channels`)"
+      - "traefik.http.routers.audittrailgw_ci.rule=PathPrefix(`/api/v0.1/channel-info`)"
+      - "traefik.http.routers.audittrailgw_sub.rule=PathPrefix(`/api/v0.1/subscriptions`)"
     environment: 
       PORT: 3002
       DATABASE_NAME: ${DATABASE_NAME}
@@ -92,9 +93,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ssibridge.entrypoints=web"
-      - "traefik.http.routers.ssibridge.rule=PathPrefix(`/api/`)"
-      - "traefik.http.routers.ssibridge.rule=Host(`localhost:3001`)"
-      - "traefik.http.routers.ssibridge.rule=Path(`/info`)"
+      - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.1/identities`) "
+      - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
+      - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
     environment: 
       PORT: 3001
       DATABASE_NAME: ${DATABASE_NAME}
