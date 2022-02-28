@@ -118,7 +118,8 @@ The example's nonce will generate the following hash:
 6d748f209e5af1f5b8825f7822d6659c45c874076cd2b3337c7861fd94cd3ba5
 ```
 
-### 3. Sign the hashed nonce
+### 3. Sign the Hashed Nonce
+
 Your secret key is encoded in Base58 and has to be decoded first. Afterwards the nonce is signed with your encoded secret key and saved as a hexadecimal string.
 :::danger
 Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/welcome) to store your secret keys securely.
