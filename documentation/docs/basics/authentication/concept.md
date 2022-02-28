@@ -34,7 +34,7 @@ JSON response body:
 
 Once you have received your nonce, you should hash it using [SHA-256](https://en.wikipedia.org/wiki/SHA-2) and encode it to hexadecimal to sign it afterwards.
 
-### 3. Sign the hashed nonce
+### 3. Sign the Hashed Nonce
 
 You can now sign the hashed nonce with your secret key. Your secret key is encoded in Base58 and needs to be decoded to hexadecimal.
 You can sign your hashed nonce with your decoded secret key using the [Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519) algorithm. Make sure that the signed nonce is in hexadecimal.
