@@ -73,7 +73,8 @@ yarn add axios@0.21.4
 
 ## Authentication Workflow
 
-### 1. Request a nonce
+### 1. Request a Nonce
+
 First, request a nonce and supply your identity id.
 
 :::info
