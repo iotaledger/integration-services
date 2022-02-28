@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: This section will let you grasp the authentication schema used in the Integration Services.
+description: This section introduces the authentication schema used in the Integration Services.
 keywords:
   - authentication
   - jwt
