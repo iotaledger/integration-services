@@ -41,7 +41,7 @@ You can sign your hashed nonce with your decoded secret key using the [Ed25519](
 
 ### 4. Request the JWT
 
-Finally, request your JWT with the following endpoint (same endpoint as in the first step but POST instead of GET). Make sure to add your signed nonce in the request body. For further information have a look at our [API Reference](https://wiki.iota.org/integration-services/api_reference#authenticationprove-ownershipid).
+You can request your JWT using the `/authentication/prove-ownership/<identity-id>` endpoint. It is the same endpoint as in the first step, but it uses the POST method instead of GET. You should add your signed nonce in the request body. You can find more information in the [API Reference](https://wiki.iota.org/integration-services/api_reference#authenticationprove-ownershipid).
 
 POST `/authentication/prove-ownership/<identity-id>`
 
