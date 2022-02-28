@@ -30,7 +30,7 @@ JSON response body:
 }
 ```
 
-### 2. Hash the nonce
+### 2. Hash the Nonce
 
 Once you have received your nonce, you should hash it using [SHA-256](https://en.wikipedia.org/wiki/SHA-2) and encode it to hexadecimal to sign it afterwards.
 
