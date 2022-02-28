@@ -113,7 +113,7 @@ const hashNonce = () => {
 
 hashNonce();
 ```
-The nonce used generated the following hash:
+The example's nonce will generate the following hash:
 ```
 6d748f209e5af1f5b8825f7822d6659c45c874076cd2b3337c7861fd94cd3ba5
 ```
