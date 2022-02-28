@@ -78,7 +78,7 @@ yarn add axios@0.21.4
 First, request a nonce and supply your identity id.
 
 :::info
-The current API version (in this example `v0.1`) can be looked up using the [http://localhost:3000/info](http://localhost:3000/info) endpoint.
+You can find your current API version using the [http://localhost:3000/info](http://localhost:3000/info) endpoint. This example uses `v0.1`.
 :::
 ```js title="./authenticate.js"
 import axios from 'axios';
