@@ -83,6 +83,11 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *       required: false
  *       schema:
  *         type: string
+ *     - name: creator
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
  *     - name: 'registration-date'
  *       in: query
  *       required: false

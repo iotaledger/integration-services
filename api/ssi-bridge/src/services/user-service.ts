@@ -11,7 +11,9 @@ import {
 import { SchemaValidator } from '../utils/validator';
 import * as IdentityDocsDb from '../database/identity-keys';
 import { SsiService } from './ssi-service';
-import { ILogger } from '../utils/logger';
+import { ILogger, Logger } from '../utils/logger';
+import jwt from 'jsonwebtoken';
+import { ConfigurationService } from './configuration-service';
 
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
@@ -33,12 +35,16 @@ export class UserService {
 			.filter((u) => u);
 	}
 
-	async createIdentity(createIdentityBody: CreateIdentityBody): Promise<IdentityJson> {
+	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string): Promise<IdentityJson> {
 		const identity = await this.ssiService.createIdentity();
+
+		const creatorId = this.decodeUserId(authorization);
+
 		const user: User = {
 			...createIdentityBody,
 			id: identity.doc.id.toString(),
-			publicKey: identity.key.public
+			publicKey: identity.key.public,
+			creator: creatorId
 		};
 
 		await this.addUser(user);
@@ -54,6 +60,28 @@ export class UserService {
 		return {
 			...identity
 		};
+	}
+
+	decodeUserId(authorization: string): string | undefined {
+		const { serverSecret } = ConfigurationService.getInstance(Logger.getInstance()).config;
+		if (!authorization || !authorization.startsWith('Bearer')) {
+			return;
+		}
+
+		const split = authorization.split('Bearer ');
+		if (split.length !== 2) {
+			return;
+		}
+
+		const token = split[1];
+		const decodedToken: any = jwt.verify(token, serverSecret);
+
+		if (typeof decodedToken === 'string' || !decodedToken?.user) {
+			return;
+		}
+		const identityId: string = decodedToken.user.id;
+
+		return identityId;
 	}
 
 	async getUser(id: string, isAuthorizedUser?: boolean): Promise<User | null> {
@@ -124,12 +152,13 @@ export class UserService {
 		if (user == null || isEmpty(user.id)) {
 			throw new Error('Error when parsing the body: id must be provided!');
 		}
-		const { publicKey, id, username, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
+		const { publicKey, id, username, creator, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
 
 		const userPersistence: UserPersistence = {
 			id,
 			publicKey,
 			username,
+			creator,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
 			claim,
 			verifiableCredentials,
@@ -146,12 +175,13 @@ export class UserService {
 			return null;
 		}
 
-		const { username, publicKey, id, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
+		const { username, creator, publicKey, id, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
 
 		const user: User = {
 			id,
 			publicKey,
 			username,
+			creator,
 			registrationDate: getDateStringFromDate(registrationDate),
 			claim,
 			verifiableCredentials,

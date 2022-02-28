@@ -22,13 +22,15 @@ export class IdentityRoutes {
 	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const createIdentityBody: CreateIdentityBody = req.body;
+			const { authorization } = req.headers;
+
 			const existingUser = await this.userService.getIdentityId(createIdentityBody.username);
 
 			if (existingUser) {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'user already exists' });
 			}
 
-			const identity = await this.userService.createIdentity(createIdentityBody);
+			const identity = await this.userService.createIdentity(createIdentityBody, authorization);
 
 			return res.status(StatusCodes.CREATED).send(identity);
 		} catch (error) {
@@ -139,6 +141,7 @@ export class IdentityRoutes {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 		const type = decodeParam(<string>req.query.type);
 		const username = decodeParam(<string>req.query.username);
+		const creator = decodeParam(<string>req.query.creator);
 		const registrationDate = decodeParam(<string>req.query['registration-date']);
 		const limitParam = parseInt(<string>req.query.limit, 10);
 		const indexParam = parseInt(<string>req.query.index, 10);
@@ -150,6 +153,7 @@ export class IdentityRoutes {
 			index,
 			limit,
 			username,
+			creator,
 			registrationDate: getDateFromString(registrationDate)
 		};
 	};

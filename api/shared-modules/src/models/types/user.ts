@@ -28,6 +28,7 @@ export enum UserRoles {
 
 export interface UserSearch {
 	username?: string;
+	creator?: string;
 	registrationDate?: Date;
 	type?: UserType | string;
 	limit?: number;
