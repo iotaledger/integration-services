@@ -71,7 +71,8 @@ yarn add axios@0.21.4
 </TabItem>
 </Tabs>
 
-## Authentication flow
+## Authentication Workflow
+
 ### 1. Request a nonce
 First, request a nonce and supply your identity id.
 
