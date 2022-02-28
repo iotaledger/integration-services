@@ -16,5 +16,6 @@ export const IdentitySchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }), // did
 	publicKey: Type.String({ minLength: 10 }),
 	creator: Type.Optional(Type.String({ minLength: 50, maxLength: 53 })),
+	numberOfCredentials: Type.Integer({description: 'Number of credentials connected to this identity'}),
 	...IdentityWithoutIdFields
 });
