@@ -61,7 +61,7 @@ JSON response body:
 }
 ```
 
-### 5. Use JWT in header
+### 5. Use the JWT in a Header
 
 For all following requests to endpoints protected by authentication use your JWT in the `Authentication` header with the prefix Bearer: `Authentication: Bearer eyJhbGciOiJIUzI1NiI...`
 
