@@ -148,12 +148,13 @@ export class IdentityRoutes {
 		const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 		const index = isNaN(indexParam) ? undefined : indexParam;
 
-		let ascending;
-		const ascParam = decodeParam(<string>req.query.asc);
-		if (ascParam != null) {
-			ascending = ascParam === 'true';
-		}
-
-		return { ascending, type: <UserType>type, index, limit, username, creator, registrationDate: getDateFromString(registrationDate) };
+		return {
+			type: <UserType>type,
+			index,
+			limit,
+			username,
+			creator,
+			registrationDate: getDateFromString(registrationDate)
+		};
 	};
 }

@@ -5,14 +5,12 @@ export const Card = styled.div`
   flex-direction: column;
   maxhight: 400px;
   minwidth: 100px;
-  border-radius: 3px;
-  background-color: ${(props) => props.theme.secondaryLight}};
+  background-color: ${(props) => props.theme.grey}};
 `;
 
 export const CardHeading = styled.h3`
 	text-align: center;
-	margin-top: 15px;
-	color: white;
+  margin-top: 15px;
 `;
 
 export const CardImage = styled.img`
@@ -23,7 +21,4 @@ export const CardImage = styled.img`
 
 export const CardText = styled.p`
 	text-align: center;
-	padding: 10px;
-	color: white;
-	font-weight: 500;
 `;

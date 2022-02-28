@@ -26,12 +26,9 @@ export const verifyCredential = async (credential: any): Promise<boolean> => {
 		const response = await client.post(url, credential);
 		const isVerified = response.data.isVerified;
 		return isVerified;
-	} catch (error: any) {
+	} catch (error) {
 		console.log(error);
-		if (error.response.status === 500) {
-			return false;
-		}
-		throw new Error('Could not verify credential');
+		throw new Error("Could not verify credential");
 	}
 };
 

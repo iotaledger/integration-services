@@ -4,18 +4,15 @@ export const TourContext = createContext({} as any);
 
 const TourProvider = ({ children }: any) => {
 	const [step, setStep] = useState<number>(0);
-	const [run, setRun] = useState<boolean>();
-	const [disabled, setDisabled] = useState<boolean>(false);
+	const [run, setRun] = useState<boolean>(true);
 
 	return (
 		<TourContext.Provider
 			value={{
 				step,
 				setStep,
-				run: disabled ? false : run,
-				setRun,
-				disabled,
-				setDisabled
+				run,
+				setRun
 			}}
 		>
 			{children}

@@ -25,8 +25,8 @@
 	},
 	"scripts": {
 		"start": "react-app-rewired start",
-		"serve": "npm run prettier && set PORT=3001 && react-app-rewired start",
-		"build": "npm run prettier && react-app-rewired build",
+		"serve": "set PORT=3001 && react-app-rewired start",
+		"build": "react-app-rewired build",
 		"test": "react-app-rewired test",
 		"eject": "react-app-rewired eject",
 		"prettier": "npx prettier --write ./src"
@@ -49,10 +49,7 @@
 	"eslintConfig": {
 		"extends": [
 			"react-app"
-		],
-		"rules": {
-			"react-hooks/exhaustive-deps": "off"
-		}
+		]
 	},
 	"browserslist": {
 		"production": [

@@ -10,11 +10,6 @@ export const CheckoutWithIotaContainer = styled.div`
 	background-image: url('../../assets/iota_logo_white.png');
 	background-color: black;
 	border-radius: 3px;
-
-	@media screen and (max-width: 600px) {
-		margin: 20px 0;
-		padding: 25px 20px;
-	}
 `;
 
 export const CheckoutWithIotaContainerHeading = styled.h3`

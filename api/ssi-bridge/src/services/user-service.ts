@@ -29,10 +29,7 @@ export class UserService {
 				return {
 					...userObj,
 					verifiableCredentials: undefined,
-					claim: {
-						type: user.claim?.type
-					},
-					numberOfCredentials: user?.verifiableCredentials ? user.verifiableCredentials?.length : 0
+					claim: undefined
 				};
 			})
 			.filter((u) => u);

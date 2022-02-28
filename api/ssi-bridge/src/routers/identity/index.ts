@@ -105,11 +105,6 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *       required: false
  *       schema:
  *         type: number
- *     - name: asc
- *       in: query
- *       required: false
- *       schema:
- *         type: boolean
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []

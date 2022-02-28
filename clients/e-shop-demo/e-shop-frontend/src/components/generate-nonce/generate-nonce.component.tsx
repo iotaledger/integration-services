@@ -9,15 +9,14 @@ const GenerateNonce = () => {
 	useEffect(() => {
 		async function getNonce() {
 			const identityId = credential?.id;
-			identityId && setNonce(await generateNonce(identityId));
+			setNonce(await generateNonce(identityId));
 		}
 		getNonce();
 	}, [credential]);
 
 	return nonce ? (
 		<>
-			<p style={{'wordBreak': 'break-all',
-    'whiteSpace': 'normal'}}>
+			<p>
 				Generated nonce: <b>{nonce}</b>
 			</p>
 			<p>Sign this nonce with your secret key using the provided tool.</p>

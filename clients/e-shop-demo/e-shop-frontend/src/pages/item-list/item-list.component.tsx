@@ -1,6 +1,6 @@
 import { ItemsContainer } from './item-list.styles';
 import items from '../../data/items.json';
-import Item from '../../components/list-item/list-item.component';
+import Item from '../../components/item/item.component';
 
 const ItemList = () => {
 	return (

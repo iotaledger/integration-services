@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from 'react';
-import { removeAuthHeader } from '../utils/axios-client';
 
 export const UserContext = createContext({} as any);
 const UserProvider = ({ children }: any) => {
@@ -15,11 +14,6 @@ const UserProvider = ({ children }: any) => {
 		setAuthenticated(auth);
 	}, []);
 
-	const logout = () => {
-		setAuthenticated(false);
-		removeAuthHeader();
-	};
-
 	return (
 		<UserContext.Provider
 			value={{
@@ -30,8 +24,7 @@ const UserProvider = ({ children }: any) => {
 				isVerified,
 				setIsVerified,
 				useOwnCredential,
-				setUseOwnCredential,
-				logout
+				setUseOwnCredential
 			}}
 		>
 			{children}

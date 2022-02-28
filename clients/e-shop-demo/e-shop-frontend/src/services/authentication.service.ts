@@ -39,6 +39,6 @@ const signNonce = async (secretKey: string, nonce: string) => {
 		process.exit();
 	}
 	const hash = crypto.createHash('sha256').update(nonce).digest().toString('hex');
-	const signedHash = await ed.sign(hash, secretKey);
+	const signedHash =  await ed.sign(hash, secretKey);
 	return ed.Signature.fromHex(signedHash).toHex();
 };
