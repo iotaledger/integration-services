@@ -100,7 +100,7 @@ The returned response body  will look like this .js object.
 
 ### 2. Hash the Nonce
 
-Now the nonce is getting hashed. The Node API's [createHash()](https://nodejs.org/api/crypto.html#hashupdatedata-inputencoding) function is used to hash the nonce with the SHA-256 hash function and convert it to hexadecimal.
+After you have retrieved the nonce, you should hash it. You can use the Node API's [createHash()](https://nodejs.org/api/crypto.html#hashupdatedata-inputencoding) function to hash the nonce with the SHA-256 hash function and convert it to hexadecimal.
 ```js title="./authenticate.js"
 import crypto from 'crypto';
 
