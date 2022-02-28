@@ -1,17 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: integration-service-api
+  name: audit-trail-gw
 spec:
-  replicas: 5
+  # TODO adjust after merging
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: integration-service-api
+      app: audit-trail-gw
   template:
     metadata:
       labels:
-        app: integration-service-api
+        app: audit-trail-gw
     spec:
       initContainers:
         - name: wait-for-hornet
@@ -45,11 +46,11 @@ spec:
               echo waiting for MongoDB;
               sleep 2;
               done
-
       containers:
-        - name: integration-service-api
-          image: iotaledger/integration-services:v0.1.3
-          imagePullPolicy: IfNotPresent
+        - name: audit-trail-gw
+          # TODO adjust after services are deployed on docker
+          image: audit-trail-gw
+          imagePullPolicy: Never
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:
@@ -61,15 +62,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /info
-              port: 3000
+              port: 3002
           env:
-            - name: "SERVER_IDENTITY_FILE"
-              value: "/config/server-identity.json"
             - name: "PORT"
               valueFrom:
                 configMapKeyRef:
                   name: integration-service-api-config
-                  key: PORT
+                  key: PORT_AUDIT
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:
@@ -90,7 +89,6 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: IOTA_HORNET_NODE
-
             - name: "SERVER_SECRET"
               valueFrom:
                 secretKeyRef:
@@ -103,4 +101,4 @@ spec:
                   key: API_KEY
           ports:
             - protocol: TCP
-              containerPort: 3000
+              containerPort: 3002

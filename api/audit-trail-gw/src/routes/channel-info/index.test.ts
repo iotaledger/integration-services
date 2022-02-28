@@ -1,7 +1,6 @@
 import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
-import { UserService } from '../../services/user-service';
 import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
@@ -10,13 +9,12 @@ import { StatusCodes } from 'http-status-codes';
 
 describe('test Search user', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 
@@ -29,8 +27,6 @@ describe('test Search user', () => {
 
 	it('should call searchChannelInfo with expected search', async () => {
 		const expectedChannelInfoSearch: ChannelInfoSearch = {
-			author: 'charliebrown',
-			authorId: '1234-5678-9',
 			topicType: 'test-topic',
 			topicSource: 'test-source',
 			limit: 1,
@@ -39,12 +35,10 @@ describe('test Search user', () => {
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
 		const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => []);
-		const getUserSpy = jest.spyOn(userService, 'getIdentityId').mockImplementation(async () => '1234-5678-9');
 
 		const req: any = {
 			params: {},
 			query: {
-				author: 'charliebrown',
 				'topic-type': 'test-topic',
 				'topic-source': 'test-source',
 				limit: '1',
@@ -57,7 +51,6 @@ describe('test Search user', () => {
 
 		await channelInfoRoutes.searchChannelInfo(req, res, nextMock);
 
-		expect(getUserSpy).toHaveBeenCalledWith('charliebrown');
 		expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
 	});
 	afterEach(() => {
@@ -68,14 +61,13 @@ describe('test Search user', () => {
 
 describe('test GET channelInfo', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
 
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 		res = {
@@ -154,7 +146,7 @@ describe('test GET channelInfo', () => {
 
 describe('test POST channelInfo', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
 
 	const validBody: ChannelInfo = {
 		authorId: 'test-author2',
@@ -168,8 +160,7 @@ describe('test POST channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 
@@ -261,7 +252,7 @@ describe('test POST channelInfo', () => {
 
 describe('test PUT channelInfo', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService, getChannelInfoSpy: any;
+	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService, getChannelInfoSpy: any;
 
 	const validBody: ChannelInfo = {
 		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
@@ -275,8 +266,7 @@ describe('test PUT channelInfo', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 		getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => ({
@@ -399,14 +389,13 @@ describe('test DELETE channelInfo', () => {
 		channelAddress: 'test-address-c3-device'
 	};
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
-	let channelInfoRoutes: ChannelInfoRoutes, userService: UserService, channelInfoService: ChannelInfoService;
+	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
 
 	beforeEach(() => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		userService = new UserService();
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		const authorizationService = new AuthorizationService();
 		channelInfoRoutes = new ChannelInfoRoutes(channelInfoService, authorizationService, LoggerMock);
 

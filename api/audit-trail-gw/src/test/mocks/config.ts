@@ -1,4 +1,4 @@
-import { Config, IdentityConfig, StreamsConfig } from '../../models/config';
+import { Config, StreamsConfig } from '../../models/config';
 
 export const StreamsConfigMock: StreamsConfig = {
 	node: '',
@@ -6,19 +6,7 @@ export const StreamsConfigMock: StreamsConfig = {
 	statePassword: 'veryvery-very-very-server-secret'
 };
 
-export const IdentityConfigMock: IdentityConfig = {
-	keyCollectionTag: 'key-collection',
-	keyCollectionSize: 2,
-	node: '',
-	permaNode: '',
-	keyType: 0,
-	hashFunction: 0,
-	hashEncoding: 'base58'
-};
-
 export const ConfigMock: Config = {
-	jwtExpiration: '1 day',
-	identityConfig: IdentityConfigMock,
 	apiKey: 'test-v1',
 	serverSecret: 'veryvery-very-very-server-secret',
 	databaseName: 'testdatabasename',

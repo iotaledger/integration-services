@@ -98,7 +98,7 @@ describe('test user routes', () => {
 					username: 'test-user3',
 					id: 'did:iota:12346',
 					publicKey: 'testpublickey3',
-					claim: { name: 'somehiddenname', type: 'youdontseeme' }
+					claim: { name: 'somehiddenname', type: 'youseeme' }
 				}
 			]);
 			const req: any = {
@@ -114,17 +114,23 @@ describe('test user routes', () => {
 				{
 					username: 'test-user1',
 					id: 'did:iota:1234',
-					publicKey: 'testpublickey'
+					publicKey: 'testpublickey',
+					claim: { type: 'testtype' },
+					numberOfCredentials: 1
 				},
 				{
 					username: 'test-user2',
 					id: 'did:iota:12345',
-					publicKey: 'testpublickey2'
+					publicKey: 'testpublickey2',
+					claim: { type: undefined },
+					numberOfCredentials: 1
 				},
 				{
 					username: 'test-user3',
 					id: 'did:iota:12346',
-					publicKey: 'testpublickey3'
+					publicKey: 'testpublickey3',
+					claim: { type: 'youseeme' },
+					numberOfCredentials: 0
 				}
 			];
 

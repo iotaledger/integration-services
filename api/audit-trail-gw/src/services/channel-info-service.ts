@@ -1,12 +1,9 @@
 import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
 import * as ChannelInfoDb from '../database/channel-info';
-import { UserService } from './user-service';
 import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {
-	constructor(private readonly userService: UserService) {}
-
 	async getChannelInfo(channelAddress: string): Promise<ChannelInfo | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
 		return channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
@@ -14,21 +11,7 @@ export class ChannelInfoService {
 
 	async searchChannelInfo(channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> {
 		let channelInfoPersistence: ChannelInfoPersistence[] = [];
-
-		if (channelInfoSearch.author && !channelInfoSearch.authorId) {
-			const authorId = await this.userService.getIdentityId(channelInfoSearch.author);
-
-			if (!authorId) {
-				throw Error(`No user id found for: ${channelInfoSearch.author}`);
-			}
-			const search = {
-				...channelInfoSearch,
-				authorId
-			};
-			channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(search);
-		} else {
-			channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
-		}
+		channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
 		return channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
 	}
 

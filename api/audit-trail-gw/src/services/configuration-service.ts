@@ -1,6 +1,5 @@
 import { Config } from '../models/config';
-import { IdentityConfig, StreamsConfig } from '../models/config/index';
-import * as Identity from '@iota/identity-wasm/node';
+import { StreamsConfig } from '../models/config/index';
 import isEmpty from 'lodash/isEmpty';
 import { ILogger } from '@iota/is-shared-modules/lib/utils/logger/index';
 
@@ -9,7 +8,6 @@ const VERSION = 'v0.1';
 export interface IConfigurationService {
 	serverIdentityId: string;
 	config: Config;
-	identityConfig: IdentityConfig;
 	streamsConfig: StreamsConfig;
 	getRootIdentityId(): Promise<string>;
 }
@@ -17,7 +15,6 @@ export interface IConfigurationService {
 export class ConfigurationService {
 	private static instance: ConfigurationService;
 	logger: ILogger;
-	private _serverIdentityId: string;
 
 	streamsConfig: StreamsConfig = {
 		node: process.env.IOTA_HORNET_NODE,
@@ -25,18 +22,8 @@ export class ConfigurationService {
 		statePassword: process.env.SERVER_SECRET
 	};
 
-	identityConfig: IdentityConfig = {
-		keyCollectionSize: 4096, // size must be a multiple of 2^2, 2^3, 2^4, ...
-		node: process.env.IOTA_HORNET_NODE,
-		permaNode: process.env.IOTA_PERMA_NODE,
-		keyType: Identity.KeyType.Ed25519,
-		hashFunction: Identity.Digest.Sha256,
-		hashEncoding: 'base58',
-		keyCollectionTag: 'key-collection'
-	};
-
 	config: Config = {
-		port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000,
+		port: process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3002,
 		apiVersion: VERSION,
 		databaseUrl: process.env.DATABASE_URL,
 		databaseName: process.env.DATABASE_NAME,
@@ -45,9 +32,7 @@ export class ConfigurationService {
 		permaNode: process.env.IOTA_PERMA_NODE,
 		apiKey: process.env.API_KEY,
 		commitHash: process.env.COMMIT_HASH,
-		identityConfig: this.identityConfig,
-		streamsConfig: this.streamsConfig,
-		jwtExpiration: !isEmpty(process.env.JWT_EXPIRATION) ? process.env.JWT_EXPIRATION : '1 day'
+		streamsConfig: this.streamsConfig
 	};
 
 	constructor(logger: ILogger) {
@@ -60,14 +45,6 @@ export class ConfigurationService {
 			ConfigurationService.instance = new ConfigurationService(logger);
 		}
 		return ConfigurationService.instance;
-	}
-
-	public get serverIdentityId(): string {
-		return this._serverIdentityId;
-	}
-
-	public set serverIdentityId(value: string) {
-		this._serverIdentityId = value;
 	}
 
 	private assertConfig() {

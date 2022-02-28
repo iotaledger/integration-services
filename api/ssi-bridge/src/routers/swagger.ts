@@ -7,12 +7,9 @@ export const openApiDefinition = {
 	definition: {
 		openapi: '3.0.0',
 		info: {
-			title: 'Integration Services API Documentation',
+			title: 'SSI Bridge API Documentation',
 			version: apiVersion,
-			description: `This is the API documentation for the Integration Services. Have a look at the repository for examples at [Github](https://github.com/iotaledger/integration-services).
-            For further information on the Audit Trail GW API have a look at [Audit Trail API](https://github.com/iotaledger/integration-services/blob/master/api/usage-audit-trail-GW.md) and head to
-            [SSI Bridge](https://github.com/iotaledger/integration-services/blob/master/api/usage-ssi-bridge.md) for information about the SSI Bridge.
-            `
+			description: `This is the API documentation for the SSI Bridge of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/ssi-bridge/introduction).`
 		},
 		tags: [
 			{
@@ -26,18 +23,6 @@ export const openApiDefinition = {
 			{
 				name: 'verification',
 				description: 'Create and verifiy credentials'
-			},
-			{
-				name: 'channel-info',
-				description: 'Get information about a channel '
-			},
-			{
-				name: 'channels',
-				description: 'Create, read from, write to channels'
-			},
-			{
-				name: 'subscriptions',
-				description: 'Manage and authorize subscriptions'
 			},
 			{
 				name: 'server-info',
