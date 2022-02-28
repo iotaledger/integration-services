@@ -33,6 +33,7 @@ export interface UserSearch {
 	type?: UserType | string;
 	limit?: number;
 	index?: number;
+	ascending?: boolean;
 }
 
 type OmittedUser = Omit<User, 'registrationDate' | 'role'>;
