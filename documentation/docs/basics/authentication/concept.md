@@ -18,7 +18,7 @@ The Integration Services API uses JSON Web Tokens ([JWTs](https://en.wikipedia.o
 
 ### 1. Request a Nonce
 
-First, request the nonce via a get request to the endpoint. Provide the identity id to authenticate in the URL. Further information can be found in the [API Reference](https://wiki.iota.org/integration-services/api_reference#authenticationprove-ownershipid).
+First, you must request the nonce via a get request to the endpoint. Provide the identity id to authenticate in the URL. You can find more information in the [API Reference](https://wiki.iota.org/integration-services/api_reference#authenticationprove-ownershipid).
 
 GET `/authentication/prove-ownership/<identity-id>`
 
