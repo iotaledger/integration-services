@@ -55,8 +55,7 @@ services:
       - "traefik.http.routers.audittrailgw_ch.rule=PathPrefix(`/api/v0.1/channels`)"
       - "traefik.http.routers.audittrailgw_ci.rule=PathPrefix(`/api/v0.1/channel-info`)"
       - "traefik.http.routers.audittrailgw_sub.rule=PathPrefix(`/api/v0.1/subscriptions`)"
-    environment: 
-      PORT: 3002
+    environment:
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -97,7 +96,6 @@ services:
       - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
       - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
     environment: 
-      PORT: 3001
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -109,7 +107,7 @@ services:
       - initialize-ssi-bridge
       - traefik
     ports:
-      - 3001:3001
+      - 3001:3000
 
 volumes:
   mongodb_data_container:
