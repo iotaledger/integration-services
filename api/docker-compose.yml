@@ -1,6 +1,5 @@
 version: '3.7'
 services:
-
   mongo:
     image: mongo:latest
     restart: always
@@ -28,10 +27,11 @@ services:
     depends_on: 
       - mongo
 
-  api:
-    build: .
+  audit-trail-gw:
+    build:
+      dockerfile: Dockerfile-audit-trail-gw
+      context: ./
     environment: 
-      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -43,6 +43,23 @@ services:
       - initialize-job
     ports:
       - 3000:3000
+
+  ssi-bridge:
+    build:
+      dockerfile: Dockerfile-ssi-bridge
+      context: ./
+    environment: 
+      DATABASE_NAME: ${DATABASE_NAME}
+      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
+      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
+      DATABASE_URL: ${DATABASE_URL}
+      SERVER_SECRET: ${SERVER_SECRET}
+    restart: always
+    depends_on: 
+      - mongo
+      - initialize-job
+    ports:
+      - 3001:3000
 
 volumes:
   mongodb_data_container:
