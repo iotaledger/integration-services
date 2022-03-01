@@ -48,9 +48,8 @@ spec:
               done
       containers:
         - name: ssi-bridge
-          # TODO adjust after services are deployed on docker
-          image: ssi-bridge
-          imagePullPolicy: Never
+          image: iotaledger/ssi-bridge:develop
+          imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:

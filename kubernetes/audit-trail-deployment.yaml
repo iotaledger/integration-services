@@ -48,9 +48,8 @@ spec:
               done
       containers:
         - name: audit-trail-gw
-          # TODO adjust after services are deployed on docker
-          image: audit-trail-gw
-          imagePullPolicy: Never
+          image: iotaledger/audit-trail-gw:develop
+          imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:
