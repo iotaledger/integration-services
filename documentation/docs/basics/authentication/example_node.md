@@ -195,7 +195,9 @@ const setAxiosHeader = () => {
 
 setAxiosHeader();
 ```
-##  Putting it all together
+
+##  Putting It All Together
+
 The following snippet is the final code using all functions together to request a JWT.
 You can find the complete code example at this repository: [https://github.com/Schereo/is-node-authentication](https://github.com/Schereo/is-node-authentication).
 
