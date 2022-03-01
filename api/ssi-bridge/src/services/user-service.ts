@@ -1,4 +1,4 @@
-import { User, UserPersistence, UserRoles, UserSearch } from '@iota/is-shared-modules/lib/models/types/user';
+import { User, UserPersistence, UserRoles, UserSearch, UserSearchResponse } from '@iota/is-shared-modules/lib/models/types/user';
 import * as userDb from '../database/user';
 import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
@@ -18,7 +18,7 @@ import { ConfigurationService } from './configuration-service';
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
 
-	async searchUsers(userSearch: UserSearch): Promise<User[]> {
+	async searchUsers(userSearch: UserSearch): Promise<UserSearchResponse[]> {
 		const usersPersistence = await userDb.searchUsers(userSearch);
 		return usersPersistence
 			.map((user) => {

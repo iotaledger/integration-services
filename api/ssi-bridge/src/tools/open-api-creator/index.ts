@@ -34,6 +34,7 @@ import {
 } from '@iota/is-shared-modules/lib/models/schemas/identity';
 import {
 	CreateIdentityBodySchema,
+	IdentitySearchBodySchema,
 	UpdateIdentityBodySchema
 } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/identity-bodies';
 import {
@@ -97,6 +98,7 @@ const schemas = {
 	ProductSchema,
 	ServiceSchema,
 	IdentitySchema,
+	IdentitySearchBodySchema,
 	IdentityIdSchema,
 	NonceSchema,
 	ChannelAddressSchema
