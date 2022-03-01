@@ -181,7 +181,8 @@ The returned js object will contain the following JWT:
 
 ### 5. Set the JWT as Axios Header
 
-When using Axios the JWT can easily be set as a default header that will be used in every subsequent request. This step may differ depending on your preferred HTTP client library.
+When you use Axios, the JWT can easily be set as a default header that will be used in every subsequent request. This step may differ depending on your preferred HTTP client library.
+
 ```js title="./authenticate.js"
 import axios from 'axios';
 
