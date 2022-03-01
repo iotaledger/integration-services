@@ -143,7 +143,8 @@ const signNonce = async () => {
 signNonce();
 ```
 
-The nonce and secret key used generated the following signed nonce:
+The example's nonce and secret key will generate the following signed nonce:
+
 ```
 270c2e502c5c753e39159683981e452444f81a10d798f56406a9c471d672a5ede1792cb7f97d4f9c9efeec7bf35577dd1f8482afca7e3710291868a65bf91e07
 ```
