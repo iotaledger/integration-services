@@ -150,7 +150,9 @@ The example's nonce and secret key will generate the following signed nonce:
 ```
 
 ### 4. Request the JWT
-The last step is to request the JWT. Use the following code snippet with your signed nonce in the request body.
+
+The last step is to request the JWT. You can use the following code snippet with your signed nonce in the request body.
+
 ```js title="./authenticate.js"
 import axios from 'axios';
 
