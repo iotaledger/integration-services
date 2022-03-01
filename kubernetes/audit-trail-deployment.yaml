@@ -89,6 +89,11 @@ spec:
                 secretKeyRef:
                   name: integration-service-api-secrets
                   key: SERVER_SECRET
+            - name: "JWT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: JWT_SECRET
             - name: "API_KEY"
               valueFrom:
                 secretKeyRef:
