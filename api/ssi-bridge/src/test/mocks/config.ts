@@ -15,6 +15,7 @@ export const ConfigMock: Config = {
 	identityConfig: IdentityConfigMock,
 	apiKey: 'test-v1',
 	serverSecret: 'veryvery-very-very-server-secret',
+	jwtSecret: 'veryvery-very-very-server-secret',
 	databaseName: 'testdatabasename',
 	databaseUrl: 'testdatabaseurl',
 	apiVersion: '0.1',

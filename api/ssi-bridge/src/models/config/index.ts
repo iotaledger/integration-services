@@ -7,6 +7,7 @@ export interface Config {
 	databaseName: string;
 	identityConfig: IdentityConfig;
 	serverSecret: string;
+	jwtSecret: string;
 	apiKey: string | undefined;
 	hornetNode: string;
 	permaNode: string;
