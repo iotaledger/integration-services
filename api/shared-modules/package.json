@@ -7,6 +7,7 @@
     "build-tsc": "tsc --project ./",
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build": "npm-run-all build-tsc build-lint",
+    "serve": "tsc --project ./ --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

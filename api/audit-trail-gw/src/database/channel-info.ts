@@ -11,9 +11,10 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { authorId, created, latestMessage, topicType, topicSource, limit, index } = channelInfoSearch;
+	const { authorId, name, created, latestMessage, topicType, topicSource, limit, index } = channelInfoSearch;
 	const query = {
 		authorId: regex(authorId),
+		name: regex(name),
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
 		'topics.source': regex(topicSource),

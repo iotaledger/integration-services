@@ -15,6 +15,9 @@ export class DatabaseSeeder {
 		const concurrencyCollection = db.collection(CollectionNames.concurrencyLocks);
 		await concurrencyCollection.createIndex({ created: 1 }, { expireAfterSeconds: LOCK_EXPIRATION_TIME_SEC });
 
+		const channelCollection = db.collection(CollectionNames.channelInfo);
+		await channelCollection.createIndex({ name: 1 }, { unique: true, partialFilterExpression: { name: { $exists: true } } });
+
 		this.logger.log('Database successfully seeded.');
 	}
 }

@@ -44,7 +44,7 @@ describe('test channel routes', () => {
 			};
 
 			await channelRoutes.createChannel(req, res, nextMock);
-			expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'topics' of undefined"));
+			expect(loggerSpy).toHaveBeenCalled();
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the channel'));
 		});
 
@@ -59,12 +59,26 @@ describe('test channel routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'no id provided' });
 		});
+		it('should return conflict since name has to be unique', async () => {
+			const req: any = {
+				params: {},
+				user: { id: 'did:iota:1234' },
+				body: { topics: [], seed: 'verysecretseed', name: 'test-channel' }
+			};
 
+			const channelExistsSpy = jest.spyOn(channelService, 'channelExists').mockImplementation(async () => true);
+
+			await channelRoutes.createChannel(req, res, nextMock);
+				
+			expect(channelExistsSpy).toHaveBeenCalledWith(req.body.name);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.CONFLICT);
+			expect(res.send).toHaveBeenCalledWith({ error: 'channel already exists' });
+		});
 		it('should create and return a channel for the user', async () => {
 			const req: any = {
 				params: {},
 				user: { id: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed' }
+				body: { topics: [], seed: 'verysecretseed', name: 'test-channel' }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -82,6 +96,7 @@ describe('test channel routes', () => {
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
+				name: 'test-channel',
 				channelAddress: '1234234234',
 				topics: []
 			};
@@ -101,6 +116,7 @@ describe('test channel routes', () => {
 			}));
 			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo').mockImplementation(async () => null);
+			const channelExistsSpy = jest.spyOn(channelService, 'channelExists').mockImplementation(async () => false);
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
@@ -109,6 +125,7 @@ describe('test channel routes', () => {
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
+			expect(channelExistsSpy).toHaveBeenCalledWith(expectedChannelInfo.name);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
 		});
@@ -118,7 +135,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { id: 'did:iota:1234' },
-				body: { topics: [], presharedKey, hasPresharedKey: true }
+				body: { name: 'test-name', topics: [], presharedKey, hasPresharedKey: true }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -136,6 +153,7 @@ describe('test channel routes', () => {
 			};
 			const expectedChannelInfo: ChannelInfo = {
 				authorId: 'did:iota:1234',
+				name: 'test-name',
 				channelAddress: '1234234234',
 				topics: []
 			};
@@ -155,6 +173,7 @@ describe('test channel routes', () => {
 			}));
 			const addSubscriptionSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo').mockImplementation(async () => null);
+			const channelExistsSpy = jest.spyOn(channelService, 'channelExists').mockImplementation(async () => false);
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
@@ -162,6 +181,7 @@ describe('test channel routes', () => {
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
+			expect(channelExistsSpy).toHaveBeenCalledWith(expectedChannelInfo.name);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
 		});
