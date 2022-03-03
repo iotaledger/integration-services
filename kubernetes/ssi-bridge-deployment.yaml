@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: ssi-bridge
 spec:
-  # TODO adjust after merging
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
