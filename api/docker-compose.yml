@@ -39,6 +39,7 @@ services:
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: on-failure
     command: node dist/index.js setup-api
     depends_on: 
@@ -61,6 +62,7 @@ services:
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: always
     depends_on: 
       - mongo
@@ -101,6 +103,7 @@ services:
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: always
     depends_on: 
       - mongo
