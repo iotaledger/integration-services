@@ -18,7 +18,6 @@ export const ChannelInfoSchema = Type.Object({
 
 export const ChannelInfoSearchSchema = Type.Object({
 	authorId: Type.Optional(Type.String()),
-	author: Type.Optional(Type.String()),
 	topicType: Type.Optional(Type.String()),
 	topicSource: Type.Optional(Type.String()),
 	created: Type.Optional(Type.String({ format: 'date-time' })),

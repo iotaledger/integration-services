@@ -5,7 +5,6 @@ import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/mode
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
-import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
 import * as SubscriptionDb from '../../../database/subscription';
@@ -15,7 +14,7 @@ import { AuthorMock } from '../../../test/mocks/streams';
 describe('test revoke subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService;
 
 	const subscriptionMock: Subscription = {
 		channelAddress: 'testaddress',
@@ -47,10 +46,9 @@ describe('test revoke subscription route', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
-		userService = new UserService();
 		streamsService = new StreamsService(config, LoggerMock);
 		jest.spyOn(streamsService, 'getMessages').mockImplementation(async () => []);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 		jest.spyOn(ChannelDataDb, 'addChannelData').mockImplementation(async () => null);

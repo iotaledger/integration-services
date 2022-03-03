@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import swaggerUi from 'swagger-ui-express';
 import { errorMiddleware } from './middlewares/error';
-import { authenticationRouter, channelInfoRouter, channelRouter, subscriptionRouter } from './routers';
+import { channelInfoRouter, channelRouter, subscriptionRouter } from './routers';
 import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
 import * as expressWinston from 'express-winston';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -56,7 +56,6 @@ async function startServer() {
 		useRouter(app, prefix + '/channel-info', channelInfoRouter);
 		useRouter(app, prefix + '/channels', channelRouter);
 		useRouter(app, prefix + '/subscriptions', subscriptionRouter);
-		useRouter(app, prefix + '/authentication', authenticationRouter);
 		useRouter(app, '', serverInfoRouter);
 
 		app.use(errorMiddleware);

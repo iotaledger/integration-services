@@ -5,14 +5,13 @@ import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscript
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
-import { UserService } from '../../../services/user-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
 
 describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService;
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
@@ -29,9 +28,8 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
-		userService = new UserService();
 		streamsService = new StreamsService(config, LoggerMock);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
@@ -129,7 +127,7 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 describe('test addSubscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService;
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
@@ -146,9 +144,8 @@ describe('test addSubscription route', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
-		userService = new UserService();
 		streamsService = new StreamsService(config, LoggerMock);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
@@ -239,7 +236,7 @@ describe('test addSubscription route', () => {
 describe('test updateSubscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService;
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
@@ -256,9 +253,8 @@ describe('test updateSubscription route', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
-		userService = new UserService();
 		streamsService = new StreamsService(config, LoggerMock);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
@@ -345,7 +341,7 @@ describe('test updateSubscription route', () => {
 describe('test deleteSubscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let subscriptionRoutes: SubscriptionRoutes, streamsService: StreamsService;
-	let channelInfoService: ChannelInfoService, userService: UserService, subscriptionService: SubscriptionService;
+	let channelInfoService: ChannelInfoService, subscriptionService: SubscriptionService;
 	const subscriptionMock: Subscription = {
 		accessRights: AccessRights.Read,
 		channelAddress: 'testaddress',
@@ -362,9 +358,8 @@ describe('test deleteSubscription route', () => {
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		const config = StreamsConfigMock;
-		userService = new UserService();
 		streamsService = new StreamsService(config, LoggerMock);
-		channelInfoService = new ChannelInfoService(userService);
+		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		subscriptionRoutes = new SubscriptionRoutes(subscriptionService, channelInfoService, LoggerMock);
 
