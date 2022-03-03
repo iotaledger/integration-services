@@ -62,15 +62,10 @@ spec:
           readinessProbe:
             httpGet:
               path: /info
-              port: 3001
+              port: 3000
           env:
             - name: "SERVER_IDENTITY_FILE"
               value: "/config/server-identity.json"
-            - name: "PORT"
-              valueFrom:
-                configMapKeyRef:
-                  name: integration-service-api-config
-                  key: PORT_SSI
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:
@@ -91,12 +86,16 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: IOTA_HORNET_NODE
-
             - name: "SERVER_SECRET"
               valueFrom:
                 secretKeyRef:
                   name: integration-service-api-secrets
                   key: SERVER_SECRET
+            - name: "JWT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: JWT_SECRET
             - name: "API_KEY"
               valueFrom:
                 secretKeyRef:
@@ -104,4 +103,4 @@ spec:
                   key: API_KEY
           ports:
             - protocol: TCP
-              containerPort: 3001
+              containerPort: 3000

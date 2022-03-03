@@ -35,9 +35,13 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: IOTA_PERMA_NODE
-
             - name: "SERVER_SECRET"
               valueFrom:
                 secretKeyRef:
                   name: integration-service-api-secrets
                   key: SERVER_SECRET
+            - name: "JWT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: JWT_SECRET

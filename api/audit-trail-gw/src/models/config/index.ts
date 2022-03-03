@@ -5,6 +5,7 @@ export interface Config {
 	databaseName: string;
 	streamsConfig: StreamsConfig;
 	serverSecret: string;
+	jwtSecret: string;
 	apiKey: string | undefined;
 	hornetNode: string;
 	permaNode: string;
