@@ -50,3 +50,9 @@ This documentation has eight sections.
 
 If you are looking for a place to discuss this library, or are in need of support head to
 our [Discord channel](https://discord.gg/iota) #integration-services.
+
+:::caution
+
+When using the demo integration services deployment, please refrain from logging any personal data. The framework is still under development and should only be used for testing. As multiple entities can have access to this demo and its associated database, the IOTA foundation cannot be held responsible for any data logged using this deployment. If you need a dedicated and secure solution for a production-ready use case, either deploy your IS locally or please get in touch [integrations@iota.org](mailto:integrations@iota.org) so we can assist you with our dedicated expertise.
+
+:::
