@@ -42,6 +42,9 @@ export const identityRouter = Router();
  *               refDeviceModel: myDevice-wastecontainer-sensor-345
  *               dateFirstUsed: 2014-09-11T11:00:00Z
  *               owner: [did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY]
+ *     security:
+ *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       201:
  *         description: Returns the created identity
