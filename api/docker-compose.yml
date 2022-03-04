@@ -68,7 +68,7 @@ services:
       - initialize-audit-trail
       - traefik
     ports:
-      - 3002:3002
+      - 3002:3000
 
   initialize-ssi-bridge:
     build:
