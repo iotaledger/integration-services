@@ -21,7 +21,12 @@ export const channelInfoRouter = Router();
  *     - channel-info
  *     parameters:
  *     - in: query
- *       name: author
+ *       name: author-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
+ *       name: name
  *       required: false
  *       schema:
  *         type: string

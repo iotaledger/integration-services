@@ -22,6 +22,7 @@ services:
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: on-failure
     command: node dist/index.js setup-api
     depends_on: 
@@ -32,12 +33,12 @@ services:
       dockerfile: Dockerfile-audit-trail-gw
       context: ./
     environment: 
-      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: always
     depends_on: 
       - mongo
@@ -50,18 +51,18 @@ services:
       dockerfile: Dockerfile-ssi-bridge
       context: ./
     environment: 
-      PORT: 3001
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: always
     depends_on: 
       - mongo
       - initialize-job
     ports:
-      - 3001:3001
+      - 3001:3000
 
 volumes:
   mongodb_data_container:

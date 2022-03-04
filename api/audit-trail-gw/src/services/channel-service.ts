@@ -14,6 +14,8 @@ import { ILock, Lock } from '../utils/lock';
 import { getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
+import { searchChannelInfo } from '../database/channel-info';
+import { isEmpty } from 'lodash';
 
 export class ChannelService {
 	private readonly password: string;
@@ -32,13 +34,14 @@ export class ChannelService {
 
 	async create(params: {
 		id: string;
+		name: string;
+		description?: string;
 		topics: Topic[];
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
-		subscriptionPassword?: string;
 	}): Promise<CreateChannelResponse> {
-		const { presharedKey, seed, hasPresharedKey, id, topics } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -68,6 +71,8 @@ export class ChannelService {
 		await this.channelInfoService.addChannelInfo({
 			topics,
 			authorId: id,
+			name,
+			description,
 			channelAddress: res.channelAddress
 		});
 
@@ -76,6 +81,11 @@ export class ChannelService {
 			presharedKey: res.presharedKey,
 			seed: res.seed
 		};
+	}
+
+	async channelExists(name: string): Promise<boolean> {
+		const channel = await searchChannelInfo({ name });
+		return !isEmpty(channel);
 	}
 
 	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber): Promise<ChannelData[]> {
