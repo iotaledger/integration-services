@@ -30,6 +30,13 @@ spec:
             name: audit-trail-gw
             port:
               number: 3000
+      - path: /audit-trail-gw/info
+        pathType: Prefix
+        backend:
+          service:
+            name: audit-trail-gw
+            port:
+              number: 3000
       - path: /api(/|$)(.*)/authentication
         pathType: Prefix
         backend:
@@ -51,27 +58,10 @@ spec:
             name: ssi-bridge
             port:
               number: 3000
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: integration-service-others
-spec:
-  ingressClassName: kong
-  rules:
-  - http:
-      paths:
-      - path: /info
+      - path: /ssi-bridge/info
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw
-            port:
-              number: 3000
-      - path: /docs
-        pathType: Prefix
-        backend:
-          service:
-            name: audit-trail-gw
+            name: ssi-bridge
             port:
               number: 3000
