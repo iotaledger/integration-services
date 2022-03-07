@@ -45,8 +45,8 @@ echo -n ...SERVER_SECRET_KEY or API_KEY... | base64
 
 The default values are:
 
-- `PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa` as `SERVER_SECRET`.
-- `94F5BA49-12B6-4E45-A487-BF91C442276D` as `API_KEY`.
+- `7w9gfhb123jngh4gd53z465fewcs569e` as `SERVER_SECRET`.
+- `4ed59704-9a26-11ec-a749-3f57454709b9` as `API_KEY`.
 
 ## Number of Replicas
 
