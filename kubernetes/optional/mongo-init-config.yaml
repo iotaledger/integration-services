@@ -11,7 +11,7 @@ data:
           roles: [
               {
                   role: "readWrite",
-                  db: "integration-service-db"
+                  db: "integration-service"
               }
           ]
       }

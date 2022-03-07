@@ -21,7 +21,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/authentication/prove-ownership/{{construction_manager_id}}?api-key=94F5BA49-12B6-4E45-A487-BF91C442276D",
+							"raw": "{{deployment_url}}/authentication/prove-ownership/{{construction_manager_id}}?api-key=4ed59704-9a26-11ec-a749-3f57454709b9",
 							"host": [
 								"{{deployment_url}}"
 							],
@@ -33,7 +33,7 @@
 							"query": [
 								{
 									"key": "api-key",
-									"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+									"value": "4ed59704-9a26-11ec-a749-3f57454709b9"
 								}
 							]
 						}
@@ -62,7 +62,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/authentication/prove-ownership/{{construction_manager_id}}?api-key=94F5BA49-12B6-4E45-A487-BF91C442276D",
+							"raw": "{{deployment_url}}/authentication/prove-ownership/{{construction_manager_id}}?api-key=4ed59704-9a26-11ec-a749-3f57454709b9",
 							"host": [
 								"{{deployment_url}}"
 							],
@@ -74,7 +74,7 @@
 							"query": [
 								{
 									"key": "api-key",
-									"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+									"value": "4ed59704-9a26-11ec-a749-3f57454709b9"
 								}
 							]
 						}
@@ -501,7 +501,7 @@
 	"variable": [
 		{
 			"key": "api-key",
-			"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+			"value": "4ed59704-9a26-11ec-a749-3f57454709b9"
 		},
 		{
 			"key": "construction_channel",

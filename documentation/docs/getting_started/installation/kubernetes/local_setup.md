@@ -63,7 +63,7 @@ The previous commands will create:
 
 - A single MongoDB instance with an ephemeral storage (i.e. no persistent bound volume) with `admin` as username and
   password for administration purpose and `username` and `password` as credentials for the
-  database `integration-service-db`.
+  database `integration-service`.
 - A Kubernetes Job that will create a root identity in the database if there is not one yet.
 - A replicated backend service for Integration Service API (5 replicas as default value).
 

@@ -8,4 +8,4 @@ keywords:
 ---
 # Contact
 
-For inquiries or questions regarding the Integration Services project, please contact **Michele Nati** (Head of Telecommunication and Infrastructure Development) <michele.nati@iota.org>.
+For inquiries or questions regarding the Integration Services project, please contact us via <integrations@iota.org>.
