@@ -8,14 +8,14 @@ An example of a configured `.env` file for a locally deployed Integration Servic
 #-----------------------
 # For management purpose
 #-----------------------
-MONGO_URL=mongodb://admin:admin@localhost:27017
-DB_NAME=integration-service-db
-SECRET_KEY=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
+MONGO_URL=mongodb://root:rootpassword@0.0.0.0:27017
+DB_NAME=integration-service
+SECRET_KEY=7w9gfhb123jngh4gd53z465fewcs569e
 
 #---------------------
 # Client configuration
 #---------------------
-API_KEY=94F5BA49-12B6-4E45-A487-BF91C442276D
+API_KEY=4ed59704-9a26-11ec-a749-3f57454709b9
 API_URL=http://localhost:3000
 ```
 
