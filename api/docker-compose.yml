@@ -32,7 +32,6 @@ services:
       dockerfile: Dockerfile-audit-trail-gw
       context: ./
     environment:
-      PORT: 3002
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -55,7 +54,9 @@ services:
       - "traefik.http.routers.audittrailgw_ch.rule=PathPrefix(`/api/v0.1/channels`)"
       - "traefik.http.routers.audittrailgw_ci.rule=PathPrefix(`/api/v0.1/channel-info`)"
       - "traefik.http.routers.audittrailgw_sub.rule=PathPrefix(`/api/v0.1/subscriptions`)"
+      - "traefik.http.services.audittrailgw.loadbalancer.server.port=3000"
     environment:
+      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -67,15 +68,12 @@ services:
       - mongo
       - initialize-audit-trail
       - traefik
-    ports:
-      - 3002:3000
 
   initialize-ssi-bridge:
     build:
       dockerfile: Dockerfile-ssi-bridge
       context: ./
     environment:
-      PORT: 3001
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -96,7 +94,9 @@ services:
       - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.1/identities`) "
       - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
       - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
-    environment: 
+      - "traefik.http.services.ssibridge.loadbalancer.server.port=3000"
+    environment:
+      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -108,8 +108,6 @@ services:
       - mongo
       - initialize-ssi-bridge
       - traefik
-    ports:
-      - 3001:3000
 
 volumes:
   mongodb_data_container:
