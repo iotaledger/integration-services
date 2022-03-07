@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: This section will guide in setting up the Integration Service API using NodeJs.
+description: This section will guide in setting up the Integration Service API using Node.js.
 keywords:
 - nodejs
 - setup API
@@ -10,7 +10,7 @@ keywords:
 
 # Local Setup
 
-This section will guide in setting up the Integration Service API using NodeJs.
+This section will guide in setting up the Integration Service API using Node.js.
 
 ## Requirements
 
@@ -63,8 +63,8 @@ MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
 DATABASE_URL=mongodb://root:rootpassword@mongo:27017
 
-SERVER_SECRET=PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
-API_KEY=94F5BA49-12A6-4E45-A487-BF91C442276D
+SERVER_SECRET=7w9gfhb123jngh4gd53z465fewcs569e
+API_KEY=4ed59704-9a26-11ec-a749-3f57454709b9
 ````
 
 Here is an example of how a corresponding `mongo-init.js` file should look like:

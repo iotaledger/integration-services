@@ -26,7 +26,7 @@ spec:
           mountPath: /docker-entrypoint-initdb.d
         env:
           - name: MONGO_INITDB_DATABASE
-            value: "integration-service-db"
+            value: "integration-service"
           - name: MONGO_INITDB_ROOT_USERNAME
             valueFrom:
               secretKeyRef:
