@@ -118,6 +118,7 @@ export class ChannelInfoRoutes {
 	getChannelInfoSearch = (req: Request): ChannelInfoSearch => {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 		const authorId = decodeParam(<string>req.query['author-id']);
+		const name = decodeParam(<string>req.query['name']);
 		const topicType = decodeParam(<string>req.query['topic-type']);
 		const topicSource = decodeParam(<string>req.query['topic-source']);
 		const created = decodeParam(<string>req.query.created);
@@ -129,6 +130,7 @@ export class ChannelInfoRoutes {
 
 		return {
 			authorId,
+			name,
 			topicType,
 			topicSource,
 			limit,

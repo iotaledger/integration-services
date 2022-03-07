@@ -26,6 +26,11 @@ export const channelInfoRouter = Router();
  *       schema:
  *         type: string
  *     - in: query
+ *       name: name
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
  *       name: 'topic-type'
  *       required: false
  *       schema:

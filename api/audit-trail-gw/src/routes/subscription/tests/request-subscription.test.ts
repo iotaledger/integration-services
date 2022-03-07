@@ -39,7 +39,7 @@ describe('test request subscription route', () => {
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
-		expect(loggerSpy).toHaveBeenCalledWith(new Error("Cannot read property 'seed' of undefined"));
+		expect(loggerSpy).toHaveBeenCalled();
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not request the subscription'));
 	});
 

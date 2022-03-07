@@ -27,6 +27,8 @@ describe('test Search user', () => {
 
 	it('should call searchChannelInfo with expected search', async () => {
 		const expectedChannelInfoSearch: ChannelInfoSearch = {
+			authorId: 'did:iota:test1234',
+			name: 'test-channel',
 			topicType: 'test-topic',
 			topicSource: 'test-source',
 			limit: 1,
@@ -39,6 +41,8 @@ describe('test Search user', () => {
 		const req: any = {
 			params: {},
 			query: {
+				'author-id': 'did:iota:test1234',
+				name: 'test-channel',
 				'topic-type': 'test-topic',
 				'topic-source': 'test-source',
 				limit: '1',
@@ -93,6 +97,7 @@ describe('test GET channelInfo', () => {
 		const channelInfo: ChannelInfoPersistence = {
 			created: date,
 			authorId: 'test-author2',
+			name: 'test-name',
 			topics: [
 				{
 					source: 'test',
@@ -113,6 +118,7 @@ describe('test GET channelInfo', () => {
 		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
 		expect(sendMock).toHaveBeenCalledWith({
 			authorId: 'test-author2',
+			name: 'test-name',
 			channelAddress: 'test-address3',
 			created: getDateStringFromDate(date),
 			latestMessage: null,
@@ -150,6 +156,7 @@ describe('test POST channelInfo', () => {
 
 	const validBody: ChannelInfo = {
 		authorId: 'test-author2',
+		name: 'test-name',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
@@ -256,6 +263,7 @@ describe('test PUT channelInfo', () => {
 
 	const validBody: ChannelInfo = {
 		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		name: 'test-name',
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
@@ -272,6 +280,7 @@ describe('test PUT channelInfo', () => {
 		getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => ({
 			created: getDateFromString('2021-03-26T16:13:11+01:00'),
 			authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+			name: 'test-name',
 			subscriberIds: [],
 			topics: [
 				{
@@ -380,6 +389,7 @@ describe('test DELETE channelInfo', () => {
 	const channel = {
 		created: getDateFromString('2021-03-26T16:13:11+01:00'),
 		authorId: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
+		name: 'test-name',
 		topics: [
 			{
 				source: 'device',
