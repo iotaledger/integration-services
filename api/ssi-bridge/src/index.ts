@@ -63,7 +63,7 @@ async function startServer() {
 		useRouter(app, prefix + '/identities', identityRouter);
 		useRouter(app, prefix + '/authentication', authenticationRouter);
 		useRouter(app, prefix + '/verification', verificationRouter);
-		useRouter(app, '', serverInfoRouter);
+		useRouter(app, '/ssi-bridge', serverInfoRouter);
 
 		app.use(errorMiddleware);
 		const server = app.listen(port, async () => {
