@@ -4,7 +4,7 @@ metadata:
   name: integration-service-api-config
 data:
   PORT: "3000"
-  DATABASE_NAME: integration-service-db
+  DATABASE_NAME: integration-service
   IOTA_PERMA_NODE: https://chrysalis-chronicle.iota.org/api/mainnet/
   IOTA_HORNET_NODE: https://chrysalis-nodes.iota.org:443
-  DATABASE_URL: mongodb://username:password@mongodb-service.default.svc.cluster.local:27017/integration-service-db?appname=integration-service-api&ssl=false
+  DATABASE_URL: mongodb://username:password@mongodb-service.default.svc.cluster.local:27017/integration-service?appname=integration-service-api&ssl=false
