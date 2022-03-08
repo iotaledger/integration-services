@@ -56,7 +56,7 @@ async function startServer() {
 		useRouter(app, prefix + '/channel-info', channelInfoRouter);
 		useRouter(app, prefix + '/channels', channelRouter);
 		useRouter(app, prefix + '/subscriptions', subscriptionRouter);
-		useRouter(app, '/audit-trail-gw', serverInfoRouter);
+		useRouter(app, '', serverInfoRouter);
 
 		app.use(errorMiddleware);
 		const server = app.listen(port, async () => {

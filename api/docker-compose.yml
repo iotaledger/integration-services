@@ -51,10 +51,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audittrailgw.entrypoints=web"
+      - "traefik.http.middlewares.audit-trail-gw-stripprefix.stripprefix.prefixes=/audit-trail-gw"
+      - "traefik.http.middlewares.audit-trail-gw-stripprefix.stripprefix.forceslash=true"
       - "traefik.http.routers.audittrailgw_ch.rule=PathPrefix(`/api/v0.1/channels`)"
       - "traefik.http.routers.audittrailgw_ci.rule=PathPrefix(`/api/v0.1/channel-info`)"
       - "traefik.http.routers.audittrailgw_sub.rule=PathPrefix(`/api/v0.1/subscriptions`)"
-      - "traefik.http.routers.audittrailgw_info.rule=Path(`/audit-trail-gw/info`)"
+      - "traefik.http.routers.audittrailgw_info.rule=PathPrefix(`/audit-trail-gw/info`)"
+      - "traefik.http.routers.audittrailgw_info.middlewares=audit-trail-gw-stripprefix"
       - "traefik.http.services.audittrailgw.loadbalancer.server.port=3000"
     environment:
       PORT: 3000
@@ -92,10 +95,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ssibridge.entrypoints=web"
+      - "traefik.http.middlewares.ssi-bridge-stripprefix.stripprefix.prefixes=/ssi-bridge"
       - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.1/identities`) "
       - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
       - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
       - "traefik.http.routers.ssibridge_info.rule=Path(`/ssi-bridge/info`)"
+      - "traefik.http.routers.ssibridge_info.middlewares=ssi-bridge-stripprefix"
       - "traefik.http.services.ssibridge.loadbalancer.server.port=3000"
     environment:
       PORT: 3000
