@@ -64,7 +64,6 @@
     "yargs": "^17.2.1"
   },
   "devDependencies": {
-    "@types/bson": "^4.2.0",
     "@types/bs58": "^4.0.1",
     "@types/express": "^4.17.11",
     "@types/jest": "^27.0.2",
