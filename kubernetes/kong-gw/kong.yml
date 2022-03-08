@@ -31,7 +31,7 @@ spec:
             port:
               number: 3000
       - path: /audit-trail-gw/info
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: audit-trail-gw
@@ -59,7 +59,7 @@ spec:
             port:
               number: 3000
       - path: /ssi-bridge/info
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: ssi-bridge
