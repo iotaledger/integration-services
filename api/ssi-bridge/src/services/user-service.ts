@@ -82,7 +82,7 @@ export class UserService {
 		if (typeof decodedToken === 'string' || !decodedToken?.user) {
 			return;
 		}
-		const identityId: string = decodedToken.user.id;
+		const identityId: string = decodedToken?.user?.id;
 
 		return identityId;
 	}
