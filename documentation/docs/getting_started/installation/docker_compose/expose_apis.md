@@ -22,8 +22,7 @@ The ports `3000` and `27017` will be exposed on the current host:
 You can check if Integration Services API is up and running by running the following command:
 
 ```bash
-curl http://localhost:3000/audit-trail-gw/info
-curl http://localhost:3000/ssi-bridge/info
+curl http://localhost:3000/info
 ```
 
 You can open in the OpenAPI documentation for the API at this address using your browser of choice:
