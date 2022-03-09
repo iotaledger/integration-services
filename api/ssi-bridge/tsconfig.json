@@ -13,5 +13,5 @@
 		"allowJs": true,
 	},
 	"include": ["src"],
-	"exclude": ["node_modules", "../shared-modules/node_modules", "*/integration-services/integration-services/api/shared-modules/node_modules/"],
+	"exclude": ["node_modules", "../shared-modules/node_modules", "**/integration-services/integration-services/api/shared-modules/node_modules"],
 }
