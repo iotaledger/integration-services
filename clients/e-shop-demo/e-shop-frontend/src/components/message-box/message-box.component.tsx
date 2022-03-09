@@ -7,7 +7,11 @@ interface Props {
 	type: string;
 }
 const MessageBox: FunctionComponent<Props> = ({ className, show, type, children }) => {
-	return show ? <MessageBoxWrapper className={className} type={type}>{children}</MessageBoxWrapper> : null;
+	return show ? (
+		<MessageBoxWrapper className={className} type={type}>
+			{children}
+		</MessageBoxWrapper>
+	) : null;
 };
 
 export default MessageBox;

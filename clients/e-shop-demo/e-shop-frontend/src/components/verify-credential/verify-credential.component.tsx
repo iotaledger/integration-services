@@ -10,9 +10,9 @@ import credentialUnderAge from '../../data/credential_under_age.json';
 import credentialNotTrusted from '../../data/credential_not_trusted_root.json';
 import { Rings } from 'react-loader-spinner';
 import { TourContext } from '../../contexts/tour.provider';
-import { VcDisplay } from './verify-credential.styles';
+import CredentialDisplay from '../credential-display/credential-display.component';
 
-const VerifyCredential = () => {
+const VerifyCredential = ({ showCredential }: { showCredential: boolean }) => {
 	const inputRef = useRef<any>();
 	const [ageRestrictionError, setAgeRestrictionError] = useState<boolean>();
 	const [credentialFile, setCredentialFile] = useState<any>();
@@ -41,16 +41,16 @@ const VerifyCredential = () => {
 		if (!overAgeRestriction && verified === false) {
 			setErrorMessage('Credential is under age restriction or invalid!');
 			setStep(6);
-			setRun(true);		
-		// User is over 18 but credential is invalid
+			setRun(true);
+			// User is over 18 but credential is invalid
 		} else if (overAgeRestriction && verified === false) {
 			setErrorMessage('Credential is invalid!');
 			setStep(6);
-			setRun(true);	
+			setRun(true);
 			// Cannot reach server
 		} else if (verified === undefined) {
 			setErrorMessage('Cannot reach server, try again.');
-			setRun(false);	
+			setRun(false);
 			// User is over 18 and already authenticated
 		} else if (overAgeRestriction && authenticated && !useOwnCredential && verified) {
 			setStep(10);
@@ -66,11 +66,15 @@ const VerifyCredential = () => {
 	};
 
 	const onFileChange = async (file: File) => {
-		const credential = await readFile(file as File);
-		setCredentialFile(credential);
-		setIsVerified(undefined);
-		setCredential(undefined);
-		setAgeRestrictionError(false);
+		try {
+			const credential = await readFile(file as File);
+			setCredentialFile(credential);
+			setIsVerified(undefined);
+			setCredential(undefined);
+			setAgeRestrictionError(false);
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	const onCredentialChange = (event: any) => {
@@ -78,22 +82,31 @@ const VerifyCredential = () => {
 		setCredential(undefined);
 		setAgeRestrictionError(undefined);
 		setErrorMessage(undefined);
-		const value = event.target.value;
-		if (value === 'under') {
-			setCredentialFile(credentialUnderAge);
-			setUseOwnCredential(false);
-			setRun(false);
-		} else if (value === 'above') {
-			setCredentialFile(credentialJson);
-			setUseOwnCredential(false);
-			setStep(5);
-			setRun(true);
-		} else if (value === 'notTrusted') {
-			setCredentialFile(credentialNotTrusted);
-			setUseOwnCredential(false);
-			setRun(false);
-		} else if (event.target.value === 'own') {
-			setUseOwnCredential(true);
+		const selectedCredential = event.target.value;
+		switch (selectedCredential) {
+			case 'under': {
+				setCredentialFile(credentialUnderAge);
+				setUseOwnCredential(false);
+				setRun(false);
+				break;
+			}
+			case 'above': {
+				setCredentialFile(credentialJson);
+				setUseOwnCredential(false);
+				setStep(5);
+				setRun(true);
+				break;
+			}
+			case 'notTrusted': {
+				setCredentialFile(credentialNotTrusted);
+				setUseOwnCredential(false);
+				setRun(false);
+				break;
+			}
+			case 'own': {
+				setUseOwnCredential(true);
+				break;
+			}
 		}
 	};
 
@@ -110,7 +123,7 @@ const VerifyCredential = () => {
 				</option>
 				<option className="overAgeCredential" value="above">
 					Adult credential
-				</option>		
+				</option>
 				<option value="own">Use your own credential</option>
 			</Form.Select>
 			{useOwnCredential && (
@@ -135,13 +148,7 @@ const VerifyCredential = () => {
 			<MessageBox className="credentialVerified" type="success" show={ageRestrictionError === false && isVerified === true}>
 				Credential successful verified
 			</MessageBox>
-			{credentialFile && (
-				<VcDisplay>
-					<b>Selected Verifiable Credential:</b>
-					<hr></hr>
-					{JSON.stringify(credentialFile, null, 4)}
-				</VcDisplay>
-			)}
+			<CredentialDisplay credentialFile={credentialFile} showCredential={showCredential}></CredentialDisplay>
 		</>
 	);
 };

@@ -1,18 +1,20 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 import { Item } from '../models/item.model';
 
 export const CartContext = createContext({} as any);
 
 const CartProvider = ({ children }: any) => {
-	const [items, setItems] = useState<any[]>([]);
+	const [items, setItems] = useState<Item[]>([]);
 
 	const addToCart = (item: Item) => {
-		setItems([...items, { item, index: items.length }]);
+		setItems([...items, item]);
 	};
 
-	const removeFromCart = (index: number) => {
-		const filteredItems = items.filter((item) => item.index !== index);
-		setItems(filteredItems);
+	const removeFromCart = (listIndex: number) => {
+		// A copy is needed to not splice the original array
+		const itemsCopy = [...items];
+		itemsCopy.splice(listIndex, 1);
+		setItems(itemsCopy);
 	};
 
 	const emptyCart = () => {
