@@ -45,7 +45,7 @@ minikube tunnel
 --- 
 
 
-## Create the kong cluster
+## Create the Kong cluster
 
 1. Apply kubernetes cluster to kong
 
@@ -85,14 +85,38 @@ ssi-bridge-bc7f94d79-4vz7p                 1/1     Running                      
 
 3. Check if up and running:
 
+If the generate-key pod is completed and the audit-trail and ssi-bridge pod are running you can check if they are available using the following two commands:
 ```
-curl -i http://127.0.0.1/ssi-bridge/info
+curl -i $PROXY_IP/ssi-bridge/info
+curl -i $PROXY_IP/audit-trail-gw/info
 ```
 
 ---
+
+# Optional
 
 ## Shut down the cluster
 
 ```
 kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
 ```
+
+---
+
+## Delete all references and recreate from scratch
+
+1. Shut down the cluster:
+
+```
+kubectl delete all --all -n kong
+```
+
+2. Exit/Close all opened terminals
+
+3. Delete namespace
+   
+```
+kubectl delete namespace kong
+```
+
+4. Start again from __Setup Kong__
