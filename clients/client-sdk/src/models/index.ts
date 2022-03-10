@@ -27,6 +27,7 @@ export {
   Subscription as SubscriptionInternal,
   SubscriptionUpdate
 } from '@iota/is-shared-modules/lib/models/types/subscription';
+export { AccessRights } from '@iota/is-shared-modules/lib/models/schemas/subscription';
 
 // Export identity types
 export {

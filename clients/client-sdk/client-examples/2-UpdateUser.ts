@@ -1,4 +1,4 @@
-import { searchCriteria, IdentityClient, IdentityJson } from '@iota/is-client-sdk';
+import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client-sdk';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -19,7 +19,7 @@ async function searchIdentityAndUpdate() {
   console.log('~~~~~~~~~~~~~~~~');
 
   // Search for identities with username 'User' in it
-  const search: searchCriteria = { username: 'MyUser-' };
+  const search: SearchCriteria = { username: 'MyUser-' };
 
   const identities = await identity.search(search);
 

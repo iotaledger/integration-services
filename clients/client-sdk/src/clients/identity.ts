@@ -12,7 +12,7 @@ import {
   VerifiableCredentialInternal
 } from '@iota/is-shared-modules/lib/models/types/verification';
 import { SearchCriteria } from '../models/searchCriteria';
-import { IdentityDocumentJson } from '@iota/is-shared-modules/src/models/types/identity';
+import { IdentityDocumentJson, IdentitySearchBody } from '@iota/is-shared-modules/src/models/types/identity';
 
 export class IdentityClient extends BaseClient {
 
@@ -48,13 +48,14 @@ export class IdentityClient extends BaseClient {
   async search({
     type,
     username,
+    creator,
     registrationDate,
     asc,
     limit,
     index
-  }: SearchCriteria): Promise<User[]> {
+  }: SearchCriteria): Promise<IdentitySearchBody[]> {
     const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
-    return await this.get(`${this.baseUrl}/identities/search`, { type, username, ...param, asc, limit, index });
+    return await this.get(`${this.baseUrl}/identities/search`, { type, username, creator, ...param, asc, limit, index });
   }
 
   /**

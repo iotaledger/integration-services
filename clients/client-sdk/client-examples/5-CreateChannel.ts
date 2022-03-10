@@ -17,7 +17,7 @@ async function createChannel() {
 
   // Create a new channel for example data
   const logChannel = await channel.create({
-    name: `Channel-${Math.ceil(Math.random() * 1000)}`,
+    name: `Channel-${Math.ceil(Math.random() * 100000)}`,
     topics: [{ type: 'example-data', source: 'data-creator' }]
   });
 

@@ -21,6 +21,7 @@ async function searchChannelAndValidateData() {
 
   // The owner creates a channel where he/she want to publish data of type 'example-data'.
   const { channelAddress } = await ownerClient.create({
+    name: `Channel-${Math.ceil(Math.random() * 100000)}`,
     topics: [{ type: 'example-data', source: 'example-creator' }]
   });
 

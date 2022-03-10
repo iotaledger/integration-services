@@ -1,4 +1,4 @@
-import { searchCriteria, IdentityClient, IdentityJson } from '@iota/is-client-sdk';
+import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client-sdk';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -17,7 +17,7 @@ async function searchIdentityAndDelete() {
   console.log('Created Identity', userIdentity);
 
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-  const search: searchCriteria = { registrationDate: yesterday, username: username };
+  const search: SearchCriteria = { registrationDate: yesterday, username: username };
   // Search for identities that have been created yesterday or later (today)
   const identities = await identity.search(search);
 
