@@ -1,4 +1,4 @@
-import { IdentityClient, ChannelClient } from 'iota-is-sdk';
+import { IdentityClient, ChannelClient } from '@iota/is-client-sdk';
 
 import { defaultConfig } from './configuration';
 

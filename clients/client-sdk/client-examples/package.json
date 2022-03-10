@@ -27,6 +27,7 @@
     "@iota/is-client-sdk": "^0.0.10"
   },
   "devDependencies": {
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.6.2"
   }
 }

@@ -1,4 +1,4 @@
-import { IdentityClient, ChannelClient } from 'iota-is-sdk';
+import { IdentityClient, ChannelClient } from '@iota/is-client-sdk';
 
 import { defaultConfig } from './configuration';
 
@@ -17,6 +17,7 @@ async function createChannel() {
 
   // Create a new channel for example data
   const logChannel = await channel.create({
+    name: `Channel-${Math.ceil(Math.random() * 1000)}`,
     topics: [{ type: 'example-data', source: 'data-creator' }]
   });
 

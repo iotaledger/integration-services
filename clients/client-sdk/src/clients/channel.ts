@@ -24,8 +24,12 @@ import {
 import { BaseClient } from './base';
 
 export class ChannelClient extends BaseClient {
+
+  private baseUrl: string;
+
   constructor(config: ClientConfig = {}) {
     super(config);
+    this.baseUrl = this.isGatewayUrl ? this.isGatewayUrl : this.auditTrailUrl!!;
   }
 
   /**
@@ -34,7 +38,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async create(data: CreateChannelBody): Promise<CreateChannelResponse> {
-    return await this.post('channels/create', data);
+    return await this.post(`${this.baseUrl}/channels/create`, data);
   }
 
   /**
@@ -44,7 +48,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async write(address: string, data: AddChannelLogBody): Promise<ChannelData> {
-    return await this.post(`channels/logs/${address}`, data);
+    return await this.post(`${this.baseUrl}/channels/logs/${address}`, data);
   }
 
   /**
@@ -71,7 +75,7 @@ export class ChannelClient extends BaseClient {
     const param1 = startDate !== undefined ? { 'start-date': startDate } : {};
     const param2 = endDate !== undefined ? { 'end-date': endDate } : {};
     const param3 = asc !== undefined ? { asc } : { asc: true };
-    const channelData: any[] = await this.get(`channels/logs/${channelAddress}`, {
+    const channelData: any[] = await this.get(`${this.baseUrl}/channels/logs/${channelAddress}`, {
       limit,
       index,
       param3,
@@ -97,7 +101,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async readHistory(channelAddress: string, presharedKey: string): Promise<ChannelData[]> {
-    return await this.get(`channels/history/${channelAddress}`, {
+    return await this.get(`${this.baseUrl}/channels/history/${channelAddress}`, {
       'preshared-key': presharedKey
     });
   }
@@ -109,7 +113,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async validate(address: string, data: ValidateBody): Promise<ValidateResponse> {
-    return await this.post(`channels/validate/${address}`, data);
+    return await this.post(`${this.baseUrl}/channels/validate/${address}`, data);
   }
 
   /**
@@ -119,12 +123,12 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async reimport(address: string, data: ReimportBody): Promise<null> {
-    return await this.post(`re-import/${address}`, data);
+    return await this.post(`${this.baseUrl}/re-import/${address}`, data);
   }
 
   /**
    * Search for a channel. A client can search for a channel which it is interested in.
-   * @param author
+   * @param authorId
    * @param topicType
    * @param topicSource
    * @param created
@@ -134,14 +138,13 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async search(searchCriteria: ChannelInfoSearch): Promise<ChannelInfo[]> {
-    const { author, authorId, topicType, topicSource, created, latestMessage, limit, index } =
+    const { authorId, topicType, topicSource, created, latestMessage, limit, index } =
       searchCriteria;
     const param1 = topicType !== undefined ? { 'topic-type': topicType } : {};
     const param2 = topicSource !== undefined ? { 'topic-source': topicSource } : {};
     const param3 = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
     const param4 = authorId !== undefined ? { 'author-id': authorId } : {};
-    return await this.get('channel-info/search', {
-      author,
+    return await this.get(`${this.baseUrl}/channel-info/search`, {
       ...param1,
       ...param2,
       created,
@@ -158,7 +161,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async info(address: string): Promise<ChannelInfo> {
-    return await this.get(`channel-info/channel/${address}`);
+    return await this.get(`${this.baseUrl}/channel-info/channel/${address}`);
   }
 
   /**
@@ -167,7 +170,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async add(channel: ChannelInfo): Promise<null> {
-    return await this.post('channel-info/channel', channel);
+    return await this.post(`${this.baseUrl}/channel-info/channel`, channel);
   }
 
   /**
@@ -176,7 +179,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async update(channel: ChannelInfo): Promise<null> {
-    return await this.put('channel-info/channel', channel);
+    return await this.put(`${this.baseUrl}/channel-info/channel`, channel);
   }
 
   /**
@@ -185,7 +188,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async remove(address: string): Promise<null> {
-    return await this.delete(`channel-info/channel/${address}`, {});
+    return await this.delete(`${this.baseUrl}/channel-info/channel/${address}`, {});
   }
 
   /**
@@ -199,7 +202,7 @@ export class ChannelClient extends BaseClient {
     isAuthorized?: boolean
   ): Promise<SubscriptionInternal[]> {
     const params = isAuthorized !== undefined ? { 'is-authorized': isAuthorized } : {};
-    return await this.get(`subscriptions/${channelAddress}`, params);
+    return await this.get(`${this.baseUrl}/subscriptions/${channelAddress}`, params);
   }
 
   /**
@@ -209,7 +212,7 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async findSubscription(channelAddress: string, id: string): Promise<SubscriptionInternal> {
-    return await this.get(`subscriptions/${channelAddress}/${id}`, {});
+    return await this.get(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, {});
   }
 
   /**
@@ -222,7 +225,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     options?: RequestSubscriptionBody
   ): Promise<RequestSubscriptionResponse> {
-    return await this.post(`subscriptions/request/${channelAddress}`, options);
+    return await this.post(`${this.baseUrl}/subscriptions/request/${channelAddress}`, options);
   }
 
   /**
@@ -235,7 +238,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     subscriptionIdentifier: AuthorizeSubscriptionBody
   ): Promise<AuthorizeSubscriptionResponse> {
-    return await this.post(`subscriptions/authorize/${channelAddress}`, subscriptionIdentifier);
+    return await this.post(`${this.baseUrl}/subscriptions/authorize/${channelAddress}`, subscriptionIdentifier);
   }
 
   /**
@@ -248,7 +251,7 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     subscriptionIdentifier: RevokeSubscriptionBody
   ): Promise<null> {
-    return await this.post(`subscriptions/revoke/${channelAddress}`, subscriptionIdentifier);
+    return await this.post(`${this.baseUrl}/subscriptions/revoke/${channelAddress}`, subscriptionIdentifier);
   }
 
   /**
@@ -263,7 +266,7 @@ export class ChannelClient extends BaseClient {
     id: string,
     subscription: SubscriptionInternal
   ): Promise<SubscriptionInternal> {
-    return await this.post(`subscriptions/${channelAddress}/${id}`, subscription);
+    return await this.post(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, subscription);
   }
 
   /**
@@ -278,7 +281,7 @@ export class ChannelClient extends BaseClient {
     id: string,
     updatedSubscription: SubscriptionUpdate
   ): Promise<null> {
-    return await this.put(`subscriptions/${channelAddress}/${id}`, updatedSubscription);
+    return await this.put(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, updatedSubscription);
   }
 
   /**
@@ -288,6 +291,6 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async removeSubscription(channelAddress: string, id: string): Promise<null> {
-    return await this.delete(`subscriptions/${channelAddress}/${id}`, {});
+    return await this.delete(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, {});
   }
 }

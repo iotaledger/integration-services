@@ -15,8 +15,12 @@ import { SearchCriteria } from '../models/searchCriteria';
 import { IdentityDocumentJson } from '@iota/is-shared-modules/src/models/types/identity';
 
 export class IdentityClient extends BaseClient {
+
+  private baseUrl: string;
+
   constructor(config: ClientConfig = {}) {
     super(config);
+    this.baseUrl = this.isGatewayUrl ? this.isGatewayUrl : this.ssiBridgeUrl!!;
   }
 
   /**
@@ -27,7 +31,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async create(username?: string, claimType = UserType.Person, claim?: any): Promise<IdentityJson> {
-    return await this.post('identities/create', {
+    return await this.post(`${this.baseUrl}/identities/create`, {
       username,
       claim: {
         ...claim,
@@ -50,7 +54,7 @@ export class IdentityClient extends BaseClient {
     index
   }: SearchCriteria): Promise<User[]> {
     const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
-    return await this.get('identities/search', { type, username, ...param, asc, limit, index });
+    return await this.get(`${this.baseUrl}/identities/search`, { type, username, ...param, asc, limit, index });
   }
 
   /**
@@ -59,7 +63,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async find(id: string): Promise<User> {
-    return await this.get(`identities/identity/${id}`, {});
+    return await this.get(`${this.baseUrl}/identities/identity/${id}`, {});
   }
 
   /**
@@ -68,7 +72,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async add(identity: IdentityInternal): Promise<null> {
-    return this.post('identities/identity', identity);
+    return this.post(`${this.baseUrl}/identities/identity`, identity);
   }
 
   /**
@@ -77,7 +81,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async update(identity: IdentityInternal): Promise<null> {
-    return this.put('identities/identity', identity);
+    return this.put(`${this.baseUrl}/identities/identity`, identity);
   }
 
   /**
@@ -87,7 +91,7 @@ export class IdentityClient extends BaseClient {
    * @returns Null
    */
   async remove(id: string, revokeCredentials: boolean = false): Promise<null> {
-    return this.delete(`identities/identity/${id}`, { 'revoke-credentials': revokeCredentials });
+    return this.delete(`${this.baseUrl}/identities/identity/${id}`, { 'revoke-credentials': revokeCredentials });
   }
 
   /**
@@ -96,7 +100,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async latestDocument(id: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
-    return await this.get(`verification/latest-document/${id}`);
+    return await this.get(`${this.baseUrl}/verification/latest-document/${id}`);
   }
 
   /**
@@ -105,7 +109,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async addTrustedAuthority(trustedRootId: string): Promise<null> {
-    return await this.post('verification/trusted-roots', { trustedRootId });
+    return await this.post(`${this.baseUrl}/verification/trusted-roots`, { trustedRootId });
   }
 
   /**
@@ -113,7 +117,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async getTrustedAuthorities(): Promise<string[]> {
-    return await this.get('verification/trusted-roots');
+    return await this.get(`${this.baseUrl}/verification/trusted-roots`);
   }
 
   /**
@@ -122,7 +126,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async removeTrustedAuthority(trustedAuthorityId: string): Promise<null> {
-    return await this.delete(`verification/trusted-roots/${trustedAuthorityId}`, {});
+    return await this.delete(`${this.baseUrl}/verification/trusted-roots/${trustedAuthorityId}`, {});
   }
 
   /**
@@ -150,7 +154,7 @@ export class IdentityClient extends BaseClient {
       },
       initiatorVC: initiatorVC
     };
-    return await this.post('verification/create-credential', body);
+    return await this.post(`${this.baseUrl}/verification/create-credential`, body);
   }
 
   /**
@@ -161,7 +165,7 @@ export class IdentityClient extends BaseClient {
   async checkCredential(
     credential: VerifiableCredentialInternal
   ): Promise<{ isVerified: boolean }> {
-    return await this.post('verification/check-credential', credential);
+    return await this.post(`${this.baseUrl}/verification/check-credential`, credential);
   }
 
   /**
@@ -170,6 +174,6 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async revokeCredential(credential: RevokeVerificationBody): Promise<null> {
-    return await this.post('verification/revoke-credential', credential);
+    return await this.post(`${this.baseUrl}/verification/revoke-credential`, credential);
   }
 }

@@ -11,20 +11,49 @@ import sha256 from 'crypto-js/sha256';
  */
 export abstract class BaseClient {
   private apiKey: string;
-  private baseUrl: string;
-  private apiVersion: ApiVersion;
+  protected isGatewayUrl?: string;
+  protected auditTrailUrl?: string;
+  protected ssiBridgeUrl?: string;
   private jwtToken?: string;
   private instance: AxiosInstance;
 
   // Default config is a local api without an api key
-  constructor({ apiKey, baseUrl, apiVersion }: ClientConfig = {}) {
+  constructor({
+    apiKey,
+    isGatewayUrl,
+    ssiBridgeUrl,
+    auditTrailUrl,
+    apiVersion
+  }: ClientConfig = {}) {
     this.apiKey = apiKey || '';
-    this.baseUrl = baseUrl || 'http://127.0.0.1:3000';
-    this.apiVersion = apiVersion || ApiVersion.v01;
+
+    this.buildUrls(isGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
+
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
     });
+  }
+
+  buildUrls(
+    isGatewayUrl?: string,
+    ssiBridgeUrl?: string,
+    auditTrailUrl?: string,
+    apiVersion = ApiVersion.v01
+  ) {
+    if (isGatewayUrl && (ssiBridgeUrl || auditTrailUrl)) {
+      throw new Error('Define either a isGatewayUrl or ssiBridgeUrl and auditTrailUrl.');
+    }
+
+    this.isGatewayUrl = isGatewayUrl && `${isGatewayUrl}/api/${apiVersion}`;
+
+    this.auditTrailUrl = auditTrailUrl
+      ? `${auditTrailUrl}/api/${apiVersion}`
+      : `http://127.0.0.1:3002/api/${apiVersion}`;
+
+    this.ssiBridgeUrl = ssiBridgeUrl
+      ? `${ssiBridgeUrl}/api/${apiVersion}`
+      : `http://127.0.0.1:3001/api/${apiVersion}`;
   }
 
   /**
@@ -33,11 +62,12 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
-    const body = await this.get(`authentication/prove-ownership/${id}`);
+    const url = this.isGatewayUrl ? this.isGatewayUrl : this.ssiBridgeUrl;
+    const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
     const signedNonce = await this.signNonce(encodedKey, nonce);
-    const { jwt } = await this.post(`authentication/prove-ownership/${id}`, {
+    const { jwt } = await this.post(`${url}/authentication/prove-ownership/${id}`, {
       signedNonce
     });
     this.jwtToken = jwt;
@@ -63,7 +93,7 @@ export abstract class BaseClient {
   protected async post(url: string, data: any) {
     let response = await this.instance.request({
       method: 'post',
-      url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
+      url,
       params: {
         'api-key': this.apiKey
       },
@@ -77,7 +107,7 @@ export abstract class BaseClient {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'get',
-      url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
+      url,
       params,
       headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
@@ -88,7 +118,7 @@ export abstract class BaseClient {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'delete',
-      url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
+      url,
       params,
       headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
@@ -98,7 +128,7 @@ export abstract class BaseClient {
   protected async put(url: string, data: any) {
     let response = await this.instance.request({
       method: 'put',
-      url: `${this.baseUrl}/api/${this.apiVersion}/${url}`,
+      url,
       params: {
         'api-key': this.apiKey
       },

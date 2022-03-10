@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "serve": "tsc --watch"
   },
   "author": {
     "name": "Tim Sigl",

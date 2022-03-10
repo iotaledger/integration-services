@@ -1,4 +1,4 @@
-import { IdentityClient, CredentialTypes, UserType, IdentityJson } from 'iota-is-sdk';
+import { IdentityClient, CredentialTypes, UserType, IdentityJson } from '@iota/is-client-sdk';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 import { externalDriverCredential1 } from './externalData';
