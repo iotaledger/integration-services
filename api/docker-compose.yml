@@ -12,11 +12,26 @@ services:
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data_container:/data/db
+  
+  traefik:
+    image: "traefik:v2.6"
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "3000:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  initialize-job:
-    build: .
+  initialize-audit-trail:
+    build:
+      dockerfile: Dockerfile-audit-trail-gw
+      context: ./
     environment:
-      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -27,12 +42,25 @@ services:
     command: node dist/index.js setup-api
     depends_on: 
       - mongo
+      - traefik
 
   audit-trail-gw:
     build:
       dockerfile: Dockerfile-audit-trail-gw
       context: ./
-    environment: 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.audittrailgw.entrypoints=web"
+      - "traefik.http.middlewares.audit-trail-gw-stripprefix.stripprefix.prefixes=/audit-trail-gw"
+      - "traefik.http.middlewares.audit-trail-gw-stripprefix.stripprefix.forceslash=true"
+      - "traefik.http.routers.audittrailgw_ch.rule=PathPrefix(`/api/v0.1/channels`)"
+      - "traefik.http.routers.audittrailgw_ci.rule=PathPrefix(`/api/v0.1/channel-info`)"
+      - "traefik.http.routers.audittrailgw_sub.rule=PathPrefix(`/api/v0.1/subscriptions`)"
+      - "traefik.http.routers.audittrailgw_info.rule=PathPrefix(`/audit-trail-gw/info`)"
+      - "traefik.http.routers.audittrailgw_info.middlewares=audit-trail-gw-stripprefix"
+      - "traefik.http.services.audittrailgw.loadbalancer.server.port=3000"
+    environment:
+      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -42,15 +70,40 @@ services:
     restart: always
     depends_on: 
       - mongo
-      - initialize-job
-    ports:
-      - 3000:3000
+      - initialize-audit-trail
+      - traefik
 
+  initialize-ssi-bridge:
+    build:
+      dockerfile: Dockerfile-ssi-bridge
+      context: ./
+    environment:
+      DATABASE_NAME: ${DATABASE_NAME}
+      IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
+      IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
+      DATABASE_URL: ${DATABASE_URL}
+      SERVER_SECRET: ${SERVER_SECRET}
+    restart: on-failure
+    command: node dist/index.js setup-api
+    depends_on: 
+      - mongo
+  
   ssi-bridge:
     build:
       dockerfile: Dockerfile-ssi-bridge
       context: ./
-    environment: 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ssibridge.entrypoints=web"
+      - "traefik.http.middlewares.ssi-bridge-stripprefix.stripprefix.prefixes=/ssi-bridge"
+      - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.1/identities`) "
+      - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
+      - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
+      - "traefik.http.routers.ssibridge_info.rule=Path(`/ssi-bridge/info`)"
+      - "traefik.http.routers.ssibridge_info.middlewares=ssi-bridge-stripprefix"
+      - "traefik.http.services.ssibridge.loadbalancer.server.port=3000"
+    environment:
+      PORT: 3000
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
@@ -60,9 +113,8 @@ services:
     restart: always
     depends_on: 
       - mongo
-      - initialize-job
-    ports:
-      - 3001:3000
+      - initialize-ssi-bridge
+      - traefik
 
 volumes:
   mongodb_data_container:

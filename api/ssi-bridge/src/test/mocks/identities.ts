@@ -78,6 +78,7 @@ export const UserIdentityMock = {
 		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
+		creator: 'did:iota:96JyhhVGbaLheq2L8j39DiAe8o3ijTHoCWWmai3D7PNk',
 		claim: { type: 'Person', firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
 		verifiableCredentials: [
