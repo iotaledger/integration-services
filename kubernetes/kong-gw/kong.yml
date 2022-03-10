@@ -2,8 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: integration-service-gw
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /api/$2
 spec:
   ingressClassName: kong
   rules:
@@ -55,23 +53,26 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: integration-service-others
+  name: integration-service-info
+  namespace: kong
+  annotations:
+    konghq.com/strip-path: "true"
 spec:
   ingressClassName: kong
   rules:
   - http:
       paths:
-      - path: /info
+      - path: /audit-trail-gw
         pathType: Prefix
         backend:
           service:
             name: audit-trail-gw
             port:
               number: 3000
-      - path: /docs
+      - path: /ssi-bridge
         pathType: Prefix
         backend:
           service:
-            name: audit-trail-gw
+            name: ssi-bridge
             port:
               number: 3000

@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: audit-trail-gw
 spec:
-  # TODO adjust after merging
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -48,9 +47,8 @@ spec:
               done
       containers:
         - name: audit-trail-gw
-          # TODO adjust after services are deployed on docker
-          image: audit-trail-gw
-          imagePullPolicy: Never
+          image: iotaledger/audit-trail-gw:develop
+          imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:
