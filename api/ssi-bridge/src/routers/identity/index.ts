@@ -42,6 +42,9 @@ export const identityRouter = Router();
  *               refDeviceModel: myDevice-wastecontainer-sensor-345
  *               dateFirstUsed: 2014-09-11T11:00:00Z
  *               owner: [did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY]
+ *     security:
+ *       - BearerAuth: []
+ *       - ApiKey: []
  *     responses:
  *       201:
  *         description: Returns the created identity
@@ -83,6 +86,11 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *       required: false
  *       schema:
  *         type: string
+ *     - name: creator
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
  *     - name: 'registration-date'
  *       in: query
  *       required: false
@@ -114,7 +122,7 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/IdentitySchema'
+ *               $ref: '#/components/schemas/IdentitySearchBodySchema'
  *       401:
  *         description: No valid api key provided / Not authenticated
  *         content:
