@@ -9,13 +9,14 @@ const maxNumberOfVc = 100;
 export const searchUsers = async (userSearch: UserSearch): Promise<UserPersistence[]> => {
 	const searchMaximum = 100;
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { type, username, index, registrationDate, ascending } = userSearch;
+	const { type, username, creator, index, registrationDate, ascending } = userSearch;
 	const sort = ascending != null ? { registrationDate: ascending ? 1 : -1 } : undefined;
 	const limit = userSearch.limit != null ? userSearch.limit : searchMaximum;
 	const query = {
 		registrationDate: registrationDate && { $gte: registrationDate },
 		'claim.type': regex(type),
-		username: regex(username)
+		username: regex(username),
+		creator: regex(creator)
 	};
 
 	const plainQuery = MongoDbService.getPlainObject(query);
