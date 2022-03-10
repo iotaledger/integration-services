@@ -1,33 +1,27 @@
 # Examples
 
-In order to work with the examples you need to copy the `.env.example` file into the `.env` file. The configuration has a section related to administration of Integration Services that will require database access (MONGO_URL, DB_NAME, SECRET_KEY) and a section to interact with the API.
+In order to work with the examples you need to copy the `.env.example` file into the `.env` file. 
 
 An example of a configured `.env` file for a locally deployed Integration Services API is the following:
 
 ```
-#-----------------------
-# For management purpose
-#-----------------------
-MONGO_URL=mongodb://root:rootpassword@0.0.0.0:27017
-DB_NAME=integration-service
-SECRET_KEY=7w9gfhb123jngh4gd53z465fewcs569e
+API_KEY=<Api Key>
 
-#---------------------
-# Client configuration
-#---------------------
-API_KEY=4ed59704-9a26-11ec-a749-3f57454709b9
-API_URL=http://localhost:3000
+# You can either choose a gateway url (used in production) or the ssiBridgeUrl AND auditTrailUrl (for local testing)
+
+SSI_BRIDGE_URL=http://localhost:3001
+AUDIT_TRAIL_URL=http://localhost:3002
+
 ```
 
 ## Setup
 
-Some of the examples requires to use a trusted root identity or an identity with Admin role.
+Some of the examples require a trusted root identity or an identity with Admin role.
+The required identity can be generated using the `setup-credential` script in the ssi-bridge api.
 
-We setup such identity using the root identity generated when the API is deployed and give it the Admin role.
-
-This is preliminary operation that need to be performed before launching some the tests:
-
-`npm run example-0`
+1. Navigate to the ssi-bridge api: `cd api/ssi-bridge`
+2. Run the script: `npm run setup-credential`
+3. Copy the adminIdentity.json into the client-examples folder
 
 ## Create Identity And Credentials
 
