@@ -1,9 +1,9 @@
 import { ClientConfig } from '../models/clientConfig';
-const crypto = require('crypto');
 import * as ed from '@noble/ed25519';
-import * as bs58 from 'bs58';
+const bs58 = require('./../bs58/bs58');
 import { ApiVersion } from '../models/apiVersion';
 import axios, { AxiosInstance } from 'axios';
+import sha256 from 'crypto-js/sha256';
 
 /**
  * This is the base client used as a parent class for all clients
@@ -52,10 +52,8 @@ export abstract class BaseClient {
     return ed.Signature.fromHex(signedHash).toHex();
   }
 
-  private async hashNonce(nonce: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(nonce);
-    return crypto.createHash('sha256').update(data).digest('hex');
+  private hashNonce(nonce: string): string {
+    return sha256(nonce).toString();
   }
 
   private getHexEncodedKey(base58Key: string) {
