@@ -72,7 +72,7 @@ IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
 DATABASE_NAME=integration-services
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
-DATABASE_URL=mongodb://root:rootpassword@localhost:27017
+DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
 
 SERVER_SECRET=7w9gfhb123jngh4gd53z465fewcs569e
 API_KEY=4ed59704-9a26-11ec-a749-3f57454709b9
