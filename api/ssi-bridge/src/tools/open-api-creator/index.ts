@@ -35,7 +35,8 @@ import {
 import {
 	CreateIdentityBodySchema,
 	IdentitySearchBodySchema,
-	UpdateIdentityBodySchema
+	UpdateIdentityBodySchema,
+	LatestIdentityDocSchema
 } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/identity-bodies';
 import {
 	DeviceSchema,
@@ -92,6 +93,7 @@ const schemas = {
 	IdentityJsonSchema,
 	IdentityKeyPairJsonSchema,
 	IdentityDocumentJsonSchema,
+	LatestIdentityDocSchema,
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,

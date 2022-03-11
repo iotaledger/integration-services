@@ -119,6 +119,11 @@ module.exports = {
     },
     {
       type: "doc",
+      id: "ssi_bridge_api_reference",
+      label: "SSI-Bridge API Reference",
+    },
+    {
+      type: "doc",
       id: "troubleshooting",
       label: "Troubleshooting",
     },
