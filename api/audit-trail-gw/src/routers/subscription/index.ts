@@ -198,7 +198,7 @@ subscriptionRouter.post(
  * /subscriptions/authorize/{channelAddress}:
  *   post:
  *     summary: Authorize a subscription to a channel
- *     description: Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
+ *     description: Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
  *     tags:
  *     - subscriptions
  *     parameters:

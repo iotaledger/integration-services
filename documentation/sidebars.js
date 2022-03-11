@@ -114,8 +114,8 @@ module.exports = {
     },
     {
       type: "doc",
-      id: "api_reference",
-      label: "API Reference",
+      id: "audit_trail_gw_api_reference",
+      label: "Audit-Trail GW API Reference",
     },
     {
       type: "doc",
