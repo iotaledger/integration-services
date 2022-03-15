@@ -12,10 +12,12 @@ import {
   VerifiableCredentialInternal
 } from '@iota/is-shared-modules/lib/models/types/verification';
 import { SearchCriteria } from '../models/searchCriteria';
-import { IdentityDocumentJson, IdentitySearchBody } from '@iota/is-shared-modules/src/models/types/identity';
+import {
+  IdentityDocumentJson,
+  IdentitySearchBody
+} from '@iota/is-shared-modules/src/models/types/identity';
 
 export class IdentityClient extends BaseClient {
-
   private baseUrl: string;
 
   constructor(config: ClientConfig = {}) {
@@ -55,7 +57,15 @@ export class IdentityClient extends BaseClient {
     index
   }: SearchCriteria): Promise<IdentitySearchBody[]> {
     const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
-    return await this.get(`${this.baseUrl}/identities/search`, { type, username, creator, ...param, asc, limit, index });
+    return await this.get(`${this.baseUrl}/identities/search`, {
+      type,
+      username,
+      creator,
+      ...param,
+      asc,
+      limit,
+      index
+    });
   }
 
   /**
@@ -92,7 +102,9 @@ export class IdentityClient extends BaseClient {
    * @returns Null
    */
   async remove(id: string, revokeCredentials: boolean = false): Promise<null> {
-    return this.delete(`${this.baseUrl}/identities/identity/${id}`, { 'revoke-credentials': revokeCredentials });
+    return this.delete(`${this.baseUrl}/identities/identity/${id}`, {
+      'revoke-credentials': revokeCredentials
+    });
   }
 
   /**
@@ -127,7 +139,10 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async removeTrustedAuthority(trustedAuthorityId: string): Promise<null> {
-    return await this.delete(`${this.baseUrl}/verification/trusted-roots/${trustedAuthorityId}`, {});
+    return await this.delete(
+      `${this.baseUrl}/verification/trusted-roots/${trustedAuthorityId}`,
+      {}
+    );
   }
 
   /**

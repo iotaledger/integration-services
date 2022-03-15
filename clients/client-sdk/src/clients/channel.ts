@@ -24,7 +24,6 @@ import {
 import { BaseClient } from './base';
 
 export class ChannelClient extends BaseClient {
-
   private baseUrl: string;
 
   constructor(config: ClientConfig = {}) {
@@ -238,7 +237,10 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     subscriptionIdentifier: AuthorizeSubscriptionBody
   ): Promise<AuthorizeSubscriptionResponse> {
-    return await this.post(`${this.baseUrl}/subscriptions/authorize/${channelAddress}`, subscriptionIdentifier);
+    return await this.post(
+      `${this.baseUrl}/subscriptions/authorize/${channelAddress}`,
+      subscriptionIdentifier
+    );
   }
 
   /**
@@ -251,7 +253,10 @@ export class ChannelClient extends BaseClient {
     channelAddress: string,
     subscriptionIdentifier: RevokeSubscriptionBody
   ): Promise<null> {
-    return await this.post(`${this.baseUrl}/subscriptions/revoke/${channelAddress}`, subscriptionIdentifier);
+    return await this.post(
+      `${this.baseUrl}/subscriptions/revoke/${channelAddress}`,
+      subscriptionIdentifier
+    );
   }
 
   /**
@@ -281,7 +286,10 @@ export class ChannelClient extends BaseClient {
     id: string,
     updatedSubscription: SubscriptionUpdate
   ): Promise<null> {
-    return await this.put(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, updatedSubscription);
+    return await this.put(
+      `${this.baseUrl}/subscriptions/${channelAddress}/${id}`,
+      updatedSubscription
+    );
   }
 
   /**

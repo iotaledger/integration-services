@@ -1,10 +1,10 @@
-import { ApiVersion } from "..";
+import { ApiVersion } from '..';
 
 export const apiConfig = {
-    ssiBridgeUrl: 'http://localhost:3001',
-    auditTrailUrl: 'http://localhost:3002',
-    apiVersion: ApiVersion.v01
-  }
+  ssiBridgeUrl: 'http://localhost:3001',
+  auditTrailUrl: 'http://localhost:3002',
+  apiVersion: ApiVersion.v01
+};
 
 export const adminUser = {
   id: 'did:iota:H9gnk3KXPiopLtwLRm3ooKU3D4oNJz49DDLVXx5xov19',
