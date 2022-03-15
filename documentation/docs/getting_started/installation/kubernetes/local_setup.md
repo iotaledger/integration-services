@@ -149,6 +149,18 @@ curl -i $PROXY_IP/audit-trail-gw/info
 ```
 
 
+## Notes
+
+The previous commands will create:
+
+- A single MongoDB instance with an ephemeral storage (i.e. no persistent bound volume) with `root` as username and `rootpassword`as password for administration purpose and `username` and `password` as credentials for the
+  database `integration-service`.
+- A Kubernetes Job that will create a root identity in the database if there is not one yet.
+- A replicated backend service for Integration Service API (2 replicas as default value).
+
+You can find information on how to configure Integration Service with a production-ready database in
+the [configuration section](configuration.md).
+
 
 ## Optional Instructions
 
@@ -178,15 +190,3 @@ kubectl delete namespace kong
 ```
 
 4. Once you have stopped kong and deleted its namespace, you can recreate it by referring to the [Set Up Kong section](#set-up-kong).
-
-## Notes
-
-The previous commands will create:
-
-- A single MongoDB instance with an ephemeral storage (i.e. no persistent bound volume) with `root` as username and `rootpassword`as password for administration purpose and `username` and `password` as credentials for the
-  database `integration-service`.
-- A Kubernetes Job that will create a root identity in the database if there is not one yet.
-- A replicated backend service for Integration Service API (2 replicas as default value).
-
-You can find information on how to configure Integration Service with a production-ready database in
-the [configuration section](configuration.md).
