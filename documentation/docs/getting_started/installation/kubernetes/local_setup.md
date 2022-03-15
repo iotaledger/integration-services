@@ -51,7 +51,7 @@ Please follow these steps to clone the Integration Services:
 
 ## Setup Kong
 
-1. Create namespace for kong:
+1. Create a namespace for kong by running the following command:
 ```
 kubectl create -f https://bit.ly/k4k8s
 ```
