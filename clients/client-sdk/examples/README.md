@@ -21,7 +21,7 @@ The required identity can be generated using the `setup-credential` script in th
 
 1. Navigate to the ssi-bridge api: `cd api/ssi-bridge`
 2. Run the script: `npm run setup-credential`
-3. Copy the adminIdentity.json into the client-examples folder
+3. Copy the adminIdentity.json into the `client-sdk/example` folder
 
 ## Create Identity And Credentials
 

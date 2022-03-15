@@ -21,8 +21,8 @@ jobs:
           cd shared-modules
           npm install
           npm run build
-      - run: cd clients/node && npm ci
-      - run: cd clients/node && npm run build
-      - run: cd clients/node && npm publish
+      - run: cd clients/client-sdk && npm ci
+      - run: cd clients/client-sdk && npm run build
+      - run: cd clients/client-sdk && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
