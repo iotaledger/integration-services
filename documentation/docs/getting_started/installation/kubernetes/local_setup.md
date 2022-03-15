@@ -60,7 +60,8 @@ kubectl create -f https://bit.ly/k4k8s
 ```
 minikube service -n kong kong-proxy --url
 ```
-> It will create the following output:
+
+**Expected output**:
 
 ```
 🏃  Starting tunnel for service kong-proxy.
