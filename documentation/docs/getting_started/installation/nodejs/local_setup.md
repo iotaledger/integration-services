@@ -171,6 +171,6 @@ npm run start
 
 4. You can check if the service is running with the following command:
 
-```
+```bash
 curl http://localhost:3002/info
 ```
