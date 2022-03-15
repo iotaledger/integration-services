@@ -56,7 +56,7 @@ export const verificationRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/LatestIdentityJsonSchema"
+ *               $ref: "#/components/schemas/LatestIdentityDocSchema"
  *       401:
  *         description: No valid api key provided
  *         content:
@@ -204,7 +204,7 @@ verificationRouter.delete('/trusted-roots/:trustedRootId', apiKeyMiddleware, aut
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/VerifyIdentityBodySchema"
+ *             $ref: "#/components/schemas/CreateCredentialBodySchema"
  *           example:
  *             subject:
  *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
