@@ -10,12 +10,12 @@ import sha256 from 'crypto-js/sha256';
  * using the integration services api.
  */
 export abstract class BaseClient {
-  private apiKey: string;
-  protected isGatewayUrl?: string;
-  protected auditTrailUrl?: string;
-  protected ssiBridgeUrl?: string;
-  private jwtToken?: string;
-  private instance: AxiosInstance;
+  apiKey: string;
+  isGatewayUrl?: string;
+  auditTrailUrl?: string;
+  ssiBridgeUrl?: string;
+  jwtToken?: string;
+  instance: AxiosInstance;
 
   // Default config is a local api without an api key
   constructor({
@@ -73,7 +73,7 @@ export abstract class BaseClient {
     this.jwtToken = jwt;
   }
 
-  private async signNonce(privateKey: string, nonce: string): Promise<string> {
+  async signNonce(privateKey: string, nonce: string): Promise<string> {
     if (nonce?.length !== 40) {
       throw new Error('nonce must have a length of 40 characters!');
     }
@@ -82,15 +82,15 @@ export abstract class BaseClient {
     return ed.Signature.fromHex(signedHash).toHex();
   }
 
-  private hashNonce(nonce: string): string {
+  hashNonce(nonce: string): string {
     return sha256(nonce).toString();
   }
 
-  private getHexEncodedKey(base58Key: string) {
+  getHexEncodedKey(base58Key: string) {
     return bs58.decode(base58Key).toString('hex');
   }
 
-  protected async post(url: string, data: any) {
+  async post(url: string, data: any) {
     let response = await this.instance.request({
       method: 'post',
       url,
@@ -103,7 +103,7 @@ export abstract class BaseClient {
     return response?.data;
   }
 
-  protected async get(url: string, params: any = {}) {
+  async get(url: string, params: any = {}) {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'get',
@@ -114,7 +114,7 @@ export abstract class BaseClient {
     return response?.data;
   }
 
-  protected async delete(url: string, params: any = {}) {
+  async delete(url: string, params: any = {}) {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'delete',
@@ -125,7 +125,7 @@ export abstract class BaseClient {
     return response?.data;
   }
 
-  protected async put(url: string, data: any) {
+  async put(url: string, data: any) {
     let response = await this.instance.request({
       method: 'put',
       url,
