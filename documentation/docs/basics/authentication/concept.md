@@ -69,5 +69,5 @@ For all following requests to endpoints protected by authentication use your JWT
 
 We provide examples of this workflow in the following languages:
 
-1. [Node](https://wiki.iota.org/integration-services/authentication/example_node)
-2. [Iota-is-sdk (Node client)](https://wiki.iota.org/integration-services/authentication/example_is_sdk)
+1. [Node](example_node.md)
+2. [Iota-is-sdk (Node client)](example_is_sdk.md)
