@@ -1,8 +1,8 @@
 import { ChannelClient, CreateChannelResponse } from '..';
 import { adminUser, apiConfig, testChannel } from './test.data';
 
-// 20 second timeout since tangle might be slow
-jest.setTimeout(20000);
+// 30 second timeout since tangle might be slow
+jest.setTimeout(30000);
 
 describe('test channel client', () => {
   let channelClient: ChannelClient;
