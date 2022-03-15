@@ -27,8 +27,7 @@ const setupCredential = async () => {
 		await setAdminRole(adminIdentity.doc.id);
 
 		fs.writeFileSync('./adminIdentity.json', JSON.stringify(adminIdentity, null, 4));
-		console.log('The following Identity can now issue credentials (it is also saved in the root directory as adminIdentity.json):');
-		console.log('Identity: ', { identityId: adminIdentity.doc.id, secretKey: adminIdentity.key.secret });
+		console.log('The identity was successfully created and saved in the adminIdentity.json file!');
 	} catch (e: any) {
 		console.log('Was not able to setup admin credential.', e);
 	} finally {
