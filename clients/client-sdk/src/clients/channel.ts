@@ -228,7 +228,7 @@ export class ChannelClient extends BaseClient {
   }
 
   /**
-   * Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
+   * Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
    * @param channelAddress
    * @param authorization
    * @returns

@@ -56,9 +56,11 @@ Important The `server-secret` must be 32 characters length
 :::
 
 
-:::tip You can create a server secret using the following command 
+:::tip You can create a server secret using the following commands:
 ```
+cd ssi-bridge
 npm run generate-secret
+cd ..
 ```
 :::
 
@@ -75,6 +77,8 @@ MONGO_INITDB_ROOT_PASSWORD=rootpassword
 DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
 
 SERVER_SECRET=7w9gfhb123jngh4gd53z465fewcs569e
+JWT_SECRET=7w9gfhb123jngh4gd53z465fewcs569e
+
 API_KEY=4ed59704-9a26-11ec-a749-3f57454709b9
 ````
 
@@ -101,9 +105,10 @@ Make sure that you use the same value for the same variables inside `.env` and `
 
 ## Run Integration Services API
 
-You can start the Integration Services API by running the following command:
+You can start the Integration Services API by running the following commands:
 
 ```bash
+docker-compose build
 docker-compose --env-file .env up --build
 ```
 

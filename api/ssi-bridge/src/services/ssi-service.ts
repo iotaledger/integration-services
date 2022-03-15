@@ -10,6 +10,7 @@ import { KeyCollectionJson } from '@iota/is-shared-modules/lib/models/types/key-
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
 import { ILogger } from '../utils/logger';
 import { IdentityKeys } from '@iota/is-shared-modules/lib/models/types/identity';
+import { LatestIdentityJson } from '../../../shared-modules/src/models/types/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -166,7 +167,7 @@ export class SsiService {
 		}
 	}
 
-	async getLatestIdentityJson(did: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
+	async getLatestIdentityJson(did: string): Promise<LatestIdentityJson> {
 		try {
 			const client = this.getIdentityClient(true);
 			return await client.resolve(did);

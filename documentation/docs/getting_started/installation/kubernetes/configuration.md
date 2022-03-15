@@ -16,7 +16,7 @@ instance. Please keep in mind that all values must be changed before deployment.
 running, you should run the following command to load your most recent configuration:
 
 ```bash
-kubectl apply -f kubernetes/optional -f kubernetes/
+kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
 ```
 
 ## Database
@@ -51,14 +51,8 @@ The default values are:
 ## Number of Replicas
 
 You can set up the initial number of replicas in the `.spec.replicas` field
-in [kubernetes/is-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/is-deployment.yaml)
+in [kubernetes/audit-trail-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/audit-trail-deployment.yaml) and [kubernetes/ssi-bridge-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/ssi-bridge-deployment.yaml)
 .
-
-## Ingress Hostname
-
-If you are accessing service via an Ingress resource, you can set the domain name
-in [kubernetes/optional/ingress.yaml file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/optional/ingress.yaml)
-. The default value is `ensuresec.solutions.iota.org`.
 
 ## Private Tangle
 
