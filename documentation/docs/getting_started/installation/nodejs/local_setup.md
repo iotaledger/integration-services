@@ -47,7 +47,7 @@ newly created `.env` and `mongo-init.js` files accordingly.
 Important The `server-secret` must be 32 characters length
 :::
 
-:::tip You can create a server secret using the following command:
+:::tip You can create a server secret using the following commands:
 ```
 cd ssi-bridge
 npm run generate-secret
