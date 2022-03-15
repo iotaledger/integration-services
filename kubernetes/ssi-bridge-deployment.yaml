@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: ssi-bridge
 spec:
-  # TODO adjust after merging
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -48,9 +47,8 @@ spec:
               done
       containers:
         - name: ssi-bridge
-          # TODO adjust after services are deployed on docker
-          image: ssi-bridge
-          imagePullPolicy: Never
+          image: iotaledger/ssi-bridge:develop
+          imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:

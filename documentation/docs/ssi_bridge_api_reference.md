@@ -1,25 +1,11 @@
----
-image: /img/integration-services/logo/integration_services.png
-description: API Reference documentation for the integration Services.
-keywords:
-- API Reference
-- models
-- endpoints
-- v1.0.0
----
-# Integration Services API Documentation
-This is the API documentation for the Integration Services. Have a look at the repository for examples at [Github](https://github.com/iotaledger/integration-services).
-            For further information on the Audit Trail GW API have a look at [Audit Trail API](services/audit-trail-gateway/introduction.md) and head to
-            [SSI Bridge](services/SSI-bridge/introduction.md) for information about the SSI Bridge.
+# SSI Bridge API Documentation
+This is the API documentation for the SSI Bridge of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/ssi-bridge/introduction).
 
-## Version: 1.0.0 
-
-## Endpoints
+## Version: v0.1
 
 ### /authentication/prove-ownership/{id}
 
 #### GET
-
 ##### Summary
 
 Request a nonce which must be signed by the private key
@@ -67,324 +53,6 @@ Get an authentication token by signing a nonce using the private key. If signatu
 | 500 | No valid signedNonce provided |
 | 5XX | Unexpected error |
 
-### /channel-info/search
-
-#### GET
-##### Summary
-
-Search for a channel
-
-##### Description
-
-Search for a channel. A client can search for a channel which it is interested in.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| author | query |  | No | string |
-| topic-type | query |  | No | string |
-| topic-source | query |  | No | string |
-| created | query |  | No | dateTime |
-| latest-message | query |  | No | dateTime |
-| limit | query |  | No | number |
-| index | query |  | No | number |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Returns information about searched channels |
-| 401 | No valid api key provided / Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /channel-info/channel/{channelAddress}
-
-#### GET
-##### Summary
-
-Get information about a channel
-
-##### Description
-
-Get information about a channel with address channel-address.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Returns information about the channel |
-| 401 | No valid api key provided |
-| 5XX | Unexpected error |
-
-#### DELETE
-##### Summary
-
-Delete information of a channel
-
-##### Description
-
-Delete information of a channel with address channel-address. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Channel successfully deleted |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /channel-info/channel
-
-#### POST
-##### Summary
-
-Add an existing channel into the database
-
-##### Description
-
-Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 201 | Channel successfully added |
-| 401 | No valid api key provided/ Not authenticated |
-| 404 | Channel not found. |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-#### PUT
-##### Summary
-
-Update channel information
-
-##### Description
-
-Update channel information. The author of a channel can update topics of a channel.
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Channel successfully added |
-| 401 | No valid api key provided/ Not authenticated |
-| 404 | Channel not found. |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /channels/create
-
-#### POST
-##### Summary
-
-Create a new channel
-
-##### Description
-
-Create a new channel. An author can create a new channel with specific topics where other clients can subscribe to.
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 201 | Returns the created channel |
-| 401 | No valid api key provided / Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /channels/logs/{channelAddress}
-
-#### POST
-##### Summary
-
-Write data to a channel
-
-##### Description
-
-Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Returns a link to the written data |
-| 401 | No valid api key provided / Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-#### GET
-##### Summary
-
-Get data from the channel
-
-##### Description
-
-Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| limit | query |  | No | number |
-| index | query |  | No | number |
-| asc | query |  | No | boolean |
-| start-date | query |  | No | dateTime |
-| end-date | query |  | No | dateTime |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Returns data from the channel |
-| 401 | No valid api key provided / Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /channels/history/{channelAddress}
-
-#### GET
-##### Summary
-
-Get the history of a channel.
-
-##### Description
-
-Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| preshared-key | query | Preshared key defined by the author to encrypt/decrypt data. | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Received history. |
-| 5XX | Unexpected error |
-
-### /channels/validate/{channelAddress}
-
-#### POST
-##### Summary
-
-Validates channel data by comparing the log of each link with the data on the tangle.
-
-##### Description
-
-Validates data of a channel.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Returns validated result. |
-| 401 | No valid api key provided / Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /channels/re-import/{channelAddress}
-
-#### POST
-##### Summary
-
-Re import the data from the tangle into the database.
-
-##### Description
-
-The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Reimport successful. |
-| 401 | No valid api key provided / Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
 ### /identities/create
 
 #### POST
@@ -404,6 +72,13 @@ Create a new decentralized digital identity (DID). Identity DID document is sign
 | 401 | No valid api key provided |
 | 5XX | Unexpected error |
 
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| BearerAuth | |
+| ApiKey | |
+
 ### /identities/search
 
 #### GET
@@ -421,9 +96,11 @@ Search for identities in the system and returns a list of existing identities.
 | ---- | ---------- | ----------- | -------- | ---- |
 | type | query |  | No | string |
 | username | query |  | No | string |
+| creator | query |  | No | string |
 | registration-date | query |  | No | dateTime |
 | limit | query |  | No | number |
 | index | query |  | No | number |
+| asc | query |  | No | boolean |
 
 ##### Responses
 
@@ -438,6 +115,7 @@ Search for identities in the system and returns a list of existing identities.
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
 ### /identities/identity/{id}
 
@@ -494,6 +172,7 @@ Removes an identity from the Bridge. An identity can only delete itself and is n
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
 ### /identities/identity
 
@@ -536,6 +215,7 @@ Update claim of a registered identity.
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
 ### /info
 
@@ -554,259 +234,6 @@ Get information about the server like commitHash, server identity id and api ver
 | ---- | ----------- |
 | 200 | Returns information about the server |
 | 5XX | Unexpected error |
-
-### /subscriptions/{channelAddress}
-
-#### GET
-##### Summary
-
-Get all subscriptions of a channel.
-
-##### Description
-
-Get all subscriptions of a channel. Use the is-authorized query parameter to filter for authorized subscriptions.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| is-authorized | query |  | No | boolean |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Subscriptions |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /subscriptions/{channelAddress}/{id}
-
-#### GET
-##### Summary
-
-Get a subscription by identity id.
-
-##### Description
-
-Get a subscription of a channel by identity id.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| id | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Subscriptions |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-#### POST
-##### Summary
-
-Adds an existing subscription
-
-##### Description
-
-Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| id | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 201 | Subscription added |
-| 400 | Subscription already added or params missing |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-#### PUT
-##### Summary
-
-Updates an existing subscription
-
-##### Description
-
-Updates an existing subscription
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| id | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Subscription updated |
-| 400 | Missing channelAddress / id |
-| 401 | No valid api key provided/ Not authenticated |
-| 404 | No subscription found |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-#### DELETE
-##### Summary
-
-Deletes subscription
-
-##### Description
-
-Deletes an existing subscription
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-| id | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Subscription deleted |
-| 400 | Missing channelAddress / id |
-| 401 | No valid api key provided/ Not authenticated |
-| 404 | No subscription found |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /subscriptions/request/{channelAddress}
-
-#### POST
-##### Summary
-
-Request subscription to a channel
-
-##### Description
-
-Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 201 | Link to requested subscription |
-| 400 | Subscription already requested |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /subscriptions/authorize/{channelAddress}
-
-#### POST
-##### Summary
-
-Authorize a subscription to a channel
-
-##### Description
-
-Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the Ecommerce-SSI Bridge).
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Link to requested subscription |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
-
-### /subscriptions/revoke/{channelAddress}
-
-#### POST
-##### Summary
-
-Revoke subscription to a channel.
-
-##### Description
-
-Revoke subscription to a channel. Only the author of a channel can revoke a subscription from a channel.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| channelAddress | path |  | Yes | string |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-| 200 | Sucessfully revoked the subscription. |
-| 401 | No valid api key provided/ Not authenticated |
-| 5XX | Unexpected error |
-
-##### Security
-
-| Security Schema | Scopes |
-| --- | --- |
-| BearerAuth | |
 
 ### /verification/latest-document/{id}
 
@@ -842,7 +269,7 @@ Adds Trusted Root identity identifiers (DIDs)
 
 ##### Description
 
-Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their verifiable credentials (VCs) are automatically trusted when checking at the Bridge.
+Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
 ##### Responses
 
@@ -857,6 +284,7 @@ Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identit
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
 #### GET
 ##### Summary
@@ -865,7 +293,7 @@ Returns a list of Trusted Root identity identifiers (DIDs)
 
 ##### Description
 
-Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their verifiable credentials (VCs) are automatically trusted when checking at the Bridge.
+Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
 ##### Responses
 
@@ -884,7 +312,7 @@ Remove Trusted Root identity identifiers (DIDs)
 
 ##### Description
 
-Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their verifiable credentials (VCs) are automatically trusted when checking at the Bridge.
+Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
 ##### Parameters
 
@@ -905,6 +333,7 @@ Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of ident
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
 ### /verification/create-credential
 
@@ -930,6 +359,7 @@ Verify the authenticity of an identity (of an individual, organization or object
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
 ### /verification/check-credential
 
@@ -974,26 +404,29 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | Security Schema | Scopes |
 | --- | --- |
 | BearerAuth | |
+| ApiKey | |
 
-## Models
+### Models
 
-### ProveOwnershipPostBodySchema
+#### ProveOwnershipPostBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | signedNonce | string |  | Yes |
 
-### CreateChannelBodySchema
+#### CreateChannelBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
+| name | string | A channel can be searched by its name. | Yes |
+| description | string | An optional description for a channel. | No |
 | subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
 | topics | [ object ] |  | Yes |
 | hasPresharedKey | boolean | If the channel has a preshared key (hasPresharedKey=true) but non is set in the presharedKey property it will be generated by the api. | No |
 | seed | string | If left empty the api will generate a seed automatically. Always store your seed otherwise the data can not be reimported. | No |
 | presharedKey | string | If the channel has a preshared key (hasPresharedKey=true) but non is defined here the presharedKey will be generated by the api. | No |
 
-### AddChannelLogBodySchema
+#### AddChannelLogBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1003,7 +436,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | publicPayload |  | Public available payload. | No |
 | payload |  | Payload is stored encrypted in the channel. | No |
 
-### ChannelDataSchema
+#### ChannelDataSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1012,48 +445,48 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | messageId | string | Message id can be used to search for the message in an IOTA explorer. | No |
 | log | object |  | Yes |
 
-### ValidateBodySchema
+#### ValidateBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | ValidateBodySchema | array |  |  |
 
-### AuthorizeSubscriptionBodySchema
+#### AuthorizeSubscriptionBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subscriptionLink | string |  | No |
 | id | string |  | No |
 
-### RequestSubscriptionBodySchema
+#### RequestSubscriptionBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | seed | string | If left empty the api will generate a seed. Make sure you store the seed since the API will not store it. You can reuse your seed for different channels. | No |
-| accessRights |  | _Enum:_ `"Audit"`, `"Read"`, `"Write"`, `"ReadAndWrite"` | No |
+| accessRights |  |  | No |
 | presharedKey | string |  | No |
 
-### RevokeSubscriptionBodySchema
+#### RevokeSubscriptionBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subscriptionLink | string |  | No |
 | id | string |  | No |
 
-### RevokeVerificationBodySchema
+#### RevokeVerificationBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | signatureValue | string |  | Yes |
 
-### VerifyIdentityBodySchema
+#### CreateCredentialBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | subject | object |  | Yes |
 | initiatorVC | object |  | No |
 
-### VerifiableCredentialBodySchema
+#### VerifiableCredentialBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1065,13 +498,13 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | issuanceDate | dateTime |  | Yes |
 | proof | object |  | Yes |
 
-### TrustedRootBodySchema
+#### TrustedRootBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | trustedRootId | string |  | Yes |
 
-### SubjectBodySchema
+#### SubjectBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1079,32 +512,33 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | credentialType | string |  | Yes |
 | claim | object |  | Yes |
 
-### CreateIdentityBodySchema
+#### CreateIdentityBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | storeIdentity | boolean |  | No |
-| username | string |  | No |
+| username | string |  | Yes |
 | registrationDate | dateTime |  | No |
 | verifiableCredentials | [ object ] |  | No |
 | role | string |  | No |
 | claim | object |  | No |
 | isPrivate | boolean |  | No |
+| isServerIdentity | boolean |  | No |
 
-### UpdateIdentityBodySchema
+#### UpdateIdentityBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
 
-### ReimportBodySchema
+#### ReimportBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | seed | string |  | No |
 | subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
 
-### CreateChannelResponseSchema
+#### CreateChannelResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1112,37 +546,37 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | channelAddress | string |  | Yes |
 | presharedKey | string |  | No |
 
-### AuthorizeSubscriptionResponseSchema
+#### AuthorizeSubscriptionResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | keyloadLink | string |  | Yes |
 
-### RequestSubscriptionResponseSchema
+#### RequestSubscriptionResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | seed | string | Auto generated seed. Make sure you store the seed since the API will not store it. You can reuse your seed for different channels. | Yes |
 | subscriptionLink | string |  | Yes |
 
-### ValidateResponseSchema
+#### ValidateResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | ValidateResponseSchema | array |  |  |
 
-### ErrorResponseSchema
+#### ErrorResponseSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | error | string |  | Yes |
 
-### ChannelInfoSearchSchema
+#### ChannelInfoSearchSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | authorId | string |  | No |
-| author | string |  | No |
+| name | string | Optional channel name. A channel can be searched by its name. | No |
 | topicType | string |  | No |
 | topicSource | string |  | No |
 | created | dateTime |  | No |
@@ -1150,63 +584,65 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | limit | number |  | No |
 | index | number |  | No |
 
-### SubscriptionSchema
+#### SubscriptionSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| type |  | _Enum:_ `"Author"`, `"Subscriber"` | Yes |
+| type |  |  | Yes |
 | channelAddress | string |  | Yes |
 | id | string |  | Yes |
 | state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
-| accessRights |  | _Enum:_ `"Audit"`, `"Read"`, `"Write"`, `"ReadAndWrite"` | Yes |
+| accessRights |  |  | Yes |
 | publicKey | string |  | No |
 | keyloadLink | string |  | No |
 | sequenceLink | string |  | No |
 | pskId | string |  | No |
 
-### SubscriptionUpdateSchema
+#### SubscriptionUpdateSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| type |  | _Enum:_ `"Author"`, `"Subscriber"` | No |
+| type |  |  | No |
 | channelAddress | string |  | No |
 | id | string |  | No |
 | state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
-| accessRights |  | _Enum:_ `"Audit"`, `"Read"`, `"Write"`, `"ReadAndWrite"` | No |
+| accessRights |  |  | No |
 | publicKey | string |  | No |
 | keyloadLink | string |  | No |
 | sequenceLink | string |  | No |
 | pskId | string |  | No |
 
-### ClaimSchema
+#### ClaimSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type |  |  | Yes |
 
-### ChannelInfoSchema
+#### ChannelInfoSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | channelAddress | string |  | Yes |
+| name | string | A channel can be searched by its name. | Yes |
+| description | string | An optional description of the channel. | No |
 | authorId | string |  | Yes |
 | subscriberIds | [ string ] |  | No |
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
 
-### TopicSchema
+#### TopicSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type | string |  | Yes |
 | source | string |  | Yes |
 
-### VerifiableCredentialSubjectSchema
+#### VerifiableCredentialSubjectSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1214,7 +650,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | type | string |  | Yes |
 | initiatorId | string |  | No |
 
-### VerifiableCredentialSchema
+#### VerifiableCredentialSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1226,31 +662,23 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | issuanceDate | dateTime |  | Yes |
 | proof | object |  | Yes |
 
-### IdentityJsonSchema
+#### IdentityJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | doc | object |  | Yes |
 | key | object |  | Yes |
 
-### IdentityJsonUpdateSchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| doc | object |  | Yes |
-| key | object |  | Yes |
-| txHash | string |  | Yes |
-
-### IdentityKeyPairJsonSchema
+#### IdentityKeyPairJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type | string |  | Yes |
 | public | string |  | Yes |
 | secret | string |  | Yes |
-| encoding |  | _Enum:_ `"base16"`, `"base58"`, `"base64"` | Yes |
+| encoding |  |  | Yes |
 
-### IdentityDocumentJsonSchema
+#### IdentityDocumentJsonSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1263,21 +691,14 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | immutable | boolean |  | Yes |
 | proof | object |  | Yes |
 
-### LatestIdentityJsonSchema
+#### LatestIdentityDocSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | document | object |  | Yes |
 | messageId | string |  | Yes |
 
-### DocumentJsonUpdateSchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| doc | object |  | Yes |
-| txHash | string |  | Yes |
-
-### DeviceSchema
+#### DeviceSchema
 
 Device schema, see the specification at: <https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md> or <https://github.com/smart-data-models/dataModel.Device/blob/master/DeviceModel/doc/spec.md> or <https://petstore.swagger.io/?url=https://smart-data-models.github.io/dataModel.Device/Device/swagger.yaml#/ngsi-ld/get_ngsi_ld_v1_entities>
 
@@ -1304,7 +725,7 @@ Device schema, see the specification at: <https://github.com/smart-data-models/d
 | dateLastValueReported | dateTime |  | No |
 | dateManufacured | dateTime |  | No |
 | deviceState | string |  | No |
-| direction |  | _Enum:_ `"Inlet"`, `"Outlet"`, `"Entry"`, `"Exit"` | No |
+| direction |  |  | No |
 | distance | number |  | No |
 | dstAware | boolean |  | No |
 | depth | number |  | No |
@@ -1324,10 +745,10 @@ Device schema, see the specification at: <https://github.com/smart-data-models/d
 | serialNumber | string |  | No |
 | softwareVersion | string |  | No |
 | source |  |  | No |
-| supportedProtocol |  | _Enum:_ `"3g"`, `"bluetooth"`, `"bluetooth LE"`, `"cat-m"`, `"coap"`, `"ec-gsm-iot"`, `"gprs"`, `"http"`, `"lwm2m"`, `"lora"`, `"lte-m"`, `"mqtt"`, `"nb-iot"`, `"onem2m"`, `"sigfox"`, `"ul20"`, `"websocket"` | No |
+| supportedProtocol |  |  | No |
 | value |  |  | No |
 
-### OrganizationSchema
+#### OrganizationSchema
 
 Organization schema, see the specification at: <https://schema.org/Organization>
 
@@ -1351,7 +772,7 @@ Organization schema, see the specification at: <https://schema.org/Organization>
 | telephone | string |  | No |
 | vatID | string |  | No |
 
-### PersonSchema
+#### PersonSchema
 
 Person schema, see the specification at: <https://schema.org/Person>
 
@@ -1380,7 +801,7 @@ Person schema, see the specification at: <https://schema.org/Person>
 | nationality | string |  | No |
 | telephone | string |  | No |
 
-### ProductSchema
+#### ProductSchema
 
 Product schema, see the specification at: <https://schema.org/Product>
 
@@ -1420,7 +841,7 @@ Product schema, see the specification at: <https://schema.org/Product>
 | weight |  |  | No |
 | width |  |  | No |
 
-### ServiceSchema
+#### ServiceSchema
 
 Service schema, see the specification at: <https://schema.org/Service>
 
@@ -1445,32 +866,49 @@ Service schema, see the specification at: <https://schema.org/Service>
 | serviceType | string |  | No |
 | termsOfService | string |  | No |
 
-### IdentitySchema
+#### IdentitySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
 | publicKey | string |  | Yes |
-| username | string |  | No |
+| creator | string |  | No |
+| username | string |  | Yes |
 | registrationDate | dateTime |  | No |
 | verifiableCredentials | [ object ] |  | No |
 | role | string |  | No |
 | claim | object |  | No |
 | isPrivate | boolean |  | No |
+| isServerIdentity | boolean |  | No |
 
-### IdentityIdSchema
+#### IdentitySearchBodySchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string |  | Yes |
+| publicKey | string |  | Yes |
+| creator | string |  | No |
+| numberOfCredentials | integer | Number of credentials connected to this identity | Yes |
+| username | string |  | Yes |
+| registrationDate | dateTime |  | No |
+| role | string |  | No |
+| claim | object |  | No |
+| isPrivate | boolean |  | No |
+| isServerIdentity | boolean |  | No |
+
+#### IdentityIdSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | IdentityIdSchema | string |  |  |
 
-### NonceSchema
+#### NonceSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | nonce | string |  | Yes |
 
-### ChannelAddressSchema
+#### ChannelAddressSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

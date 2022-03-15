@@ -29,6 +29,7 @@ export class AuthenticationService {
 			if (publicKey) {
 				user = {
 					id,
+					username: id,
 					publicKey,
 					role: UserRoles.User
 				};

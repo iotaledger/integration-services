@@ -19,8 +19,8 @@ describe('test keygenerator', () => {
 	it('should throw error since found two serverIdentities', async () => {
 		// found two server identities and so it throws an error
 		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementationOnce(async () => [
-			{ id: 'did:iota:1234', publicKey: 'testpublickey' },
-			{ id: 'did:iota:123456789', publicKey: 'testpublickey2' }
+			{ id: 'did:iota:1234', username: ServerIdentityMock.userData.username, publicKey: 'testpublickey' },
+			{ id: 'did:iota:123456789', username: ServerIdentityMock.userData.username, publicKey: 'testpublickey2' }
 		]);
 
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('Database is in bad state: found 2 root identities');
@@ -31,7 +31,7 @@ describe('test keygenerator', () => {
 		// found one server identity but malicious format
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementationOnce(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
+			.mockImplementationOnce(async () => [{ id: 'did:iota:1234', username: ServerIdentityMock.userData.username, publicKey: 'testpublickey' }]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => null);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 
@@ -48,7 +48,7 @@ describe('test keygenerator', () => {
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementation(async () => [
-				{ id: ServerIdentityMock.doc.id, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
+				{ id: ServerIdentityMock.doc.id, username: ServerIdentityMock.userData.username, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
 			]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
@@ -73,7 +73,7 @@ describe('test keygenerator', () => {
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementationOnce(async () => [
-				{ id: ServerIdentityMock.doc.id, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
+				{ id: ServerIdentityMock.doc.id, username: ServerIdentityMock.userData.username, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
 			]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => unvalidServerIdentity);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);

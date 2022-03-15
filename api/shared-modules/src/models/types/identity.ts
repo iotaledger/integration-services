@@ -7,7 +7,7 @@ import {
 	IdentityKeyPairJsonSchema,
 	IdentityJsonSchema
 } from '../schemas/identity';
-import { CreateIdentityBodySchema } from '../schemas/request-response-body/identity-bodies';
+import { CreateIdentityBodySchema, LatestIdentityDocSchema } from '../schemas/request-response-body/identity-bodies';
 import { IdentitySchema } from '../schemas/user';
 
 export interface Credential<T> {
@@ -21,7 +21,7 @@ export interface IdentityDocument extends Identity.Document {
 	key: Identity.KeyPair;
 }
 
-export type IdentityInternal = Static<typeof IdentitySchema>
+export type IdentityInternal = Static<typeof IdentitySchema>;
 export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>;
 
 export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
@@ -30,6 +30,7 @@ export type CredentialSubject = Static<typeof VerifiableCredentialSubjectSchema>
 export type IdentityDocumentJson = Static<typeof IdentityDocumentJsonSchema>;
 export type IdentityKeyPairJson = Static<typeof IdentityKeyPairJsonSchema>;
 export type IdentityJson = Static<typeof IdentityJsonSchema>;
+export type LatestIdentityJson = Static<typeof LatestIdentityDocSchema>;
 
 export interface IdentityKeys {
 	id: string;

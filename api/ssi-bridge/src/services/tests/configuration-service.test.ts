@@ -58,7 +58,7 @@ describe('test configuration service', () => {
 
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
+			.mockImplementation(async () => [{ id: 'did:iota:1234', username: 'test-user', publicKey: 'testpublickey' }]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
@@ -79,7 +79,7 @@ describe('test configuration service', () => {
 
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [{ id: null, publicKey: 'testpublickey' }]); // no valid id
+			.mockImplementation(async () => [{ id: null, username: 'test-user', publicKey: 'testpublickey' }]); // no valid id
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
 		const configService = ConfigurationService.getInstance(LoggerMock);
@@ -99,8 +99,8 @@ describe('test configuration service', () => {
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
 		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => [
-			{ id: 'did:iota:1234', publicKey: 'testpublickey' },
-			{ id: 'did:iota:123456', publicKey: 'testpublickey2' }
+			{ id: 'did:iota:1234', username: 'test-user', publicKey: 'testpublickey' },
+			{ id: 'did:iota:123456', username: 'test-user', publicKey: 'testpublickey2' }
 		]); // two root identities
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => null);
 
@@ -122,7 +122,7 @@ describe('test configuration service', () => {
 
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [{ id: 'did:iota:1234', publicKey: 'testpublickey' }]);
+			.mockImplementation(async () => [{ id: 'did:iota:1234', username: 'test-user', publicKey: 'testpublickey' }]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocDB, 'getIdentityKeys').mockImplementation(async () => {
 			return {} as any;
 		});
