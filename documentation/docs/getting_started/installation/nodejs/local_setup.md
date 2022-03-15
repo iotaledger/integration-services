@@ -162,7 +162,7 @@ curl http://localhost:3001/info
 2. Adjust the PORT env var of the `.env` file to `PORT=3002`.
 3.  Run the following commands to install dependencies, build the project, set up the API, and finally start the Audit-Trail Gateway:
 
-```
+```bash
 npm install
 npm run build
 npm run setup-api
