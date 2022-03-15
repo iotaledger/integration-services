@@ -57,7 +57,7 @@ kubectl create -f https://bit.ly/k4k8s
 ```
 
 2. Start a tunnel for the Kong service by opening a new terminal window and running the following command:
-```
+```bash
 minikube service -n kong kong-proxy --url
 ```
 
