@@ -169,7 +169,7 @@ npm run setup-api
 npm run start
 ```
 
-4. Check if service is running:
+4. You can check if the service is running with the following command:
 
 ```
 curl http://localhost:3002/info
