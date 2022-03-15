@@ -35,10 +35,10 @@ decentralized identities and credentials.
 
 This documentation has eight sections.
 
-1. [Getting started](getting_started/overview): All the resources you need to get started.
+1. [Getting started](getting_started/overview.md): All the resources you need to get started.
 2. **Services**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md).
 3. [Examples](examples/introduction): Examples on creating and managing decentralized identities, verifiable
-   credentials, and _channels_.
+   credentials, and channels.
 4. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
 5. [API Reference](api_reference): Detailed specification of all endpoints.
 6. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
