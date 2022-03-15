@@ -49,10 +49,10 @@ Please follow these steps to clone the Integration Services:
     cd integration-services
     ```
 
-## Setup Kong
+## Set Up Kong
 
 1. Create a namespace for kong by running the following command:
-```
+```bash
 kubectl create -f https://bit.ly/k4k8s
 ```
 
@@ -63,7 +63,7 @@ minikube service -n kong kong-proxy --url
 
 **Expected output**:
 
-```
+```plaintext
 🏃  Starting tunnel for service kong-proxy.
 |-----------|------------|-------------|------------------------|
 | NAMESPACE |    NAME    | TARGET PORT |          URL           |
@@ -76,40 +76,44 @@ http://127.0.0.1:56204
 ❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
 ```
 
-3. Open another terminal and type in:
+3. Open another terminal and export the PROXY_IP variable by running the following command replacing `http://127.0.0.1:56203` with the first IP which was outputted in step 2. :
 
-```
+```bash
 export PROXY_IP=http://127.0.0.1:56203
 ```
-You select the first IP of the output above.
 
-```
+You can check that you have exported the variable correctly by running the following command: 
+
+```bash
 echo $PROXY_IP
 ```
-It should output the ip, as for instance `http://127.0.0.1:56203`
+It should output the IP you have exported, in this example `http://127.0.0.1:56203`.
 
-4. Open another terminal and type in:
+4. Open another terminal and type run the following command to expose the kong service:
 
-```
+```bash
 minikube tunnel
 ```
 
 
 
-## Create the Kong cluster
+## Create the Kong Cluster
 
-1. Apply kubernetes cluster to kong
+1. Apply the Kubernetes cluster to kong by running the following command:
 
-```
+```bash
 kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
 ```
-2. Check if services are up and running:
 
-```
+2. You can check if the services are up and running with the following command:
+
+```bash
 kubectl get services -n kong
 ```
-Should return an output like:
-```
+
+**Expected output**:
+
+```plaintext
 NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
 audit-trail-gw            ClusterIP      10.103.130.76    <none>        3002/TCP                     6s
 kong-proxy                LoadBalancer   10.109.251.223   127.0.0.1     80:30175/TCP,443:30790/TCP   66s
@@ -118,13 +122,13 @@ mongodb-service           ClusterIP      10.106.69.114    <none>        27017/TC
 ssi-bridge                ClusterIP      10.99.146.170    <none>        3001/TCP                     6s
 ```
 
-Check if the pods are running:
-```
+You can check if the pods are running with the following command:
+```bash
 kubectl get pods -n kong
 ```
 
-Should return an output like:
-```
+**Expected output**:
+```plaintext
 
 NAME                                       READY   STATUS                       RESTARTS       AGE
 audit-trail-gw-6d4f66494c-6nw8k            1/1     Running                      0              84s
@@ -137,9 +141,9 @@ ssi-bridge-bc7f94d79-4vz7p                 1/1     Running                      
 3. Check if the services are up and running:
 
 In few minutes, depending on how many resources you allocated, the Integration Service API will be ready to handle
-requests. If the generate-key pod is completed and the audit-trail and ssi-bridge pod are running you can check if they are available using the following two commands:
+requests. Once the generate-key pod is completed and the audit-trail and ssi-bridge pods are running, you can check if they are available with following two commands:
 
-```
+```bash
 curl -i $PROXY_IP/ssi-bridge/info
 curl -i $PROXY_IP/audit-trail-gw/info
 ```
@@ -148,31 +152,32 @@ curl -i $PROXY_IP/audit-trail-gw/info
 
 ## Optional Instructions
 
-### Shut down the cluster
+### Shut Down the Cluster
 
-```
+You can shut down the cluster by running the following commands:
+
+```bash
 kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
 ```
 
----
 
-### Delete all references and recreate from scratch
+### Delete All References and Recreate From Scratch
 
-1. Shut down the cluster:
+1. Shut down the cluster by running:
 
-```
+```bash
 kubectl delete all --all -n kong
 ```
 
-2. Exit/Close all opened terminals
+2. Close all open terminal windows.
 
-3. Delete namespace
+3. Delete the kong namespace by running the following command:
    
-```
+```bash
 kubectl delete namespace kong
 ```
 
-4. Start again from __Setup Kong__
+4. Once you have stopped kong and deleted its namespace, you can recreate it by referring to the [Set Up Kong section](#set-up-kong).
 
 ## Notes
 

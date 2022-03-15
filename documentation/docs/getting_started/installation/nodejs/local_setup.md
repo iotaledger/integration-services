@@ -10,7 +10,7 @@ keywords:
 
 # Local Setup
 
-This section will guide in setting up the Integration Service API using Node.js. It is mainly relevant for developers who want to contribute to the project or create a fork of the project.
+This section will guide in setting up the Integration Service API using Node.js. It is mainly relevant for developers who want to contribute to the project or create a project fork.
 
 ## Requirements
 
@@ -99,7 +99,7 @@ Make sure that you use the same value for the same variables inside `.env` and `
 
 Add the same `.env` configuration as above to the subfolders of the `ssi-bridge` and `audit-trail-gw`.
 
-The folder structure would look like:
+The folder structure should look like the following:
 ```
 | api
 |- mongo-init.js
@@ -139,9 +139,9 @@ The setup will install all external dependencies and build the services. If you 
 
 #### Setup SSI-Bridge
 
-1. Move into the folder `ssi-bridge`
-1. Adjust the PORT env var of the `.env` file to `PORT=3001`
-3. Run the following commands
+1. Move into the folder `ssi-bridge`.
+2. Adjust the PORT env var of the `.env` file to `PORT=3001`.
+3. Run the following commands to install dependencies, build the project, set up the API, and finally start the SSI-Bridge:
 
 ```
 npm install
@@ -150,15 +150,15 @@ npm run setup-api
 npm run start
 ```
 
-4. Check if service is running:
+4. You can check if the service is running with the following command:
 
-```
+```bash
 curl http://localhost:3001/info
 ```
 
-#### Setup Audit-Trail Gateway
+#### Set up the Audit-Trail Gateway
 
-1. Move into the folder `audit-trail-gw`
+1. Move into the folder `audit-trail-gw`.
 2. Adjust the PORT env var of the `.env` file to `PORT=3002`.
 3.  Run the following commands to install dependencies, build the project, set up the API, and finally start the Audit-Trail Gateway:
 
