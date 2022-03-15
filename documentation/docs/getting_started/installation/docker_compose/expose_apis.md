@@ -19,7 +19,7 @@ The ports `3000` and `27017` will be exposed on the current host:
   password, and database you configured in your `.env` file.
 - `3000` is the port that will serve the Integration Service APIs.
 
-You can check if Integration Services API is up and running by running the following command:
+You can check if Integration Services API is up and running by running the following commands:
 
 ```bash
 curl http://localhost:3000/audit-trail-gw/info
