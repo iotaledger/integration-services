@@ -9,3 +9,4 @@ logs
 .vscode
 **/server-identity.json
 openApiSpecification.json
+adminIdentity.json
