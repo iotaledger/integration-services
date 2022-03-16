@@ -21,7 +21,10 @@ const setupCredential = async () => {
 		await MongoDbService.connect(config.databaseUrl, config.databaseName);
 
 		const rootIdentity = await configService.getRootIdentityId();
-		const adminIdentity = await userService.createIdentity({ username: `Admin-${Math.ceil(Math.random() * 100000)}` });
+		const adminIdentity = await userService.createIdentity({
+			username: `Admin-${Math.ceil(Math.random() * 100000)}`,
+			claim: { type: UserType.Organization }
+		});
 
 		await createCredential(adminIdentity.doc.id, rootIdentity);
 		await setAdminRole(adminIdentity.doc.id);
