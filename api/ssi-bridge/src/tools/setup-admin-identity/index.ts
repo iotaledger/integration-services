@@ -11,9 +11,9 @@ import { CollectionNames } from '../../database/constants';
 import { CredentialTypes } from '@iota/is-shared-modules/lib/models/types/verification';
 
 /**
- * Issues a credential from the root identity to a newly created identity and sets its role to admin
+ * Create an identity, issue a credential from the root identity and set its role to admin.
  */
-const setupCredential = async () => {
+const setupAdminIdentity = async () => {
 	try {
 		const configService = ConfigurationService.getInstance(Logger.getInstance());
 		const config = configService.config;
@@ -32,7 +32,7 @@ const setupCredential = async () => {
 		fs.writeFileSync('./adminIdentity.json', JSON.stringify(adminIdentity, null, 4));
 		console.log('The identity was successfully created and saved in the adminIdentity.json file!');
 	} catch (e: any) {
-		console.log('Was not able to setup admin credential.', e);
+		console.log('Was not able to setup admin identity.', e);
 	} finally {
 		await MongoDbService.disconnect();
 	}
@@ -64,4 +64,4 @@ const setAdminRole = async (targetId: string) => {
 	);
 };
 
-setupCredential();
+setupAdminIdentity();

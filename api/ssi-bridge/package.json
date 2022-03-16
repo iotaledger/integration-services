@@ -11,7 +11,7 @@
     "test": "jest --detectOpenHandles",
     "test-watch": "npm run test -- --watchAll",
     "generate-secret": "ts-node src/tools/generate-secret-key",
-    "setup-credential": "ts-node src/tools/setup-credential",
+    "setup-admin-identity": "ts-node src/tools/setup-admin-identity",
     "start-node": "node dist/index.js server",
     "start-setup-api": "node dist/index.js setup-api",
     "start": "npm-run-all build start-node",
