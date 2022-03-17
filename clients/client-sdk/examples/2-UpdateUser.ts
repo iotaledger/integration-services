@@ -1,4 +1,4 @@
-import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client-sdk';
+import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 

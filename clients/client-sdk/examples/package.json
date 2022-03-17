@@ -1,7 +1,7 @@
 {
   "name": "is-client-examples",
   "version": "0.0.1",
-  "description": "Examples on how to use the node.js client for the integration services.",
+  "description": "Examples on how to use the javascript client for the integration services.",
   "scripts": {
     "example-0": "ts-node 0-MakeRootIdentityAdmin.ts",
     "example-1": "ts-node 1-CreateIdentityAndCredential.ts",
@@ -24,7 +24,7 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "@iota/is-client-sdk": "file:../",
+    "@iota/is-client": "file:../",
     "@iota/is-shared-modules": "file:../../../api/shared-modules",
     "dotenv": "^10.0.0",
     "mongodb": "^4.4.1"

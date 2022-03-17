@@ -1,4 +1,4 @@
-import { ApiVersion, ClientConfig } from '@iota/is-client-sdk';
+import { ApiVersion, ClientConfig } from '@iota/is-client';
 
 import * as dotenv from 'dotenv';
 import { ManagerConfig } from './manager/manager-config';

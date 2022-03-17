@@ -1,4 +1,4 @@
-import { IdentityClient, IdentityJson, CredentialTypes, UserType } from '@iota/is-client-sdk';
+import { IdentityClient, IdentityJson, CredentialTypes, UserType } from '@iota/is-client';
 import { defaultConfig, defaultManagerConfig } from './configuration';
 import { writeFileSync } from 'fs';
 import { Manager } from './manager';
