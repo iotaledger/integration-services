@@ -1,6 +1,6 @@
 # Examples
 
-In order to work with the examples you need to copy the `.env.example` file into the `.env` file.
+In order to run the examples copy the `.env.example` file and rename it to `.env`.
 
 An example of a configured `.env` file for a locally deployed Integration Services API is the following:
 
