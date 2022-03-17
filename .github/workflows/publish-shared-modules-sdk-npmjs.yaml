@@ -18,7 +18,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       # build local package in advance
       - run: |
-          cd shared-modules
+          cd api/shared-modules
           npm install
           npm run build
           npm publish
