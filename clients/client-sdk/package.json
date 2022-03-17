@@ -1,14 +1,16 @@
 {
-  "name": "@iota/is-client-sdk",
+  "name": "@iota/is-client",
   "version": "0.0.10",
-  "description": "node.js sdk for the IOTA's Integration Services API",
-  "main": "lib/index.js",
-  "types": "lib",
+  "description": "Javascript client for the IOTA's Integration Services API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run format && tsc",
     "serve": "tsc --watch",
     "test": "jest",
-    "format": "npx prettier --write . "
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "format": "npx prettier --write ./src "
   },
   "author": {
     "name": "Tim Sigl",
@@ -20,13 +22,24 @@
       "email": "michele.mastrogiovanni@gmail.com"
     }
   ],
+  "homepage": "https://www.iota.org/solutions/secure-digital-infrastructure",
   "repository": {
-    "url": "https://github.com/iotaledger/integration-services",
+    "url": "github:iotaledger/integration-services",
     "type": "git"
   },
+  "bugs": {
+    "url": "https://github.com/iotaledger/integration-services/issues",
+    "email": "tim.sigl@iota.org"
+  },
   "license": "ISC",
+  "keywords": [
+    "iota",
+    "integration-services",
+    "identity",
+    "streams",
+    "decentralized"
+  ],
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
     "@types/jest": "^27.4.1",
     "jest": "^27.5.1",
     "prettier": "2.5.1",
