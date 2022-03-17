@@ -3,7 +3,7 @@ on:
   push:
       branches: [ develop ]
       paths: 
-        - "clients/node/**"
+        - "clients/client-sdk/**"
         - ".github/workflows/publish-node-sdk-npmjs.yml"
   workflow_dispatch:
 jobs:
