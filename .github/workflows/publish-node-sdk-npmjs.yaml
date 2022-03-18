@@ -23,6 +23,6 @@ jobs:
           npm run build
       - run: cd clients/client-sdk && npm ci
       - run: cd clients/client-sdk && npm run build
-      - run: cd clients/client-sdk && npm publish
+      - run: cd clients/client-sdk && npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
