@@ -11,8 +11,8 @@ keywords:
 
 # Update Users
 
-The [example-2](https://github.com/iotaledger/integration-services/blob/master/clients/node/examples/2-UpdateUser.ts)
-script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](how-to-run-examples) and then performs the following tasks:
+The [example-2](https://github.com/iotaledger/integration-services/blob/master/clients/client-sdk/examples/2-UpdateUser.ts)
+script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](./how-to-run-examples) and then performs the following tasks:
 
 1. Searches for a user.
 2. Updates said user's username. 

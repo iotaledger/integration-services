@@ -7,13 +7,25 @@
     "build-tsc": "tsc --project ./",
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build": "npm-run-all build-tsc build-lint",
-    "serve": "tsc --project ./ --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "tsc --project ./ --watch"
   },
   "keywords": [
-    "integration-services"
+    "iota", "integration-services", "identity", "stream", "decentralized"
   ],
-  "author": "Dominic Zettl (IOTA Foundation)",
+  "author": {
+    "name": "Dominic Zettl",
+    "email": "dominic.zettl@iota.org"
+  },
+  "contributors": [
+    {
+      "name": "Tim Sigl",
+      "email": "tim.sigl@iota.org"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/iotaledger/integration-services/issues",
+    "email": "dominic.zettl@iota.org"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "@iota/identity-wasm": "^0.4.2",

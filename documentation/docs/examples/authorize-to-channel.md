@@ -10,7 +10,7 @@ keywords:
 
 # Authorize Channel
 
-The [example-6](https://github.com/iotaledger/integration-services/blob/master/clients/node/examples/6-AuthorizeToChannel.ts)
+The [example-6](https://github.com/iotaledger/integration-services/blob/master/clients/client-sdk/examples/6-AuthorizeToChannel.ts)
 script performs the following tasks:
 
 1. Create two identities: `Owner` and `User`.

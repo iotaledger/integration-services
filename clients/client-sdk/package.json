@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-client",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Javascript client for the IOTA's Integration Services API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -54,6 +54,6 @@
     "axios": "~0.24.0"
   },
   "files": [
-    "lib"
+    "dist"
   ]
 }

@@ -18,3 +18,4 @@ export const defaultManagerConfig: ManagerConfig = {
   databaseName: process.env.DB_NAME!,
   secretKey: process.env.SECRET_KEY!
 };
+// 77
