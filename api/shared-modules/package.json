@@ -1,8 +1,7 @@
 {
   "name": "@iota/is-shared-modules",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared modules of the Integration Service.",
-  "main": "index.js",
   "scripts": {
     "build-tsc": "tsc --project ./",
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
