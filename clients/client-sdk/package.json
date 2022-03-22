@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-client",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "description": "Javascript client for the IOTA's Integration Services API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "format": "prettier --write ./src "
+    "format": "prettier --write ./src",
+    "generate-api-docs": "typedoc --plugin typedoc-plugin-markdown --out temp-docs src/index.ts --hideBreadcrumbs true && node ./tools/deleteLines.js && markdown-include docs/markdown.json && rimraf temp-docs"
   },
   "author": {
     "name": "Tim Sigl",
@@ -31,7 +32,7 @@
     "url": "https://github.com/iotaledger/integration-services/issues",
     "email": "tim.sigl@iota.org"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "keywords": [
     "iota",
     "integration-services",
@@ -42,8 +43,12 @@
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "jest": "^27.5.1",
+    "markdown-include": "^0.4.3",
     "prettier": "2.5.1",
+    "rimraf": "^3.0.2",
     "ts-jest": "^27.1.3",
+    "typedoc": "^0.22.13",
+    "typedoc-plugin-markdown": "^3.11.14",
     "typescript": "^4.5.2"
   },
   "dependencies": {
