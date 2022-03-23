@@ -24,7 +24,7 @@ export {
   RevokeSubscriptionBody
 } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 export {
-  Subscription as SubscriptionInternal,
+  Subscription,
   SubscriptionUpdate
 } from '@iota/is-shared-modules/lib/models/types/subscription';
 export { AccessRights } from '@iota/is-shared-modules/lib/models/schemas/subscription';

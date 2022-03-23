@@ -18,7 +18,7 @@ import {
   RevokeSubscriptionBody
 } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import {
-  Subscription as SubscriptionInternal,
+  Subscription,
   SubscriptionUpdate
 } from '@iota/is-shared-modules/lib/models/types/subscription';
 import { BaseClient } from './base';
@@ -200,7 +200,7 @@ export class ChannelClient extends BaseClient {
   async findAllSubscriptions(
     channelAddress: string,
     isAuthorized?: boolean
-  ): Promise<SubscriptionInternal[]> {
+  ): Promise<Subscription[]> {
     const params = isAuthorized !== undefined ? { 'is-authorized': isAuthorized } : {};
     return await this.get(`${this.baseUrl}/subscriptions/${channelAddress}`, params);
   }
@@ -211,7 +211,7 @@ export class ChannelClient extends BaseClient {
    * @param id
    * @returns
    */
-  async findSubscription(channelAddress: string, id: string): Promise<SubscriptionInternal> {
+  async findSubscription(channelAddress: string, id: string): Promise<Subscription> {
     return await this.get(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, {});
   }
 
@@ -270,8 +270,8 @@ export class ChannelClient extends BaseClient {
   async addSubscription(
     channelAddress: string,
     id: string,
-    subscription: SubscriptionInternal
-  ): Promise<SubscriptionInternal> {
+    subscription: Subscription
+  ): Promise<Subscription> {
     return await this.post(`${this.baseUrl}/subscriptions/${channelAddress}/${id}`, subscription);
   }
 
