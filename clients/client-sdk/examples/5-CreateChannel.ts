@@ -42,7 +42,7 @@ async function createChannel() {
   // Reading channel
   const channelData = await channel.read(channelAddress);
   console.log('Read from channel:');
-  channelData.forEach((data) => {
+  channelData.forEach((data: any) => {
     console.log(data.log);
   });
 }
