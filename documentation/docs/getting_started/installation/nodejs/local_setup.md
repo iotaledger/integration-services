@@ -10,13 +10,15 @@ keywords:
 
 # Local Setup
 
-This section will guide in setting up the Integration Service API using Node.js.
+This section will guide in setting up the Integration Service API using Node.js. It is mainly relevant for developers who want to contribute to the project or create a project fork.
 
 ## Requirements
 
 Please make sure to have the following installed before moving forward:
 
 * [node.js](https://nodejs.org/)
+* [docker](https://docs.docker.com/get-docker/)
+* [docker-compose](https://docs.docker.com/compose/install/)
 
 ## Download the Project
 
@@ -32,7 +34,7 @@ Please make sure to have the following installed before moving forward:
     cd integration-services/api
     ```
 
-## Configuration
+## Configure Env Vars
 
 If this is your first time installing the project, please make a copy of
 the [.env.example file](https://github.com/iotaledger/integration-services/blob/master/api/.env.example) and rename it
@@ -45,9 +47,11 @@ newly created `.env` and `mongo-init.js` files accordingly.
 Important The `server-secret` must be 32 characters length
 :::
 
-:::tip You can create a server secret using the following command:
+:::tip You can create a server secret using the following commands:
 ```
+cd ssi-bridge
 npm run generate-secret
+cd ..
 ```
 :::
 
@@ -61,9 +65,11 @@ IOTA_HORNET_NODE=https://chrysalis-nodes.iota.org:443
 DATABASE_NAME=integration-services
 MONGO_INITDB_ROOT_USERNAME=root
 MONGO_INITDB_ROOT_PASSWORD=rootpassword
-DATABASE_URL=mongodb://root:rootpassword@mongo:27017
+DATABASE_URL=mongodb://root:rootpassword@0.0.0.0:27017
 
 SERVER_SECRET=7w9gfhb123jngh4gd53z465fewcs569e
+JWT_SECRET=7w9gfhb123jngh4gd53z465fewcs569e
+
 API_KEY=4ed59704-9a26-11ec-a749-3f57454709b9
 ````
 
@@ -88,7 +94,29 @@ db.createUser(
 Make sure that you use the same value for the same variables inside `.env` and `mongo-init.js`
 :::
 
-## Start the Service
+
+## Configure Audit-Trail Gateway & SSI-Bridge
+
+Add the same `.env` configuration as above to the subfolders of the `ssi-bridge` and `audit-trail-gw`.
+
+The folder structure should look like the following:
+```
+| api
+|- mongo-init.js
+|- .env
+|- ...
+|
+|- audit-trail-gw
+|-- .env
+|-- ...
+|
+|- ssi-bridge
+|-- .env
+|-- ...
+|
+```
+
+## Start the Services
 
 ### Start the MongoDB
 
@@ -107,20 +135,42 @@ f15ab2571369   mongo:latest  "docker-entrypoint.s…"   7 weeks ago    Up 7 week
 
 ### Setup Integration Services API
 
-The setup will install all external dependencies and build the service. If you are starting the API for the first time, you should run `setup-api` to set up a root identity for the service and the database. 
+The setup will install all external dependencies and build the services. If you are starting the API for the first time, you should run `setup-api` to set up a root identity for the service and the database. 
+
+#### Setup SSI-Bridge
+
+1. Move into the folder `ssi-bridge`.
+2. Adjust the PORT env var of the `.env` file to `PORT=3001`.
+3. Run the following commands to install dependencies, build the project, set up the API, and finally start the SSI-Bridge:
 
 ```
 npm install
 npm run build
 npm run setup-api
-```
-### Run Integration Services API
-
-After you have set up your API, you can use the following command to start the API:
-
-```
 npm run start
 ```
 
+4. You can check if the service is running with the following command:
 
+```bash
+curl http://localhost:3001/info
+```
 
+#### Set up the Audit-Trail Gateway
+
+1. Move into the folder `audit-trail-gw`.
+2. Adjust the PORT env var of the `.env` file to `PORT=3002`.
+3.  Run the following commands to install dependencies, build the project, set up the API, and finally start the Audit-Trail Gateway:
+
+```bash
+npm install
+npm run build
+npm run setup-api
+npm run start
+```
+
+4. You can check if the service is running with the following command:
+
+```bash
+curl http://localhost:3002/info
+```

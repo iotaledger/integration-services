@@ -18,7 +18,7 @@ can always read and write messages in the channel.
 
 :::caution Important 
 
-The Audit Trail GW currently integrates the [Ecommerce-SSI bridge](../SSI-bridge/introduction.md)
+The Audit Trail GW currently integrates the [SSI Bridge](../SSI-bridge/introduction.md)
 to identify and authorize subscribers. This means anyone interacting with the audit trail must create their
 own [Identity](../../basics/identity.md) beforehand.
 

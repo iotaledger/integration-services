@@ -14,28 +14,28 @@ keywords:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The following sections  will guide you in how to use the [Integration Services SDK](https://www.npmjs.com/package/iota-is-sdk).
-The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
+The following sections  will guide you in how to use the [Integration Services Client](https://www.npmjs.com/package/@iota/is-client).
+The Integration Services Client makes it easy to manage decentralized identities and secure channels (Audit Trail).
 
 You should have a basic understanding of [decentralized identities](../basics/identity)
 to get the most out of the following examples.
 
 ## Install
 
-You can install the Integration Services SDK using [npm](https://npmjs.com/) or [yarn](https://yarnpkg.com/).
+You can install the Integration Services Client using [npm](https://npmjs.com/) or [yarn](https://yarnpkg.com/).
 
 <Tabs>
 <TabItem value="npm" label="npm">
 
 ```bash
-npm install iota-is-sdk
+npm install @iota/is-client
 ```
 
 </TabItem>
 <TabItem value="yarn" label="Yarn">
 
 ```bash
-yarn add iota-is-sdk
+yarn add @iota/is-client
 ```
 
 </TabItem>
@@ -43,7 +43,7 @@ yarn add iota-is-sdk
 
 ## Clients
 
-The Integration Services SDK has two different clients you can use:
+The Integration Services package has two different clients you can use:
 
 ### IdentityClient
 
@@ -68,12 +68,14 @@ You can import and configure these clients using a `ClientConfig` object:
 
 ```js
 
-import { ClientConfig, IdentityClient, ChannelClient } from 'iota-is-sdk';
+import { ClientConfig, IdentityClient, ChannelClient } from '@iota/is-client';
 
 const config: ClientConfig = {
-    apiKey: process.env.API_KEY,        // Deployed Integration Services API KEY
-    baseUrl: process.env.API_URL,       // URL of the Integration Services API 
-    apiVersion: ApiVersion.v01
+    isGatewayUrl: process.env.IS_GATEWAY_URL,   // used in production (default: undefined)
+    ssiBridgeUrl: process.env.SSI_BRIDGE_URL,   // used in local development (default: http://127.0.0.1:3001)
+    auditTrailUrl: process.env.AUDIT_TRAIL_URL, // used in local development (default: http://127.0.0.1:3002)
+    apiKey: process.env.API_KEY,                // can be setup in the API to restrict access 
+    apiVersion: ApiVersion.v01                  // API version (default: v0.1)
 };
 
 ...
@@ -99,7 +101,7 @@ The Integration Services use a JWT token based authorization mechanism which beh
 You can get an identity using the following script (no auth required):
 
 ```js
-import { IdentityJson } from 'iota-is-sdk';
+import { IdentityJson } from '@iota/is-client';
 ...
 
 const identity = await identityClient.create('User') as IdentityJson;
