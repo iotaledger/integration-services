@@ -51,7 +51,7 @@ The default values are:
 ## Number of Replicas
 
 You can set up the initial number of replicas in the `.spec.replicas` field
-in [kubernetes/audit-trail-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/audit-trail-deployment.yaml) and [kubernetes/ssi-bridge-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/ssi-bridge-deployment.yaml)
+in [kubernetes/audit-trail-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/is-deployment.yaml) and [kubernetes/ssi-bridge-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/ssi-bridge-deployment.yaml)
 .
 
 ## Private Tangle
