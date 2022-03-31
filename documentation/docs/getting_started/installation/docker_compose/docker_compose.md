@@ -52,16 +52,22 @@ After you have done this, replace `db-user`, `db-password`, `dn-name`, `server-s
 newly created `.env` and `mongo-init.js` files accordingly.
 
 :::danger
+
 Important The `server-secret` must be 32 characters length
+
 :::
 
 
-:::tip You can create a server secret using the following commands:
+:::tip 
+
+You can create a server secret using the following commands:
+
 ```
 cd ssi-bridge
 npm run generate-secret
 cd ..
 ```
+
 :::
 
 Here is an example of how a `.env` file should look like:
@@ -100,7 +106,9 @@ db.createUser(
 ````
 
 :::note
+
 Make sure that you use the same value for the same variables inside `.env` and `mongo-init.js`
+
 :::
 
 ## Run Integration Services API
