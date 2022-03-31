@@ -56,9 +56,9 @@ module.exports = {
       items: [
         "getting_started/overview",
         {
-          type: "category",
+          type: "doc",
           label: "Node.js",
-          items: ["getting_started/installation/nodejs/local_setup"],
+          id: "getting_started/installation/node_setup",
         },
         {
           type: "category",

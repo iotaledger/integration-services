@@ -1,26 +1,26 @@
 {
     "doc": {
-        "id": "did:iota:4w56BsmAX3auEdPJoGaufAAKi9rEghqzei5Y8QXSLsvp",
+        "id": "did:iota:3MYWb4dzUaRSUntauG5Qtfe2DtH2KZ7HHYP4MDQXTihu",
         "authentication": [
             {
-                "id": "did:iota:4w56BsmAX3auEdPJoGaufAAKi9rEghqzei5Y8QXSLsvp#key",
-                "controller": "did:iota:4w56BsmAX3auEdPJoGaufAAKi9rEghqzei5Y8QXSLsvp",
+                "id": "did:iota:3MYWb4dzUaRSUntauG5Qtfe2DtH2KZ7HHYP4MDQXTihu#key",
+                "controller": "did:iota:3MYWb4dzUaRSUntauG5Qtfe2DtH2KZ7HHYP4MDQXTihu",
                 "type": "Ed25519VerificationKey2018",
-                "publicKeyBase58": "HLduJZNiCFqP2E7YzcVLvNbB6Fnnwai4bz6PkoPwjVLW"
+                "publicKeyBase58": "J6wRhEW3KCeQCpBEq5DBVNgCZ2J7fW6CZcfitkxi9LW1"
             }
         ],
-        "created": "2022-03-15T16:13:41Z",
-        "updated": "2022-03-15T16:13:41Z",
+        "created": "2022-03-29T04:27:44Z",
+        "updated": "2022-03-29T04:27:44Z",
         "proof": {
             "type": "JcsEd25519Signature2020",
             "verificationMethod": "#key",
-            "signatureValue": "4SZMPQxdJ3r1yGuXPAkNNiiQ4p5fxDARmKRPB41v4H7tTSDiWuGSEME1KBvdbc2XFCReUrS974ZMrag4UP6asPXe"
+            "signatureValue": "BkRSTzznapmzQ1JoSc3L77V3kdbDKPGTxr8zKkorxfca6XkNrghBDYR8STsgnhHQMueXAtS5QEcXZw3NUwnXAFV"
         }
     },
     "key": {
         "type": "ed25519",
-        "public": "HLduJZNiCFqP2E7YzcVLvNbB6Fnnwai4bz6PkoPwjVLW",
-        "secret": "EjbaQXdcakQvjGQMozRFe9TfUPfBAzSZ3hMT8z6VYWsS",
+        "public": "J6wRhEW3KCeQCpBEq5DBVNgCZ2J7fW6CZcfitkxi9LW1",
+        "secret": "68UoYziup2d62XsFX9RkU38F8isxfga4ekRKUGM5fm9e",
         "encoding": "base58"
     }
 }
