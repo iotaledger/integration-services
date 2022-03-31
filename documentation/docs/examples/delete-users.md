@@ -13,7 +13,7 @@ keywords:
 
 # Delete Users
 
-The [example-3](https://github.com/iotaledger/integration-services/blob/master/clients/client-sdk/examples/3-DeleteUser.ts)
+The [example-3](https://github.com/iotaledger/integration-services/blob/master/clients/node/examples/3-DeleteUser.ts)
 script authenticates an Integration Service client to manage Identities using the Admin identity created in [example-0](./how-to-run-examples) and then performs the following tasks:
 
 1. Creates a new identity.

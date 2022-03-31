@@ -22,7 +22,7 @@ also known as Self-Sovereign Identity (SSI) and Streams techonology on the IOTA 
 
 > **WARNING** 
 >
-> This library is currently in its **under development** and might undergo large changes!
+> This library is currently  **under development** and might undergo large changes!
 > Until a formal third-party security audit has taken place, the [IOTA Foundation](https://www.iota.org/) makes no guarantees to the fitness of this library. 
 > As such, it is to be seen as **experimental** and not ready for real-world applications.
 > Nevertheless, we are very interested in feedback about user experience, design and implementation, and encourage you to reach out with any concerns or suggestions you may have.
