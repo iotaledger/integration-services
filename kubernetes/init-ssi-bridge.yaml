@@ -11,7 +11,7 @@ spec:
         - name: create-root-identity
           image: iotaledger/ssi-bridge:develop
           imagePullPolicy: IfNotPresent
-          command: ["node", "dist/index.js", "setup-api"]
+          command: ["node", "dist/ssi-bridge/src/index.js", "setup-api"]
           env:
             - name: "SERVER_IDENTITY_FILE"
               value: "/config/server-identity.json"
