@@ -7,7 +7,7 @@ RUN cd shared-modules && npm install && npm run build
 
 WORKDIR /usr/src/app/audit-trail-gw
 
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 CMD [ "node", "dist/index.js", "server" ]

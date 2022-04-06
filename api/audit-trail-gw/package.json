@@ -7,7 +7,7 @@
     "build-tsc": "tsc --project ./",
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "create-dist-folder": "mkdir -p ./dist",
-    "build": "npm-run-all build-tsc build-lint",
+    "build": "npm-run-all build-lint build-tsc",
     "test": "jest --detectOpenHandles",
     "test-watch": "npm run test -- --watchAll",
     "generate-secret": "ts-node src/tools/generate-secret-key",

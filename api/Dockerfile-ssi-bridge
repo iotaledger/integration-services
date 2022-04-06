@@ -7,7 +7,7 @@ RUN cd shared-modules && npm install && npm run build
 
 WORKDIR /usr/src/app/ssi-bridge
 
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 CMD [ "node", "dist/index.js", "server" ]
