@@ -9,8 +9,9 @@ describe('test configuration service', () => {
 	});
 
 	it('should crash since env variables are missing', async () => {
-		const start = () => ConfigurationService.getInstance(LoggerMock);
-		expect(start).toThrowError('Server secret must to have a length of 32!');
+		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => { return undefined as never });
+		ConfigurationService.getInstance(LoggerMock);
+		expect(mockExit).toHaveBeenCalledWith(1);
 	});
 
 	it('should start without errors if all env vars are set', async () => {
