@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
 import { IdentityKeys } from '@iota/is-shared-modules/lib/models/types/identity';
 import { decrypt, encrypt } from '@iota/is-shared-modules/lib/utils/encryption';
 
