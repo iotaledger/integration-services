@@ -56,6 +56,8 @@ services:
       - "traefik.http.routers.audittrailgw_ch.rule=PathPrefix(`/api/v0.1/channels`)"
       - "traefik.http.routers.audittrailgw_ci.rule=PathPrefix(`/api/v0.1/channel-info`)"
       - "traefik.http.routers.audittrailgw_sub.rule=PathPrefix(`/api/v0.1/subscriptions`)"
+      - "traefik.http.routers.audittrailgw_docs.rule=Path(`/audit-trail-gw/docs`)"
+      - "traefik.http.routers.audittrailgw_docs.middlewares=audit-trail-gw-stripprefix"
       - "traefik.http.routers.audittrailgw_info.rule=PathPrefix(`/audit-trail-gw/info`)"
       - "traefik.http.routers.audittrailgw_info.middlewares=audit-trail-gw-stripprefix"
       - "traefik.http.services.audittrailgw.loadbalancer.server.port=3000"
@@ -84,7 +86,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
     restart: on-failure
-    command: node dist/index.js setup-api
+    command: node dist/ssi-bridge/src/index.js setup-api
     depends_on: 
       - mongo
   
@@ -99,6 +101,8 @@ services:
       - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.1/identities`) "
       - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
       - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
+      - "traefik.http.routers.ssibridge_docs.rule=Path(`/ssi-bridge/docs`)"
+      - "traefik.http.routers.ssibridge_docs.middlewares=ssi-bridge-stripprefix"
       - "traefik.http.routers.ssibridge_info.rule=Path(`/ssi-bridge/info`)"
       - "traefik.http.routers.ssibridge_info.middlewares=ssi-bridge-stripprefix"
       - "traefik.http.services.ssibridge.loadbalancer.server.port=3000"

@@ -60,12 +60,53 @@ npx @iota/is-cli setup-api
 You can start the Integration Services API by running the following commands:
 
 ```bash
-docker-compose build
+docker-compose --env-file .env up --build
+```
+
+Now you are done with the docker-compose setup. To make sure that everything works as expected read the [next section](#test-your-api) down below.
+
+## Test your API
+By following this section you can check if the installation was successful. 
+### Check Container
+First we want to test if all docker container started up correctly.
+
+List all container:
+```bash
+docker-compose ps
+```
+
+You should be able to see all container except `api_initialize-audit-trail_1` and `api_initialize-ssi-bridge_1` in a `Up` state.
+
+```
+            Name                          Command               State                       Ports                    
+---------------------------------------------------------------------------------------------------------------------
+api_audit-trail-gw_1           docker-entrypoint.sh node  ...   Up                                                   
+api_initialize-audit-trail_1   docker-entrypoint.sh node  ...   Exit 0                                               
+api_initialize-ssi-bridge_1    docker-entrypoint.sh node  ...   Exit 0                                               
+api_mongo_1                    docker-entrypoint.sh mongod      Up       0.0.0.0:27017->27017/tcp                    
+api_ssi-bridge_1               docker-entrypoint.sh node  ...   Up                                                   
+traefik                        /entrypoint.sh --api.insec ...   Up       0.0.0.0:3000->80/tcp, 0.0.0.0:8080->8080/tcp
+```
+
+### Check Endpoints
+Now you can check if you can reach the `audit-trail-gw` and `ssi-brdige` via http by running the following commands:
+
+```bash
+curl http://localhost:3000/audit-trail-gw/info
 ```
 
 ```bash
-docker-compose --env-file .env up --build
+curl http://localhost:3000/ssi-bridge/info
 ```
+
+The API documentation for each endpoint can be found here:
+
+- [http://localhost:3000/audit-trail-gw/docs](http://localhost:3000/audit-trail-gw/docs)
+
+- [http://localhost:3000/ssi-bridge/docs](http://localhost:3000/ssi-bridge/docs)
+
+
+
 
 
 

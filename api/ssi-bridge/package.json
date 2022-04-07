@@ -12,7 +12,7 @@
     "test-watch": "npm run test -- --watchAll",
     "generate-secret": "ts-node src/tools/generate-secret-key",
     "setup-admin-identity": "ts-node src/tools/setup-admin-identity",
-    "start-node": "node dist/index.js server",
+    "start-node": "node dist/ssi-bridge/src/index.js server",
     "start-setup-api": "node dist/index.js setup-api",
     "start": "npm-run-all build start-node",
     "setup-api": "npm i && npm-run-all build start-setup-api",
