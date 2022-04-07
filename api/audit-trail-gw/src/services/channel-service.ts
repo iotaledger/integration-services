@@ -115,7 +115,7 @@ export class ChannelService {
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
 
-	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions) {
+	async c(channelAddress: string, id: string, options: ChannelLogRequestOptions) {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
