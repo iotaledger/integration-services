@@ -27,7 +27,7 @@ Please make sure to have the following installed before moving forward:
 
 ## Minikube
 
-You can start your cluster by running the following command:
+Start your cluster by running the following command:
 
 ```bash
 minikube start

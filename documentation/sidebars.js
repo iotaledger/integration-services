@@ -69,12 +69,9 @@ module.exports = {
           ],
         },
         {
-          type: "category",
+          type: "doc",
           label: "Docker Compose",
-          items: [
-            "getting_started/installation/docker_compose/docker_compose",
-            "getting_started/installation/docker_compose/expose_apis",
-          ],
+          id: "getting_started/installation/docker_compose_setup",
         },
       ],
     },
