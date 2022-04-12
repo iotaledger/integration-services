@@ -1,5 +1,5 @@
 {
-  label: "Integrationm Services",
+  label: "Integration Services",
   to: "integration-services/welcome",
   className: "icon-integration-services",
   activeBaseRegex: 'integration-services/.*'
