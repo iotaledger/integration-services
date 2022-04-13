@@ -110,7 +110,6 @@ ssi-bridge-f849f7fc7-t4msg            1/1     Running     2 (7m42s ago)   9m8s
 If the generate-key pod is completed and the audit-trail and ssi-bridge pod are running you can check if they are available using the following two commands:
 ```
 curl -i $PROXY_IP/ssi-bridge/info
-curl -i $PROXY_IP/ssi-bridge/info
 curl -i $PROXY_IP/audit-trail-gw/info
 ```
 

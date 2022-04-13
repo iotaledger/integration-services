@@ -84,6 +84,9 @@ export class ChannelService {
 	}
 
 	async channelExists(name: string): Promise<boolean> {
+		if (!name) {
+			return false;
+		}
 		const channel = await searchChannelInfo({ name });
 		return !isEmpty(channel);
 	}
