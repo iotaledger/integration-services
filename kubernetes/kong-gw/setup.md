@@ -7,7 +7,10 @@ minikube start
 ```
 
 1. Install helm:
-   
+```
+brew install helm
+```  
+
 2. Add helm repo
 
 ```
