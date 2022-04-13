@@ -12,13 +12,11 @@ minikube start
 
 ```
 helm repo add kong https://charts.konghq.com
-# helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
 3. Install kong using helm
 ```
 helm install kong/kong --generate-name
-#helm install kong bitnami/kong --set service.type=NodePort
 ```
 
 2. Open new terminal and type in
