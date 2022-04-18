@@ -9,7 +9,11 @@
     "serve": "tsc --project ./ --watch"
   },
   "keywords": [
-    "iota", "integration-services", "identity", "stream", "decentralized"
+    "iota",
+    "integration-services",
+    "identity",
+    "stream",
+    "decentralized"
   ],
   "author": {
     "name": "Dominic Zettl",
