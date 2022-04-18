@@ -7,7 +7,7 @@ import {
 	Credential
 } from '@iota/is-shared-modules/lib/models/types/identity';
 import { KeyCollectionJson } from '@iota/is-shared-modules/lib/models/types/key-collection';
-const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
+const { Document, Credential, VerificationMethod, KeyPair, Client, ProofOptions } = Identity;
 import { ILogger } from '../utils/logger';
 import { IdentityKeys } from '@iota/is-shared-modules/lib/models/types/identity';
 import { LatestIdentityJson } from '../../../shared-modules/src/models/types/identity';
@@ -64,6 +64,7 @@ export class SsiService {
 
 	async createIdentity(): Promise<IdentityJson> {
 		try {
+			
 			const identity = this.generateIdentity();
 			identity.doc.sign(identity.key);
 			await this.publishSignedDoc(identity.doc.toJSON());
@@ -94,23 +95,25 @@ export class SsiService {
 			const { document } = await this.getLatestIdentityJson(issuerIdentity.id);
 
 			const { doc } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
-			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
+			const issuerKeys = KeyPair.fromJSON(keyCollectionJson);
 			const digest = this.config.hashFunction;
-			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.getKeyCollectionTag(keyCollectionIndex));
+			const method = new VerificationMethod(doc.id, 1, issuerKeys.public(), 'fragment');
 
-			const unsignedVc = VerifiableCredential.extend({
+			const unsignedVc = Credential.extend({
 				id: credential?.id,
 				type: credential.type,
 				issuer: doc.id.toString(),
 				credentialSubject: credential.subject
 			});
 
-			const signedVc = await doc.signCredential(unsignedVc, {
-				method: method.id.toString(),
-				public: issuerKeys.public(subjectKeyIndex),
-				secret: issuerKeys.secret(subjectKeyIndex),
-				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
-			});
+			const signedVc = await doc.create(unsignedVc, issuerKeys.private(), , new ProofOptions({}));
+
+			// {
+			// 	method: method.id.toString(),
+			// 	public: issuerKeys.public(subjectKeyIndex),
+			// 	secret: issuerKeys.private(subjectKeyIndex),
+			// 	proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
+			// }
 
 			const client = this.getIdentityClient(true);
 			const validatedCredential = await client.checkCredential(signedVc.toString());
@@ -202,7 +205,7 @@ export class SsiService {
 	restoreIdentity(identity: IdentityJson) {
 		try {
 			const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
-			const doc = Document.fromJSON(identity.doc) as any;
+			const doc: Identity.Document = Document.fromJSON(identity.doc) as any;
 
 			return {
 				doc,
@@ -216,7 +219,8 @@ export class SsiService {
 
 	generateIdentity() {
 		try {
-			const { doc, key } = new Document(this.config.keyType, Identity.Network.mainnet().toString()) as any;
+			const keys = new KeyPair(this.config.keyType)
+			const { doc, key } = new Document(keys, Identity.Network.mainnet().toString()) as any;
 
 			return {
 				doc,
