@@ -25,10 +25,15 @@ describe('test authentication routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService, serverSecret, LoggerMock);
-		authenticationService = new AuthenticationService(userService, ssiService, {
-			jwtExpiration: '2 days',
-			serverSecret
-		});
+		authenticationService = new AuthenticationService(
+			userService,
+			ssiService,
+			{
+				jwtExpiration: '2 days',
+				serverSecret
+			},
+			LoggerMock
+		);
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, LoggerMock);
 
 		res = {

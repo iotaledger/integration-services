@@ -13,6 +13,6 @@ const { serverSecret, identityConfig, jwtExpiration } = configService.config;
 export const ssiService = SsiService.getInstance(identityConfig, logger);
 export const authorizationService = new AuthorizationService();
 export const userService = new UserService(ssiService, serverSecret, logger);
-export const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret });
+export const authenticationService = new AuthenticationService(userService, ssiService, { jwtExpiration, serverSecret }, logger);
 
 export const verificationService = new VerificationService(ssiService, userService, logger, configService);
