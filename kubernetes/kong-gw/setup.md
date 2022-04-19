@@ -1,13 +1,30 @@
 ## Setup Kong
 
-1. Create namespace for kong:
+0. Start minikube
+
 ```
-kubectl create -f https://bit.ly/k4k8s
+minikube start
+```
+
+1. Install helm:
+```
+brew install helm
+```  
+
+2. Add helm repo
+
+```
+helm repo add kong https://charts.konghq.com
+```
+
+3. Install kong using helm
+```
+helm install kong/kong --generate-name
 ```
 
 2. Open new terminal and type in
 ```
-minikube service -n kong kong-proxy --url
+minikube service kong --url
 ```
 > It will create the following output:
 
@@ -50,37 +67,42 @@ minikube tunnel
 1. Apply kubernetes cluster to kong
 
 ```
-kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
+kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 ```
 2. Check if services are up and running:
 
 ```
-kubectl get services -n kong
+kubectl get services
 ```
 Should return an output like:
 ```
-NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-audit-trail-gw            ClusterIP      10.103.130.76    <none>        3002/TCP                     6s
-kong-proxy                LoadBalancer   10.109.251.223   127.0.0.1     80:30175/TCP,443:30790/TCP   66s
-kong-validation-webhook   ClusterIP      10.101.48.173    <none>        443/TCP                      65s
-mongodb-service           ClusterIP      10.106.69.114    <none>        27017/TCP                    7s
-ssi-bridge                ClusterIP      10.99.146.170    <none>        3001/TCP                     6s
+NAME                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+audit-trail-gw       ClusterIP   10.109.143.231   <none>        3000/TCP                     9m27s
+kong                 NodePort    10.109.196.88    <none>        80:30368/TCP,443:32425/TCP   26m
+kong-postgresql      ClusterIP   10.104.194.254   <none>        5432/TCP                     26m
+kong-postgresql-hl   ClusterIP   None             <none>        5432/TCP                     26m
+kubernetes           ClusterIP   10.96.0.1        <none>        443/TCP                      65m
+mongodb-service      ClusterIP   10.96.36.17      <none>        27017/TCP                    9m28s
+ssi-bridge           ClusterIP   10.96.210.228    <none>        3000/TCP                     9m27s
 ```
 
 Check if the pods are running:
 ```
-kubectl get pods -n kong
+kubectl get pods
 ```
 
 Should return an output like:
 ```
-
-NAME                                       READY   STATUS                       RESTARTS       AGE
-audit-trail-gw-6d4f66494c-6nw8k            1/1     Running                      0              84s
-generate-key--1-m5wvv                      0/1     Completed                    0              84s
-ingress-kong-67ffbc788d-xkgmj              2/2     Running                      2 (84s ago)    84s
-mongodb-deployment-7456899d7b-khb7v        1/1     Running                      0              85s
-ssi-bridge-bc7f94d79-4vz7p                 1/1     Running                      1 (62s ago)    84s
+NAME                                  READY   STATUS      RESTARTS        AGE
+audit-trail-gw-557959d777-52p94       1/1     Running     0               9m8s
+audit-trail-gw-557959d777-cmqvg       1/1     Running     0               9m8s
+generate-key--1-zbz7x                 0/1     Completed   0               9m8s
+kong-75757c49b6-pptwm                 2/2     Running     0               26m
+kong-75757c49b6-zgqkg                 2/2     Running     0               26m
+kong-postgresql-0                     1/1     Running     0               26m
+mongodb-deployment-5f89c7c88f-nr5xv   1/1     Running     0               9m9s
+ssi-bridge-f849f7fc7-fhg6g            1/1     Running     2 (7m42s ago)   9m8s
+ssi-bridge-f849f7fc7-t4msg            1/1     Running     2 (7m42s ago)   9m8s
 ```
 
 3. Check if up and running:
@@ -98,7 +120,7 @@ curl -i $PROXY_IP/audit-trail-gw/info
 ## Shut down the cluster
 
 ```
-kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
+kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 ```
 
 ---
@@ -108,15 +130,15 @@ kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --nam
 1. Shut down the cluster:
 
 ```
-kubectl delete all --all -n kong
+kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 ```
 
-2. Exit/Close all opened terminals
+2. Uninstall helm release
 
-3. Delete namespace
-   
 ```
-kubectl delete namespace kong
+helm delete kong
 ```
+
+3. Exit/Close all opened terminals
 
 4. Start again from __Setup Kong__
