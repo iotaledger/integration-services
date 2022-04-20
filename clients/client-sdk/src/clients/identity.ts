@@ -5,7 +5,10 @@ import {
   IdentityJson,
   VerifiableCredentialJson
 } from '@iota/is-shared-modules/lib/models/types/identity';
-import { RevokeVerificationBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import {
+  RevokeVerificationBody,
+  VerifyJwtBody
+} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import { User, UserType } from '@iota/is-shared-modules/lib/models/types/user';
 import {
   CredentialTypes,
@@ -15,7 +18,7 @@ import { SearchCriteria } from '../models/searchCriteria';
 import {
   IdentityDocumentJson,
   IdentitySearchBody
-} from '@iota/is-shared-modules/src/models/types/identity';
+} from '@iota/is-shared-modules/lib/models/types/identity';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
@@ -191,5 +194,14 @@ export class IdentityClient extends BaseClient {
    */
   async revokeCredential(credential: RevokeVerificationBody): Promise<null> {
     return await this.post(`${this.baseUrl}/verification/revoke-credential`, credential);
+  }
+
+  /**
+   * Check the verifiable credential of an identity. Validates the signed verifiable credential against the Issuer information stored onto the IOTA Tangle and checks if the issuer identity (DID) contained in the credential is from a trusted root.
+   * @param credential
+   * @returns
+   */
+  async verifyJwt(jwt: VerifyJwtBody): Promise<{ isValid: boolean; error?: string }> {
+    return await this.post(`${this.baseUrl}/authentication/verify-jwt`, jwt);
   }
 }

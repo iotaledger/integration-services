@@ -2,11 +2,15 @@ import { Router } from 'express';
 import { AuthenticationRoutes } from '../../routes/authentication';
 import { Logger } from '../../utils/logger';
 import { authenticationService } from '../services';
-import { apiKeyMiddleware } from '../middlewares';
+import { apiKeyMiddleware, validate } from '../middlewares';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
+import {
+	ProveOwnershipPostBodySchema,
+	VerifyJwtBodySchema
+} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
 
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, Logger.getInstance());
-const { getNonce, proveOwnership } = authenticationRoutes;
+const { getNonce, proveOwnership, verifyJwt } = authenticationRoutes;
 
 export const authenticationRouter = Router();
 /**
@@ -113,6 +117,60 @@ authenticationRouter.post(
 	'/prove-ownership/:id',
 	apiKeyMiddleware,
 	mongodbSanitizer,
-	//validate({ body: ProveOwnershipPostBodySchema }),
+	validate({ body: ProveOwnershipPostBodySchema }),
 	proveOwnership
 );
+
+/**
+ * @openapi
+ * /authentication/verify-jwt:
+ *   post:
+ *     summary: Verify a signed jwt
+ *     description: Check if the jwt was signed by the Integration Service.
+ *     tags:
+ *     - authentication
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VerifyJwtBodySchema'
+ *           example:
+ *             jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+ *     responses:
+ *       200:
+ *         description: Returns if the jwt is valid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isValid:
+ *                   type: boolean
+ * 				   error:
+ *         			 type: string
+ *       400:
+ *         description: No valid body provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       500:
+ *         description: No valid signedNonce provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       401:
+ *         description: No valid api key provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+authenticationRouter.post('/verify-jwt', apiKeyMiddleware, mongodbSanitizer, validate({ body: VerifyJwtBodySchema }), verifyJwt);
