@@ -49,7 +49,7 @@ spec:
         - name: ssi-bridge
           image: iotaledger/ssi-bridge:develop
           imagePullPolicy: IfNotPresent
-          command: ["node", "dist/ssi-bridge/src/index.js", "server"]
+          command: ["node", "dist/index.js", "server"]
           resources:
             requests:
               memory: "100Mi"

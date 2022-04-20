@@ -16,7 +16,7 @@ instance. Please keep in mind that all values must be changed before deployment.
 running, you should run the following command to load your most recent configuration:
 
 ```bash
-kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw --namespace=kong
+kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 ```
 
 ## Database
@@ -46,6 +46,7 @@ echo -n ...SERVER_SECRET_KEY or API_KEY... | base64
 The default values are:
 
 - `7w9gfhb123jngh4gd53z465fewcs569e` as `SERVER_SECRET`.
+- `7w9gfhb123jngh4gd53z465fewcs569e` as `JWT_SECRET`.
 - `4ed59704-9a26-11ec-a749-3f57454709b9` as `API_KEY`.
 
 ## Number of Replicas
