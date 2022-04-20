@@ -21,8 +21,17 @@ export class AuthenticationService {
 		return nonce;
 	}
 
-	verifyJwt(token: string): { isValid: boolean; error?: string } {
+	verifyJwt(jwtToken: string): { isValid: boolean; error?: string } {
+		let token = jwtToken;
 		try {
+			if (token.startsWith('Bearer')) {
+				const split = token.split('Bearer ');
+				if (split.length !== 2) {
+					return { isValid: false, error: 'could not separate Bearer from token' };
+				}
+				token = split[1];
+			}
+
 			jwt.verify(token, this.config.serverSecret);
 		} catch (e) {
 			this.logger.error(e?.message);

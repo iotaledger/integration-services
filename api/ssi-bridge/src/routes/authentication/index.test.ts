@@ -220,7 +220,38 @@ describe('test authentication routes', () => {
 		expect(res.send).toHaveBeenCalledWith({ isValid: true });
 	});
 
-	it('verify-jwt - should return isValid=true for verified jwt', async () => {
+	it('verify-jwt - should return isValid=true for verified jwt including Bearer prefix', async () => {
+		const jwt =
+			'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.mEsZ8pkqb_x90MlCgci8qqbvdrc52ayDkNZBWAqPaRA';
+		const req: any = {
+			params: {},
+			body: {
+				jwt
+			}
+		};
+
+		await authenticationRoutes.verifyJwt(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith({ isValid: true });
+	});
+	it('verify-jwt - should return isValid=false malformed Bearer prefix', async () => {
+		const jwt =
+			'BearereyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.mEsZ8pkqb_x90MlCgci8qqbvdrc52ayDkNZBWAqPaRA';
+		const req: any = {
+			params: {},
+			body: {
+				jwt
+			}
+		};
+
+		await authenticationRoutes.verifyJwt(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith({ isValid: false, error: 'could not separate Bearer from token' });
+	});
+	it('verify-jwt - should return isValid=false if we have different signer', async () => {
+		// different signature key used
 		const wrongJwt =
 			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 		const req: any = {
@@ -236,7 +267,7 @@ describe('test authentication routes', () => {
 		expect(res.send).toHaveBeenCalledWith({ isValid: false, error: 'invalid signature' });
 	});
 
-	it('verify-jwt - should return isValid=true for verified jwt', async () => {
+	it('verify-jwt - should return isValid=false for unvalid token', async () => {
 		const wrongJwt = 'notavalidtoken';
 		const req: any = {
 			params: {},
