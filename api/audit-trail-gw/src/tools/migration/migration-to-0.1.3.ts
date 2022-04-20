@@ -39,8 +39,8 @@ const migrate = async () => {
 
 	// since now only keys are stored this collection will be renamed!
 	const collections = await db.listCollections().toArray();
-	const collectionNames = collections.map((c) => c.name);
-	if (collectionNames.some((n) => n === 'identity-docs') && !collectionNames.some((n) => n === 'identity-keys')) {
+	const collectionNames = collections.map((c: any) => c.name);
+	if (collectionNames.some((n: string) => n === 'identity-docs') && !collectionNames.some((n: string) => n === 'identity-keys')) {
 		await db.collection('identity-docs').rename('identity-keys');
 		await db.collection('identity-keys').updateMany(
 			{
