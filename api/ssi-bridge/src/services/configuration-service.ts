@@ -122,7 +122,7 @@ export class ConfigurationService {
 				throw Error('Please replace the default COMMIT_HASH or delete it!');
 			}
 
-			if (config?.serverSecret?.length !== 32 || config?.jwtSecret.length !== 32) {
+			if (config?.serverSecret?.length !== 32 || config?.jwtSecret?.length !== 32) {
 				throw Error('SERVER_SECRET and JWT_SECRET must have a length of 32!');
 			}
 
