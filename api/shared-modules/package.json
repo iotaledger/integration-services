@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-shared-modules",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Shared modules of the Integration Service.",
   "scripts": {
     "build-tsc": "tsc --project ./",
@@ -9,7 +9,11 @@
     "serve": "tsc --project ./ --watch"
   },
   "keywords": [
-    "iota", "integration-services", "identity", "stream", "decentralized"
+    "iota",
+    "integration-services",
+    "identity",
+    "stream",
+    "decentralized"
   ],
   "author": {
     "name": "Dominic Zettl",
