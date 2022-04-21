@@ -2,6 +2,7 @@ version: '3.7'
 services:
   mongo:
     image: mongo:latest
+    container_name: "mongo"
     restart: always
     environment:
       MONGO_INITDB_DATABASE: ${DATABASE_NAME}
