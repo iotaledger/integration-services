@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ProveOwnershipPostBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import { ProveOwnershipPostBody, VerifyJwtBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import { AuthenticationService } from '../../services/authentication-service';
 import { ILogger } from '../../utils/logger';
 
@@ -40,6 +40,19 @@ export class AuthenticationRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not prove the ownership'));
+		}
+	};
+
+	verifyJwt = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+		try {
+			const body: VerifyJwtBody = req.body;
+			const jwt = body?.jwt;
+
+			const isValid = this.authenticationService.verifyJwt(jwt);
+			return res.status(StatusCodes.OK).send({ ...isValid });
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not verify the jwt'));
 		}
 	};
 }

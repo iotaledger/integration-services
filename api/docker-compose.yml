@@ -84,7 +84,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
     restart: on-failure
-    command: node dist/ssi-bridge/src/index.js setup-api
+    command: node dist/index.js setup-api
     depends_on: 
       - mongo
   
