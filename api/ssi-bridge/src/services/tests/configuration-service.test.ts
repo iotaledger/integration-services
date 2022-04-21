@@ -6,17 +6,18 @@ import * as IdentityDocDB from '../../database/identity-keys';
 
 describe('test configuration service', () => {
 	let loggerSpy: jest.SpyInstance;
+	let mockExit: jest.SpyInstance;
 	beforeEach(() => {
 		loggerSpy = jest.spyOn(LoggerMock, 'error');
 		jest.spyOn(ConfigurationService, 'getInstance').mockImplementation(() => {
 			return new ConfigurationService(LoggerMock);
 		});
+		mockExit  = jest.spyOn(process, 'exit').mockImplementation(() => {
+			return undefined as never;
+		});
 	});
 
 	it('should crash since env variables are missing', async () => {
-		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
-			return undefined as never;
-		});
 		ConfigurationService.getInstance(LoggerMock);
 		expect(loggerSpy).toHaveBeenCalledWith('SERVER_SECRET and JWT_SECRET must have a length of 32!');
 		expect(mockExit).toHaveBeenCalledWith(1);
@@ -28,9 +29,7 @@ describe('test configuration service', () => {
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
-		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
-			return undefined as never;
-		});
+		
 		ConfigurationService.getInstance(LoggerMock);
 		expect(loggerSpy).toHaveBeenCalledWith('Env var is missing or invalid: databaseUrl');
 		expect(mockExit).toHaveBeenCalledWith(1);
@@ -43,9 +42,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
-		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
-			return undefined as never;
-		});
 
 		ConfigurationService.getInstance(LoggerMock);
 		expect(loggerSpy).not.toHaveBeenCalled();
@@ -142,10 +138,7 @@ describe('test configuration service', () => {
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
-
-		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
-			return undefined as never;
-		});
+		
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementation(async () => [{ id: 'did:iota:1234', username: 'test-user', publicKey: 'testpublickey' }]);
