@@ -23,7 +23,7 @@ export class AuthenticationService {
 
 	verifyJwt(token: string): { isValid: boolean; error?: string } {
 		try {
-			jwt.verify(token, this.config.serverSecret);
+			jwt.verify(token, this.config.jwtSecret);
 		} catch (e) {
 			this.logger.error(e?.message);
 			return { isValid: false, error: e?.message };
@@ -60,11 +60,11 @@ export class AuthenticationService {
 			throw new Error('signed nonce is not valid!');
 		}
 
-		if (!this.config?.serverSecret) {
-			throw new Error('no server secret set!');
+		if (!this.config?.jwtSecret) {
+			throw new Error('no jwt secret set!');
 		}
 
-		const signedJwt = jwt.sign({ user }, this.config.serverSecret, { expiresIn: this.config?.jwtExpiration });
+		const signedJwt = jwt.sign({ user }, this.config.jwtSecret, { expiresIn: this.config?.jwtExpiration });
 		return signedJwt;
 	}
 }
