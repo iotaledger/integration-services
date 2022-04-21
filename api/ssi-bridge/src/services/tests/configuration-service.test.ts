@@ -8,7 +8,9 @@ describe('test configuration service', () => {
 	let loggerSpy: jest.SpyInstance;
 	beforeEach(() => {
 		loggerSpy = jest.spyOn(LoggerMock, 'error');
-		ConfigurationService.instance = undefined;
+		jest.spyOn(ConfigurationService, 'getInstance').mockImplementation(() => {
+			return new ConfigurationService(LoggerMock);
+		});
 	});
 
 	it('should crash since env variables are missing', async () => {
@@ -26,7 +28,6 @@ describe('test configuration service', () => {
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
-
 		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
 			return undefined as never;
 		});

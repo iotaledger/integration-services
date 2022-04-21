@@ -16,7 +16,7 @@ export interface IConfigurationService {
 }
 
 export class ConfigurationService {
-	static instance: ConfigurationService;
+	private static instance: ConfigurationService;
 	logger: ILogger;
 	private _serverIdentityId: string;
 
