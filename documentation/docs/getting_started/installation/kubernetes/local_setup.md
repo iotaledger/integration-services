@@ -25,14 +25,7 @@ Please make sure to have the following installed before moving forward:
 * [minikube](https://minikube.sigs.k8s.io/docs/start/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 * [helm](https://helm.sh/)
-
-## Minikube
-
-Start your cluster by running the following command:
-
-```bash
-minikube start
-```
+* [Homebrew](https://brew.sh/)
 
 ## Clone Integration Services Repository
 
@@ -49,7 +42,13 @@ Please follow these steps to clone the Integration Services:
     ```bash
     cd integration-services
     ```
+## Start Minikube
 
+Setup and start the empty cluster by running the following command:
+
+```bash
+minikube start
+```
 ## Set Up Kong
 
 1. Install helm by running the following command:
@@ -69,13 +68,13 @@ helm repo add kong https://charts.konghq.com
 helm install kong kong/kong
 ```
 
-4. Open another terminal and type run the following command to expose the kong service:
+4. Open a **new terminal** and type run the following command to expose the kong service:
 
 ```bash
 minikube tunnel
 ```
 
-5. Start a tunnel for the Kong service by opening a new terminal window and running the following command:
+5. In a **new terminal** run the following command to start a tunnel for the Kong service:
 ```bash
 minikube service kong --url
 ```

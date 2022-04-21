@@ -28,18 +28,6 @@ Please make sure to have the following installed before moving forward:
     git clone https://github.com/iotaledger/integration-services.git
     ```
 
-2. Change directory into the `api` folder in your freshly cloned project by running:
-
-    ```bash
-    cd integration-services/api
-    ```
-
-3. Install all npm dependencies by running:
-
-    ```bash
-    npm install
-    ```
-
 ## Configuration
 
 Use the Integration Services CLI to configure the API. The CLI configures your `.env` and `mongo-init.json` files.
@@ -53,7 +41,7 @@ cd integration-services/api
 2. Configure the API:
 
 ```bash
-npx @iota/is-cli setup-api
+npx @iota/is-cli setup-docker
 ```
 
 ## Run Integration Services API
@@ -105,8 +93,6 @@ curl http://localhost:3000/audit-trail-gw/info
 curl http://localhost:3000/ssi-bridge/info
 ```
 
-The API documentation for each endpoint can be found here:
-
--   [http://localhost:3000/audit-trail-gw/docs](http://localhost:3000/audit-trail-gw/docs)
-
--   [http://localhost:3000/ssi-bridge/docs](http://localhost:3000/ssi-bridge/docs)
+:::info
+The API documentation for each endpoint **cannot** be reached currently. This issue will be fixed in a future release. 
+:::
