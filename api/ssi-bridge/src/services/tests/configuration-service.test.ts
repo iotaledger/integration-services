@@ -6,34 +6,53 @@ import * as IdentityDocDB from '../../database/identity-keys';
 
 describe('test configuration service', () => {
 	let loggerSpy: jest.SpyInstance;
+	let mockExit: jest.SpyInstance;
 	beforeEach(() => {
 		loggerSpy = jest.spyOn(LoggerMock, 'error');
+		jest.spyOn(ConfigurationService, 'getInstance').mockImplementation(() => {
+			return new ConfigurationService(LoggerMock);
+		});
+		mockExit  = jest.spyOn(process, 'exit').mockImplementation(() => {
+			return undefined as never;
+		});
 	});
 
 	it('should crash since env variables are missing', async () => {
-		const start = () => ConfigurationService.getInstance(LoggerMock);
-		expect(start).toThrowError('Server secret must to have a length of 32!');
+		ConfigurationService.getInstance(LoggerMock);
+		expect(loggerSpy).toHaveBeenCalledWith('SERVER_SECRET and JWT_SECRET must have a length of 32!');
+		expect(mockExit).toHaveBeenCalledWith(1);
+	});
+
+	it('should crash since DATABASE_URL is missing', async () => {
+		process.env.SERVER_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
+		process.env.DATABASE_NAME = ConfigMock.databaseName;
+		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
+		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
+		
+		ConfigurationService.getInstance(LoggerMock);
+		expect(loggerSpy).toHaveBeenCalledWith('Env var is missing or invalid: databaseUrl');
+		expect(mockExit).toHaveBeenCalledWith(1);
 	});
 
 	it('should start without errors if all env vars are set', async () => {
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
-		process.env.JWT_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
-		process.env.SERVER_SECRET = ConfigMock.serverSecret;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
-		const start = () => ConfigurationService.getInstance(LoggerMock);
-		expect(start).not.toThrow();
+		ConfigurationService.getInstance(LoggerMock);
 		expect(loggerSpy).not.toHaveBeenCalled();
+		expect(mockExit).not.toHaveBeenCalled();
 	});
 
 	it('should log that no server identity was found', async () => {
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
-		process.env.SERVER_SECRET = ConfigMock.serverSecret;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -50,9 +69,9 @@ describe('test configuration service', () => {
 
 	it('should log that no identity doc was found', async () => {
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
-		process.env.SERVER_SECRET = ConfigMock.serverSecret;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -71,9 +90,9 @@ describe('test configuration service', () => {
 
 	it('should log that found identity is malicious', async () => {
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
-		process.env.SERVER_SECRET = ConfigMock.serverSecret;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -92,9 +111,9 @@ describe('test configuration service', () => {
 
 	it('should log that two root identites were found', async () => {
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
-		process.env.SERVER_SECRET = ConfigMock.serverSecret;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
 
@@ -114,12 +133,12 @@ describe('test configuration service', () => {
 
 	it('should run sucessfully since document and root identity was found', async () => {
 		process.env.SERVER_SECRET = ConfigMock.serverSecret;
+		process.env.JWT_SECRET = ConfigMock.jwtSecret;
 		process.env.DATABASE_URL = ConfigMock.databaseUrl;
 		process.env.DATABASE_NAME = ConfigMock.databaseName;
-		process.env.SERVER_SECRET = ConfigMock.serverSecret;
 		process.env.IOTA_HORNET_NODE = ConfigMock.hornetNode;
 		process.env.IOTA_PERMA_NODE = ConfigMock.permaNode;
-
+		
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
 			.mockImplementation(async () => [{ id: 'did:iota:1234', username: 'test-user', publicKey: 'testpublickey' }]);
@@ -133,6 +152,7 @@ describe('test configuration service', () => {
 		expect(getServerIdentitiesSpy).toHaveBeenCalledWith();
 		expect(getIdentityKeysSpy).toHaveBeenCalledWith('did:iota:1234', ConfigMock.serverSecret);
 		expect(loggerSpy).not.toHaveBeenCalled();
+		expect(mockExit).not.toHaveBeenCalled();
 		expect(id).toEqual('did:iota:1234');
 	});
 

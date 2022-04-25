@@ -2,6 +2,7 @@ version: '3.7'
 services:
   mongo:
     image: mongo:latest
+    container_name: "mongo"
     restart: always
     environment:
       MONGO_INITDB_DATABASE: ${DATABASE_NAME}
@@ -83,6 +84,7 @@ services:
       IOTA_PERMA_NODE: ${IOTA_PERMA_NODE}
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     restart: on-failure
     command: node dist/index.js setup-api
     depends_on: 

@@ -15,6 +15,7 @@ const validUserMock = UserIdentityMock.userData;
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
+	const jwtSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService, ssiService: SsiService;
 	let authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
@@ -25,10 +26,15 @@ describe('test authentication routes', () => {
 		const identityConfig: IdentityConfig = IdentityConfigMock;
 		ssiService = SsiService.getInstance(identityConfig, LoggerMock);
 		userService = new UserService(ssiService, serverSecret, LoggerMock);
-		authenticationService = new AuthenticationService(userService, ssiService, {
-			jwtExpiration: '2 days',
-			serverSecret
-		});
+		authenticationService = new AuthenticationService(
+			userService,
+			ssiService,
+			{
+				jwtExpiration: '2 days',
+				jwtSecret
+			},
+			LoggerMock
+		);
 		authenticationRoutes = new AuthenticationRoutes(authenticationService, LoggerMock);
 
 		res = {
@@ -197,6 +203,54 @@ describe('test authentication routes', () => {
 		);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalled();
+	});
+
+	it('verify-jwt - should return isValid=true for verified jwt', async () => {
+		const jwt =
+			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.mEsZ8pkqb_x90MlCgci8qqbvdrc52ayDkNZBWAqPaRA';
+		const req: any = {
+			params: {},
+			body: {
+				jwt
+			}
+		};
+
+		await authenticationRoutes.verifyJwt(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith({ isValid: true });
+	});
+
+	it('verify-jwt - should return isValid=false if we have different signer', async () => {
+		// different signature key used
+		const wrongJwt =
+			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+		const req: any = {
+			params: {},
+			body: {
+				jwt: wrongJwt
+			}
+		};
+
+		await authenticationRoutes.verifyJwt(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith({ isValid: false, error: 'invalid signature' });
+	});
+
+	it('verify-jwt - should return isValid=false for unvalid token', async () => {
+		const wrongJwt = 'notavalidtoken';
+		const req: any = {
+			params: {},
+			body: {
+				jwt: wrongJwt
+			}
+		};
+
+		await authenticationRoutes.verifyJwt(req, res, nextMock);
+
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+		expect(res.send).toHaveBeenCalledWith({ isValid: false, error: 'jwt malformed' });
 	});
 	afterEach(() => {
 		jest.clearAllMocks();

@@ -66,7 +66,7 @@ export class UserService {
 	}
 
 	decodeUserId(authorization: string): string | undefined {
-		const { serverSecret } = ConfigurationService.getInstance(Logger.getInstance()).config;
+		const { jwtSecret } = ConfigurationService.getInstance(Logger.getInstance()).config;
 		if (!authorization || !authorization.startsWith('Bearer')) {
 			return;
 		}
@@ -77,7 +77,7 @@ export class UserService {
 		}
 
 		const token = split[1];
-		const decodedToken: any = jwt.verify(token, serverSecret);
+		const decodedToken: any = jwt.verify(token, jwtSecret);
 
 		if (typeof decodedToken === 'string' || !decodedToken?.user) {
 			return;

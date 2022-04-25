@@ -1,4 +1,4 @@
 export interface AuthenticationServiceConfig {
-	serverSecret: string;
+	jwtSecret: string;
 	jwtExpiration: string;
 }

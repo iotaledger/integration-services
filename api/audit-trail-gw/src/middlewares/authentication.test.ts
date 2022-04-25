@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { isAuth } from './authentication';
 
 describe('test authentication middleware', () => {
-	const serverSecret = 'very-secret-secret';
+	const jwtSecret = 'very-secret-secret';
 	let nextMock: any, res: any, sendMock: any, sendStatusMock: any;
 	beforeEach(() => {
 		sendMock = jest.fn();
@@ -23,7 +23,7 @@ describe('test authentication middleware', () => {
 			}
 		};
 
-		isAuth(serverSecret)(req, res, nextMock);
+		isAuth(jwtSecret)(req, res, nextMock);
 
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'not authenticated!' });
@@ -36,7 +36,7 @@ describe('test authentication middleware', () => {
 			}
 		};
 
-		isAuth(serverSecret)(req, res, nextMock);
+		isAuth(jwtSecret)(req, res, nextMock);
 
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'not authenticated!' });
@@ -50,7 +50,7 @@ describe('test authentication middleware', () => {
 			}
 		};
 		const t = () => {
-			isAuth(serverSecret)(req, res, nextMock);
+			isAuth(jwtSecret)(req, res, nextMock);
 		};
 
 		expect(t).toThrowError();
@@ -65,7 +65,7 @@ describe('test authentication middleware', () => {
 			}
 		};
 		// jwt from: { user: { id: 'NEEDS TO BE CALLED id' }
-		isAuth(serverSecret)(req, res, nextMock);
+		isAuth(jwtSecret)(req, res, nextMock);
 
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
 		expect(res.send).toHaveBeenCalledWith({ error: 'not authenticated!' });
@@ -83,7 +83,7 @@ describe('test authentication middleware', () => {
 		// jwt from: { user: { id: 'did:iota:123456' } }
 		expect(req.user).toBeUndefined();
 
-		isAuth(serverSecret)(req, res, nextMock);
+		isAuth(jwtSecret)(req, res, nextMock);
 
 		expect(req.user).toEqual({ id: 'did:iota:123456' });
 		expect(nextMock).toHaveBeenCalledWith();

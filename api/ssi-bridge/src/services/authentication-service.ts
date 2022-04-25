@@ -5,18 +5,31 @@ import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
 import { SsiService } from './ssi-service';
 import { User, UserRoles } from '@iota/is-shared-modules/lib/models/types/user';
+import { ILogger } from '../utils/logger';
 
 export class AuthenticationService {
 	constructor(
 		private readonly userService: UserService,
 		private readonly ssiService: SsiService,
-		private readonly config: AuthenticationServiceConfig
+		private readonly config: AuthenticationServiceConfig,
+		private readonly logger: ILogger
 	) {}
 
 	async getNonce(id: string) {
 		const nonce = createNonce();
 		await AuthDb.upsertNonce(id, nonce);
 		return nonce;
+	}
+
+	verifyJwt(token: string): { isValid: boolean; error?: string } {
+		try {
+			jwt.verify(token, this.config.jwtSecret);
+		} catch (e) {
+			this.logger.error(e?.message);
+			return { isValid: false, error: e?.message };
+		}
+
+		return { isValid: true };
 	}
 
 	async authenticate(signedNonce: string, id: string) {
@@ -47,11 +60,11 @@ export class AuthenticationService {
 			throw new Error('signed nonce is not valid!');
 		}
 
-		if (!this.config?.serverSecret) {
-			throw new Error('no server secret set!');
+		if (!this.config?.jwtSecret) {
+			throw new Error('no jwt secret set!');
 		}
 
-		const signedJwt = jwt.sign({ user }, this.config.serverSecret, { expiresIn: this.config?.jwtExpiration });
+		const signedJwt = jwt.sign({ user }, this.config.jwtSecret, { expiresIn: this.config?.jwtExpiration });
 		return signedJwt;
 	}
 }

@@ -41,4 +41,4 @@ export {
   CredentialTypes,
   VerifiableCredentialInternal
 } from '@iota/is-shared-modules/lib/models/types/verification';
-export { IdentityDocumentJson } from '@iota/is-shared-modules/src/models/types/identity';
+export { IdentityDocumentJson } from '@iota/is-shared-modules/lib/models/types/identity';
