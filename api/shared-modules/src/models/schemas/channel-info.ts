@@ -32,7 +32,8 @@ export const ChannelInfoSearchSchema = Type.Object({
 	created: Type.Optional(Type.String({ format: 'date-time' })),
 	latestMessage: Type.Optional(Type.String({ format: 'date-time' })),
 	limit: Type.Optional(Type.Number()),
-	index: Type.Optional(Type.Number())
+	index: Type.Optional(Type.Number()),
+	ascending: Type.Optional(Type.Boolean({description: 'Sorting the channels by creation date ascending or descending'}))
 });
 
 export const ChannelLogRequestOptionsSchema = Type.Object({
