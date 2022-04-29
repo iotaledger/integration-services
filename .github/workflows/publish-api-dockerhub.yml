@@ -2,6 +2,8 @@ name: Publish API on DockerHub
 
 on:
   push:
+    tags:        
+      - '*'
     branches:
       - 'master'
       - 'develop'
@@ -17,7 +19,6 @@ on:
     paths: 
       - "api/**"
       - ".github/workflows/publish-api-dockerhub.yml"
-
   workflow_dispatch:
 
 jobs:
