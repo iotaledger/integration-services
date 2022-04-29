@@ -76,7 +76,7 @@ minikube tunnel
 
 5. In a **new terminal** run the following command to start a tunnel for the Kong service:
 ```bash
-minikube service kong --url
+minikube service kong-kong-proxy --url
 ```
 
 **Expected output**:

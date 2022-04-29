@@ -19,6 +19,7 @@ Please make sure to have the following installed before moving forward:
 * [node.js](https://nodejs.org/) min. v15.6.0
 * [docker](https://docs.docker.com/get-docker/)
 * [docker-compose](https://docs.docker.com/compose/install/)
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Download the Project
 
@@ -68,7 +69,7 @@ npm run setup-api
 ```
 
 ```bash
-npm run start
+npm start
 ```
 
 4. You can check if the service is running with the following command:
@@ -87,7 +88,7 @@ npm run setup-api
 ```
 
 ```bash
-npm run start
+npm start
 ```
 
 4. You can check if the service is running with the following command:
@@ -95,3 +96,10 @@ npm run start
 ```bash
 curl http://localhost:3002/info
 ```
+
+## FAQ
+
+*I accidentally stopped the mongo db container (the database cannot be reached) can I start it again?*
+
+Yes, the container can be started again by running `docker start <container-id>` <br/>
+-> The container id can be found by running `docker ps -a`

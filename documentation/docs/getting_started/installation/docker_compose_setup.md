@@ -19,6 +19,8 @@ Please make sure to have the following installed before moving forward:
 
 -   [docker](https://docs.docker.com/get-docker/)
 -   [docker-compose](https://docs.docker.com/compose/install/)
+-   [node.js](https://nodejs.org/) min. v15.6.0
+-   [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Download the Project
 
@@ -46,7 +48,7 @@ npx @iota/is-cli setup-docker
 
 ## Run Integration Services API
 
-You can start the Integration Services API by running the following commands:
+You can start the Integration Services API by running the following commands in the same `/api` directory:
 
 ```bash
 docker-compose --env-file .env up --build
@@ -94,5 +96,5 @@ curl http://localhost:3000/ssi-bridge/info
 ```
 
 :::info
-The API documentation for each endpoint **cannot** be reached currently. This issue will be fixed in a future release. 
+The API documentation for each endpoint **cannot** be reached currently. This issue will be fixed in a future release.
 :::
