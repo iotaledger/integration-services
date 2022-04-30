@@ -24,7 +24,6 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 	const sort = ascending != null ? { created: ascending ? 1 : -1 } : undefined;
 	const skip = index > 0 ? index * limit : 0;
 	const options = limit != null ? { limit, skip, sort } : { sort };
-	console.log(options)
 
 	return await MongoDbService.getDocuments<ChannelInfoPersistence>(collectionName, plainQuery, options);
 };

@@ -137,12 +137,22 @@ export class ChannelClient extends BaseClient {
    * @returns
    */
   async search(searchCriteria: ChannelInfoSearch): Promise<ChannelInfo[]> {
-    const { name, authorId, topicType, topicSource, created, latestMessage, limit, index } =
-      searchCriteria;
+    const {
+      name,
+      authorId,
+      topicType,
+      topicSource,
+      created,
+      latestMessage,
+      limit,
+      index,
+      ascending
+    } = searchCriteria;
     const param1 = topicType !== undefined ? { 'topic-type': topicType } : {};
     const param2 = topicSource !== undefined ? { 'topic-source': topicSource } : {};
     const param3 = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
     const param4 = authorId !== undefined ? { 'author-id': authorId } : {};
+    const param5 = ascending !== undefined ? { asc: ascending } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
       ...param1,
@@ -150,6 +160,7 @@ export class ChannelClient extends BaseClient {
       created,
       ...param3,
       ...param4,
+      ...param5,
       limit,
       index
     });

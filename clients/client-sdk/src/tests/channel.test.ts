@@ -8,6 +8,7 @@ describe('test channel client', () => {
   let channelClient: ChannelClient;
   const ssiBridgeUrl = `${apiConfig.ssiBridgeUrl}/api/${apiConfig.apiVersion}`;
   const auditTrailUrl = `${apiConfig.auditTrailUrl}/api/${apiConfig.apiVersion}`;
+  const globalTestChannel = testChannel;
   beforeEach(() => {
     channelClient = new ChannelClient(apiConfig);
   });
@@ -72,9 +73,9 @@ describe('test channel client', () => {
       jest.spyOn(channelClient, 'create');
       jest.spyOn(channelClient, 'post');
       try {
-        const response = await channelClient.create(testChannel);
+        const response = await channelClient.create(globalTestChannel);
         expect(response).toMatchObject({
-          seed: testChannel.seed,
+          seed: globalTestChannel.seed,
           presharedKey: expect.any(String),
           channelAddress: expect.any(String)
         });
@@ -87,6 +88,51 @@ describe('test channel client', () => {
         `${auditTrailUrl}/channels/create`,
         testChannel
       );
+    });
+  });
+  describe('test channel search', () => {
+    beforeEach(async () => {
+      try {
+        await channelClient.authenticate(adminUser.id, adminUser.secretKey);
+      } catch (e: any) {
+        console.log('error: ', e);
+        expect(e).toBeUndefined();
+      }
+    });
+    it('should find created channel', async () => {
+      jest.spyOn(channelClient, 'search');
+      jest.spyOn(channelClient, 'get');
+      try {
+        const response = await channelClient.search({
+          name: globalTestChannel.name,
+          authorId: adminUser.id,
+          ascending: true,
+          index: 0
+        });
+        expect(response.length).toBe(1);
+        expect(response[0]).toMatchObject({
+          created: expect.any(String),
+          authorId: adminUser.id,
+          name: globalTestChannel.name,
+          description: globalTestChannel.description,
+          subscriberIds: expect.any(Array),
+          topics: expect.arrayContaining(globalTestChannel.topics),
+          channelAddress: expect.any(String)
+        });
+      } catch (e: any) {
+        console.log('error: ', e);
+        expect(e).toBeUndefined();
+      }
+
+      expect(channelClient.get).toHaveBeenCalledWith(`${auditTrailUrl}/channel-info/search`, {
+        'api-key': '',
+        name: globalTestChannel.name,
+        'author-id': adminUser.id,
+        created: undefined,
+        limit: undefined,
+        asc: true,
+        index: 0
+      });
     });
   });
 });
