@@ -146,8 +146,8 @@ authenticationRouter.post(
  *               properties:
  *                 isValid:
  *                   type: boolean
- * 				   error:
- *         			 type: string
+ *                 error:
+ *                   type: string
  *       400:
  *         description: No valid body provided
  *         content:
