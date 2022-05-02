@@ -32,7 +32,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@iota/is-ui-components": "0.0.37",
+    "@iota/is-ui-components": "0.0.41",
     "sveltestrap": "^5.9.0"
   }
 }

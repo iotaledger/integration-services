@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
-	import { LoginRegisterManager, isAuthenticated } from '@iota/is-ui-components';
+	import { LoginRegisterManager } from '@iota/is-ui-components';
 	import { Col, Container, Row } from 'sveltestrap';
 </script>
 
@@ -16,11 +16,7 @@
 <Container class="my-5">
 	<Row>
 		<Col sm="12" md={{ size: 10, offset: 1 }} lg={{ size: 6, offset: 3 }}>
-			{#if $isAuthenticated}
-				loggedin
-			{:else}
-				<LoginRegisterManager onLoginSuccess={() => goto('/identity-manager')} />
-			{/if}
+			<LoginRegisterManager onLoginSuccess={() => goto('/identity-manager')} />
 		</Col>
 	</Row>
 </Container>
