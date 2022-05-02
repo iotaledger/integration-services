@@ -3,10 +3,6 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN cd shared-modules && npm install && npm run build
-
-WORKDIR /usr/src/app/audit-trail-gw
-
 RUN npm install
 RUN npm run build
 

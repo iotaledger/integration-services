@@ -30,8 +30,7 @@ services:
 
   initialize-audit-trail:
     build:
-      dockerfile: Dockerfile-audit-trail-gw
-      context: ./
+      context: ./api/audit-trail-gw
     environment:
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
@@ -47,8 +46,7 @@ services:
 
   audit-trail-gw:
     build:
-      dockerfile: Dockerfile-audit-trail-gw
-      context: ./
+      context: ./api/audit-trail-gw
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audittrailgw.entrypoints=web"
@@ -76,8 +74,7 @@ services:
 
   initialize-ssi-bridge:
     build:
-      dockerfile: Dockerfile-ssi-bridge
-      context: ./
+      context: ./api/ssi-bridge
     environment:
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
@@ -92,8 +89,7 @@ services:
   
   ssi-bridge:
     build:
-      dockerfile: Dockerfile-ssi-bridge
-      context: ./
+      context: ./api/ssi-bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ssibridge.entrypoints=web"
