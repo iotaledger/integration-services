@@ -22,7 +22,7 @@ on:
 
 jobs:
   push_audit_trail_to_registry:
-    name: Push Docker image to Docker Hub
+    name: Push Audit Trail image to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -50,7 +50,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   push_ssi_bridge_to_registry:
-    name: Push Docker image to Docker Hub
+    name: Push SSI image to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
