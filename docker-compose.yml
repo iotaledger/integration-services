@@ -130,6 +130,8 @@ services:
     depends_on:
       - ssi-bridge
       - audit-trail-gw
+    ports:
+      - "3055:3055"
 
 
 
