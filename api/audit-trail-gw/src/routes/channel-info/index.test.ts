@@ -7,7 +7,7 @@ import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';
 import { StatusCodes } from 'http-status-codes';
 
-describe('test Search user', () => {
+describe('test Search channel', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
 	beforeEach(() => {
@@ -33,6 +33,7 @@ describe('test Search user', () => {
 			topicSource: 'test-source',
 			limit: 1,
 			index: 1,
+			ascending: true,
 			created: getDateFromString('2021-02-12T14:58:05+01:00'),
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
@@ -48,7 +49,8 @@ describe('test Search user', () => {
 				limit: '1',
 				index: '1',
 				created: '2021-02-12T14:58:05+01:00',
-				'latest-message': '2021-02-12T14:58:05+01:00'
+				'latest-message': '2021-02-12T14:58:05+01:00',
+				asc: 'true'
 			},
 			body: null
 		};

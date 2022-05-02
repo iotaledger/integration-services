@@ -127,6 +127,9 @@ export class ChannelInfoRoutes {
 		const indexParam = parseInt(<string>req.query.index, 10);
 		const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 		const index = isNaN(indexParam) ? undefined : indexParam;
+		// If ascending is undefined, don't sort otherwise sort ascending or descending
+		const ascending = decodeParam(<string>req.query.asc) ? decodeParam(<string>req.query.asc) === 'true' : undefined;
+
 
 		return {
 			authorId,
@@ -136,7 +139,8 @@ export class ChannelInfoRoutes {
 			limit,
 			index,
 			created: getDateFromString(created),
-			latestMessage: getDateFromString(latestMessage)
+			latestMessage: getDateFromString(latestMessage),
+			ascending
 		};
 	};
 }

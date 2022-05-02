@@ -11,7 +11,7 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { authorId, name, created, latestMessage, topicType, topicSource, limit, index } = channelInfoSearch;
+	const { authorId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
 	const query = {
 		authorId: regex(authorId),
 		name: regex(name),
@@ -21,8 +21,9 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 		'topics.type': regex(topicType)
 	};
 	const plainQuery = MongoDbService.getPlainObject(query);
+	const sort = ascending != null ? { created: ascending ? 1 : -1 } : undefined;
 	const skip = index > 0 ? index * limit : 0;
-	const options = limit != null ? { limit, skip } : undefined;
+	const options = limit != null ? { limit, skip, sort } : { sort };
 
 	return await MongoDbService.getDocuments<ChannelInfoPersistence>(collectionName, plainQuery, options);
 };

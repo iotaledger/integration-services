@@ -25,7 +25,7 @@ import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota/is-shared-mo
 import fs from 'fs';
 
 /**
- * If new schemas have been created / changed just add them to the schemas object and run script: `generate-openapi-schemas`
+ * If new schemas have been created / changed just add them to the schemas object and run script: `npm run generate-openapi-schemas`
  */
 const schemas = {
 	CreateChannelBodySchema,
