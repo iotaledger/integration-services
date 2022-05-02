@@ -114,5 +114,26 @@ services:
       - initialize-ssi-bridge
       - traefik
 
+  dashboard:
+    build:
+      context: ./dashboard
+    container_name: "is-dashboard"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.rule=PathPrefix(`/`)"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=3055"
+    environment:
+      - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
+      - VITE_IOTA_IS_SDK_GATEWAY_URL=http://0.0.0.0:3000
+    depends_on:
+      - ssi-bridge
+      - audit-trail-gw
+
+
+
+
+
 volumes:
   mongodb_data_container:
