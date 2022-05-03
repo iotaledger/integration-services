@@ -123,7 +123,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.routers.dashboard.rule=PathPrefix(`/`)"
-      - "traefik.http.services.dashboard.loadbalancer.server.port=3055"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
     environment:
       - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
       - VITE_IOTA_IS_SDK_GATEWAY_URL=http://0.0.0.0:3000
@@ -131,7 +131,7 @@ services:
       - ssi-bridge
       - audit-trail-gw
     ports:
-      - "3055:3055"
+      - "3055:3000"
 
 
 

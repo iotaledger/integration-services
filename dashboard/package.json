@@ -2,7 +2,7 @@
   "name": "dashboard",
   "version": "0.0.1",
   "scripts": {
-    "prod": "svelte-kit dev --port=3055 --host=0.0.0.0",
+    "prod": "svelte-kit dev --host=0.0.0.0",
     "dev": "svelte-kit dev --port=3055",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
