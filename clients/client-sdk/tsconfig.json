@@ -1,6 +1,6 @@
 {
-  "include": ["src/**/*"],
-  "exclude": ["examples/", "node_modules", "src/tests"],
+  "include": ["src/**/*", "src/tests"],
+  "exclude": ["examples/", "node_modules"],
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
