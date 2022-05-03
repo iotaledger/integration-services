@@ -30,8 +30,7 @@ services:
 
   initialize-audit-trail:
     build:
-      dockerfile: Dockerfile-audit-trail-gw
-      context: ./
+      context: ./api/audit-trail-gw
     environment:
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
@@ -47,8 +46,7 @@ services:
 
   audit-trail-gw:
     build:
-      dockerfile: Dockerfile-audit-trail-gw
-      context: ./
+      context: ./api/audit-trail-gw
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audittrailgw.entrypoints=web"
@@ -76,8 +74,7 @@ services:
 
   initialize-ssi-bridge:
     build:
-      dockerfile: Dockerfile-ssi-bridge
-      context: ./
+      context: ./api/ssi-bridge
     environment:
       DATABASE_NAME: ${DATABASE_NAME}
       IOTA_HORNET_NODE: ${IOTA_HORNET_NODE}
@@ -92,8 +89,7 @@ services:
   
   ssi-bridge:
     build:
-      dockerfile: Dockerfile-ssi-bridge
-      context: ./
+      context: ./api/ssi-bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ssibridge.entrypoints=web"
@@ -117,6 +113,29 @@ services:
       - mongo
       - initialize-ssi-bridge
       - traefik
+
+  dashboard:
+    build:
+      context: ./dashboard
+    container_name: "is-dashboard"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.rule=PathPrefix(`/`)"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
+    environment:
+      - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
+      - VITE_IOTA_IS_SDK_GATEWAY_URL=http://0.0.0.0:3000
+    depends_on:
+      - ssi-bridge
+      - audit-trail-gw
+    ports:
+      - "3055:3000"
+
+
+
+
 
 volumes:
   mongodb_data_container:

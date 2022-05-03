@@ -208,6 +208,7 @@ export class SubscriptionService {
 
 		await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
 		await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
+		await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id);
 
 		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
 	}

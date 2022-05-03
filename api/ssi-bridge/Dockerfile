@@ -3,8 +3,6 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN cd shared-modules && npm install && npm run build
-
 RUN npm install
 RUN npm run build
 
