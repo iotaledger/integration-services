@@ -75,3 +75,20 @@ spec:
             name: ssi-bridge
             port:
               number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: integration-service-dashboard
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: is-dashboard
+            port:
+              number: 3000
