@@ -155,7 +155,6 @@ describe('test channel client', () => {
   // ***** READ HISTORY OF CHANNEL WITH PRESHARED KEY *****
 
   describe('test read history of channel with preshared key', () => {
-    let subscriptionLink: string;
     let channelPresharedKey: CreateChannelResponse;
     const presharedKey = 'test-shared-key';
     beforeEach(async () => {
@@ -173,7 +172,6 @@ describe('test channel client', () => {
           presharedKey,
           hasPresharedKey: true
         });
-        console.log(channelPresharedKey);
       } catch (e: any) {
         console.log('error: ', e);
         expect(e).toBeUndefined();
