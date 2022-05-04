@@ -108,25 +108,39 @@ export class ConfigurationService {
 	private assertConfig() {
 		const config = this.config;
 
-		if (config?.serverSecret === '<server-secret>') {
-			this.logger.error('please replace the default values!');
-		}
-
-		if (config?.serverSecret?.length !== 32) {
-			throw Error('Server secret must to have a length of 32!');
-		}
-
-		// apiKey can be empty if the host decides so
-		// commitHash is set automatically during deployment
-		const optionalEnvVariables = ['apiKey', 'commitHash'];
-		Object.values(config).map((value, i) => {
-			if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
-				if (optionalEnvVariables.includes(Object.keys(config)[i])) {
-					return;
-				}
-
-				this.logger.error(`env var is missing or invalid: ${Object.keys(config)[i]}`);
+		try {
+			if (config?.serverSecret === '<server-secret>') {
+				throw Error('Please replace the default SERVER_SECRET!');
 			}
-		});
+			if (config?.jwtSecret === '<jwt-secret>') {
+				throw Error('Please replace the default JWT_SECRET!');
+			}
+			if (config?.apiKey === '<optional-api-key>') {
+				throw Error('Please replace the default API_KEY or delete it!');
+			}
+			if (config?.commitHash === '<optional-commit-hash>') {
+				throw Error('Please replace the default COMMIT_HASH or delete it!');
+			}
+
+			if (config?.serverSecret?.length !== 32 || config?.jwtSecret?.length !== 32) {
+				throw Error('SERVER_SECRET and JWT_SECRET must have a length of 32!');
+			}
+
+			// apiKey can be empty if the host decides so
+			// commitHash is set automatically during deployment
+			const optionalEnvVariables = ['apiKey', 'commitHash'];
+			Object.values(config).map((value, i) => {
+				if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
+					if (optionalEnvVariables.includes(Object.keys(config)[i])) {
+						return;
+					}
+
+					throw Error(`Env var is missing or invalid: ${Object.keys(config)[i]}`);
+				}
+			});
+		} catch (e: any) {
+			this.logger.error(e.message);
+			process.exit(1);
+		}
 	}
 }

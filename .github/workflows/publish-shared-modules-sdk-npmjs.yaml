@@ -19,7 +19,7 @@ jobs:
       # build local package in advance
       - run: |
           cd api/shared-modules
-          npm install
+          npm ci
           npm run build
           npm publish --access=public
         env:

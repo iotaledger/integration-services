@@ -11,6 +11,11 @@ export const adminUser = {
   secretKey: 'Hn5Sw3yuLVA8HSbf42sqYwa3A9Bd5YfxGRqLMA3L2w8D'
 };
 
+export const normalUser = {
+  id: 'did:iota:G2xuoUpXYTboDgHWLKcQvEkBviBv9QYDAECtx2GpugqC',
+  secretKey: '8jxJoqcKQXRq3YfpWkPM5K6NuC4TWLWJobQR3Svqtv1p'
+}
+
 export const testChannel = {
   description: 'channelForTesting',
   subscriptionPassword: 'password',
@@ -18,4 +23,12 @@ export const testChannel = {
   seed: `randomSeed-${Math.ceil(Math.random() * 100000)}`,
   name: `testChannel-${Math.ceil(Math.random() * 100000)}`,
   topics: [{ type: 'data', source: 'test' }]
+};
+
+export const testChannelWrite = {
+  type: 'test-channel-data',
+  created: new Date().toISOString(),
+  metadata: 'client-sdk-jest',
+  publicPayload: 'This message was created within a test suit in the @iota/is-client',
+  payload: 'This message was created within a test suit in the @iota/is-client'
 };

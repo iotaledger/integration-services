@@ -15,6 +15,7 @@ const validUserMock = UserIdentityMock.userData;
 
 describe('test authentication routes', () => {
 	const serverSecret = 'very-secret-secret';
+	const jwtSecret = 'very-secret-secret';
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let userService: UserService, ssiService: SsiService;
 	let authenticationService: AuthenticationService, authenticationRoutes: AuthenticationRoutes;
@@ -30,7 +31,7 @@ describe('test authentication routes', () => {
 			ssiService,
 			{
 				jwtExpiration: '2 days',
-				serverSecret
+				jwtSecret
 			},
 			LoggerMock
 		);
