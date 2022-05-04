@@ -9,6 +9,7 @@ import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
 import * as SubscriptionDb from '../../../database/subscription';
 import * as ChannelDataDb from '../../../database/channel-data';
+import * as ChannelInfoDb from '../../../database/channel-info';
 import { AuthorMock } from '../../../test/mocks/streams';
 
 describe('test revoke subscription route', () => {
@@ -166,6 +167,7 @@ describe('test revoke subscription route', () => {
 			sequenceLink: 'testsequencelink',
 			author: AuthorMock
 		}));
+		const removeChannelSubscriberIdSpy = jest.spyOn(ChannelInfoDb, 'removeChannelSubscriberId').mockImplementation(async () => null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const removeSubscriptionSpy = jest.spyOn(SubscriptionDb, 'removeSubscription').mockImplementation(async () => null);
@@ -199,6 +201,7 @@ describe('test revoke subscription route', () => {
 		);
 		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
+		expect(removeChannelSubscriberIdSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.id, 'new-state');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, 'veryvery-very-very-server-secret');
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);

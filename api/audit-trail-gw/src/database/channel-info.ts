@@ -71,6 +71,24 @@ export const addChannelSubscriberId = async (channelAddress: string, subscriberI
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
+export const removeChannelSubscriberId = async (channelAddress: string, subscriberId: string) => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.subscriberIds || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			subscriberIds: subs.filter((s) => s !== subscriberId)
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
 export const deleteChannelInfo = async (channelAddress: string) => {
 	const query = { _id: channelAddress };
 	return MongoDbService.removeDocument(collectionName, query);

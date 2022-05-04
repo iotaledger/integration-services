@@ -1,5 +1,7 @@
 import { AccessRights, ChannelClient, CreateChannelResponse } from '..';
 import { adminUser, apiConfig, normalUser, testChannel, testChannelWrite } from './test.data';
+import { ClientConfig } from '../models/clientConfig';
+import { ApiVersion } from '../models/apiVersion';
 
 // 30 second timeout since tangle might be slow
 jest.setTimeout(30000);
@@ -19,6 +21,14 @@ describe('test channel client', () => {
     channelClient = new ChannelClient(apiConfig);
   });
   describe('test authentication', () => {
+    it('should have expected default config', async () => {
+      const config: ClientConfig = {
+        apiVersion: ApiVersion.v01
+      };
+      const tmpClient = new ChannelClient(config);
+      expect(tmpClient.useGatewayUrl).toBe(true);
+      expect(tmpClient.isGatewayUrl).toBe('/api/v0.1');
+    });
     it('should authenticate user', async () => {
       jest.spyOn(channelClient, 'get');
       jest.spyOn(channelClient, 'getHexEncodedKey');
@@ -147,87 +157,6 @@ describe('test channel client', () => {
 
         await channelClient.write(createdTestChannel.channelAddress, globalTestChannelWrite);
       } catch (e: any) {
-        expect(e.response.data).toMatchObject({ error: 'could not add the logs' });
-      }
-    });
-  });
-
-  // ***** READ HISTORY OF CHANNEL WITH PRESHARED KEY *****
-
-  describe('test read history of channel with preshared key', () => {
-    let channelPresharedKey: CreateChannelResponse;
-    const presharedKey = 'test-shared-key';
-    beforeEach(async () => {
-      try {
-        await channelClient.authenticate(adminUser.id, adminUser.secretKey);
-      } catch (e: any) {
-        console.log('error: ', e);
-        expect(e).toBeUndefined();
-      }
-    });
-    it('should create channel with preshared key', async () => {
-      try {
-        channelPresharedKey = await channelClient.create({
-          ...testChannel,
-          presharedKey,
-          hasPresharedKey: true
-        });
-      } catch (e: any) {
-        console.log('error: ', e);
-        expect(e).toBeUndefined();
-      }
-    });
-  });
-
-  // ***** CHANNEL SUBSCRIPTION AND READ *****
-
-  describe('test channel subscription and channel read', () => {
-    let subscriptionLink: string;
-    beforeEach(async () => {
-      try {
-        await channelClient.authenticate(adminUser.id, adminUser.secretKey);
-      } catch (e: any) {
-        console.log('error: ', e);
-        expect(e).toBeUndefined();
-      }
-    });
-    it('should request read access right to channel', async () => {
-      jest.spyOn(channelClient, 'requestSubscription');
-      try {
-        await channelClient.authenticate(normalUser.id, normalUser.secretKey);
-        // start spying after authentication to not catch the authentication post request
-        jest.spyOn(channelClient, 'post');
-        const response = await channelClient.requestSubscription(
-          createdTestChannel.channelAddress,
-          { accessRights: AccessRights.Read }
-        );
-        expect(response).toMatchObject({
-          seed: expect.any(String),
-          subscriptionLink: expect.any(String)
-        });
-        subscriptionLink = response.subscriptionLink;
-      } catch (e: any) {
-        console.log('error: ', e);
-        expect(e).toBeUndefined();
-      }
-      expect(channelClient.post).toHaveBeenCalledWith(
-        `${auditTrailUrl}/subscriptions/request/${createdTestChannel.channelAddress}`,
-        { accessRights: AccessRights.Read }
-      );
-    });
-
-    it('should authorize requested subscription', async () => {
-      jest.spyOn(channelClient, 'authorizeSubscription');
-      jest.spyOn(channelClient, 'post');
-      try {
-        const response = await channelClient.authorizeSubscription(
-          createdTestChannel.channelAddress,
-          { subscriptionLink }
-        );
-        expect(response).toMatchObject({
-          keyloadLink: expect.any(String)
-        });
-      } catch (e: any) {
         console.log('error: ', e);
         expect(e).toBeUndefined();
       }
@@ -256,10 +185,6 @@ describe('test channel client', () => {
       } catch (e: any) {
         expect(e.response.data).toMatchObject({ error: 'could not add the logs' });
       }
-      expect(channelClient.post).toHaveBeenCalledWith(
-        `${auditTrailUrl}/channels/logs/${createdTestChannel.channelAddress}`,
-        { payload: 'test' }
-      );
     });
   });
 

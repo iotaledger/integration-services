@@ -29,6 +29,10 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 
+	async removeChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
+		return ChannelInfoDb.removeChannelSubscriberId(channelAddress, channelSubscriberId);
+	}
+
 	async deleteChannelInfo(channelAddress: string) {
 		return ChannelInfoDb.deleteChannelInfo(channelAddress);
 	}
