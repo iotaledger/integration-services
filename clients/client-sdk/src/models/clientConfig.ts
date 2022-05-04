@@ -2,7 +2,7 @@ import { ApiVersion } from './apiVersion';
 
 export type ClientConfig = {
   apiKey?: string;
-  gatewayUrl?: string;
+  isGatewayUrl?: string;
   useGatewayUrl?: boolean;
   ssiBridgeUrl?: string;
   auditTrailUrl?: string;

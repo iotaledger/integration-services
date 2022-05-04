@@ -12,7 +12,7 @@ import { ClientConfig } from '../models/clientConfig';
  */
 export abstract class BaseClient {
   apiKey: string;
-  gatewayUrl: string;
+  isGatewayUrl: string;
   useGatewayUrl?: boolean;
   auditTrailUrl?: string;
   ssiBridgeUrl?: string;
@@ -22,7 +22,7 @@ export abstract class BaseClient {
   // Default config is a local api without an api key
   constructor({
     apiKey,
-    gatewayUrl,
+    isGatewayUrl,
     useGatewayUrl,
     ssiBridgeUrl,
     auditTrailUrl,
@@ -31,9 +31,9 @@ export abstract class BaseClient {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
     this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
-    this.gatewayUrl = gatewayUrl ? `${gatewayUrl}/api/${apiVersion}` : '';
+    this.isGatewayUrl = `${isGatewayUrl}/api/${apiVersion}`;
 
-    console.log(this.useGatewayUrl, this.gatewayUrl, this.auditTrailUrl, this.ssiBridgeUrl);
+    console.log(this.useGatewayUrl, this.isGatewayUrl, this.auditTrailUrl, this.ssiBridgeUrl);
 
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
@@ -64,7 +64,7 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
-    const url: string = this.useGatewayUrl ? this.gatewayUrl!! : this.ssiBridgeUrl!!;
+    const url: string = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
     const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
