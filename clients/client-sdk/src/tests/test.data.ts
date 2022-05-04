@@ -1,6 +1,8 @@
 import { ApiVersion } from '..';
+import { ClientConfig } from '../models';
 
-export const apiConfig = {
+export const apiConfig: ClientConfig = {
+  isGatewayUrl: '',
   ssiBridgeUrl: 'http://localhost:3001',
   auditTrailUrl: 'http://localhost:3002',
   apiVersion: ApiVersion.v01,
