@@ -24,20 +24,20 @@ Please make sure to have the following installed before moving forward:
 
 ## Download the Project
 
-1. Clone the project by running the following command:
+Clone the project by running the following command:
 
-    ```bash
-    git clone https://github.com/iotaledger/integration-services.git
-    ```
+```bash
+git clone https://github.com/iotaledger/integration-services.git
+```
 
 ## Configuration
 
 Use the Integration Services CLI to configure the API. The CLI configures your `.env` and `mongo-init.json` files.
 
-1. Navigate to the api folder:
+1. Navigate to the root folder:
 
 ```bash
-cd integration-services/api
+cd integration-services
 ```
 
 2. Configure the API:
@@ -48,7 +48,7 @@ npx @iota/is-cli setup-docker
 
 ## Run Integration Services API
 
-You can start the Integration Services API by running the following commands in the same `/api` directory:
+You can start the Integration Services API by running the following commands in the same root directory:
 
 ```bash
 docker-compose --env-file .env up --build
@@ -73,14 +73,16 @@ docker-compose ps
 You should be able to see all container except `api_initialize-audit-trail_1` and `api_initialize-ssi-bridge_1` in a `Up` state.
 
 ```
-            Name                          Command               State                       Ports
----------------------------------------------------------------------------------------------------------------------
-api_audit-trail-gw_1           docker-entrypoint.sh node  ...   Up
-api_initialize-audit-trail_1   docker-entrypoint.sh node  ...   Exit 0
-api_initialize-ssi-bridge_1    docker-entrypoint.sh node  ...   Exit 0
-api_mongo_1                    docker-entrypoint.sh mongod      Up       0.0.0.0:27017->27017/tcp
-api_ssi-bridge_1               docker-entrypoint.sh node  ...   Up
-traefik                        /entrypoint.sh --api.insec ...   Up       0.0.0.0:3000->80/tcp, 0.0.0.0:8080->8080/tcp
+                       Name                                     Command               State                       Ports                    
+-------------------------------------------------------------------------------------------------------------------------------------------
+integration-services_audit-trail-gw_1                       docker-entrypoint.sh node  ...   Up       3000/tcp                                    
+integration-services_initialize-audit-trail_1               docker-entrypoint.sh node  ...   Exit 0                                               
+integration-services_initialize-ssi-bridge_1                docker-entrypoint.sh node  ...   Exit 0                                               
+integration-services_ssi-bridge_1                           docker-entrypoint.sh node  ...   Up       3000/tcp                                    
+is-dashboard                                                docker-entrypoint.sh npm r ...   Up       0.0.0.0:3055->3000/tcp                      
+mongo                                                       docker-entrypoint.sh mongod      Up       0.0.0.0:27017->27017/tcp                    
+traefik                                                     /entrypoint.sh --api.insec ...   Up       0.0.0.0:3000->80/tcp, 0.0.0.0:8080->8080/tcp
+timsigl@Tims-MBP integration-services-test %                /entrypoint.sh --api.insec ...   Up       0.0.0.0:3000->80/tcp, 0.0.0.0:8080->8080/tcp
 ```
 
 ### Check Endpoints
@@ -97,4 +99,16 @@ curl http://localhost:3000/ssi-bridge/info
 
 :::info
 The API documentation for each endpoint **cannot** be reached currently. This issue will be fixed in a future release.
+:::
+
+### Dashboard
+
+We also supply a dashboard  with the Integration Services. You can reach the Dashboard in your Browser via:
+
+```bash
+http://localhost:3000
+```
+
+:::info
+To make requests from the dashboard to the api you have to have CORS enabled. For local testing purposes this can be done with a CORS browser plugin. On first load the dashboard might show a Javascript module error. This bug is not related to our implementation and can be fixed with a simple page reload.
 :::

@@ -33,10 +33,10 @@ git clone https://github.com/iotaledger/integration-services.git
 
 Use the Integration Services CLI to configure the API. The CLI configures your `.env` and `mongo-init.json` files.
 
-1. Navigate to the api folder: 
+1. Navigate to the root directory: 
 
 ```bash
-cd integration-services/api
+cd integration-services
 ```
 2. Configure the API: 
 
@@ -46,7 +46,7 @@ npx @iota/is-cli setup-node
 
 ### Start the MongoDB
 
-Now you can start docker-compose in the same `/api` directory to setup your mongo database.
+Now you can start docker-compose in the same root directory to setup your mongo database.
 
 ```
 docker-compose up -d mongo
@@ -61,7 +61,7 @@ f15ab2571369   mongo:latest  "docker-entrypoint.s…"   7 weeks ago    Up 7 week
 
 ### Setup SSI-Bridge
 
-1. Move into the folder `ssi-bridge`.
+1. Move into the folder `api/ssi-bridge`.
 2. Run the following commands to install dependencies, build the project, set up the API, and finally start the SSI-Bridge:
 
 ```bash
@@ -72,7 +72,7 @@ npm run setup-api
 npm start
 ```
 
-4. You can check if the service is running with the following command:
+3. To check if the service started run in your terminal:
 
 ```bash
 curl http://localhost:3001/info
@@ -80,7 +80,7 @@ curl http://localhost:3001/info
 
 ### Set up the Audit-Trail Gateway
 
-1. Move into the folder `audit-trail-gw`.
+1. Move into the folder `api/audit-trail-gw`.
 2.  Run the following commands to install dependencies, build the project, set up the API, and finally start the Audit-Trail Gateway:
 
 ```bash
@@ -91,7 +91,7 @@ npm run setup-api
 npm start
 ```
 
-4. You can check if the service is running with the following command:
+3. To check if the service started run in your terminal:
 
 ```bash
 curl http://localhost:3002/info
