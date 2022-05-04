@@ -1,5 +1,7 @@
 import { ChannelClient, CreateChannelResponse } from '..';
 import { adminUser, apiConfig, normalUser, testChannel, testChannelWrite } from './test.data';
+import { ClientConfig } from '../models/clientConfig';
+import { ApiVersion } from '../models/apiVersion';
 
 // 30 second timeout since tangle might be slow
 jest.setTimeout(30000);
@@ -15,6 +17,14 @@ describe('test channel client', () => {
     channelClient = new ChannelClient(apiConfig);
   });
   describe('test authentication', () => {
+    it('should have expected default config', async () => {
+      const config: ClientConfig = {
+        apiVersion: ApiVersion.v01
+      };
+      const tmpClient = new ChannelClient(config);
+      expect(tmpClient.useGatewayUrl).toBe(true);
+      expect(tmpClient.isGatewayUrl).toBe('/api/v0.1');
+    });
     it('should authenticate user', async () => {
       jest.spyOn(channelClient, 'get');
       jest.spyOn(channelClient, 'getHexEncodedKey');

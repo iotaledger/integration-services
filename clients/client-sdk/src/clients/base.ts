@@ -22,11 +22,11 @@ export abstract class BaseClient {
   // Default config is a local api without an api key
   constructor({
     apiKey,
-    isGatewayUrl,
-    useGatewayUrl,
-    ssiBridgeUrl,
-    auditTrailUrl,
-    apiVersion
+    ssiBridgeUrl = '',
+    auditTrailUrl = '',
+    isGatewayUrl = '',
+    useGatewayUrl = true,
+    apiVersion = ApiVersion.v01
   }: ClientConfig) {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
@@ -40,10 +40,10 @@ export abstract class BaseClient {
   }
 
   buildUrls(
-    useGatewayUrl = true,
+    useGatewayUrl?: boolean,
     ssiBridgeUrl?: string,
     auditTrailUrl?: string,
-    apiVersion = ApiVersion.v01
+    apiVersion?: ApiVersion
   ) {
     if (!useGatewayUrl && (!ssiBridgeUrl || !auditTrailUrl)) {
       throw new Error(
