@@ -26,9 +26,9 @@ import { BaseClient } from './base';
 export class ChannelClient extends BaseClient {
   private baseUrl: string;
 
-  constructor(config: ClientConfig = {}) {
+  constructor(config: ClientConfig) {
     super(config);
-    this.baseUrl = this.isGatewayUrl ? this.isGatewayUrl : this.auditTrailUrl!!;
+    this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.auditTrailUrl!!;
   }
 
   /**
