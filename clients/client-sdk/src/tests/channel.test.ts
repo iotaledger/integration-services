@@ -124,7 +124,7 @@ describe('test channel client', () => {
             publicPayload,
             payload
           }
-        });   
+        });
       } catch (e: any) {
         console.log('error: ', e);
         expect(e).toBeUndefined();
@@ -141,16 +141,12 @@ describe('test channel client', () => {
       try {
         await channelClient.authenticate(normalUser.id, normalUser.secretKey);
 
-        await channelClient.write(
-          createdTestChannel.channelAddress,
-          globalTestChannelWrite
-        );
-    
+        await channelClient.write(createdTestChannel.channelAddress, globalTestChannelWrite);
       } catch (e: any) {
         console.log('error: ', e);
         expect(e.response.data).toMatchObject({ error: 'could not add the logs' });
       }
-    })
+    });
   });
 
   // ***** CHANNEL SEARCH *****
@@ -163,7 +159,7 @@ describe('test channel client', () => {
         expect(e).toBeUndefined();
       }
     });
-    
+
     it('should find created channel', async () => {
       jest.spyOn(channelClient, 'search');
       jest.spyOn(channelClient, 'get');

@@ -23,9 +23,9 @@ import {
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
 
-  constructor(config: ClientConfig = {}) {
+  constructor(config: ClientConfig) {
     super(config);
-    this.baseUrl = this.isGatewayUrl ? this.isGatewayUrl : this.ssiBridgeUrl!!;
+    this.baseUrl = this.useGatewayUrl ? this.gatewayUrl!! : this.ssiBridgeUrl!!;
   }
 
   /**

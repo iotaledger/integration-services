@@ -3,7 +3,8 @@ import { ApiVersion } from '..';
 export const apiConfig = {
   ssiBridgeUrl: 'http://localhost:3001',
   auditTrailUrl: 'http://localhost:3002',
-  apiVersion: ApiVersion.v01
+  apiVersion: ApiVersion.v01,
+  useGatewayUrl: false
 };
 
 export const adminUser = {
@@ -14,7 +15,7 @@ export const adminUser = {
 export const normalUser = {
   id: 'did:iota:G2xuoUpXYTboDgHWLKcQvEkBviBv9QYDAECtx2GpugqC',
   secretKey: '8jxJoqcKQXRq3YfpWkPM5K6NuC4TWLWJobQR3Svqtv1p'
-}
+};
 
 export const testChannel = {
   description: 'channelForTesting',

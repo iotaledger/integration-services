@@ -12,7 +12,8 @@ import { ClientConfig } from '../models/clientConfig';
  */
 export abstract class BaseClient {
   apiKey: string;
-  isGatewayUrl?: string;
+  gatewayUrl: string;
+  useGatewayUrl?: boolean;
   auditTrailUrl?: string;
   ssiBridgeUrl?: string;
   jwtToken?: string;
@@ -21,14 +22,18 @@ export abstract class BaseClient {
   // Default config is a local api without an api key
   constructor({
     apiKey,
-    isGatewayUrl,
+    gatewayUrl,
+    useGatewayUrl,
     ssiBridgeUrl,
     auditTrailUrl,
     apiVersion
-  }: ClientConfig = {}) {
+  }: ClientConfig) {
     this.apiKey = apiKey || '';
+    this.useGatewayUrl = useGatewayUrl;
+    this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
+    this.gatewayUrl = gatewayUrl ? `${gatewayUrl}/api/${apiVersion}` : '';
 
-    this.buildUrls(isGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
+    console.log(this.useGatewayUrl, this.gatewayUrl, this.auditTrailUrl, this.ssiBridgeUrl);
 
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
@@ -37,24 +42,20 @@ export abstract class BaseClient {
   }
 
   buildUrls(
-    isGatewayUrl?: string,
+    useGatewayUrl = true,
     ssiBridgeUrl?: string,
     auditTrailUrl?: string,
     apiVersion = ApiVersion.v01
   ) {
-    if (isGatewayUrl && (ssiBridgeUrl || auditTrailUrl)) {
-      throw new Error('Define either a isGatewayUrl or ssiBridgeUrl and auditTrailUrl.');
+    if (!useGatewayUrl && (!ssiBridgeUrl || !auditTrailUrl)) {
+      throw new Error(
+        'Define a gatewayUrl or unset useGatewayUrl and use ssiBridgeUrl and auditTrailUrl'
+      );
     }
 
-    this.isGatewayUrl = isGatewayUrl && `${isGatewayUrl}/api/${apiVersion}`;
+    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api/${apiVersion}`;
 
-    this.auditTrailUrl = auditTrailUrl
-      ? `${auditTrailUrl}/api/${apiVersion}`
-      : `http://127.0.0.1:3002/api/${apiVersion}`;
-
-    this.ssiBridgeUrl = ssiBridgeUrl
-      ? `${ssiBridgeUrl}/api/${apiVersion}`
-      : `http://127.0.0.1:3001/api/${apiVersion}`;
+    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api/${apiVersion}`;
   }
 
   /**
@@ -63,7 +64,7 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
-    const url = this.isGatewayUrl ? this.isGatewayUrl : this.ssiBridgeUrl;
+    const url: string = this.useGatewayUrl ? this.gatewayUrl!! : this.ssiBridgeUrl!!;
     const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
