@@ -1,4 +1,4 @@
-import { ChannelClient, CreateChannelResponse } from '..';
+import { AccessRights, ChannelClient, CreateChannelResponse } from '..';
 import { adminUser, apiConfig, normalUser, testChannel, testChannelWrite } from './test.data';
 import { ClientConfig } from '../models/clientConfig';
 import { ApiVersion } from '../models/apiVersion';
@@ -13,6 +13,10 @@ describe('test channel client', () => {
   const globalTestChannel = testChannel;
   const globalTestChannelWrite = testChannelWrite;
   let createdTestChannel: CreateChannelResponse;
+
+  console.log(
+    'PLEASE only execute the tests with the ssi-bridge and audit-trail configured to a devnet node to not flood the mainnet with test data'
+  );
   beforeEach(() => {
     channelClient = new ChannelClient(apiConfig);
   });
@@ -154,6 +158,31 @@ describe('test channel client', () => {
         await channelClient.write(createdTestChannel.channelAddress, globalTestChannelWrite);
       } catch (e: any) {
         console.log('error: ', e);
+        expect(e).toBeUndefined();
+      }
+    });
+
+    it('should read channel', async () => {
+      jest.spyOn(channelClient, 'read');
+      try {
+        await channelClient.authenticate(normalUser.id, normalUser.secretKey);
+        // start spying after authentication to not catch the authentication get request
+        jest.spyOn(channelClient, 'get');
+        const response = await channelClient.read(createdTestChannel.channelAddress);
+        expect(response).toEqual([]);
+      } catch (e: any) {
+        console.log('error: ', e);
+        expect(e).toBeUndefined();
+      }
+    });
+
+    it('should not be able to write to channel since only read access rights are granted', async () => {
+      try {
+        await channelClient.authenticate(normalUser.id, normalUser.secretKey);
+        // start spying after authentication to not catch the authentication post request
+        jest.spyOn(channelClient, 'post');
+        await channelClient.write(createdTestChannel.channelAddress, { payload: 'test' });
+      } catch (e: any) {
         expect(e.response.data).toMatchObject({ error: 'could not add the logs' });
       }
     });

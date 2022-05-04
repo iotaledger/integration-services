@@ -22,7 +22,7 @@ export const normalUser = {
 export const testChannel = {
   description: 'channelForTesting',
   subscriptionPassword: 'password',
-  hasPresharedKey: true,
+  hasPresharedKey: false,
   seed: `randomSeed-${Math.ceil(Math.random() * 100000)}`,
   name: `testChannel-${Math.ceil(Math.random() * 100000)}`,
   topics: [{ type: 'data', source: 'test' }]
