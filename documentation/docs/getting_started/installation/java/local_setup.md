@@ -27,7 +27,8 @@ See project's [POM](https://github.com/albydeca/iota-is-sdk/blob/main/pom.xml). 
 
 ## Download and Build the Project
 
-Build from source
+Build from source:
+
 
 ```bash
 git clone git@github.com:albydeca/iota-is-sdk.git
