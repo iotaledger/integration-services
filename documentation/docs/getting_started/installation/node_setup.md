@@ -99,7 +99,7 @@ curl http://localhost:3002/info
 
 ## FAQ
 
-*I accidentally stopped the mongo db container (the database cannot be reached) can I start it again?*
+***I accidentally stopped the mongo db container (the database cannot be reached) can I start it again?***
 
 Yes, the container can be started again by running `docker start <container-id>` <br/>
 -> The container id can be found by running `docker ps -a`

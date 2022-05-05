@@ -53,7 +53,7 @@ You can start the Integration Services API by running the following commands in 
 ```bash
 docker-compose --env-file .env up --build
 ```
-
+It is totally normal to see `error : No root identity found!` while the containers are starting up. After startup there should be no remaining errors.
 Now you are done with the docker-compose setup. To make sure that everything works as expected read the [next section](#test-your-api) down below.
 
 ## Test your API
@@ -82,7 +82,6 @@ integration-services_ssi-bridge_1                           docker-entrypoint.sh
 is-dashboard                                                docker-entrypoint.sh npm r ...   Up       0.0.0.0:3055->3000/tcp                      
 mongo                                                       docker-entrypoint.sh mongod      Up       0.0.0.0:27017->27017/tcp                    
 traefik                                                     /entrypoint.sh --api.insec ...   Up       0.0.0.0:3000->80/tcp, 0.0.0.0:8080->8080/tcp
-timsigl@Tims-MBP integration-services-test %                /entrypoint.sh --api.insec ...   Up       0.0.0.0:3000->80/tcp, 0.0.0.0:8080->8080/tcp
 ```
 
 ### Check Endpoints
@@ -103,7 +102,7 @@ The API documentation for each endpoint **cannot** be reached currently. This is
 
 ### Dashboard
 
-We also supply a dashboard  with the Integration Services. You can reach the Dashboard in your Browser via:
+We also supply a dashboard  with the Integration Services. You can reach the dashboard in your browser via:
 
 ```bash
 http://localhost:3000
