@@ -74,7 +74,7 @@ helm install kong kong/kong
 sudo minikube tunnel
 ```
 
-5. Open **new terminal** and export the PROXY_IP variable by running the following command:
+5. Open a **new terminal** and export the PROXY_IP variable by running the following command:
 
 ```bash
 export PROXY_IP=export PROXY_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" service kong-kong-proxy)
@@ -85,7 +85,7 @@ You can check that you have exported the variable correctly by running the follo
 ```bash
 echo $PROXY_IP
 ```
-It should output the IP you have exported. In most of the cases it will be `http://127.0.0.1`.
+It should output the IP you have exported. In most of the cases this will be `http://127.0.0.1`.
 
 
 

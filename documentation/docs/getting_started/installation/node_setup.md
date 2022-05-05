@@ -10,11 +10,11 @@ keywords:
 
 # Local Setup
 
-This section will guide in setting up the Integration Service API using Node.js. It is mainly relevant for developers who want to contribute to the project or create a project fork.
+This section will guide you in setting up the Integration Services API using node.js. It is mainly relevant for developers who want to contribute to the project or create a project fork.
 
 ## Requirements
 
-Please make sure to have the following installed before moving forward:
+Please make sure to have the following dependencies installed before moving forward:
 
 * [node.js](https://nodejs.org/) min. v15.6.0
 * [docker](https://docs.docker.com/get-docker/)
@@ -23,7 +23,7 @@ Please make sure to have the following installed before moving forward:
 
 ## Download the Project
 
-Clone the project by running the following command:
+Freshly clone the project by running the following command:
 
 ```bash
 git clone https://github.com/iotaledger/integration-services.git

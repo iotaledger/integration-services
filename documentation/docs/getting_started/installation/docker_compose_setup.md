@@ -1,6 +1,6 @@
 ---
 image: /img/integration-services/logo/integration_services.png
-description: This section will guide in setting up the Integration Service API using Docker Compose.
+description: This section will guide you in setting up the Integration Service API using Docker Compose.
 keywords:
     - docker compose
     - setup API
@@ -11,11 +11,11 @@ keywords:
 
 # Local Setup
 
-This section will guide in setting up the Integration Service API using Docker Compose.
+This section will guide you in setting up the Integration Services API using Docker Compose.
 
 ## Requirements
 
-Please make sure to have the following installed before moving forward:
+Please make sure to have the following dependencies installed before continuing:
 
 -   [docker](https://docs.docker.com/get-docker/)
 -   [docker-compose](https://docs.docker.com/compose/install/)
@@ -54,7 +54,7 @@ You can start the Integration Services API by running the following commands in 
 docker-compose --env-file .env up --build
 ```
 It is totally normal to see `error : No root identity found!` while the containers are starting up. After startup there should be no remaining errors.
-Now you are done with the docker-compose setup. To make sure that everything works as expected read the [next section](#test-your-api) down below.
+Now you are done with the docker-compose setup. To make sure that everything works as expected read the next section.
 
 ## Test your API
 
@@ -102,7 +102,7 @@ The Swagger API documentation **cannot** be reached currently. This issue will b
 
 ## Dashboard
 
-We also supply a dashboard  with the Integration Services. You can reach the dashboard in your browser via:
+We also supply a dashboard with the Integration Services. You can reach the dashboard in your browser via:
 
 ```bash
 http://localhost:3000
@@ -116,6 +116,6 @@ To make requests from the dashboard to the api you have to have CORS enabled. Fo
 
 ***Im getting errors like `error : could not connect to mongodb` and  `error : MongoError: Authentication failed.` when setting up the container.***
 
-Please make sure to delete all old mongodb containers in your Integration Services installation you created earlier.
+Please make sure to delete all old MongoDB containers in your Integration Services installation you created earlier.
 -> All data in your local database will be lost <br/>
 -> Stop the container: `docker stop mongo` and delete it `docker rm -v  mongo`
