@@ -65,6 +65,7 @@ Please set up the following files in order to run the code locally:
   api-version=vX.X
   api-url=XXXXXXX
   identity-file=adminIdentity.json
+  ```
 - `adminIdentity.json` - will contain the admin identity object (json file with elements `doc` and `key`)
 
 
