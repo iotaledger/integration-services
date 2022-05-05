@@ -67,6 +67,7 @@ Please set up the following files in order to run the code locally:
   identity-file=adminIdentity.json
 - `adminIdentity.json` - will contain the admin identity object (json file with elements `doc` and `key`)
 
+
 You are now ready to use the JAR and access the classes. Please remember to keep the `env.properties` *in the same folder as the JAR*.
 The JAR can be used as a dependency to run the examples, which, contrary to the node implementation, exist as part of their own package
 which depends on this project's JAR (see `examples/pom.xml` in the repo)
