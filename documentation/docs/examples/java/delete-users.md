@@ -38,7 +38,7 @@ identityClient.remove(someIdentity.getId(), true);
 ```
 
 :::note
-You can only remove an identity in the Integration Services backend, **the Identity cannot be removed from the Tangle**.
+You cannot delete an identity from the Tangle. You can only remove it from the Integration Services database.
 :::
 
 ## Get an Identity Directly from the Tangle
