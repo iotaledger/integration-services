@@ -2,6 +2,7 @@
 image: /img/integration-services/architecture-integration.png
 description: The Ecommerce-Audit Trail Gateway allows you to create and share immutable data channels and store the channel’s data on the IOTA Tangle.
 keywords:
+- how to
 - subscribe to channel
 - ecommerce
 - immutable data channel

@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: You can install the Integration Services using Kubernetes, Docker-Compose or NodeJs. 
 keywords:
+- how to
 - install
 - Kubernetes
 - Docker-compose

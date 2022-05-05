@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section describes all the configuration parameters which you can customize in your Integration Service Kubernetes instance.
 keywords:
+- how to
 - integration services kubernetes
 - services kubernetes instance
 - Kubernetes

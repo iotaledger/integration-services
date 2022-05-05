@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: The example-3 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates a new identity, removes it from Integration Services, and verifies that the identity still exists on the Tangle.
 keywords:
+- how to
 - delete users
 - retrieve identity from tangle
 - verify identity

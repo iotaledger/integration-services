@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: Access your Integration Services API using ingress, port forwarding, a load balancer service or an Ingress Controller.  
 keywords:
+- how to
 - minikube nginx ingres
 - ingres controller
 - kubectl port

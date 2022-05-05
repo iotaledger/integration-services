@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section will show you an example on how to authenticate using Java.
 keywords:
+- how to
 - authentication
 - jwt
 - nonce
@@ -30,9 +31,9 @@ This example uses the following identity:
 
 ## Prerequisites 
 
-* JDK 16 (recommended)
+* [JDK 16](https://openjdk.java.net/projects/jdk/16/) (recommended)
 * A reference to an instance of the [Integration Services API](https://github.com/iotaledger/integration-services)
-* Maven
+* [Maven](https://maven.apache.org/)
 
 ### Required Packages 
 
@@ -48,11 +49,12 @@ Ideally every dependency listed in the project's [POM](https://github.com/albyde
 
 ### 1. Request a Nonce
 
-First, request a nonce and supply your identity id.
+First, request a nonce and supply your id.
 
 :::info
 You can find your current API version using the [http://localhost:3000/info](http://localhost:3000/info) endpoint. This example uses `v0.1`.
 :::
+
 ```java
 private String createNonce(String didId)
 			throws IOException, URISyntaxException, ParseException, InvalidAPIResponseException {
@@ -78,6 +80,7 @@ public JSONObject sendIOTAGetRequest(String endpoint, Map<String, String> params
 ```
 
 The returned response body  will look like this .js object.
+
 ```js
 { nonce: '3eaf8814caa842d94fdb96fc26d02f7c339e65ff' }
 ```
@@ -85,6 +88,7 @@ The returned response body  will look like this .js object.
 ### 2. Hash the Nonce
 
 After you have retrieved the nonce, you should hash it. You can use insert java method to hash the nonce with the SHA-256 hash function and convert it to hexadecimal.
+
 ```java
 public void hashAndSignNonce(String privateKey, String publicKey, String nonce, String didId)
 			throws IOException, CryptoException, URISyntaxException, InvalidAPIResponseException {
@@ -98,6 +102,7 @@ public void hashAndSignNonce(String privateKey, String publicKey, String nonce, 
         [...]
 ```
 The example's nonce will generate the following hash:
+
 ```
 6d748f209e5af1f5b8825f7822d6659c45c874076cd2b3337c7861fd94cd3ba5
 ```
@@ -157,7 +162,7 @@ The last step is to request the JWT. You can use the following code snippet with
 	}
 ```
 
-The returned js object will contain the following JWT:
+The returned JS object will contain the following JWT:
 
 ```js
 {
@@ -168,6 +173,7 @@ The returned js object will contain the following JWT:
 ### 5. Set the JWT as Request Header
 
 This is an example of a GET request to the API with the JWT from the last step included in the `Authorization`:
+
 ```java
 private HttpEntity sendGetRequest(String endpoint, Map<String, String> params, boolean needsBearer,
 			String presharedKey, CloseableHttpClient client) throws URISyntaxException, ClientProtocolException,

@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: The example-4 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates and verifies identities and credentials.
 keywords:
+- how to
 - create identity
 - create credential
 - validate credential

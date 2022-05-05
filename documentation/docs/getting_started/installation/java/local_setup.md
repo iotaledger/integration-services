@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section will guide in setting up the Integration Service API using Java.
 keywords:
+- how to
 - Java
 - setup API
 - configure
@@ -27,6 +28,7 @@ See project's [POM](https://github.com/albydeca/iota-is-sdk/blob/main/pom.xml). 
 ## Download and Build the Project
 
 Build from source
+
 ```bash
 git clone git@github.com:albydeca/iota-is-sdk.git
 cd iota-is-sdk
@@ -36,6 +38,7 @@ mvn clean install
 or download JAR from [MVNRepository](https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk/0.0.1)
 
 or simply add to your POM if you wish to import the codebase into a wider project:
+
 ```xml
 <!-- https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk -->
 <dependency>
@@ -46,6 +49,7 @@ or simply add to your POM if you wish to import the codebase into a wider projec
 ```
 
 Gradle more your thing? Please add to your dependencies:
+
 ```
 implementation group: 'net.gradbase', name: 'iota.is.sdk', version: '0.0.1'
 ```
@@ -67,6 +71,7 @@ The JAR can be used as a dependency to run the examples, which, contrary to the 
 which depends on this project's JAR (see `examples/pom.xml` in the repo)
 
 Note that the sensitive variables are accessed in the code as follows:
+
 ```java
 public BaseClient() throws FileNotFoundException, IOException {
     Properties appProps = new Properties();
@@ -77,6 +82,7 @@ public BaseClient() throws FileNotFoundException, IOException {
     this.jwt = null;
 }
 ```
+
 Anyone who wishes to implement such access in a more convenient way for their needs is welcome to make the changes and submit a pull request.
 
 ### Run Integration Services API

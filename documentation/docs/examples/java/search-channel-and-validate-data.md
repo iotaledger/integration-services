@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: The example-7 script creates 2 identities, and later uses them to demonstrate how you can detect if data has been tampered with by validating using the Tangle. 
 keywords:
+- how to
 - channels
 - authorize channel
 - subscribe channel
