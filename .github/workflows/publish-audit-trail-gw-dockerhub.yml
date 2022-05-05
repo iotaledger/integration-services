@@ -7,7 +7,7 @@ on:
       - 'develop'
     tags:
       - 'v*'
-      - 'audit-trail-gw-*'
+      - 'audit-trail-gw-v*'
     paths: 
       - "api/audit-trail-gw/**"
       - ".github/workflows/publish-audit-trail-gw-dockerhub.yml"
