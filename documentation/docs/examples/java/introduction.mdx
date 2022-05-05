@@ -132,7 +132,8 @@ It is a JSON file like the following:
 If you have a JSON Identity, you can authorize your client as follows:
 
 ```java
-  client.authenticate(newUserIdentity.getJSONObject("doc").getString("id"),
-			  newUserIdentity.getJSONObject("key").getString("public"),
-				newUserIdentity.getJSONObject("key").getString("secret"));
+  String id = newUserIdentity.getJSONObject("doc").getString("id");
+  String pubKey = newUserIdentity.getJSONObject("key").getString("public");
+  String privKey = newUserIdentity.getJSONObject("key").getString("secret");
+  client.authenticate(id, pubKey, privKey);
 ```
