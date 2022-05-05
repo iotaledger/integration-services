@@ -94,7 +94,6 @@ You can get an identity using the following script (no auth required):
   System.out.println("username: " + randomUsername);
   JSONObject newUserIdentity = client.create(randomUsername, claim);
   System.out.println("created new user " + newUserIdentity);
-
 ```
 
 The generated identity is stored on the IOTA Tangle and follows [did-core specifications](https://www.w3.org/TR/did-core/).
