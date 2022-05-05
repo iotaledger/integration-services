@@ -43,7 +43,7 @@ cd integration-services
 2. Configure the API:
 
 ```bash
-npx @iota/is-cli setup-docker
+npx @iota/is-cli@latest setup-docker
 ```
 
 ## Run Integration Services API
@@ -97,10 +97,10 @@ curl http://localhost:3000/ssi-bridge/info
 ```
 
 :::info
-The API documentation for each endpoint **cannot** be reached currently. This issue will be fixed in a future release.
+The Swagger API documentation **cannot** be reached currently. This issue will be fixed in a future release.
 :::
 
-### Dashboard
+## Dashboard
 
 We also supply a dashboard  with the Integration Services. You can reach the dashboard in your browser via:
 
@@ -111,3 +111,11 @@ http://localhost:3000
 :::info
 To make requests from the dashboard to the api you have to have CORS enabled. For local testing purposes this can be done with a CORS browser plugin. On first load the dashboard might show a Javascript module error. This bug is not related to our implementation and can be fixed with a simple page reload.
 :::
+
+## FAQ
+
+***Im getting errors like `error : could not connect to mongodb` and  `error : MongoError: Authentication failed.` when setting up the container.***
+
+Please make sure to delete all old mongodb containers in your Integration Services installation you created earlier.
+-> All data in your local database will be lost <br/>
+-> Stop the container: `docker stop mongo` and delete it `docker rm -v  mongo`

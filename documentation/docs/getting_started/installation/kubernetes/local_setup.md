@@ -68,7 +68,7 @@ helm repo add kong https://charts.konghq.com
 helm install kong kong/kong
 ```
 
-4. Open a terminal and type run the following command to expose the kong service:
+4. Expose the kong service (**Do NOT close this terminal**):
 
 ```bash
 sudo minikube tunnel
