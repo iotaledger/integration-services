@@ -35,7 +35,7 @@ mvn clean install
 
 or download JAR from [MVNRepository](https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk/0.0.1)
 
-or simply add to your POM:
+or simply add to your POM if you wish to import the codebase into a wider project:
 ```xml
 <!-- https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk -->
 <dependency>
@@ -45,9 +45,14 @@ or simply add to your POM:
 </dependency>
 ```
 
+Gradle more your thing? Please add to your dependencies:
+```
+implementation group: 'net.gradbase', name: 'iota.is.sdk', version: '0.0.1'
+```
+
 ## Configuration
 
-Please set up the following files in order to generate the JAR and run the code locally:
+Please set up the following files in order to run the code locally:
 
 - `env.properties` - with the following structure:
   ```
@@ -57,10 +62,6 @@ Please set up the following files in order to generate the JAR and run the code 
   identity-file=adminIdentity.json
 - `adminIdentity.json` - will contain the admin identity object (json file with elements `doc` and `key`)
 
-Then, perform the following steps:
-```bash
-mvn clean install
-```
 You are now ready to use the JAR and access the classes. Please remember to keep the `env.properties` *in the same folder as the JAR*.
 The JAR can be used as a dependency to run the examples, which, contrary to the node implementation, exist as part of their own package
 which depends on this project's JAR (see `examples/pom.xml` in the repo)

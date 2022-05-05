@@ -19,7 +19,8 @@ script authenticates an Integration Service client to manage Identities using th
 You can run the example with the following command:
 
 ```bash
-TODO
+cd /path/to/examples/folder/
+mvn exec:java -Dexec.mainClass=net.gradbase.examples.CreateChannel
 ```
 
 ## Create Channel
