@@ -14,7 +14,6 @@ on:
   pull_request:
     branches:
       - 'master'
-      - 'develop'
     paths: 
       - "api/audit-trail-gw/**"
       - ".github/workflows/publish-audit-trail-gw-dockerhub.yml"

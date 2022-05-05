@@ -14,7 +14,6 @@ on:
   pull_request:
     branches:
       - 'master'
-      - 'develop'
     paths: 
       - "api/ssi-bridge/**"
       - ".github/workflows/publish-ssi-bridge-dockerhub.yml"
