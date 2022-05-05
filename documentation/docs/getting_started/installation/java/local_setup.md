@@ -96,5 +96,5 @@ The codebase is divided into three parts:
 
 * `IdentityClient` allows the developer to create, update, delete users, add/revoke/check their credentials and manage trusted authorities. Self-Sovereign Identity (SSI) developers should make use of this part.
 * `ChannelClient` allows the developer to create, delete data channels (IOTA Streams), manage all subscription-related actions for those channels, push and pull data. IoT developers might want to use this to implement M2M communications.
-* `examples` provides a set of sample activities that show the potential of what can be done with the codebase, and also acts as a rudimentary testsuite. More about these can be found in the [dedicated section](../../../examples/java/introduction.mdx).
+* `examples` provides a set of sample activities that show the potential of what can be done with the codebase, and also acts as a rudimentary test suite. More about these can be found in the [dedicated section](../../../examples/java/introduction.mdx).
 
