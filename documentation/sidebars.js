@@ -61,8 +61,13 @@ module.exports = {
           items: ["getting_started/installation/nodejs/local_setup"],
         },
         {
-          type: "category",
-          label: "Kubernetes",
+          type: 'category',
+          label: 'Java',
+          items: ['getting_started/installation/java/local_setup']
+        },
+        {
+          type: 'category',
+          label: 'Kubernetes',
           items: [
             "getting_started/installation/kubernetes/local_setup",
             "getting_started/installation/kubernetes/configuration",
@@ -87,10 +92,11 @@ module.exports = {
           type: "category",
           label: "Authentication",
           items: [
-            "basics/authentication/concept",
-            "basics/authentication/example_node",
-            "basics/authentication/example_is_sdk",
-          ],
+            'basics/authentication/concept',
+            'basics/authentication/example_node',
+            'basics/authentication/example_is_sdk',
+            'basics/authentication/example_java',
+          ]
         },
         "basics/identity",
         "basics/streams",
@@ -101,16 +107,36 @@ module.exports = {
       label: "Examples",
       collapsed: true,
       items: [
-        "examples/introduction",
-        "examples/how-to-run-examples",
-        "examples/create-identity-and-credentials",
-        "examples/update-users",
-        "examples/delete-users",
-        "examples/trusted-authorities",
-        "examples/create-channel",
-        "examples/authorize-to-channel",
-        "examples/search-channel-and-validate-data",
-      ],
+        {
+          type: 'category',
+          label: 'Node.js',
+          items: ['examples/node/introduction',
+          'examples/node/how-to-run-examples',
+          'examples/node/create-identity-and-credentials',
+          'examples/node/update-users',
+          'examples/node/delete-users',
+          'examples/node/trusted-authorities',
+          'examples/node/create-channel',
+          'examples/node/authorize-to-channel',
+          'examples/node/search-channel-and-validate-data'
+        ]
+        },
+        {
+          type: 'category',
+          label: 'Java',
+          items: ['examples/java/introduction',
+          'examples/java/how-to-run-examples',
+          'examples/java/create-identity-and-credentials',
+          'examples/java/update-users',
+          'examples/java/delete-users',
+          'examples/java/trusted-authorities',
+          'examples/java/create-channel',
+          'examples/java/authorize-to-channel',
+          'examples/java/search-channel-and-validate-data'
+        ]
+        },
+        
+      ]
     },
     {
       type: "doc",

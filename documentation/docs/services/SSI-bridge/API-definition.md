@@ -2,6 +2,7 @@
 image: /img/integration-services/diagrams/ecommerce-ssi-bridge.jpeg
 description: The SSI Bridge Service API implementation provides an Identity Service, Authentication Service, and Verification Service to integrate IOTA Identity seamlessly.
 keywords:
+- how to
 - API definition
 - Architecture overview
 - identity services
