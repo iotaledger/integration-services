@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section will guide in setting up the Integration Service API using Docker Compose.
 keywords:
+- how to
 - docker compose
 - setup API
 - configure

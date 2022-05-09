@@ -1,7 +1,20 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: API Reference documentation for the integration Services.
+keywords:
+- how to
+- API Reference
+- models
+- endpoints
+- v1.0.0
+---
+
 # SSI Bridge API Documentation
 This is the API documentation for the SSI Bridge of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/ssi-bridge/introduction).
 
-## Version: v0.1
+## Version: 1.0.0 
+
+## Endpoints
 
 ### /authentication/prove-ownership/{id}
 

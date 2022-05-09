@@ -2,12 +2,13 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section introduces the authentication schema used in the Integration Services.
 keywords:
-  - authentication
-  - jwt
-  - nonce
-  - not-authenticated
-  - 401
-  - explanation
+- how to
+- authentication
+- jwt
+- nonce
+- not-authenticated
+- 401
+- explanation
 ---
 
 # Concept

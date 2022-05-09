@@ -37,7 +37,7 @@ This documentation has eight sections.
 
 1. [Getting started](getting_started/overview.md): All the resources you need to get started.
 2. **Services**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md).
-3. [Examples](examples/introduction): Examples on creating and managing decentralized identities, verifiable
+3. [Examples](examples/node/introduction): Examples on creating and managing decentralized identities, verifiable
    credentials, and channels.
 4. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
 5. [API Reference](api_reference): Detailed specification of all endpoints.
@@ -51,8 +51,14 @@ This documentation has eight sections.
 If you are looking for a place to discuss this library, or are in need of support head to
 our [Discord channel](https://discord.gg/iota) #integration-services.
 
-:::caution
+:::danger
 
 When using the demo integration services deployment, please refrain from logging any personal data. The framework is still under development and should only be used for testing. As multiple entities can have access to this demo and its associated database, the IOTA foundation cannot be held responsible for any data logged using this deployment. If you need a dedicated and secure solution for a production-ready use case, either deploy your IS locally or please get in touch [integrations@iota.org](mailto:integrations@iota.org) so we can assist you with our dedicated expertise.
+
+:::
+
+:::caution Bug Reporting
+
+Please report any bugs found whilst engaging with any part of the integration services to [integrations@iota.org](mailto:integrations@iota.org)
 
 :::

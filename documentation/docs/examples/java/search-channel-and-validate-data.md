@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: The example-7 script creates 2 identities, and later uses them to demonstrate how you can detect if data has been tampered with by validating using the Tangle. 
 keywords:
+- how to
 - channels
 - authorize channel
 - subscribe channel
@@ -11,7 +12,7 @@ keywords:
 
 # Search Channel and Validate Data
 
-The [example-7](https://github.com/iotaledger/integration-services/blob/master/clients/client-sdk/examples/5-SearchChannelAndValidateData.ts)
+The [example-7](https://github.com/albydeca/iota-is-sdk/blob/main/examples/src/main/java/net/gradbase/examples/SearchChannelAndValidateData.java)
 script is similar to previous example ([Authorize Channel](authorize-to-channel)) that creates a channel as `Owner` and authorizes a `User` to write on it but:
 
 1. `Owner` sends some data on the channel.
@@ -21,14 +22,15 @@ script is similar to previous example ([Authorize Channel](authorize-to-channel)
 You can run the example with the following command:
 
 ```bash
-npm run example-7
+cd /path/to/examples/folder/
+mvn exec:java -Dexec.mainClass=net.gradbase.examples.SearchChannelAndValidateData
 ```
 
 ## Validate Channel's Data 
 
-Since the signature do not match `results` is a set of tampered data, so the validation will notify it when running the following script:
+Since the signature does not match, `results` is a set of tampered data, so the validation will notify it when running the following script:
 
-```js
+```java
 // Now try to validate the manipulated data
-const validationResult2 = await userClient.validate(channelAddress, results);
+JSONArray validated = userClient.validate(channelAddress, resuts);
 ```
