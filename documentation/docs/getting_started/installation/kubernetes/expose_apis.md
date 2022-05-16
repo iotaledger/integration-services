@@ -63,7 +63,7 @@ kubectl port-forward svc/integration-service-api 3000:3000
 This command will expose APIs on port 3000 of the local host.
 
 If you prefer to use visual tool we suggest you
-use [Kube Forwarder]([https://link](https://kube-forwarder.pixelpoint.io/)).
+use [Kube Forwarder](https://kube-forwarder.pixelpoint.io/).
 
 ## Load Balancer Service
 
