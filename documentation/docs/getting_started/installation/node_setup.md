@@ -42,7 +42,7 @@ cd integration-services
 2. Configure the API: 
 
 ```bash
-npx @iota/is-cli setup-node
+npx @iota/is-cli@latest setup-node
 ```
 
 ### Start the MongoDB
