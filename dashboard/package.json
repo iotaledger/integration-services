@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "prod": "svelte-kit dev --host=0.0.0.0",
     "dev": "svelte-kit dev --port ${PORT:-3055}",
