@@ -3,6 +3,7 @@ import { StreamsService } from './streams-service';
 import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
 import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
 import { ChannelLogRequestOptions, Topic } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -40,14 +41,15 @@ export class ChannelService {
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
+		type?: ChannelType;
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
 		}
 
-		const res = await this.streamsService.create(seed, key);
+		const res = await this.streamsService.create(type === ChannelType.public, seed, key);
 
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');
@@ -73,7 +75,8 @@ export class ChannelService {
 			authorId: id,
 			name,
 			description,
-			channelAddress: res.channelAddress
+			channelAddress: res.channelAddress,
+			type
 		});
 
 		return {

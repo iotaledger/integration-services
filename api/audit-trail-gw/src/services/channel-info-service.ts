@@ -45,6 +45,7 @@ export class ChannelInfoService {
 		const channelInfoPersistence: ChannelInfoPersistence = {
 			created: ci.created ? getDateFromString(ci.created) : null,
 			authorId: ci.authorId,
+			type: ci.type,
 			name: ci.name,
 			description: ci.description,
 			subscriberIds: ci.subscriberIds || [],

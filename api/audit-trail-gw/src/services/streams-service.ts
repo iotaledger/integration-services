@@ -2,7 +2,7 @@ import streams, {
 	Address,
 	Author,
 	Subscriber,
-	ChannelType,
+	ChannelType as StreamsChannelType,
 	StreamsClient,
 	ClientBuilder,
 	PublicKeys,
@@ -35,6 +35,7 @@ export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
 	async create(
+		isPublic: boolean,
 		seed?: string,
 		presharedKey?: string
 	): Promise<{
@@ -51,9 +52,13 @@ export class StreamsService {
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
-
 			const client = await this.getClient(this.config.node, this.config.permaNode);
-			const author = Author.fromClient(client, seed, ChannelType.MultiBranch);
+			let author;
+			if (isPublic) {
+				author = Author.fromClient(client, seed, StreamsChannelType.SingleBranch);
+			} else {
+				author = Author.fromClient(client, seed, StreamsChannelType.MultiBranch);
+			}
 			const announceResponse = await author.clone().send_announce();
 			const announcementAddress = announceResponse.link;
 			const announcementLink = announcementAddress.copy().toString();

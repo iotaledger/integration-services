@@ -19,7 +19,7 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { name, description, topics, seed, hasPresharedKey, presharedKey } = req.body as CreateChannelBody;
+			const { name, description, topics, seed, hasPresharedKey, presharedKey, type } = req.body as CreateChannelBody;
 			const { id } = req.user;
 
 			if (!id) {
@@ -31,7 +31,16 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
 			}
 
-			const channel = await this.channelService.create({ id, name, description, topics, hasPresharedKey, seed, presharedKey });
+			const channel = await this.channelService.create({
+				id,
+				name,
+				description,
+				topics,
+				hasPresharedKey,
+				seed,
+				presharedKey,
+				type
+			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);
