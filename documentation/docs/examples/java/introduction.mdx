@@ -2,48 +2,49 @@
 image: /img/logo/integration_services.png
 description: The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
 keywords:
+- how to
 - integration services sdk
 - sdk
 - decentralized identity
-- yarn
-- npm
+- maven
+- java
 ---
 
 # Introduction
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 
-The following sections  will guide you in how to use the [Integration Services Client](https://www.npmjs.com/package/@iota/is-client).
-The Integration Services Client makes it easy to manage decentralized identities and secure channels (Audit Trail).
+The following sections  will guide you in how to use the [Integration Services SDK](https://www.npmjs.com/package/iota-is-sdk).
+The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
 
-You should have a basic understanding of [decentralized identities](../basics/identity)
+You should have a basic understanding of [decentralized identities](../../basics/identity)
 to get the most out of the following examples.
 
 ## Install
 
-You can install the Integration Services Client using [npm](https://npmjs.com/) or [yarn](https://yarnpkg.com/).
+Build from source:
 
-<Tabs>
-<TabItem value="npm" label="npm">
 
 ```bash
-npm install @iota/is-client
+git clone git@github.com:albydeca/iota-is-sdk.git
+cd iota-is-sdk
+mvn clean install
 ```
 
-</TabItem>
-<TabItem value="yarn" label="Yarn">
+or download JAR from [MVNRepository](https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk/0.0.1)
 
-```bash
-yarn add @iota/is-client
+or simply add to your POM:
+```xml
+<!-- https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk -->
+<dependency>
+    <groupId>net.gradbase</groupId>
+    <artifactId>iota.is.sdk</artifactId>
+    <version>0.0.1</version>
+</dependency>
 ```
-
-</TabItem>
-</Tabs>
 
 ## Clients
 
-The Integration Services package has two different clients you can use:
+The Integration Services SDK has two different clients you can use:
 
 ### IdentityClient
 
@@ -64,29 +65,13 @@ You can use the `ChannelClient` to access Audit Trail features. These include, b
 * [Reading and Writing on a channel](create-channel#write-on-a-channel)
 
 
-You can import and configure these clients using a `ClientConfig` object:
+You can import and configure these clients using a `env.properties` object which will populate the `BaseClient` class:
 
-```js
-
-import { ClientConfig, IdentityClient, ChannelClient } from '@iota/is-client';
-
-const config: ClientConfig = {
-    isGatewayUrl: process.env.IS_GATEWAY_URL,   // used in production (default: undefined)
-    ssiBridgeUrl: process.env.SSI_BRIDGE_URL,   // used in local development (default: http://127.0.0.1:3001)
-    auditTrailUrl: process.env.AUDIT_TRAIL_URL, // used in local development (default: http://127.0.0.1:3002)
-    apiKey: process.env.API_KEY,                // can be setup in the API to restrict access 
-    apiVersion: ApiVersion.v01                  // API version (default: v0.1)
-};
-
-...
-const identityClient = new IdentityClient(config);
-...
-
-...
-const channelClient = new ChannelClient(config);
-...
-
-
+ ```
+  api-key=XXXXXXX
+  api-version=vX.X
+  api-url=XXXXXXX
+  identity-file=adminIdentity.json
 ```
 
 ## Authorization
@@ -100,11 +85,16 @@ The Integration Services use a JWT token based authorization mechanism which beh
 
 You can get an identity using the following script (no auth required):
 
-```js
-import { IdentityJson } from '@iota/is-client';
-...
+```java
+  IdentityClient client = new IdentityClient();
+  JSONObject jsonClaim = new JSONObject().put("type", "Person").put("name", "randomName");
 
-const identity = await identityClient.create('User') as IdentityJson;
+  Claim claim = new Claim(jsonClaim);
+
+  final String randomUsername = Utils.getRandomUsernameOfLength(5);
+  System.out.println("username: " + randomUsername);
+  JSONObject newUserIdentity = client.create(randomUsername, claim);
+  System.out.println("created new user " + newUserIdentity);
 ```
 
 The generated identity is stored on the IOTA Tangle and follows [did-core specifications](https://www.w3.org/TR/did-core/).
@@ -139,10 +129,11 @@ It is a JSON file like the following:
 }
 ```
 
-If you have a JSON Identity, you can authorize your client with the script:
+If you have a JSON Identity, you can authorize your client as follows:
 
-```js
-const identity = // ... did-core json object ...
-
-await identityClient.authenticate(identity.doc.id, identity.key.secret);
+```java
+  String id = newUserIdentity.getJSONObject("doc").getString("id");
+  String pubKey = newUserIdentity.getJSONObject("key").getString("public");
+  String privKey = newUserIdentity.getJSONObject("key").getString("secret");
+  client.authenticate(id, pubKey, privKey);
 ```

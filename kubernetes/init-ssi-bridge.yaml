@@ -13,8 +13,6 @@ spec:
           imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "setup-api"]
           env:
-            - name: "SERVER_IDENTITY_FILE"
-              value: "/config/server-identity.json"
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:

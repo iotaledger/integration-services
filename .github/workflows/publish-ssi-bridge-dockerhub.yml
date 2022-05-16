@@ -7,14 +7,13 @@ on:
       - 'develop'
     tags:
       - 'v*'
-      - 'ssi-bridge-*'
+      - 'ssi-bridge-v*'
     paths: 
       - "api/ssi-bridge/**"
       - ".github/workflows/publish-ssi-bridge-dockerhub.yml"
   pull_request:
     branches:
       - 'master'
-      - 'develop'
     paths: 
       - "api/ssi-bridge/**"
       - ".github/workflows/publish-ssi-bridge-dockerhub.yml"

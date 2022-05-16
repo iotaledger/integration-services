@@ -7,14 +7,13 @@ on:
       - 'develop'
     tags:
       - 'v*'
-      - 'is-dashboard-*'
+      - 'is-dashboard-v*'
     paths: 
       - "dashboard/**"
       - ".github/workflows/publish-is-dashboard-dockerhub.yml"
   pull_request:
     branches:
       - 'master'
-      - 'develop'
     paths: 
       - "dashboard/**"
       - ".github/workflows/publish-is-dashboard-dockerhub.yml"

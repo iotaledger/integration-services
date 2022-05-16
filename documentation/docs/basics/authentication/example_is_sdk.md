@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section will show you an example on how to authenticate using the IOTA IS-SDK npm package.
 keywords:
+- how to
 - authentication
 - jwt
 - nonce

@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: IOTA Streams offers auditable encrypted data streams for any industry, ensuring data has not been modified throughout the industry data pipeline.channels.
 keywords:
+- how to
 - channels
 - authorize channel
 - subscribe channel

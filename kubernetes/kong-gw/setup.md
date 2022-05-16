@@ -19,45 +19,27 @@ helm repo add kong https://charts.konghq.com
 
 3. Install kong using helm
 ```
-helm install kong/kong --generate-name
+helm install kong kong/kong
 ```
-
-2. Open new terminal and type in
-```
-minikube service kong --url
-```
-> It will create the following output:
-
-```
-🏃  Starting tunnel for service kong-proxy.
-|-----------|------------|-------------|------------------------|
-| NAMESPACE |    NAME    | TARGET PORT |          URL           |
-|-----------|------------|-------------|------------------------|
-| kong      | kong-proxy |             | http://127.0.0.1:56203 |
-|           |            |             | http://127.0.0.1:56204 |
-|-----------|------------|-------------|------------------------|
-http://127.0.0.1:56203
-http://127.0.0.1:56204
-❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
-```
-
-3. Open another terminal and type in:
-
-```
-export PROXY_IP=http://127.0.0.1:56203
-```
-You select the first IP of the output above.
-
-```
-echo $PROXY_IP
-```
-Should output the ip.
 
 4. Open another terminal and type in:
 
 ```
 minikube tunnel
 ```
+
+5. Open new terminal and type in
+```
+export PROXY_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" service kong-kong-proxy)
+echo $PROXY_IP
+```
+> It will create the following output:
+
+```
+127.0.0.1
+```
+
+You can access kong via this url.
 
 --- 
 

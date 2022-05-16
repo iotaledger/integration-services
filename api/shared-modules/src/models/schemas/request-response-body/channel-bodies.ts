@@ -1,20 +1,18 @@
 import { Type } from '@sinclair/typebox';
-import { TopicSchema } from '../channel-info';
+import { TopicSchema, ChannelType } from '../channel-info';
 
 export const CreateChannelBodySchema = Type.Object({
-	name: Type.Optional(Type.String({
-		description: 'A channel can be searched by its name.'
-	})),
-	description: Type.Optional(Type.String({
-		description: 'An optional description for a channel.'
-	})),
-	subscriptionPassword: Type.Optional(
+	name: Type.Optional(
 		Type.String({
-			minLength: 8,
-			description:
-				'If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service.'
+			description: 'A channel can be searched by its name.'
 		})
-	), // TODO#156 use to decrypt/encrypt data and state
+	),
+	description: Type.Optional(
+		Type.String({
+			description: 'An optional description for a channel.'
+		})
+	),
+	type: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
 	topics: Type.Array(TopicSchema),
 	hasPresharedKey: Type.Optional(
 		Type.Boolean({

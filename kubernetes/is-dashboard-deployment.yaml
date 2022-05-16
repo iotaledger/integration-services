@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: is-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: is-dashboard
+  template:
+    metadata:
+      labels:
+        app: is-dashboard
+    spec:
+      containers:
+        - name: is-dashboard
+          image: iotaledger/is-dashboard:develop
+          imagePullPolicy: IfNotPresent
+          command: ["npm", "run", "prod"]
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "250m"
+            limits:
+              memory: "250Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+          env:
+            - name: "VITE_IOTA_IS_SDK_API_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: API_KEY
+          ports:
+            - protocol: TCP
+              containerPort: 3000
