@@ -15,7 +15,7 @@ You can find more information on IOTA streams in the following resources:
 
 ## Wiki
 
-1. [Stream Overview](https://wiki.iota.org/streams/overview/overview)
+1. [Stream Overview](https://wiki.iota.org/streams/overview)
 
 ## Blogposts
 

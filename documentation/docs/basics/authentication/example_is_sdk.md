@@ -18,7 +18,7 @@ import TabItem from '@theme/TabItem';
 
 # Integration Services SDK
 
-In this example, you will learn how to authenticate your identity using the [**IOTA IS-SDK** npm package](https://www.npmjs.com/package/iota-is-sdk). Since the package will handle decoding, hashing, and signing, this is the simplest way to authenticate your identity. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication), so you can fully understand the [Authentication Workflow](https://wiki.iota.org/integration-services/authentication#authentication-workflow).
+In this example, you will learn how to authenticate your identity using the [**IOTA IS-Client** npm package](https://www.npmjs.com/package/@iota/is-client). Since the package will handle decoding, hashing, and signing, this is the simplest way to authenticate your identity. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication), so you can fully understand the authentication workflow.
 
 This example uses the following identity: 
 
@@ -39,14 +39,14 @@ This example uses the following identity:
 <TabItem value="npm" label="npm">
 
 ```bash
-npm install iota-is-sdk
+npm install @iota/is-client@latest
 ```
 
 </TabItem>
 <TabItem value="yarn" label="Yarn">
 
 ```bash
-yarn add iota-is-sdk
+yarn add @iota/is-client@latest
 ```
 
 </TabItem>
@@ -63,14 +63,16 @@ Never save your secret key in plain text in your code. Use local environment var
 :::
 
 Depending on the functionality you are going to use, it may be sufficient to only authenticate the `IdentityClient()` or the `ChannelClient()`.
-Each of the clients has its authentication state. This means that when you authenticate on the `IdentityClient()`, you are not automatically authenticated on the `ChannelClient()`.
+Each of the clients has its own authentication state. This means that when you authenticate on the `IdentityClient()`, you are not automatically authenticated on the `ChannelClient()`.
 
 ```js title="./authenticate.js
-import { IdentityClient, ChannelClient, ApiVersion } from 'iota-is-sdk';
+import { IdentityClient, ChannelClient, ApiVersion } from '@iota/is-client';
 
 const authenticate = async (identityId, secretKey) => {
   const config = {
-    baseUrl: 'http://localhost:3000',
+    ssiBridgeUrl: 'http://localhost:3001',
+    auditTrailUrl: 'http://localhost:3002',
+    useGatewayUrl: false,
     apiVersion: ApiVersion.v01
   };
 

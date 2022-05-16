@@ -24,8 +24,8 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "@iota/is-client": "^0.1.2",
-    "@iota/is-shared-modules": "^0.1.1",
+    "@iota/is-client": "0.1.6",
+    "@iota/is-shared-modules": "0.1.5",
     "dotenv": "^10.0.0",
     "mongodb": "^4.4.1"
   },
