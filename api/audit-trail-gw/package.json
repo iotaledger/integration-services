@@ -14,7 +14,7 @@
     "start-node": "node dist/index.js server",
     "start-setup-api": "node dist/index.js setup-api",
     "start": "npm-run-all build start-node",
-    "setup-api": "npm i && npm-run-all build start-setup-api",
+    "setup-api": "npm-run-all build start-setup-api",
     "build-watch": "tsc --watch ",
     "serve-nodemon": "nodemon ./dist/index server",
     "serve": "run-p build-watch serve-nodemon",

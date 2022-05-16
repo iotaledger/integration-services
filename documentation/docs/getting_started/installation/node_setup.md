@@ -65,6 +65,10 @@ f15ab2571369   mongo:latest  "docker-entrypoint.s…"   7 weeks ago    Up 7 week
 2. Run the following commands to install dependencies, build the project, set up the API, and finally start the SSI-Bridge:
 
 ```bash
+npm run install
+```
+
+```bash
 npm run setup-api
 ```
 
@@ -82,6 +86,10 @@ curl http://localhost:3001/info
 
 1. Move into the folder `api/audit-trail-gw`.
 2.  Run the following commands to install dependencies, build the project, set up the API, and finally start the Audit-Trail Gateway:
+
+```bash
+npm run install
+```
 
 ```bash
 npm run setup-api
