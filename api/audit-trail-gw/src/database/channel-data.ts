@@ -43,7 +43,6 @@ export const addChannelData = async (channelAddress: string, id: string, channel
 	const imported = getDateStringFromDate(new Date());
 
 	const documents = channelData.map((data) => {
-		console.log('data.log.payload#', data.log.payload);
 		const encryptedPayload = data?.log?.payload ? encrypt(JSON.stringify(data?.log?.payload), secret) : undefined;
 		return {
 			_id: getIndex(data.link, id),
