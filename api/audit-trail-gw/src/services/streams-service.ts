@@ -16,7 +16,7 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '@iota/is-shared-modules/lib/utils/text';
 import * as crypto from 'crypto';
-import { ChannelType } from '../../../shared-modules/src/models/schemas/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 streams.set_panic_hook();
 
@@ -75,7 +75,7 @@ export class StreamsService {
 
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
 			const keyloadLink = res?.link.toString();
-			const sequenceLink = res?.seqLink.toString();
+			const sequenceLink = res?.seqLink?.toString();
 
 			return {
 				seed,
@@ -101,9 +101,8 @@ export class StreamsService {
 	): Promise<{ link: string; messageId: string }> {
 		try {
 			const latestAddress = this.getChannelAddress(keyloadLink);
-			const pubPayload = toBytes(JSON.stringify(publicPayload));
-			const mPayload = toBytes(JSON.stringify(maskedPayload));
-
+			const pubPayload = publicPayload ? toBytes(JSON.stringify(publicPayload)) : new Uint8Array();
+			const mPayload = maskedPayload ? toBytes(JSON.stringify(maskedPayload)) : new Uint8Array();
 			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, pubPayload, mPayload);
 			const messageLink = sendResponse?.link;
 			if (!messageLink) {
@@ -256,7 +255,7 @@ export class StreamsService {
 		publicKeys: string[],
 		author: Author,
 		pskId?: string
-	): Promise<{ keyloadLink: string; sequenceLink: string }> {
+	): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		try {
 			const anchorAddress = this.getChannelAddress(anchorLink);
 

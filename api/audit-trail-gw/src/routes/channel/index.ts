@@ -13,7 +13,7 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { getDateFromString } from '@iota/is-shared-modules/lib/utils/text';
 import { compareAsc } from 'date-fns';
 import { ChannelLogRequestOptions } from '@iota/is-shared-modules/lib/models/types/channel-info';
-import { ChannelType } from '../../../../shared-modules/src/models/schemas/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class ChannelRoutes {
 	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}

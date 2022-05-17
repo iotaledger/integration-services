@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
-import { ChannelType } from '../../../shared-modules/src/models/schemas/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class SubscriptionService {
 	private password: string;
@@ -114,7 +114,7 @@ export class SubscriptionService {
 		channelAddress: string,
 		subscription: Subscription,
 		authorId: string
-	): Promise<{ keyloadLink: string; sequenceLink: string }> {
+	): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		const authorSub = await this.getSubscription(channelAddress, authorId);
 		const { publicKey, subscriptionLink, id } = subscription;
 		const pskId = authorSub.pskId;
@@ -222,7 +222,7 @@ export class SubscriptionService {
 		authorId: string;
 		id: string;
 		pskId?: string;
-	}): Promise<{ keyloadLink: string; sequenceLink: string }> {
+	}): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		const key = 'auth-sub-' + params.channelAddress + params.authorId;
 		return await this.lock.acquire(key).then(async (release) => {
 			try {
