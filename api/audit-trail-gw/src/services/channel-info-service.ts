@@ -69,6 +69,7 @@ export class ChannelInfoService {
 			description: cip.description,
 			subscriberIds: cip.subscriberIds || [],
 			topics: cip.topics,
+			type: cip.type,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress
 		};
