@@ -11,6 +11,7 @@ import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
+import { ChannelType } from '../../../shared-modules/src/models/schemas/channel-info';
 
 export class SubscriptionService {
 	private password: string;
@@ -80,7 +81,7 @@ export class SubscriptionService {
 		presharedKey?: string;
 	}): Promise<RequestSubscriptionResponse> {
 		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
-		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+		const res = await this.streamsService.requestSubscription(channelAddress, ChannelType.private, seed, presharedKey);
 
 		if (res.publicKey) {
 			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);

@@ -114,9 +114,9 @@ export class ChannelService {
 		return channelData;
 	}
 
-	async getHistory(channelAddress: string, presharedKey: string): Promise<ChannelData[]> {
+	async getHistory(channelAddress: string, presharedKey: string, type: ChannelType): Promise<ChannelData[]> {
 		const seed: string = undefined;
-		const { subscriber } = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+		const { subscriber } = await this.streamsService.requestSubscription(channelAddress, type, seed, presharedKey);
 		const messages = await this.streamsService.getMessages(subscriber);
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}

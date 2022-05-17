@@ -13,6 +13,7 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { getDateFromString } from '@iota/is-shared-modules/lib/utils/text';
 import { compareAsc } from 'date-fns';
 import { ChannelLogRequestOptions } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelType } from '../../../../shared-modules/src/models/schemas/channel-info';
 
 export class ChannelRoutes {
 	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}
@@ -84,16 +85,17 @@ export class ChannelRoutes {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const presharedKey = <string>req.query?.['preshared-key'];
+			const type = (<string>req.query?.['type'] || 'private') as ChannelType;
 
 			if (!channelAddress) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
-			if (!presharedKey) {
+			if (!presharedKey && type === ChannelType.private) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no preshared-key provided' });
 			}
 
-			const history = await this.channelService.getHistory(channelAddress, presharedKey);
+			const history = await this.channelService.getHistory(channelAddress, presharedKey, type);
 			return res.status(StatusCodes.OK).send(history);
 		} catch (error) {
 			this.logger.error(error);

@@ -16,6 +16,7 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '@iota/is-shared-modules/lib/utils/text';
 import * as crypto from 'crypto';
+import { ChannelType } from '../../../shared-modules/src/models/schemas/channel-info';
 
 streams.set_panic_hook();
 
@@ -55,7 +56,7 @@ export class StreamsService {
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			let author;
 			if (isPublic) {
-				author = Author.fromClient(client, seed, StreamsChannelType.SingleBranch);
+				author = Author.fromClient(client, seed, StreamsChannelType.SingleDepth);
 			} else {
 				author = Author.fromClient(client, seed, StreamsChannelType.MultiBranch);
 			}
@@ -200,6 +201,7 @@ export class StreamsService {
 
 	async requestSubscription(
 		announcementLink: string,
+		type: ChannelType,
 		seed?: string,
 		presharedKey?: string
 	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string; pskId?: string }> {
@@ -225,8 +227,13 @@ export class StreamsService {
 				};
 			}
 
-			const response = await subscriber.clone().send_subscribe(annAddress.copy());
-			const subscriptionLink = response.link;
+			let subscriptionLink = undefined;
+
+			if (type !== ChannelType.public) {
+				const response = await subscriber.clone().send_subscribe(annAddress.copy());
+				subscriptionLink = response.link;
+			}
+
 			return {
 				seed,
 				subscriptionLink: subscriptionLink?.toString(),
