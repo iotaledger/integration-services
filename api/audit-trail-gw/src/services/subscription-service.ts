@@ -76,12 +76,14 @@ export class SubscriptionService {
 	async requestSubscription(params: {
 		subscriberId: string;
 		channelAddress: string;
+		channelType: ChannelType;
 		accessRights?: AccessRights;
 		seed?: string;
 		presharedKey?: string;
 	}): Promise<RequestSubscriptionResponse> {
-		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
-		const res = await this.streamsService.requestSubscription(channelAddress, ChannelType.private, seed, presharedKey);
+		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType } = params;
+		const isPublicChannel = channelType === ChannelType.public;
+		const res = await this.streamsService.requestSubscription(channelAddress, isPublicChannel, seed, presharedKey);
 
 		if (res.publicKey) {
 			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
@@ -95,13 +97,13 @@ export class SubscriptionService {
 			type: SubscriptionType.Subscriber,
 			id: subscriberId,
 			channelAddress: channelAddress,
-			subscriptionLink: res.subscriptionLink,
-			accessRights: !isEmpty(presharedKey) ? AccessRights.Audit : accessRights, // always use audit for presharedKey
-			isAuthorized: !isEmpty(presharedKey), // if there is a presharedKey the subscription is already authorized
+			subscriptionLink: isPublicChannel ? channelAddress : res.subscriptionLink,
+			accessRights: !isEmpty(presharedKey) || isPublicChannel ? AccessRights.Audit : accessRights, // always use audit for presharedKey and public channels
+			isAuthorized: !isEmpty(presharedKey) || isPublicChannel, // if there is a presharedKey or it is a public channel the subscription is already authorized
 			state: this.streamsService.exportSubscription(res.subscriber, this.password),
 			publicKey: res.publicKey,
 			pskId: res.pskId,
-			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
+			keyloadLink: !isEmpty(presharedKey) || isPublicChannel ? channelAddress : undefined
 		};
 
 		await this.addSubscription(subscription);

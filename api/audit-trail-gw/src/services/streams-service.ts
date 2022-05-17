@@ -16,7 +16,6 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { StreamsConfig } from '../models/config';
 import { fromBytes, toBytes } from '@iota/is-shared-modules/lib/utils/text';
 import * as crypto from 'crypto';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 streams.set_panic_hook();
 
@@ -209,25 +208,29 @@ export class StreamsService {
 
 	async requestSubscription(
 		announcementLink: string,
-		type: ChannelType,
+		isPublic: boolean,
 		seed?: string,
 		presharedKey?: string
 	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string; pskId?: string }> {
 		try {
 			const annAddress = this.getChannelAddress(announcementLink);
-
-			if (!seed) {
-				seed = this.makeSeed(81);
-			}
+			seed = seed || this.makeSeed(81);
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			const subscriber = Subscriber.fromClient(client, seed);
 			await subscriber.clone().receive_announcement(annAddress.copy());
-			let pskId: string = undefined;
+
+			if (isPublic) {
+				return {
+					seed,
+					subscriber: subscriber.clone(),
+					publicKey: subscriber.clone().get_public_key()
+				};
+			}
 
 			if (presharedKey) {
 				// subscriber stores psk
-				pskId = await subscriber.clone().store_psk(presharedKey);
+				const pskId = await subscriber.clone().store_psk(presharedKey);
 				return {
 					seed,
 					subscriber: subscriber.clone(),
@@ -235,12 +238,8 @@ export class StreamsService {
 				};
 			}
 
-			let subscriptionLink = undefined;
-
-			if (type !== ChannelType.public) {
-				const response = await subscriber.clone().send_subscribe(annAddress.copy());
-				subscriptionLink = response.link;
-			}
+			const response = await subscriber.clone().send_subscribe(annAddress.copy());
+			const subscriptionLink = response.link;
 
 			return {
 				seed,
