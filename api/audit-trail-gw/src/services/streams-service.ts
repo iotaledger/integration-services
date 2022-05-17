@@ -44,29 +44,38 @@ export class StreamsService {
 		channelAddress: string;
 		author: Author;
 		publicKey: string;
-		presharedKey: string;
+		presharedKey?: string;
 		keyloadLink: string;
 		sequenceLink: string;
-		pskId: string;
+		pskId?: string;
 	}> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
 			const client = await this.getClient(this.config.node, this.config.permaNode);
-			let author;
-			if (isPublic) {
-				author = Author.fromClient(client, seed, StreamsChannelType.SingleDepth);
-			} else {
-				author = Author.fromClient(client, seed, StreamsChannelType.MultiBranch);
-			}
+
+			const channelType = isPublic ? StreamsChannelType.SingleDepth : StreamsChannelType.MultiBranch;
+			const author = Author.fromClient(client, seed, channelType);
 			const announceResponse = await author.clone().send_announce();
 			const announcementAddress = announceResponse.link;
 			const announcementLink = announcementAddress.copy().toString();
+			const publicKey = author.get_public_key();
+
+			if (isPublic) {
+				return {
+					seed,
+					channelAddress: announcementLink,
+					author: author.clone(),
+					publicKey,
+					keyloadLink: announcementLink,
+					sequenceLink: announcementLink
+				};
+			}
+
+			let pskId: string = undefined;
 			const keys = new PublicKeys();
 			const ids = PskIds.new();
-			let pskId: string = undefined;
-			const publicKey = author.get_public_key();
 
 			if (presharedKey) {
 				pskId = author.clone().store_psk(presharedKey);
