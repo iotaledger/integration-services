@@ -109,10 +109,6 @@ We also supply a dashboard with the Integration Services. You can reach the dash
 http://localhost:3000
 ```
 
-:::info
-To make requests from the dashboard to the api you have to have CORS enabled. For local testing purposes this can be done with a CORS browser plugin. On first load the dashboard might show a Javascript module error. This bug is not related to our implementation and can be fixed with a simple page reload.
-:::
-
 ## FAQ
 
 ***Im getting errors like `error : could not connect to mongodb` and  `error : MongoError: Authentication failed.` when setting up the container.***
