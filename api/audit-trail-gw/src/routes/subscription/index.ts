@@ -8,7 +8,7 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { Subscription, SubscriptionUpdate } from '@iota/is-shared-modules/lib/models/types/subscription';
 import { SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
 import { ChannelInfoService } from '../../services/channel-info-service';
-import { ChannelType } from '../../../../shared-modules/src/models/schemas/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class SubscriptionRoutes {
 	constructor(
