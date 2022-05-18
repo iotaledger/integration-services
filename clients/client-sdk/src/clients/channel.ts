@@ -22,6 +22,7 @@ import {
   SubscriptionUpdate
 } from '@iota/is-shared-modules/lib/models/types/subscription';
 import { BaseClient } from './base';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class ChannelClient extends BaseClient {
   private baseUrl: string;
@@ -97,11 +98,17 @@ export class ChannelClient extends BaseClient {
    * Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
    * @param channelAddress
    * @param presharedKey
+   * @param type
    * @returns
    */
-  async readHistory(channelAddress: string, presharedKey: string): Promise<ChannelData[]> {
+  async readHistory(
+    channelAddress: string,
+    presharedKey: string,
+    type?: ChannelType
+  ): Promise<ChannelData[]> {
     return await this.get(`${this.baseUrl}/channels/history/${channelAddress}`, {
-      'preshared-key': presharedKey
+      'preshared-key': presharedKey,
+      type: type
     });
   }
 
