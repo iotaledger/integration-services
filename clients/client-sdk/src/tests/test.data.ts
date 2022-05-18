@@ -1,5 +1,7 @@
 import { ApiVersion } from '..';
 import { ClientConfig } from '../models';
+import { CreateChannelBody } from '../../../../api/shared-modules/src/models/types/request-response-bodies';
+import { ChannelType } from '../../../../api/shared-modules/src/models/schemas/channel-info';
 
 export const apiConfig: ClientConfig = {
   isGatewayUrl: '',
@@ -19,9 +21,9 @@ export const normalUser = {
   secretKey: '8jxJoqcKQXRq3YfpWkPM5K6NuC4TWLWJobQR3Svqtv1p'
 };
 
-export const testChannel = {
+export const testChannel: CreateChannelBody = {
   description: 'channelForTesting',
-  subscriptionPassword: 'password',
+  type: ChannelType.private,
   hasPresharedKey: false,
   seed: `randomSeed-${Math.ceil(Math.random() * 100000)}`,
   name: `testChannel-${Math.ceil(Math.random() * 100000)}`,
