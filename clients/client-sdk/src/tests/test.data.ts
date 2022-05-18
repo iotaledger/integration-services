@@ -1,7 +1,7 @@
 import { ApiVersion } from '..';
 import { ClientConfig } from '../models';
-import { CreateChannelBody } from '../../../../api/shared-modules/src/models/types/request-response-bodies';
-import { ChannelType } from '../../../../api/shared-modules/src/models/schemas/channel-info';
+import { CreateChannelBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export const apiConfig: ClientConfig = {
   isGatewayUrl: '',
