@@ -78,7 +78,7 @@ sudo minikube tunnel
 5. Open a **new terminal** and export the PROXY_IP variable by running the following command:
 
 ```bash
-export PROXY_IP=export PROXY_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" service kong-kong-proxy)
+export PROXY_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" service kong-kong-proxy)
 ```
 
 You can check that you have exported the variable correctly by running the following command: 
