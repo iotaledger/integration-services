@@ -69,7 +69,7 @@ describe('test channel routes', () => {
 			const channelExistsSpy = jest.spyOn(channelService, 'channelExists').mockImplementation(async () => true);
 
 			await channelRoutes.createChannel(req, res, nextMock);
-				
+
 			expect(channelExistsSpy).toHaveBeenCalledWith(req.body.name);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CONFLICT);
 			expect(res.send).toHaveBeenCalledWith({ error: 'channel already exists' });
@@ -121,7 +121,7 @@ describe('test channel routes', () => {
 			await channelRoutes.createChannel(req, res, nextMock);
 
 			const presharedKey: string = undefined;
-			expect(createSpy).toHaveBeenCalledWith('verysecretseed', presharedKey);
+			expect(createSpy).toHaveBeenCalledWith(false, 'verysecretseed', presharedKey);
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
@@ -177,7 +177,7 @@ describe('test channel routes', () => {
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
-			expect(createSpy).toHaveBeenCalledWith(undefined, presharedKey);
+			expect(createSpy).toHaveBeenCalledWith(false, undefined, presharedKey);
 			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
@@ -265,7 +265,7 @@ describe('test channel routes', () => {
 			const getMessagesSpy = jest.spyOn(streamsService, 'getMessages').mockImplementation(async () => messages);
 
 			await channelRoutes.getHistory(req, res, nextMock);
-			expect(requestSubscriptionSpy).toHaveBeenCalledWith('12345', undefined, 'eaifooaeenagr');
+			expect(requestSubscriptionSpy).toHaveBeenCalledWith('12345', false, undefined, 'eaifooaeenagr');
 			expect(getMessagesSpy).toHaveBeenCalledWith(null);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith([

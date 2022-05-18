@@ -115,7 +115,7 @@ describe('test request subscription route', () => {
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
 
-		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(exportSubscriptionSpy).not.toHaveBeenCalled();
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('public key already used'));
@@ -156,7 +156,7 @@ describe('test request subscription route', () => {
 			type: SubscriptionType.Subscriber
 		};
 
-		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
@@ -203,7 +203,7 @@ describe('test request subscription route', () => {
 			pskId: 'testpskid' // has preshared key
 		};
 
-		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
@@ -249,7 +249,7 @@ describe('test request subscription route', () => {
 			pskId: 'testpskid' // has preshared key
 		};
 
-		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', seed, presharedKey);
+		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
 		expect(getSubscriptionByPublicKeySpy).not.toHaveBeenCalled(); // not called since it has no public key because of preshared key
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
