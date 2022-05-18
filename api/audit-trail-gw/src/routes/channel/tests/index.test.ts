@@ -10,7 +10,7 @@ import { SubscriptionService } from '../../../services/subscription-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
-import { ChannelType } from '../../../../../shared-modules/src/models/schemas/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 describe('test channel routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
