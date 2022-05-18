@@ -114,7 +114,7 @@ export class ChannelService {
 		return channelData;
 	}
 
-	async getHistory(channelAddress: string, presharedKey: string, type: ChannelType): Promise<ChannelData[]> {
+	async getHistory(channelAddress: string, type: ChannelType, presharedKey: string): Promise<ChannelData[]> {
 		const seed: string = undefined;
 		const { subscriber } = await this.streamsService.requestSubscription(channelAddress, type === ChannelType.public, seed, presharedKey);
 		const messages = await this.streamsService.getMessages(subscriber);
@@ -138,7 +138,7 @@ export class ChannelService {
 				// that's why we use the getHistory workaround here and need to investigate after the new streams version is released
 				const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 				if (channelInfo.type === ChannelType.public) {
-					return this.getHistory(channelAddress, '', ChannelType.public);
+					return this.getHistory(channelAddress, ChannelType.public, '');
 				}
 
 				// for all other channels we simply use the subscription and cache the data in the database

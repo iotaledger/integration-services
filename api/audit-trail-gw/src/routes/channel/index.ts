@@ -73,6 +73,7 @@ export class ChannelRoutes {
 			const ascending: boolean = <string>req.query.asc === 'true';
 			const options: ChannelLogRequestOptions =
 				limit !== undefined && index !== undefined ? { limit, index, ascending, startDate, endDate } : { ascending, startDate, endDate };
+
 			const channel = await this.channelService.getLogs(channelAddress, id, options);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
@@ -95,7 +96,7 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no preshared-key provided' });
 			}
 
-			const history = await this.channelService.getHistory(channelAddress, presharedKey, type);
+			const history = await this.channelService.getHistory(channelAddress, type, presharedKey);
 			return res.status(StatusCodes.OK).send(history);
 		} catch (error) {
 			this.logger.error(error);
