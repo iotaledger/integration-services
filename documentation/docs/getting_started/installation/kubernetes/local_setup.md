@@ -26,14 +26,7 @@ Please make sure to have the following installed before moving forward:
 * [minikube](https://minikube.sigs.k8s.io/docs/start/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 * [helm](https://helm.sh/)
-
-## Minikube
-
-You can start your cluster by running the following command:
-
-```bash
-minikube start
-```
+* [Homebrew](https://brew.sh/)
 
 ## Clone Integration Services Repository
 
@@ -50,7 +43,13 @@ Please follow these steps to clone the Integration Services:
     ```bash
     cd integration-services
     ```
+## Start Minikube
 
+Setup and start the empty cluster by running the following command:
+
+```bash
+minikube start
+```
 ## Set Up Kong
 
 1. Install helm by running the following command:
@@ -70,36 +69,16 @@ helm repo add kong https://charts.konghq.com
 helm install kong kong/kong
 ```
 
-4. Open another terminal and type run the following command to expose the kong service:
+4. Expose the kong service (**Do NOT close this terminal**):
 
 ```bash
-minikube tunnel
+sudo minikube tunnel
 ```
 
-5. Start a tunnel for the Kong service by opening a new terminal window and running the following command:
-```bash
-minikube service kong --url
-```
-
-**Expected output**:
-
-```plaintext
-🏃  Starting tunnel for service kong-proxy.
-|-----------|------------|-------------|------------------------|
-| NAMESPACE |    NAME    | TARGET PORT |          URL           |
-|-----------|------------|-------------|------------------------|
-| kong      | kong-proxy |             | http://127.0.0.1:56203 |
-|           |            |             | http://127.0.0.1:56204 |
-|-----------|------------|-------------|------------------------|
-http://127.0.0.1:56203
-http://127.0.0.1:56204
-❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
-```
-
-6. Open another terminal and export the PROXY_IP variable by running the following command replacing `http://127.0.0.1:56203` with the first IP which was outputted in step 2. :
+5. Open a **new terminal** and export the PROXY_IP variable by running the following command:
 
 ```bash
-export PROXY_IP=http://127.0.0.1:56203
+export PROXY_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" service kong-kong-proxy)
 ```
 
 You can check that you have exported the variable correctly by running the following command: 
@@ -107,7 +86,7 @@ You can check that you have exported the variable correctly by running the follo
 ```bash
 echo $PROXY_IP
 ```
-It should output the IP you have exported, in this example `http://127.0.0.1:56203`.
+It should output the IP you have exported. In most of the cases this will be `http://127.0.0.1`.
 
 
 
@@ -136,7 +115,7 @@ mongodb-service   ClusterIP      10.106.253.44    <none>        27017/TCP       
 ssi-bridge        ClusterIP      10.110.29.161    <none>        3000/TCP                     17h
 ```
 
-You can check if the pods are running with the following command:
+You can check if the pods are running with the following command. It will take a few minutes before all pods are running.
 ```bash
 kubectl get pods
 ```
@@ -163,37 +142,37 @@ requests. Once the generate-key pod is completed and the audit-trail and ssi-bri
 
 ```bash
 curl -i $PROXY_IP/ssi-bridge/info
+```
+
+```bash
 curl -i $PROXY_IP/audit-trail-gw/info
 ```
 
+You finished the setup of the Integration Services using Kubernetes!
 
-## Notes
-
-The previous commands will create:
-
-- A single MongoDB instance with an ephemeral storage (i.e. no persistent bound volume) with `root` as username and `rootpassword`as password for administration purpose and `username` and `password` as credentials for the
+- You set up a single MongoDB instance with an ephemeral storage (i.e. no persistent bound volume) with `root` as username and `rootpassword`as password for administration purpose and `username` and `password` as credentials for the
   database `integration-service`.
-- A Kubernetes Job that will create a root identity in the database if there is not one yet.
-- A replicated backend service for Integration Service API (2 replicas as default value).
+- You run a Kubernetes Job that will create a root identity in the database if there is not one yet.
+- You created replicated backend service for Integration Service API (2 replicas as default value).
 
 You can find information on how to configure Integration Service with a production-ready database in
 the [configuration section](configuration.md).
 
 
-## Optional Instructions
+## FAQ
 
-### Shut Down the Cluster
+***How can I stop the cluster?***
 
-You can shut down the cluster by running the following commands:
+Just run the following command to stop the cluster.
 
 ```bash
 kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 ```
 
 
-### Delete All References and Recreate From Scratch
+***How can I delete my whole Kubernetes cluster?***
 
-1. Shut down the cluster by running:
+1. First, shut down the cluster by running:
 
 ```bash
 kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
@@ -207,4 +186,8 @@ kubectl delete -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 helm delete kong
 ```
 
-4. Once you have stopped kong and deleted all services, you can recreate it by referring to the [Set Up Kong section](#set-up-kong).
+4. Delete the minikube container containing the cluster
+
+```bash
+minikube delete
+```

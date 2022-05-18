@@ -1,19 +1,17 @@
 {
-  "name": "documentation",
+  "name": "integration-services",
   "version": "0.0.0",
-  "private": "true",
+  "private": true,
   "scripts": {
-    "start": "iota-wiki-cli start",
-    "test": "iota-wiki-cli start --dry-run",
-    "clean": "iota-wiki-cli clean",
-    "setup": "iota-wiki-cli setup"
+    "start": "iota-wiki start",
+    "build": "iota-wiki build"
   },
   "license": "UNLICENSED",
   "engines": {
     "node": ">=16.14.0"
   },
-  "dependencies": {
-    "iota-wiki-cli": "git+https://github.com/iota-community/iota-wiki-cli.git#v1.6.0",
-    "yarn": "^1.22.17"
-  }
+  "devDependencies": {
+    "@iota-community/iota-wiki-cli": "iota-community/iota-wiki-cli#v2"
+  },
+  "packageManager": "yarn@3.2.0"
 }
