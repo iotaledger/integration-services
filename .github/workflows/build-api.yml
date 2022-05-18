@@ -9,7 +9,7 @@ on:
     branches: [ master, develop ]
     paths: 
       - "api/**"
-      - ".github/workflows/build-api.yaml"
+      - ".github/workflows/build-api.yml"
 
 
   # Allows you to run this workflow manually from the Actions tab
@@ -31,8 +31,19 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '14.x'
-      - name: Build api
+      # build local package in advance
+      - name: Build shared modules
         run: |
-          cd api
+          cd api/shared-modules
+          npm install
+          npm run build
+      - name: Build audit-trail-gw
+        run: |
+          cd api/audit-trail-gw
+          npm install
+          npm run build
+      - name: Build ssi-bridge
+        run: |
+          cd api/ssi-bridge
           npm install
           npm run build

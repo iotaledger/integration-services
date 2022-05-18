@@ -2,6 +2,7 @@
 image: /img/integration-services/use-case-1.png
 description: IOTA Identity provides a digital identity anchored on the Tangle and verifiable credentials (VC) that are attachable to said identity.
 keywords:
+- how to
 - IOTA Identity basics
 - validate university degree
 - validate patient data

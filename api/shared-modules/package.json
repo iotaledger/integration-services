@@ -1,0 +1,68 @@
+{
+  "name": "@iota/is-shared-modules",
+  "version": "0.1.5",
+  "description": "Shared modules of the Integration Service.",
+  "scripts": {
+    "build-tsc": "tsc --project ./",
+    "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "build": "npm-run-all build-tsc build-lint",
+    "serve": "tsc --project ./ --watch"
+  },
+  "keywords": [
+    "iota",
+    "integration-services",
+    "identity",
+    "stream",
+    "decentralized"
+  ],
+  "author": {
+    "name": "Dominic Zettl",
+    "email": "dominic.zettl@iota.org"
+  },
+  "contributors": [
+    {
+      "name": "Tim Sigl",
+      "email": "tim.sigl@iota.org"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/iotaledger/integration-services/issues",
+    "email": "dominic.zettl@iota.org"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@iota/identity-wasm": "^0.4.2",
+    "@noble/ed25519": "^1.5.2",
+    "@sinclair/typebox": "^0.23.2",
+    "bs58": "^4.0.1",
+    "date-fns": "^2.28.0",
+    "express": "^4.17.1",
+    "express-winston": "^4.2.0",
+    "lodash": "^4.17.21",
+    "mongodb": "^3.6.4",
+    "winston": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/bs58": "^4.0.1",
+    "@types/express": "^4.17.11",
+    "@types/jest": "^27.0.2",
+    "@types/lodash": "^4.14.178",
+    "@types/mongodb": "^3.6.5",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^27.2.5",
+    "nodemon": "^2.0.7",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^9.1.1",
+    "tslint": "^6.1.3",
+    "typescript": "=4.1.6"
+  },
+  "files": [
+    "lib"
+  ]
+}

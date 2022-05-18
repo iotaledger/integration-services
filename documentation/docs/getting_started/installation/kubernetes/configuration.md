@@ -2,6 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section describes all the configuration parameters which you can customize in your Integration Service Kubernetes instance.
 keywords:
+- how to
 - integration services kubernetes
 - services kubernetes instance
 - Kubernetes
@@ -16,7 +17,7 @@ instance. Please keep in mind that all values must be changed before deployment.
 running, you should run the following command to load your most recent configuration:
 
 ```bash
-kubectl apply -f kubernetes/optional -f kubernetes/
+kubectl apply -f kubernetes/optional -f kubernetes/ -f kubernetes/kong-gw
 ```
 
 ## Database
@@ -46,19 +47,14 @@ echo -n ...SERVER_SECRET_KEY or API_KEY... | base64
 The default values are:
 
 - `7w9gfhb123jngh4gd53z465fewcs569e` as `SERVER_SECRET`.
+- `7w9gfhb123jngh4gd53z465fewcs569e` as `JWT_SECRET`.
 - `4ed59704-9a26-11ec-a749-3f57454709b9` as `API_KEY`.
 
 ## Number of Replicas
 
 You can set up the initial number of replicas in the `.spec.replicas` field
-in [kubernetes/is-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/is-deployment.yaml)
+in [kubernetes/audit-trail-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/audit-trail-deployment.yaml) and [kubernetes/ssi-bridge-deployment.yaml  file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/ssi-bridge-deployment.yaml)
 .
-
-## Ingress Hostname
-
-If you are accessing service via an Ingress resource, you can set the domain name
-in [kubernetes/optional/ingress.yaml file](https://github.com/iotaledger/integration-services/blob/master/kubernetes/optional/ingress.yaml)
-. The default value is `ensuresec.solutions.iota.org`.
 
 ## Private Tangle
 

@@ -1,0 +1,26 @@
+name: Publish shared-modules to npmjs
+on:
+  push:
+      branches: [ develop ]
+      paths: 
+        - "api/shared-modules/**"
+        - ".github/workflows/publish-shared-modules-sdk-npmjs.yml"
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      # build local package in advance
+      - run: |
+          cd api/shared-modules
+          npm ci
+          npm run build
+          npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

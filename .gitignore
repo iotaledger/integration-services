@@ -1,5 +1,6 @@
 node_modules
 dist
+lib
 npm-debug.log
 .env
 mongo-init.js
@@ -8,3 +9,4 @@ logs
 .vscode
 **/server-identity.json
 openApiSpecification.json
+adminIdentity.json
