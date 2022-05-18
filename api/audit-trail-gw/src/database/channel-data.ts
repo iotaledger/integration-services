@@ -33,7 +33,7 @@ export const getChannelData = async (
 	return channelDataArr.map(({ link, log, messageId, imported }) => {
 		const decryptedLog = {
 			...log,
-			payload: JSON.parse(decrypt(log.payload, secret))
+			payload: log.payload != null ? JSON.parse(decrypt(log.payload, secret)) : undefined
 		};
 		return { link, log: decryptedLog, messageId, imported };
 	});
@@ -43,7 +43,7 @@ export const addChannelData = async (channelAddress: string, id: string, channel
 	const imported = getDateStringFromDate(new Date());
 
 	const documents = channelData.map((data) => {
-		const encryptedPayload = encrypt(JSON.stringify(data.log.payload), secret);
+		const encryptedPayload = data?.log?.payload ? encrypt(JSON.stringify(data?.log?.payload), secret) : undefined;
 		return {
 			_id: getIndex(data.link, id),
 			channelAddress,
