@@ -66,7 +66,7 @@ f15ab2571369   mongo:latest  "docker-entrypoint.s…"   7 weeks ago    Up 7 week
 2. Run the following commands to install dependencies, build the project, set up the API, and finally start the SSI-Bridge:
 
 ```bash
-npm run install
+npm install
 ```
 
 ```bash
@@ -74,7 +74,7 @@ npm run setup-api
 ```
 
 ```bash
-npm start
+npm run start
 ```
 
 3. To check if the service started run in your terminal:
@@ -97,7 +97,7 @@ npm run setup-api
 ```
 
 ```bash
-npm start
+npm run start
 ```
 
 3. To check if the service started run in your terminal:
