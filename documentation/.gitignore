@@ -1,5 +1,7 @@
 # Dependencies
 node_modules
+local-wiki
+package-lock.json
 
 # Yarn
 .pnp.*
