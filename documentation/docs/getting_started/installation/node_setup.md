@@ -89,7 +89,7 @@ curl http://localhost:3001/info
 2.  Run the following commands to install dependencies, build the project, set up the API, and finally start the Audit-Trail Gateway:
 
 ```bash
-npm run install
+npm install
 ```
 
 ```bash
