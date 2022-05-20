@@ -2,7 +2,7 @@ import streams, {
 	Address,
 	Author,
 	Subscriber,
-	ChannelType,
+	ChannelType as StreamsChannelType,
 	StreamsClient,
 	ClientBuilder,
 	PublicKeys,
@@ -35,6 +35,7 @@ export class StreamsService {
 	constructor(private readonly config: StreamsConfig, private readonly logger: ILogger) {}
 
 	async create(
+		isPublic: boolean,
 		seed?: string,
 		presharedKey?: string
 	): Promise<{
@@ -42,25 +43,38 @@ export class StreamsService {
 		channelAddress: string;
 		author: Author;
 		publicKey: string;
-		presharedKey: string;
+		presharedKey?: string;
 		keyloadLink: string;
 		sequenceLink: string;
-		pskId: string;
+		pskId?: string;
 	}> {
 		try {
 			if (!seed) {
 				seed = this.makeSeed(81);
 			}
-
 			const client = await this.getClient(this.config.node, this.config.permaNode);
-			const author = Author.fromClient(client, seed, ChannelType.MultiBranch);
+
+			const channelType = isPublic ? StreamsChannelType.SingleDepth : StreamsChannelType.MultiBranch;
+			const author = Author.fromClient(client, seed, channelType);
 			const announceResponse = await author.clone().send_announce();
 			const announcementAddress = announceResponse.link;
 			const announcementLink = announcementAddress.copy().toString();
+			const publicKey = author.get_public_key();
+
+			if (isPublic) {
+				return {
+					seed,
+					channelAddress: announcementLink,
+					author: author.clone(),
+					publicKey,
+					keyloadLink: announcementLink,
+					sequenceLink: announcementLink
+				};
+			}
+
+			let pskId: string = undefined;
 			const keys = new PublicKeys();
 			const ids = PskIds.new();
-			let pskId: string = undefined;
-			const publicKey = author.get_public_key();
 
 			if (presharedKey) {
 				pskId = author.clone().store_psk(presharedKey);
@@ -69,7 +83,7 @@ export class StreamsService {
 
 			const res = await author.clone().send_keyload(announcementAddress.copy(), ids, keys);
 			const keyloadLink = res?.link.toString();
-			const sequenceLink = res?.seqLink.toString();
+			const sequenceLink = res?.seqLink?.toString();
 
 			return {
 				seed,
@@ -95,9 +109,8 @@ export class StreamsService {
 	): Promise<{ link: string; messageId: string }> {
 		try {
 			const latestAddress = this.getChannelAddress(keyloadLink);
-			const pubPayload = toBytes(JSON.stringify(publicPayload));
-			const mPayload = toBytes(JSON.stringify(maskedPayload));
-
+			const pubPayload = publicPayload ? toBytes(JSON.stringify(publicPayload)) : new Uint8Array();
+			const mPayload = maskedPayload ? toBytes(JSON.stringify(maskedPayload)) : new Uint8Array();
 			const sendResponse = await subscription.clone().send_signed_packet(latestAddress, pubPayload, mPayload);
 			const messageLink = sendResponse?.link;
 			if (!messageLink) {
@@ -195,24 +208,29 @@ export class StreamsService {
 
 	async requestSubscription(
 		announcementLink: string,
+		isPublic: boolean,
 		seed?: string,
 		presharedKey?: string
 	): Promise<{ seed: string; subscriptionLink?: string; subscriber: Subscriber; publicKey?: string; pskId?: string }> {
 		try {
 			const annAddress = this.getChannelAddress(announcementLink);
-
-			if (!seed) {
-				seed = this.makeSeed(81);
-			}
+			seed = seed || this.makeSeed(81);
 
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			const subscriber = Subscriber.fromClient(client, seed);
 			await subscriber.clone().receive_announcement(annAddress.copy());
-			let pskId: string = undefined;
+
+			if (isPublic) {
+				return {
+					seed,
+					subscriber: subscriber.clone(),
+					publicKey: subscriber.clone().get_public_key()
+				};
+			}
 
 			if (presharedKey) {
 				// subscriber stores psk
-				pskId = await subscriber.clone().store_psk(presharedKey);
+				const pskId = await subscriber.clone().store_psk(presharedKey);
 				return {
 					seed,
 					subscriber: subscriber.clone(),
@@ -222,6 +240,7 @@ export class StreamsService {
 
 			const response = await subscriber.clone().send_subscribe(annAddress.copy());
 			const subscriptionLink = response.link;
+
 			return {
 				seed,
 				subscriptionLink: subscriptionLink?.toString(),
@@ -244,7 +263,7 @@ export class StreamsService {
 		publicKeys: string[],
 		author: Author,
 		pskId?: string
-	): Promise<{ keyloadLink: string; sequenceLink: string }> {
+	): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		try {
 			const anchorAddress = this.getChannelAddress(anchorLink);
 

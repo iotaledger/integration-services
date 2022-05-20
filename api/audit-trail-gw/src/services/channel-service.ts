@@ -3,6 +3,7 @@ import { StreamsService } from './streams-service';
 import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
 import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
 import { ChannelLogRequestOptions, Topic } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -40,14 +41,15 @@ export class ChannelService {
 		hasPresharedKey: boolean;
 		seed?: string;
 		presharedKey?: string;
+		type?: ChannelType;
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
 		}
 
-		const res = await this.streamsService.create(seed, key);
+		const res = await this.streamsService.create(type === ChannelType.public, seed, key);
 
 		if (!res?.seed || !res?.channelAddress || !res?.author) {
 			throw new Error('could not create the channel');
@@ -73,7 +75,8 @@ export class ChannelService {
 			authorId: id,
 			name,
 			description,
-			channelAddress: res.channelAddress
+			channelAddress: res.channelAddress,
+			type
 		});
 
 		return {
@@ -111,9 +114,9 @@ export class ChannelService {
 		return channelData;
 	}
 
-	async getHistory(channelAddress: string, presharedKey: string): Promise<ChannelData[]> {
+	async getHistory(channelAddress: string, type: ChannelType, presharedKey: string): Promise<ChannelData[]> {
 		const seed: string = undefined;
-		const { subscriber } = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+		const { subscriber } = await this.streamsService.requestSubscription(channelAddress, type === ChannelType.public, seed, presharedKey);
 		const messages = await this.streamsService.getMessages(subscriber);
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
@@ -131,9 +134,16 @@ export class ChannelService {
 					throw new Error('not allowed to get logs from the channel');
 				}
 
+				// normally it should be possible to use `getChannelData` and fetch the data but the subscription was not able to receive the data from a public channel
+				// that's why we use the getHistory workaround here and need to investigate after the new streams version is released
+				const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+				if (channelInfo.type === ChannelType.public) {
+					return this.getHistory(channelAddress, ChannelType.public, '');
+				}
+
+				// for all other channels we simply use the subscription and cache the data in the database
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
-
 				await this.fetchLogs(channelAddress, id, sub);
 				return await ChannelDataDb.getChannelData(channelAddress, id, options, this.password);
 			} finally {

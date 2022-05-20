@@ -45,6 +45,7 @@ export class ChannelInfoService {
 		const channelInfoPersistence: ChannelInfoPersistence = {
 			created: ci.created ? getDateFromString(ci.created) : null,
 			authorId: ci.authorId,
+			type: ci.type,
 			name: ci.name,
 			description: ci.description,
 			subscriberIds: ci.subscriberIds || [],
@@ -68,6 +69,7 @@ export class ChannelInfoService {
 			description: cip.description,
 			subscriberIds: cip.subscriberIds || [],
 			topics: cip.topics,
+			type: cip.type,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress
 		};
