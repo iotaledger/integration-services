@@ -187,7 +187,7 @@ describe('test channel routes', () => {
 			expect(res.send).toHaveBeenCalledWith({ channelAddress: '1234234234', seed: 'verysecretseed', presharedKey });
 		});
 
-		fit('should create and return a public channel for the user', async () => {
+		it('should create and return a public channel for the user', async () => {
 			const type = ChannelType.public;
 			const req: any = {
 				params: {},
