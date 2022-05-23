@@ -9,7 +9,7 @@ export const defaultConfig: ClientConfig = {
   isGatewayUrl: process.env.IS_GATEWAY_URL,
   ssiBridgeUrl: process.env.SSI_BRIDGE_URL,
   auditTrailUrl: process.env.AUDIT_TRAIL_URL,
-  useGatewayUrl: false,
+  useGatewayUrl: process.env.USE_GATEWAY_URL === 'true' || false,
   apiKey: process.env.API_KEY,
   apiVersion: ApiVersion.v01
 };
