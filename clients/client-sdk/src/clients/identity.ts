@@ -158,7 +158,7 @@ export class IdentityClient extends BaseClient {
   async createCredential(
     initiatorVC: VerifiableCredentialInternal | undefined,
     targetDid: string,
-    credentialType: CredentialTypes,
+    credentialType: CredentialTypes | string,
     claimType: UserType,
     claim?: any
   ): Promise<VerifiableCredentialJson> {
