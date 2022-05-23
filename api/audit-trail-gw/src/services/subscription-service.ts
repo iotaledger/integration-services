@@ -11,6 +11,7 @@ import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class SubscriptionService {
 	private password: string;
@@ -75,12 +76,14 @@ export class SubscriptionService {
 	async requestSubscription(params: {
 		subscriberId: string;
 		channelAddress: string;
+		channelType: ChannelType;
 		accessRights?: AccessRights;
 		seed?: string;
 		presharedKey?: string;
 	}): Promise<RequestSubscriptionResponse> {
-		const { channelAddress, presharedKey, seed, subscriberId, accessRights } = params;
-		const res = await this.streamsService.requestSubscription(channelAddress, seed, presharedKey);
+		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType } = params;
+		const isPublicChannel = channelType === ChannelType.public;
+		const res = await this.streamsService.requestSubscription(channelAddress, isPublicChannel, seed, presharedKey);
 
 		if (res.publicKey) {
 			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
@@ -94,13 +97,13 @@ export class SubscriptionService {
 			type: SubscriptionType.Subscriber,
 			id: subscriberId,
 			channelAddress: channelAddress,
-			subscriptionLink: res.subscriptionLink,
-			accessRights: !isEmpty(presharedKey) ? AccessRights.Audit : accessRights, // always use audit for presharedKey
-			isAuthorized: !isEmpty(presharedKey), // if there is a presharedKey the subscription is already authorized
+			subscriptionLink: isPublicChannel ? channelAddress : res.subscriptionLink,
+			accessRights: !isEmpty(presharedKey) || isPublicChannel ? AccessRights.Audit : accessRights, // always use audit for presharedKey and public channels
+			isAuthorized: !isEmpty(presharedKey) || isPublicChannel, // if there is a presharedKey or it is a public channel the subscription is already authorized
 			state: this.streamsService.exportSubscription(res.subscriber, this.password),
 			publicKey: res.publicKey,
 			pskId: res.pskId,
-			keyloadLink: !isEmpty(presharedKey) ? channelAddress : undefined
+			keyloadLink: !isEmpty(presharedKey) || isPublicChannel ? channelAddress : undefined
 		};
 
 		await this.addSubscription(subscription);
@@ -113,7 +116,7 @@ export class SubscriptionService {
 		channelAddress: string,
 		subscription: Subscription,
 		authorId: string
-	): Promise<{ keyloadLink: string; sequenceLink: string }> {
+	): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		const authorSub = await this.getSubscription(channelAddress, authorId);
 		const { publicKey, subscriptionLink, id } = subscription;
 		const pskId = authorSub.pskId;
@@ -221,7 +224,7 @@ export class SubscriptionService {
 		authorId: string;
 		id: string;
 		pskId?: string;
-	}): Promise<{ keyloadLink: string; sequenceLink: string }> {
+	}): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		const key = 'auth-sub-' + params.channelAddress + params.authorId;
 		return await this.lock.acquire(key).then(async (release) => {
 			try {

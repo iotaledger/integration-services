@@ -2,6 +2,7 @@
 	export const SITE_PAGES = [
 		{ title: 'Identities', url: '/identity-manager' },
 		{ title: 'Streams', url: '/streams-manager' },
+		{ title: 'Channel History', url: '/history' },
 		{ title: 'Verify Credential', url: '/verify-credential' }
 	];
 </script>

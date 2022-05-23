@@ -1,5 +1,12 @@
 # Changelog
 
+### v0.1.4 -> v0.1.5
+
+##### Non breaking changes:
+
+- Adjust the `/history` endpoint to also support public channels
+- Add history UI to the dashboard
+
 ### v0.1.3 -> v0.1.4
 
 ##### Non breaking changes:

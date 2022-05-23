@@ -13,13 +13,14 @@ import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { getDateFromString } from '@iota/is-shared-modules/lib/utils/text';
 import { compareAsc } from 'date-fns';
 import { ChannelLogRequestOptions } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class ChannelRoutes {
 	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { name, description, topics, seed, hasPresharedKey, presharedKey } = req.body as CreateChannelBody;
+			const { name, description, topics, seed, hasPresharedKey, presharedKey, type } = req.body as CreateChannelBody;
 			const { id } = req.user;
 
 			if (!id) {
@@ -31,7 +32,16 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
 			}
 
-			const channel = await this.channelService.create({ id, name, description, topics, hasPresharedKey, seed, presharedKey });
+			const channel = await this.channelService.create({
+				id,
+				name,
+				description,
+				topics,
+				hasPresharedKey,
+				seed,
+				presharedKey,
+				type
+			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
 			this.logger.error(error);
@@ -63,6 +73,7 @@ export class ChannelRoutes {
 			const ascending: boolean = <string>req.query.asc === 'true';
 			const options: ChannelLogRequestOptions =
 				limit !== undefined && index !== undefined ? { limit, index, ascending, startDate, endDate } : { ascending, startDate, endDate };
+
 			const channel = await this.channelService.getLogs(channelAddress, id, options);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
@@ -75,16 +86,17 @@ export class ChannelRoutes {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const presharedKey = <string>req.query?.['preshared-key'];
+			const type = (<string>req.query?.['type'] || 'private') as ChannelType;
 
 			if (!channelAddress) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
-			if (!presharedKey) {
+			if (!presharedKey && type === ChannelType.private) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no preshared-key provided' });
 			}
 
-			const history = await this.channelService.getHistory(channelAddress, presharedKey);
+			const history = await this.channelService.getHistory(channelAddress, type, presharedKey);
 			return res.status(StatusCodes.OK).send(history);
 		} catch (error) {
 			this.logger.error(error);

@@ -1,12 +1,12 @@
 {
   "name": "dashboard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "prod": "svelte-kit dev --host=0.0.0.0",
     "dev": "svelte-kit dev --port ${PORT:-3055}",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
-    "preview": "svelte-kit preview",
+    "preview": "svelte-kit preview --host=0.0.0.0",
     "prepare": "svelte-kit sync",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -33,7 +33,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@iota/is-ui-components": "0.0.44",
+    "@iota/is-ui-components": "0.0.48",
+    "@sveltejs/adapter-node": "^1.0.0-next.73",
     "sveltestrap": "^5.9.0"
   }
 }

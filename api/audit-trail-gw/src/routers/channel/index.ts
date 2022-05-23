@@ -237,8 +237,13 @@ channelRouter.get('/logs/:channelAddress', apiKeyMiddleware, authMiddleWare, cha
  *           summary: Example channel address
  *     - name: 'preshared-key'
  *       in: query
- *       required: true
  *       description: Preshared key defined by the author to encrypt/decrypt data.
+ *       schema:
+ *         type: string
+ *     - name: type
+ *       in: query
+ *       required: false
+ *       description: Define whether it is a `public` or `private` channel. You are able to read from public channels without a `preshared-key`.
  *       schema:
  *         type: string
  *     responses:
