@@ -40,7 +40,7 @@ This documentation has eight sections.
 3. [Examples](examples/node/introduction): Examples on creating and managing decentralized identities, verifiable
    credentials, and channels.
 4. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
-5. [API Reference](api_reference): Detailed specification of all endpoints.
+5. [SSI Bridge API Reference](ssi_bridge_api_reference.md) and [Audit Trail API Reference](audit_trail_gw_api_reference.md): Detailed specification of all endpoints.
 6. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
 7. [FAQ](faq): Answers to the most common doubts.
 8. [Contribute](contribute): Find ways to help the project.

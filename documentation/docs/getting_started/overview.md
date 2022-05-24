@@ -14,6 +14,6 @@ keywords:
 You can install the Integration Services using the following methods: 
 
 * [Using node.js (**recommended for local development and testing**)](installation/node_setup.md)
-* [Using Java](installation/java_setup.md)
+* [Using Java](installation/java/local_setup.md)
 * [Using Kubernetes (**recommended for production**)](installation/kubernetes/local_setup.md)
 * [Using Docker-Compose](installation/docker_compose_setup.md)

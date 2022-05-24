@@ -107,3 +107,4 @@ risks.
 4. A user app allows the customer to verify the signature of the product authenticity credential using the Ecommerce-SSI
    Bridge, allowing verification of the seller's identity.
 
+### [Try out our demo, implemented using the SSI bridge APIs](https://eshop-poc.solutions.iota.org/)
