@@ -19,10 +19,10 @@ The Integration Services also includes a dashboard to view and manage all your i
 ## Login and Registration 
 
 This is the first page visible after opening the dashboard. An already created decentralized identity can be used to login. If no identity was created yet a new one can be registered by clicking on the *log in with DID* link.
-![Login-Screen](/img/integration-services/dashboard/login.png)
+![Login-Screen](/img/integration-services/dashboard/login.gif)
 
 A new DID can be registered on this page. Depending on the identity template you select in the first dropdown different fields will be shown. A username, first name and last name are mandatory for creating a new DID with the Person template.
-![Register-Screen](/img/integration-services/dashboard/register.png)
+![Register-Screen](/img/integration-services/dashboard/register.gif)
 
 ## Identity Management
 

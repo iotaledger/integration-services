@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "scripts": {
     "prod": "svelte-kit dev --host=0.0.0.0",
-    "dev": "svelte-kit dev --port ${PORT:-3055}",
+    "dev": "svelte-kit dev --port ${PORT:-3054}",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
     "preview": "svelte-kit preview --host=0.0.0.0",
