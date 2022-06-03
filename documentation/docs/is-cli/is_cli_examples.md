@@ -72,7 +72,7 @@ is read-channel -i identityB.json <Channel address of channelA>
 
 ### Read history of Channel
 
-The user can also read the history of a Channel. Especially if the Channel is `public` it is the only way for the subscriber to read the Channel. For that add the option `-pC` and remove the option for the preshared Key `-psK`.
+The user can also read the history of a Channel. Especially if the Channel is `public` it is the only way for the subscriber to read from the Channel. For that add the option `-pC` and remove the option for the preshared Key `-psK`.
 
 ```sh
 is read-channel-history -i identityB.json -psK <preshared key> <Channel address of channelA> 
