@@ -15,9 +15,8 @@ spec:
     spec:
       containers:
         - name: is-dashboard
-          image: iotaledger/is-dashboard:develop
+          image: iotaledger/is-dashboard:pr-563
           imagePullPolicy: IfNotPresent
-          command: ["npm", "run", "prod"]
           resources:
             requests:
               memory: "100Mi"
@@ -25,16 +24,14 @@ spec:
             limits:
               memory: "250Mi"
               cpu: "500m"
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 3000
           env:
             - name: "VITE_IOTA_IS_SDK_API_KEY"
               valueFrom:
                 secretKeyRef:
                   name: integration-service-api-secrets
                   key: API_KEY
+            - name: "VITE_IOTA_IS_SDK_GATEWAY_URL"
+              value: ""
           ports:
             - protocol: TCP
               containerPort: 3000
