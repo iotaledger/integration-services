@@ -89,7 +89,7 @@ is revoke-subscription -i identityA.json -sI <Id of identityB> <Channel address 
 
 We can also double check if the Subscription is revoked by simply trying to find it. 
 ```sh
-is find-subscription -i identityA.json -sI <Id of identityB> <Channel address of channelA> 
+is find-subscription -i identityA.json -c channelA.json -sI <Id of identityB>
 ```
 
 ### Help
