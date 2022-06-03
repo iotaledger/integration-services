@@ -117,6 +117,9 @@ services:
   dashboard:
     build:
       context: ./dashboard
+      args:
+        - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
+        - VITE_IOTA_IS_SDK_GATEWAY_URL=
     container_name: "is-dashboard"
     restart: always
     labels:
@@ -124,9 +127,6 @@ services:
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.routers.dashboard.rule=PathPrefix(`/`)"
       - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
-    environment:
-      - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
-      - VITE_IOTA_IS_SDK_GATEWAY_URL=
     depends_on:
       - ssi-bridge
       - audit-trail-gw
