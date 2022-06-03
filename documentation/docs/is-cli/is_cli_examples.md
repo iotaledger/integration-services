@@ -74,10 +74,10 @@ is read-channel -i identityB.json -c channelA.json
 
 The user can also read the history of a Channel.
 ```sh
-is read-channel-history -i identityB.json -c channelA.json -psK <preshared key of channelA> 
+is read-channel-history -i identityB.json -c channelA.json -sK <preshared key of channelA> 
 ```
 
-Especially if the Channel is `public` it is the only way for the subscriber to read from the Channel. For that add the option `-pC` and remove the option for the preshared Key `-psK`.
+Especially if the Channel is `public` it is the only way for the subscriber to read from the Channel. For that add the option `-pC` and remove the option for the preshared Key `-sK`.
 
 ```sh
 is read-channel-history -i identityB.json -c channelA.json -pC
