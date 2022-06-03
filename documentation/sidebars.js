@@ -51,6 +51,24 @@ module.exports = {
     },
     {
       type: "category",
+      label: "IS-CLI",
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          label: "Introduction",
+          id: "is-cli/introduction"
+        },
+        {
+          type: "doc",
+          label: "Examples",
+          id: "is-cli/is_cli_examples"
+        },
+       
+      ]
+    },
+    {
+      type: "category",
       label: "Getting Started",
       collapsed: false,
       items: [
