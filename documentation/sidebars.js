@@ -48,9 +48,20 @@ module.exports = {
           ],
         },
         {
-          type: "doc",
+          type: "category",
           label: "Dashboard",
-          id: "services/dashboard",
+          items: [
+            {
+              type: "doc",
+              id: "services/dashboard/dashboard",
+              label: "Dashboard"
+            },
+            {
+              type: "doc",
+              id: "services/dashboard/ui-components",
+              label: "UI Components"
+            },
+          ]
         },
       ],
     },
