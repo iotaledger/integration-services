@@ -23,8 +23,6 @@ env:
   AWS_REGION: eu-west-1                                      # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: is_audit_trail_gw                          # set this to your Amazon ECR repository name
   ECR_REGISTRY: 832788057033.dkr.ecr.eu-west-1.amazonaws.com # set this to your Amazon ECR registry name
-  
-
 
 
 jobs:
@@ -55,22 +53,27 @@ jobs:
     
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-          IMAGE_TAG: ${{ steps.meta.outputs.labels.org.opencontainers.image.version }}
+        env:
+          IMAGE_TAG: ${{ steps.meta.outputs.tags }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG api/audit-trail-gw/
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build -t $IMAGE_TAG api/audit-trail-gw/
+          docker push $IMAGE_TAG
+          echo "::set-output name=image::$IMAGE_TAG"
 
-      - name: Add latest tag
+      - name: Add aws cli
         id: install-aws-cli
-          IMAGE_TAG: ${{ steps.meta.outputs.labels.org.opencontainers.image.version }}
         uses: unfor19/install-aws-cli-action@master
         with:
           version: 2
-      - run: |
-          # Tag last push with latest tag withour re-uploading image.
-          MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
+
+      - name : Add latest tag
+        id: latest-tag
+        env:
+          IMAGE_TAG: ${{ steps.meta.outputs.tags }}
+        run: |
+          DOCKER_IMAGE_TAG=$( echo "$IMAGE_TAG" | awk -F: '{print $2}' )
+          MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$DOCKER_IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
           aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
