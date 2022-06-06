@@ -28,7 +28,6 @@ jobs:
   deploy:
     name: Push image to ECR
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout
@@ -49,7 +48,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: $ECR_REGISTRY/$ECR_REPOSITORY
+          images: $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
