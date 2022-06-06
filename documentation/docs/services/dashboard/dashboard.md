@@ -14,7 +14,7 @@ keywords:
 
 # Dashboard
 
-The Integration Services also includes a dashboard to view and manage all your identities, credentials and streams. The dashboard supports nearly every feature currently supported by the Audit Trail Gateway and SSI Bridge APIs. You can run the dashboard directly with the `npm run dev` script in the `./dashboard` directory. The dashboard gets automatically deployed if you chosen to install the Integration Services by docker-compose or Kubernetes.
+The Integration Services also includes a dashboard to view and manage all your identities, credentials and streams. The dashboard supports nearly every feature currently supported by the Audit Trail Gateway and SSI Bridge APIs. You can run the dashboard directly with the `npm run dev` script in the `./dashboard` directory. The dashboard gets automatically deployed if you chosen to install the Integration Services by docker-compose or Kubernetes. The dashboard can be found in the [Integration Services repository](https://github.com/iotaledger/integration-services/tree/master/dashboard).
 
 ## Login and Registration 
 
@@ -38,9 +38,11 @@ This tab is for managing streams. You can search for streams by stream address o
 
 The detailed view of a stream shows meta information, authorized subscribers and pending subscribers. Pending subscribers can be authorized with just the click of a button. Furthermore, while you are on the detail page, it is polling for new data on the stream in a predefined interval. If you are the author of a stream or have write permissions you can add new messages to the stream here.
 ![Streams-Detail-Screen](/img/integration-services/dashboard/streams_detail_hd.gif)
+
 ## Channel History
 In the channel history tab you can fetch the whole history of a stream directly from the Tangle. For encrypted streams a preshared key is needed. For reading public streams you don't have to be subscribed.
 ![Channel-History-Screen](/img/integration-services/dashboard/history_hd.gif)
+
 ## Verify Credential
 In this tab you can upload verifiable credentials in a .json format to verify them. The verification result will be shown to you.
 ![Verify-Credential-Screen](/img/integration-services/dashboard/verify_hd.gif)
