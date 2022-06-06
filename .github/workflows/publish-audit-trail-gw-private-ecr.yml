@@ -28,7 +28,6 @@ jobs:
   deploy:
     name: Push image to ECR
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout
