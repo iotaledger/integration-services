@@ -23,12 +23,14 @@ env:
   AWS_REGION: eu-west-1                                      # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: is_audit_trail_gw                          # set this to your Amazon ECR repository name
   ECR_REGISTRY: 832788057033.dkr.ecr.eu-west-1.amazonaws.com # set this to your Amazon ECR registry name
+  
+
+
 
 jobs:
   deploy:
     name: Push image to ECR
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout
@@ -49,12 +51,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: $ECR_REGISTRY/$ECR_REPOSITORY
-
+          images: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+    
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-        env:
-          IMAGE_TAG:  ${{ steps.meta.outputs.tags }}
+          IMAGE_TAG: ${{ steps.meta.outputs.labels.org.opencontainers.image.version }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
@@ -65,6 +66,7 @@ jobs:
 
       - name: Add latest tag
         id: install-aws-cli
+          IMAGE_TAG: ${{ steps.meta.outputs.labels.org.opencontainers.image.version }}
         uses: unfor19/install-aws-cli-action@master
         with:
           version: 2
