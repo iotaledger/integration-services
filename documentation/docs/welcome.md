@@ -33,7 +33,7 @@ decentralized identities and credentials.
 
 ## What You Will Find
 
-This documentation has eight sections.
+This documentation has nine sections.
 
 1. [Getting started](getting_started/overview.md): All the resources you need to get started.
 2. **Services**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md).
