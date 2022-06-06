@@ -1,6 +1,6 @@
 # Examples
 
-In this example we will show how to create Identities, Channels and how to subscribe to a channel, authorize one Subscriber and write data into a Channel.
+In this example we will show how to create Identities, Channels and how to subscribe to a channel, authorize a Subscriber and write data into a Channel.
 
 
 ### Create json files
