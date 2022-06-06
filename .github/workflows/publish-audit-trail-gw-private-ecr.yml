@@ -1,0 +1,74 @@
+name: Publish API on private ECR
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    tags:
+      - 'v*'
+      - 'audit-trail-gw-v*'
+    paths: 
+      - "api/audit-trail-gw/**"
+      - ".github/workflows/publish-audit-trail-gw-private-ecr.yml"
+  pull_request:
+    branches:
+      - 'master'
+    paths: 
+      - "api/audit-trail-gw/**"
+      - ".github/workflows/publish-audit-trail-gw-private-ecr.yml"
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-west-1                                      # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: is_audit_trail_gw                          # set this to your Amazon ECR repository name
+  ECR_REGISTRY: 832788057033.dkr.ecr.eu-west-1.amazonaws.com # set this to your Amazon ECR registry name
+
+jobs:
+  deploy:
+    name: Push image to ECR
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: $ECR_REGISTRY/$ECR_REPOSITORY
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          IMAGE_TAG:  ${{ steps.meta.outputs.tags }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG api/audit-trail-gw/
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+k
+      - name: Add latest tag
+        id: install-aws-cli
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: 2
+        run: |
+          # Tag last push with latest tag withour re-uploading image.
+          MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
+          aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
