@@ -38,6 +38,7 @@ This tab is for managing streams. You can search for streams by stream address o
 
 The detailed view of a stream shows meta information, authorized subscribers and pending subscribers. Pending subscribers can be authorized with just the click of a button. Furthermore, while you are on the detail page, it is polling for new data on the stream in a predefined interval. If you are the author of a stream or have write permissions you can add new messages to the stream here.
 ![Streams-Detail-Screen](/img/integration-services/dashboard/streams_detail_hd.gif)
+
 ## Channel History
 In the channel history tab you can fetch the whole history of a stream directly from the Tangle. For encrypted streams a preshared key is needed. For reading public streams you don't have to be subscribed.
 ![Channel-History-Screen](/img/integration-services/dashboard/history_hd.gif)
