@@ -68,7 +68,8 @@ jobs:
         uses: unfor19/install-aws-cli-action@master
         with:
           version: 2
-        run: |
+      - run: |
           # Tag last push with latest tag withour re-uploading image.
           MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
           aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
+        shell: bash
