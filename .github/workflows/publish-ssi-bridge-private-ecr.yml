@@ -1,4 +1,4 @@
-name: Publish API on DockerHub
+name: Publish SSI Bridge on ECR
 
 on:
   push:
@@ -10,13 +10,13 @@ on:
       - 'ssi-bridge-v*'
     paths: 
       - "api/ssi-bridge/**"
-      - ".github/workflows/publish-ssi-bridge-dockerhub.yml"
+      - ".github/workflows/publish-ssi-bridge-private-ecr.yml"
   pull_request:
     branches:
       - 'master'
     paths: 
       - "api/ssi-bridge/**"
-      - ".github/workflows/publish-ssi-bridge-dockerhub.yml"
+      - ".github/workflows/publish-ssi-bridge-private-ecr.yml"
   workflow_dispatch:
 
 env:
@@ -27,7 +27,7 @@ env:
 
 jobs:
   deploy:
-    name: Push image to ECR
+    name: Push SSI Bridge to ECR
     runs-on: ubuntu-latest
 
     steps:

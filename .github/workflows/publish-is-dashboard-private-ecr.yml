@@ -1,4 +1,4 @@
-name: Publish API on DockerHub
+name: Publish IS Dashboard on ECR
 
 on:
   push:
@@ -10,13 +10,13 @@ on:
       - 'is-dashboard-v*'
     paths: 
       - "dashboard/**"
-      - ".github/workflows/publish-is-dashboard-dockerhub.yml"
+      - ".github/workflows/publish-is-dashboard-private-ecr.yml"
   pull_request:
     branches:
       - 'master'
     paths: 
       - "dashboard/**"
-      - ".github/workflows/publish-is-dashboard-dockerhub.yml"
+      - ".github/workflows/publish-is-dashboard-private-ecr.yml"
   workflow_dispatch:
 
 env:
@@ -27,7 +27,7 @@ env:
 
 jobs:
   deploy:
-    name: Push image to ECR
+    name: Push IS Dashboard to ECR
     runs-on: ubuntu-latest
 
     steps:
