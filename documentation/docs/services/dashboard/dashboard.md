@@ -42,6 +42,7 @@ The detailed view of a stream shows meta information, authorized subscribers and
 ## Channel History
 In the channel history tab you can fetch the whole history of a stream directly from the Tangle. For encrypted streams a preshared key is needed. For reading public streams you don't have to be subscribed.
 ![Channel-History-Screen](/img/integration-services/dashboard/history_hd.gif)
+
 ## Verify Credential
 In this tab you can upload verifiable credentials in a .json format to verify them. The verification result will be shown to you.
 ![Verify-Credential-Screen](/img/integration-services/dashboard/verify_hd.gif)
