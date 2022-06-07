@@ -32,8 +32,8 @@ Identities can be managed in the *Identities* tab. Here you can search for ident
 This is the detail page of the root identity. The identity claim and all credential attached to the identity can be viewed. Here you can also create, revoke and download verifiable credentials if you have sufficient permissions.
 ![Identities-Detail-Screen](/img/integration-services/dashboard/identity_detail_hd.gif)
 
-## Steam Management
-This tab is for managing streams. You can search for streams by stream address or topic source. Additionally you can create new streams. The table shows if you are the author or a subscriber of the listed stream. A detailed view of a stream can be opened by clicking on the table entries.
+## Stream Management
+This tab is for managing streams, you can search for streams by the address, topic or source. Additionally you can create new streams. The table shows if you are the author or a subscriber of the listed stream. A detailed view of a stream can be opened by clicking on the table entries.
 ![Streams-Screen](/img/integration-services/dashboard/streams_hd.gif)
 
 The detailed view of a stream shows meta information, authorized subscribers and pending subscribers. Pending subscribers can be authorized with just the click of a button. Furthermore, while you are on the detail page, it is polling for new data on the stream in a predefined interval. If you are the author of a stream or have write permissions you can add new messages to the stream here.
