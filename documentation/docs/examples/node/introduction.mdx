@@ -64,6 +64,12 @@ You can use the `ChannelClient` to access Audit Trail features. These include, b
 * [Subscribing or approving access to a channel](authorize-to-channel#subscribe-to-a-channel)
 * [Reading and Writing on a channel](create-channel#write-on-a-channel)
 
+:::info
+You can test your implementation on our public API which is connected to the IOTA Mainnet.
+
+- URL: https://demo-integration-services.iota.cafe/
+- API key: b85e51a2-9981-11ec-8770-4b8f01948e9b
+:::
 
 You can import and configure these clients using a `ClientConfig` object:
 
@@ -72,9 +78,9 @@ You can import and configure these clients using a `ClientConfig` object:
 import { ClientConfig, IdentityClient, ChannelClient } from '@iota/is-client';
 
 const config: ClientConfig = {
-    isGatewayUrl: process.env.IS_GATEWAY_URL,   // used in production (default: undefined)
-    ssiBridgeUrl: process.env.SSI_BRIDGE_URL,   // used in local development (default: http://127.0.0.1:3001)
-    auditTrailUrl: process.env.AUDIT_TRAIL_URL, // used in local development (default: http://127.0.0.1:3002)
+    isGatewayUrl: process.env.IS_GATEWAY_URL,   // used in production 
+    ssiBridgeUrl: process.env.SSI_BRIDGE_URL,   // used in local development 
+    auditTrailUrl: process.env.AUDIT_TRAIL_URL, // used in local development 
     apiKey: process.env.API_KEY,                // can be setup in the API to restrict access 
     apiVersion: ApiVersion.v01                  // API version (default: v0.1)
 };
