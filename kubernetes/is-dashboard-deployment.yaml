@@ -15,8 +15,9 @@ spec:
     spec:
       containers:
         - name: is-dashboard
-          image: iotaledger/is-dashboard:pr-563
-          imagePullPolicy: IfNotPresent
+          image: iotaledger/is-dashboard:develop
+          imagePullPolicy: Always
+          command: ['sh', '-c', 'npm run build && node build']
           resources:
             requests:
               memory: "100Mi"
