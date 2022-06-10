@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "prod": "node build/index.js",
     "dev": "svelte-kit dev --port ${PORT:-3055}",
