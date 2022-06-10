@@ -5,7 +5,7 @@ In this example we will show how to create Identities, Channels and how to subsc
 
 ### Create json files
 
-First create two files `identityA.json` and `identitiyB.json` for creating these Identities with the CLI in the next step. Rename for the second file the `username`.
+First create two files `identityA.json` and `identitiyB.json` for creating these Identities with the CLI in the next step. Rename the `username` field in `identityB.json` into `actorB`.
 
 ```json
 {
@@ -44,19 +44,19 @@ is write-channel -i identityA.json -p "hello world" -c channelA.json
 
 ### Request Subscription 
 
-Other users need first to subscribe to a Channel.
+Other users need to subscribe to a Channel first.
 ```sh
 is subscribe-channel -i identityB.json -c channelA.json
 ```
 
 ### Authorize Subscription
 
-The creator of the Channel authorize one subscriber.
+The creator of the Channel authorizes a subscriber.
 ```sh
 is authorize-subscription -i identityA.json -c channelA.json <Id of identityB>
 ```
 
-### Write message as a subscriber
+### Write Message as a Subscriber
 
 After the authorization the subscriber can write into the Channel.
 ```sh
@@ -65,12 +65,12 @@ is write-channel -i identityB.json -p "Can you hear me?" -c channelA.json
 
 ### Read Channel
 
-The subscriber can read the Channel entries but just only the ones after he was authorized to the Channel.
+The subscriber can read the Channel entries but only ones created after he/she was authorized to the Channel.
 ```sh
 is read-channel -i identityB.json -c channelA.json
 ```
 
-### Read history of Channel
+### Read History of Channel
 
 The user can also read the history of a Channel.
 ```sh
@@ -90,7 +90,7 @@ At any time the creator of a Channel can revoke the Subscription of other users.
 is revoke-subscription -i identityA.json -c channelA.json -sI <Id of identityB>
 ```
 
-### Find subscription
+### Find Subscription
 
 We can also double check if the Subscription is revoked by simply trying to find it. 
 ```sh
