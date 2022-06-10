@@ -47,6 +47,22 @@ module.exports = {
             "services/SSI-bridge/use-cases",
           ],
         },
+        {
+          type: "category",
+          label: "Dashboard",
+          items: [
+            {
+              type: "doc",
+              id: "services/dashboard/dashboard",
+              label: "Dashboard"
+            },
+            {
+              type: "doc",
+              id: "services/dashboard/ui-components",
+              label: "UI Components"
+            },
+          ]
+        },
       ],
     },
     {

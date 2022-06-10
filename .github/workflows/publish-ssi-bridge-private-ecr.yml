@@ -1,0 +1,79 @@
+name: Publish SSI Bridge on ECR
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    tags:
+      - 'v*'
+      - 'ssi-bridge-v*'
+    paths: 
+      - "api/ssi-bridge/**"
+      - ".github/workflows/publish-ssi-bridge-private-ecr.yml"
+  pull_request:
+    branches:
+      - 'master'
+    paths: 
+      - "api/ssi-bridge/**"
+      - ".github/workflows/publish-ssi-bridge-private-ecr.yml"
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-west-1                                      # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: is_ssi_bridge                              # set this to your Amazon ECR repository name
+  ECR_REGISTRY: 832788057033.dkr.ecr.eu-west-1.amazonaws.com # set this to your Amazon ECR registry name
+
+
+jobs:
+  deploy:
+    name: Push SSI Bridge to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+    
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          IMAGE_TAG: ${{ steps.meta.outputs.tags }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $IMAGE_TAG api/ssi-bridge/
+          docker push $IMAGE_TAG
+          echo "::set-output name=image::$IMAGE_TAG"
+
+      - name: Add aws cli
+        id: install-aws-cli
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: 2
+
+      - name : Add latest tag
+        id: latest-tag
+        env:
+          IMAGE_TAG: ${{ steps.meta.outputs.tags }}
+        run: |
+          DOCKER_IMAGE_TAG=$( echo "$IMAGE_TAG" | awk -F: '{print $2}' )
+          MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$DOCKER_IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
+          aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
