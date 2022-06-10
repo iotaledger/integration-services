@@ -25,7 +25,7 @@ helm install kong kong/kong
 4. Open another terminal and type in:
 
 ```
-minikube tunnel
+sudo minikube tunnel
 ```
 
 5. Open new terminal and type in

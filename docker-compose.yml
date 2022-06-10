@@ -127,6 +127,7 @@ services:
     environment:
       - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
       - VITE_IOTA_IS_SDK_GATEWAY_URL=
+    command: sh -c "npm run build && npm run prod"
     depends_on:
       - ssi-bridge
       - audit-trail-gw

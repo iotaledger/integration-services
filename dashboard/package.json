@@ -2,7 +2,7 @@
   "name": "dashboard",
   "version": "0.1.1",
   "scripts": {
-    "prod": "svelte-kit dev --host=0.0.0.0",
+    "prod": "node build/index.js",
     "dev": "svelte-kit dev --port ${PORT:-3055}",
     "build": "svelte-kit build",
     "package": "svelte-kit package",
@@ -33,7 +33,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@iota/is-ui-components": "0.0.49",
+    "@iota/is-ui-components": "0.0.51",
     "@sveltejs/adapter-node": "^1.0.0-next.73",
     "sveltestrap": "^5.9.0"
   }
