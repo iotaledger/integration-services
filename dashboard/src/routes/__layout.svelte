@@ -37,7 +37,7 @@
 
 	async function _logout() {
 		logout();
-		goto('/');
+		await goto('/');
 	}
 </script>
 
