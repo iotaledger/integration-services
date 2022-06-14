@@ -97,10 +97,6 @@ curl http://localhost:3000/audit-trail-gw/info
 curl http://localhost:3000/ssi-bridge/info
 ```
 
-:::info
-The Swagger API documentation **cannot** be reached currently. This issue will be fixed in a future release.
-:::
-
 ## Dashboard
 
 We also supply a dashboard with the Integration Services. You can reach the dashboard in your browser via:

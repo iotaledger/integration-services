@@ -57,7 +57,7 @@ async function startServer() {
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
 		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
 
-		app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
+		app.use('/ssi-bridge/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 
 		const prefix = `/api/${version}`;
 		useRouter(app, prefix + '/identities', identityRouter);

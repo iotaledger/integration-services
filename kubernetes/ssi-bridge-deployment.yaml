@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ssi-bridge
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -48,7 +48,7 @@ spec:
       containers:
         - name: ssi-bridge
           image: iotaledger/ssi-bridge:develop
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:
