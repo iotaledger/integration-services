@@ -1,60 +1,48 @@
 import {
 	ProveOwnershipPostBodySchema,
-	NonceSchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
-import {
+	NonceSchema,
 	CreateChannelBodySchema,
 	AddChannelLogBodySchema,
 	CreateChannelResponseSchema,
 	ChannelDataSchema,
 	ReimportBodySchema,
 	ValidateBodySchema,
-	ValidateResponseSchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/channel-bodies';
-import {
+	ValidateResponseSchema,
 	ClaimSchema,
 	RevokeVerificationBodySchema,
 	CreateCredentialBodySchema,
 	VerifiableCredentialBodySchema,
 	TrustedRootBodySchema,
-	SubjectBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/verification-bodies';
-import {
+	SubjectBodySchema,
 	ChannelInfoSchema,
 	ChannelInfoSearchSchema,
 	TopicSchema,
-	ChannelAddressSchema
-} from '@iota/is-shared-modules/lib/models/schemas/channel-info';
-import {
+	ChannelAddressSchema,
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
 	IdentityJsonSchema,
 	IdentityDocumentJsonSchema,
-	IdentityKeyPairJsonSchema
-} from '@iota/is-shared-modules/lib/models/schemas/identity';
-import {
+	IdentityKeyPairJsonSchema,
 	CreateIdentityBodySchema,
 	IdentitySearchBodySchema,
 	UpdateIdentityBodySchema,
-	LatestIdentityDocSchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/identity-bodies';
-import {
+	LatestIdentityDocSchema,
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,
 	ProductSchema,
-	ServiceSchema
-} from '@iota/is-shared-modules/lib/models/schemas/user-types';
-import { IdentitySchema } from '@iota/is-shared-modules/lib/models/schemas/user';
-import {
+	ServiceSchema,
+	IdentitySchema,
 	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionResponseSchema,
 	RequestSubscriptionBodySchema,
-	RevokeSubscriptionBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/subscription-bodies';
-import { ErrorResponseSchema, IdentityIdSchema } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/misc-bodies';
-import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+	RevokeSubscriptionBodySchema,
+	ErrorResponseSchema,
+	IdentityIdSchema,
+	SubscriptionSchema,
+	SubscriptionUpdateSchema
+} from '@iota/is-shared-modules';
 import fs from 'fs';
 
 /**

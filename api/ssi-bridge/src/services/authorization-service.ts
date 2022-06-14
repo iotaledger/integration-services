@@ -1,6 +1,4 @@
-import { AuthorizationCheck, CredentialTypes } from '@iota/is-shared-modules/lib/models/types/verification';
-import { User, UserType, UserRoles } from '@iota/is-shared-modules/lib/models/types/user';
-
+import { AuthorizationCheck, CredentialTypes, User, UserType, UserRoles } from '@iota/is-shared-modules';
 export class AuthorizationService {
 	isAuthorized(requestUser: User, id: string): AuthorizationCheck {
 		const isAuthorizedUser = this.isAuthorizedUser(requestUser.id, id);

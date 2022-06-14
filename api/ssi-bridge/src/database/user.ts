@@ -1,7 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
-import { UserPersistence, UserRoles, UserSearch } from '@iota/is-shared-modules/lib/models/types/user';
-import { VerifiableCredentialJson } from '@iota/is-shared-modules/lib/models/types/identity';
+import { MongoDbService, UserPersistence, UserRoles, UserSearch, VerifiableCredentialJson } from '@iota/is-shared-modules';
 
 const collectionName = CollectionNames.users;
 const maxNumberOfVc = 100;

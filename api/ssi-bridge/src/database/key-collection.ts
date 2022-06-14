@@ -1,7 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
-import { KeyCollectionPersistence } from '@iota/is-shared-modules/lib/models/types/key-collection';
-import { decrypt, encrypt } from '@iota/is-shared-modules/lib/utils/encryption';
+import { MongoDbService, KeyCollectionPersistence, decrypt, encrypt } from '@iota/is-shared-modules';
 
 const collectionName = CollectionNames.keyCollection;
 const getIndex = (index: number, id: string) => `${id}-${index}`;

@@ -7,7 +7,7 @@ import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 import {
 	ProveOwnershipPostBodySchema,
 	VerifyJwtBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/authentication-bodies';
+} from '@iota/is-shared-modules';
 
 const authenticationRoutes = new AuthenticationRoutes(authenticationService, Logger.getInstance());
 const { getNonce, proveOwnership, verifyJwt } = authenticationRoutes;
