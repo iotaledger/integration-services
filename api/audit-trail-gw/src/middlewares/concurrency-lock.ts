@@ -1,10 +1,8 @@
 import { NextFunction, Response } from 'express';
-import { AuthenticatedRequest } from '@iota/is-shared-modules/lib/models/types/verification';
+import { AuthenticatedRequest, Logger, ConcurrencyLocks } from '@iota/is-shared-modules';
 import { getLock, insertLock, removeLock } from '../database/concurrency-lock';
 import { StatusCodes } from 'http-status-codes';
-import { Logger } from '@iota/is-shared-modules/lib/utils/logger/index';
 import _ from 'lodash';
-import { ConcurrencyLocks } from '@iota/is-shared-modules/lib/models/types/concurrency';
 
 export const basicLock = (lockName: string) => async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 	const responseCompleted = async () => {

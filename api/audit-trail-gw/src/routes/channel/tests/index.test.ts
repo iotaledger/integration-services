@@ -1,8 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
-import { ChannelInfo } from '@iota/is-shared-modules/lib/models/types/channel-info';
-import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
-import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+import { ChannelInfo, Subscription, AccessRights, SubscriptionType, ChannelType } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
@@ -10,7 +8,6 @@ import { SubscriptionService } from '../../../services/subscription-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 describe('test channel routes', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
