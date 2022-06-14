@@ -1,13 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import { SubscriptionRoutes } from '..';
-import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
-import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+import { Subscription, AccessRights, SubscriptionType, ChannelType } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 describe('test request subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;

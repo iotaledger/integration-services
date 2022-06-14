@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
+import { ILogger } from '@iota/is-shared-modules';
 import * as os from 'os';
 import { ConfigurationService } from '../../services/configuration-service';
 

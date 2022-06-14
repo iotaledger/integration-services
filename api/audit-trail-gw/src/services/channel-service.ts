@@ -1,20 +1,26 @@
 import { Author, Subscriber } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
-import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
-import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
-import { ChannelLogRequestOptions, Topic } from '@iota/is-shared-modules/lib/models/types/channel-info';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
+import {
+	Subscription,
+	AccessRights,
+	SubscriptionType,
+	ChannelLogRequestOptions,
+	Topic,
+	ChannelType,
+	ChannelData,
+	ChannelLog,
+	CreateChannelResponse,
+	ValidateResponse,
+	getDateStringFromDate,
+	ILogger
+} from '@iota/is-shared-modules';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
-import { ChannelData, ChannelLog } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import { StreamsConfig } from '../models/config';
-import { CreateChannelResponse, ValidateResponse } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
-import { getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
-import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
 import { searchChannelInfo } from '../database/channel-info';
 import { isEmpty } from 'lodash';
 
