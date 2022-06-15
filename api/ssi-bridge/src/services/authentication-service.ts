@@ -63,7 +63,16 @@ export class AuthenticationService {
 			throw new Error('no jwt secret set!');
 		}
 
-		const signedJwt = jwt.sign({ user }, this.config.jwtSecret, { expiresIn: this.config?.jwtExpiration });
+		const jwtPayload = {
+			user: {
+				publicKey: user.publicKey,
+				id: user.id,
+				role: user.role,
+				username: user.username
+			}
+		};
+
+		const signedJwt = jwt.sign(jwtPayload, this.config.jwtSecret, { expiresIn: this.config?.jwtExpiration });
 		return signedJwt;
 	}
 }
