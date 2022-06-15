@@ -1,4 +1,4 @@
-name: Publish API on DockerHub
+name: Publish IS-Dashboard on DockerHub
 
 on:
   push:

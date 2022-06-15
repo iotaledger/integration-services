@@ -1,4 +1,4 @@
-name: Publish API on DockerHub
+name: Publish Audit Trail GW on DockerHub
 
 on:
   push:
