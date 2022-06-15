@@ -1,6 +1,5 @@
 import { isEqual } from 'lodash';
-import { ChannelData, ChannelLog } from '@iota/is-shared-modules/lib/models/types/channel-data';
-import { ValidateResponse } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import { ChannelData, ChannelLog, ValidateResponse } from '@iota/is-shared-modules';
 import { StreamsMessage } from '../../services/streams-service';
 import _ from 'lodash';
 

@@ -3,15 +3,15 @@ import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
 	VerifiableCredentialBodySchema,
-	CreateCredentialBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/verification-bodies';
+	CreateCredentialBodySchema,
+	ConcurrencyLocks
+} from '@iota/is-shared-modules';
 import { VerificationRoutes } from '../../routes/verification';
 import { Logger } from '../../utils/logger';
 import { authorizationService, verificationService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { ConfigurationService } from '../../services/configuration-service';
 import { basicLock } from '../../middlewares/concurrency-lock';
-import { ConcurrencyLocks } from '@iota/is-shared-modules/lib/models/types/concurrency';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const verificationRoutes = new VerificationRoutes(

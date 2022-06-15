@@ -3,7 +3,7 @@ import { AuthenticationService } from '../../services/authentication-service';
 import { UserService } from '../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
 import * as AuthDb from '../../database/auth';
-import { User } from '@iota/is-shared-modules/lib/models/types/user';
+import { User } from '@iota/is-shared-modules';
 import * as EncryptionUtils from '@iota/is-shared-modules/lib/utils/encryption';
 import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';

@@ -1,7 +1,9 @@
 name: Publish shared-modules to npmjs
 on:
   push:
-      branches: [ develop ]
+      branches:
+      - 'master'
+      - 'develop'
       paths: 
         - "api/shared-modules/**"
         - ".github/workflows/publish-shared-modules-sdk-npmjs.yml"

@@ -1,4 +1,4 @@
-import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
+import { ILogger } from '@iota/is-shared-modules';
 
 export const LoggerMock: ILogger = {
 	getExpressWinstonOptions: () => ({

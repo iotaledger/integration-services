@@ -1,14 +1,12 @@
 import { ApiVersion } from '..';
 import { ClientConfig } from '../models';
-import { CreateChannelBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
+import { CreateChannelBody, ChannelType } from '@iota/is-shared-modules';
 
 export const apiConfig: ClientConfig = {
-  isGatewayUrl: '',
-  ssiBridgeUrl: 'http://localhost:3001',
-  auditTrailUrl: 'http://localhost:3002',
+  isGatewayUrl: 'http://localhost:3000',
   apiVersion: ApiVersion.v01,
-  useGatewayUrl: false
+  useGatewayUrl: true,
+  apiKey: '7ef16390-bab8-4d2d-958a-98709d7fb04e'
 };
 
 export const adminUser = {

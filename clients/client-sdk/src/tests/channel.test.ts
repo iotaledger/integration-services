@@ -1,15 +1,27 @@
-import { AccessRights, ChannelClient, CreateChannelResponse } from '..';
+import {
+  AccessRights,
+  AuthorizeSubscriptionResponse,
+  ChannelClient,
+  CreateChannelResponse,
+  RequestSubscriptionResponse
+} from '..';
 import { adminUser, apiConfig, normalUser, testChannel, testChannelWrite } from './test.data';
 import { ClientConfig } from '../models/clientConfig';
 import { ApiVersion } from '../models/apiVersion';
 
-// 30 second timeout since tangle might be slow
-jest.setTimeout(30000);
+// 60 second timeout since tangle might be slow
+jest.setTimeout(60000);
 
 describe('test channel client', () => {
   let channelClient: ChannelClient;
-  const ssiBridgeUrl = `${apiConfig.ssiBridgeUrl}/api/${apiConfig.apiVersion}`;
-  const auditTrailUrl = `${apiConfig.auditTrailUrl}/api/${apiConfig.apiVersion}`;
+  let { apiVersion, auditTrailUrl, isGatewayUrl, ssiBridgeUrl } = apiConfig;
+  if (isGatewayUrl) {
+    ssiBridgeUrl = `${isGatewayUrl}/api/${apiVersion}`;
+    auditTrailUrl = `${isGatewayUrl}/api/${apiVersion}`;
+  } else {
+    ssiBridgeUrl = `${ssiBridgeUrl}/api/${apiVersion}`;
+    auditTrailUrl = `${auditTrailUrl}/api/${apiVersion}`;
+  }
   const globalTestChannel = testChannel;
   const globalTestChannelWrite = testChannelWrite;
   let createdTestChannel: CreateChannelResponse;
@@ -93,9 +105,8 @@ describe('test channel client', () => {
         createdTestChannel = await channelClient.create(globalTestChannel);
         expect(createdTestChannel).toMatchObject({
           seed: globalTestChannel.seed,
-          presharedKey: expect.any(String),
           channelAddress: expect.any(String)
-        });
+        } as CreateChannelResponse);
       } catch (e: any) {
         console.log('error: ', e);
         expect(e).toBeUndefined();
@@ -157,6 +168,44 @@ describe('test channel client', () => {
 
         await channelClient.write(createdTestChannel.channelAddress, globalTestChannelWrite);
       } catch (e: any) {
+        expect(e.response.data).toMatchObject({ error: 'could not add the logs' });
+      }
+    });
+
+    it('should subscribe to channel', async () => {
+      jest.spyOn(channelClient, 'authorizeSubscription');
+      try {
+        await channelClient.authenticate(normalUser.id, normalUser.secretKey);
+        jest.spyOn(channelClient, 'post');
+        const requestResponse = await channelClient.requestSubscription(
+          createdTestChannel.channelAddress,
+          {
+            accessRights: AccessRights.Read
+          }
+        );
+        await channelClient.authenticate(adminUser.id, adminUser.secretKey);
+        const authorizationResponse = await channelClient.authorizeSubscription(
+          createdTestChannel.channelAddress,
+          { subscriptionLink: requestResponse.subscriptionLink }
+        );
+        expect(requestResponse).toMatchObject({
+          seed: expect.any(String),
+          subscriptionLink: expect.any(String)
+        } as RequestSubscriptionResponse);
+        expect(authorizationResponse).toMatchObject({
+          keyloadLink: expect.any(String)
+        } as AuthorizeSubscriptionResponse);
+        expect(channelClient.post).toHaveBeenNthCalledWith(
+          1,
+          `${auditTrailUrl}/subscriptions/request/${createdTestChannel.channelAddress}`,
+          { accessRights: AccessRights.Read }
+        );
+        expect(channelClient.post).toHaveBeenNthCalledWith(
+          3,
+          `${auditTrailUrl}/subscriptions/authorize/${createdTestChannel.channelAddress}`,
+          { subscriptionLink: requestResponse.subscriptionLink }
+        );
+      } catch (e: any) {
         console.log('error: ', e);
         expect(e).toBeUndefined();
       }
@@ -168,6 +217,7 @@ describe('test channel client', () => {
         await channelClient.authenticate(normalUser.id, normalUser.secretKey);
         // start spying after authentication to not catch the authentication get request
         jest.spyOn(channelClient, 'get');
+
         const response = await channelClient.read(createdTestChannel.channelAddress);
         expect(response).toEqual([]);
       } catch (e: any) {
@@ -225,7 +275,7 @@ describe('test channel client', () => {
       }
 
       expect(channelClient.get).toHaveBeenCalledWith(`${auditTrailUrl}/channel-info/search`, {
-        'api-key': '',
+        'api-key': apiConfig.apiKey,
         name: globalTestChannel.name,
         'author-id': adminUser.id,
         created: undefined,
