@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelInfo, ChannelInfoSearch } from  '../../../../shared-modules/src/models/types/index' //'@iota/is-shared-modules/lib/models/types/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
@@ -118,6 +118,8 @@ export class ChannelInfoRoutes {
 	getChannelInfoSearch = (req: Request): ChannelInfoSearch => {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 		const authorId = decodeParam(<string>req.query['author-id']);
+		const subscriberId = decodeParam(<string>req.query['subscriber-id']);
+		const requestSubscriberId = decodeParam(<string>req.query['request-subscription-id']);
 		const name = decodeParam(<string>req.query['name']);
 		const topicType = decodeParam(<string>req.query['topic-type']);
 		const topicSource = decodeParam(<string>req.query['topic-source']);
@@ -133,6 +135,8 @@ export class ChannelInfoRoutes {
 
 		return {
 			authorId,
+			subscriberId,
+			requestSubscriberId,
 			name,
 			topicType,
 			topicSource,

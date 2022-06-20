@@ -25,6 +25,7 @@ export const ChannelInfoSchema = Type.Object({
 	type: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
 	authorId: Type.String({ minLength: 50, maxLength: 53 }),
 	subscriberIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
+	requestedSubscriptionIds: Type.Optional(Type.Array(Type.String({minLength: 50, maxLength: 53}))),
 	topics: Type.Array(TopicSchema),
 	created: Type.Optional(Type.String({ format: 'date-time' })),
 	latestMessage: Type.Optional(Type.String({ format: 'date-time' }))
@@ -32,6 +33,8 @@ export const ChannelInfoSchema = Type.Object({
 
 export const ChannelInfoSearchSchema = Type.Object({
 	authorId: Type.Optional(Type.String()),
+	subscriberId: Type.Optional(Type.String()),
+	requestSubscriberId: Type.Optional(Type.String()),
 	name: Type.Optional(
 		Type.String({
 			description: 'Optional channel name. A channel can be searched by its name.'

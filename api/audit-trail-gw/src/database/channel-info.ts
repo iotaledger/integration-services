@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
-import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '../../../shared-modules/src/models/types/index'  //@iota/is-shared-modules/lib/models/types/channel-info';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -11,9 +11,11 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { authorId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
+	const { authorId, subscriberId, requestSubscriberId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
 	const query = {
 		authorId: regex(authorId),
+		subscriberIds: subscriberId ? { $elemMatch: { $eq: subscriberId } } : undefined,
+	    requestedSubscriptionIds: requestSubscriberId ? { $elemMatch: { $eq: requestSubscriberId } } : undefined,
 		name: regex(name),
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
@@ -52,6 +54,42 @@ export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence) =>
 
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
+
+export const addChannelRequestSubscriberId = async (channelAddress: string, subscriberId: string) => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.requestedSubscriptionIds || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			requestedSubscriptionIds: [...subs, subscriberId]
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const removeChannelRequestSubscriberId = async (channelAddress: string, subscriberId: string) => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.requestedSubscriptionIds || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			requestedSubscriptionIds: subs.filter((subscriber: string) => subscriber !== subscriberId)
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+}
 
 export const addChannelSubscriberId = async (channelAddress: string, subscriberId: string) => {
 	const currChannel = await getChannelInfo(channelAddress);

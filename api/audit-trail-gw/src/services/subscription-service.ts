@@ -107,7 +107,7 @@ export class SubscriptionService {
 		};
 
 		await this.addSubscription(subscription);
-		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
+		await this.channelInfoService.addChannelRequestSubscriberId(channelAddress, subscriberId);
 
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}

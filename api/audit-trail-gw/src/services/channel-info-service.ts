@@ -25,7 +25,15 @@ export class ChannelInfoService {
 		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
 	}
 
-	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
+	async addChannelRequestSubscriberId(channelAddress: string, channelRequestSubscriberId: string) {
+		return ChannelInfoDb.addChannelRequestSubscriberId(channelAddress, channelRequestSubscriberId);
+	}
+
+	async removeChannelRequestSubscriberId(channelAddress: string, channelRequestSubscriberId: string){
+		return ChannelInfoDb.removeChannelRequestSubscriberId(channelAddress, channelRequestSubscriberId);
+	}
+
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string){
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 

@@ -26,6 +26,16 @@ export const channelInfoRouter = Router();
  *       schema:
  *         type: string
  *     - in: query
+ *       name: subscriber-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
+ *       name: request-subscription-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
  *       name: name
  *       required: false
  *       schema:
@@ -100,7 +110,7 @@ export const channelInfoRouter = Router();
  *                 error:
  *                   type: string
  */
-channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannelInfo);
+channelInfoRouter.get('/search', /**apiKeyMiddleware, authMiddleWare,**/ searchChannelInfo);
 
 /**
  * @openapi
