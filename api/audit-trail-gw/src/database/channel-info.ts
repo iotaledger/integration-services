@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
-import { ChannelInfoPersistence, ChannelInfoSearch } from '../../../shared-modules/src/models/types/index'  //@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -11,11 +11,11 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { authorId, subscriberId, requestSubscriberId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
+	const { authorId, subscriberId, requestedSubscriptionId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
 	const query = {
 		authorId: regex(authorId),
 		subscriberIds: subscriberId ? { $elemMatch: { $eq: subscriberId } } : undefined,
-	    requestedSubscriptionIds: requestSubscriberId ? { $elemMatch: { $eq: requestSubscriberId } } : undefined,
+	    requestedSubscriptionIds: requestedSubscriptionId ? { $elemMatch: { $eq: requestedSubscriptionId } } : undefined,
 		name: regex(name),
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
