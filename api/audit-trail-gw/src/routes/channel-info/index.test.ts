@@ -27,6 +27,8 @@ describe('test Search channel', () => {
 	it('should call searchChannelInfo with expected search', async () => {
 		const expectedChannelInfoSearch: ChannelInfoSearch = {
 			authorId: 'did:iota:test1234',
+			subscriberId: 'did:iota:4321',
+			requestedSubscriptionId: 'did:iota:1432',
 			name: 'test-channel',
 			topicType: 'test-topic',
 			topicSource: 'test-source',
@@ -42,6 +44,8 @@ describe('test Search channel', () => {
 			params: {},
 			query: {
 				'author-id': 'did:iota:test1234',
+				'subscriber-id': 'did:iota:4321',
+				'request-subscription-id': 'did:iota:1432',
 				name: 'test-channel',
 				'topic-type': 'test-topic',
 				'topic-source': 'test-source',
@@ -124,6 +128,7 @@ describe('test GET channelInfo', () => {
 			created: getDateStringFromDate(date),
 			latestMessage: null,
 			subscriberIds: [],
+			requestedSubscriptionIds: [],
 			topics: [{ source: 'test', type: 'test-type' }]
 		});
 	});

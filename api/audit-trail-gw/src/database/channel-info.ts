@@ -11,10 +11,13 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
 	const { authorId, subscriberId, requestedSubscriptionId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
+
+	const subscriberIds = { subscriberIds: subscriberId ? { $elemMatch: { $eq: subscriberId } } : undefined };
+	const requestedSubscriptionIds = { requestedSubscriptionIds: requestedSubscriptionId ? { $elemMatch: { $eq: requestedSubscriptionId } } : undefined };
+	const orFilterValues = [subscriberIds, requestedSubscriptionIds].filter(object => Object.values(object)[0] != undefined);
 	const query = {
 		authorId: regex(authorId),
-		subscriberIds: subscriberId ? { $elemMatch: { $eq: subscriberId } } : undefined,
-	    requestedSubscriptionIds: requestedSubscriptionId ? { $elemMatch: { $eq: requestedSubscriptionId } } : undefined,
+		$or: orFilterValues.length >= 1 ? orFilterValues : undefined,
 		name: regex(name),
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
@@ -54,7 +57,7 @@ export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence) =>
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const addChannelRequestSubscriberId = async (channelAddress: string, subscriberId: string) => {
+export const addChannelRequestedSubscriptionId = async (channelAddress: string, requestedSubscriptionId: string) => {
 	const currChannel = await getChannelInfo(channelAddress);
 	if (!currChannel) {
 		throw new Error(`could not find channel with address ${channelAddress}`);
@@ -65,14 +68,14 @@ export const addChannelRequestSubscriberId = async (channelAddress: string, subs
 	};
 	const update = {
 		$set: {
-			requestedSubscriptionIds: [...subs, subscriberId]
+			requestedSubscriptionIds: [...subs, requestedSubscriptionId]
 		}
 	};
 
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const removeChannelRequestSubscriberId = async (channelAddress: string, subscriberId: string) => {
+export const removeChannelRequestedSubscriptionId = async (channelAddress: string, requestedSubscriptionId: string) => {
 	const currChannel = await getChannelInfo(channelAddress);
 	if (!currChannel) {
 		throw new Error(`could not find channel with address ${channelAddress}`);
@@ -83,7 +86,7 @@ export const removeChannelRequestSubscriberId = async (channelAddress: string, s
 	};
 	const update = {
 		$set: {
-			requestedSubscriptionIds: subs.filter((subscriber: string) => subscriber !== subscriberId)
+			requestedSubscriptionIds: subs.filter((id: string) => id !== requestedSubscriptionId)
 		}
 	};
 

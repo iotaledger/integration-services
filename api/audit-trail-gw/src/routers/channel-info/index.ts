@@ -109,7 +109,7 @@ export const channelInfoRouter = Router();
  *                 error:
  *                   type: string
  */
-channelInfoRouter.get('/search', /**apiKeyMiddleware, authMiddleWare,**/ searchChannelInfo);
+channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannelInfo);
 
 /**
  * @openapi
