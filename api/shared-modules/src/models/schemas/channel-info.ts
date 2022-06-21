@@ -33,8 +33,8 @@ export const ChannelInfoSchema = Type.Object({
 
 export const ChannelInfoSearchSchema = Type.Object({
 	authorId: Type.Optional(Type.String()),
-	subscriberId: Type.Optional(Type.String()),
-	requestSubscriberId: Type.Optional(Type.String()),
+	subscriberId: Type.Optional(Type.String()), 
+	requestedSubscriptionId: Type.Optional(Type.String()),
 	name: Type.Optional(
 		Type.String({
 			description: 'Optional channel name. A channel can be searched by its name.'
