@@ -21,7 +21,7 @@ on:
 
 env:
   AWS_REGION: eu-west-1                                      # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: is_ssi_bridge                              # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: is-ssi-bridge                              # set this to your Amazon ECR repository name
   ECR_REGISTRY: 832788057033.dkr.ecr.eu-west-1.amazonaws.com # set this to your Amazon ECR registry name
 
 
@@ -49,6 +49,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
+          flavor: latest=false
           images: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
     
       - name: Build, tag, and push image to Amazon ECR

@@ -8,7 +8,7 @@ import { UserService } from '../services/user-service';
 import * as TrustedRootDb from '../database/trusted-roots';
 import * as VerifiableCredentialDb from '../database/verifiable-credentials';
 import { VerificationService } from '../services/verification-service';
-import { CredentialTypes } from '@iota/is-shared-modules/lib/models/types/verification';
+import { CredentialTypes } from '@iota/is-shared-modules';
 
 describe('test keygenerator', () => {
 	let keyGenerator: KeyGenerator;

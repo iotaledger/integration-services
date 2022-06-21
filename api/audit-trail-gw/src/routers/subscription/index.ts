@@ -2,11 +2,12 @@ import { Router } from 'express';
 import {
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionBodySchema,
-	RevokeSubscriptionBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/subscription-bodies';
-import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+	RevokeSubscriptionBodySchema,
+	SubscriptionSchema,
+	SubscriptionUpdateSchema,
+	Logger
+} from '@iota/is-shared-modules';
 import { SubscriptionRoutes } from '../../routes/subscription';
-import { Logger } from '@iota/is-shared-modules/lib/utils/logger';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelInfoService, subscriptionService } from '../services';
 import { channelLock } from '../../middlewares/concurrency-lock';

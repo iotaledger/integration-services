@@ -2,16 +2,20 @@ import { Author } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
 import * as ChannelDataDb from '../database/channel-data';
 import * as SubscriptionDb from '../database/subscription';
-import { Subscription, SubscriptionUpdate } from '@iota/is-shared-modules/lib/models/types/subscription';
-import { AccessRights, SubscriptionType } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+import {
+	Subscription,
+	SubscriptionUpdate,
+	AccessRights,
+	SubscriptionType,
+	RequestSubscriptionResponse,
+	ChannelData,
+	ChannelType
+} from '@iota/is-shared-modules';
 import { ChannelInfoService } from './channel-info-service';
 import { StreamsConfig } from '../models/config';
-import { RequestSubscriptionResponse } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
-import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class SubscriptionService {
 	private password: string;

@@ -1,10 +1,7 @@
-import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import {
+  ChannelData,
   ChannelInfo,
-  ChannelInfoSearch
-} from '@iota/is-shared-modules/lib/models/types/channel-info';
-import { ClientConfig } from '../models/clientConfig';
-import {
+  ChannelInfoSearch,
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
@@ -15,14 +12,13 @@ import {
   AuthorizeSubscriptionResponse,
   RequestSubscriptionBody,
   RequestSubscriptionResponse,
-  RevokeSubscriptionBody
-} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
-import {
+  RevokeSubscriptionBody,
   Subscription,
-  SubscriptionUpdate
-} from '@iota/is-shared-modules/lib/models/types/subscription';
+  SubscriptionUpdate,
+  ChannelType
+} from '@iota/is-shared-modules';
+import { ClientConfig } from '../models/clientConfig';
 import { BaseClient } from './base';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class ChannelClient extends BaseClient {
   private baseUrl: string;
@@ -247,10 +243,10 @@ export class ChannelClient extends BaseClient {
   }
 
   /**
-   * Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
+   * Authorize a subscription to a channel with DID or subscription link. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
    * @param channelAddress
-   * @param authorization
-   * @returns
+   * @param subscriptionIdentifier
+   * @returns keyloadLink
    */
   async authorizeSubscription(
     channelAddress: string,

@@ -1,6 +1,5 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
 import * as ChannelInfoDb from '../database/channel-info';
-import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/lib/utils/text';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {

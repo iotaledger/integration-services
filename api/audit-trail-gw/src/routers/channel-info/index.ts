@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import { ChannelInfoSchema } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
+import { ChannelInfoSchema, Logger } from '@iota/is-shared-modules';
 import { ChannelInfoRoutes } from '../../routes/channel-info';
-import { Logger } from '@iota/is-shared-modules/lib/utils/logger';
 import { authorizationService, channelInfoService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';

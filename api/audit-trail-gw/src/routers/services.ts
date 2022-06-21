@@ -3,7 +3,7 @@ import { ChannelInfoService } from '../services/channel-info-service';
 import { ChannelService } from '../services/channel-service';
 import { StreamsService } from '../services/streams-service';
 import { SubscriptionService } from '../services/subscription-service';
-import { Logger } from '@iota/is-shared-modules/lib/utils/logger';
+import { Logger } from '@iota/is-shared-modules';
 import { ConfigurationService } from '../services/configuration-service';
 
 const logger = Logger.getInstance();

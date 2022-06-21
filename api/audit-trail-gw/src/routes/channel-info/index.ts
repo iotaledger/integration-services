@@ -1,13 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ChannelInfo, ChannelInfoSearch, getDateFromString, AuthenticatedRequest, ILogger } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
-import { getDateFromString } from '@iota/is-shared-modules/lib/utils/text';
-import { AuthenticatedRequest } from '@iota/is-shared-modules/lib/models/types/verification';
 import { AuthorizationService } from '../../services/authorization-service';
-import { ILogger } from '@iota/is-shared-modules/lib/utils/logger';
-
 export class ChannelInfoRoutes {
 	constructor(
 		private readonly channelInfoService: ChannelInfoService,
@@ -131,7 +127,6 @@ export class ChannelInfoRoutes {
 		const index = isNaN(indexParam) ? undefined : indexParam;
 		// If ascending is undefined, don't sort otherwise sort ascending or descending
 		const ascending = decodeParam(<string>req.query.asc) ? decodeParam(<string>req.query.asc) === 'true' : undefined;
-
 
 		return {
 			authorId,

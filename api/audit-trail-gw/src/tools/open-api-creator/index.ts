@@ -5,23 +5,21 @@ import {
 	ChannelDataSchema,
 	ReimportBodySchema,
 	ValidateBodySchema,
-	ValidateResponseSchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/channel-bodies';
-import {
+	ValidateResponseSchema,
 	ChannelInfoSchema,
 	ChannelInfoSearchSchema,
 	TopicSchema,
-	ChannelAddressSchema
-} from '@iota/is-shared-modules/lib/models/schemas/channel-info';
-import {
+	ChannelAddressSchema,
 	AuthorizeSubscriptionResponseSchema,
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionResponseSchema,
 	RequestSubscriptionBodySchema,
-	RevokeSubscriptionBodySchema
-} from '@iota/is-shared-modules/lib/models/schemas/request-response-body/subscription-bodies';
-import { ErrorResponseSchema, IdentityIdSchema } from '@iota/is-shared-modules/lib/models/schemas/request-response-body/misc-bodies';
-import { SubscriptionSchema, SubscriptionUpdateSchema } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+	RevokeSubscriptionBodySchema,
+	ErrorResponseSchema,
+	IdentityIdSchema,
+	SubscriptionSchema,
+	SubscriptionUpdateSchema
+} from '@iota/is-shared-modules';
 import fs from 'fs';
 
 /**

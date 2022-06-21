@@ -4,13 +4,13 @@ import {
 	IdentityDocumentJson,
 	IdentityJson,
 	VerifiableCredentialJson,
-	Credential
-} from '@iota/is-shared-modules/lib/models/types/identity';
-import { KeyCollectionJson } from '@iota/is-shared-modules/lib/models/types/key-collection';
+	Credential,
+	KeyCollectionJson,
+	IdentityKeys,
+	LatestIdentityJson
+} from '@iota/is-shared-modules';
 const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
 import { ILogger } from '../utils/logger';
-import { IdentityKeys } from '@iota/is-shared-modules/lib/models/types/identity';
-import { LatestIdentityJson } from '@iota/is-shared-modules/lib/models/types/identity';
 
 export class SsiService {
 	private static instance: SsiService;

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: audit-trail-gw
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -48,7 +48,7 @@ spec:
       containers:
         - name: audit-trail-gw
           image: iotaledger/audit-trail-gw:develop
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:

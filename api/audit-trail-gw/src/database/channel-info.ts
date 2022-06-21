@@ -1,6 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota/is-shared-modules/lib/services/mongodb-service';
-import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { MongoDbService, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
 
 const collectionName = CollectionNames.channelInfo;
 

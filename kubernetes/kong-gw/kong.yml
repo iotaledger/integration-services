@@ -49,6 +49,21 @@ spec:
             name: ssi-bridge
             port:
               number: 3000
+      - path: /audit-trail-gw/docs
+        pathType: Prefix
+        backend:
+          service:
+            name: audit-trail-gw
+            port:
+              number: 3000
+              number: 3000
+      - path: /ssi-bridge/docs
+        pathType: Prefix
+        backend:
+          service:
+            name: ssi-bridge
+            port:
+              number: 3000
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

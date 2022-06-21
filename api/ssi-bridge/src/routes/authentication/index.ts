@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ProveOwnershipPostBody, VerifyJwtBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import { ProveOwnershipPostBody, VerifyJwtBody } from '@iota/is-shared-modules';
 import { AuthenticationService } from '../../services/authentication-service';
 import { ILogger } from '../../utils/logger';
 

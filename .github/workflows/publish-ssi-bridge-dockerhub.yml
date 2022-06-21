@@ -1,4 +1,4 @@
-name: Publish API on DockerHub
+name: Publish SSI Bridge on DockerHub
 
 on:
   push:

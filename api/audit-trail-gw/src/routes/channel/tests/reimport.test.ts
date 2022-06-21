@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
-import { AccessRights } from '@iota/is-shared-modules/lib/models/schemas/subscription';
+import { AccessRights, Subscription } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsService } from '../../../services/streams-service';
@@ -10,7 +10,6 @@ import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import * as ChannelDataDb from '../../../database/channel-data';
 import { SubscriberMock } from '../../../test/mocks/streams';
-import { Subscription } from '@iota/is-shared-modules/lib/models/types/subscription';
 import { Subscriber } from '@iota/streams/node/streams_wasm';
 
 describe('test re-import route', () => {
