@@ -12,12 +12,12 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 	const regex = (text: string) => text && new RegExp(text, 'i');
 	const { authorId, subscriberId, requestedSubscriptionId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
 
+	const author = MongoDbService.getPlainObject({ authorId: regex(authorId)});
 	const subscriberIds = { subscriberIds: subscriberId ? { $elemMatch: { $eq: subscriberId } } : undefined };
 	const requestedSubscriptionIds = { requestedSubscriptionIds: requestedSubscriptionId ? { $elemMatch: { $eq: requestedSubscriptionId } } : undefined };
-	const orFilterValues = [subscriberIds, requestedSubscriptionIds].filter(object => Object.values(object)[0] != undefined);
+	const idFilterValues = [author, subscriberIds, requestedSubscriptionIds].filter(object => Object.values(object)[0] != undefined);
 	const query = {
-		authorId: regex(authorId),
-		$or: orFilterValues.length >= 1 ? orFilterValues : undefined,
+		$or: idFilterValues.length >= 1 ? idFilterValues : undefined,
 		name: regex(name),
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
