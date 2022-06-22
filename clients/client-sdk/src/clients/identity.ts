@@ -1,19 +1,24 @@
+import { BaseClient } from './base';
+import { ClientConfig } from '../models/clientConfig';
 import {
   IdentityInternal,
   IdentityJson,
-  VerifiableCredentialJson,
+  VerifiableCredentialJson
+} from '@iota/is-shared-modules/lib/models/types/identity';
+import {
   RevokeVerificationBody,
-  VerifyJwtBody,
-  User,
-  UserType,
+  VerifyJwtBody
+} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import { User, UserType } from '@iota/is-shared-modules/lib/models/types/user';
+import {
   CredentialTypes,
-  VerifiableCredentialInternal,
+  VerifiableCredentialInternal
+} from '@iota/is-shared-modules/lib/models/types/verification';
+import { SearchCriteria } from '../models/searchCriteria';
+import {
   IdentityDocumentJson,
   IdentitySearchBody
-} from '@iota/is-shared-modules';
-import { SearchCriteria } from '../models/searchCriteria';
-import { BaseClient } from './base';
-import { ClientConfig } from '../models/clientConfig';
+} from '@iota/is-shared-modules/lib/models/types/identity';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
