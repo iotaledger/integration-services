@@ -1,7 +1,10 @@
+import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import {
-  ChannelData,
   ChannelInfo,
-  ChannelInfoSearch,
+  ChannelInfoSearch
+} from '@iota/is-shared-modules/lib/models/types/channel-info';
+import { ClientConfig } from '../models/clientConfig';
+import {
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
@@ -12,13 +15,14 @@ import {
   AuthorizeSubscriptionResponse,
   RequestSubscriptionBody,
   RequestSubscriptionResponse,
-  RevokeSubscriptionBody,
+  RevokeSubscriptionBody
+} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
+import {
   Subscription,
-  SubscriptionUpdate,
-  ChannelType
-} from '@iota/is-shared-modules';
-import { ClientConfig } from '../models/clientConfig';
+  SubscriptionUpdate
+} from '@iota/is-shared-modules/lib/models/types/subscription';
 import { BaseClient } from './base';
+import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class ChannelClient extends BaseClient {
   private baseUrl: string;
