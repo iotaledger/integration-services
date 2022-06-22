@@ -143,6 +143,8 @@ export class ChannelClient extends BaseClient {
     const {
       name,
       authorId,
+      subscriberId, 
+	    requestedSubscriptionId,
       topicType,
       topicSource,
       created,
@@ -155,7 +157,9 @@ export class ChannelClient extends BaseClient {
     const param2 = topicSource !== undefined ? { 'topic-source': topicSource } : {};
     const param3 = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
     const param4 = authorId !== undefined ? { 'author-id': authorId } : {};
-    const param5 = ascending !== undefined ? { asc: ascending } : {};
+    const param5 = subscriberId !== undefined ? { 'subscriber-id': subscriberId } : {};
+    const param6 = requestedSubscriptionId !== undefined ? { 'request-subscription-id': requestedSubscriptionId } : {};
+    const param7 = ascending !== undefined ? { asc: ascending } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
       ...param1,
@@ -164,6 +168,8 @@ export class ChannelClient extends BaseClient {
       ...param3,
       ...param4,
       ...param5,
+      ...param6,
+      ...param7,
       limit,
       index
     });

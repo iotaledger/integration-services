@@ -266,6 +266,7 @@ describe('test channel client', () => {
           name: globalTestChannel.name,
           description: globalTestChannel.description,
           subscriberIds: expect.any(Array),
+          requestedSubscriptionIds: expect.any(Array),
           topics: expect.arrayContaining(globalTestChannel.topics),
           channelAddress: expect.any(String)
         });
