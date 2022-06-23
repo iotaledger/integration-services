@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
-    "@iota/is-shared-modules": "^0.1.7",
+    "@iota/is-shared-modules": "^0.1.9",
     "@iota/streams": "^0.1.2",
     "@noble/ed25519": "^1.5.2",
     "@sinclair/typebox": "^0.12.8",

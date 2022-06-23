@@ -194,7 +194,7 @@ export class ChannelService {
 				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicPayload, maskedPayload);
 
 				// store newly added log
-				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log };
+				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log, source: { publicKey: res.source } };
 				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], this.password);
 
 				await this.subscriptionService.updateSubscriptionState(

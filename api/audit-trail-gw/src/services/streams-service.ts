@@ -106,7 +106,7 @@ export class StreamsService {
 		subscription: Author | Subscriber,
 		publicPayload: unknown,
 		maskedPayload: unknown
-	): Promise<{ link: string; messageId: string }> {
+	): Promise<{ link: string; messageId: string; source?: string }> {
 		try {
 			const latestAddress = this.getChannelAddress(keyloadLink);
 			const pubPayload = publicPayload ? toBytes(JSON.stringify(publicPayload)) : new Uint8Array();
@@ -122,7 +122,8 @@ export class StreamsService {
 
 			return {
 				messageId,
-				link: messageLink?.toString()
+				link: messageLink?.toString(),
+				source: subscription.clone().get_public_key()
 			};
 		} catch (error) {
 			this.logger.error(`Error from streams sdk: ${error}`);
@@ -137,7 +138,7 @@ export class StreamsService {
 		const publicPayload = message && fromBytes(message.get_public_payload());
 		const maskedPayload = message && fromBytes(message.get_masked_payload());
 		const source = message?.get_identifier();
-
+		console.log('source', source);
 		if (!publicPayload && !maskedPayload) {
 			return null;
 		}
@@ -176,6 +177,8 @@ export class StreamsService {
 							const message = messageResponse.message;
 							const publicPayload = message && fromBytes(message.get_public_payload());
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
+							const source = message?.get_identifier();
+							console.log('source111', source);
 
 							try {
 								if (!publicPayload && !maskedPayload) {
@@ -189,7 +192,8 @@ export class StreamsService {
 									link,
 									messageId,
 									publicPayload: publicPayload && JSON.parse(publicPayload),
-									maskedPayload: maskedPayload && JSON.parse(maskedPayload)
+									maskedPayload: maskedPayload && JSON.parse(maskedPayload),
+									source
 								};
 							} catch (e) {
 								this.logger.error('could not parse maskedPayload');
