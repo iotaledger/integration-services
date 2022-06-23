@@ -24,12 +24,13 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 		ascending
 	} = channelInfoSearch;
 
-	const authorFilter = { authorId: regex(authorId) };
+	const authorFilter = authorId ? { authorId: regex(authorId) } : undefined;
 	const subscriberIdsFilter = subscriberId ? { subscriberIds: { $elemMatch: { $eq: subscriberId } } } : undefined;
 	const requestedSubscriptionIdsFilter = requestedSubscriptionId
 		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
 		: undefined;
 	const idFilters = [authorFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+
 	const query = {
 		$or: idFilters.length >= 1 ? idFilters : undefined,
 		name: regex(name),
