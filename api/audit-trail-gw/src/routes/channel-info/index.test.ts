@@ -45,7 +45,7 @@ describe('test Search channel', () => {
 			query: {
 				'author-id': 'did:iota:test1234',
 				'subscriber-id': 'did:iota:4321',
-				'request-subscription-id': 'did:iota:1432',
+				'requested-subscription-id': 'did:iota:1432',
 				name: 'test-channel',
 				'topic-type': 'test-topic',
 				'topic-source': 'test-source',
