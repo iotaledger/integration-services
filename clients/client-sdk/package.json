@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-client",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Javascript client for the IOTA's Integration Services API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@iota/crypto.js": "^1.8.6",
-    "@iota/is-shared-modules": "^0.1.8",
+    "@iota/is-shared-modules": "^0.1.9",
     "@iota/util.js": "^1.8.6",
     "@noble/ed25519": "^1.5.0",
     "axios": "~0.24.0"
