@@ -30,7 +30,7 @@ export const channelInfoRouter = Router();
  *       schema:
  *         type: string
  *     - in: query
- *       name: request-subscription-id
+ *       name: requested-subscription-id
  *       required: false
  *       schema:
  *         type: string

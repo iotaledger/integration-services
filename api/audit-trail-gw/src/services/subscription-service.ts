@@ -171,6 +171,8 @@ export class SubscriptionService {
 		);
 
 		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
+		await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
+		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscription.id);
 
 		return { keyloadLink, sequenceLink };
 	}

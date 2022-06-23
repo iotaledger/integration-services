@@ -253,8 +253,6 @@ export class SubscriptionRoutes {
 			}
 
 			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId);
-			await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
-			await this.channelInfoService.addChannelSubscriberId(channelAddress, subscription.id);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
