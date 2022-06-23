@@ -164,7 +164,7 @@ export class ChannelClient extends BaseClient {
     const latestMessageParam = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
     const authorIdParam = authorId !== undefined ? { 'author-id': authorId } : {};
     const subscriberIdParam = subscriberId !== undefined ? { 'subscriber-id': subscriberId } : {};
-    const requestedSubscriptionIdParam = requestedSubscriptionId !== undefined ? { 'request-subscription-id': requestedSubscriptionId } : {};
+    const requestedSubscriptionIdParam = requestedSubscriptionId !== undefined ? { 'requested-subscription-id': requestedSubscriptionId } : {};
     const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
