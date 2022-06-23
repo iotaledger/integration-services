@@ -18,9 +18,8 @@ The concepts of decentralized identities will not be explained in depth in this 
 
 ## Wiki
 
-1. [Decentralized Identifier](https://wiki.iota.org/identity.rs/decentralized_identifiers/overview)
-2. [Verifiable Credentials](https://wiki.iota.org/identity.rs/verifiable_credentials/overview)  
-3. [DID Communication](https://wiki.iota.org/identity.rs/did_communications/overview)
+1. [Decentralized Identifier](https://wiki.iota.org/identity.rs/concepts/decentralized_identifiers/overview)
+2. [Verifiable Credentials](https://wiki.iota.org/identity.rs/concepts/verifiable_credentials/overview)  
 
 ## Blogposts
 

@@ -15,7 +15,7 @@ keywords:
 
 # UI Components
 
-The UI Components are an essential part for managing decentralized identities and streams on a easy-to-use visual dashboard. The UI Components are building blocks which can be used to easily configure a dashboard like the dashboard used for the [Integration Services](dashboard.md). You can adjust the dashboard to your specific use-case by changing out the displayed components, logos and colors.
+The UI Components are an essential part for managing decentralized identities and streams on a easy-to-use visual dashboard. The UI Components are building blocks which can be used to easily configure a dashboard like the dashboard used for the [Integration Services](dashboard.md).
 
 ## Installation
 

@@ -12,9 +12,48 @@
 module.exports = {
   docs: [
     {
-      type: "doc",
-      id: "welcome",
-      label: "Welcome",
+      type: "category",
+      label: "Getting Started/Welcome",
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          id: "welcome",
+          label: "Welcome",
+        },
+        {
+          type: "category",
+          label: "Getting Started",
+          collapsed: true,
+          items: [
+            "getting_started/overview",
+            {
+              type: "doc",
+              label: "Node.js",
+              id: "getting_started/installation/node_setup",
+            },
+            {
+              type: 'category',
+              label: 'Java',
+              items: ['getting_started/installation/java/local_setup']
+            },
+            {
+              type: 'category',
+              label: 'Kubernetes',
+              items: [
+                "getting_started/installation/kubernetes/local_setup",
+                "getting_started/installation/kubernetes/configuration",
+              ],
+            },
+            {
+              type: "doc",
+              label: "Docker Compose",
+              id: "getting_started/installation/docker_compose_setup",
+            },
+
+          ]
+        }
+      ],
     },
     {
       type: "category",
@@ -32,6 +71,11 @@ module.exports = {
             },
             "services/audit-trail-gateway/API-definition",
             "services/audit-trail-gateway/use-cases",
+            {
+              type: "doc",
+              id: "services/audit-trail-gateway/audit_trail_gw_api_reference",
+              label: "Audit-Trail GW API Reference",
+            },
           ],
         },
         {
@@ -45,74 +89,69 @@ module.exports = {
             },
             "services/SSI-bridge/API-definition",
             "services/SSI-bridge/use-cases",
+            {
+              type: "doc",
+              id: "services/SSI-bridge/ssi_bridge_api_reference",
+              label: "SSI-Bridge API Reference",
+            },
           ],
-        },
-        {
-          type: "category",
-          label: "Dashboard",
-          items: [
-            {
-              type: "doc",
-              id: "services/dashboard/dashboard",
-              label: "Dashboard"
-            },
-            {
-              type: "doc",
-              id: "services/dashboard/ui-components",
-              label: "UI Components"
-            },
-          ]
-        },
+        }
       ],
     },
     {
       type: "category",
-      label: "IS-CLI",
+      label: 'Clients',
       collapsed: false,
       items: [
+        "services/dashboard/dashboard", ,
+        "services/dashboard/ui-components",
         {
-          type: "doc",
-          label: "Introduction",
-          id: "is-cli/introduction"
+          type: "category",
+          label: "CLI",
+          collapsed: false,
+          items: [
+            {
+              type: "doc",
+              label: "Introduction",
+              id: "is-cli/introduction"
+            },
+            {
+              type: "doc",
+              label: "Examples",
+              id: "is-cli/is_cli_examples"
+            },
+
+          ]
         },
         {
-          type: "doc",
-          label: "Examples",
-          id: "is-cli/is_cli_examples"
-        },
-       
-      ]
-    },
-    {
-      type: "category",
-      label: "Getting Started",
-      collapsed: false,
-      items: [
-        "getting_started/overview",
-        {
-          type: "doc",
-          label: "Node.js",
-          id: "getting_started/installation/node_setup",
+          type: 'category',
+          label: 'Node.js',
+          items: ['examples/node/introduction',
+            'examples/node/how-to-run-examples',
+            'examples/node/create-identity-and-credentials',
+            'examples/node/update-users',
+            'examples/node/delete-users',
+            'examples/node/trusted-authorities',
+            'examples/node/create-channel',
+            'examples/node/authorize-to-channel',
+            'examples/node/search-channel-and-validate-data'
+          ]
         },
         {
           type: 'category',
           label: 'Java',
-          items: ['getting_started/installation/java/local_setup']
+          items: ['examples/java/introduction',
+            'examples/java/how-to-run-examples',
+            'examples/java/create-identity-and-credentials',
+            'examples/java/update-users',
+            'examples/java/delete-users',
+            'examples/java/trusted-authorities',
+            'examples/java/create-channel',
+            'examples/java/authorize-to-channel',
+            'examples/java/search-channel-and-validate-data'
+          ]
         },
-        {
-          type: 'category',
-          label: 'Kubernetes',
-          items: [
-            "getting_started/installation/kubernetes/local_setup",
-            "getting_started/installation/kubernetes/configuration",
-          ],
-        },
-        {
-          type: "doc",
-          label: "Docker Compose",
-          id: "getting_started/installation/docker_compose_setup",
-        },
-      ],
+      ]
     },
     {
       type: "category",
@@ -134,52 +173,6 @@ module.exports = {
       ],
     },
     {
-      type: "category",
-      label: "Examples",
-      collapsed: true,
-      items: [
-        {
-          type: 'category',
-          label: 'Node.js',
-          items: ['examples/node/introduction',
-          'examples/node/how-to-run-examples',
-          'examples/node/create-identity-and-credentials',
-          'examples/node/update-users',
-          'examples/node/delete-users',
-          'examples/node/trusted-authorities',
-          'examples/node/create-channel',
-          'examples/node/authorize-to-channel',
-          'examples/node/search-channel-and-validate-data'
-        ]
-        },
-        {
-          type: 'category',
-          label: 'Java',
-          items: ['examples/java/introduction',
-          'examples/java/how-to-run-examples',
-          'examples/java/create-identity-and-credentials',
-          'examples/java/update-users',
-          'examples/java/delete-users',
-          'examples/java/trusted-authorities',
-          'examples/java/create-channel',
-          'examples/java/authorize-to-channel',
-          'examples/java/search-channel-and-validate-data'
-        ]
-        },
-        
-      ]
-    },
-    {
-      type: "doc",
-      id: "audit_trail_gw_api_reference",
-      label: "Audit-Trail GW API Reference",
-    },
-    {
-      type: "doc",
-      id: "ssi_bridge_api_reference",
-      label: "SSI-Bridge API Reference",
-    },
-    {
       type: "doc",
       id: "troubleshooting",
       label: "Troubleshooting",
@@ -188,16 +181,6 @@ module.exports = {
       type: "doc",
       id: "faq",
       label: "FAQ",
-    },
-    {
-      type: "doc",
-      id: "contribute",
-      label: "Contribute",
-    },
-    {
-      type: "doc",
-      id: "contact",
-      label: "Contact",
     },
   ],
 };

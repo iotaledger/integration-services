@@ -21,6 +21,22 @@ existing digital infrastructure.
 The solutions developed by the Integration Services are domain agnostic and can be applied to several use cases, ranging
 from e-commerce to healthcare and beyond.
 
+:::info Deployment
+
+If you require a deployment of the Cloud Services please contact the team at [integrations@iota.org](mailto:integrations@iota.org)
+
+:::
+
+:::info Try out
+
+For testing purposes please try our demo deployment here: 
+
+URL: [`https://demo-integration-services.iota.cafe/`](https://demo-integration-services.iota.cafe/)
+
+API key: `b85e51a2-9981-11ec-8770-4b8f01948e9b`
+
+:::
+
 ## IOTA Audit Trail Gateway
 
 The [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) allows third-party entities to easily log and share immutable information, while other
@@ -33,23 +49,18 @@ decentralized identities and credentials.
 
 ## What You Will Find
 
-This documentation has nine sections.
+This documentation has five sections:
 
-1. [Getting started](getting_started/overview.md): All the resources you need to get started.
-2. **Services**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md).
-3. [Examples](examples/node/introduction): Examples on creating and managing decentralized identities, verifiable
-   credentials, and channels.
-4. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
-5. [SSI Bridge API Reference](ssi_bridge_api_reference.md) and [Audit Trail API Reference](audit_trail_gw_api_reference.md): Detailed specification of all endpoints.
-6. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
-7. [FAQ](faq): Answers to the most common doubts.
-8. [Contribute](contribute): Find ways to help the project.
-9. [Contact](contact): Get in touch with the Integration Services team.
+1. **Services**: An introduction to the main concepts, use cases, API referneces and definitions for the [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md).
+2. **Clients**: Showcase of the [Dashboard](services/dashboard/dashboard.md), [UI components](services/dashboard/ui-components.md), [CLI](is-cli/introduction.md) and examples on creating and managing decentralized identities, verifiable credentials, and channels with [Node.js](examples/node/introduction.mdx) and [Java](examples/java/introduction.mdx).
+3. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
+4. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
+5. [FAQ](faq): Answers to the most common doubts.
 
 ## Join the Discussion
 
 If you are looking for a place to discuss this library, or are in need of support head to
-our [Discord channel](https://discord.gg/iota) #integration-services.
+our [Discord channel](https://discord.gg/iota) `#integration-services`.
 
 :::danger
 

@@ -11,7 +11,7 @@ keywords:
 
 # Local Setup
 
-This section will guide you in setting up the Integration Services API using node.js. It is mainly relevant for developers who want to contribute to the project or create a project fork.
+This section will guide you in setting up the Integration Services API using Node.js. It is mainly relevant for developers who want to contribute to the project or create a project fork.
 
 ## Requirements
 

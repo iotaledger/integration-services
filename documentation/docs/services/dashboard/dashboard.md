@@ -14,7 +14,7 @@ keywords:
 
 # Dashboard
 
-The Integration Services also includes a dashboard to view and manage all your identities, credentials and streams. The dashboard supports nearly every feature currently supported by the Audit Trail Gateway and SSI Bridge APIs. You can run the dashboard directly with the `npm run dev` script in the `./dashboard` directory. The dashboard gets automatically deployed if you chosen to install the Integration Services by docker-compose or Kubernetes. The dashboard can be found in the [Integration Services repository](https://github.com/iotaledger/integration-services/tree/master/dashboard).
+The Integration Services also includes a dashboard to view and manage all your identities, credentials and streams. The dashboard supports nearly every feature currently supported by the Audit Trail Gateway and SSI Bridge APIs.
 
 ## Login and Registration 
 

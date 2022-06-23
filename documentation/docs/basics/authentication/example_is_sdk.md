@@ -19,7 +19,7 @@ import TabItem from '@theme/TabItem';
 
 # Integration Services SDK
 
-In this example, you will learn how to authenticate your identity using the [**IOTA IS-Client** npm package](https://www.npmjs.com/package/@iota/is-client). Since the package will handle decoding, hashing, and signing, this is the simplest way to authenticate your identity. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication), so you can fully understand the authentication workflow.
+In this example, you will learn how to authenticate your identity using the [**IOTA IS-Client** npm package](https://www.npmjs.com/package/@iota/is-client). Since the package will handle decoding, hashing, and signing, this is the simplest way to authenticate your identity. Make sure to read the [general authentication concept](concept.md), so you can fully understand the authentication workflow.
 
 This example uses the following identity: 
 
@@ -56,11 +56,11 @@ yarn add @iota/is-client@latest
 ## Authentication Workflow
 
 :::info
-You can find your current API version using the [http://localhost:3000/info](http://localhost:3000/info) endpoint. This example uses `v0.1`.
+You can find the API version using the https://demo-integration-services.iota.cafe/ssi-bridge/info endpoint. This example uses `v0.1`.
 :::
 
 :::danger
-Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/welcome) to store your secret keys securely.
+Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/getting_started) to store your secret keys securely.
 :::
 
 Depending on the functionality you are going to use, it may be sufficient to only authenticate the `IdentityClient()` or the `ChannelClient()`.
@@ -71,9 +71,7 @@ import { IdentityClient, ChannelClient, ApiVersion } from '@iota/is-client';
 
 const authenticate = async (identityId, secretKey) => {
   const config = {
-    ssiBridgeUrl: 'http://localhost:3001',
-    auditTrailUrl: 'http://localhost:3002',
-    useGatewayUrl: false,
+    isGatewayUrl: https://demo-integration-services.iota.cafe
     apiVersion: ApiVersion.v01
   };
 

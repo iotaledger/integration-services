@@ -79,14 +79,14 @@ yarn add axios@0.21.4
 First, request a nonce and supply your identity id.
 
 :::info
-You can find your current API version using the [http://localhost:3000/info](http://localhost:3000/info) endpoint. This example uses `v0.1`.
+You can find your current API version using the https://demo-integration-services.iota.cafe/ssi-bridge/info endpoint. This example uses `v0.1`.
 :::
 ```js title="./authenticate.js"
 import axios from 'axios';
 
 const requestNonce = async () => {
   const identityId = 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF';
-  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`
+  const url = `https://demo-integration-services.iota.cafe/ssi-bridge/api/v0.1/authentication/prove-ownership/${identityId}`
   const request = await axios.get(url);
   console.log(request.data);
 };
@@ -163,7 +163,7 @@ const requestJWT = async () => {
     signedNonce:
       '270c2e502c5c753e39159683981e452444f81a10d798f56406a9c471d672a5ede1792cb7f97d4f9c9efeec7bf35577dd1f8482afca7e3710291868a65bf91e07'
   };
-  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+  const url = `https://demo-integration-services.iota.cafe/ssi-bridge/api/v0.1/authentication/prove-ownership/${identityId}`;
 
   const request = await axios.post(url, body);
   console.log(request.data);
@@ -209,7 +209,7 @@ import bs58 from 'bs58';
 import crypto from 'crypto';
 
 const requestNonce = async (identityId) => {
-  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+  const url = `https://demo-integration-services.iota.cafe/ssi-bridge/api/v0.1/authentication/prove-ownership/${identityId}`;
   const request = await axios.get(url);
   return request.data.nonce;
 };
@@ -227,7 +227,7 @@ const signNonce = async (hashedNonce, secretKey) => {
 };
 
 const requestJwt = async (identityId, signedNonce) => {
-  const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+  const url = `https://demo-integration-services.iota.cafe/ssi-bridge/api/v0.1/authentication/prove-ownership/${identityId}`;
   const request = await axios.post(url, { signedNonce });
   return request.data.jwt;
 };

@@ -18,7 +18,7 @@ keywords:
 The [Integration Services Java library](https://github.com/albydeca/iota-is-sdk) is still in BETA. Please note that not everything may yet run smoothly.
 :::
 
-In this example, you will learn to authenticate your identity using Java. Make sure to read the [general authentication concept](https://wiki.iota.org/integration-services/authentication) so you can fully understand the [Authentication Workflow](https://wiki.iota.org/integration-services/authentication#authentication-workflow).
+In this example, you will learn to authenticate your identity using Java. Make sure to read the [general authentication concept](concept.md) so you can fully understand the Authentication Workflow.
 
 This example uses the following identity: 
 
@@ -52,7 +52,7 @@ Ideally every dependency listed in the project's [POM](https://github.com/albyde
 First, request a nonce and supply your id.
 
 :::info
-You can find your current API version using the [http://localhost:3000/info](http://localhost:3000/info) endpoint. This example uses `v0.1`.
+You can find the API version using the https://demo-integration-services.iota.cafe/ endpoint. This example uses `v0.1`.
 :::
 
 ```java
@@ -112,7 +112,7 @@ The example's nonce will generate the following hash:
 Your secret key is encoded in Base58 and has to be decoded. Once it has been decoded, the nonce is signed with your encoded secret key and saved as a hexadecimal string.
 
 :::danger
-Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/welcome) to store your secret keys securely.
+Never save your secret key in plain text in your code. Use local environment variables or IOTA [Stronghold](https://wiki.iota.org/stronghold.rs/getting_started) to store your secret keys securely.
 :::
 
 ```java

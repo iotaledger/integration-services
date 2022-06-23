@@ -19,7 +19,7 @@ The Integration Services API uses JSON Web Tokens ([JWTs](https://en.wikipedia.o
 
 ### 1. Request a Nonce
 
-First, you must request the nonce via a get request to the endpoint. Provide the identity id to authenticate in the URL. You can find more information in the [API Reference](https://wiki.iota.org/integration-services/api_reference#authenticationprove-ownershipid).
+First, you must request the nonce via a get request to the endpoint. Provide the identity id to authenticate in the URL. You can find more information in the [API Reference](../../services/SSI-bridge/ssi_bridge_api_reference.md)
 
 GET `/authentication/prove-ownership/<identity-id>`
 
@@ -42,7 +42,7 @@ You can sign your hashed nonce with your decoded secret key using the [Ed25519](
 
 ### 4. Request the JWT
 
-You can request your JWT using the `/authentication/prove-ownership/<identity-id>` endpoint. It is the same endpoint as in the first step, but it uses the POST method instead of GET. You should add your signed nonce in the request body. You can find more information in the [API Reference](https://wiki.iota.org/integration-services/api_reference#authenticationprove-ownershipid).
+You can request your JWT using the `/authentication/prove-ownership/<identity-id>` endpoint. It is the same endpoint as in the first step, but it uses the POST method instead of GET. You should add your signed nonce in the request body. You can find more information in the [API Reference](../../services/SSI-bridge/ssi_bridge_api_reference.md).
 
 POST `/authentication/prove-ownership/<identity-id>`
 
