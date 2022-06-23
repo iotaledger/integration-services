@@ -26,6 +26,7 @@ global.Response = (fetch as any).Response;
 export interface StreamsMessage {
 	link: string;
 	messageId: string;
+	source?: string;
 	publicPayload: unknown;
 	maskedPayload: unknown;
 }
@@ -135,6 +136,7 @@ export class StreamsService {
 		const message = messageResponse.message;
 		const publicPayload = message && fromBytes(message.get_public_payload());
 		const maskedPayload = message && fromBytes(message.get_masked_payload());
+		const source = message?.get_identifier();
 
 		if (!publicPayload && !maskedPayload) {
 			return null;
@@ -147,7 +149,8 @@ export class StreamsService {
 			link,
 			messageId,
 			publicPayload: publicPayload && JSON.parse(publicPayload),
-			maskedPayload: maskedPayload && JSON.parse(maskedPayload)
+			maskedPayload: maskedPayload && JSON.parse(maskedPayload),
+			source
 		};
 	}
 
