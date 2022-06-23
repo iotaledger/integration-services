@@ -10,14 +10,28 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { authorId, subscriberId, requestedSubscriptionId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
+	const {
+		authorId,
+		subscriberId,
+		requestedSubscriptionId,
+		name,
+		created,
+		latestMessage,
+		topicType,
+		topicSource,
+		limit,
+		index,
+		ascending
+	} = channelInfoSearch;
 
-	const author = MongoDbService.getPlainObject({ authorId: regex(authorId)});
-	const subscriberIds = { subscriberIds: subscriberId ? { $elemMatch: { $eq: subscriberId } } : undefined };
-	const requestedSubscriptionIds = { requestedSubscriptionIds: requestedSubscriptionId ? { $elemMatch: { $eq: requestedSubscriptionId } } : undefined };
-	const idFilterValues = [author, subscriberIds, requestedSubscriptionIds].filter(object => Object.values(object)[0] != undefined);
+	const authorFilter = { authorId: regex(authorId) };
+	const subscriberIdsFilter = subscriberId ? { subscriberIds: { $elemMatch: { $eq: subscriberId } } } : undefined;
+	const requestedSubscriptionIdsFilter = requestedSubscriptionId
+		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
+		: undefined;
+	const idFilters = [authorFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
 	const query = {
-		$or: idFilterValues.length >= 1 ? idFilterValues : undefined,
+		$or: idFilters.length >= 1 ? idFilters : undefined,
 		name: regex(name),
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
@@ -91,7 +105,7 @@ export const removeChannelRequestedSubscriptionId = async (channelAddress: strin
 	};
 
 	return MongoDbService.updateDocument(collectionName, query, update);
-}
+};
 
 export const addChannelSubscriberId = async (channelAddress: string, subscriberId: string) => {
 	const currChannel = await getChannelInfo(channelAddress);
