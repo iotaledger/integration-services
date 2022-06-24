@@ -19,9 +19,11 @@ export class ChannelLogTransformer {
 			const channelData: ChannelData = {
 				link: message?.link,
 				messageId: message?.messageId,
-				source: {
-					publicKey: message?.source
-				},
+				source: message?.source
+					? {
+							publicKey: message?.source
+					  }
+					: undefined,
 				log: ChannelLogTransformer.getChannelLog(message?.publicPayload, message?.maskedPayload)
 			};
 			return channelData;
