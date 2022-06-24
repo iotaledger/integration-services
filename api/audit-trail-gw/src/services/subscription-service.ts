@@ -111,7 +111,7 @@ export class SubscriptionService {
 		};
 
 		await this.addSubscription(subscription);
-		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId);
+		await this.channelInfoService.addChannelRequestedSubscriptionId(channelAddress, subscriberId);
 
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}
@@ -171,6 +171,8 @@ export class SubscriptionService {
 		);
 
 		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
+		await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
+		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscription.id);
 
 		return { keyloadLink, sequenceLink };
 	}
