@@ -118,7 +118,7 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
 			}
 
-			const channel = await this.channelService.addLogs(channelAddress, id, body);
+			const channel = await this.channelService.addLog(channelAddress, id, body);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
