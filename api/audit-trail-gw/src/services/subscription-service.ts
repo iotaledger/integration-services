@@ -112,7 +112,9 @@ export class SubscriptionService {
 		};
 
 		await this.addSubscription(subscription);
-		await this.channelInfoService.addChannelRequestedSubscriptionId(channelAddress, subscriberId);
+		isPublicChannel
+			? await this.channelInfoService.addChannelSubscriberId(channelAddress, subscriberId)
+			: await this.channelInfoService.addChannelRequestedSubscriptionId(channelAddress, subscriberId);
 
 		return { seed: res.seed, subscriptionLink: res.subscriptionLink };
 	}
@@ -135,9 +137,9 @@ export class SubscriptionService {
 		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions: Subscription[] = subscriptions
 			? subscriptions.filter(
-					(s: Subscription) =>
-						s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-			  )
+				(s: Subscription) =>
+					s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			)
 			: [];
 		const existingSubscriptionKeys = existingSubscriptions.map((s: Subscription) => s?.publicKey).filter((pubkey: string) => pubkey);
 
@@ -191,8 +193,8 @@ export class SubscriptionService {
 		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions = subscriptions
 			? subscriptions.filter(
-					(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-			  )
+				(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			)
 			: [];
 
 		// remove revoked public key
@@ -218,7 +220,9 @@ export class SubscriptionService {
 
 		await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
 		await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
-		await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
+		subscription.isAuthorized
+			? await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id)
+			: await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 
 		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
 	}
