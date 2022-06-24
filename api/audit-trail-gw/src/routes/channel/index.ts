@@ -104,7 +104,7 @@ export class ChannelRoutes {
 		}
 	};
 
-	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+	addLog = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;

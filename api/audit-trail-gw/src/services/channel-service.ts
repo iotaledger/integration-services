@@ -158,7 +158,7 @@ export class ChannelService {
 		});
 	}
 
-	async addLogs(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+	async addLog(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
