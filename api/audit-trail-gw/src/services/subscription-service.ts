@@ -55,6 +55,7 @@ export class SubscriptionService {
 	}
 
 	async deleteSubscription(channelAddress: string, id: string) {
+		await this.channelInfoService.removeChannelSubscriberId(channelAddress, id)
 		return SubscriptionDb.removeSubscription(channelAddress, id);
 	}
 
@@ -217,7 +218,7 @@ export class SubscriptionService {
 
 		await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
 		await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
-		await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id);
+		await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 
 		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
 	}

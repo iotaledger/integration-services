@@ -166,7 +166,7 @@ describe('test revoke subscription route', () => {
 			sequenceLink: 'testsequencelink',
 			author: AuthorMock
 		}));
-		const removeChannelSubscriberIdSpy = jest.spyOn(ChannelInfoDb, 'removeChannelSubscriberId').mockImplementation(async () => null);
+		const removeChannelSubscriberIdSpy = jest.spyOn(ChannelInfoDb, 'removeChannelRequestedSubscriptionId').mockImplementation(async () => null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 		const removeSubscriptionSpy = jest.spyOn(SubscriptionDb, 'removeSubscription').mockImplementation(async () => null);
