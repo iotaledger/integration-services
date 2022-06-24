@@ -267,7 +267,7 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelInfo').mockImplementation(async () => ({
 			created: '2022-05-17T16:47:41+02:00',
 			authorId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
@@ -317,7 +317,7 @@ describe('test request subscription route', () => {
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'mypublickey');
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
-		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
+		expect(addChannelSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testaddress' });
 	});
