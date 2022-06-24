@@ -41,11 +41,12 @@ export const addChannelData = async (channelAddress: string, id: string, channel
 	const subscriptions = await getSubscriptions(channelAddress);
 
 	const documents = channelData.map((data) => {
+		const sourceId = data.source?.id ? data.source.id : subscriptions.find((sub) => sub.publicKey === data.source?.publicKey)?.id;
 		const linkedSource = {
-			id: subscriptions.find((sub) => sub.publicKey === data.source?.publicKey)?.id,
+			id: sourceId,
 			publicKey: data.source?.publicKey
 		};
-		console.log('source', linkedSource);
+
 		const encryptedPayload = data?.log?.payload ? encrypt(JSON.stringify(data?.log?.payload), secret) : undefined;
 		return {
 			_id: getIndex(data.link, id),

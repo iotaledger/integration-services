@@ -138,7 +138,7 @@ export class StreamsService {
 		const publicPayload = message && fromBytes(message.get_public_payload());
 		const maskedPayload = message && fromBytes(message.get_masked_payload());
 		const source = message?.get_identifier();
-		console.log('source', source);
+
 		if (!publicPayload && !maskedPayload) {
 			return null;
 		}
@@ -178,7 +178,6 @@ export class StreamsService {
 							const publicPayload = message && fromBytes(message.get_public_payload());
 							const maskedPayload = message && fromBytes(message.get_masked_payload());
 							const source = message?.get_identifier();
-							console.log('source111', source);
 
 							try {
 								if (!publicPayload && !maskedPayload) {
