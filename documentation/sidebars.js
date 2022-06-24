@@ -12,49 +12,43 @@
 module.exports = {
   docs: [
     {
-      type: "category",
+      type: "doc",
+      id: "welcome",
       label: "Getting Started/Welcome",
-      collapsed: false,
-      items: [
-        {
-          type: "doc",
-          id: "welcome",
-          label: "Welcome",
-        },
-        {
-          type: "category",
-          label: "Getting Started",
-          collapsed: true,
-          items: [
-            "getting_started/overview",
-            {
-              type: "doc",
-              label: "Node.js",
-              id: "getting_started/installation/node_setup",
-            },
-            {
-              type: 'category',
-              label: 'Java',
-              items: ['getting_started/installation/java/local_setup']
-            },
-            {
-              type: 'category',
-              label: 'Kubernetes',
-              items: [
-                "getting_started/installation/kubernetes/local_setup",
-                "getting_started/installation/kubernetes/configuration",
-              ],
-            },
-            {
-              type: "doc",
-              label: "Docker Compose",
-              id: "getting_started/installation/docker_compose_setup",
-            },
-
-          ]
-        }
-      ],
     },
+    //Hidden for now until another decision about this section is made
+    /**{
+       type: "category",
+       label: "Getting Started",
+       collapsed: true,
+       items: [
+         "getting_started/overview",
+         {
+           type: "doc",
+           label: "Node.js",
+           id: "getting_started/installation/node_setup",
+         },
+         {
+           type: 'category',
+           label: 'Java',
+           items: ['getting_started/installation/java/local_setup']
+         },
+         {
+           type: 'category',
+           label: 'Kubernetes',
+           items: [
+             "getting_started/installation/kubernetes/local_setup",
+             "getting_started/installation/kubernetes/configuration",
+           ],
+         },
+         {
+           type: "doc",
+           label: "Docker Compose",
+           id: "getting_started/installation/docker_compose_setup",
+         },
+
+       ]
+     }*/
     {
       type: "category",
       label: "Services",
