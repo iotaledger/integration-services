@@ -428,6 +428,7 @@ describe('test deleteSubscription route', () => {
 			channelAddress,
 			topics: []
 		}));
+		jest.spyOn(channelInfoService, 'removeChannelSubscriberId').mockImplementation(async () => undefined);
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({
 			...subscriptionMock,
 			channelAddress
