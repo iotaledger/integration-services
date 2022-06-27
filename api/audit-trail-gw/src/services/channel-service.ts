@@ -158,7 +158,7 @@ export class ChannelService {
 		});
 	}
 
-	async addLogs(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+	async addLog(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
@@ -194,7 +194,7 @@ export class ChannelService {
 				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicPayload, maskedPayload);
 
 				// store newly added log
-				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log };
+				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log, source: { publicKey: res.source, id } };
 				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], this.password);
 
 				await this.subscriptionService.updateSubscriptionState(

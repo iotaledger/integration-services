@@ -7,7 +7,7 @@ import { channelLock } from '../../middlewares/concurrency-lock';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
+const { addLog, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
 
 export const channelRouter = Router();
 
@@ -132,7 +132,7 @@ channelRouter.post(
 	validate({ body: AddChannelLogBodySchema }),
 	mongodbSanitizer,
 	channelLock,
-	addLogs
+	addLog
 );
 
 /**
