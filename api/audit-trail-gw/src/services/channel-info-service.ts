@@ -24,7 +24,15 @@ export class ChannelInfoService {
 		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
 	}
 
-	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
+	async addChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string) {
+		return ChannelInfoDb.addChannelRequestedSubscriptionId(channelAddress, channelRequestedSubscriptionId);
+	}
+
+	async removeChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string){
+		return ChannelInfoDb.removeChannelRequestedSubscriptionId(channelAddress,  channelRequestedSubscriptionId);
+	}
+
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string){
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 
@@ -48,6 +56,7 @@ export class ChannelInfoService {
 			name: ci.name,
 			description: ci.description,
 			subscriberIds: ci.subscriberIds || [],
+			requestedSubscriptionIds: ci.requestedSubscriptionIds || [],
 			topics: ci.topics,
 			channelAddress: ci.channelAddress,
 			latestMessage: ci.latestMessage && getDateFromString(ci.created)
@@ -67,6 +76,7 @@ export class ChannelInfoService {
 			name: cip.name,
 			description: cip.description,
 			subscriberIds: cip.subscriberIds || [],
+			requestedSubscriptionIds: cip.requestedSubscriptionIds || [],
 			topics: cip.topics,
 			type: cip.type,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),

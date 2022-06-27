@@ -25,6 +25,16 @@ export const channelInfoRouter = Router();
  *       schema:
  *         type: string
  *     - in: query
+ *       name: subscriber-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
+ *       name: requested-subscription-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
  *       name: name
  *       required: false
  *       schema:
