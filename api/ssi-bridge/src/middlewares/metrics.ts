@@ -38,10 +38,10 @@ register.registerMetric(totalRequests);
 
 export const statusMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	res.on('finish', () => {
-		totalRequests.labels({ method: req.method, path: req.path }).inc();
+		const { method, path } = req;
+		totalRequests.labels({ method, path }).inc();
 		if (res.statusCode >= 400) {
-			failedRequests.labels({ method: req.method, path: req.path }).inc();
-			console.log('Failed request');
+			failedRequests.labels({ method, path }).inc();
 		}
 	});
 	next();
@@ -50,11 +50,12 @@ export const statusMiddleware = (req: Request, res: Response, next: NextFunction
 // middleware for prom-client
 export const latencyMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	const end = httpRequestDurationSeconds.startTimer();
+	const { method, path } = req;
 	const responseCompleted = () => {
 		// we do not listen for close since we need to keep the lock until the request to the tangle has been finished.
 		// otherwise the client could close the request before and we would release the lock too early.
 		res.removeListener('finish', responseCompleted);
-		end({ method: req.method, code: res.statusCode, path: req.path });
+		end({ method, code: res.statusCode, path });
 	};
 	res.on('finish', responseCompleted);
 
