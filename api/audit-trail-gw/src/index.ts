@@ -51,7 +51,6 @@ async function startServer() {
 		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
 		app.use('/audit-trail-gw/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 		// Monitoring middlewares
-		app.use(errorMiddleware);
 		app.use(statusMiddleware);
 		app.use(latencyMiddleware);
 
@@ -64,7 +63,8 @@ async function startServer() {
 			res.setHeader('Content-Type', register.contentType);
 			res.status(200).end(await register.metrics());
 		});
-
+		
+		app.use(errorMiddleware);
 		const server = app.listen(port, async () => {
 			logger.log(`Started API Server on port ${port}`);
 			await MongoDbService.connect(dbUrl, dbName);

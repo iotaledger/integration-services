@@ -58,6 +58,7 @@ async function startServer() {
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
 		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
 		app.use('/metrics', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
+		// Monitoring middlewares
 		app.use(statusMiddleware);
 		app.use(latencyMiddleware);
 
