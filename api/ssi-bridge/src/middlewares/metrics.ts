@@ -1,7 +1,7 @@
 import promClient, { Histogram, Gauge, Registry } from 'prom-client';
 import { NextFunction, Request, Response } from 'express';
 
-//prometheus integration:
+// Prometheus integration
 export const register = new Registry();
 register.setDefaultLabels({
 	app: 'integration-services'
@@ -31,7 +31,7 @@ const totalRequests = new Gauge({
 	labelNames: ['method', 'path']
 });
 
-// // Register the histogram
+// Register the histogram
 register.registerMetric(httpRequestDurationSeconds);
 register.registerMetric(failedRequests);
 register.registerMetric(totalRequests);
@@ -47,7 +47,7 @@ export const statusMiddleware = (req: Request, res: Response, next: NextFunction
 	next();
 };
 
-// middleware for prom-client:
+// middleware for prom-client
 export const latencyMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	const end = httpRequestDurationSeconds.startTimer();
 	const responseCompleted = () => {

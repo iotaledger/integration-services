@@ -60,7 +60,7 @@ async function startServer() {
 		useRouter(app, prefix + '/channels', channelRouter);
 		useRouter(app, prefix + '/subscriptions', subscriptionRouter);
 		useRouter(app, '', serverInfoRouter);
-		app.get('/audit-trail-metrics', async function (_, res) {
+		app.get('/metrics', async function (_, res) {
 			res.setHeader('Content-Type', register.contentType);
 			res.status(200).end(await register.metrics());
 		});
