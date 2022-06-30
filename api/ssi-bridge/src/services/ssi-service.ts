@@ -9,8 +9,23 @@ import {
 	IdentityKeys,
 	LatestIdentityJson
 } from '@iota/is-shared-modules';
-const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
+const {
+	Document,
+	Credential,
+	VerificationMethod,
+	RevocationBitmap,
+	Client,
+	CredentialValidationOptions,
+	CredentialValidator,
+	KeyPair,
+	KeyType,
+	FailFast,
+	ProofOptions,
+	AccountBuilder,
+	MethodContent
+} = Identity;
 import { ILogger } from '../utils/logger';
+import { isThisISOWeek } from 'date-fns';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -64,7 +79,8 @@ export class SsiService {
 
 	async createIdentity(): Promise<IdentityJson> {
 		try {
-			const identity = this.generateIdentity();
+			const identity = await this.generateIdentity();
+			//identity.account.publish()
 			identity.doc.sign(identity.key);
 			await this.publishSignedDoc(identity.doc.toJSON());
 			const identityIsVerified = identity.doc.verify();
@@ -201,7 +217,7 @@ export class SsiService {
 
 	restoreIdentity(identity: IdentityJson) {
 		try {
-			const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
+			const key: Identity.KeyPair = KeyPair.fromJSON(identity.key);
 			const doc = Document.fromJSON(identity.doc) as any;
 
 			return {
@@ -214,13 +230,16 @@ export class SsiService {
 		}
 	}
 
-	generateIdentity() {
+	async generateIdentity(): Promise<{ account: Identity.Account; doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
-			const { doc, key } = new Document(this.config.keyType, Identity.Network.mainnet().toString()) as any;
+			const builder = this.getAccountBuilder();
+			const keyPair = new KeyPair(KeyType.Ed25519);
+			const account = await builder.createIdentity({ privateKey: keyPair.private() });
 
 			return {
-				doc,
-				key
+				account,
+				doc: account.document(),
+				key: keyPair
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -228,6 +247,19 @@ export class SsiService {
 		}
 	}
 	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
+
+	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
+		const clientConfig: Identity.IClientConfig = {
+			permanodes: usePermaNode ? [{ url: this.config.permaNode }] : [],
+			primaryNode: { url: this.config.node },
+			network: Identity.Network.mainnet(),
+			localPow: true
+		};
+		const builderOptions = {
+			clientConfig
+		};
+		return new AccountBuilder(builderOptions);
+	}
 
 	private getIdentityClient(usePermaNode?: boolean) {
 		const cfg = Identity.Config.fromNetwork(Identity.Network.mainnet());

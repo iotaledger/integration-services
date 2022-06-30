@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
-    "@iota/identity-wasm": "0.3.5",
+    "@iota/identity-wasm": "0.6.0",
     "@iota/is-shared-modules": "^0.1.8",
     "@iota/streams": "^0.1.2",
     "@noble/ed25519": "^1.4.0",
