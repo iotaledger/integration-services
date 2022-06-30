@@ -13,6 +13,7 @@ import { serverInfoRouter } from './routers/server-info';
 import yargs from 'yargs';
 import { ConfigurationService } from './services/configuration-service';
 import { SetupManager } from './setup/setup-manager';
+import { latencyMiddleware, register, statusMiddleware } from './middlewares/metrics';
 
 const argv = yargs.command('server', 'Start the integration service API', {}).command('setup-api', 'Setups the API', {}).help().argv;
 
@@ -56,14 +57,19 @@ async function startServer() {
 		app.use(express.json({ limit: '10mb' }));
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
 		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
-
 		app.use('/ssi-bridge/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
+		app.use(statusMiddleware);
+		app.use(latencyMiddleware);
 
 		const prefix = `/api/${version}`;
 		useRouter(app, prefix + '/identities', identityRouter);
 		useRouter(app, prefix + '/authentication', authenticationRouter);
 		useRouter(app, prefix + '/verification', verificationRouter);
 		useRouter(app, '', serverInfoRouter);
+		app.get('/ssi-bridge-metrics', async function (_, res) {
+			res.setHeader('Content-Type', register.contentType);
+			res.status(200).end(await register.metrics());
+		});
 
 		app.use(errorMiddleware);
 		const server = app.listen(port, async () => {

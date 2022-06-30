@@ -41,6 +41,7 @@ export const statusMiddleware = (req: Request, res: Response, next: NextFunction
 		totalRequests.labels({ method: req.method, path: req.path }).inc();
 		if (res.statusCode >= 400) {
 			failedRequests.labels({ method: req.method, path: req.path }).inc();
+			console.log('Failed request');
 		}
 	});
 	next();
