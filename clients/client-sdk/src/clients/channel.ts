@@ -74,9 +74,9 @@ export class ChannelClient extends BaseClient {
     const channelData: any[] = await this.get(`${this.baseUrl}/channels/logs/${channelAddress}`, {
       limit,
       index,
-      param3,
       ...param1,
-      ...param2
+      ...param2,
+      ...param3
     });
     // Temporary fix to replace null values with undefined
     // TODO: fix this in backend
