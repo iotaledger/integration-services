@@ -9,23 +9,8 @@ import {
 	IdentityKeys,
 	LatestIdentityJson
 } from '@iota/is-shared-modules';
-const {
-	Document,
-	Credential,
-	VerificationMethod,
-	RevocationBitmap,
-	Client,
-	CredentialValidationOptions,
-	CredentialValidator,
-	KeyPair,
-	KeyType,
-	FailFast,
-	ProofOptions,
-	AccountBuilder,
-	MethodContent
-} = Identity;
+const { Document, Credential, VerificationMethod, RevocationBitmap, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
-import { isThisISOWeek } from 'date-fns';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -81,13 +66,13 @@ export class SsiService {
 		try {
 			const identity = await this.generateIdentity();
 			//identity.account.publish()
-			identity.doc.sign(identity.key);
+			/*identity.doc.signSelf(identity.key,identity.doc.defaultSigningMethod().id());
 			await this.publishSignedDoc(identity.doc.toJSON());
-			const identityIsVerified = identity.doc.verify();
+			const identityIsVerified = identity.doc.verifyDocument(x)
 
 			if (!identityIsVerified) {
 				throw new Error('could not create the identity. Please try it again.');
-			}
+			}*/
 
 			return {
 				doc: identity.doc.toJSON(),
@@ -146,6 +131,10 @@ export class SsiService {
 		try {
 			const issuerDoc = await this.getLatestIdentityDoc(signedVc.issuer);
 			const subject = await this.getLatestIdentityDoc(signedVc.id);
+			/*const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
+			const subjectIsVerified = subject.verifyDocument(subject);
+			const verified = issuerDoc.verifyDocument(issuerDoca) && credentialVerified && subjectIsVerified;
+			return verified;*/
 			const credentialVerified = issuerDoc.verifyData(signedVc);
 			const subjectIsVerified = subject.verify();
 			const verified = issuerDoc.verify() && credentialVerified && subjectIsVerified;
@@ -156,10 +145,10 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
-		const client = this.getIdentityClient();
+	async publishSignedDoc(newDoc: Identity.Document): Promise<string> {
+		const client = await this.getIdentityClient();
 		const tx = await client.publishDocument(newDoc);
-		return tx?.messageId;
+		return tx?.messageId();
 	}
 
 	async revokeVerifiableCredential(
@@ -185,8 +174,15 @@ export class SsiService {
 
 	async getLatestIdentityJson(did: string): Promise<LatestIdentityJson> {
 		try {
-			const client = this.getIdentityClient(true);
-			return await client.resolve(did);
+			const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
+			const resolvedDoc = await resolver.resolve(did);
+			const messageId = resolvedDoc.integrationMessageId();
+			console.log('messageIdmessageIdmessageId', messageId);
+
+			return {
+				document: resolvedDoc.document().toJSON(),
+				messageId
+			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not get the latest identity');
@@ -207,11 +203,14 @@ export class SsiService {
 		}
 	}
 
-	getPublicKey(identityDoc: Identity.Document): string | undefined {
+	async getPublicKey(identityDoc: Identity.Document): Promise<string | undefined> {
 		if (!identityDoc) {
 			return;
 		}
-		const verificationMethod = identityDoc.resolveKey(`${identityDoc.id}#key`);
+		const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
+		const doc = await resolver.resolve(identityDoc.id());
+		const verificationMethod = doc.intoDocument().resolveMethod(`${identityDoc.id}#key`);
+		console.log('verificationMethod', verificationMethod);
 		return verificationMethod?.toJSON()?.publicKeyBase58;
 	}
 
@@ -249,12 +248,7 @@ export class SsiService {
 	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
 
 	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
-		const clientConfig: Identity.IClientConfig = {
-			permanodes: usePermaNode ? [{ url: this.config.permaNode }] : [],
-			primaryNode: { url: this.config.node },
-			network: Identity.Network.mainnet(),
-			localPow: true
-		};
+		const clientConfig: Identity.IClientConfig = this.getConfig(usePermaNode);
 		const builderOptions = {
 			clientConfig
 		};
@@ -262,12 +256,17 @@ export class SsiService {
 	}
 
 	private getIdentityClient(usePermaNode?: boolean) {
-		const cfg = Identity.Config.fromNetwork(Identity.Network.mainnet());
-		if (usePermaNode) {
-			cfg.setPermanode(this.config.permaNode);
-		}
-		cfg.setNode(this.config.node);
+		const cfg: Identity.IClientConfig = this.getConfig(usePermaNode);
 		return Client.fromConfig(cfg);
+	}
+
+	private getConfig(usePermaNode?: boolean): Identity.IClientConfig {
+		return {
+			permanodes: usePermaNode ? [{ url: this.config.permaNode }] : [],
+			primaryNode: { url: this.config.node },
+			network: Identity.Network.mainnet(),
+			localPow: true
+		};
 	}
 
 	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
