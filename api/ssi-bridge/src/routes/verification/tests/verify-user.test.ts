@@ -179,14 +179,16 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
-		it('should verify for user which has valid vc and different organization but admin user', async () => {
+		test.each([UserRoles.Admin, UserRoles.Manager])(
+			'should verify for user which has valid vc and different organization but admin user',
+			 async (role) => {
 			const subject = TestUsersMock[1];
 			const keyIndex = 0;
 			const keyCollectionIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
-				user: { id: initiatorVC.id, role: UserRoles.Admin, type: UserType.Person },
+				user: { id: initiatorVC.id, role: role, type: UserType.Person },
 				params: {},
 				body: {
 					subject: {
