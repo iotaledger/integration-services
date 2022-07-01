@@ -5,11 +5,11 @@ import {
 	UserSearch,
 	UserSearchResponse,
 	CreateIdentityBody,
-	IdentityJson,
 	VerifiableCredentialJson,
 	IdentityKeys,
 	getDateFromString,
-	getDateStringFromDate
+	getDateStringFromDate,
+	Encoding
 } from '@iota/is-shared-modules';
 import * as userDb from '../database/user';
 import isEmpty from 'lodash/isEmpty';
@@ -43,15 +43,19 @@ export class UserService {
 			.filter((u) => u);
 	}
 
-	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string): Promise<IdentityJson> {
+	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string) {
 		const identity = await this.ssiService.createIdentity();
+		console.log('identity.doc.id1111', identity);
 
 		const creatorId = this.decodeUserId(authorization);
 
+		console.log('identity.doc.id', identity.doc.id);
+		console.log('identity.key.public().toString()', identity.key.public().toString());
+		// TODO fix public key
 		const user: User = {
 			...createIdentityBody,
-			id: identity.doc.id.toString(),
-			publicKey: identity.key.public,
+			id: identity.doc.id().toString(),
+			publicKey: identity.key.public().toString(),
 			creator: creatorId
 		};
 
@@ -59,8 +63,13 @@ export class UserService {
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
 			const identityKeys: IdentityKeys = {
-				id: identity.doc.id,
-				key: identity.key
+				id: identity.doc.id().toString(),
+				key: {
+					public: identity.key.public().toString(),
+					secret: identity.key.private().toString(),
+					type: identity.key.type().toString(),
+					encoding: Encoding.base58
+				}
 			};
 			await IdentityDocsDb.saveIdentityKeys(identityKeys, this.serverSecret);
 		}
@@ -122,7 +131,9 @@ export class UserService {
 		validator.validateUser(user);
 
 		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.id);
-		const publicKey = this.ssiService.getPublicKey(identityDoc);
+		const publicKey = await this.ssiService.getPublicKey(identityDoc);
+		console.log('publicKeypublicKey', publicKey);
+		console.log('user.publicKey', user.publicKey);
 		if (!publicKey || !user.publicKey || publicKey !== user.publicKey) {
 			throw new Error('wrong identity provided');
 		}

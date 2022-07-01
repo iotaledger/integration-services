@@ -1,7 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
 import {
-	IdentityDocumentJson,
 	IdentityJson,
 	VerifiableCredentialJson,
 	Credential,
@@ -9,7 +8,7 @@ import {
 	IdentityKeys,
 	LatestIdentityJson
 } from '@iota/is-shared-modules';
-const { Document, Credential, VerificationMethod, RevocationBitmap, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
+const { Document, Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
 
 export class SsiService {
@@ -24,12 +23,13 @@ export class SsiService {
 	}
 
 	async generateKeyCollection(
-		keyCollectionIndex: number,
-		keyCollectionSize: number,
-		issuerIdentity: IdentityKeys
+		_keyCollectionIndex: number,
+		_keyCollectionSize: number,
+		_issuerIdentity: IdentityKeys
 	): Promise<{ keyCollectionJson: KeyCollectionJson }> {
 		try {
-			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
+			throw Error('NOTIMPLMEMENTED');
+			/*const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
 			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
@@ -42,11 +42,8 @@ export class SsiService {
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
 
 			newDoc.insertMethod(method, `VerificationMethod`);
-			newDoc.sign(key);
-
-			if (!newDoc.verify()) {
-				throw new Error('could not add keycollection to the identity!');
-			}
+			newDoc.signSelf(key, '');
+			newDoc.verifyDocument(newDoc);
 
 			await this.publishSignedDoc(newDoc.toJSON());
 			const { keys, type } = keyCollection?.toJSON();
@@ -55,14 +52,14 @@ export class SsiService {
 				keys,
 				publicKeyBase58
 			};
-			return { keyCollectionJson };
+			return { keyCollectionJson };*/
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not generate the key collection');
 		}
 	}
 
-	async createIdentity(): Promise<IdentityJson> {
+	async createIdentity(): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
 			const identity = await this.generateIdentity();
 			//identity.account.publish()
@@ -73,10 +70,10 @@ export class SsiService {
 			if (!identityIsVerified) {
 				throw new Error('could not create the identity. Please try it again.');
 			}*/
-
+			console.log('identity.doc', identity);
 			return {
-				doc: identity.doc.toJSON(),
-				key: { ...identity.key.toJSON(), encoding: this.config.hashEncoding }
+				doc: identity.doc,
+				key: identity.key
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -85,14 +82,15 @@ export class SsiService {
 	}
 
 	async createVerifiableCredential<T>(
-		issuerIdentity: IdentityKeys,
-		credential: Credential<T>,
-		keyCollectionJson: KeyCollectionJson,
-		keyCollectionIndex: number,
-		subjectKeyIndex: number
+		_issuerIdentity: IdentityKeys,
+		_credential: Credential<T>,
+		_keyCollectionJson: KeyCollectionJson,
+		_keyCollectionIndex: number,
+		_subjectKeyIndex: number
 	): Promise<VerifiableCredentialJson> {
 		try {
-			const { document } = await this.getLatestIdentityJson(issuerIdentity.id);
+			throw Error('NOTIMPLMEMENTED');
+			/*const { document } = await this.getLatestIdentityJson(issuerIdentity.id);
 
 			const { doc } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
@@ -120,7 +118,8 @@ export class SsiService {
 				throw new Error('could not verify identity, please try it again.');
 			}
 
-			return validatedCredential.credential;
+			return validatedCredential.credential;*/
+			return null;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the verifiable credential');
@@ -131,13 +130,10 @@ export class SsiService {
 		try {
 			const issuerDoc = await this.getLatestIdentityDoc(signedVc.issuer);
 			const subject = await this.getLatestIdentityDoc(signedVc.id);
-			/*const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
-			const subjectIsVerified = subject.verifyDocument(subject);
-			const verified = issuerDoc.verifyDocument(issuerDoca) && credentialVerified && subjectIsVerified;
-			return verified;*/
-			const credentialVerified = issuerDoc.verifyData(signedVc);
-			const subjectIsVerified = subject.verify();
-			const verified = issuerDoc.verify() && credentialVerified && subjectIsVerified;
+			const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
+			subject.verifyDocument(subject);
+			issuerDoc.verifyDocument(issuerDoc);
+			const verified = credentialVerified;
 			return verified;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -152,12 +148,13 @@ export class SsiService {
 	}
 
 	async revokeVerifiableCredential(
-		issuerIdentity: IdentityKeys,
-		keyCollectionIndex: number,
-		keyIndex: number
+		_issuerIdentity: IdentityKeys,
+		_keyCollectionIndex: number,
+		_keyIndex: number
 	): Promise<{ revoked: boolean }> {
 		try {
-			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
+			throw Error('NOTIMPLMEMENTED');
+			/*const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
 			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), keyIndex);
@@ -165,7 +162,8 @@ export class SsiService {
 			newDoc.sign(key);
 			await this.publishSignedDoc(newDoc.toJSON());
 
-			return { revoked: result };
+			return { revoked: result };*/
+			return null;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not revoke the verifiable credential');
@@ -209,9 +207,9 @@ export class SsiService {
 		}
 		const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
 		const doc = await resolver.resolve(identityDoc.id());
-		const verificationMethod = doc.intoDocument().resolveMethod(`${identityDoc.id}#key`);
-		console.log('verificationMethod', verificationMethod);
-		return verificationMethod?.toJSON()?.publicKeyBase58;
+		const id = identityDoc.id().toString();
+		const method = doc.intoDocument().resolveMethod(`${id}#sign-0`);
+		return method.toJSON().publicKeyMultibase;
 	}
 
 	restoreIdentity(identity: IdentityJson) {
@@ -234,7 +232,7 @@ export class SsiService {
 			const builder = this.getAccountBuilder();
 			const keyPair = new KeyPair(KeyType.Ed25519);
 			const account = await builder.createIdentity({ privateKey: keyPair.private() });
-
+			console.log('dooooc', account.document());
 			return {
 				account,
 				doc: account.document(),
@@ -265,14 +263,14 @@ export class SsiService {
 			permanodes: usePermaNode ? [{ url: this.config.permaNode }] : [],
 			primaryNode: { url: this.config.node },
 			network: Identity.Network.mainnet(),
-			localPow: true
+			localPow: false
 		};
 	}
 
-	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
+	/*private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
 		return Identity.Document.fromJSON({
 			...doc.toJSON(),
 			...property
 		});
-	}
+	}*/
 }

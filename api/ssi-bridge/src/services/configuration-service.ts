@@ -25,7 +25,7 @@ export class ConfigurationService {
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
 		keyType: Identity.KeyType.Ed25519,
-		hashFunction: Identity.Digest.Sha256,
+		hashFunction: 0, //TODO remove!
 		hashEncoding: 'base58',
 		keyCollectionTag: 'key-collection'
 	};

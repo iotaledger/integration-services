@@ -84,12 +84,13 @@ export class KeyGenerator {
 		const userService = new UserService(ssiService, this.config.serverSecret, this.logger);
 		const identity = await userService.createIdentity(serverData);
 
-		this.configService.serverIdentityId = identity.doc.id;
+		const id = identity.doc.id().toString();
+		this.configService.serverIdentityId = id;
 
 		// create the verification service with a valid server identity id
 		const verificationService = new VerificationService(ssiService, userService, this.logger, this.configService);
 
-		const serverUser = await userService.getUser(identity.doc.id);
+		const serverUser = await userService.getUser(id);
 
 		if (!serverUser) {
 			throw new Error('server user not found!');

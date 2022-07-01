@@ -36,7 +36,7 @@ export class AuthenticationService {
 
 		if (!user) {
 			const doc = await this.ssiService.getLatestIdentityDoc(id);
-			const publicKey = this.ssiService.getPublicKey(doc);
+			const publicKey = await this.ssiService.getPublicKey(doc);
 
 			if (publicKey) {
 				user = {

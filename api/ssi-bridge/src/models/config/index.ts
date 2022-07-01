@@ -20,7 +20,7 @@ export interface IdentityConfig {
 	node: string;
 	permaNode: string;
 	keyType: Identity.KeyType;
-	hashFunction: Identity.Digest;
+	hashFunction: number; // TODO remove
 	keyCollectionTag: string;
 	hashEncoding: 'base16' | 'base58' | 'base64';
 }
