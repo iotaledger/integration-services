@@ -46,6 +46,8 @@ export class UserService {
 
 	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string) {
 		const identity = await this.ssiService.createIdentity();
+		const publicKey = bs58.encode(identity.key.public());
+		const privateKey = bs58.encode(identity.key.private());
 		const creatorId = this.decodeUserId(authorization);
 		const user: User = {
 			...createIdentityBody,
@@ -59,8 +61,8 @@ export class UserService {
 			const identityKeys: IdentityKeys = {
 				id: identity.doc.id().toString(),
 				key: {
-					public: bs58.encode(identity.key.public()),
-					secret: bs58.encode(identity.key.private()),
+					public: publicKey,
+					secret: privateKey,
 					type: identity.key.type().toString(),
 					encoding: Encoding.base58
 				}
@@ -69,7 +71,12 @@ export class UserService {
 		}
 
 		return {
-			...identity
+			...identity,
+			key: {
+				type: identity.key.type(),
+				public: publicKey,
+				secret: privateKey
+			}
 		};
 	}
 

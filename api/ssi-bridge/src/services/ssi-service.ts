@@ -62,15 +62,7 @@ export class SsiService {
 	async createIdentity(): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
 			const identity = await this.generateIdentity();
-			//identity.account.publish()
-			/*identity.doc.signSelf(identity.key,identity.doc.defaultSigningMethod().id());
-			await this.publishSignedDoc(identity.doc.toJSON());
-			const identityIsVerified = identity.doc.verifyDocument(x)
 
-			if (!identityIsVerified) {
-				throw new Error('could not create the identity. Please try it again.');
-			}*/
-			console.log('identity.doc', identity);
 			return {
 				doc: identity.doc,
 				key: identity.key
@@ -175,7 +167,6 @@ export class SsiService {
 			const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
 			const resolvedDoc = await resolver.resolve(did);
 			const messageId = resolvedDoc.integrationMessageId();
-			console.log('messageIdmessageIdmessageId', messageId);
 
 			return {
 				document: resolvedDoc.document().toJSON(),
@@ -232,7 +223,7 @@ export class SsiService {
 			const builder = this.getAccountBuilder();
 			const keyPair = new KeyPair(KeyType.Ed25519);
 			const account = await builder.createIdentity({ privateKey: keyPair.private() });
-			console.log('dooooc', account.document());
+
 			return {
 				account,
 				doc: account.document(),
