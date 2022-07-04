@@ -5,7 +5,10 @@ export class AuthorizationService {
 		if (!isAuthorizedUser) {
 			const isAuthorizedAdmin = this.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
-				return { isAuthorized: false, error: new Error('not allowed!') };
+				const isAuthorizedManager = this.isAuthorizedManager(requestUser)
+				if (!isAuthorizedManager) {
+					return { isAuthorized: false, error: new Error('not allowed!') };
+				}
 			}
 		}
 		return { isAuthorized: true, error: null };
@@ -39,5 +42,13 @@ export class AuthorizationService {
 
 	hasVerificationCredentialType(type: string[]): boolean {
 		return type.some((t) => t === CredentialTypes.VerifiedIdentityCredential);
+	}
+
+	canManagerUpdateUser(updateUser: User): boolean {
+		return updateUser.role === UserRoles.User ? true : false;
+	}
+
+	canUpdateRole(role?: UserRoles): boolean {
+		return role === UserRoles.User ? true : false;
 	}
 }

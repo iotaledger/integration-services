@@ -4,7 +4,8 @@ import {
 	getDateFromString,
 	AuthenticatedRequest,
 	CreateIdentityBody,
-	IdentitySchemaBody
+	IdentitySchemaBody,
+	UserRoles
 } from '@iota/is-shared-modules';
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../services/user-service';
@@ -20,7 +21,7 @@ export class IdentityRoutes {
 		private readonly authorizationService: AuthorizationService,
 		private readonly verificationService: VerificationService,
 		private readonly logger: ILogger
-	) {}
+	) { }
 
 	createIdentity = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
@@ -99,6 +100,20 @@ export class IdentityRoutes {
 			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, user.id);
 			if (!isAuthorized) {
 				throw error;
+			}
+
+			const currentUser = await this.userService.getUser(user.id);
+			if (req.user?.role === UserRoles.Manager || req.user?.role === UserRoles.User) {
+				if (req.user?.role === UserRoles.Manager) {
+					const canUpdate = this.authorizationService.canManagerUpdateUser(currentUser);
+					if (!canUpdate) {
+						throw new Error('not allowed to update an admin or manager')
+					}
+				}
+				const canChangeRole = this.authorizationService.canUpdateRole(user?.role)
+				if (!canChangeRole) {
+					throw new Error('not allowed to update role to admin or manager')
+				}
 			}
 
 			const result = await this.userService.updateUser(user);
