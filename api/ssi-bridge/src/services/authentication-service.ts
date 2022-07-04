@@ -1,5 +1,5 @@
 import { UserService } from './user-service';
-import { createNonce, getHexEncodedKey, verifySignedNonce, User, UserRoles } from '@iota/is-shared-modules';
+import { createNonce, verifySignedNonce, User, UserRoles } from '@iota/is-shared-modules';
 import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';
@@ -33,28 +33,23 @@ export class AuthenticationService {
 
 	async authenticate(signedNonce: string, id: string) {
 		let user: User = await this.userService.getUser(id);
+		const doc = await this.ssiService.getLatestIdentityDoc(id);
+		let publicKeyBase = await this.ssiService.getPublicKey(doc);
+		const publicKey = publicKeyBase.substring(1); // strip the z from the public key
 
 		if (!user) {
-			const doc = await this.ssiService.getLatestIdentityDoc(id);
-			const publicKey = await this.ssiService.getPublicKey(doc);
-
 			if (publicKey) {
 				user = {
 					id,
 					username: id,
-					publicKey,
 					role: UserRoles.User
 				};
 			}
 		}
 
-		if (!user) {
-			throw new Error(`no identity with id: ${id} found!`);
-		}
 		const { nonce } = await AuthDb.getNonce(id);
-		const publicKey = getHexEncodedKey(user.publicKey);
-
 		const verified = await verifySignedNonce(publicKey, nonce, signedNonce);
+
 		if (!verified) {
 			throw new Error('signed nonce is not valid!');
 		}
@@ -65,7 +60,6 @@ export class AuthenticationService {
 
 		const jwtPayload = {
 			user: {
-				publicKey: user.publicKey,
 				id: user.id,
 				role: user.role,
 				username: user.username
