@@ -57,7 +57,7 @@ async function startServer() {
 		app.use(express.json({ limit: '10mb' }));
 		app.use(express.urlencoded({ limit: '10mb', extended: true }));
 		app.use(expressWinston.logger(logger.getExpressWinstonOptions()));
-		app.use('/metrics', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
+		app.use('/ssi-bridge/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { explorer: true }));
 		// Monitoring middlewares
 		app.use(statusMiddleware);
 		app.use(latencyMiddleware);
@@ -67,7 +67,7 @@ async function startServer() {
 		useRouter(app, prefix + '/authentication', authenticationRouter);
 		useRouter(app, prefix + '/verification', verificationRouter);
 		useRouter(app, '', serverInfoRouter);
-		app.get('/ssi-bridge-metrics', async function (_, res) {
+		app.get('/metrics', async function (_, res) {
 			res.setHeader('Content-Type', register.contentType);
 			res.status(200).end(await register.metrics());
 		});
