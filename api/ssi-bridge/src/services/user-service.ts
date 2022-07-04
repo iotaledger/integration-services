@@ -19,6 +19,7 @@ import { SsiService } from './ssi-service';
 import { ILogger, Logger } from '../utils/logger';
 import jwt from 'jsonwebtoken';
 import { ConfigurationService } from './configuration-service';
+import * as bs58 from 'bs58';
 
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
@@ -49,13 +50,13 @@ export class UserService {
 
 		const creatorId = this.decodeUserId(authorization);
 
-		console.log('identity.doc.id', identity.doc.id);
-		console.log('identity.key.public().toString()', identity.key.public().toString());
-		// TODO fix public key
+		console.log('identity.doc.id', identity.doc.id().toString());
+		console.log('identity.key.public().toString()', bs58.encode(identity.key.public()));
+		// TODO remove public key
 		const user: User = {
 			...createIdentityBody,
 			id: identity.doc.id().toString(),
-			publicKey: identity.key.public().toString(),
+			publicKey: bs58.encode(identity.key.public()),
 			creator: creatorId
 		};
 
@@ -65,8 +66,8 @@ export class UserService {
 			const identityKeys: IdentityKeys = {
 				id: identity.doc.id().toString(),
 				key: {
-					public: identity.key.public().toString(),
-					secret: identity.key.private().toString(),
+					public: bs58.encode(identity.key.public()),
+					secret: bs58.encode(identity.key.private()),
 					type: identity.key.type().toString(),
 					encoding: Encoding.base58
 				}
@@ -132,9 +133,8 @@ export class UserService {
 
 		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.id);
 		const publicKey = await this.ssiService.getPublicKey(identityDoc);
-		console.log('publicKeypublicKey', publicKey);
-		console.log('user.publicKey', user.publicKey);
-		if (!publicKey || !user.publicKey || publicKey !== user.publicKey) {
+
+		if (!publicKey || !user.publicKey || publicKey.substring(1) !== user.publicKey) {
 			throw new Error('wrong identity provided');
 		}
 
