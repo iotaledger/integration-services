@@ -24,6 +24,15 @@ export class AuthorizationService {
 		return false;
 	}
 
+	isAuthorizedManager(requestUser: User): boolean {
+		const role = requestUser?.role;
+
+		if (role === UserRoles.Manager) {
+			return true;
+		}
+		return false;
+	}
+
 	hasAuthorizedUserType(type: string): boolean {
 		return type === UserType.Person || type === UserType.Service || type === UserType.Organization;
 	}

@@ -161,7 +161,8 @@ export class VerificationRoutes {
 		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.id, kci.initiatorId);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
 			const isAuthorizedAdmin = this.authorizationService.isAuthorizedAdmin(requestUser);
-			if (!isAuthorizedAdmin) {
+			const isAuthorizedManager = this.authorizationService.isAuthorizedManager(requestUser);
+			if (!isAuthorizedAdmin && !isAuthorizedManager) {
 				return { isAuthorized: false, error: new Error('not allowed to revoke credential!') };
 			}
 		}
@@ -175,7 +176,8 @@ export class VerificationRoutes {
 		requestUser: User
 	): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
-		if (!isAdmin) {
+		const isManager = requestUser.role === UserRoles.Manager;
+		if (!isAdmin && !isManager) {
 			if (!initiatorVC || !initiatorVC.credentialSubject) {
 				return { isAuthorized: false, error: new Error('no valid verfiable credential!') };
 			}
