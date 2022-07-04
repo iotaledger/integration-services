@@ -46,17 +46,10 @@ export class UserService {
 
 	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string) {
 		const identity = await this.ssiService.createIdentity();
-		console.log('identity.doc.id1111', identity);
-
 		const creatorId = this.decodeUserId(authorization);
-
-		console.log('identity.doc.id', identity.doc.id().toString());
-		console.log('identity.key.public().toString()', bs58.encode(identity.key.public()));
-		// TODO remove public key
 		const user: User = {
 			...createIdentityBody,
 			id: identity.doc.id().toString(),
-			publicKey: bs58.encode(identity.key.public()),
 			creator: creatorId
 		};
 
@@ -134,8 +127,8 @@ export class UserService {
 		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.id);
 		const publicKey = await this.ssiService.getPublicKey(identityDoc);
 
-		if (!publicKey || !user.publicKey || publicKey.substring(1) !== user.publicKey) {
-			throw new Error('wrong identity provided');
+		if (!identityDoc || !publicKey) {
+			throw new Error('no identity found!');
 		}
 
 		const userPersistence = this.getUserPersistence(user);
@@ -164,18 +157,17 @@ export class UserService {
 	}
 
 	private hasValidFields(user: User): boolean {
-		return !(!user.publicKey && !user.id);
+		return !!user.id;
 	}
 
 	private getUserPersistence(user: User): UserPersistence | null {
 		if (user == null || isEmpty(user.id)) {
 			throw new Error('Error when parsing the body: id must be provided!');
 		}
-		const { publicKey, id, username, creator, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
+		const { id, username, creator, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
 
 		const userPersistence: UserPersistence = {
 			id,
-			publicKey,
 			username,
 			creator,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
@@ -194,11 +186,10 @@ export class UserService {
 			return null;
 		}
 
-		const { username, creator, publicKey, id, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
+		const { username, creator, id, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
 
 		const user: User = {
 			id,
-			publicKey,
 			username,
 			creator,
 			registrationDate: getDateStringFromDate(registrationDate),
