@@ -31,7 +31,9 @@ describe('test keygenerator', () => {
 		// found one server identity but malicious format
 		const getServerIdentitiesSpy = jest
 			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementationOnce(async () => [{ id: 'did:iota:1234', username: ServerIdentityMock.userData.username, publicKey: 'testpublickey' }]);
+			.mockImplementationOnce(async () => [
+				{ id: 'did:iota:1234', username: ServerIdentityMock.userData.username, publicKey: 'testpublickey' }
+			]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => null);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 
@@ -45,11 +47,13 @@ describe('test keygenerator', () => {
 
 	it('should find a valid serveridentity doc', async () => {
 		// found one server identity but malicious format
-		const getServerIdentitiesSpy = jest
-			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementation(async () => [
-				{ id: ServerIdentityMock.doc.id, username: ServerIdentityMock.userData.username, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
-			]);
+		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => [
+			{
+				id: ServerIdentityMock.doc.id,
+				username: ServerIdentityMock.userData.username,
+				publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58
+			}
+		]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
@@ -70,11 +74,13 @@ describe('test keygenerator', () => {
 	it('should find an invalid serveridentity doc because public and secret key are not compatible', async () => {
 		const unvalidServerIdentity = { ...ServerIdentityKey };
 		unvalidServerIdentity.key.public = 'wrongpublickey'; // found identity has wrong server keypair stored
-		const getServerIdentitiesSpy = jest
-			.spyOn(UserDb, 'getServerIdentities')
-			.mockImplementationOnce(async () => [
-				{ id: ServerIdentityMock.doc.id, username: ServerIdentityMock.userData.username, publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58 }
-			]);
+		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementationOnce(async () => [
+			{
+				id: ServerIdentityMock.doc.id,
+				username: ServerIdentityMock.userData.username,
+				publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58
+			}
+		]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => unvalidServerIdentity);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 
@@ -103,8 +109,8 @@ describe('test keygenerator', () => {
 	it('should create a new serveridentity but could not create keycollection since returns null', async () => {
 		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
-		VerificationService.prototype.getKeyCollectionIndex = jest.fn();
-		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => null); // no keycollection
+		VerificationService.prototype.getBitmapIndex = jest.fn();
+		VerificationService.prototype.getBitmap = jest.fn().mockImplementationOnce(async () => null); // no keycollection
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
@@ -117,8 +123,8 @@ describe('test keygenerator', () => {
 	it('should create a new serveridentity and successfully run the script till the end', async () => {
 		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
-		VerificationService.prototype.getKeyCollectionIndex = jest.fn();
-		VerificationService.prototype.getKeyCollection = jest.fn().mockImplementationOnce(async () => []);
+		VerificationService.prototype.getBitmapIndex = jest.fn();
+		VerificationService.prototype.getBitmap = jest.fn().mockImplementationOnce(async () => []);
 		const issueCredentialSpy = jest.fn();
 		VerificationService.prototype.issueVerifiableCredential = issueCredentialSpy;
 

@@ -1,5 +1,5 @@
 import { VerificationService } from '../verification-service';
-import * as KeyCollectionDb from '../../database/revocation-bitmap';
+import * as RevocationBitmapDb from '../../database/revocation-bitmap';
 import * as IdentityDocsDb from '../../database/identity-keys';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';
@@ -34,12 +34,10 @@ describe('test getKeyCollection', () => {
 				docUpdate: {}
 			} as any)
 		);
-		const getKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'getKeyCollection').mockReturnValue(Promise.resolve(null)); // no keycollection found
-		const saveKeyCollectionSpy = jest
-			.spyOn(KeyCollectionDb, 'saveKeyCollection')
-			.mockReturnValue(Promise.resolve({ result: { n: 1 } } as any));
+		const getKeyCollectionSpy = jest.spyOn(RevocationBitmapDb, 'getBitmap').mockReturnValue(Promise.resolve(null)); // no keycollection found
+		const saveKeyCollectionSpy = jest.spyOn(RevocationBitmapDb, 'saveBitmap').mockReturnValue(Promise.resolve({ result: { n: 1 } } as any));
 
-		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
+		const keyCollection = await verificationService.getBitmap(keyCollectionIndex);
 
 		expect(getKeyCollectionSpy).toHaveBeenCalledWith(
 			keyCollectionIndex,
@@ -57,9 +55,9 @@ describe('test getKeyCollection', () => {
 			return {} as any;
 		});
 		const createRevocationBitmapSpy = jest.spyOn(ssiService, 'createRevocationBitmap').mockImplementation(async () => null);
-		const saveKeyCollectionSpy = jest.spyOn(KeyCollectionDb, 'saveKeyCollection').mockImplementation(async () => null);
+		const saveKeyCollectionSpy = jest.spyOn(RevocationBitmapDb, 'saveBitmap').mockImplementation(async () => null);
 
-		const keyCollection = await verificationService.getKeyCollection(keyCollectionIndex);
+		const keyCollection = await verificationService.getBitmap(keyCollectionIndex);
 
 		expect(createRevocationBitmapSpy).not.toHaveBeenCalled();
 		expect(saveKeyCollectionSpy).not.toHaveBeenCalled();

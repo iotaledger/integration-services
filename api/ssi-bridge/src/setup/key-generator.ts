@@ -101,8 +101,8 @@ export class KeyGenerator {
 
 		this.logger.log('Generate key collection...');
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.id);
-		const keyCollectionIndex = verificationService.getKeyCollectionIndex(index);
-		const kc = await verificationService.getKeyCollection(keyCollectionIndex);
+		const keyCollectionIndex = verificationService.getBitmapIndex(index);
+		const kc = await verificationService.getBitmap(keyCollectionIndex);
 
 		if (!kc) {
 			throw new Error('could not create the keycollection!');

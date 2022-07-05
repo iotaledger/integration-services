@@ -1,5 +1,4 @@
 import {
-	KeyCollectionJson,
 	VerifiableCredentialPersistence,
 	CredentialSubject,
 	VerifiableCredentialJson,
@@ -38,7 +37,7 @@ export class VerificationService {
 		this.serverSecret = this.configService.config.serverSecret;
 	}
 
-	async getKeyCollection(bitmapIndex: number) {
+	async getBitmap(bitmapIndex: number) {
 		let bitmap = await BitmapDb.getBitmap(bitmapIndex, this.configService.serverIdentityId);
 		if (!bitmap) {
 			bitmap = await this.createRevocationBitmap(bitmapIndex, this.configService.serverIdentityId);
@@ -71,8 +70,7 @@ export class VerificationService {
 		};
 
 		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-		const keyCollectionIndex = this.getKeyCollectionIndex(currentCredentialIndex);
-		const keyCollection = await this.getKeyCollection(keyCollectionIndex);
+		const keyCollectionIndex = this.getBitmapIndex(currentCredentialIndex);
 		const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
 		const keyIndex = nextCredentialIndex % this.keyCollectionSize;
 		// const keyCollectionJson: KeyCollectionJson = {
@@ -88,7 +86,7 @@ export class VerificationService {
 		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
 			identityKeys,
 			credential,
-			keyCollectionJson,
+			undefined,
 			keyCollectionIndex,
 			keyIndex
 		);
@@ -147,7 +145,7 @@ export class VerificationService {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
 
-		const keyCollectionIndex = this.getKeyCollectionIndex(vcp.index);
+		const keyCollectionIndex = this.getBitmapIndex(vcp.index);
 		const keyIndex = vcp.index % this.keyCollectionSize;
 
 		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
@@ -192,7 +190,7 @@ export class VerificationService {
 		await this.userService.addUserVC(vc);
 	}
 
-	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
+	getBitmapIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
 
 	private async createRevocationBitmap(bitmapIndex: number, issuerId: string): Promise<Bitmap> {
 		try {
