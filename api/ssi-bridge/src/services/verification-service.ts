@@ -30,13 +30,12 @@ export class VerificationService {
 		private readonly configService: IConfigurationService
 	) {
 		this.serverSecret = this.configService.config.serverSecret;
-		this.keyCollectionSize = this.configService.identityConfig.keyCollectionSize;
 	}
 
 	async getKeyCollection(keyCollectionIndex: number) {
 		let keyCollection = await KeyCollectionDb.getKeyCollection(keyCollectionIndex, this.configService.serverIdentityId, this.serverSecret);
 		if (!keyCollection) {
-			keyCollection = await this.generateKeyCollection(keyCollectionIndex, this.keyCollectionSize, this.configService.serverIdentityId);
+			keyCollection = await this.createRevocationBitmap(keyCollectionIndex, this.keyCollectionSize, this.configService.serverIdentityId);
 			const res = await KeyCollectionDb.saveKeyCollection(keyCollection, this.configService.serverIdentityId, this.serverSecret);
 
 			if (!res?.result.n) {
@@ -189,7 +188,7 @@ export class VerificationService {
 
 	getKeyCollectionIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
 
-	private async generateKeyCollection(
+	private async createRevocationBitmap(
 		keyCollectionIndex: number,
 		keyCollectionSize: number,
 		issuerId: string
@@ -201,10 +200,13 @@ export class VerificationService {
 				throw new Error(this.noIssuerFoundErrMessage(issuerId));
 			}
 
-			const { keyCollectionJson } = await this.ssiService.generateKeyCollection(keyCollectionIndex, keyCollectionSize, issuerIdentity);
+			const identity = await this.ssiService.restoreIdentity(issuerIdentity);
+			await this.ssiService.createRevocationBitmap(keyCollectionIndex, keyCollectionSize, { id: issuerId, key: identity.key });
 
 			return {
-				...keyCollectionJson,
+				keys: [],
+				type: '',
+				publicKeyBase58: 'base58',
 				count: keyCollectionSize,
 				index: keyCollectionIndex
 			};

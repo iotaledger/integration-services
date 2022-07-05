@@ -1,5 +1,3 @@
-import * as Identity from '@iota/identity-wasm/node';
-
 export interface Config {
 	port: number;
 	apiVersion: string;
@@ -16,11 +14,7 @@ export interface Config {
 }
 
 export interface IdentityConfig {
-	keyCollectionSize: number; // size must be a multiple of 2^2, 2^3, 2^4, ...
 	node: string;
 	permaNode: string;
-	keyType: Identity.KeyType;
-	hashFunction: number; // TODO remove
-	keyCollectionTag: string;
-	hashEncoding: 'base16' | 'base58' | 'base64';
+	bitmapTag: string;
 }

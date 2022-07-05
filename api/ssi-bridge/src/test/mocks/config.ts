@@ -1,13 +1,9 @@
 import { Config, IdentityConfig } from '../../models/config';
 
 export const IdentityConfigMock: IdentityConfig = {
-	keyCollectionTag: 'key-collection',
-	keyCollectionSize: 2,
 	node: '',
 	permaNode: '',
-	keyType: 0,
-	hashFunction: 0,
-	hashEncoding: 'base58'
+	bitmapTag: 'signature-bitmap'
 };
 
 export const ConfigMock: Config = {

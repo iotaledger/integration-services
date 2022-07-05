@@ -1,13 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import {
-	IdentityJson,
-	VerifiableCredentialJson,
-	Credential,
-	KeyCollectionJson,
-	IdentityKeys,
-	LatestIdentityJson
-} from '@iota/is-shared-modules';
+import { VerifiableCredentialJson, Credential, KeyCollectionJson, IdentityKeys, LatestIdentityJson } from '@iota/is-shared-modules';
 const { Document, Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
 
@@ -22,15 +15,33 @@ export class SsiService {
 		return SsiService.instance;
 	}
 
-	async generateKeyCollection(
-		_keyCollectionIndex: number,
+	async createRevocationBitmap(
+		keyCollectionIndex: number,
 		_keyCollectionSize: number,
-		_issuerIdentity: IdentityKeys
-	): Promise<{ keyCollectionJson: KeyCollectionJson }> {
+		issuerIdentity: {
+			id: string;
+			key: Identity.KeyPair;
+		}
+	): Promise<void> {
 		try {
-			throw Error('NOTIMPLMEMENTED');
-			/*const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
-			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
+			console.log('AAAAA');
+			const doc = await this.getLatestIdentityDoc(issuerIdentity.id);
+			const key = issuerIdentity.key;
+			console.log('BBBB');
+			const revocationBitmap = new Identity.RevocationBitmap();
+			console.log('cccc');
+			const service = new Identity.Service({
+				id: this.getBitmapTag(issuerIdentity.id, keyCollectionIndex),
+				serviceEndpoint: revocationBitmap.toEndpoint(),
+				type: Identity.RevocationBitmap.type()
+			});
+			console.log('ddddd');
+			doc.insertService(service);
+			console.log('eeeee');
+			doc.signSelf(key, doc.defaultSigningMethod().id());
+			console.log('AAAAA');
+			await this.publishSignedDoc(doc);
+			/*
 			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
 			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
 			const method = VerificationMethod.createMerkleKey(
@@ -54,6 +65,7 @@ export class SsiService {
 			};
 			return { keyCollectionJson };*/
 		} catch (error) {
+			console.log('ERROR:', error);
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not generate the key collection');
 		}
@@ -203,10 +215,10 @@ export class SsiService {
 		return method.toJSON().publicKeyMultibase;
 	}
 
-	restoreIdentity(identity: IdentityJson) {
+	async restoreIdentity(identity: IdentityKeys): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
 			const key: Identity.KeyPair = KeyPair.fromJSON(identity.key);
-			const doc = Document.fromJSON(identity.doc) as any;
+			const doc = await this.getLatestIdentityDoc(identity.id);
 
 			return {
 				doc,
@@ -231,10 +243,10 @@ export class SsiService {
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
-			throw new Error(`could not create identity document from keytype: ${this.config.keyType}`);
+			throw new Error(`could not create identity document from keytype: ${KeyType.Ed25519}`);
 		}
 	}
-	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
+	getBitmapTag = (id: string, keyCollectionIndex: number) => `${id}#${this.config.bitmapTag}-${keyCollectionIndex}`;
 
 	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
 		const clientConfig: Identity.IClientConfig = this.getConfig(usePermaNode);
