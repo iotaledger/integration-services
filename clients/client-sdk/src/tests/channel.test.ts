@@ -176,7 +176,7 @@ describe('test channel client', () => {
       jest.spyOn(channelClient, 'authorizeSubscription');
       try {
         await channelClient.authenticate(normalUser.id, normalUser.secretKey);
-        jest.spyOn(channelClient, 'post');
+        const postMock = jest.spyOn(channelClient, 'post');
         const requestResponse = await channelClient.requestSubscription(
           createdTestChannel.channelAddress,
           {
@@ -195,12 +195,12 @@ describe('test channel client', () => {
         expect(authorizationResponse).toMatchObject({
           keyloadLink: expect.any(String)
         } as AuthorizeSubscriptionResponse);
-        expect(channelClient.post).toHaveBeenNthCalledWith(
+        expect(postMock).toHaveBeenNthCalledWith(
           1,
           `${auditTrailUrl}/subscriptions/request/${createdTestChannel.channelAddress}`,
           { accessRights: AccessRights.Read }
         );
-        expect(channelClient.post).toHaveBeenNthCalledWith(
+        expect(postMock).toHaveBeenNthCalledWith(
           3,
           `${auditTrailUrl}/subscriptions/authorize/${createdTestChannel.channelAddress}`,
           { subscriptionLink: requestResponse.subscriptionLink }

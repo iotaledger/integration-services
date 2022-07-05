@@ -135,7 +135,7 @@ export class ChannelClient extends BaseClient {
   /**
    * Search for a channel. A client can search for a channel which it is interested in.
    * @param authorId
-   * @param subscriberId, 
+   * @param subscriberId,
    * @param requestedSubscriptionId
    * @param topicType
    * @param topicSource
@@ -161,10 +161,14 @@ export class ChannelClient extends BaseClient {
     } = searchCriteria;
     const topicTypeParam = topicType !== undefined ? { 'topic-type': topicType } : {};
     const topicSourceParam = topicSource !== undefined ? { 'topic-source': topicSource } : {};
-    const latestMessageParam = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
+    const latestMessageParam =
+      latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
     const authorIdParam = authorId !== undefined ? { 'author-id': authorId } : {};
     const subscriberIdParam = subscriberId !== undefined ? { 'subscriber-id': subscriberId } : {};
-    const requestedSubscriptionIdParam = requestedSubscriptionId !== undefined ? { 'requested-subscription-id': requestedSubscriptionId } : {};
+    const requestedSubscriptionIdParam =
+      requestedSubscriptionId !== undefined
+        ? { 'requested-subscription-id': requestedSubscriptionId }
+        : {};
     const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
