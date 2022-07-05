@@ -16,58 +16,30 @@ export class SsiService {
 	}
 
 	async createRevocationBitmap(
-		keyCollectionIndex: number,
-		_keyCollectionSize: number,
+		bitmapIndex: number,
 		issuerIdentity: {
 			id: string;
 			key: Identity.KeyPair;
 		}
-	): Promise<void> {
+	): Promise<Identity.IService> {
 		try {
-			console.log('AAAAA');
 			const { doc, messageId } = await this.getLatestIdentityDoc(issuerIdentity.id);
 			const key = issuerIdentity.key;
-			console.log('BBBB');
 			const revocationBitmap = new Identity.RevocationBitmap();
-			console.log('cccc');
-			const service = new Identity.Service({
-				id: this.getBitmapTag(issuerIdentity.id, keyCollectionIndex),
+			const bitmapService = {
+				id: this.getBitmapTag(issuerIdentity.id, bitmapIndex),
 				serviceEndpoint: revocationBitmap.toEndpoint(),
 				type: Identity.RevocationBitmap.type()
-			});
-			console.log('ddddd');
-			doc.insertService(service);
-			console.log('eeeee');
+			};
+			const service = new Identity.Service(bitmapService);
 
+			doc.insertService(service);
 			doc.setMetadataPreviousMessageId(messageId);
 			doc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 
 			doc.signSelf(key, doc.defaultSigningMethod().id());
-			console.log('doooooc', doc.toJSON());
 			await this.publishSignedDoc(doc);
-			/*
-			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
-			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
-			const method = VerificationMethod.createMerkleKey(
-				this.config.hashFunction,
-				doc.id,
-				keyCollection,
-				this.getKeyCollectionTag(keyCollectionIndex)
-			);
-			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
-
-			newDoc.insertMethod(method, `VerificationMethod`);
-			newDoc.signSelf(key, '');
-			newDoc.verifyDocument(newDoc);
-
-			await this.publishSignedDoc(newDoc.toJSON());
-			const { keys, type } = keyCollection?.toJSON();
-			const keyCollectionJson: KeyCollectionJson = {
-				type,
-				keys,
-				publicKeyBase58
-			};
-			return { keyCollectionJson };*/
+			return bitmapService;
 		} catch (error) {
 			console.log('ERROR:', error);
 			this.logger.error(`Error from identity sdk: ${error}`);

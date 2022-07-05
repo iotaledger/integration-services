@@ -1,6 +1,6 @@
 export const enum CollectionNames {
 	users = 'users',
-	keyCollection = 'key-collection',
+	revocationBitmap = 'revocation-bitmap',
 	identityKeysCollection = 'identity-keys',
 	verifiableCredentials = 'verifiable-credentials',
 	auth = 'auth',

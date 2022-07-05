@@ -1,5 +1,5 @@
 import { VerificationService } from '../verification-service';
-import * as KeyCollectionDb from '../../database/key-collection';
+import * as KeyCollectionDb from '../../database/revocation-bitmap';
 import * as IdentityDocsDb from '../../database/identity-keys';
 import { UserService } from '../user-service';
 import { SsiService } from '../ssi-service';

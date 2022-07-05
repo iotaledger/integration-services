@@ -1,6 +1,6 @@
 import { CredentialSubject, UserType, UserRoles } from '@iota/is-shared-modules';
 import { DeviceIdentityMock, ServerIdentityMock, TestUsersMock, ServerIdentityKey } from '../../../test/mocks/identities';
-import * as KeyCollectionDB from '../../../database/key-collection';
+import * as KeyCollectionDB from '../../../database/revocation-bitmap';
 import * as KeyCollectionLinksDB from '../../../database/verifiable-credentials';
 import * as IdentityDocsDb from '../../../database/identity-keys';
 import { SsiService } from '../../../services/ssi-service';
@@ -181,68 +181,69 @@ describe('test authentication routes', () => {
 
 		test.each([UserRoles.Admin, UserRoles.Manager])(
 			'should verify for user which has valid vc and different organization but admin user',
-			 async (role) => {
-			const subject = TestUsersMock[1];
-			const keyIndex = 0;
-			const keyCollectionIndex = 0;
-			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
-			const req: any = {
-				user: { id: initiatorVC.id, role: role, type: UserType.Person },
-				params: {},
-				body: {
+			async (role) => {
+				const subject = TestUsersMock[1];
+				const keyIndex = 0;
+				const keyCollectionIndex = 0;
+				const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
+				const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
+				const req: any = {
+					user: { id: initiatorVC.id, role: role, type: UserType.Person },
+					params: {},
+					body: {
+						subject: {
+							id: subject.id,
+							credentialType: 'VerifiedIdentityCredential',
+							claim: { ...subject.claim, type: subject.type }
+						},
+						initiatorVC
+					}
+				};
+
+				const credentialSubject: CredentialSubject = {
+					type: subject.type,
+					id: subject.id,
+					initiatorId: initiatorVC.id
+				};
+				const expectedCredential: any = {
+					type: 'VerifiedIdentityCredential',
+					id: subject.id,
 					subject: {
-						id: subject.id,
-						credentialType: 'VerifiedIdentityCredential',
-						claim: { ...subject.claim, type: subject.type }
-					},
-					initiatorVC
-				}
-			};
+						...credentialSubject,
+						'@context': 'https://schema.org/',
+						type: 'Person',
+						...subject.claim
+					}
+				};
+				const expectedKeyCollection = {
+					type: KeyCollectionMock.type,
+					keys: KeyCollectionMock.keys,
+					publicKeyBase58: 'testpublickey'
+				};
+				const expectedAddKeyCollectionCall = {
+					index: keyIndex,
+					isRevoked: false,
+					initiatorId: initiatorVC.id,
+					vc: vcMock
+				};
+				await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			const credentialSubject: CredentialSubject = {
-				type: subject.type,
-				id: subject.id,
-				initiatorId: initiatorVC.id
-			};
-			const expectedCredential: any = {
-				type: 'VerifiedIdentityCredential',
-				id: subject.id,
-				subject: {
-					...credentialSubject,
-					'@context': 'https://schema.org/',
-					type: 'Person',
-					...subject.claim
-				}
-			};
-			const expectedKeyCollection = {
-				type: KeyCollectionMock.type,
-				keys: KeyCollectionMock.keys,
-				publicKeyBase58: 'testpublickey'
-			};
-			const expectedAddKeyCollectionCall = {
-				index: keyIndex,
-				isRevoked: false,
-				initiatorId: initiatorVC.id,
-				vc: vcMock
-			};
-			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
-
-			expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, ServerIdentityMock.doc.id, serverSecret);
-			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-				ServerIdentityKey,
-				expectedCredential,
-				expectedKeyCollection,
-				keyCollectionIndex,
-				keyIndex
-			);
-			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
-			expect(addUserVCSpy).toHaveBeenCalled();
-			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-			expect(res.send).toHaveBeenCalledWith(vcMock);
-		});
+				expect(getKeyCollectionSpy).toHaveBeenCalledWith(keyCollectionIndex, ServerIdentityMock.doc.id, serverSecret);
+				expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+				expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+				expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
+					ServerIdentityKey,
+					expectedCredential,
+					expectedKeyCollection,
+					keyCollectionIndex,
+					keyIndex
+				);
+				expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
+				expect(addUserVCSpy).toHaveBeenCalled();
+				expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+				expect(res.send).toHaveBeenCalledWith(vcMock);
+			}
+		);
 
 		it('should verify for user which has valid vc and is in same organization', async () => {
 			const subject = TestUsersMock[0];
