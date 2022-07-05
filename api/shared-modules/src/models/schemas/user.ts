@@ -8,7 +8,7 @@ export const IdentityWithoutIdFields = {
 	verifiableCredentials: Type.Optional(Type.Array(VerifiableCredentialSchema)),
 	role: Type.Optional(Type.String()),
 	claim: Type.Optional(ClaimSchema),
-	isPrivate: Type.Optional(Type.Boolean()),
+	hidden: Type.Optional(Type.Boolean()),
 	isServerIdentity: Type.Optional(Type.Boolean())
 };
 
@@ -17,7 +17,7 @@ export const IdentityWithoutIdAndCredentialFields = {
 	registrationDate: Type.Optional(Type.String({ format: 'date-time' })),
 	role: Type.Optional(Type.String()),
 	claim: Type.Optional(ClaimSchema),
-	isPrivate: Type.Optional(Type.Boolean()),
+	hidden: Type.Optional(Type.Boolean()),
 	isServerIdentity: Type.Optional(Type.Boolean())
 };
 
