@@ -25,7 +25,7 @@ export class SsiService {
 	): Promise<void> {
 		try {
 			console.log('AAAAA');
-			const doc = await this.getLatestIdentityDoc(issuerIdentity.id);
+			const { doc, messageId } = await this.getLatestIdentityDoc(issuerIdentity.id);
 			const key = issuerIdentity.key;
 			console.log('BBBB');
 			const revocationBitmap = new Identity.RevocationBitmap();
@@ -38,8 +38,12 @@ export class SsiService {
 			console.log('ddddd');
 			doc.insertService(service);
 			console.log('eeeee');
+
+			doc.setMetadataPreviousMessageId(messageId);
+			doc.setMetadataUpdated(Identity.Timestamp.nowUTC());
+
 			doc.signSelf(key, doc.defaultSigningMethod().id());
-			console.log('AAAAA');
+			console.log('doooooc', doc.toJSON());
 			await this.publishSignedDoc(doc);
 			/*
 			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
@@ -132,8 +136,8 @@ export class SsiService {
 
 	async checkVerifiableCredential(signedVc: VerifiableCredentialJson): Promise<boolean> {
 		try {
-			const issuerDoc = await this.getLatestIdentityDoc(signedVc.issuer);
-			const subject = await this.getLatestIdentityDoc(signedVc.id);
+			const issuerDoc = (await this.getLatestIdentityDoc(signedVc.issuer)).doc;
+			const subject = (await this.getLatestIdentityDoc(signedVc.id)).doc;
 			const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
 			subject.verifyDocument(subject);
 			issuerDoc.verifyDocument(issuerDoc);
@@ -190,14 +194,14 @@ export class SsiService {
 		}
 	}
 
-	async getLatestIdentityDoc(did: string): Promise<Identity.Document> {
+	async getLatestIdentityDoc(did: string): Promise<{ doc: Identity.Document; messageId: string }> {
 		try {
-			const { document } = await this.getLatestIdentityJson(did);
+			const { document, messageId } = await this.getLatestIdentityJson(did);
 			const doc = Document.fromJSON(document);
 			if (!doc) {
 				throw new Error('could not parse json');
 			}
-			return doc;
+			return { doc, messageId };
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not get the latest identity');
@@ -218,7 +222,7 @@ export class SsiService {
 	async restoreIdentity(identity: IdentityKeys): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
 			const key: Identity.KeyPair = KeyPair.fromJSON(identity.key);
-			const doc = await this.getLatestIdentityDoc(identity.id);
+			const { doc } = await this.getLatestIdentityDoc(identity.id);
 
 			return {
 				doc,
