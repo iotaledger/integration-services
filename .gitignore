@@ -10,3 +10,4 @@ logs
 **/server-identity.json
 openApiSpecification.json
 adminIdentity.json
+monitoring
