@@ -40,12 +40,4 @@ export class AuthorizationService {
 	hasVerificationCredentialType(type: string[]): boolean {
 		return type.some((t) => t === CredentialTypes.VerifiedIdentityCredential);
 	}
-
-	canManagerUpdateUser(updateUser: User): boolean {
-		return updateUser.role === UserRoles.User ? true : false;
-	}
-
-	canUpdateRole(role?: UserRoles): boolean {
-		return role === UserRoles.User ? true : false;
-	}
 }
