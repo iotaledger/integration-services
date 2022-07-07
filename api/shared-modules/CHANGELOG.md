@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.14 (2022-07-07)
+
+- Added `hidden` and `visibilityList` properties to CreateChannelBodySchema, ChannelInfoSchema and ChannelINfoSearchSchema
+
 ### 0.1.13 (2022-07-05)
 
 - Reverted new changes due to compatibility issues
