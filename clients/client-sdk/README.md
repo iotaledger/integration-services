@@ -522,116 +522,116 @@ searchChannelAndValidateData();
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Audit](AccessRights.md#audit)
 - [Read](AccessRights.md#read)
 - [ReadAndWrite](AccessRights.md#readandwrite)
 - [Write](AccessRights.md#write)
 
-## Enumeration members
+## Enumeration Members
 
 ### Audit
 
-• **Audit** = `"Audit"`
+• **Audit** = ``"Audit"``
 
 #### Defined in
 
-api/shared-modules/lib/models/schemas/subscription.d.ts:6
+node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:6
 
 ___
 
 ### Read
 
-• **Read** = `"Read"`
+• **Read** = ``"Read"``
 
 #### Defined in
 
-api/shared-modules/lib/models/schemas/subscription.d.ts:7
+node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:7
 
 ___
 
 ### ReadAndWrite
 
-• **ReadAndWrite** = `"ReadAndWrite"`
+• **ReadAndWrite** = ``"ReadAndWrite"``
 
 #### Defined in
 
-api/shared-modules/lib/models/schemas/subscription.d.ts:9
+node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:9
 
 ___
 
 ### Write
 
-• **Write** = `"Write"`
+• **Write** = ``"Write"``
 
 #### Defined in
 
-api/shared-modules/lib/models/schemas/subscription.d.ts:8
+node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:8
 
 # Enumeration: ApiVersion
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [v01](ApiVersion.md#v01)
 - [v1](ApiVersion.md#v1)
 
-## Enumeration members
+## Enumeration Members
 
 ### v01
 
-• **v01** = `"v0.1"`
+• **v01** = ``"v0.1"``
 
 #### Defined in
 
-[clients/client-sdk/src/models/apiVersion.ts:2](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/models/apiVersion.ts#L2)
+[src/models/apiVersion.ts:2](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/apiVersion.ts#L2)
 
 ___
 
 ### v1
 
-• **v1** = `"v1"`
+• **v1** = ``"v1"``
 
 #### Defined in
 
-[clients/client-sdk/src/models/apiVersion.ts:3](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/models/apiVersion.ts#L3)
+[src/models/apiVersion.ts:3](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/apiVersion.ts#L3)
 
 # Enumeration: CredentialTypes
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [BasicIdentityCredential](CredentialTypes.md#basicidentitycredential)
 - [VerifiedIdentityCredential](CredentialTypes.md#verifiedidentitycredential)
 
-## Enumeration members
+## Enumeration Members
 
 ### BasicIdentityCredential
 
-• **BasicIdentityCredential** = `"BasicIdentityCredential"`
+• **BasicIdentityCredential** = ``"BasicIdentityCredential"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/verification.d.ts:8
+node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:8
 
 ___
 
 ### VerifiedIdentityCredential
 
-• **VerifiedIdentityCredential** = `"VerifiedIdentityCredential"`
+• **VerifiedIdentityCredential** = ``"VerifiedIdentityCredential"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/verification.d.ts:7
+node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:7
 
 # Enumeration: UserType
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Device](UserType.md#device)
 - [Organization](UserType.md#organization)
@@ -640,65 +640,65 @@ api/shared-modules/lib/models/types/verification.d.ts:7
 - [Service](UserType.md#service)
 - [Unknown](UserType.md#unknown)
 
-## Enumeration members
+## Enumeration Members
 
 ### Device
 
-• **Device** = `"Device"`
+• **Device** = ``"Device"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:18
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:18
 
 ___
 
 ### Organization
 
-• **Organization** = `"Organization"`
+• **Organization** = ``"Organization"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:15
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:15
 
 ___
 
 ### Person
 
-• **Person** = `"Person"`
+• **Person** = ``"Person"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:17
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:17
 
 ___
 
 ### Product
 
-• **Product** = `"Product"`
+• **Product** = ``"Product"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:19
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:19
 
 ___
 
 ### Service
 
-• **Service** = `"Service"`
+• **Service** = ``"Service"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:16
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:16
 
 ___
 
 ### Unknown
 
-• **Unknown** = `"Unknown"`
+• **Unknown** = ``"Unknown"``
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:20
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 
 
 # Class: ChannelClient
@@ -724,6 +724,7 @@ api/shared-modules/lib/models/types/user.d.ts:20
 - [isGatewayUrl](ChannelClient.md#isgatewayurl)
 - [jwtToken](ChannelClient.md#jwttoken)
 - [ssiBridgeUrl](ChannelClient.md#ssibridgeurl)
+- [useGatewayUrl](ChannelClient.md#usegatewayurl)
 
 ### Methods
 
@@ -760,7 +761,7 @@ api/shared-modules/lib/models/types/user.d.ts:20
 
 ### constructor
 
-• **new ChannelClient**(`config?`)
+• **new ChannelClient**(`config`)
 
 #### Parameters
 
@@ -771,10 +772,6 @@ api/shared-modules/lib/models/types/user.d.ts:20
 #### Overrides
 
 BaseClient.constructor
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:29](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L29)
 
 ## Properties
 
@@ -788,7 +785,7 @@ BaseClient.apiKey
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -802,7 +799,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
@@ -812,7 +809,7 @@ ___
 
 #### Defined in
 
-[clients/client-sdk/src/clients/channel.ts:27](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L27)
+[src/clients/channel.ts:28](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/channel.ts#L28)
 
 ___
 
@@ -826,13 +823,13 @@ BaseClient.instance
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
 ### isGatewayUrl
 
-• `Optional` **isGatewayUrl**: `string`
+• **isGatewayUrl**: `string`
 
 #### Inherited from
 
@@ -840,7 +837,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
 
 ___
 
@@ -854,7 +851,7 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -868,7 +865,21 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+
+___
+
+### useGatewayUrl
+
+• `Optional` **useGatewayUrl**: `boolean`
+
+#### Inherited from
+
+BaseClient.useGatewayUrl
+
+#### Defined in
+
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
 
 ## Methods
 
@@ -889,16 +900,14 @@ Add an existing channel into the database. Clients are able to add existing chan
 | `channel.description` | `undefined` \| `string` |
 | `channel.latestMessage` | `undefined` \| `string` |
 | `channel.name` | `string` |
+| `channel.requestedSubscriptionIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.subscriberIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
+| `channel.type` | `undefined` \| `ChannelType` |
 
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:172](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L172)
 
 ___
 
@@ -931,10 +940,6 @@ Adds an existing subscription (e.g. the subscription was not created with the ap
 
 `Promise`<{ `accessRights`: [`AccessRights`](../enums/AccessRights.md) ; `channelAddress`: `string` ; `id`: `string` ; `isAuthorized`: `boolean` ; `keyloadLink`: `undefined` \| `string` ; `pskId`: `undefined` \| `string` ; `publicKey`: `undefined` \| `string` ; `sequenceLink`: `undefined` \| `string` ; `state`: `string` ; `subscriptionLink`: `undefined` \| `string` ; `type`: `SubscriptionType`  }\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:270](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L270)
-
 ___
 
 ### authenticate
@@ -958,17 +963,13 @@ Authenticates the user to the api for requests where authentication is needed
 
 BaseClient.authenticate
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:65](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L65)
-
 ___
 
 ### authorizeSubscription
 
 ▸ **authorizeSubscription**(`channelAddress`, `subscriptionIdentifier`): `Promise`<{ `keyloadLink`: `string`  }\>
 
-Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
+Authorize a subscription to a channel with DID or subscription link. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
 
 #### Parameters
 
@@ -983,24 +984,22 @@ Authorize a subscription to a channel with address channel-address. The author o
 
 `Promise`<{ `keyloadLink`: `string`  }\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:237](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L237)
+keyloadLink
 
 ___
 
 ### buildUrls
 
-▸ **buildUrls**(`isGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
+▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `isGatewayUrl?` | `string` | `undefined` |
-| `ssiBridgeUrl?` | `string` | `undefined` |
-| `auditTrailUrl?` | `string` | `undefined` |
-| `apiVersion` | [`ApiVersion`](../enums/ApiVersion.md) | `ApiVersion.v01` |
+| Name | Type |
+| :------ | :------ |
+| `useGatewayUrl?` | `boolean` |
+| `ssiBridgeUrl?` | `string` |
+| `auditTrailUrl?` | `string` |
+| `apiVersion?` | [`ApiVersion`](../enums/ApiVersion.md) |
 
 #### Returns
 
@@ -1009,10 +1008,6 @@ ___
 #### Inherited from
 
 BaseClient.buildUrls
-
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:39](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L39)
 
 ___
 
@@ -1032,16 +1027,12 @@ Create a new channel. An author can create a new channel with specific topics wh
 | `data.name` | `undefined` \| `string` |
 | `data.presharedKey` | `undefined` \| `string` |
 | `data.seed` | `undefined` \| `string` |
-| `data.subscriptionPassword` | `undefined` \| `string` |
 | `data.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
+| `data.type` | `undefined` \| `ChannelType` |
 
 #### Returns
 
 `Promise`<{ `channelAddress`: `string` ; `presharedKey`: `undefined` \| `string` ; `seed`: `undefined` \| `string`  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:39](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L39)
 
 ___
 
@@ -1064,10 +1055,6 @@ ___
 
 BaseClient.delete
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:121](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L121)
-
 ___
 
 ### findAllSubscriptions
@@ -1087,10 +1074,6 @@ Get all subscriptions of a channel. Use the is-authorized query parameter to fil
 
 `Promise`<{ `accessRights`: [`AccessRights`](../enums/AccessRights.md) ; `channelAddress`: `string` ; `id`: `string` ; `isAuthorized`: `boolean` ; `keyloadLink`: `undefined` \| `string` ; `pskId`: `undefined` \| `string` ; `publicKey`: `undefined` \| `string` ; `sequenceLink`: `undefined` \| `string` ; `state`: `string` ; `subscriptionLink`: `undefined` \| `string` ; `type`: `SubscriptionType`  }[]\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:200](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L200)
-
 ___
 
 ### findSubscription
@@ -1109,10 +1092,6 @@ Get a subscription of a channel by identity id.
 #### Returns
 
 `Promise`<{ `accessRights`: [`AccessRights`](../enums/AccessRights.md) ; `channelAddress`: `string` ; `id`: `string` ; `isAuthorized`: `boolean` ; `keyloadLink`: `undefined` \| `string` ; `pskId`: `undefined` \| `string` ; `publicKey`: `undefined` \| `string` ; `sequenceLink`: `undefined` \| `string` ; `state`: `string` ; `subscriptionLink`: `undefined` \| `string` ; `type`: `SubscriptionType`  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:214](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L214)
 
 ___
 
@@ -1135,10 +1114,6 @@ ___
 
 BaseClient.get
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:110](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L110)
-
 ___
 
 ### getHexEncodedKey
@@ -1158,10 +1133,6 @@ ___
 #### Inherited from
 
 BaseClient.getHexEncodedKey
-
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:93](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L93)
 
 ___
 
@@ -1183,15 +1154,11 @@ ___
 
 BaseClient.hashNonce
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:86](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L86)
-
 ___
 
 ### info
 
-▸ **info**(`address`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\>  }\>
+▸ **info**(`address`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }\>
 
 Get information about a channel with address channel-address.
 
@@ -1203,11 +1170,7 @@ Get information about a channel with address channel-address.
 
 #### Returns
 
-`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\>  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:163](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L163)
+`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }\>
 
 ___
 
@@ -1230,10 +1193,6 @@ ___
 
 BaseClient.post
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:97](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L97)
-
 ___
 
 ### put
@@ -1255,15 +1214,11 @@ ___
 
 BaseClient.put
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:132](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L132)
-
 ___
 
 ### read
 
-▸ **read**(`channelAddress`, `channelOptions?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string`  }[]\>
+▸ **read**(`channelAddress`, `channelOptions?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
 
@@ -1281,17 +1236,13 @@ Get data from the channel with address channel address. The first possible messa
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string`  }[]\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:63](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L63)
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 ___
 
 ### readHistory
 
-▸ **readHistory**(`channelAddress`, `presharedKey`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string`  }[]\>
+▸ **readHistory**(`channelAddress`, `presharedKey`, `type?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
 
@@ -1301,14 +1252,11 @@ Get all data of a channel using a shared key (in case of encrypted channels). Ma
 | :------ | :------ |
 | `channelAddress` | `string` |
 | `presharedKey` | `string` |
+| `type?` | `ChannelType` |
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string`  }[]\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:102](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L102)
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 ___
 
@@ -1331,10 +1279,6 @@ The user can decide to re-import the data from the Tangle into the database. A r
 
 `Promise`<``null``\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:124](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L124)
-
 ___
 
 ### remove
@@ -1352,10 +1296,6 @@ Delete information of a channel with address channel-address. The author of a ch
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:190](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L190)
 
 ___
 
@@ -1375,10 +1315,6 @@ Deletes an existing subscription.
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:302](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L302)
 
 ___
 
@@ -1402,10 +1338,6 @@ Request subscription to a channel with address channel-address. A client can req
 
 `Promise`<{ `seed`: `string` ; `subscriptionLink`: `string`  }\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:224](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L224)
-
 ___
 
 ### revokeSubscription
@@ -1427,15 +1359,11 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 
 `Promise`<``null``\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:253](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L253)
-
 ___
 
 ### search
 
-▸ **search**(`searchCriteria`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\>  }[]\>
+▸ **search**(`searchCriteria`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }[]\>
 
 Search for a channel. A client can search for a channel which it is interested in.
 
@@ -1447,11 +1375,7 @@ Search for a channel. A client can search for a channel which it is interested i
 
 #### Returns
 
-`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\>  }[]\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:139](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L139)
+`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }[]\>
 
 ___
 
@@ -1474,10 +1398,6 @@ ___
 
 BaseClient.signNonce
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:77](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L77)
-
 ___
 
 ### update
@@ -1497,16 +1417,14 @@ Update channel information. The author of a channel can update topics of a chann
 | `channel.description` | `undefined` \| `string` |
 | `channel.latestMessage` | `undefined` \| `string` |
 | `channel.name` | `string` |
+| `channel.requestedSubscriptionIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.subscriberIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
+| `channel.type` | `undefined` \| `ChannelType` |
 
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:181](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L181)
 
 ___
 
@@ -1539,10 +1457,6 @@ Updates an existing subscription.
 
 `Promise`<``null``\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:285](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L285)
-
 ___
 
 ### validate
@@ -1556,21 +1470,17 @@ Validates channel data by comparing the log of each link with the data on the ta
 | Name | Type |
 | :------ | :------ |
 | `address` | `string` |
-| `data` | `StaticArray`<`TObject`<{ `imported`: `TOptional`<`TString`\> ; `link`: `TString` ; `log`: `TObject`<{ `created`: `TOptional`<`TString`\> ; `metadata`: `TOptional`<`TAny`\> ; `payload`: `TOptional`<`TAny`\> ; `publicPayload`: `TOptional`<`TAny`\> ; `type`: `TOptional`<`TString`\>  }\> ; `messageId`: `TOptional`<`TString`\>  }\>\> |
+| `data` | `StaticArray`<`TObject`<{ `imported`: `TOptional`<`TString`\> ; `link`: `TString` ; `log`: `TObject`<{ `created`: `TOptional`<`TString`\> ; `metadata`: `TOptional`<`TAny`\> ; `payload`: `TOptional`<`TAny`\> ; `publicPayload`: `TOptional`<`TAny`\> ; `type`: `TOptional`<`TString`\>  }\> ; `messageId`: `TOptional`<`TString`\> ; `source`: `TOptional`<`TObject`<{ `id`: `TOptional`<`TString`\> ; `publicKey`: `TOptional`<`TString`\>  }\>\>  }\>\> |
 
 #### Returns
 
 `Promise`<`StaticArray`<`TObject`<{ `error`: `TOptional`<`TString`\> ; `isValid`: `TBoolean` ; `link`: `TString` ; `tangleLog`: `TOptional`<`TAny`\>  }\>\>\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:114](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L114)
-
 ___
 
 ### write
 
-▸ **write**(`address`, `data`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string`  }\>
+▸ **write**(`address`, `data`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
 
 Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
 
@@ -1588,11 +1498,7 @@ Write data to a channel with address channel address. Write permission is mandat
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string`  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/channel.ts:49](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/channel.ts#L49)
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
 
 # Class: IdentityClient
 
@@ -1617,6 +1523,7 @@ Write data to a channel with address channel address. Write permission is mandat
 - [isGatewayUrl](IdentityClient.md#isgatewayurl)
 - [jwtToken](IdentityClient.md#jwttoken)
 - [ssiBridgeUrl](IdentityClient.md#ssibridgeurl)
+- [useGatewayUrl](IdentityClient.md#usegatewayurl)
 
 ### Methods
 
@@ -1642,12 +1549,13 @@ Write data to a channel with address channel address. Write permission is mandat
 - [search](IdentityClient.md#search)
 - [signNonce](IdentityClient.md#signnonce)
 - [update](IdentityClient.md#update)
+- [verifyJwt](IdentityClient.md#verifyjwt)
 
 ## Constructors
 
 ### constructor
 
-• **new IdentityClient**(`config?`)
+• **new IdentityClient**(`config`)
 
 #### Parameters
 
@@ -1658,10 +1566,6 @@ Write data to a channel with address channel address. Write permission is mandat
 #### Overrides
 
 BaseClient.constructor
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:23](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L23)
 
 ## Properties
 
@@ -1675,7 +1579,7 @@ BaseClient.apiKey
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -1689,7 +1593,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
@@ -1699,7 +1603,7 @@ ___
 
 #### Defined in
 
-[clients/client-sdk/src/clients/identity.ts:21](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L21)
+[src/clients/identity.ts:24](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/identity.ts#L24)
 
 ___
 
@@ -1713,13 +1617,13 @@ BaseClient.instance
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
 ### isGatewayUrl
 
-• `Optional` **isGatewayUrl**: `string`
+• **isGatewayUrl**: `string`
 
 #### Inherited from
 
@@ -1727,7 +1631,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
 
 ___
 
@@ -1741,7 +1645,7 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -1755,7 +1659,21 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[clients/client-sdk/src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+
+___
+
+### useGatewayUrl
+
+• `Optional` **useGatewayUrl**: `boolean`
+
+#### Inherited from
+
+BaseClient.useGatewayUrl
+
+#### Defined in
+
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
 
 ## Methods
 
@@ -1775,7 +1693,6 @@ Register an existing identity into the Bridge. This can be used if the identity 
 | `identity.id` | `string` |
 | `identity.isPrivate` | `undefined` \| `boolean` |
 | `identity.isServerIdentity` | `undefined` \| `boolean` |
-| `identity.publicKey` | `string` |
 | `identity.registrationDate` | `undefined` \| `string` |
 | `identity.role` | `undefined` \| `string` |
 | `identity.username` | `string` |
@@ -1784,10 +1701,6 @@ Register an existing identity into the Bridge. This can be used if the identity 
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:85](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L85)
 
 ___
 
@@ -1806,10 +1719,6 @@ Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identit
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:124](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L124)
 
 ___
 
@@ -1834,24 +1743,20 @@ Authenticates the user to the api for requests where authentication is needed
 
 BaseClient.authenticate
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:65](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L65)
-
 ___
 
 ### buildUrls
 
-▸ **buildUrls**(`isGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
+▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `isGatewayUrl?` | `string` | `undefined` |
-| `ssiBridgeUrl?` | `string` | `undefined` |
-| `auditTrailUrl?` | `string` | `undefined` |
-| `apiVersion` | [`ApiVersion`](../enums/ApiVersion.md) | `ApiVersion.v01` |
+| Name | Type |
+| :------ | :------ |
+| `useGatewayUrl?` | `boolean` |
+| `ssiBridgeUrl?` | `string` |
+| `auditTrailUrl?` | `string` |
+| `apiVersion?` | [`ApiVersion`](../enums/ApiVersion.md) |
 
 #### Returns
 
@@ -1860,10 +1765,6 @@ ___
 #### Inherited from
 
 BaseClient.buildUrls
-
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:39](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L39)
 
 ___
 
@@ -1890,10 +1791,6 @@ Check the verifiable credential of an identity. Validates the signed verifiable 
 
 `Promise`<{ `isVerified`: `boolean`  }\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:181](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L181)
-
 ___
 
 ### create
@@ -1914,10 +1811,6 @@ Create a new decentralized digital identity (DID). Identity DID document is sign
 
 `Promise`<{ `doc`: { verificationMethod?: StaticArray<TObject<{ id: TString; controller: TString; type: TString; publicKeyBase58: TString; }\>\> \| undefined; ... 6 more ...; proof: { ...; }; } ; `key`: { type: string; public: string; secret: string; encoding: Encoding; }  }\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:35](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L35)
-
 ___
 
 ### createCredential
@@ -1932,17 +1825,13 @@ Verify the authenticity of an identity (of an individual, organization or object
 | :------ | :------ |
 | `initiatorVC` | `undefined` \| { `@context`: `string` ; `credentialSubject`: { initiatorId?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  } |
 | `targetDid` | `string` |
-| `credentialType` | [`CredentialTypes`](../enums/CredentialTypes.md) |
+| `credentialType` | `string` |
 | `claimType` | [`UserType`](../enums/UserType.md) |
 | `claim?` | `any` |
 
 #### Returns
 
 `Promise`<{ `@context`: `string` ; `credentialSubject`: { initiatorId?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:155](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L155)
 
 ___
 
@@ -1965,15 +1854,11 @@ ___
 
 BaseClient.delete
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:121](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L121)
-
 ___
 
 ### find
 
-▸ **find**(`id`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `publicKey`: `string` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
+▸ **find**(`id`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
 
 Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
 
@@ -1985,11 +1870,7 @@ Get information (including attached credentials) about a specific identity using
 
 #### Returns
 
-`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `publicKey`: `string` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:76](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L76)
+`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
 
 ___
 
@@ -2012,10 +1893,6 @@ ___
 
 BaseClient.get
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:110](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L110)
-
 ___
 
 ### getHexEncodedKey
@@ -2036,10 +1913,6 @@ ___
 
 BaseClient.getHexEncodedKey
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:93](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L93)
-
 ___
 
 ### getTrustedAuthorities
@@ -2051,10 +1924,6 @@ Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DI
 #### Returns
 
 `Promise`<`string`[]\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:132](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L132)
 
 ___
 
@@ -2076,10 +1945,6 @@ ___
 
 BaseClient.hashNonce
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:86](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L86)
-
 ___
 
 ### latestDocument
@@ -2097,10 +1962,6 @@ Get the latest version of an identity document (DID) from the IOTA Tangle.
 #### Returns
 
 `Promise`<{ `document`: { `authentication`: `StaticArray`<`TObject`<{ `controller`: `TString` ; `id`: `TString` ; `publicKeyBase58`: `TString` ; `type`: `TString`  }\>\> ; `created`: `string` ; `id`: `string` ; `immutable`: `boolean` ; `previousMessageId`: `undefined` \| `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `updated`: `string` ; `verificationMethod`: `undefined` \| `StaticArray`<`TObject`<{ `controller`: `TString` ; `id`: `TString` ; `publicKeyBase58`: `TString` ; `type`: `TString`  }\>\>  } ; `messageId`: `string`  }\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:115](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L115)
 
 ___
 
@@ -2123,10 +1984,6 @@ ___
 
 BaseClient.post
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:97](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L97)
-
 ___
 
 ### put
@@ -2147,10 +2004,6 @@ ___
 #### Inherited from
 
 BaseClient.put
-
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:132](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L132)
 
 ___
 
@@ -2173,10 +2026,6 @@ Removes an identity from the Bridge. An identity can only delete itself and is n
 
 Null
 
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:104](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L104)
-
 ___
 
 ### removeTrustedAuthority
@@ -2194,10 +2043,6 @@ Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of ident
 #### Returns
 
 `Promise`<``null``\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:141](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L141)
 
 ___
 
@@ -2218,15 +2063,11 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 
 `Promise`<``null``\>
 
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:192](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L192)
-
 ___
 
 ### search
 
-▸ **search**(`username`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `publicKey`: `string` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
+▸ **search**(`username`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
 
 Search for identities in the system and returns a list of existing identities.
 
@@ -2238,11 +2079,7 @@ Search for identities in the system and returns a list of existing identities.
 
 #### Returns
 
-`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `publicKey`: `string` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
-
-#### Defined in
-
-[clients/client-sdk/src/clients/identity.ts:50](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L50)
+`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
 
 ___
 
@@ -2265,10 +2102,6 @@ ___
 
 BaseClient.signNonce
 
-#### Defined in
-
-[clients/client-sdk/src/clients/base.ts:77](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/base.ts#L77)
-
 ___
 
 ### update
@@ -2287,7 +2120,6 @@ Update claim of a registered identity.
 | `identity.id` | `string` |
 | `identity.isPrivate` | `undefined` \| `boolean` |
 | `identity.isServerIdentity` | `undefined` \| `boolean` |
-| `identity.publicKey` | `string` |
 | `identity.registrationDate` | `undefined` \| `string` |
 | `identity.role` | `undefined` \| `string` |
 | `identity.username` | `string` |
@@ -2297,9 +2129,24 @@ Update claim of a registered identity.
 
 `Promise`<``null``\>
 
-#### Defined in
+___
 
-[clients/client-sdk/src/clients/identity.ts:94](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/clients/identity.ts#L94)
+### verifyJwt
+
+▸ **verifyJwt**(`jwt`): `Promise`<{ `error?`: `string` ; `isValid`: `boolean`  }\>
+
+Check the verifiable credential of an identity. Validates the signed verifiable credential against the Issuer information stored onto the IOTA Tangle and checks if the issuer identity (DID) contained in the credential is from a trusted root.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `jwt` | `Object` |
+| `jwt.jwt` | `string` |
+
+#### Returns
+
+`Promise`<{ `error?`: `string` ; `isValid`: `boolean`  }\>
 
 
 ### Types
@@ -2323,7 +2170,7 @@ Update claim of a registered identity.
 - [RevokeSubscriptionBody](modules.md#revokesubscriptionbody)
 - [RevokeVerificationBody](modules.md#revokeverificationbody)
 - [SearchCriteria](modules.md#searchcriteria)
-- [SubscriptionInternal](modules.md#subscriptioninternal)
+- [Subscription](modules.md#subscription)
 - [SubscriptionUpdate](modules.md#subscriptionupdate)
 - [User](modules.md#user)
 - [ValidateBody](modules.md#validatebody)
@@ -2331,7 +2178,7 @@ Update claim of a registered identity.
 - [VerifiableCredentialInternal](modules.md#verifiablecredentialinternal)
 - [VerifiableCredentialJson](modules.md#verifiablecredentialjson)
 
-## Type aliases
+## Type Aliases
 
 ### AddChannelLogBody
 
@@ -2339,7 +2186,7 @@ Update claim of a registered identity.
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:15
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:16
 
 ___
 
@@ -2349,7 +2196,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:19
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:20
 
 ___
 
@@ -2359,7 +2206,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:23
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:24
 
 ___
 
@@ -2369,7 +2216,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/channel-data.d.ts:4
+node_modules/@iota/is-shared-modules/lib/models/types/channel-data.d.ts:4
 
 ___
 
@@ -2379,7 +2226,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/channel-info.d.ts:4
+node_modules/@iota/is-shared-modules/lib/models/types/channel-info.d.ts:4
 
 ___
 
@@ -2389,7 +2236,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/channel-info.d.ts:11
+node_modules/@iota/is-shared-modules/lib/models/types/channel-info.d.ts:11
 
 ___
 
@@ -2406,10 +2253,11 @@ ___
 | `auditTrailUrl?` | `string` |
 | `isGatewayUrl?` | `string` |
 | `ssiBridgeUrl?` | `string` |
+| `useGatewayUrl?` | `boolean` |
 
 #### Defined in
 
-[clients/client-sdk/src/models/clientConfig.ts:3](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/models/clientConfig.ts#L3)
+[src/models/clientConfig.ts:3](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/clientConfig.ts#L3)
 
 ___
 
@@ -2419,7 +2267,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:13
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:14
 
 ___
 
@@ -2429,7 +2277,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:14
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:15
 
 ___
 
@@ -2439,7 +2287,7 @@ ___
 
 #### Defined in
 
-[api/shared-modules/src/models/types/identity.ts:32](https://github.com/iotaledger/integration-services/blob/2cb13820/api/shared-modules/src/models/types/identity.ts#L32)
+node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:20
 
 ___
 
@@ -2449,7 +2297,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/identity.d.ts:16
+node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:16
 
 ___
 
@@ -2459,7 +2307,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/identity.d.ts:22
+node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:22
 
 ___
 
@@ -2469,7 +2317,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:16
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:17
 
 ___
 
@@ -2479,7 +2327,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:21
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:22
 
 ___
 
@@ -2489,7 +2337,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:22
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:23
 
 ___
 
@@ -2499,7 +2347,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:20
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:21
 
 ___
 
@@ -2509,7 +2357,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:26
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:27
 
 ___
 
@@ -2531,17 +2379,17 @@ ___
 
 #### Defined in
 
-[clients/client-sdk/src/models/searchCriteria.ts:1](https://github.com/iotaledger/integration-services/blob/2cb13820/clients/client-sdk/src/models/searchCriteria.ts#L1)
+[src/models/searchCriteria.ts:1](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/searchCriteria.ts#L1)
 
 ___
 
-### SubscriptionInternal
+### Subscription
 
-Ƭ **SubscriptionInternal**: `Static`<typeof `SubscriptionSchema`\>
+Ƭ **Subscription**: `Static`<typeof `SubscriptionSchema`\>
 
 #### Defined in
 
-api/shared-modules/lib/models/types/subscription.d.ts:3
+node_modules/@iota/is-shared-modules/lib/models/types/subscription.d.ts:3
 
 ___
 
@@ -2551,7 +2399,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/subscription.d.ts:4
+node_modules/@iota/is-shared-modules/lib/models/types/subscription.d.ts:4
 
 ___
 
@@ -2561,7 +2409,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/user.d.ts:7
+node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:7
 
 ___
 
@@ -2571,7 +2419,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:17
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:18
 
 ___
 
@@ -2581,7 +2429,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/request-response-bodies.d.ts:18
+node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:19
 
 ___
 
@@ -2591,7 +2439,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/verification.d.ts:11
+node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:11
 
 ___
 
@@ -2601,7 +2449,7 @@ ___
 
 #### Defined in
 
-api/shared-modules/lib/models/types/identity.d.ts:18
+node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:18
 
 
 ## Bugs
