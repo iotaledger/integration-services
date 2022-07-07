@@ -38,7 +38,7 @@ export const identityRouter = Router();
  *               refDeviceModel: myDevice-wastecontainer-sensor-345
  *               dateFirstUsed: 2014-09-11T11:00:00Z
  *               owner: [did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY]
- * 			   hidden: false
+ *               hidden: false
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
@@ -213,7 +213,7 @@ identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
  *                 verificationMethod: #key-collection-0
  *                 signatureValue: example-key
  *             role: User
- * 			   hidden: false	
+ *             hidden: false
  *             claim:
  *               type: Device
  *     responses:
@@ -276,7 +276,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *                 verificationMethod: #key-collection-0
  *                 signatureValue: example-key
  *             role: User
- * 			   hidden: false	
+ *             hidden: false
  *             claim:
  *               type: Device
  *     responses:
