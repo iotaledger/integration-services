@@ -102,18 +102,8 @@ export class IdentityRoutes {
 				throw error;
 			}
 
-			const currentUser = await this.userService.getUser(user.id);
-			if (req.user?.role === UserRoles.Manager || req.user?.role === UserRoles.User) {
-				if (req.user?.role === UserRoles.Manager) {
-					const canUpdate = this.authorizationService.canManagerUpdateUser(currentUser);
-					if (!canUpdate) {
-						throw new Error('not allowed to update an admin or manager')
-					}
-				}
-				const canChangeRole = this.authorizationService.canUpdateRole(user?.role)
-				if (!canChangeRole) {
-					throw new Error('not allowed to update role to admin or manager')
-				}
+			if (user?.role && req.user?.role !== UserRoles.Admin) {
+				throw new Error('not allowed to update role!')
 			}
 
 			const result = await this.userService.updateUser(user);

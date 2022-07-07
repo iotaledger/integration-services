@@ -5,10 +5,7 @@ export class AuthorizationService {
 		if (!isAuthorizedUser) {
 			const isAuthorizedAdmin = this.isAuthorizedAdmin(requestUser);
 			if (!isAuthorizedAdmin) {
-				const isAuthorizedManager = this.isAuthorizedManager(requestUser)
-				if (!isAuthorizedManager) {
-					return { isAuthorized: false, error: new Error('not allowed!') };
-				}
+				return { isAuthorized: false, error: new Error('not allowed!') };
 			}
 		}
 		return { isAuthorized: true, error: null };
