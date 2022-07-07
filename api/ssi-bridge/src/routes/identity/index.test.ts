@@ -189,7 +189,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date,
-				isPrivate: true
+				hidden: true
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
@@ -204,7 +204,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: undefined, // claim is undefined since user id and requester is different
 				registrationDate: getDateStringFromDate(date),
-				isPrivate: true
+				hidden: true
 			};
 			await userRoutes.getUser(req, res, nextMock);
 
@@ -221,7 +221,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date,
-				isPrivate: true
+				hidden: true
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
@@ -236,7 +236,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim, // claim is not undefined since is the same user
 				registrationDate: getDateStringFromDate(date),
-				isPrivate: true
+				hidden: true
 			};
 			await userRoutes.getUser(req, res, nextMock);
 
