@@ -316,7 +316,7 @@ describe('test PUT channelInfo', () => {
 
 	it('should return 404 since no channel updated', async () => {
 		const updateChannelTopicSpy = jest
-			.spyOn(ChannelInfoDb, 'updateChannelTopic')
+			.spyOn(ChannelInfoDb, 'updateChannel')
 			.mockImplementation(async () => ({ result: { n: 0 } } as any));
 
 		const req: any = {
@@ -334,7 +334,7 @@ describe('test PUT channelInfo', () => {
 
 	it('should update expected channel info', async () => {
 		const updateChannelTopicSpy = jest
-			.spyOn(ChannelInfoDb, 'updateChannelTopic')
+			.spyOn(ChannelInfoDb, 'updateChannel')
 			.mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
@@ -352,7 +352,7 @@ describe('test PUT channelInfo', () => {
 	it('should not update expected channel info since not allowed', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const updateChannelTopicSpy = jest
-			.spyOn(ChannelInfoDb, 'updateChannelTopic')
+			.spyOn(ChannelInfoDb, 'updateChannel')
 			.mockImplementation(async () => ({ result: { n: 1 } } as any));
 
 		const req: any = {
@@ -370,7 +370,7 @@ describe('test PUT channelInfo', () => {
 
 	it('should call next(err) if an error occurs', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		const updateChannelTopicSpy = jest.spyOn(ChannelInfoDb, 'updateChannelTopic').mockImplementation(async () => {
+		const updateChannelTopicSpy = jest.spyOn(ChannelInfoDb, 'updateChannel').mockImplementation(async () => {
 			throw new Error('Test error');
 		});
 		const req: any = {

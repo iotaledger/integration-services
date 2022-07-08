@@ -58,14 +58,17 @@ export const addChannelInfo = async (channelInfo: ChannelInfoPersistence) => {
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence) => {
+export const updateChannel = async (channelInfo: ChannelInfoPersistence) => {
 	const query = {
 		_id: channelInfo.channelAddress
 	};
-	const { topics } = channelInfo;
+	const { topics, hidden, visibilityList } = channelInfo;
+
 	const update = {
 		$set: {
-			topics
+			topics,
+			hidden,
+			visibilityList
 		}
 	};
 

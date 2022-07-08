@@ -68,13 +68,16 @@ export class ChannelInfoRoutes {
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
 			}
+			if(!channelInfo?.hidden){
+				channelInfo.visibilityList = []
+			}
 
 			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);
 			if (!isAuthorized) {
 				throw error;
 			}
 
-			const result = await this.channelInfoService.updateChannelTopic(channelInfoBody);
+			const result = await this.channelInfoService.updateChannel(channelInfoBody);
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'No channel info found to update!' });
 				return;

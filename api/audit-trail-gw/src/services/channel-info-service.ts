@@ -19,9 +19,9 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
 	}
 
-	async updateChannelTopic(channelInfo: ChannelInfo) {
+	async updateChannel(channelInfo: ChannelInfo) {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
-		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
+		return ChannelInfoDb.updateChannel(channelInfoPersistence);
 	}
 
 	async addChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string) {
