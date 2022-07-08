@@ -78,9 +78,22 @@ export const channelInfoRouter = Router();
  *       required: false
  *       schema:
  *         type: boolean
+ *     - name: hidden
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: boolean
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items: {id: string}
+ *           example:
+ *             visbilityList: [{id: did:iota:1234}, {id: did:iota:4321}]
  *     responses:
  *       200:
  *         description: Returns information about searched channels
@@ -185,6 +198,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
+ *             hidden: false
  *     responses:
  *       201:
  *         description: Channel successfully added
@@ -253,6 +267,8 @@ channelInfoRouter.post(
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
+ *             hidden: true
+ *             visibilityList: [{id: did:iota:12345}]
  *     responses:
  *       200:
  *         description: Channel successfully added

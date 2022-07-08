@@ -20,7 +20,7 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { name, description, topics, seed, hasPresharedKey, presharedKey, type } = req.body as CreateChannelBody;
+			const { name, description, topics, seed, hasPresharedKey, presharedKey, type, hidden, visibilityList } = req.body as CreateChannelBody;
 			const { id } = req.user;
 
 			if (!id) {
@@ -40,7 +40,9 @@ export class ChannelRoutes {
 				hasPresharedKey,
 				seed,
 				presharedKey,
-				type
+				type,
+				hidden,
+				visibilityList
 			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {

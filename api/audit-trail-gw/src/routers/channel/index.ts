@@ -32,6 +32,7 @@ export const channelRouter = Router();
  *             - type: example-channel-data
  *               source: channel-creator
  *             name: test-channel
+ *             hidden: false
  *     responses:
  *       201:
  *         description: Returns the created channel

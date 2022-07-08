@@ -59,7 +59,9 @@ export class ChannelInfoService {
 			requestedSubscriptionIds: ci.requestedSubscriptionIds || [],
 			topics: ci.topics,
 			channelAddress: ci.channelAddress,
-			latestMessage: ci.latestMessage && getDateFromString(ci.created)
+			latestMessage: ci.latestMessage && getDateFromString(ci.created),
+			hidden: ci.hidden,
+			visibilityList: ci.visibilityList
 		};
 
 		return channelInfoPersistence;
@@ -80,7 +82,9 @@ export class ChannelInfoService {
 			topics: cip.topics,
 			type: cip.type,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
-			channelAddress: cip.channelAddress
+			channelAddress: cip.channelAddress,
+			hidden: cip.hidden,
+			visibilityList: cip.visibilityList
 		};
 		return channelInfo;
 	}

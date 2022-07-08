@@ -35,6 +35,8 @@ describe('test Search channel', () => {
 			limit: 1,
 			index: 1,
 			ascending: true,
+			hidden: true,
+			visibilityList: [{ id: "did:iota:54321" }],
 			created: getDateFromString('2021-02-12T14:58:05+01:00'),
 			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 		};
@@ -53,9 +55,12 @@ describe('test Search channel', () => {
 				index: '1',
 				created: '2021-02-12T14:58:05+01:00',
 				'latest-message': '2021-02-12T14:58:05+01:00',
-				asc: 'true'
+				asc: 'true',
+				hidden: true
 			},
-			body: null
+			body: {
+				visibilityList: [{ id: "did:iota:54321" }]
+			}
 		};
 
 		await channelInfoRoutes.searchChannelInfo(req, res, nextMock);
@@ -273,7 +278,9 @@ describe('test PUT channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		topics: [{ source: 'test', type: 'test-type' }]
+		topics: [{ source: 'test', type: 'test-type' }],
+		hidden: true,
+		visibilityList: [{ id: "did:iota:12345" }]
 	};
 
 	beforeEach(() => {

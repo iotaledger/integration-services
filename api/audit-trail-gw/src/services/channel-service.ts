@@ -48,8 +48,10 @@ export class ChannelService {
 		seed?: string;
 		presharedKey?: string;
 		type?: ChannelType;
+		hidden?: boolean,
+		visibilityList: {id: string} []
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -82,7 +84,9 @@ export class ChannelService {
 			name,
 			description,
 			channelAddress: res.channelAddress,
-			type
+			type,
+			hidden,
+			visibilityList
 		});
 
 		return {
