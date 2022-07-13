@@ -10,7 +10,7 @@ describe('test Search channel', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
 	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
 	beforeEach(() => {
-		sendMock = jest.fn();
+		sendMock = jest.fn().mockReturnThis();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		channelInfoService = new ChannelInfoService();
@@ -24,49 +24,78 @@ describe('test Search channel', () => {
 		};
 	});
 
-	it('should call searchChannelInfo with expected search', async () => {
-		const expectedChannelInfoSearch: ChannelInfoSearch = {
-			authorId: 'did:iota:test1234',
-			subscriberId: 'did:iota:4321',
-			requestedSubscriptionId: 'did:iota:1432',
-			name: 'test-channel',
-			topicType: 'test-topic',
-			topicSource: 'test-source',
-			limit: 1,
-			index: 1,
-			ascending: true,
-			hidden: true,
-			visibilityList: [{ id: "did:iota:54321" }],
-			created: getDateFromString('2021-02-12T14:58:05+01:00'),
-			latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
-		};
-		const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => []);
-
-		const req: any = {
-			params: {},
-			query: {
-				'author-id': 'did:iota:test1234',
-				'subscriber-id': 'did:iota:4321',
-				'requested-subscription-id': 'did:iota:1432',
+	test.each([
+		{ authorId: "did:iota:1234", hidden: true, visibilityList: [{ id: "did:iota:54321" }] },
+		{ authorId: "did:iota:54321", hidden: false, visibilityList: [] },
+		{ authorId: "did:iota:54321", hidden: true, empty: true }
+	])(
+		"1: return channel because request is author" +
+		"2: return channel with empty visbilityList because not author" +
+		"3. return empty list because channel is hidden and requester is not author.",
+		async (obj) => {
+			const expectedChannelInfoSearch: ChannelInfoSearch = {
+				authorId: "did:iota:1234",
+				subscriberId: 'did:iota:4321',
+				requestedSubscriptionId: 'did:iota:1432',
 				name: 'test-channel',
-				'topic-type': 'test-topic',
-				'topic-source': 'test-source',
-				limit: '1',
-				index: '1',
-				created: '2021-02-12T14:58:05+01:00',
-				'latest-message': '2021-02-12T14:58:05+01:00',
-				asc: 'true',
-				hidden: true
-			},
-			body: {
-				visibilityList: [{ id: "did:iota:54321" }]
-			}
-		};
+				topicType: 'test-topic',
+				topicSource: 'test-source',
+				limit: 1,
+				index: 1,
+				ascending: true,
+				hidden: obj.hidden,
+				visibilityList: [{ id: "did:iota:54321" }],
+				created: getDateFromString('2021-02-12T14:58:05+01:00'),
+				latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
+			};
+			const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => [{ ...expectedChannelInfoSearch, channelAddress: "channelAddress" } as ChannelInfoPersistence]);
 
-		await channelInfoRoutes.searchChannelInfo(req, res, nextMock);
+			const req: any = {
+				user: { id: obj.authorId },
+				params: {},
+				query: {
+					'author-id': "did:iota:1234",
+					'subscriber-id': 'did:iota:4321',
+					'requested-subscription-id': 'did:iota:1432',
+					name: 'test-channel',
+					'topic-type': 'test-topic',
+					'topic-source': 'test-source',
+					limit: '1',
+					index: '1',
+					created: '2021-02-12T14:58:05+01:00',
+					'latest-message': '2021-02-12T14:58:05+01:00',
+					asc: 'true',
+					hidden: new Boolean(obj.hidden).toString()
+				},
+				body: {
+					visibilityList: [{ id: "did:iota:54321" }]
+				}
+			};
 
-		expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
-	});
+			await channelInfoRoutes.searchChannelInfo(req, res, nextMock);
+
+
+			expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
+			expect(res.send).toHaveBeenCalledWith(
+				!obj?.empty
+					? [{
+						"authorId": "did:iota:1234",
+						"channelAddress": "channelAddress",
+						"created": "2021-02-12T14:58:05+01:00",
+						"description": undefined,
+						"hidden": obj.hidden,
+						"latestMessage": "2021-02-12T14:58:05+01:00",
+						"name": "test-channel",
+						"requestedSubscriptionIds": [],
+						"subscriberIds": [],
+						"topics": undefined,
+						"type": undefined,
+						"visibilityList": obj.visibilityList
+					}]
+					: [])
+
+		})
+
 	afterEach(() => {
 		jest.resetAllMocks();
 		jest.clearAllMocks();
@@ -102,42 +131,60 @@ describe('test GET channelInfo', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress provided' });
 	});
 
-	it('should return expected channel info', async () => {
-		const date = getDateFromString('2021-02-09T00:00:00+01:00');
-		const channelInfo: ChannelInfoPersistence = {
-			created: date,
-			authorId: 'test-author2',
-			name: 'test-name',
-			topics: [
-				{
-					source: 'test',
-					type: 'test-type'
-				}
-			],
-			latestMessage: null,
-			channelAddress: 'test-address3'
-		};
-		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channelInfo);
-		const req: any = {
-			user: { id: 'test-author2' },
-			params: { channelAddress: 'test-address3' },
-			body: null
-		};
+	test.each([
+		{ author: 'test-author2', hidden: true, visibilityList: [{ id: "12345" }] },
+		{ author: 'test-author2', hidden: false, visibilityList: [{ id: "12345" }] },
+		{ author: 'test-author3', hidden: false, visibilityList: [] },
+		{ author: 'test-author3', hidden: true, error: true }
+	])
+		(
+			'1: should return channel' +
+			'2: should return channel with visbilityList if hidden is false and requester is author'+
+			'3: should return channel with empty visbilityList because not author' +
+			'4: should throw error because channel is hidden and requester is not author',
+			async (obj) => {
+				const date = getDateFromString('2021-02-09T00:00:00+01:00');
+				const channelInfo: ChannelInfoPersistence = {
+					created: date,
+					authorId: 'test-author2',
+					name: 'test-name',
+					topics: [
+						{
+							source: 'test',
+							type: 'test-type'
+						}
+					],
+					latestMessage: null,
+					channelAddress: 'test-address3',
+					hidden: obj.hidden,
+					visibilityList: [{ id: "12345" }]
+				};
+				const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channelInfo);
+				const req: any = {
+					user: { id: obj.author },
+					params: { channelAddress: 'test-address3' },
+					body: null
+				};
 
-		await channelInfoRoutes.getChannelInfo(req, res, nextMock);
+				await channelInfoRoutes.getChannelInfo(req, res, nextMock);
 
-		expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
-		expect(sendMock).toHaveBeenCalledWith({
-			authorId: 'test-author2',
-			name: 'test-name',
-			channelAddress: 'test-address3',
-			created: getDateStringFromDate(date),
-			latestMessage: null,
-			subscriberIds: [],
-			requestedSubscriptionIds: [],
-			topics: [{ source: 'test', type: 'test-type' }]
-		});
-	});
+				expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
+				!obj.error
+					? expect(sendMock).toHaveBeenCalledWith(
+						{
+							authorId: 'test-author2',
+							name: 'test-name',
+							channelAddress: 'test-address3',
+							created: getDateStringFromDate(date),
+							latestMessage: null,
+							subscriberIds: [],
+							requestedSubscriptionIds: [],
+							topics: [{ source: 'test', type: 'test-type' }],
+							hidden: obj.hidden,
+							visibilityList: obj.visibilityList
+						})
+					: expect(nextMock).toHaveBeenCalledWith(new Error('could not get the channel info'))
+			});
 
 	it('should call next(err) if an error occurs', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
@@ -172,7 +219,9 @@ describe('test POST channelInfo', () => {
 		channelAddress: 'test-address3',
 		created: '2021-03-26T13:43:03+01:00',
 		latestMessage: null,
-		topics: [{ source: 'test', type: 'test-type' }]
+		topics: [{ source: 'test', type: 'test-type' }],
+		hidden: true,
+		visibilityList: [{id: "did:iota:54321"}]
 	};
 
 	beforeEach(() => {
