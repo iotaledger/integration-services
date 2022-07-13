@@ -157,7 +157,9 @@ export class ChannelClient extends BaseClient {
       latestMessage,
       limit,
       index,
-      ascending
+      ascending,
+      hidden,
+      visibilityList
     } = searchCriteria;
     const topicTypeParam = topicType !== undefined ? { 'topic-type': topicType } : {};
     const topicSourceParam = topicSource !== undefined ? { 'topic-source': topicSource } : {};
@@ -170,6 +172,8 @@ export class ChannelClient extends BaseClient {
         ? { 'requested-subscription-id': requestedSubscriptionId }
         : {};
     const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
+    const hiddenParam = hidden !== undefined ? {hidden: hidden} : {};
+    const visbilityList = visibilityList !== undefined ? visibilityList : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
       ...topicTypeParam,
@@ -181,8 +185,10 @@ export class ChannelClient extends BaseClient {
       ...requestedSubscriptionIdParam,
       ...ascendingParam,
       limit,
-      index
-    });
+      index,
+      hiddenParam
+    },
+    visbilityList);
   }
 
   /**
