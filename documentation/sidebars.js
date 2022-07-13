@@ -100,14 +100,6 @@ module.exports = {
           items: ['getting_started/installation/java/local_setup']
         },
         {
-          type: 'category',
-          label: 'Kubernetes',
-          items: [
-            "getting_started/installation/kubernetes/local_setup",
-            "getting_started/installation/kubernetes/configuration",
-          ],
-        },
-        {
           type: "doc",
           label: "Docker Compose",
           id: "getting_started/installation/docker_compose_setup",
