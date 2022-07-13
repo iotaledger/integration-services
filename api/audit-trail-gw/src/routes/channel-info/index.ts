@@ -9,12 +9,21 @@ export class ChannelInfoRoutes {
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly authorizationService: AuthorizationService,
 		private readonly logger: ILogger
-	) {}
+	) { }
 
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelInfoSearch = this.getChannelInfoSearch(req);
-			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
+			let channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
+			channelInfos = channelInfos
+				.filter(ch => (ch?.authorId !== req?.user?.id && !ch?.hidden) || (ch?.authorId === req?.user?.id))
+				.map(ch => {
+					if (ch?.authorId !== req?.user?.id) {
+						ch.visibilityList = [];
+					}
+					return ch
+				});
+
 			res.send(channelInfos);
 		} catch (error) {
 			this.logger.error(error);
@@ -22,7 +31,7 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+	getChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 
@@ -31,6 +40,15 @@ export class ChannelInfoRoutes {
 			}
 
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+
+			const authorized = req?.user?.id === channelInfo.authorId;
+			if (channelInfo?.hidden && !authorized) {
+				throw new Error('not authorized for hidden channels.')
+			}
+			if (!authorized && !channelInfo?.hidden) {
+				channelInfo.visibilityList = []
+			}
+
 			res.send(channelInfo);
 		} catch (error) {
 			this.logger.error(error);
@@ -67,9 +85,6 @@ export class ChannelInfoRoutes {
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress);
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
-			}
-			if(!channelInfo?.hidden){
-				channelInfo.visibilityList = []
 			}
 
 			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, channelInfo.authorId);

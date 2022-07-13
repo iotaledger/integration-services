@@ -168,7 +168,7 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  *                 error:
  *                   type: string
  */
-channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
+channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, getChannelInfo);
 
 /**
  * @openapi

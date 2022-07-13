@@ -119,7 +119,8 @@ describe('test GET channelInfo', () => {
 		};
 		const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channelInfo);
 		const req: any = {
-			params: { channelAddress: 'test-address' },
+			user: { id: 'test-author2' },
+			params: { channelAddress: 'test-address3' },
 			body: null
 		};
 
