@@ -64,7 +64,7 @@ export const updateUser = async (user: UserPersistence) => {
 		_id: user.id
 	};
 
-	const { username, claim, verifiableCredentials, hidden } = user;
+	const { username, claim, verifiableCredentials, hidden, role } = user;
 
 	if (verifiableCredentials?.some((vc) => vc?.id !== user.id)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
@@ -78,7 +78,8 @@ export const updateUser = async (user: UserPersistence) => {
 		username: username || undefined, // username must not be ''
 		claim,
 		verifiableCredentials,
-		hidden
+		hidden,
+		role
 	});
 
 	const update = {
