@@ -5,12 +5,13 @@ import { ChannelInfoService } from '../../services/channel-info-service';
 import { AuthorizationService } from '../../services/authorization-service';
 import { LoggerMock } from '../../test/mocks/logger';
 import { StatusCodes } from 'http-status-codes';
-
+import { Response } from 'express'
 describe('test Search channel', () => {
-	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
+	let sendMock: any, sendStatusMock: any, nextMock: any, res: Partial<Response>;
 	let channelInfoRoutes: ChannelInfoRoutes, channelInfoService: ChannelInfoService;
+	let response: ChannelInfo[];
 	beforeEach(() => {
-		sendMock = jest.fn().mockReturnThis();
+		sendMock = jest.fn().mockImplementation((result: ChannelInfo[]) => { response = result });
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
 		channelInfoService = new ChannelInfoService();
@@ -19,8 +20,7 @@ describe('test Search channel', () => {
 
 		res = {
 			send: sendMock,
-			sendStatus: sendStatusMock,
-			status: jest.fn(() => res)
+			sendStatus: sendStatusMock
 		};
 	});
 
@@ -72,28 +72,15 @@ describe('test Search channel', () => {
 				}
 			};
 
-			await channelInfoRoutes.searchChannelInfo(req, res, nextMock);
-
+			await channelInfoRoutes.searchChannelInfo(req, res as Response, nextMock);
 
 			expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
-			expect(res.send).toHaveBeenCalledWith(
-				!obj?.empty
-					? [{
-						"authorId": "did:iota:1234",
-						"channelAddress": "channelAddress",
-						"created": "2021-02-12T14:58:05+01:00",
-						"description": undefined,
-						"hidden": obj.hidden,
-						"latestMessage": "2021-02-12T14:58:05+01:00",
-						"name": "test-channel",
-						"requestedSubscriptionIds": [],
-						"subscriberIds": [],
-						"topics": undefined,
-						"type": undefined,
-						"visibilityList": obj.visibilityList
-					}]
-					: [])
-
+			if (!obj?.empty) {
+				expect(response[0].hidden).toBe(obj.hidden)
+				expect(response[0].visibilityList).toEqual(obj.visibilityList)
+			}else{
+				expect(response).toEqual([])
+			}
 		})
 
 	afterEach(() => {
@@ -139,7 +126,7 @@ describe('test GET channelInfo', () => {
 	])
 		(
 			'1: should return channel' +
-			'2: should return channel with visbilityList if hidden is false and requester is author'+
+			'2: should return channel with visbilityList if hidden is false and requester is author' +
 			'3: should return channel with empty visbilityList because not author' +
 			'4: should throw error because channel is hidden and requester is not author',
 			async (obj) => {
@@ -221,7 +208,7 @@ describe('test POST channelInfo', () => {
 		latestMessage: null,
 		topics: [{ source: 'test', type: 'test-type' }],
 		hidden: true,
-		visibilityList: [{id: "did:iota:54321"}]
+		visibilityList: [{ id: "did:iota:54321" }]
 	};
 
 	beforeEach(() => {
