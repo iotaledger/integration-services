@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.15 (2022-07-07)
+
+- Changed property `isPrivate` to `hidden` IdentityWithoutIdFields and IdentityWithoutIdAndCredentialFields
+
 ### 0.1.14 (2022-07-07)
 
 - Added `hidden` and `visibilityList` properties to CreateChannelBodySchema, ChannelInfoSchema and ChannelINfoSearchSchema
