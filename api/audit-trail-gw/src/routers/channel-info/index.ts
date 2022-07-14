@@ -93,7 +93,7 @@ export const channelInfoRouter = Router();
  *             type: array
  *             items: {id: string}
  *           example:
- *             visbilityList: [{id: did:iota:1234}, {id: did:iota:4321}]
+ *             visbilityList: [{id: did:iota:E6oCF3bMFitBDqxvb6cTfzgY6P3u4vCGZdqvmKbdsJ7Y}, {id: did:iota:HPDe7BnMVGqtZwy7pHfCMRNrfs7HeEDFszY2xw3SQwhj}]
  *     responses:
  *       200:
  *         description: Returns information about searched channels
@@ -268,7 +268,7 @@ channelInfoRouter.post(
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
  *             hidden: true
- *             visibilityList: [{id: did:iota:12345}]
+ *             visibilityList: [{id: did:iota:HPDe7BnMVGqtZwy7pHfCMRNrfs7HeEDFszY2xw3SQwhj}]
  *     responses:
  *       200:
  *         description: Channel successfully added

@@ -1,4 +1,4 @@
-import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
+import { ChannelInfoPersistence, ChannelInfo, ChannelInfoSearch, getDateFromString, getDateStringFromDate, UserRoles } from '@iota/is-shared-modules';
 import { ChannelInfoRoutes } from '.';
 import * as ChannelInfoDb from '../../database/channel-info';
 import { ChannelInfoService } from '../../services/channel-info-service';
@@ -25,14 +25,19 @@ describe('test Search channel', () => {
 	});
 
 	test.each([
-		{ authorId: "did:iota:1234", hidden: true, visibilityList: [{ id: "did:iota:54321" }] },
-		{ authorId: "did:iota:54321", hidden: false, visibilityList: [] },
-		{ authorId: "did:iota:54321", hidden: true, empty: true }
+		{ authorId: "did:iota:1234", hidden: true, visibilityList: [{ id: "did:iota:54321" }], body: { visibilityList: [{ id: "did:iota:54321" }] } },
+		{ authorId: "did:iota:54321", hidden: false, visibilityList: [], body: {} },
+		{ authorId: "did:iota:54321", hidden: true, visibilityList: [], body: {}, empty: true },
+		{ authorId: "did:iota:54321", noHiddenSearch: true, body: { visibilityList: [{ id: "did:iota:54321" }] }, empty: true },
+		{ authorId: "did:iota:89765", role: UserRoles.Admin, hidden: true, visibilityList: [{ id: "did:iota:54321" }], body: { visibilityList: [{ id: "did:iota:54321" }] } },
 	])(
-		"1: return channel because request is author" +
-		"2: return channel with empty visbilityList because not author" +
-		"3. return empty list because channel is hidden and requester is not author.",
+		"1: return channel because requester is author" +
+		"2: return channel with empty visibilityList because not author" +
+		"3: return empty list because channel is hidden and requester is not author." +
+		"4: return empty list because searching based on visbilityList where is not author should return empty list."+
+		"5: return channel because requester is admin",
 		async (obj) => {
+			const hidden = !obj?.noHiddenSearch ? { hidden: obj.hidden } : undefined;
 			const expectedChannelInfoSearch: ChannelInfoSearch = {
 				authorId: "did:iota:1234",
 				subscriberId: 'did:iota:4321',
@@ -43,15 +48,16 @@ describe('test Search channel', () => {
 				limit: 1,
 				index: 1,
 				ascending: true,
-				hidden: obj.hidden,
-				visibilityList: [{ id: "did:iota:54321" }],
+				...hidden,
+				visibilityList: obj.body?.visibilityList,
 				created: getDateFromString('2021-02-12T14:58:05+01:00'),
 				latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 			};
 			const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => [{ ...expectedChannelInfoSearch, channelAddress: "channelAddress" } as ChannelInfoPersistence]);
 
+			const hiddenSearch = !obj?.noHiddenSearch ? { hidden: new Boolean(obj.hidden).toString() } : undefined
 			const req: any = {
-				user: { id: obj.authorId },
+				user: { id: obj.authorId, role: obj?.role },
 				params: {},
 				query: {
 					'author-id': "did:iota:1234",
@@ -65,11 +71,9 @@ describe('test Search channel', () => {
 					created: '2021-02-12T14:58:05+01:00',
 					'latest-message': '2021-02-12T14:58:05+01:00',
 					asc: 'true',
-					hidden: new Boolean(obj.hidden).toString()
+					...hiddenSearch
 				},
-				body: {
-					visibilityList: [{ id: "did:iota:54321" }]
-				}
+				body: obj.body
 			};
 
 			await channelInfoRoutes.searchChannelInfo(req, res as Response, nextMock);
@@ -78,7 +82,7 @@ describe('test Search channel', () => {
 			if (!obj?.empty) {
 				expect(response[0].hidden).toBe(obj.hidden)
 				expect(response[0].visibilityList).toEqual(obj.visibilityList)
-			}else{
+			} else {
 				expect(response).toEqual([])
 			}
 		})

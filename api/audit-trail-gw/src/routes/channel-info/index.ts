@@ -16,9 +16,13 @@ export class ChannelInfoRoutes {
 			const channelInfoSearch = this.getChannelInfoSearch(req);
 			let channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
 			channelInfos = channelInfos
-				.filter(ch => (ch?.authorId !== req?.user?.id && !ch?.hidden) || (ch?.authorId === req?.user?.id))
+				.filter(ch => {
+					const { isAuthorized } = this.authorizationService.isAuthorized(req?.user, ch?.authorId);
+					return (!isAuthorized && !ch?.hidden && !channelInfoSearch.visibilityList) || isAuthorized
+				})
 				.map(ch => {
-					if (ch?.authorId !== req?.user?.id) {
+					const { isAuthorized } = this.authorizationService.isAuthorized(req?.user, ch?.authorId);
+					if (!isAuthorized) {
 						ch.visibilityList = [];
 					}
 					return ch
@@ -41,12 +45,13 @@ export class ChannelInfoRoutes {
 
 			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
 
-			const authorized = req?.user?.id === channelInfo.authorId;
-			if (channelInfo?.hidden && !authorized) {
-				throw new Error('not authorized for hidden channels.')
+			const { isAuthorized, error } = this.authorizationService.isAuthorized(req?.user, channelInfo.authorId);
+
+			if (channelInfo?.hidden && !isAuthorized) {
+				throw error;
 			}
-			if (!authorized && !channelInfo?.hidden) {
-				channelInfo.visibilityList = []
+			if (!isAuthorized && !channelInfo?.hidden) {
+				channelInfo.visibilityList = [];
 			}
 
 			res.send(channelInfo);
