@@ -13,7 +13,7 @@ import {
 	VerifiableCredentialPersistence
 } from '@iota/is-shared-modules';
 import { VerificationService } from '../../services/verification-service';
-import * as KeyCollectionLinksDb from '../../database/verifiable-credentials';
+import * as CredentialsDb from '../../database/verifiable-credentials';
 import { AuthorizationService } from '../../services/authorization-service';
 import { ILogger } from '../../utils/logger';
 import * as _ from 'lodash';
@@ -75,7 +75,7 @@ export class VerificationRoutes {
 			const revokeBody = req.body as RevokeVerificationBody;
 			const requestUser = req.user;
 
-			const vcp = await KeyCollectionLinksDb.getVerifiableCredential(revokeBody.signatureValue);
+			const vcp = await CredentialsDb.getVerifiableCredential(revokeBody.signatureValue);
 			if (!vcp) {
 				throw new Error('no vc found to revoke the verification!');
 			}

@@ -106,18 +106,18 @@ describe('test keygenerator', () => {
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('server user not found!');
 	});
 
-	it('should create a new serveridentity but could not create keycollection since returns null', async () => {
+	it('should create a new serveridentity but could not create bitmap since returns null', async () => {
 		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
 		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
 		VerificationService.prototype.getBitmapIndex = jest.fn();
-		VerificationService.prototype.getBitmap = jest.fn().mockImplementationOnce(async () => null); // no keycollection
+		VerificationService.prototype.getBitmap = jest.fn().mockImplementationOnce(async () => null); // no bitmap
 
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 
-		await expect(keyGenerator.keyGeneration()).rejects.toThrow('could not create the keycollection!');
+		await expect(keyGenerator.keyGeneration()).rejects.toThrow('could not create the bitmap!');
 	});
 
 	it('should create a new serveridentity and successfully run the script till the end', async () => {

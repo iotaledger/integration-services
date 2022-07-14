@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, KeyCollectionPersistence } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules';
 import { Bitmap } from '../services/verification-service';
 
 const collectionName = CollectionNames.revocationBitmap;
@@ -21,5 +21,5 @@ export const saveBitmap = async (bitmap: Bitmap, serverId: string) => {
 		created: new Date()
 	};
 
-	return MongoDbService.insertDocument<KeyCollectionPersistence>(collectionName, document);
+	return MongoDbService.insertDocument<Bitmap>(collectionName, document);
 };

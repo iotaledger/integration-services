@@ -190,6 +190,7 @@ export class VerificationService {
 		await this.userService.addUserVC(vc);
 	}
 
+	//TODO decide about keycollectionsize
 	getBitmapIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
 
 	private async createRevocationBitmap(bitmapIndex: number, issuerId: string): Promise<Bitmap> {
