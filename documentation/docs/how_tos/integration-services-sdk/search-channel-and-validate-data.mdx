@@ -1,0 +1,30 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: The example-7 script creates 2 identities, and later uses them to demonstrate how you can detect if data has been tampered with by validating using the Tangle. 
+keywords:
+- how to
+- channels
+- authorize channel
+- subscribe channel
+- read channel
+- validate channel data
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import JavaHowTo, {toc as JavaTOC} from "./_java/search-channel-and-validate-data.md"
+import NodejsHowTo, {toc as NodeToc} from "./_node/search-channel-and-validate-data.md"
+import InlineTOC from "../../_inline_TOC/_inline_toc.mdx";
+
+# Search Channel and Validate Data
+
+<Tabs groupId="language">
+    <TabItem value="java" label="Java">
+        <InlineTOC toc={JavaTOC} />
+        <JavaHowTo />
+    </TabItem>
+    <TabItem value="nodejs" label="Nodejs">
+        <InlineTOC toc={NodeToc} />
+        <NodejsHowTo />
+    </TabItem>
+</Tabs>

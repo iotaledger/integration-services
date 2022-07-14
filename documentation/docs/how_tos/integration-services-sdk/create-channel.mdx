@@ -1,0 +1,29 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: The example-5 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates a channel, writes data on the channel, reads data from the channel.
+keywords:
+- how to
+- create channel
+- read channel
+- write channel
+- example
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import JavaHowTo, {toc as JavaTOC} from "./_java/create-channel.md";
+import NodejsHowTo, {toc as NodeToc} from "./_node/create-channel.md";
+import InlineTOC from "../../_inline_TOC/_inline_toc.mdx";
+
+# Create a Channel
+
+<Tabs groupId="language">
+    <TabItem value="java" label="Java">
+        <InlineTOC toc={JavaTOC} />
+        <JavaHowTo />
+    </TabItem>
+    <TabItem value="nodejs" label="Nodejs">
+        <InlineTOC toc={NodeToc} />
+        <NodejsHowTo />
+    </TabItem>
+</Tabs>

@@ -18,73 +18,6 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Services",
-      collapsed: false,
-      items: [
-        {
-          type: "category",
-          label: "Audit Trail Gateway",
-          items: [
-            {
-              type: "doc",
-              id: "services/audit-trail-gateway/introduction",
-              label: "Introduction",
-            },
-            "services/audit-trail-gateway/API-definition",
-            "services/audit-trail-gateway/use-cases",
-          ],
-        },
-        {
-          type: "category",
-          label: "SSI Bridge",
-          items: [
-            {
-              type: "doc",
-              id: "services/SSI-bridge/introduction",
-              label: "Introduction",
-            },
-            "services/SSI-bridge/API-definition",
-            "services/SSI-bridge/use-cases",
-          ],
-        },
-        {
-          type: "category",
-          label: "Dashboard",
-          items: [
-            {
-              type: "doc",
-              id: "services/dashboard/dashboard",
-              label: "Dashboard"
-            },
-            {
-              type: "doc",
-              id: "services/dashboard/ui-components",
-              label: "UI Components"
-            },
-          ]
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "IS-CLI",
-      collapsed: false,
-      items: [
-        {
-          type: "doc",
-          label: "Introduction",
-          id: "is-cli/introduction"
-        },
-        {
-          type: "doc",
-          label: "Examples",
-          id: "is-cli/is_cli_examples"
-        },
-       
-      ]
-    },
-    {
-      type: "category",
       label: "Getting Started",
       collapsed: false,
       items: [
@@ -116,68 +49,131 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Basics",
+      label: "Explanations",
+      items: [
+        {
+          type: "category",
+          label: "Services",
+          collapsed: false,
+          items: [
+            {
+              type: "category",
+              label: "Authentication",
+              items: [
+                'explanations/authentication/concept',
+              ]
+            },
+            "explanations/identity",
+            "explanations/streams",
+            {
+              type: "category",
+              label: "Audit Trail Gateway",
+              items: [
+                {
+                  type: "doc",
+                  id: "explanations/services/audit-trail-gateway/introduction",
+                  label: "Introduction",
+                },
+                "explanations/services/audit-trail-gateway/API-definition",
+                "explanations/services/audit-trail-gateway/use-cases",
+              ],
+            },
+            {
+              type: "category",
+              label: "SSI Bridge",
+              items: [
+                {
+                  type: "doc",
+                  id: "explanations/services/SSI-bridge/introduction",
+                  label: "Introduction",
+                },
+                "explanations/services/SSI-bridge/API-definition",
+                "explanations/services/SSI-bridge/use-cases",
+              ],
+            },
+            {
+              type: "category",
+              label: "Dashboard",
+              items: [
+                {
+                  type: "doc",
+                  id: "explanations/services/dashboard/dashboard",
+                  label: "Dashboard"
+                },
+                {
+                  type: "doc",
+                  id: "explanations/services/dashboard/ui-components",
+                  label: "UI Components"
+                },
+              ]
+            },
+          ],
+        },
+      ]
+    },
+    {
+      type: "category",
+      label: "How Tos",
       collapsed: true,
       items: [
         {
           type: "category",
-          label: "Authentication",
+          label: "Integration Services SDK",
           items: [
-            'basics/authentication/concept',
-            'basics/authentication/example_node',
-            'basics/authentication/example_is_sdk',
-            'basics/authentication/example_java',
+            'how_tos/integration-services-sdk/introduction',
+            'how_tos/integration-services-sdk/run-how-tos',
+            'how_tos/integration-services-sdk/create-identity-and-credentials',
+            'how_tos/integration-services-sdk/update-users',
+            'how_tos/integration-services-sdk/delete-users',
+            'how_tos/integration-services-sdk/trusted-authorities',
+            'how_tos/integration-services-sdk/create-channel',
+            'how_tos/integration-services-sdk/authorize-to-channel',
+            'how_tos/integration-services-sdk/search-channel-and-validate-data',
           ]
         },
-        "basics/identity",
-        "basics/streams",
-      ],
-    },
-    {
-      type: "category",
-      label: "Examples",
-      collapsed: true,
-      items: [
         {
-          type: 'category',
-          label: 'Node.js',
-          items: ['examples/node/introduction',
-          'examples/node/how-to-run-examples',
-          'examples/node/create-identity-and-credentials',
-          'examples/node/update-users',
-          'examples/node/delete-users',
-          'examples/node/trusted-authorities',
-          'examples/node/create-channel',
-          'examples/node/authorize-to-channel',
-          'examples/node/search-channel-and-validate-data'
-        ]
+          type: "category",
+          label: "Integration Service CLI",
+          collapsed: false,
+          items: [
+            {
+              type: "doc",
+              label: "Introduction",
+              id: "how_tos/is-cli/introduction"
+            },
+            {
+              type: "doc",
+              label: "Create Identities",
+              id: "how_tos/is-cli/create-identities"
+            },
+
+          ]
         },
         {
-          type: 'category',
-          label: 'Java',
-          items: ['examples/java/introduction',
-          'examples/java/how-to-run-examples',
-          'examples/java/create-identity-and-credentials',
-          'examples/java/update-users',
-          'examples/java/delete-users',
-          'examples/java/trusted-authorities',
-          'examples/java/create-channel',
-          'examples/java/authorize-to-channel',
-          'examples/java/search-channel-and-validate-data'
-        ]
-        },
-        
+          type: "category",
+          label: "Authentication",
+          items: [
+            'how_tos/authentication/authenticate_your_identity',
+          ]
+        }
       ]
     },
     {
-      type: "doc",
-      id: "audit_trail_gw_api_reference",
-      label: "Audit-Trail GW API Reference",
-    },
-    {
-      type: "doc",
-      id: "ssi_bridge_api_reference",
-      label: "SSI-Bridge API Reference",
+      type: 'category',
+      label: 'References',
+      items: [
+        {
+          type: "doc",
+          id: "references/audit_trail_gw_api_reference",
+          label: "Audit-Trail GW API Reference",
+        },
+        {
+          type: "doc",
+          id: "references/ssi_bridge_api_reference",
+          label: "SSI-Bridge API Reference",
+        },
+
+      ]
     },
     {
       type: "doc",

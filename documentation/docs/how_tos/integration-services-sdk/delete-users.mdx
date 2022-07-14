@@ -1,0 +1,31 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: The example-3 script authenticates an Integration Service client to manage Identities using the Admin identity created in example-0 and then creates a new identity, removes it from Integration Services, and verifies that the identity still exists on the Tangle.
+keywords:
+- how to
+- delete users
+- retrieve identity from tangle
+- verify identity
+- example
+- manage identity
+- integration services backend
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import JavaHowTo, {toc as JavaTOC} from "./_java/delete-users.md";
+import NodejsHowTo, {toc as NodeToc} from "./_node/delete-users.md";
+import InlineTOC from "../../_inline_TOC/_inline_toc.mdx";
+
+# Delete Users
+
+<Tabs groupId="language">
+    <TabItem value="java" label="Java">
+        <InlineTOC toc={JavaTOC} />
+        <JavaHowTo />
+    </TabItem>
+    <TabItem value="nodejs" label="Nodejs">
+        <InlineTOC toc={NodeToc} />
+        <NodejsHowTo />
+    </TabItem>
+</Tabs>
