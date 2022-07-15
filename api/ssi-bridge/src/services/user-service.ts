@@ -49,6 +49,7 @@ export class UserService {
 		const publicKey = bs58.encode(identity.key.public());
 		const privateKey = bs58.encode(identity.key.private());
 		const creatorId = this.decodeUserId(authorization);
+		const keyType = identity.key.type() === 1 ? 'ed25519' : 'x25519'; // TODO use enum or static string
 		const user: User = {
 			...createIdentityBody,
 			id: identity.doc.id().toString(),
@@ -63,7 +64,7 @@ export class UserService {
 				key: {
 					public: publicKey,
 					secret: privateKey,
-					type: identity.key.type().toString(),
+					type: keyType,
 					encoding: Encoding.base58
 				}
 			};
@@ -73,7 +74,7 @@ export class UserService {
 		return {
 			...identity,
 			key: {
-				type: identity.key.type(),
+				type: keyType,
 				public: publicKey,
 				secret: privateKey
 			}

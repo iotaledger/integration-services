@@ -3,6 +3,8 @@ import { IdentityConfig } from '../models/config';
 import { VerifiableCredentialJson, Credential, KeyCollectionJson, IdentityKeys, LatestIdentityJson } from '@iota/is-shared-modules';
 const { Document, Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
+import * as bs58 from 'bs58';
+import { toBytes } from '@iota/is-shared-modules';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -41,7 +43,6 @@ export class SsiService {
 			await this.publishSignedDoc(doc);
 			return bitmapService;
 		} catch (error) {
-			console.log('ERROR:', error);
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not generate the key collection');
 		}
@@ -193,7 +194,12 @@ export class SsiService {
 
 	async restoreIdentity(identity: IdentityKeys): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
-			const key: Identity.KeyPair = KeyPair.fromJSON(identity.key);
+			const decodedKey = {
+				public: toBytes(bs58.decode(identity.key.public).toString()),
+				secret: toBytes(bs58.decode(identity.key.secret).toString())
+			};
+			const keyTypeNum = identity.key.type === 'ed25519' ? 1 : 2; // TODO use enum or static string
+			const key: Identity.KeyPair = KeyPair.fromKeys(keyTypeNum, decodedKey.public, decodedKey.secret);
 			const { doc } = await this.getLatestIdentityDoc(identity.id);
 
 			return {
