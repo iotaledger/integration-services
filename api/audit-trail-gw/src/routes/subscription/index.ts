@@ -61,7 +61,7 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
-			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
+			const authorId = await this.channelInfoService.getChannelAuthor(channelAddress);
 
 			// updating is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
@@ -92,7 +92,7 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
 			}
 
-			const { authorId } = await this.channelInfoService.getChannelInfo(channelAddress);
+			const authorId = await this.channelInfoService.getChannelAuthor(channelAddress);
 
 			// deleting is only allowed for the subscriber and channel author
 			if (userIdentityId !== subscriberId && userIdentityId !== authorId) {
@@ -166,13 +166,13 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
 			}
 
-			const info = await this.channelInfoService.getChannelInfo(channelAddress);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
 
 			const channel = await this.subscriptionService.requestSubscription({
 				subscriberId,
 				channelAddress,
 				accessRights,
-				channelType: info?.type || ChannelType.private,
+				channelType: type || ChannelType.private,
 				seed,
 				presharedKey
 			});

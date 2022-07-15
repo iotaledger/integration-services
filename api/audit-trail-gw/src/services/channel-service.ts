@@ -146,8 +146,8 @@ export class ChannelService {
 
 				// normally it should be possible to use `getChannelData` and fetch the data but the subscription was not able to receive the data from a public channel
 				// that's why we use the getHistory workaround here and need to investigate after the new streams version is released
-				const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-				if (channelInfo.type === ChannelType.public) {
+				const type = await this.channelInfoService.getChannelType(channelAddress);
+				if (type === ChannelType.public) {
 					return this.getHistory(channelAddress, ChannelType.public, '');
 				}
 

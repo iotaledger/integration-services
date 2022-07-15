@@ -34,7 +34,7 @@ describe('test Search channel', () => {
 		"1: return channel because requester is author" +
 		"2: return channel with empty visibilityList because not author" +
 		"3: return empty list because channel is hidden and requester is not author." +
-		"4: return empty list because searching based on visbilityList where is not author should return empty list."+
+		"4: return empty list because searching based on visbilityList and requester is not author."+
 		"5: return channel because requester is admin",
 		async (obj) => {
 			const hidden = !obj?.noHiddenSearch ? { hidden: obj.hidden } : undefined;
@@ -123,16 +123,20 @@ describe('test GET channelInfo', () => {
 	});
 
 	test.each([
-		{ author: 'test-author2', hidden: true, visibilityList: [{ id: "12345" }] },
-		{ author: 'test-author2', hidden: false, visibilityList: [{ id: "12345" }] },
-		{ author: 'test-author3', hidden: false, visibilityList: [] },
-		{ author: 'test-author3', hidden: true, error: true }
+		{ author: 'test-author2', role: UserRoles.User, hidden: true, visibilityList: [{ id: "12345" }] },
+		{ author: 'test-author2', role: UserRoles.User, hidden: false, visibilityList: [{ id: "12345" }] },
+		{ author: 'test-author3', role: UserRoles.User, hidden: false, visibilityList: [] },
+		{ author: 'test-author4', role: UserRoles.Admin, hidden: true, visibilityList: [{ id: "12345" }] },
+		{ author: 'test-author4', role: UserRoles.Admin, hidden: false, visibilityList: [{ id: "12345" }] },
+		{ author: 'test-author3', role: UserRoles.User, hidden: true, error: true }
 	])
 		(
 			'1: should return channel' +
 			'2: should return channel with visbilityList if hidden is false and requester is author' +
-			'3: should return channel with empty visbilityList because not author' +
-			'4: should throw error because channel is hidden and requester is not author',
+			'3: should return channel with empty visbilityList because not author or admin' +
+			'4: should return hidden channel with visbilityList because admin' +
+			'5: should return not hidden channel with visbilityList because admin' +
+			'6: should throw error because channel is hidden and requester is not author or admin',
 			async (obj) => {
 				const date = getDateFromString('2021-02-09T00:00:00+01:00');
 				const channelInfo: ChannelInfoPersistence = {
@@ -152,7 +156,7 @@ describe('test GET channelInfo', () => {
 				};
 				const getChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'getChannelInfo').mockImplementation(async () => channelInfo);
 				const req: any = {
-					user: { id: obj.author },
+					user: { id: obj.author, role: obj.role },
 					params: { channelAddress: 'test-address3' },
 					body: null
 				};
@@ -184,7 +188,8 @@ describe('test GET channelInfo', () => {
 		});
 		const req: any = {
 			params: { channelAddress: 'test-address' },
-			body: null
+			body: null,
+			user: {id: "did:iota:wrongId"}
 		};
 
 		await channelInfoRoutes.getChannelInfo(req, res, nextMock);
@@ -490,7 +495,8 @@ describe('test DELETE channelInfo', () => {
 		const req: any = {
 			id: 'did:iota:1234567', // wrong identityid
 			params: { channelAddress: 'test-address' },
-			body: null
+			body: null,
+			role: UserRoles.User
 		};
 
 		await channelInfoRoutes.deleteChannelInfo(req, res, nextMock);

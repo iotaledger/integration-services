@@ -1,17 +1,40 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelType, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
 import * as ChannelInfoDb from '../database/channel-info';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {
-	async getChannelInfo(channelAddress: string): Promise<ChannelInfo | null> {
+	async getChannelInfo(channelAddress: string, reqId: string, isAdmin: boolean): Promise<ChannelInfo | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		return channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		const channelInfo = channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		const authorId = channelInfo?.authorId;
+		const hidden = channelInfo?.hidden;
+		if (hidden && !isAdmin && reqId !== authorId) {
+			throw new Error('not allowed for hidden channels!');
+		}
+		if (!isAdmin && reqId !== authorId && !hidden) {
+			channelInfo.visibilityList = [];
+		}
+		return channelInfo;
 	}
 
-	async searchChannelInfo(channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> {
+	async searchChannelInfo(channelInfoSearch: ChannelInfoSearch, reqId: string, isAdmin: boolean): Promise<ChannelInfo[]> {
 		let channelInfoPersistence: ChannelInfoPersistence[] = [];
 		channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
-		return channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
+		let channelInfos = channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
+		channelInfos = channelInfos
+			.filter(ch => {
+				const isAuthor = reqId === ch.authorId
+				const visbilityListSearch = channelInfoSearch.visibilityList
+				return (!isAdmin && !isAuthor && !ch?.hidden && !visbilityListSearch) || (isAdmin || isAuthor)
+			})
+			.map(ch => {
+				const isAuthor = reqId === ch.authorId
+				if (!isAdmin && !isAuthor) {
+					ch.visibilityList = [];
+				}
+				return ch
+			});
+		return channelInfos;
 	}
 
 	async addChannelInfo(channelInfo: ChannelInfo) {
@@ -28,11 +51,11 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelRequestedSubscriptionId(channelAddress, channelRequestedSubscriptionId);
 	}
 
-	async removeChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string){
-		return ChannelInfoDb.removeChannelRequestedSubscriptionId(channelAddress,  channelRequestedSubscriptionId);
+	async removeChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string) {
+		return ChannelInfoDb.removeChannelRequestedSubscriptionId(channelAddress, channelRequestedSubscriptionId);
 	}
 
-	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string){
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 
@@ -42,6 +65,18 @@ export class ChannelInfoService {
 
 	async deleteChannelInfo(channelAddress: string) {
 		return ChannelInfoDb.deleteChannelInfo(channelAddress);
+	}
+
+	async getChannelAuthor(channelAddress: string): Promise<string | null> {
+		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
+		const { authorId } = channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		return authorId;
+	}
+
+	async getChannelType(channelAddress: string): Promise<ChannelType | null> {
+		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
+		const { type } = channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		return type;
 	}
 
 	getChannelInfoPersistence(ci: ChannelInfo): ChannelInfoPersistence | null {

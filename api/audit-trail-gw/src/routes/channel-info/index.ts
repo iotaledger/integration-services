@@ -14,19 +14,8 @@ export class ChannelInfoRoutes {
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelInfoSearch = this.getChannelInfoSearch(req);
-			let channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
-			channelInfos = channelInfos
-				.filter(ch => {
-					const { isAuthorized } = this.authorizationService.isAuthorized(req?.user, ch?.authorId);
-					return (!isAuthorized && !ch?.hidden && !channelInfoSearch.visibilityList) || isAuthorized
-				})
-				.map(ch => {
-					const { isAuthorized } = this.authorizationService.isAuthorized(req?.user, ch?.authorId);
-					if (!isAuthorized) {
-						ch.visibilityList = [];
-					}
-					return ch
-				});
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req.user);
+			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch, req.user.id, isAdmin);
 
 			res.send(channelInfos);
 		} catch (error) {
@@ -43,16 +32,8 @@ export class ChannelInfoRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-
-			const { isAuthorized, error } = this.authorizationService.isAuthorized(req?.user, channelInfo.authorId);
-
-			if (channelInfo?.hidden && !isAuthorized) {
-				throw error;
-			}
-			if (!isAuthorized && !channelInfo?.hidden) {
-				channelInfo.visibilityList = [];
-			}
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req?.user);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress, req.user.id, isAdmin);
 
 			res.send(channelInfo);
 		} catch (error) {
@@ -87,7 +68,8 @@ export class ChannelInfoRoutes {
 		try {
 			const channelInfoBody = req.body as ChannelInfo;
 
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress);
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req?.user);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress, req?.user?.id, isAdmin);
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
 			}
@@ -116,7 +98,8 @@ export class ChannelInfoRoutes {
 			if (_.isEmpty(channelAddress)) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req?.user);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress, req?.user?.id, isAdmin);
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
 			}
