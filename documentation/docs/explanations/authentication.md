@@ -2,7 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: This section introduces the authentication schema used in the Integration Services.
 keywords:
-- how to
+- explanation
 - authentication
 - jwt
 - nonce
@@ -68,4 +68,5 @@ For all following requests to endpoints protected by authentication use your JWT
 
 ## Related How-To Guides
 
-- [How To Authenticate Your Identity](../../how_tos/authentication/authenticate_your_identity.mdx);
+- [How To Authenticate Your Identity](../how_tos/integration-services-sdk/authenticate-your-identity.mdx);
+- [How To Authenticate Your Identity](../how_tos/is-cli/authenticate-your-identity.mdx);

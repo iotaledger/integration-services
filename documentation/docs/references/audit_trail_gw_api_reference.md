@@ -1,3 +1,14 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: API Reference documentation Audit Trail Gateway of the the integration Services.
+keywords:
+- reference
+- API Reference
+- models
+- endpoints
+- audit trail
+---
+
 # Audit Trail GW API Documentation
 This is the API documentation for the Audit Trail Gateway of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/audit-trail-gateway/introduction).
 

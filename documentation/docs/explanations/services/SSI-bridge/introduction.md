@@ -2,7 +2,7 @@
 image: /img/integration-services/arch/network-of-trust.jpeg
 description: The IOTA SSI Bridge provides an abstraction layer through REST APIs that allows entities to create decentralized identities (DIDs), verify them, attach verifiable credentials and verify them.
 keywords:
-- how to
+- explanation
 - ecommerce
 - ssi bridge
 - abstraction layer

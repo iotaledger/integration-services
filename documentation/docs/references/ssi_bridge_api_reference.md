@@ -2,7 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: API Reference documentation for the integration Services.
 keywords:
-- how to
+- reference
 - API Reference
 - models
 - endpoints

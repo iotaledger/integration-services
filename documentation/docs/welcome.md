@@ -8,6 +8,7 @@ keywords:
 - use cases
 - audit trail gateway
 - Self-Sovereign Identity Bridge
+- explanation
 ---
 # Welcome
 
@@ -40,8 +41,10 @@ This documentation has nine sections.
 3. **How-Tos**: How-to guides covering the following topics:
    1. [Integration Services SDK](how_tos/integration-services-sdk/introduction.mdx): How-to guides on creating and managing decentralized identities, verifiable credentials, and channels using the Integration Services SDK.
    2. [Integration Services CLI](how_tos/is-cli/introduction.md):  How-to guides on creating and managing decentralized identities using the Integration Services Command Line Interface.
-   3. [Authentication](how_tos/authentication/authenticate_your_identity.mdx): How-to guide to authiticate your identity using Java, Node.js or the Integration Services SDK.
-4. **References**: Detailed specification of all endpoints for the [Self Sovereign Identity(SSI) Bridge API Reference](references/ssi_bridge_api_reference.md) and [Audit Trail API Reference](references/audit_trail_gw_api_reference.md).
+   3. **Authentication**: How-to guide to authenticate your identity using the [Integration Services SDK](how_tos/is-cli/authenticate-your-identity.mdx) or  [Java and Node.js](how_tos/integration-services-sdk/authenticate-your-identity.mdx).
+4. **References**: Detailed specification of all endpoints for:
+    * [Self Sovereign Identity(SSI) Bridge API Reference](references/ssi_bridge_api_reference.md) 
+    * [Audit Trail API Reference](references/audit_trail_gw_api_reference.md).
 5. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
 6. [FAQ](faq): Answers to the most common doubts.
 7. [Contribute](contribute): Find ways to help the project.

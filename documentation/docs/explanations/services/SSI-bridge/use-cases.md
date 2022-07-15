@@ -2,7 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: In the context of e-commerce and the ENSURESEC project, you can use the SSI-Bridge to verify identities for products, customer, sellers, and clients.   
 keywords:
-- how to
+- explanation
 - ecommerce
 - scanner device
 - customer

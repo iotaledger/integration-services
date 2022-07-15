@@ -2,7 +2,7 @@
 image: /img/integration-services/diagrams/ecommerce-audit-trail-bridge.jpeg
 description: The Audit Trail GW implementation provides a Channel Service, a Channel Info Service, and a Subscription Service.
 keywords:
-- how to
+- explanation
 - API definition
 - Architecture overview
 - Channel Service

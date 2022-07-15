@@ -1,12 +1,44 @@
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+---
+image: /img/integration-services/logo/integration_services.png
+description: This section will show you an example on how to authenticate using the IOTA IS-SDK npm package.
+keywords:
+- how to
+- authentication
+- jwt
+- nonce
+- not-authenticated
+- 401
+- nodejs
+- is-sdk
+- npm
+- how to
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Integration Services SDK
+
+In this example, you will learn how to authenticate your identity using the
+[**IOTA IS-Client** npm package](https://www.npmjs.com/package/@iota/is-client). Since the package will handle decoding,
+hashing, and signing, this is the simplest way to authenticate your identity. Make sure to read the
+[general authentication concept](https://wiki.iota.org/integration-services/authentication), so you can fully understand
+the [Authentication Workflow](../../explanations/authentication.md#authentication-workflow).
 
 
-## Prerequisites{#prerequisites-sdk}
+This example uses the following identity:
+
+```js
+{
+    identityId: 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF',
+    secretKey: '5N3SxG4UzVDpNe4LyDoZyb6bSgE9tk3pE2XP5znXo5bF'
+}
+```
+
+## Prerequisites
 
 * A recent version of [Node.js](https://nodejs.org/en/download/) (>14.19.0).
 
-## Installation{#installation-sdk}
+## Installation
 
 <Tabs>
 <TabItem value="npm" label="npm">
@@ -25,7 +57,7 @@ yarn add @iota/is-client@latest
 </TabItem>
 </Tabs>
 
-## Authentication Workflow{#authentication-workflow-sdk}
+## Authentication Workflow
 
 :::info
 You can find your current API version using the [http://localhost:3000/info](http://localhost:3000/info) endpoint. This example uses `v0.1`.

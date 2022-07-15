@@ -2,7 +2,7 @@
 image: /img/integration-services/logo/integration_services.png
 description: The UI-Components are part of the Integration Services Suite and enables management of identities and streams.
 keywords:
-    - how to
+    - explanation
     - ecommerce
     - dashboard
     - ui
