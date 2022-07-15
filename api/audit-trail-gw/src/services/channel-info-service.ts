@@ -8,7 +8,7 @@ export class ChannelInfoService {
 		const channelInfo = this.getChannelInfoObject(channelInfoPersistence);
 		const authorId = channelInfo?.authorId;
 		const hidden = channelInfo?.hidden;
-		const isInVisibilityList = channelInfo?.visibilityList.find(i => i.id == reqId) != null
+		const isInVisibilityList = channelInfo?.visibilityList && channelInfo.visibilityList.find(i => i.id == reqId) != null
 		if (hidden && !isAdmin && reqId !== authorId && !isInVisibilityList) {
 			return null;
 		}
@@ -26,7 +26,7 @@ export class ChannelInfoService {
 			.filter(ch => {
 				const isAuthor = reqId == ch.authorId
 				if (ch.hidden && !isAdmin && !isAuthor) {
-					if (ch.visibilityList.length == 0 || ch.visibilityList.find(i => i.id == reqId) == null) {
+					if (!ch.visibilityList || ch.visibilityList.length == 0 || ch.visibilityList.find(i => i.id == reqId) == null) {
 						return false;
 					}
 				}
