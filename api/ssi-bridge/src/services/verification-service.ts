@@ -26,7 +26,7 @@ export interface Bitmap {
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identity found for issuerId: ${issuerId}`;
 	private readonly serverSecret: string;
-	private readonly keyCollectionSize: number;
+	private readonly bitmapSize: number = 100000;
 
 	constructor(
 		private readonly ssiService: SsiService,
@@ -41,6 +41,7 @@ export class VerificationService {
 		let bitmap = await BitmapDb.getBitmap(bitmapIndex, this.configService.serverIdentityId);
 		if (!bitmap) {
 			bitmap = await this.createRevocationBitmap(bitmapIndex, this.configService.serverIdentityId);
+			console.log('saving bitmap....');
 			const res = await BitmapDb.saveBitmap({ ...bitmap, index: bitmapIndex }, this.configService.serverIdentityId);
 
 			if (!res?.result.n) {
@@ -68,11 +69,11 @@ export class VerificationService {
 				initiatorId
 			}
 		};
-
+		console.log('ISSUUUUUE CREDENTIAL');
 		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-		const keyCollectionIndex = this.getBitmapIndex(currentCredentialIndex);
+		const bitmapIndex = this.getBitmapIndex(currentCredentialIndex);
 		const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
-		const keyIndex = nextCredentialIndex % this.keyCollectionSize;
+		const keyIndex = nextCredentialIndex % this.bitmapSize;
 		// const keyCollectionJson: KeyCollectionJson = {
 		// 	type: keyCollection.type,
 		// 	keys: keyCollection.keys,
@@ -80,16 +81,11 @@ export class VerificationService {
 		// };
 
 		const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
+
 		if (!identityKeys) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
-		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(
-			identityKeys,
-			credential,
-			undefined,
-			keyCollectionIndex,
-			keyIndex
-		);
+		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(identityKeys, credential, bitmapIndex, keyIndex);
 
 		await VerifiableCredentialsDb.addVerifiableCredential(
 			{
@@ -145,10 +141,10 @@ export class VerificationService {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
 
-		const keyCollectionIndex = this.getBitmapIndex(vcp.index);
-		const keyIndex = vcp.index % this.keyCollectionSize;
+		const bitmapIndex = this.getBitmapIndex(vcp.index);
+		const vcIndex = vcp.index % this.bitmapSize;
 
-		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, keyCollectionIndex, keyIndex);
+		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, bitmapIndex, vcIndex);
 
 		if (res.revoked !== true) {
 			this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
@@ -190,8 +186,7 @@ export class VerificationService {
 		await this.userService.addUserVC(vc);
 	}
 
-	//TODO decide about keycollectionsize
-	getBitmapIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.keyCollectionSize);
+	getBitmapIndex = (currentCredentialIndex: number) => Math.floor(currentCredentialIndex / this.bitmapSize);
 
 	private async createRevocationBitmap(bitmapIndex: number, issuerId: string): Promise<Bitmap> {
 		try {
@@ -202,6 +197,7 @@ export class VerificationService {
 			}
 
 			const identity = await this.ssiService.restoreIdentity(issuerIdentity);
+			console.log('create rev bitmap...,bitmapIndex', bitmapIndex);
 			const bitmapService = await this.ssiService.createRevocationBitmap(bitmapIndex, { id: issuerId, key: identity.key });
 			return { id: bitmapService.id as string, serviceEndpoint: bitmapService.serviceEndpoint, index: bitmapIndex };
 		} catch (e) {

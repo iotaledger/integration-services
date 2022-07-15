@@ -1,4 +1,4 @@
-import { addTrustedRootId } from '../database/trusted-roots';
+import { addTrustedRootId, getTrustedRootIds } from '../database/trusted-roots';
 import {
 	CreateIdentityBody,
 	IdentityKeys,
@@ -57,66 +57,75 @@ export class KeyGenerator {
 			throw new Error(`Database is in bad state: found ${rootServerIdentities.length} root identities`);
 		}
 
-		const serverIdentityId = rootServerIdentities[0]?.id;
-
+		let serverIdentityId = rootServerIdentities[0]?.id;
+		let serverIdentityKeys;
 		if (serverIdentityId) {
 			this.configService.serverIdentityId = serverIdentityId;
-			this.logger.error('Root identity already exists: verify data');
-			const serverIdentity = await getIdentityKeys(serverIdentityId, this.config.serverSecret);
-			if (serverIdentity) {
-				const isValid = await this.verifyIdentity(serverIdentity);
+			this.logger.log('Root identity already exists: verify data');
+			serverIdentityKeys = await getIdentityKeys(serverIdentityId, this.config.serverSecret);
+			if (serverIdentityKeys) {
+				const isValid = await this.verifyIdentity(serverIdentityKeys);
+
 				if (isValid) {
 					this.logger.log('Root identity is already defined and valid');
 					this.logger.log('No need to create a root identity');
 				} else {
 					this.logger.error('Root identity malformed or not valid: ' + serverIdentityId);
 					this.logger.error('Database could be tampered');
+					return;
 				}
 			} else {
 				this.logger.error('Error getting data from db');
+				return;
 			}
-			return;
 		}
 
 		const serverData: CreateIdentityBody = serverIdentityJson;
 
 		const ssiService = SsiService.getInstance(this.config.identityConfig, this.logger);
 		const userService = new UserService(ssiService, this.config.serverSecret, this.logger);
-		const identity = await userService.createIdentity(serverData);
 
-		const id = identity.doc.id().toString();
-		this.configService.serverIdentityId = id;
+		if (!serverIdentityKeys) {
+			this.logger.log('creating the server identity...');
+			const newIdentity = await userService.createIdentity(serverData);
+			serverIdentityId = newIdentity.doc.id().toString();
+			this.configService.serverIdentityId = serverIdentityId;
+			this.logger.log(JSON.stringify(newIdentity));
+		}
 
 		// create the verification service with a valid server identity id
 		const verificationService = new VerificationService(ssiService, userService, this.logger, this.configService);
-
-		const serverUser = await userService.getUser(id);
+		const serverUser = await userService.getUser(serverIdentityId);
 
 		if (!serverUser) {
 			throw new Error('server user not found!');
 		}
 
 		this.logger.log('Add server id as trusted root...');
-		await addTrustedRootId(serverUser.id);
-
-		this.logger.log('Generate key collection...');
-		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.id);
-		const keyCollectionIndex = verificationService.getBitmapIndex(index);
-		const kc = await verificationService.getBitmap(keyCollectionIndex);
-
-		if (!kc) {
-			throw new Error('could not create the keycollection!');
+		const rootIds = await getTrustedRootIds();
+		if (rootIds.find((r) => r.id == serverUser.id) == null) {
+			await addTrustedRootId(serverUser.id);
 		}
 
-		this.logger.log('Set server identity as verified...');
-		const subject: Subject = {
-			claim: serverUser.claim,
-			credentialType: CredentialTypes.VerifiedIdentityCredential,
-			id: serverUser.id
-		};
+		this.logger.log('Generate bitmap...');
+		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.id);
+		const bitmapIndex = verificationService.getBitmapIndex(index);
+		console.log('bitmapindex:', bitmapIndex);
+		const bm = await verificationService.getBitmap(bitmapIndex);
 
-		await verificationService.issueVerifiableCredential(subject, serverUser.id, serverUser.id);
+		if (!bm) {
+			throw new Error('could not create the bitmap!');
+		}
+		if (!serverUser?.verifiableCredentials || serverUser.verifiableCredentials.length === 0) {
+			this.logger.log('Set server identity as verified...');
+			const subject: Subject = {
+				claim: serverUser.claim,
+				credentialType: CredentialTypes.VerifiedIdentityCredential,
+				id: serverUser.id
+			};
 
+			await verificationService.issueVerifiableCredential(subject, serverUser.id, serverUser.id);
+		}
 		this.logger.log(`Setup Done!`);
 	}
 }
