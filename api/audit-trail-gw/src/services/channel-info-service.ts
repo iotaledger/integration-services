@@ -1,17 +1,45 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelType, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
 import * as ChannelInfoDb from '../database/channel-info';
 import isEmpty from 'lodash/isEmpty';
 
 export class ChannelInfoService {
-	async getChannelInfo(channelAddress: string): Promise<ChannelInfo | null> {
+	async getChannelInfo(channelAddress: string, reqId: string, isAdmin: boolean): Promise<ChannelInfo | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		return channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		const channelInfo = this.getChannelInfoObject(channelInfoPersistence);
+		const authorId = channelInfo?.authorId;
+		const hidden = channelInfo?.hidden;
+		const isInVisibilityList = channelInfo?.visibilityList && channelInfo.visibilityList.find(i => i.id == reqId) != null
+		if (hidden && !isAdmin && reqId !== authorId && !isInVisibilityList) {
+			return null;
+		}
+		if (!isAdmin && reqId !== authorId && (!hidden || isInVisibilityList)) {
+			channelInfo.visibilityList = undefined;
+		}
+		return channelInfo;
 	}
 
-	async searchChannelInfo(channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfo[]> {
+	async searchChannelInfo(channelInfoSearch: ChannelInfoSearch, reqId: string, isAdmin: boolean): Promise<ChannelInfo[]> {
 		let channelInfoPersistence: ChannelInfoPersistence[] = [];
 		channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
-		return channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
+		let channelInfos = channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
+		channelInfos = channelInfos
+			.filter(ch => {
+				const isAuthor = reqId == ch.authorId
+				if (ch.hidden && !isAdmin && !isAuthor) {
+					if (!ch.visibilityList || ch.visibilityList.length == 0 || ch.visibilityList.find(i => i.id == reqId) == null) {
+						return false;
+					}
+				}
+				return true
+			})
+			.map(ch => {
+				const isAuthor = reqId == ch.authorId
+				if (!isAdmin && !isAuthor) {
+					ch.visibilityList = undefined;
+				}
+				return ch;
+			});
+		return channelInfos;
 	}
 
 	async addChannelInfo(channelInfo: ChannelInfo) {
@@ -19,20 +47,20 @@ export class ChannelInfoService {
 		return ChannelInfoDb.addChannelInfo(channelInfoPersistence);
 	}
 
-	async updateChannelTopic(channelInfo: ChannelInfo) {
+	async updateChannel(channelInfo: ChannelInfo) {
 		const channelInfoPersistence = this.getChannelInfoPersistence(channelInfo);
-		return ChannelInfoDb.updateChannelTopic(channelInfoPersistence);
+		return ChannelInfoDb.updateChannel(channelInfoPersistence);
 	}
 
 	async addChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string) {
 		return ChannelInfoDb.addChannelRequestedSubscriptionId(channelAddress, channelRequestedSubscriptionId);
 	}
 
-	async removeChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string){
-		return ChannelInfoDb.removeChannelRequestedSubscriptionId(channelAddress,  channelRequestedSubscriptionId);
+	async removeChannelRequestedSubscriptionId(channelAddress: string, channelRequestedSubscriptionId: string) {
+		return ChannelInfoDb.removeChannelRequestedSubscriptionId(channelAddress, channelRequestedSubscriptionId);
 	}
 
-	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string){
+	async addChannelSubscriberId(channelAddress: string, channelSubscriberId: string) {
 		return ChannelInfoDb.addChannelSubscriberId(channelAddress, channelSubscriberId);
 	}
 
@@ -42,6 +70,18 @@ export class ChannelInfoService {
 
 	async deleteChannelInfo(channelAddress: string) {
 		return ChannelInfoDb.deleteChannelInfo(channelAddress);
+	}
+
+	async getChannelAuthor(channelAddress: string): Promise<string | null> {
+		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
+		const { authorId } = this.getChannelInfoObject(channelInfoPersistence);
+		return authorId;
+	}
+
+	async getChannelType(channelAddress: string): Promise<ChannelType | null> {
+		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
+		const { type } = this.getChannelInfoObject(channelInfoPersistence);
+		return type;
 	}
 
 	getChannelInfoPersistence(ci: ChannelInfo): ChannelInfoPersistence | null {
@@ -59,7 +99,9 @@ export class ChannelInfoService {
 			requestedSubscriptionIds: ci.requestedSubscriptionIds || [],
 			topics: ci.topics,
 			channelAddress: ci.channelAddress,
-			latestMessage: ci.latestMessage && getDateFromString(ci.created)
+			latestMessage: ci.latestMessage && getDateFromString(ci.created),
+			hidden: ci.hidden,
+			visibilityList: ci.visibilityList
 		};
 
 		return channelInfoPersistence;
@@ -80,7 +122,9 @@ export class ChannelInfoService {
 			topics: cip.topics,
 			type: cip.type,
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
-			channelAddress: cip.channelAddress
+			channelAddress: cip.channelAddress,
+			hidden: cip.hidden,
+			visibilityList: cip.visibilityList || []
 		};
 		return channelInfo;
 	}

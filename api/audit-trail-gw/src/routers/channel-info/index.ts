@@ -78,6 +78,11 @@ export const channelInfoRouter = Router();
  *       required: false
  *       schema:
  *         type: boolean
+ *     - name: hidden
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: boolean
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
@@ -155,7 +160,7 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  *                 error:
  *                   type: string
  */
-channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
+channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, getChannelInfo);
 
 /**
  * @openapi
@@ -185,6 +190,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
+ *             hidden: false
  *     responses:
  *       201:
  *         description: Channel successfully added
@@ -253,6 +259,8 @@ channelInfoRouter.post(
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
+ *             hidden: true
+ *             visibilityList: [{id: did:iota:HPDe7BnMVGqtZwy7pHfCMRNrfs7HeEDFszY2xw3SQwhj}]
  *     responses:
  *       200:
  *         description: Channel successfully added
