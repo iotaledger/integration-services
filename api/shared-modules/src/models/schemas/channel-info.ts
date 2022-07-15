@@ -42,8 +42,7 @@ export const ChannelInfoSearchSchema = Type.Object({
 			description: 'Optional channel name. A channel can be searched by its name.'
 		})
 	),
-	hidden: Type.Optional(Type.Boolean({default: false, description: 'Channels which are hidden to others.'})),
-	visibilityList: Type.Optional(Type.Array(Type.Object({id: Type.String()}))),
+	hidden: Type.Optional(Type.Boolean({description: 'Channels which are hidden to others.'})),
 	channelType: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
 	topicType: Type.Optional(Type.String()),
 	topicSource: Type.Optional(Type.String()),
