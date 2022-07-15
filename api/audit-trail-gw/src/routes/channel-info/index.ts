@@ -124,7 +124,6 @@ export class ChannelInfoRoutes {
 		const requestedSubscriptionId = decodeParam(<string>req.query['requested-subscription-id']);
 		const name = decodeParam(<string>req.query['name']);
 		const hidden = decodeParam(<string>req.query.hidden) ? decodeParam(<string>req.query.hidden) === 'true' : undefined;
-		const visibilityList = req.body?.visibilityList
 		const topicType = decodeParam(<string>req.query['topic-type']);
 		const topicSource = decodeParam(<string>req.query['topic-source']);
 		const created = decodeParam(<string>req.query.created);
@@ -142,7 +141,6 @@ export class ChannelInfoRoutes {
 			requestedSubscriptionId,
 			name,
 			hidden,
-			visibilityList,
 			topicType,
 			topicSource,
 			limit,

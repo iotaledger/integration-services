@@ -166,13 +166,13 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
 			}
 
-			const type = await this.channelInfoService.getChannelType(channelAddress);
+			const channelType = await this.channelInfoService.getChannelType(channelAddress);
 
 			const channel = await this.subscriptionService.requestSubscription({
 				subscriberId,
 				channelAddress,
 				accessRights,
-				channelType: type || ChannelType.private,
+				channelType: channelType || ChannelType.private,
 				seed,
 				presharedKey
 			});

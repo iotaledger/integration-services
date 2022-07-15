@@ -5,14 +5,15 @@ import isEmpty from 'lodash/isEmpty';
 export class ChannelInfoService {
 	async getChannelInfo(channelAddress: string, reqId: string, isAdmin: boolean): Promise<ChannelInfo | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		const channelInfo = channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		const channelInfo = this.getChannelInfoObject(channelInfoPersistence);
 		const authorId = channelInfo?.authorId;
 		const hidden = channelInfo?.hidden;
-		if (hidden && !isAdmin && reqId !== authorId) {
-			throw new Error('not allowed for hidden channels!');
+		const isInVisibilityList = channelInfo?.visibilityList.find(i => i.id == reqId) != null
+		if (hidden && !isAdmin && reqId !== authorId && !isInVisibilityList) {
+			return null;
 		}
-		if (!isAdmin && reqId !== authorId && !hidden) {
-			channelInfo.visibilityList = [];
+		if (!isAdmin && reqId !== authorId && (!hidden || isInVisibilityList)) {
+			channelInfo.visibilityList = undefined;
 		}
 		return channelInfo;
 	}
@@ -23,16 +24,20 @@ export class ChannelInfoService {
 		let channelInfos = channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
 		channelInfos = channelInfos
 			.filter(ch => {
-				const isAuthor = reqId === ch.authorId
-				const visbilityListSearch = channelInfoSearch.visibilityList
-				return (!isAdmin && !isAuthor && !ch?.hidden && !visbilityListSearch) || (isAdmin || isAuthor)
+				const isAuthor = reqId == ch.authorId
+				if (ch.hidden && !isAdmin && !isAuthor) {
+					if (ch.visibilityList.length == 0 || ch.visibilityList.find(i => i.id == reqId) == null) {
+						return false;
+					}
+				}
+				return true
 			})
 			.map(ch => {
-				const isAuthor = reqId === ch.authorId
+				const isAuthor = reqId == ch.authorId
 				if (!isAdmin && !isAuthor) {
-					ch.visibilityList = [];
+					ch.visibilityList = undefined;
 				}
-				return ch
+				return ch;
 			});
 		return channelInfos;
 	}
@@ -69,13 +74,13 @@ export class ChannelInfoService {
 
 	async getChannelAuthor(channelAddress: string): Promise<string | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		const { authorId } = channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		const { authorId } = this.getChannelInfoObject(channelInfoPersistence);
 		return authorId;
 	}
 
 	async getChannelType(channelAddress: string): Promise<ChannelType | null> {
 		const channelInfoPersistence = await ChannelInfoDb.getChannelInfo(channelAddress);
-		const { type } = channelInfoPersistence && this.getChannelInfoObject(channelInfoPersistence);
+		const { type } = this.getChannelInfoObject(channelInfoPersistence);
 		return type;
 	}
 
@@ -119,7 +124,7 @@ export class ChannelInfoService {
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress,
 			hidden: cip.hidden,
-			visibilityList: cip.visibilityList
+			visibilityList: cip.visibilityList || []
 		};
 		return channelInfo;
 	}

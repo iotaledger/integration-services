@@ -86,14 +86,6 @@ export const channelInfoRouter = Router();
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: array
- *             items: {id: string}
- *           example:
- *             visbilityList: [{id: did:iota:E6oCF3bMFitBDqxvb6cTfzgY6P3u4vCGZdqvmKbdsJ7Y}, {id: did:iota:HPDe7BnMVGqtZwy7pHfCMRNrfs7HeEDFszY2xw3SQwhj}]
  *     responses:
  *       200:
  *         description: Returns information about searched channels

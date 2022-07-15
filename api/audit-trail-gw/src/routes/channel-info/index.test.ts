@@ -25,17 +25,19 @@ describe('test Search channel', () => {
 	});
 
 	test.each([
-		{ authorId: "did:iota:1234", hidden: true, visibilityList: [{ id: "did:iota:54321" }], body: { visibilityList: [{ id: "did:iota:54321" }] } },
-		{ authorId: "did:iota:54321", hidden: false, visibilityList: [], body: {} },
-		{ authorId: "did:iota:54321", hidden: true, visibilityList: [], body: {}, empty: true },
-		{ authorId: "did:iota:54321", noHiddenSearch: true, body: { visibilityList: [{ id: "did:iota:54321" }] }, empty: true },
-		{ authorId: "did:iota:89765", role: UserRoles.Admin, hidden: true, visibilityList: [{ id: "did:iota:54321" }], body: { visibilityList: [{ id: "did:iota:54321" }] } },
+		{ reqId: "did:iota:1234", role: UserRoles.User, hidden: true, visibilityList: [{ id: "did:iota:854321" }], returnedList: [{ id: "did:iota:854321" }] },
+		{ reqId: "did:iota:54321", role: UserRoles.User, hidden: false, empty: true },
+		{ reqId: "did:iota:54321", role: UserRoles.User, hidden: true, visibilityList: [{ id: "did:iota:854321" }], returnedList: undefined, empty: true },
+		{ reqId: "did:iota:54321", role: UserRoles.User, hidden: true, visibilityList: [{ id: "did:iota:54321" }], returnedList: undefined },
+		{ reqId: "did:iota:54321", role: UserRoles.User, noHiddenSearch: true, visibilityList: [{ id: "did:iota:854321" }], returnedList: undefined, empty: true },
+		{ reqId: "did:iota:89765", role: UserRoles.Admin, hidden: true, visibilityList: [{ id: "did:iota:854321" }], returnedList: [{ id: "did:iota:854321" }] }
 	])(
-		"1: return channel because requester is author" +
-		"2: return channel with empty visibilityList because not author" +
-		"3: return empty list because channel is hidden and requester is not author." +
-		"4: return empty list because searching based on visbilityList and requester is not author."+
-		"5: return channel because requester is admin",
+		"1: should return channel because requester is author, " +
+		"2: should not return channel because hidden is set to false, " +
+		"3: should not return channel because it is hidden and reqId is not in visbilityList, " +
+		"4: should return channel because reqId is in visbilityList but the list is returned undefine, " +
+		"5: should not return channel because is hidden is not set as search parameter and reqId is not in visbilityList, "+
+		"6: should return channel because requester is admin",
 		async (obj) => {
 			const hidden = !obj?.noHiddenSearch ? { hidden: obj.hidden } : undefined;
 			const expectedChannelInfoSearch: ChannelInfoSearch = {
@@ -49,15 +51,14 @@ describe('test Search channel', () => {
 				index: 1,
 				ascending: true,
 				...hidden,
-				visibilityList: obj.body?.visibilityList,
 				created: getDateFromString('2021-02-12T14:58:05+01:00'),
 				latestMessage: getDateFromString('2021-02-12T14:58:05+01:00')
 			};
-			const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => [{ ...expectedChannelInfoSearch, channelAddress: "channelAddress" } as ChannelInfoPersistence]);
+			const searchChannelInfoSpy = jest.spyOn(ChannelInfoDb, 'searchChannelInfo').mockImplementation(async () => [{ ...expectedChannelInfoSearch, channelAddress: "channelAddress", hidden: true, visibilityList: obj.visibilityList } as ChannelInfoPersistence]);
 
 			const hiddenSearch = !obj?.noHiddenSearch ? { hidden: new Boolean(obj.hidden).toString() } : undefined
 			const req: any = {
-				user: { id: obj.authorId, role: obj?.role },
+				user: { id: obj.reqId, role: obj.role },
 				params: {},
 				query: {
 					'author-id': "did:iota:1234",
@@ -72,8 +73,7 @@ describe('test Search channel', () => {
 					'latest-message': '2021-02-12T14:58:05+01:00',
 					asc: 'true',
 					...hiddenSearch
-				},
-				body: obj.body
+				}
 			};
 
 			await channelInfoRoutes.searchChannelInfo(req, res as Response, nextMock);
@@ -81,7 +81,7 @@ describe('test Search channel', () => {
 			expect(searchChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfoSearch);
 			if (!obj?.empty) {
 				expect(response[0].hidden).toBe(obj.hidden)
-				expect(response[0].visibilityList).toEqual(obj.visibilityList)
+				expect(response[0].visibilityList).toEqual(obj.returnedList)
 			} else {
 				expect(response).toEqual([])
 			}
@@ -125,17 +125,17 @@ describe('test GET channelInfo', () => {
 	test.each([
 		{ author: 'test-author2', role: UserRoles.User, hidden: true, visibilityList: [{ id: "12345" }] },
 		{ author: 'test-author2', role: UserRoles.User, hidden: false, visibilityList: [{ id: "12345" }] },
-		{ author: 'test-author3', role: UserRoles.User, hidden: false, visibilityList: [] },
+		{ author: 'test-author3', role: UserRoles.User, hidden: false, visibilityList: undefined },
 		{ author: 'test-author4', role: UserRoles.Admin, hidden: true, visibilityList: [{ id: "12345" }] },
 		{ author: 'test-author4', role: UserRoles.Admin, hidden: false, visibilityList: [{ id: "12345" }] },
-		{ author: 'test-author3', role: UserRoles.User, hidden: true, error: true }
+		{ author: 'test-author3', role: UserRoles.User, hidden: true, empty: true }
 	])
 		(
-			'1: should return channel' +
-			'2: should return channel with visbilityList if hidden is false and requester is author' +
-			'3: should return channel with empty visbilityList because not author or admin' +
-			'4: should return hidden channel with visbilityList because admin' +
-			'5: should return not hidden channel with visbilityList because admin' +
+			'1: should return channel, ' +
+			'2: should return channel with visbilityList if hidden is false and requester is author, ' +
+			'3: should return channel with empty visbilityList because not author or admin, ' +
+			'4: should return hidden channel with visbilityList because admin, ' +
+			'5: should return not hidden channel with visbilityList because admin, ' +
 			'6: should throw error because channel is hidden and requester is not author or admin',
 			async (obj) => {
 				const date = getDateFromString('2021-02-09T00:00:00+01:00');
@@ -164,7 +164,7 @@ describe('test GET channelInfo', () => {
 				await channelInfoRoutes.getChannelInfo(req, res, nextMock);
 
 				expect(getChannelInfoSpy).toHaveBeenCalledTimes(1);
-				!obj.error
+				!obj.empty
 					? expect(sendMock).toHaveBeenCalledWith(
 						{
 							authorId: 'test-author2',
@@ -178,7 +178,7 @@ describe('test GET channelInfo', () => {
 							hidden: obj.hidden,
 							visibilityList: obj.visibilityList
 						})
-					: expect(nextMock).toHaveBeenCalledWith(new Error('could not get the channel info'))
+					: expect(sendMock).toHaveBeenCalledWith(null)
 			});
 
 	it('should call next(err) if an error occurs', async () => {
@@ -189,7 +189,7 @@ describe('test GET channelInfo', () => {
 		const req: any = {
 			params: { channelAddress: 'test-address' },
 			body: null,
-			user: {id: "did:iota:wrongId"}
+			user: { id: "did:iota:wrongId" }
 		};
 
 		await channelInfoRoutes.getChannelInfo(req, res, nextMock);

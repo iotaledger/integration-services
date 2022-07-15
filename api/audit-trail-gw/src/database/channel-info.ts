@@ -22,8 +22,7 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 		limit,
 		index,
 		ascending,
-		hidden,
-		visibilityList
+		hidden
 	} = channelInfoSearch;
 
 	const authorFilter = authorId ? { authorId: regex(authorId) } : undefined;
@@ -40,8 +39,7 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 		latestMessage: latestMessage && { $gte: latestMessage },
 		'topics.source': regex(topicSource),
 		'topics.type': regex(topicType),
-		hidden: hidden === true || hidden === false ? hidden : undefined,
-		visibilityList: visibilityList ? { $elemMatch: { $in: visibilityList } } : undefined
+		hidden: hidden === true || hidden === false ? hidden : undefined
 	};
 	const plainQuery = MongoDbService.getPlainObject(query);
 	const sort = ascending != null ? { created: ascending ? 1 : -1 } : undefined;

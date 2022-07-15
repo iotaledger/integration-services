@@ -729,7 +729,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | requestedSubscriptionId | string |  | No |
 | name | string | Optional channel name. A channel can be searched by its name. | No |
 | hidden | boolean | Channels which are hidden to others. | No |
-| visibilityList | [ object ] |  | No |
 | channelType |  | Channel type used to differ between public and private channels. | No |
 | topicType | string |  | No |
 | topicSource | string |  | No |
