@@ -26,6 +26,7 @@ export const identityRouter = Router();
  *             $ref: "#/components/schemas/CreateIdentityBodySchema"
  *           example:
  *             username: iota-test-device
+ *             hidden: false
  *             claim:
  *               type: Device
  *               category: [sensor]
@@ -38,7 +39,6 @@ export const identityRouter = Router();
  *               refDeviceModel: myDevice-wastecontainer-sensor-345
  *               dateFirstUsed: 2014-09-11T11:00:00Z
  *               owner: [did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY]
- *               hidden: false
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []

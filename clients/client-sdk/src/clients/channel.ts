@@ -143,6 +143,7 @@ export class ChannelClient extends BaseClient {
    * @param latestMessage
    * @param limit
    * @param index
+   * @param hidden
    * @returns
    */
   async search(searchCriteria: ChannelInfoSearch): Promise<ChannelInfo[]> {
@@ -158,8 +159,7 @@ export class ChannelClient extends BaseClient {
       limit,
       index,
       ascending,
-      hidden,
-      visibilityList
+      hidden
     } = searchCriteria;
     const topicTypeParam = topicType !== undefined ? { 'topic-type': topicType } : {};
     const topicSourceParam = topicSource !== undefined ? { 'topic-source': topicSource } : {};
@@ -173,7 +173,6 @@ export class ChannelClient extends BaseClient {
         : {};
     const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
     const hiddenParam = hidden !== undefined ? {hidden: hidden} : {};
-    const visbilityList = visibilityList !== undefined ? visibilityList : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
       ...topicTypeParam,
@@ -187,8 +186,7 @@ export class ChannelClient extends BaseClient {
       limit,
       index,
       hiddenParam
-    },
-    visbilityList);
+    });
   }
 
   /**

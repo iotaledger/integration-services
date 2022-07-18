@@ -112,7 +112,6 @@ export abstract class BaseClient {
       method: 'get',
       url,
       params,
-      data,
       headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}
     });
     return response?.data;
