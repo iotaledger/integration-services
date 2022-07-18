@@ -33,10 +33,10 @@ export class IdentityClient extends BaseClient {
    * @param username
    * @param claimType defaults to UserType.Person
    * @param claim
-   * @param hidden defaults to false
+   * @param hidden
    * @returns
    */
-  async create(username?: string, hidden: boolean = false, claimType = UserType.Person, claim?: any): Promise<IdentityJson> {
+  async create(username?: string, claimType = UserType.Person, claim?: any, hidden?: boolean): Promise<IdentityJson> {
     return await this.post(`${this.baseUrl}/identities/create`, {
       username,
       hidden,
