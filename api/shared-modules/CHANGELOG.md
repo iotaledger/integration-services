@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.17 (2022-07-18)
+
+- Added `hidden` field to UserSearch type
+
 ### 0.1.16 (2022-07-15)
 
 - Removed `visibilityList` from ChannelInfoSearchSchema
