@@ -1,10 +1,9 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { VerifiableCredentialJson, Credential, IdentityKeys, LatestIdentityJson } from '@iota/is-shared-modules';
+import { VerifiableCredentialJson, Credential, IdentityKeys, LatestIdentityJson, Encoding } from '@iota/is-shared-modules';
 const { Document, Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
-import { toBytes } from '@iota/is-shared-modules';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -28,23 +27,19 @@ export class SsiService {
 			const { doc, messageId } = await this.getLatestIdentityDoc(issuerIdentity.id);
 			const key = issuerIdentity.key;
 			const revocationBitmap = new Identity.RevocationBitmap();
-			console.log('bitmaptag:', this.getBitmapTag(issuerIdentity.id, bitmapIndex));
 			const bitmapService = {
 				id: this.getBitmapTag(issuerIdentity.id, bitmapIndex),
 				serviceEndpoint: revocationBitmap.toEndpoint(),
 				type: Identity.RevocationBitmap.type()
 			};
 			const service = new Identity.Service(bitmapService);
-			console.log('before insert');
 			doc.insertService(service);
 			doc.setMetadataPreviousMessageId(messageId);
 			doc.setMetadataUpdated(Identity.Timestamp.nowUTC());
-			console.log('before signself');
-			console.log('default sign: ', doc.defaultSigningMethod().id().toString());
-			doc.signSelf(key, doc.defaultSigningMethod().id().toString());
-			console.log('after signself');
+			const methodId = doc.defaultSigningMethod().id().toString();
+
+			doc.signSelf(key, methodId);
 			await this.publishSignedDoc(doc);
-			console.log('after pujblish');
 			return bitmapService;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -52,13 +47,21 @@ export class SsiService {
 		}
 	}
 
-	async createIdentity(): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
+	async createIdentity(): Promise<IdentityKeys> {
 		try {
 			const identity = await this.generateIdentity();
+			const publicKey = bs58.encode(identity.key.public());
+			const privateKey = bs58.encode(identity.key.private());
+			const keyType = identity.key.type() === 1 ? 'ed25519' : 'x25519'; // TODO use enum or static string
 
 			return {
-				doc: identity.doc,
-				key: identity.key
+				id: identity.doc.id().toString(),
+				key: {
+					public: publicKey,
+					secret: privateKey,
+					type: keyType,
+					encoding: Encoding.base58
+				}
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -86,41 +89,9 @@ export class SsiService {
 				issuer: issuerId,
 				credentialSubject: credential.subject as any // TODO adjust subject type
 			});
-			console.log('signerid:', doc.defaultSigningMethod().id().toString());
-			const signedCredential = await doc.signCredential(
-				unsignedVc,
-				key.private(),
-				doc.defaultSigningMethod().id().toString(),
-				Identity.ProofOptions.default()
-			);
-			return signedCredential;
-			/*const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
-			const digest = this.config.hashFunction;
-			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.getKeyCollectionTag(keyCollectionIndex));
-
-			const unsignedVc = VerifiableCredential.extend({
-				id: credential?.id,
-				type: credential.type,
-				issuer: doc.id.toString(),
-				credentialSubject: credential.subject
-			});
-
-			const signedVc = await doc.signCredential(unsignedVc, {
-				method: method.id.toString(),
-				public: issuerKeys.public(subjectKeyIndex),
-				secret: issuerKeys.secret(subjectKeyIndex),
-				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
-			});
-
-			const client = this.getIdentityClient(true);
-			const validatedCredential = await client.checkCredential(signedVc.toString());
-
-			if (!validatedCredential?.verified || !doc.verify(signedVc)) {
-				throw new Error('could not verify identity, please try it again.');
-			}
-
-			return validatedCredential.credential;*/
-			return null;
+			const methodId = doc.defaultSigningMethod().id().toString();
+			const signedCredential = await doc.signCredential(unsignedVc, key.private(), methodId, Identity.ProofOptions.default());
+			return signedCredential.toJSON();
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the verifiable credential');
@@ -203,25 +174,24 @@ export class SsiService {
 		}
 		const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
 		const doc = await resolver.resolve(identityDoc.id());
-		const method = doc.intoDocument().resolveMethod(doc.document().defaultSigningMethod().id().toString());
+		const methodId = doc.document().defaultSigningMethod().id().toString();
+		const method = doc.intoDocument().resolveMethod(methodId);
 		return method.toJSON().publicKeyMultibase;
 	}
 
 	async restoreIdentity(identity: IdentityKeys): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
 			const decodedKey = {
-				public: toBytes(bs58.decode(identity.key.public).toString()),
-				secret: toBytes(bs58.decode(identity.key.secret).toString())
+				public: Array.from(bs58.decode(identity.key.public)),
+				secret: Array.from(bs58.decode(identity.key.secret))
 			};
-			const keyTypeNum = identity.key.type === 'ed25519' ? 1 : 2; // TODO use enum or static string
-			console.log('identity.key.type', keyTypeNum);
-			console.log('identity.key.secret', identity.key.public);
-			console.log('identity.key.secret', identity.key.secret);
-			console.log('identity.key.secret', decodedKey.secret);
-			console.log('identity.key.public', decodedKey.public);
-			const key: Identity.KeyPair = KeyPair.fromKeys(keyTypeNum, decodedKey.public, decodedKey.secret);
+			const json = {
+				type: identity.key.type,
+				public: decodedKey.public,
+				private: decodedKey.secret
+			};
+			const key: Identity.KeyPair = KeyPair.fromJSON(json);
 			const { doc } = await this.getLatestIdentityDoc(identity.id);
-
 			return {
 				doc,
 				key
