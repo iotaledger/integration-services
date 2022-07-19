@@ -25,20 +25,20 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 		hidden
 	} = channelInfoSearch;
 
+	const nameFilter = name ? { name: regex(name) } : undefined;
 	const authorFilter = authorId ? { authorId: regex(authorId) } : undefined;
+	const typeFilter = topicType ? { 'topics.type': { $regex: topicType } } : undefined;
+	const sourceFilter = topicSource ? { 'topics.source': { $regex: topicSource } } : undefined;
 	const subscriberIdsFilter = subscriberId ? { subscriberIds: { $elemMatch: { $eq: subscriberId } } } : undefined;
 	const requestedSubscriptionIdsFilter = requestedSubscriptionId
 		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
 		: undefined;
-	const idFilters = [authorFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+	const filters = [nameFilter, authorFilter, typeFilter, sourceFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
 
 	const query = {
-		$or: idFilters.length >= 1 ? idFilters : undefined,
-		name: regex(name),
+		$or: filters.length >= 1 ? filters : undefined,
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
-		'topics.source': regex(topicSource),
-		'topics.type': regex(topicType),
 		hidden: hidden === true || hidden === false ? hidden : undefined
 	};
 	const plainQuery = MongoDbService.getPlainObject(query);
