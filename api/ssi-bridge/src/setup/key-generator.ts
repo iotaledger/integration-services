@@ -88,7 +88,7 @@ export class KeyGenerator {
 		if (!serverIdentityKeys) {
 			this.logger.log('creating the server identity...');
 			const newIdentity = await userService.createIdentity(serverData);
-			serverIdentityId = newIdentity.doc.id().toString();
+			serverIdentityId = newIdentity.id;
 			this.configService.serverIdentityId = serverIdentityId;
 			this.logger.log(JSON.stringify(newIdentity));
 		}
@@ -110,7 +110,6 @@ export class KeyGenerator {
 		this.logger.log('Generate bitmap...');
 		const index = await VerifiableCredentialsDb.getNextCredentialIndex(serverUser.id);
 		const bitmapIndex = verificationService.getBitmapIndex(index);
-		console.log('bitmapindex:', bitmapIndex);
 		const bm = await verificationService.getBitmap(bitmapIndex);
 
 		if (!bm) {

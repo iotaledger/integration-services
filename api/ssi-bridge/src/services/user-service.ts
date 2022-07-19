@@ -8,8 +8,7 @@ import {
 	VerifiableCredentialJson,
 	IdentityKeys,
 	getDateFromString,
-	getDateStringFromDate,
-	Encoding
+	getDateStringFromDate
 } from '@iota/is-shared-modules';
 import * as userDb from '../database/user';
 import isEmpty from 'lodash/isEmpty';
@@ -19,7 +18,6 @@ import { SsiService } from './ssi-service';
 import { ILogger, Logger } from '../utils/logger';
 import jwt from 'jsonwebtoken';
 import { ConfigurationService } from './configuration-service';
-import * as bs58 from 'bs58';
 
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
@@ -46,13 +44,10 @@ export class UserService {
 
 	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string) {
 		const identity = await this.ssiService.createIdentity();
-		const publicKey = bs58.encode(identity.key.public());
-		const privateKey = bs58.encode(identity.key.private());
 		const creatorId = this.decodeUserId(authorization);
-		const keyType = identity.key.type() === 1 ? 'ed25519' : 'x25519'; // TODO use enum or static string
 		const user: User = {
 			...createIdentityBody,
-			id: identity.doc.id().toString(),
+			id: identity.id,
 			creator: creatorId
 		};
 
@@ -60,24 +55,14 @@ export class UserService {
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
 			const identityKeys: IdentityKeys = {
-				id: identity.doc.id().toString(),
-				key: {
-					public: publicKey,
-					secret: privateKey,
-					type: keyType,
-					encoding: Encoding.base58
-				}
+				id: identity.id,
+				key: identity.key
 			};
 			await IdentityDocsDb.saveIdentityKeys(identityKeys, this.serverSecret);
 		}
 
 		return {
-			...identity,
-			key: {
-				type: keyType,
-				public: publicKey,
-				secret: privateKey
-			}
+			...identity
 		};
 	}
 

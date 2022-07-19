@@ -69,24 +69,17 @@ export class VerificationService {
 				initiatorId
 			}
 		};
-		console.log('ISSUUUUUE CREDENTIAL');
 		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
 		const bitmapIndex = this.getBitmapIndex(currentCredentialIndex);
 		const nextCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
 		const keyIndex = nextCredentialIndex % this.bitmapSize;
-		// const keyCollectionJson: KeyCollectionJson = {
-		// 	type: keyCollection.type,
-		// 	keys: keyCollection.keys,
-		// 	publicKeyBase58: keyCollection.publicKeyBase58
-		// };
-
 		const identityKeys: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
 
 		if (!identityKeys) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
 		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(identityKeys, credential, bitmapIndex, keyIndex);
-
+		console.log('VCCCC', vc);
 		await VerifiableCredentialsDb.addVerifiableCredential(
 			{
 				vc,
@@ -197,7 +190,6 @@ export class VerificationService {
 			}
 
 			const identity = await this.ssiService.restoreIdentity(issuerIdentity);
-			console.log('create rev bitmap...,bitmapIndex', bitmapIndex);
 			const bitmapService = await this.ssiService.createRevocationBitmap(bitmapIndex, { id: issuerId, key: identity.key });
 			return { id: bitmapService.id as string, serviceEndpoint: bitmapService.serviceEndpoint, index: bitmapIndex };
 		} catch (e) {
