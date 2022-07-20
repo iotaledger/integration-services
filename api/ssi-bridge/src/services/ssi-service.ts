@@ -34,10 +34,8 @@ export class SsiService {
 			};
 			const service = new Identity.Service(bitmapService);
 			doc.insertService(service);
-			doc.setMetadataPreviousMessageId(messageId);
-			doc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 
-			await this.publishSignedDoc(doc, key);
+			await this.publishSignedDoc(doc, key, messageId);
 			return bitmapService;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -99,11 +97,20 @@ export class SsiService {
 	async checkVerifiableCredential(signedVc: VerifiableCredentialJson): Promise<boolean> {
 		try {
 			const issuerDoc = (await this.getLatestIdentityDoc(signedVc.issuer)).doc;
-			const subject = (await this.getLatestIdentityDoc(signedVc.id)).doc;
 			const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
-			subject.verifyDocument(subject);
-			issuerDoc.verifyDocument(issuerDoc);
-			const verified = credentialVerified;
+			let validCredential = true;
+			try {
+				Identity.CredentialValidator.validate(
+					signedVc as any,
+					issuerDoc,
+					Identity.CredentialValidationOptions.default(),
+					Identity.FailFast.FirstError
+				);
+			} catch (e) {
+				// if credential is revoked, validate will throw an error
+				validCredential = false;
+			}
+			const verified = validCredential && credentialVerified;
 			return verified;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -111,7 +118,9 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair): Promise<string> {
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string> {
+		newDoc.setMetadataPreviousMessageId(prevMessageId);
+		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
 		newDoc.signSelf(key, methodId);
 		const client = await this.getIdentityClient();
@@ -121,31 +130,10 @@ export class SsiService {
 
 	async revokeVerifiableCredential(issuerIdentity: IdentityKeys, bitmapIndex: number, keyIndex: number): Promise<void> {
 		try {
-			//await issuer.revokeCredentials("my-revocation-service", 5);
 			const res = await this.restoreIdentity(issuerIdentity);
-			const bitmapTag = this.getBitmapTag(res.doc.id().toString(), bitmapIndex);
+			const bitmapTag = `${this.config.bitmapTag}-${bitmapIndex}`; // caution this is without the did by purpose
 			await res.doc.revokeCredentials(bitmapTag, keyIndex);
-			await this.publishSignedDoc(res.doc, res.key);
-			// Credential verification now fails.
-			/* try {
-				CredentialValidator.validate(
-					signedVc,
-					issuer.document(),
-					CredentialValidationOptions.default(),
-					FailFast.FirstError
-				);
-			} catch (e) {
-				console.log(`Error during validation: ${e}`);
-			} */
-			/*const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
-			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
-			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
-			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), keyIndex);
-
-			newDoc.sign(key);
-			await this.publishSignedDoc(newDoc.toJSON());
-
-			return { revoked: result };*/
+			await this.publishSignedDoc(res.doc, res.key, res.messageId);
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not revoke the verifiable credential');
@@ -193,7 +181,7 @@ export class SsiService {
 		return method.toJSON().publicKeyMultibase;
 	}
 
-	async restoreIdentity(identity: IdentityKeys): Promise<{ doc: Identity.Document; key: Identity.KeyPair }> {
+	async restoreIdentity(identity: IdentityKeys): Promise<{ doc: Identity.Document; key: Identity.KeyPair; messageId: string }> {
 		try {
 			const decodedKey = {
 				public: Array.from(bs58.decode(identity.key.public)),
@@ -205,10 +193,11 @@ export class SsiService {
 				private: decodedKey.secret
 			};
 			const key: Identity.KeyPair = KeyPair.fromJSON(json);
-			const { doc } = await this.getLatestIdentityDoc(identity.id);
+			const { doc, messageId } = await this.getLatestIdentityDoc(identity.id);
 			return {
 				doc,
-				key
+				key,
+				messageId
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
