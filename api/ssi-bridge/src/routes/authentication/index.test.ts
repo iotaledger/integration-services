@@ -102,7 +102,7 @@ describe('test authentication routes', () => {
 
 	it('auth - should return the jwt for identity not in db but on tangle', async () => {
 		const verified = true;
-		const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
+		const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
 		const getLatestIdentityJsonSpy = jest.spyOn(ssiService, 'getLatestIdentityJson').mockImplementation(async () => {
 			return { document: UserIdentityMock.doc, messageId: '' };

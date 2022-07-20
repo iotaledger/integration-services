@@ -74,7 +74,6 @@ export class IdentityRoutes {
 		try {
 			const user = req.body as IdentitySchemaBody;
 			const existingUser = await this.userService.getIdentityId(user.username);
-
 			if (existingUser) {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'user already exists' });
 			}

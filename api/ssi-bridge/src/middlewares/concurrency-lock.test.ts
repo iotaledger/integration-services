@@ -79,8 +79,8 @@ describe('test authentication middleware', () => {
 
 		await channelLock(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
-		expect(insertLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(getLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc');
+		expect(insertLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc');
 		expect(nextMock).toHaveBeenCalledWith();
 	});
 

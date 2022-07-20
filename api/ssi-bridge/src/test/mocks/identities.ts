@@ -54,26 +54,25 @@ export const TestUsersMock = [
 // returned from localhost:3000/api/v1/identities/create
 export const UserIdentityMock = {
 	doc: {
-		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-		authentication: [
+		id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+		capabilityInvocation: [
 			{
-				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4#key',
-				controller: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+				controller: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm'
+				publicKeyMultibase: 'z6eD5GXFV5yqEdY5rsDfwZ1KjkmTiQvTtDL1MBT8PwJ8'
 			}
 		],
-		created: '2021-03-16T14:18:47Z',
-		updated: '2021-03-16T14:18:47Z',
-		immutable: false,
-		proof: {
-			type: 'JcsEd25519Signature2020',
-			verificationMethod: '#key',
-			signatureValue: '2AKaB7KC9rQQLirMgRoYYns6fF2wVtryCnqKesMiwxuhmYzYPtPBbc6jeMPxgMHWtSoQQKyPkVdcFKx87LPabAq1'
-		}
+		service: [
+			{
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+				type: 'RevocationBitmap2022',
+				serviceEndpoint: 'data:application/octet-stream;base64,ZUp5ek1tQmdZR1NBQUFFZ1ptTUFBQWZRQUlJ'
+			}
+		]
 	},
 	userData: {
-		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+		id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		creator: 'did:iota:96JyhhVGbaLheq2L8j39DiAe8o3ijTHoCWWmai3D7PNk',
@@ -82,10 +81,10 @@ export const UserIdentityMock = {
 		verifiableCredentials: [
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 				type: ['VerifiableCredential', 'PersonCredential'],
 				credentialSubject: {
-					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 					type: UserType.Person,
 					registrationDate: '2021-03-16T15:18:49+01:00',
 					username: 'first-user',
@@ -103,12 +102,12 @@ export const UserIdentityMock = {
 		]
 	},
 	key: {
+		public: 'Aydf34yzkvnAsKNvbAuPqUZ3sex45fXyEe6zvfLRzNbT',
+		secret: '7urqexm1bpZz1ytRDTfFisJnhEPfwEnHAy2QNEzJdJcW',
 		type: 'ed25519',
-		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
-		encoding: Encoding.base58
+		encoding: 'base58'
 	}
-} as IdentityJson & { userData: User };
+} as any & { userData: User };
 
 export const ServerIdentityMock = {
 	doc: {

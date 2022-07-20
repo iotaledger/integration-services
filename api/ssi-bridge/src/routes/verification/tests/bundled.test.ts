@@ -49,7 +49,7 @@ describe('test authentication routes', () => {
 		});
 
 		it('should return the document of the id', async () => {
-			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
+			const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 			const getLatestIdentitySpy = jest
 				.spyOn(ssiService, 'getLatestIdentityJson')
 				.mockReturnValue(Promise.resolve(UserIdentityMock as any));
