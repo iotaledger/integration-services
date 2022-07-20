@@ -27,8 +27,8 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 
 	const nameFilter = name ? { name: regex(name) } : undefined;
 	const authorFilter = authorId ? { authorId: regex(authorId) } : undefined;
-	const typeFilter = topicType ? { 'topics.type': { $regex: topicType } } : undefined;
-	const sourceFilter = topicSource ? { 'topics.source': { $regex: topicSource } } : undefined;
+	const typeFilter = topicType ? { 'topics.type': { $regex: regex(topicType) } } : undefined;
+	const sourceFilter = topicSource ? { 'topics.source': { $regex: regex(topicSource) } } : undefined;
 	const subscriberIdsFilter = subscriberId ? { subscriberIds: { $elemMatch: { $eq: subscriberId } } } : undefined;
 	const requestedSubscriptionIdsFilter = requestedSubscriptionId
 		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
