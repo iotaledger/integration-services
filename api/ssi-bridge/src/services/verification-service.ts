@@ -126,9 +126,7 @@ export class VerificationService {
 		);
 	}
 
-	async revokeVerifiableCredential(vcp: VerifiableCredentialPersistence, issuerId: string): Promise<{ revoked: boolean }> {
-		const subjectId = vcp.vc.id;
-
+	async revokeVerifiableCredential(vcp: VerifiableCredentialPersistence, issuerId: string): Promise<void> {
 		const issuerIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(issuerId, this.serverSecret);
 		if (!issuerIdentity) {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
@@ -137,17 +135,10 @@ export class VerificationService {
 		const bitmapIndex = this.getBitmapIndex(vcp.index);
 		const vcIndex = vcp.index % this.bitmapSize;
 
-		const res = await this.ssiService.revokeVerifiableCredential(issuerIdentity, bitmapIndex, vcIndex);
-
-		if (res.revoked !== true) {
-			this.logger.error(`could not revoke identity for ${subjectId} on the ledger, maybe it is already revoked!`);
-			return;
-		}
+		await this.ssiService.revokeVerifiableCredential(issuerIdentity, bitmapIndex, vcIndex);
 
 		await VerifiableCredentialsDb.revokeVerifiableCredential(vcp, this.configService.serverIdentityId);
 		await this.userService.removeUserVC(vcp.vc);
-
-		return res;
 	}
 
 	async getLatestDocument(did: string) {

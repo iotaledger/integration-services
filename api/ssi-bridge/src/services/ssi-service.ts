@@ -36,10 +36,8 @@ export class SsiService {
 			doc.insertService(service);
 			doc.setMetadataPreviousMessageId(messageId);
 			doc.setMetadataUpdated(Identity.Timestamp.nowUTC());
-			const methodId = doc.defaultSigningMethod().id().toString();
 
-			doc.signSelf(key, methodId);
-			await this.publishSignedDoc(doc);
+			await this.publishSignedDoc(doc, key);
 			return bitmapService;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -113,15 +111,32 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: Identity.Document): Promise<string> {
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair): Promise<string> {
+		const methodId = newDoc.defaultSigningMethod().id().toString();
+		newDoc.signSelf(key, methodId);
 		const client = await this.getIdentityClient();
 		const tx = await client.publishDocument(newDoc);
 		return tx?.messageId();
 	}
 
-	async revokeVerifiableCredential(_issuerIdentity: IdentityKeys, _bitmapIndex: number, _keyIndex: number): Promise<{ revoked: boolean }> {
+	async revokeVerifiableCredential(issuerIdentity: IdentityKeys, bitmapIndex: number, keyIndex: number): Promise<void> {
 		try {
-			throw Error('NOTIMPLMEMENTED');
+			//await issuer.revokeCredentials("my-revocation-service", 5);
+			const res = await this.restoreIdentity(issuerIdentity);
+			const bitmapTag = this.getBitmapTag(res.doc.id().toString(), bitmapIndex);
+			await res.doc.revokeCredentials(bitmapTag, keyIndex);
+			await this.publishSignedDoc(res.doc, res.key);
+			// Credential verification now fails.
+			/* try {
+				CredentialValidator.validate(
+					signedVc,
+					issuer.document(),
+					CredentialValidationOptions.default(),
+					FailFast.FirstError
+				);
+			} catch (e) {
+				console.log(`Error during validation: ${e}`);
+			} */
 			/*const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
 			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
 			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
@@ -131,7 +146,6 @@ export class SsiService {
 			await this.publishSignedDoc(newDoc.toJSON());
 
 			return { revoked: result };*/
-			return null;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not revoke the verifiable credential');
@@ -140,7 +154,7 @@ export class SsiService {
 
 	async getLatestIdentityJson(did: string): Promise<LatestIdentityJson> {
 		try {
-			const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
+			const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
 			const resolvedDoc = await resolver.resolve(did);
 			const messageId = resolvedDoc.integrationMessageId();
 
@@ -172,7 +186,7 @@ export class SsiService {
 		if (!identityDoc) {
 			return;
 		}
-		const resolver = await Resolver.builder().clientConfig(this.getConfig()).build();
+		const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
 		const doc = await resolver.resolve(identityDoc.id());
 		const methodId = doc.document().defaultSigningMethod().id().toString();
 		const method = doc.intoDocument().resolveMethod(methodId);
@@ -241,11 +255,4 @@ export class SsiService {
 			localPow: false
 		};
 	}
-
-	/*private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
-		return Identity.Document.fromJSON({
-			...doc.toJSON(),
-			...property
-		});
-	}*/
 }
