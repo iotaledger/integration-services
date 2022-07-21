@@ -33,8 +33,13 @@ export class AuthenticationService {
 
 	async authenticate(signedNonce: string, id: string) {
 		let user: User = await this.userService.getUser(id);
-		const { doc } = await this.ssiService.getLatestIdentityDoc(id);
-		const publicKeyBase = await this.ssiService.getPublicKey(doc);
+		const res = await this.ssiService.getLatestIdentityDoc(id);
+
+		if (!res?.doc) {
+			throw Error(`no identity with id: ${id} found!`);
+		}
+
+		const publicKeyBase = await this.ssiService.getPublicKey(res.doc);
 		const publicKey = publicKeyBase.substring(1); // strip the z from the public key
 
 		if (!user) {

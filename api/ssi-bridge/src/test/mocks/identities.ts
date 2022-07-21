@@ -109,6 +109,7 @@ export const UserIdentityMock = {
 	}
 } as any & { userData: User };
 
+// TODO adjust doc
 export const ServerIdentityMock = {
 	doc: {
 		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
@@ -199,6 +200,7 @@ export const ServerIdentityKey: IdentityKeys = {
 	key: ServerIdentityMock.key
 };
 
+// TODO adjust doc
 export const DeviceIdentityMock = {
 	doc: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',

@@ -144,6 +144,11 @@ export class SsiService {
 		try {
 			const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
 			const resolvedDoc = await resolver.resolve(did);
+
+			if (!resolvedDoc) {
+				throw Error(`no identity with id: ${did} found!`);
+			}
+
 			const messageId = resolvedDoc.integrationMessageId();
 
 			return {
