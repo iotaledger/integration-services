@@ -4,7 +4,6 @@ export const TestUsersMock = [
 	{
 		_id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'Device',
 		registrationDate: '2021-03-15T10:29:56+01:00',
@@ -73,7 +72,6 @@ export const UserIdentityMock = {
 	},
 	userData: {
 		id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
-		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
 		username: 'first-user',
 		creator: 'did:iota:96JyhhVGbaLheq2L8j39DiAe8o3ijTHoCWWmai3D7PNk',
 		claim: { type: 'Person', firstName: 'Tom', lastName: 'Sonson' },
@@ -141,7 +139,6 @@ export const ServerIdentityMock = {
 	},
 	userData: {
 		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
 		username: 'api-identity',
 		registrationDate: '2021-03-24T15:38:43+01:00',
 		verifiableCredentials: [
@@ -223,7 +220,6 @@ export const DeviceIdentityMock = {
 	},
 	userData: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
 		registrationDate: '2021-03-24T16:54:38+01:00',
 		verifiableCredentials: [

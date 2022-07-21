@@ -35,40 +35,15 @@ describe('test keygenerator', () => {
 				{ id: 'did:iota:1234', username: ServerIdentityMock.userData.username, publicKey: 'testpublickey' }
 			]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => null);
-		const loggerSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
-
-		await keyGenerator.keyGeneration();
-
-		expect(getServerIdentitiesSpy).toHaveBeenCalled();
-		expect(getIdentityKeysSpy).toHaveBeenCalledWith('did:iota:1234', 'veryvery-very-very-server-secret');
-		expect(loggerSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
-		expect(loggerSpy).toHaveBeenCalledWith('Error getting data from db');
-	});
-
-	it('should find a valid serveridentity doc', async () => {
-		// found one server identity but malicious format
-		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => [
-			{
-				id: ServerIdentityMock.doc.id,
-				username: ServerIdentityMock.userData.username,
-				publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58
-			}
-		]);
-		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
 
 		await keyGenerator.keyGeneration();
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalled();
-		expect(getIdentityKeysSpy).toHaveBeenCalledWith(
-			'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-			'veryvery-very-very-server-secret'
-		);
-		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
-		expect(loggerInfoSpy).toHaveBeenCalledWith('Setting root identity please wait...');
-		expect(loggerInfoSpy).toHaveBeenCalledWith('Verify if root identity already exists...');
-		expect(loggerInfoSpy).toHaveBeenCalledWith('Root identity is already defined and valid');
+		expect(getIdentityKeysSpy).toHaveBeenCalledWith('did:iota:1234', 'veryvery-very-very-server-secret');
+		expect(loggerInfoSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
+		expect(loggerErrorSpy).toHaveBeenCalledWith('Error getting data from db');
 	});
 
 	it('should find an invalid serveridentity doc because public and secret key are not compatible', async () => {
@@ -82,6 +57,7 @@ describe('test keygenerator', () => {
 			}
 		]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => unvalidServerIdentity);
+		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
 		const loggerErrorSpy = jest.spyOn(LoggerMock, 'error').mockImplementationOnce(() => null);
 
 		await keyGenerator.keyGeneration();
@@ -91,7 +67,7 @@ describe('test keygenerator', () => {
 			'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
 			'veryvery-very-very-server-secret'
 		);
-		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
+		expect(loggerInfoSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
 		expect(loggerErrorSpy).toHaveBeenCalledWith('error when signing or verifying the nonce, the secret key might have changed...');
 		expect(loggerErrorSpy).toHaveBeenCalledWith('Root identity malformed or not valid: ' + unvalidServerIdentity.id);
 	});
@@ -115,14 +91,19 @@ describe('test keygenerator', () => {
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
+		jest.spyOn(TrustedRootDb, 'getTrustedRootIds').mockImplementationOnce(async () => [{ id: ServerIdentityMock.doc.id }]);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('could not create the bitmap!');
 	});
 
 	it('should create a new serveridentity and successfully run the script till the end', async () => {
+		const userData: any = {
+			...ServerIdentityMock.userData,
+			verifiableCredentials: []
+		};
 		UserService.prototype.createIdentity = jest.fn().mockImplementationOnce(async () => ServerIdentityMock);
-		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => ServerIdentityMock.userData);
+		UserService.prototype.getUser = jest.fn().mockImplementationOnce(async () => userData);
 		VerificationService.prototype.getBitmapIndex = jest.fn();
 		VerificationService.prototype.getBitmap = jest.fn().mockImplementationOnce(async () => []);
 		const issueCredentialSpy = jest.fn();
@@ -131,7 +112,9 @@ describe('test keygenerator', () => {
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
+		jest.spyOn(TrustedRootDb, 'getTrustedRootIds').mockImplementationOnce(async () => [{ id: ServerIdentityMock.doc.id }]);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
+		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
 
 		await keyGenerator.keyGeneration();
 
@@ -140,6 +123,10 @@ describe('test keygenerator', () => {
 			credentialType: CredentialTypes.VerifiedIdentityCredential,
 			id: ServerIdentityMock.userData.id
 		};
+
+		expect(loggerInfoSpy).toHaveBeenCalledWith('Setting root identity please wait...');
+		expect(loggerInfoSpy).toHaveBeenCalledWith('Verify if root identity already exists...');
+		expect(loggerInfoSpy).toHaveBeenCalledWith('creating the server identity...');
 		expect(issueCredentialSpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
 	});
 

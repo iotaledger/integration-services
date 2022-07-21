@@ -354,42 +354,6 @@ describe('test authentication routes', () => {
 			expect(loggerSpy).not.toHaveBeenCalled();
 			expect(nextMock).not.toHaveBeenCalled();
 		});
-
-		it('identity is already revoked', async () => {
-			const identityToRevoke = vcMock.id;
-			const bitmapIndex = 0;
-			const linkedIdentity: VerifiableCredentialPersistence = {
-				index: 0,
-				initiatorId: 'did:iota:1234',
-				isRevoked: false,
-				vc: { ...vcMock }
-			};
-			const revokeResult = {
-				docUpdate: ServerIdentityMock.doc,
-				revoked: false
-			};
-			const getVerifiableCredentialSpy = jest
-				.spyOn(CredentialsDb, 'getVerifiableCredential')
-				.mockReturnValue(Promise.resolve(linkedIdentity));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
-			const revokeVerifiableCredentialSpy = jest
-				.spyOn(ssiService, 'revokeVerifiableCredential')
-				.mockReturnValue(Promise.resolve(revokeResult as any));
-			const revokeVerifiableCredentialDbSpy = jest.spyOn(CredentialsDb, 'revokeVerifiableCredential').mockImplementation(async () => null);
-			const req: any = {
-				user: { id: 'did:iota:1234', type: UserType.Person }, // same request user id as initiatorId
-				params: {},
-				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
-			};
-
-			await verificationRoutes.revokeVerifiableCredential(req, res, nextMock);
-
-			expect(getVerifiableCredentialSpy).toHaveBeenCalledWith(SignatureValue);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityKey.id, serverSecret);
-			expect(revokeVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, bitmapIndex, linkedIdentity.index);
-			expect(revokeVerifiableCredentialDbSpy).not.toHaveBeenCalled();
-			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
-		});
 	});
 	afterEach(() => {
 		jest.clearAllMocks();
