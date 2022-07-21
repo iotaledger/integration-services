@@ -177,61 +177,57 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
 
-		test.each([UserRoles.Admin, UserRoles.Manager])(
-			'should verify for user which has valid vc and different organization but admin user',
-			async (role) => {
-				const subject = TestUsersMock[1];
-				const keyIndex = 0;
-				const bitmapIndex = 0;
-				const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
-				const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
-				const req: any = {
-					user: { id: initiatorVC.id, role: role, type: UserType.Person },
-					params: {},
-					body: {
-						subject: {
-							id: subject.id,
-							credentialType: 'VerifiedIdentityCredential',
-							claim: { ...subject.claim, type: subject.type }
-						},
-						initiatorVC
-					}
-				};
-
-				const credentialSubject: CredentialSubject = {
-					type: subject.type,
-					id: subject.id,
-					initiatorId: initiatorVC.id
-				};
-				const expectedCredential: any = {
-					type: 'VerifiedIdentityCredential',
-					id: subject.id,
+		test.each([UserRoles.Admin, UserRoles.Manager])('should verify for user which has admin or manager role', async (role) => {
+			const subject = TestUsersMock[1];
+			const keyIndex = 0;
+			const bitmapIndex = 0;
+			const initiatorId = ServerIdentityMock.doc.id;
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
+			const req: any = {
+				user: { id: initiatorId, role: role, type: UserType.Person },
+				params: {},
+				body: {
 					subject: {
-						...credentialSubject,
-						'@context': 'https://schema.org/',
-						type: 'Person',
-						...subject.claim
+						id: subject.id,
+						credentialType: 'VerifiedIdentityCredential',
+						claim: { ...subject.claim, type: subject.type }
 					}
-				};
-				const expectedAddKeyCollectionCall = {
-					index: keyIndex,
-					isRevoked: false,
-					initiatorId: initiatorVC.id,
-					vc: vcMock
-				};
-				await verificationRoutes.createVerifiableCredential(req, res, nextMock);
+				}
+			};
 
-				expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-				expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-				expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
-				expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
-				expect(addUserVCSpy).toHaveBeenCalled();
-				expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-				expect(res.send).toHaveBeenCalledWith(vcMock);
-			}
-		);
+			const credentialSubject: CredentialSubject = {
+				type: subject.type,
+				id: subject.id,
+				initiatorId: initiatorId
+			};
+			const expectedCredential: any = {
+				type: 'VerifiedIdentityCredential',
+				id: subject.id,
+				subject: {
+					...credentialSubject,
+					'@context': 'https://schema.org/',
+					type: 'Person',
+					...subject.claim
+				}
+			};
+			const expectedAddKeyCollectionCall = {
+				index: keyIndex,
+				isRevoked: false,
+				initiatorId: initiatorId,
+				vc: vcMock
+			};
+			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-		it('should verify for user which has valid vc and is in same organization', async () => {
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
+			expect(addUserVCSpy).toHaveBeenCalled();
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith(vcMock);
+		});
+
+		it('should verify for user which has valid vc', async () => {
 			const subject = TestUsersMock[0];
 			const bitmapIndex = 0;
 			const keyIndex = 0;
