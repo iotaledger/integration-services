@@ -213,9 +213,6 @@ describe('test authentication routes', () => {
 						...subject.claim
 					}
 				};
-				const expectedKeyCollection = {
-					...BitmapMock
-				};
 				const expectedAddKeyCollectionCall = {
 					index: keyIndex,
 					isRevoked: false,
@@ -224,16 +221,9 @@ describe('test authentication routes', () => {
 				};
 				await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-				expect(getBitmapSpy).toHaveBeenCalledWith(bitmapIndex, ServerIdentityMock.doc.id, serverSecret);
 				expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 				expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-				expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-					ServerIdentityKey,
-					expectedCredential,
-					expectedKeyCollection,
-					bitmapIndex,
-					keyIndex
-				);
+				expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
 				expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 				expect(addUserVCSpy).toHaveBeenCalled();
 				expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
@@ -280,9 +270,6 @@ describe('test authentication routes', () => {
 					id: subject.id
 				}
 			};
-			const expectedKeyCollection = {
-				...BitmapMock
-			};
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,
 				isRevoked: false,
@@ -291,17 +278,10 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(getBitmapSpy).toHaveBeenCalledWith(bitmapIndex, ServerIdentityMock.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
-			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(
-				ServerIdentityKey,
-				expectedCredential,
-				expectedKeyCollection,
-				bitmapIndex,
-				keyIndex
-			);
+			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
 			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);

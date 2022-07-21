@@ -79,7 +79,7 @@ export class VerificationService {
 			throw new Error(this.noIssuerFoundErrMessage(issuerId));
 		}
 		const vc = await this.ssiService.createVerifiableCredential<CredentialSubject>(identityKeys, credential, bitmapIndex, keyIndex);
-		console.log('VCCCC', vc);
+
 		await VerifiableCredentialsDb.addVerifiableCredential(
 			{
 				vc,
