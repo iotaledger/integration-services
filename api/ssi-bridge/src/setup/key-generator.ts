@@ -1,14 +1,6 @@
 import { addTrustedRootId, getTrustedRootIds } from '../database/trusted-roots';
-import {
-	CreateIdentityBody,
-	IdentityKeys,
-	Subject,
-	CredentialTypes,
-	createNonce,
-	signNonce,
-	getHexEncodedKey,
-	verifySignedNonce
-} from '@iota/is-shared-modules';
+import { CreateIdentityBody, IdentityKeys, Subject, CredentialTypes } from '@iota/is-shared-modules';
+import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from '@iota/is-shared-modules/node';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
 import * as serverIdentityJson from '../config/server-identity.json';
@@ -37,8 +29,8 @@ export class KeyGenerator {
 		const nonce = createNonce();
 		let verified = false;
 		try {
-			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.key.secret), nonce);
-			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.key.public), nonce, signedNonce);
+			const signedNonce = await signNonce(getHexEncodedKey(serverIdentity.keys.sign.private), nonce);
+			verified = await verifySignedNonce(getHexEncodedKey(serverIdentity.keys.sign.public), nonce, signedNonce);
 		} catch (e) {
 			this.logger.error('error when signing or verifying the nonce, the secret key might have changed...');
 		}

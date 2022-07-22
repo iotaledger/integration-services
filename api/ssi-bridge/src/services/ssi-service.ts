@@ -4,18 +4,7 @@ import { VerifiableCredentialJson, Credential, IdentityKeys, Encoding } from '@i
 const { Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
-
-// TODO move to shared-modules
-export enum KeyTypes {
-	ed25519 = 'ed25519',
-	x25519 = 'x25519'
-}
-// TODO move type
-export interface Bitmap {
-	id: string;
-	index: number;
-	serviceEndpoint: string | string[] | Map<string, string[]> | Record<string, string[]>;
-}
+import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -64,11 +53,13 @@ export class SsiService {
 
 			return {
 				id: identity.doc.id().toString(),
-				key: {
-					public: publicKey,
-					secret: privateKey,
-					type: keyType,
-					encoding: Encoding.base58
+				keys: {
+					sign: {
+						public: publicKey,
+						private: privateKey,
+						type: keyType,
+						encoding: Encoding.base58
+					}
 				}
 			};
 		} catch (error) {
@@ -187,11 +178,11 @@ export class SsiService {
 	async restoreIdentity(identity: IdentityKeys): Promise<{ document: Identity.Document; key: Identity.KeyPair; messageId: string }> {
 		try {
 			const decodedKey = {
-				public: Array.from(bs58.decode(identity.key.public)),
-				secret: Array.from(bs58.decode(identity.key.secret))
+				public: Array.from(bs58.decode(identity.keys.sign.public)),
+				secret: Array.from(bs58.decode(identity.keys.sign.private))
 			};
 			const json = {
-				type: identity.key.type,
+				type: identity.keys.sign.type,
 				public: decodedKey.public,
 				private: decodedKey.secret
 			};

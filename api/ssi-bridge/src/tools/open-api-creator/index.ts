@@ -20,9 +20,8 @@ import {
 	ChannelAddressSchema,
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
-	IdentityJsonSchema,
-	IdentityDocumentJsonSchema,
-	IdentityKeyPairJsonSchema,
+	IdentityDocumentSchema,
+	IdentityKeyPairSchema,
 	CreateIdentityBodySchema,
 	IdentitySearchBodySchema,
 	UpdateIdentityBodySchema,
@@ -78,16 +77,15 @@ const schemas = {
 	TopicSchema,
 	VerifiableCredentialSubjectSchema,
 	VerifiableCredentialSchema,
-	IdentityJsonSchema,
-	IdentityKeyPairJsonSchema,
-	IdentityDocumentJsonSchema,
+	IdentitySchema,
+	IdentityKeyPairSchema,
+	IdentityDocumentSchema,
 	LatestIdentityDocSchema,
 	DeviceSchema,
 	OrganizationSchema,
 	PersonSchema,
 	ProductSchema,
 	ServiceSchema,
-	IdentitySchema,
 	IdentitySearchBodySchema,
 	IdentityIdSchema,
 	NonceSchema,
@@ -110,7 +108,7 @@ const converter = () => {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log('Successfully converted JSON schema.');
+			console.log('Successfully converted  schema.');
 		}
 	});
 };

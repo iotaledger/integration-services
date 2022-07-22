@@ -2,16 +2,8 @@ import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
 import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
-import {
-	UserPersistence,
-	UserType,
-	User,
-	UserSearch,
-	IdentityClaim,
-	getDateFromString,
-	getDateStringFromDate,
-	UserRoles
-} from '@iota/is-shared-modules';
+import { UserPersistence, UserType, User, UserSearch, IdentityClaim, UserRoles } from '@iota/is-shared-modules';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
@@ -349,7 +341,7 @@ describe('test user routes', () => {
 		it('should send result for valid body', async () => {
 			const identitySpy = jest
 				.spyOn(ssiService, 'createIdentity')
-				.mockImplementationOnce(async () => ({ id: UserIdentityMock.document.doc.id, key: UserIdentityMock.key }));
+				.mockImplementationOnce(async () => ({ id: UserIdentityMock.document.doc.id, keys: UserIdentityMock.keys }));
 			const decodeUserSpy = jest.spyOn(userService, 'decodeUserId').mockImplementationOnce(() => UserIdentityMock.userData.creator);
 			const saveIdentitySpy = jest
 				.spyOn(IdentityDocsDb, 'saveIdentityKeys')
@@ -385,7 +377,7 @@ describe('test user routes', () => {
 		it('should save the identity since it is called to with storeIdentity=true', async () => {
 			const identitySpy = jest
 				.spyOn(ssiService, 'createIdentity')
-				.mockImplementationOnce(async () => ({ id: UserIdentityMock.document.doc.id, key: UserIdentityMock.key }));
+				.mockImplementationOnce(async () => ({ id: UserIdentityMock.document.doc.id, keys: UserIdentityMock.keys }));
 			const decodeUserSpy = jest.spyOn(userService, 'decodeUserId').mockImplementationOnce(() => UserIdentityMock.userData.creator);
 			const saveIdentitySpy = jest.spyOn(IdentityDocsDb, 'saveIdentityKeys');
 			const userSpy = jest.spyOn(userService, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));

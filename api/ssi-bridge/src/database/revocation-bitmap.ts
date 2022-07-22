@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService } from '@iota/is-shared-modules';
-import { Bitmap } from '../services/ssi-service';
+import { MongoDbService } from '@iota/is-shared-modules/node';
+import { Bitmap } from '@iota/is-shared-modules/lib/web/models/types/identity'; // TODO fix path
 
 const collectionName = CollectionNames.revocationBitmap;
 const getIndex = (index: number, id: string) => `${id}-${index}`;

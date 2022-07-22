@@ -6,10 +6,9 @@ import {
 	UserSearchResponse,
 	CreateIdentityBody,
 	VerifiableCredentialJson,
-	IdentityKeys,
-	getDateFromString,
-	getDateStringFromDate
+	IdentityKeys
 } from '@iota/is-shared-modules';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
 import * as userDb from '../database/user';
 import isEmpty from 'lodash/isEmpty';
 import { SchemaValidator } from '../utils/validator';
@@ -56,7 +55,7 @@ export class UserService {
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
 			const identityKeys: IdentityKeys = {
 				id: identity.id,
-				key: identity.key
+				keys: identity.keys
 			};
 			await IdentityDocsDb.saveIdentityKeys(identityKeys, this.serverSecret);
 		}
