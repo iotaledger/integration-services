@@ -35,11 +35,11 @@ export class AuthenticationService {
 		let user: User = await this.userService.getUser(id);
 		const res = await this.ssiService.getLatestIdentityDoc(id);
 
-		if (!res?.doc) {
+		if (!res?.document) {
 			throw Error(`no identity with id: ${id} found!`);
 		}
 
-		const publicKeyBase = await this.ssiService.getPublicKey(res.doc);
+		const publicKeyBase = await this.ssiService.getPublicKey(res.document);
 		const publicKey = publicKeyBase.substring(1); // strip the z from the public key
 
 		if (!user) {

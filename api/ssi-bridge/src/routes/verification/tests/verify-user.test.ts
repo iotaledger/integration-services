@@ -70,7 +70,7 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('user id of request does not concur with the initiatorVC user id!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
@@ -96,7 +96,7 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('no valid verfiable credential!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
@@ -119,7 +119,7 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiator is not allowed based on its identity type!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
@@ -143,7 +143,7 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiator is not allowed based on its credential type!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
@@ -172,7 +172,7 @@ describe('test authentication routes', () => {
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.doc.id);
+			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiatorVC is not verified!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
 		});
@@ -181,7 +181,7 @@ describe('test authentication routes', () => {
 			const subject = TestUsersMock[1];
 			const keyIndex = 0;
 			const bitmapIndex = 0;
-			const initiatorId = ServerIdentityMock.doc.id;
+			const initiatorId = ServerIdentityMock.document.doc.id;
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
 				user: { id: initiatorId, role: role, type: UserType.Person },
@@ -218,10 +218,10 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
-			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.document.doc.id);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith(vcMock);
@@ -275,10 +275,10 @@ describe('test authentication routes', () => {
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
-			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id);
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
-			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.doc.id);
+			expect(addVerifiableCredentialSpy).toHaveBeenCalledWith(expectedAddKeyCollectionCall, ServerIdentityMock.document.doc.id);
 			expect(addUserVCSpy).toHaveBeenCalled();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith(vcMock);

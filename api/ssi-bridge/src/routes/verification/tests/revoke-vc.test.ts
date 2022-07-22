@@ -79,7 +79,7 @@ describe('test authentication routes', () => {
 				vc: { ...vcMock }
 			};
 			const revokeResult = {
-				docUpdate: ServerIdentityMock.doc,
+				docUpdate: ServerIdentityMock.document.doc,
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = jest
@@ -117,7 +117,7 @@ describe('test authentication routes', () => {
 				vc: { ...vcMock }
 			};
 			const revokeResult = {
-				docUpdate: ServerIdentityMock.doc,
+				docUpdate: ServerIdentityMock.document.doc,
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = jest
@@ -156,7 +156,7 @@ describe('test authentication routes', () => {
 				vc: vcToRevoke // same id as request uid below
 			};
 			const revokeResult = {
-				docUpdate: ServerIdentityMock.doc,
+				docUpdate: ServerIdentityMock.document.doc,
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = jest
@@ -196,7 +196,7 @@ describe('test authentication routes', () => {
 					vc: { ...vcMock }
 				};
 				const revokeResult = {
-					docUpdate: ServerIdentityMock.doc,
+					docUpdate: ServerIdentityMock.document.doc,
 					revoked: true
 				};
 				const getVerifiableCredentialSpy = jest
@@ -241,7 +241,7 @@ describe('test authentication routes', () => {
 					vc: { ...vcMock }
 				};
 				const revokeResult = {
-					docUpdate: ServerIdentityMock.doc,
+					docUpdate: ServerIdentityMock.document.doc,
 					revoked: true
 				};
 				const getVerifiableCredentialSpy = jest
@@ -286,7 +286,7 @@ describe('test authentication routes', () => {
 					vc: vcMock
 				};
 				const revokeResult = {
-					docUpdate: ServerIdentityMock.doc,
+					docUpdate: ServerIdentityMock.document.doc,
 					revoked: true
 				};
 				const getVerifiableCredentialSpy = jest
@@ -327,7 +327,7 @@ describe('test authentication routes', () => {
 				vc: { ...vcMock }
 			};
 			const revokeResult = {
-				docUpdate: ServerIdentityMock.doc,
+				docUpdate: ServerIdentityMock.document.doc,
 				revoked: true
 			};
 			const getVerifiableCredentialSpy = jest

@@ -117,10 +117,10 @@ export class UserService {
 		const validator = SchemaValidator.getInstance(this.logger);
 		validator.validateUser(user);
 
-		const { doc } = await this.ssiService.getLatestIdentityDoc(user.id);
-		const publicKey = await this.ssiService.getPublicKey(doc);
+		const { document } = await this.ssiService.getLatestIdentityDoc(user.id);
+		const publicKey = await this.ssiService.getPublicKey(document);
 
-		if (!doc || !publicKey) {
+		if (!document || !publicKey) {
 			throw new Error('no identity found!');
 		}
 

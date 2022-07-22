@@ -142,7 +142,7 @@ export class VerificationService {
 	}
 
 	async getLatestDocument(did: string) {
-		return await this.ssiService.getLatestIdentityJson(did);
+		return await this.ssiService.getLatestIdentityDoc(did);
 	}
 
 	async getTrustedRootIds() {

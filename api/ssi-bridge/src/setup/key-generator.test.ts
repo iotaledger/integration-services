@@ -51,9 +51,9 @@ describe('test keygenerator', () => {
 		unvalidServerIdentity.key.public = 'wrongpublickey'; // found identity has wrong server keypair stored
 		const getServerIdentitiesSpy = jest.spyOn(UserDb, 'getServerIdentities').mockImplementationOnce(async () => [
 			{
-				id: ServerIdentityMock.doc.id,
+				id: ServerIdentityMock.document.doc.id,
 				username: ServerIdentityMock.userData.username,
-				publicKey: ServerIdentityMock.doc.authentication[0].publicKeyBase58
+				publicKey: ServerIdentityMock.document.doc.capabilityInvocation[0].publicKeyMultibase
 			}
 		]);
 		const getIdentityKeysSpy = jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => unvalidServerIdentity);
@@ -64,7 +64,7 @@ describe('test keygenerator', () => {
 
 		expect(getServerIdentitiesSpy).toHaveBeenCalled();
 		expect(getIdentityKeysSpy).toHaveBeenCalledWith(
-			'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+			'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
 			'veryvery-very-very-server-secret'
 		);
 		expect(loggerInfoSpy).toHaveBeenCalledWith('Root identity already exists: verify data');
@@ -91,7 +91,7 @@ describe('test keygenerator', () => {
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
-		jest.spyOn(TrustedRootDb, 'getTrustedRootIds').mockImplementationOnce(async () => [{ id: ServerIdentityMock.doc.id }]);
+		jest.spyOn(TrustedRootDb, 'getTrustedRootIds').mockImplementationOnce(async () => [{ id: ServerIdentityMock.document.doc.id }]);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 
 		await expect(keyGenerator.keyGeneration()).rejects.toThrow('could not create the bitmap!');
@@ -112,7 +112,7 @@ describe('test keygenerator', () => {
 		jest.spyOn(UserDb, 'getServerIdentities').mockImplementation(async () => []);
 		jest.spyOn(IdentityDocs, 'getIdentityKeys').mockImplementationOnce(async () => ServerIdentityKey);
 		jest.spyOn(TrustedRootDb, 'addTrustedRootId').mockImplementationOnce(async () => null);
-		jest.spyOn(TrustedRootDb, 'getTrustedRootIds').mockImplementationOnce(async () => [{ id: ServerIdentityMock.doc.id }]);
+		jest.spyOn(TrustedRootDb, 'getTrustedRootIds').mockImplementationOnce(async () => [{ id: ServerIdentityMock.document.doc.id }]);
 		jest.spyOn(VerifiableCredentialDb, 'getNextCredentialIndex').mockImplementationOnce(async () => 1);
 		const loggerInfoSpy = jest.spyOn(LoggerMock, 'log').mockImplementationOnce(() => null);
 
@@ -127,7 +127,7 @@ describe('test keygenerator', () => {
 		expect(loggerInfoSpy).toHaveBeenCalledWith('Setting root identity please wait...');
 		expect(loggerInfoSpy).toHaveBeenCalledWith('Verify if root identity already exists...');
 		expect(loggerInfoSpy).toHaveBeenCalledWith('creating the server identity...');
-		expect(issueCredentialSpy).toHaveBeenCalledWith(sub, ServerIdentityMock.doc.id, ServerIdentityMock.doc.id); // should run till end of setup
+		expect(issueCredentialSpy).toHaveBeenCalledWith(sub, ServerIdentityMock.document.doc.id, ServerIdentityMock.document.doc.id); // should run till end of setup
 	});
 
 	afterEach(() => {

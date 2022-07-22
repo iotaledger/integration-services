@@ -105,7 +105,7 @@ describe('test authentication routes', () => {
 		const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
 		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
-			return { doc: UserIdentityMock.doc, messageId: '' };
+			return { document: UserIdentityMock.document, messageId: '' };
 		});
 		const getPublicKeySpy = jest
 			.spyOn(ssiService, 'getPublicKey')
@@ -123,7 +123,7 @@ describe('test authentication routes', () => {
 
 		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getLatestIdentityDocSpy).toHaveBeenCalledWith(id);
-		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.doc);
+		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.document);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 			'0171f9b7366cc7928851a15ac28bf3741d9e19d96da2af6445ca09b2fcdafd19',
@@ -159,7 +159,7 @@ describe('test authentication routes', () => {
 		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
-			return { doc: UserIdentityMock.doc, messageId: '' };
+			return { document: UserIdentityMock.document, messageId: '' };
 		});
 		const getPublicKeySpy = jest
 			.spyOn(ssiService, 'getPublicKey')
@@ -178,7 +178,7 @@ describe('test authentication routes', () => {
 
 		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getLatestIdentityDocSpy).toHaveBeenCalledWith(id);
-		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.doc);
+		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.document);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 			'0171f9b7366cc7928851a15ac28bf3741d9e19d96da2af6445ca09b2fcdafd19',
@@ -195,7 +195,7 @@ describe('test authentication routes', () => {
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
 		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
-			return { doc: UserIdentityMock.doc, messageId: '' };
+			return { document: UserIdentityMock.document, messageId: '' };
 		});
 		const getPublicKeySpy = jest
 			.spyOn(ssiService, 'getPublicKey')
@@ -213,7 +213,7 @@ describe('test authentication routes', () => {
 
 		expect(getUserSpy).toHaveBeenCalledWith(id);
 		expect(getLatestIdentityDocSpy).toHaveBeenCalledWith(id);
-		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.doc);
+		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.document);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
 			'0171f9b7366cc7928851a15ac28bf3741d9e19d96da2af6445ca09b2fcdafd19',
