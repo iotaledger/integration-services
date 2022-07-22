@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.20 (2022-07-22)
+
+- Moved web imports to we folder
+
 ### 0.1.19 (2022-07-22)
 
 - Fixed typings import
