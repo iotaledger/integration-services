@@ -13,9 +13,9 @@ export {
 	IdentityKeys,
 	IdentitySearchBody,
 	LatestIdentityJson,
-	VerifiableCredentialJson
+	VerifiableCredentialJson,
+	VerifiableCredentialPersistence
 } from './identity';
-export { KeyCollectionJson, KeyCollectionPersistence, SimpleKeyPair, VerifiableCredentialPersistence } from './key-collection';
 export {
 	AddChannelLogBody,
 	AuthorizeSubscriptionBody,

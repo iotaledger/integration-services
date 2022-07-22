@@ -7,8 +7,25 @@ import {
 	IdentityKeyPairJsonSchema,
 	IdentityJsonSchema
 } from '../schemas/identity';
-import { CreateIdentityBodySchema, LatestIdentityDocSchema, IdentitySearchBodySchema } from '../schemas/request-response-body/identity-bodies';
+import {
+	CreateIdentityBodySchema,
+	LatestIdentityDocSchema,
+	IdentitySearchBodySchema
+} from '../schemas/request-response-body/identity-bodies';
 import { IdentitySchema } from '../schemas/user';
+
+export interface Bitmap {
+	id: string;
+	index: number;
+	serviceEndpoint: string | string[] | Map<string, string[]> | Record<string, string[]>;
+}
+
+export interface VerifiableCredentialPersistence {
+	index: number;
+	initiatorId: string;
+	isRevoked: boolean;
+	vc: VerifiableCredentialJson;
+}
 
 export interface Credential<T> {
 	id: string;
@@ -21,9 +38,9 @@ export interface IdentityDocument extends Identity.Document {
 	key: Identity.KeyPair;
 }
 
-export type IdentitySearchBody = Static<typeof IdentitySearchBodySchema>
+export type IdentitySearchBody = Static<typeof IdentitySearchBodySchema>;
 
-export type IdentityInternal = Static<typeof IdentitySchema>
+export type IdentityInternal = Static<typeof IdentitySchema>;
 export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>;
 
 export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;

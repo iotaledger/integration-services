@@ -6,6 +6,11 @@ export enum Encoding {
 	base64 = 'base64'
 }
 
+export enum KeyTypes {
+	ed25519 = 'ed25519',
+	x25519 = 'x25519'
+}
+
 export const VerifiableCredentialSubjectSchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }),
 	type: Type.String({ minLength: 1 }),
