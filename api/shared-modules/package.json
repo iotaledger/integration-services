@@ -1,14 +1,16 @@
 {
 	"name": "@iota/is-shared-modules",
-	"version": "0.1.17",
+	"version": "0.1.18",
 	"description": "Shared modules of the Integration Service.",
-	"main": "lib/index-node.js",
-	"types": "lib/index-node.d.ts",
+	"main": "lib/index-browser.js",
+	"types": "lib/node/index.d.ts",
 	"browser": "lib/index-browser.js",
 	"scripts": {
 		"build-tsc": "tsc --project ./",
 		"build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-		"build": "npm-run-all build-tsc build-lint",
+		"build-copy-node-folder": "cp -a ./lib/node/. ./node", // copy node folder to make import easier
+		"build-types": "node types-generator.js", // adding model types into node types by adding 'export * from '../lib/models';' to ./node/index.d.ts
+		"build": "npm-run-all build-tsc build-lint build-copy-node-folder build-types",
 		"serve": "tsc --project ./ --watch"
 	},
 	"author": {
@@ -56,6 +58,7 @@
 		"@types/jest": "^27.0.2",
 		"@types/lodash": "^4.14.178",
 		"@types/mongodb": "^3.6.5",
+		"@types/node": "^18.0.6",
 		"@typescript-eslint/eslint-plugin": "^5.30.5",
 		"@typescript-eslint/parser": "^5.30.5",
 		"eslint": "^7.18.0",
@@ -67,12 +70,10 @@
 		"ts-jest": "^27.0.7",
 		"typescript": "^4.7.4"
 	},
-	"exports": {
-		"./node": "./lib/index-node.js",
-		".": "./lib/index-browser.js"
-	},
 	"files": [
 		"lib",
-		"src"
+		"src",
+		"node",
+		"CHANGELOG.md"
 	]
 }

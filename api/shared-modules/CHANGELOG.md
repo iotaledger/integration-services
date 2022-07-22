@@ -1,5 +1,13 @@
 # Changelog
 
+### 0.1.18 (2022-07-22)
+
+- Replaced export maps with simple folder imports, imports requiring node can still be imported with `@iota/is-shared-modules/node`
+
+### 0.1.17 (2022-07-22) **POTENTIALLY BREAKING**
+
+- Adjusted imports with export maps, imports requiring node can now be imported with `@iota/is-shared-modules/node`, all other imports are still available with `@iota/is-shared-modules`
+
 ### 0.1.16 (2022-07-15)
 
 - Removed `visibilityList` from ChannelInfoSearchSchema

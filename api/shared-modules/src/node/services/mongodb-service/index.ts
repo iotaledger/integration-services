@@ -15,7 +15,7 @@ import {
 	FindOneOptions,
 	CommonOptions
 } from 'mongodb';
-import { Logger } from '../../node/utils/logger';
+import { Logger } from '../../utils/logger';
 import * as _ from 'lodash';
 
 const logger = Logger.getInstance();
