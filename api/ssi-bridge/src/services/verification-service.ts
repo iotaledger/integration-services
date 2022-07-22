@@ -6,7 +6,7 @@ import {
 	IdentityKeys,
 	Subject
 } from '@iota/is-shared-modules';
-import { SsiService } from './ssi-service';
+import { SsiService, Bitmap } from './ssi-service';
 import { UserService } from './user-service';
 import * as VerifiableCredentialsDb from '../database/verifiable-credentials';
 import * as IdentityDocsDb from '../database/identity-keys';
@@ -15,13 +15,6 @@ import * as BitmapDb from '../database/revocation-bitmap';
 import { JsonldGenerator } from '../utils/jsonld';
 import { ILogger } from '../utils/logger';
 import { IConfigurationService } from './configuration-service';
-
-// TODO move type
-export interface Bitmap {
-	id: string;
-	index: number;
-	serviceEndpoint: string | string[] | Map<string, string[]> | Record<string, string[]>;
-}
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identity found for issuerId: ${issuerId}`;

@@ -1,4 +1,4 @@
-import { Bitmap } from '../../services/verification-service';
+import { Bitmap } from '../../services/ssi-service';
 
 export const BitmapMock: Bitmap = {
 	id: 'signature-bitmap-0',

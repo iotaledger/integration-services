@@ -5,6 +5,18 @@ const { Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Ident
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
 
+// TODO move to shared-modules
+export enum KeyTypes {
+	ed25519 = 'ed25519',
+	x25519 = 'x25519'
+}
+// TODO move type
+export interface Bitmap {
+	id: string;
+	index: number;
+	serviceEndpoint: string | string[] | Map<string, string[]> | Record<string, string[]>;
+}
+
 export class SsiService {
 	private static instance: SsiService;
 	private constructor(private readonly config: IdentityConfig, private readonly logger: ILogger) {}
@@ -48,7 +60,7 @@ export class SsiService {
 			const identity = await this.generateIdentity();
 			const publicKey = bs58.encode(identity.key.public());
 			const privateKey = bs58.encode(identity.key.private());
-			const keyType = identity.key.type() === 1 ? 'ed25519' : 'x25519'; // TODO use enum or static string
+			const keyType = identity.key.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
 
 			return {
 				id: identity.doc.id().toString(),
@@ -83,7 +95,10 @@ export class SsiService {
 					revocationBitmapIndex: subjectKeyIndex
 				},
 				issuer: issuerId,
-				credentialSubject: credential.subject as any // TODO adjust subject type
+				credentialSubject: {
+					id: credential.id,
+					...credential.subject
+				}
 			});
 			const methodId = document.defaultSigningMethod().id().toString();
 			const signedCredential = await document.signCredential(unsignedVc, key.private(), methodId, Identity.ProofOptions.default());
