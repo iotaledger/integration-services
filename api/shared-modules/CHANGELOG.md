@@ -2,7 +2,7 @@
 
 ### 0.1.20 (2022-07-22)
 
-- Moved web imports to we folder
+- Moved web imports to web folder
 
 ### 0.1.19 (2022-07-22)
 
