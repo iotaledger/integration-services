@@ -6,7 +6,7 @@ export {
 	Credential,
 	CredentialSubject,
 	IdentityDocument,
-	IdentityDocumentJson,
+	IdentityDocument as IdentityDocumentJson,
 	IdentityInternal,
 	IdentityJson,
 	IdentityKeyPairJson,

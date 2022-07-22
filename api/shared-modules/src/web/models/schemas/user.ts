@@ -19,6 +19,5 @@ export const IdentityWithoutIdFields = {
 
 export const IdentitySchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }), // did
-
 	...IdentityWithoutIdFields
 });

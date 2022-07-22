@@ -3,7 +3,7 @@ import { Static } from '@sinclair/typebox';
 import {
 	VerifiableCredentialSchema,
 	VerifiableCredentialSubjectSchema,
-	IdentityDocumentJsonSchema,
+	IdentityDocumentSchema,
 	IdentityKeyPairJsonSchema,
 	IdentityJsonSchema
 } from '../schemas/identity';
@@ -13,6 +13,7 @@ import {
 	IdentitySearchBodySchema
 } from '../schemas/request-response-body/identity-bodies';
 import { IdentitySchema } from '../schemas/user';
+import { IdentityKeysSchema, KeysSchema } from '../schemas/identity';
 
 export interface Bitmap {
 	id: string;
@@ -33,11 +34,6 @@ export interface Credential<T> {
 	subject: T;
 }
 
-export interface IdentityDocument extends Identity.Document {
-	doc: Identity.Document;
-	key: Identity.KeyPair;
-}
-
 export type IdentitySearchBody = Static<typeof IdentitySearchBodySchema>;
 
 export type IdentityInternal = Static<typeof IdentitySchema>;
@@ -46,12 +42,10 @@ export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>;
 export type VerifiableCredentialJson = Static<typeof VerifiableCredentialSchema>;
 export type CredentialSubject = Static<typeof VerifiableCredentialSubjectSchema>;
 
-export type IdentityDocumentJson = Static<typeof IdentityDocumentJsonSchema>;
+export type IdentityDocument = Static<typeof IdentityDocumentSchema>;
 export type IdentityKeyPairJson = Static<typeof IdentityKeyPairJsonSchema>;
 export type IdentityJson = Static<typeof IdentityJsonSchema>;
 export type LatestIdentityJson = Static<typeof LatestIdentityDocSchema>;
 
-export interface IdentityKeys {
-	id: string;
-	key: IdentityKeyPairJson;
-}
+export type IdentityKeys = Static<typeof IdentityKeysSchema>;
+export type Keys = Static<typeof KeysSchema>;

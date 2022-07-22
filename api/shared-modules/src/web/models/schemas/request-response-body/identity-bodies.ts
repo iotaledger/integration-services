@@ -1,5 +1,5 @@
 import { Type } from '@sinclair/typebox';
-import { IdentityDocumentJsonSchema } from '../identity';
+import { IdentityDocumentSchema } from '../identity';
 import { IdentityWithoutIdAndCredentialFields, IdentityWithoutIdFields } from '../user';
 
 export const CreateIdentityBodySchema = Type.Object({
@@ -18,6 +18,6 @@ export const IdentitySearchBodySchema = Type.Object({
 });
 
 export const LatestIdentityDocSchema = Type.Object({
-	document: IdentityDocumentJsonSchema,
+	document: IdentityDocumentSchema,
 	messageId: Type.String()
 });
