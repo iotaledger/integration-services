@@ -1,16 +1,16 @@
 {
 	"name": "@iota/is-shared-modules",
-	"version": "0.1.18",
+	"version": "0.1.19",
 	"description": "Shared modules of the Integration Service.",
 	"main": "lib/index-browser.js",
-	"types": "lib/node/index.d.ts",
+	"types": "lib/index-browser.d.ts",
 	"browser": "lib/index-browser.js",
 	"scripts": {
 		"build-tsc": "tsc --project ./",
 		"build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
 		"build-copy-node-folder": "cp -a ./lib/node/. ./node",
 		"build-types": "node types-generator.js",
-		"build": "npm-run-all build-tsc build-lint build-copy-node-folder build-types",
+		"build": "npm-run-all build-tsc build-lint build-copy-node-folder",
 		"serve": "tsc --project ./ --watch"
 	},
 	"author": {

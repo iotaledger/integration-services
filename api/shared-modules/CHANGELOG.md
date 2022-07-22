@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.19 (2022-07-22)
+
+- Fixed typings import
+
 ### 0.1.18 (2022-07-22)
 
 - Replaced export maps with simple folder imports, imports requiring node can still be imported with `@iota/is-shared-modules/node`
