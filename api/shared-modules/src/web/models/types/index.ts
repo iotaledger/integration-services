@@ -6,14 +6,12 @@ export {
 	Credential,
 	CredentialSubject,
 	IdentityDocument,
-	IdentityDocument as IdentityDocumentJson,
 	IdentityInternal,
-	IdentityJson,
-	IdentityKeyPairJson,
+	IdentityKeyPair as IdentityKeyPairJson,
 	IdentityKeys,
 	IdentitySearchBody,
-	LatestIdentityJson,
-	VerifiableCredentialJson,
+	LatestIdentity as LatestIdentityJson,
+	VerifiableCredential as VerifiableCredentialJson,
 	VerifiableCredentialPersistence
 } from './identity';
 export {

@@ -65,7 +65,7 @@ export const IdentityDocumentSchema = Type.Object({
 	integrationMessageId: Type.String()
 });
 
-export const IdentityKeyPairJsonSchema = Type.Object({
+export const IdentityKeyPairSchema = Type.Object({
 	type: Type.String(),
 	public: Type.String(),
 	private: Type.String(),
@@ -73,12 +73,7 @@ export const IdentityKeyPairJsonSchema = Type.Object({
 });
 
 export const KeysSchema = Type.Object({
-	sign: IdentityKeyPairJsonSchema
-});
-
-export const IdentityJsonSchema = Type.Object({
-	document: IdentityDocumentSchema,
-	keys: KeysSchema
+	sign: IdentityKeyPairSchema
 });
 
 export const IdentityKeysSchema = Type.Object({
