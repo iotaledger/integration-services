@@ -91,7 +91,7 @@ export class UserService {
 	async getUser(id: string, isAuthorizedUser?: boolean): Promise<User | null> {
 		const userPersistence = await userDb.getUser(id);
 		const user = userPersistence && this.getUserObject(userPersistence);
-		const privateUserInfo: boolean = user?.isPrivate && !isAuthorizedUser;
+		const hiddenUserInfo: boolean = user?.hidden && !isAuthorizedUser;
 
 		if (!user) {
 			return null;
@@ -99,8 +99,8 @@ export class UserService {
 
 		return {
 			...user,
-			claim: !privateUserInfo ? user.claim : undefined,
-			verifiableCredentials: !privateUserInfo ? user.verifiableCredentials : undefined
+			claim: !hiddenUserInfo ? user.claim : undefined,
+			verifiableCredentials: !hiddenUserInfo ? user.verifiableCredentials : undefined
 		};
 	}
 
@@ -157,7 +157,7 @@ export class UserService {
 		if (user == null || isEmpty(user.id)) {
 			throw new Error('Error when parsing the body: id must be provided!');
 		}
-		const { id, username, creator, registrationDate, claim, verifiableCredentials, role, isPrivate, isServerIdentity } = user;
+		const { id, username, creator, registrationDate, claim, verifiableCredentials, role, hidden, isServerIdentity } = user;
 
 		const userPersistence: UserPersistence = {
 			id,
@@ -167,7 +167,7 @@ export class UserService {
 			claim,
 			verifiableCredentials,
 			role: role && (role as UserRoles),
-			isPrivate,
+			hidden,
 			isServerIdentity
 		};
 
@@ -179,7 +179,7 @@ export class UserService {
 			return null;
 		}
 
-		const { username, creator, id, registrationDate, claim, verifiableCredentials, role, isPrivate } = userPersistence;
+		const { username, creator, id, registrationDate, claim, verifiableCredentials, role, hidden } = userPersistence;
 
 		const user: User = {
 			id,
@@ -189,7 +189,7 @@ export class UserService {
 			claim,
 			verifiableCredentials,
 			role: role && (role as UserRoles),
-			isPrivate
+			hidden
 		};
 		return user;
 	}

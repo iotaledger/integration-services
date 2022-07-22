@@ -106,7 +106,7 @@ export abstract class BaseClient {
     return response?.data;
   }
 
-  async get(url: string, params: any = {}) {
+  async get(url: string, params: any = {}, data: any = {}) {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'get',

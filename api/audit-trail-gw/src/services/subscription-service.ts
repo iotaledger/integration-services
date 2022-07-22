@@ -64,8 +64,8 @@ export class SubscriptionService {
 	}
 
 	async isAuthor(channelAddress: string, authorId: string): Promise<boolean> {
-		const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-		return channelInfo.authorId == authorId;
+		const channelAuthorId = await this.channelInfoService.getChannelAuthor(channelAddress);
+		return channelAuthorId == authorId;
 	}
 
 	async setSubscriptionAuthorized(channelAddress: string, id: string, keyloadLink: string, sequenceLink: string) {

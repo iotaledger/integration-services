@@ -9,7 +9,8 @@ import {
 	UserSearch,
 	IdentityClaim,
 	getDateFromString,
-	getDateStringFromDate
+	getDateStringFromDate,
+	UserRoles
 } from '@iota/is-shared-modules';
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
@@ -188,7 +189,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date,
-				isPrivate: true
+				hidden: true
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
@@ -202,7 +203,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: undefined, // claim is undefined since user id and requester is different
 				registrationDate: getDateStringFromDate(date),
-				isPrivate: true
+				hidden: true
 			};
 			await userRoutes.getUser(req, res, nextMock);
 
@@ -218,7 +219,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim,
 				registrationDate: date,
-				isPrivate: true
+				hidden: true
 			};
 			const getUserSpy = jest.spyOn(UserDb, 'getUser').mockImplementationOnce(async () => user);
 			const req: any = {
@@ -232,7 +233,7 @@ describe('test user routes', () => {
 				username: 'first-user',
 				claim: { type: UserType.Person, firstName: 'Tom', lastName: 'Tomson' } as IdentityClaim, // claim is not undefined since is the same user
 				registrationDate: getDateStringFromDate(date),
-				isPrivate: true
+				hidden: true
 			};
 			await userRoutes.getUser(req, res, nextMock);
 
@@ -483,6 +484,58 @@ describe('test user routes', () => {
 
 			expect(updateUserSpy).toHaveBeenCalledTimes(1);
 			expect(sendStatusMock).toHaveBeenCalledWith(200);
+		});
+
+		test.each([UserRoles.Admin, UserRoles.Manager, UserRoles.User])(
+			'admins can set the role of user to manager, admin or user',
+			async (role) => {
+				const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+
+				const req: any = {
+					user: { id: 'did:iota:12345', role: UserRoles.Admin },
+					params: {},
+					body: { ...validBody, role: role }
+				};
+
+				await userRoutes.updateUser(req, res, nextMock);
+
+				expect(updateUserSpy).toHaveBeenCalledTimes(1);
+				expect(sendStatusMock).toHaveBeenCalledWith(200);
+			}
+		);
+
+		test.each([UserRoles.Admin, UserRoles.Manager])('manager can not update role to manager or admin', async (role) => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+
+			const req: any = {
+				user: { id: validBody.id, role: UserRoles.Manager },
+				params: {},
+				body: { ...validBody, role: role }
+			};
+
+			await userRoutes.updateUser(req, res, nextMock);
+
+			expect(updateUserSpy).toHaveBeenCalledTimes(0);
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to update role!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
+		});
+
+		test.each([UserRoles.Admin, UserRoles.Manager])('user can not update role to manager or admin', async (role) => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+
+			const req: any = {
+				user: { id: validBody.id, role: UserRoles.User },
+				params: {},
+				body: { ...validBody, role: role }
+			};
+
+			await userRoutes.updateUser(req, res, nextMock);
+
+			expect(updateUserSpy).toHaveBeenCalledTimes(0);
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to update role!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
 		});
 
 		it('should call next(err) if an error occurs when updating the db', async () => {

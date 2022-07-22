@@ -21,23 +21,25 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 		topicSource,
 		limit,
 		index,
-		ascending
+		ascending,
+		hidden
 	} = channelInfoSearch;
 
+	const nameFilter = name ? { name: regex(name) } : undefined;
 	const authorFilter = authorId ? { authorId: regex(authorId) } : undefined;
+	const typeFilter = topicType ? { 'topics.type': { $regex: regex(topicType) } } : undefined;
+	const sourceFilter = topicSource ? { 'topics.source': { $regex: regex(topicSource) } } : undefined;
 	const subscriberIdsFilter = subscriberId ? { subscriberIds: { $elemMatch: { $eq: subscriberId } } } : undefined;
 	const requestedSubscriptionIdsFilter = requestedSubscriptionId
 		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
 		: undefined;
-	const idFilters = [authorFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+	const filters = [nameFilter, authorFilter, typeFilter, sourceFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
 
 	const query = {
-		$or: idFilters.length >= 1 ? idFilters : undefined,
-		name: regex(name),
+		$or: filters.length >= 1 ? filters : undefined,
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
-		'topics.source': regex(topicSource),
-		'topics.type': regex(topicType)
+		hidden: hidden === true || hidden === false ? hidden : undefined
 	};
 	const plainQuery = MongoDbService.getPlainObject(query);
 	const sort = ascending != null ? { created: ascending ? 1 : -1 } : undefined;
@@ -58,14 +60,17 @@ export const addChannelInfo = async (channelInfo: ChannelInfoPersistence) => {
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence) => {
+export const updateChannel = async (channelInfo: ChannelInfoPersistence) => {
 	const query = {
 		_id: channelInfo.channelAddress
 	};
-	const { topics } = channelInfo;
+	const { topics, hidden, visibilityList } = channelInfo;
+
 	const update = {
 		$set: {
-			topics
+			topics,
+			hidden,
+			visibilityList
 		}
 	};
 

@@ -1,8 +1,16 @@
 # Changelog
 
+### 0.1.16 (2022-07-15)
+
+- Removed `visibilityList` from ChannelInfoSearchSchema
+
+### 0.1.15 (2022-07-07)
+
+- Changed property `isPrivate` to `hidden` IdentityWithoutIdFields and IdentityWithoutIdAndCredentialFields
+
 ### 0.1.14 (2022-07-07)
 
-- Added `hidden` and `visibilityList` properties to CreateChannelBodySchema, ChannelInfoSchema and ChannelINfoSearchSchema
+- Added `hidden` and `visibilityList` properties to CreateChannelBodySchema, ChannelInfoSchema and ChannelInfoSearchSchema
 
 ### 0.1.13 (2022-07-05)
 

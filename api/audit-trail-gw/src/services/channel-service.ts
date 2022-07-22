@@ -48,8 +48,10 @@ export class ChannelService {
 		seed?: string;
 		presharedKey?: string;
 		type?: ChannelType;
+		hidden?: boolean,
+		visibilityList: {id: string} []
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -82,7 +84,9 @@ export class ChannelService {
 			name,
 			description,
 			channelAddress: res.channelAddress,
-			type
+			type,
+			hidden,
+			visibilityList
 		});
 
 		return {
@@ -142,8 +146,8 @@ export class ChannelService {
 
 				// normally it should be possible to use `getChannelData` and fetch the data but the subscription was not able to receive the data from a public channel
 				// that's why we use the getHistory workaround here and need to investigate after the new streams version is released
-				const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-				if (channelInfo.type === ChannelType.public) {
+				const type = await this.channelInfoService.getChannelType(channelAddress);
+				if (type === ChannelType.public) {
 					return this.getHistory(channelAddress, ChannelType.public, '');
 				}
 
