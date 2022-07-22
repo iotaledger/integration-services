@@ -8,8 +8,8 @@
 	"scripts": {
 		"build-tsc": "tsc --project ./",
 		"build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-		"build-copy-node-folder": "cp -a ./lib/node/. ./node", // copy node folder to make import easier
-		"build-types": "node types-generator.js", // adding model types into node types by adding 'export * from '../lib/models';' to ./node/index.d.ts
+		"build-copy-node-folder": "cp -a ./lib/node/. ./node",
+		"build-types": "node types-generator.js",
 		"build": "npm-run-all build-tsc build-lint build-copy-node-folder build-types",
 		"serve": "tsc --project ./ --watch"
 	},
