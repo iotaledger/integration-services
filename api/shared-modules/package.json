@@ -9,7 +9,6 @@
 		"build-tsc": "tsc --project ./",
 		"build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
 		"build-copy-node-folder": "cp -a ./lib/node/. ./node",
-		"build-types": "node types-generator.js",
 		"build": "npm-run-all build-tsc build-lint build-copy-node-folder",
 		"serve": "tsc --project ./ --watch"
 	},
