@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@iota/crypto.js": "^1.8.6",
-    "@iota/is-shared-modules": "^0.1.14",
+    "@iota/is-shared-modules": "^0.1.20",
     "@iota/util.js": "^1.8.6",
     "@noble/ed25519": "^1.6.1",
     "axios": "~0.24.0"

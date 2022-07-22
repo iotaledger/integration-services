@@ -1,10 +1,7 @@
-import { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 import {
+  ChannelData,
   ChannelInfo,
-  ChannelInfoSearch
-} from '@iota/is-shared-modules/lib/models/types/channel-info';
-import { ClientConfig } from '../models/clientConfig';
-import {
+  ChannelInfoSearch,
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
@@ -15,14 +12,13 @@ import {
   AuthorizeSubscriptionResponse,
   RequestSubscriptionBody,
   RequestSubscriptionResponse,
-  RevokeSubscriptionBody
-} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
-import {
+  RevokeSubscriptionBody,
   Subscription,
-  SubscriptionUpdate
-} from '@iota/is-shared-modules/lib/models/types/subscription';
+  SubscriptionUpdate,
+  ChannelType
+} from '@iota/is-shared-modules';
+import { ClientConfig } from '../models/clientConfig';
 import { BaseClient } from './base';
-import { ChannelType } from '@iota/is-shared-modules/lib/models/schemas/channel-info';
 
 export class ChannelClient extends BaseClient {
   private baseUrl: string;
@@ -172,7 +168,7 @@ export class ChannelClient extends BaseClient {
         ? { 'requested-subscription-id': requestedSubscriptionId }
         : {};
     const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
-    const hiddenParam = hidden !== undefined ? {hidden: hidden} : {};
+    const hiddenParam = hidden !== undefined ? { hidden: hidden } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
       ...topicTypeParam,

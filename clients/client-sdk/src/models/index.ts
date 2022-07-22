@@ -5,12 +5,10 @@ export * from './clientConfig';
 export * from './apiVersion';
 
 // Export channel types
-export { ChannelData } from '@iota/is-shared-modules/lib/models/types/channel-data';
 export {
+  ChannelData,
   ChannelInfo,
-  ChannelInfoSearch
-} from '@iota/is-shared-modules/lib/models/types/channel-info';
-export {
+  ChannelInfoSearch,
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
@@ -21,24 +19,18 @@ export {
   AuthorizeSubscriptionResponse,
   RequestSubscriptionBody,
   RequestSubscriptionResponse,
-  RevokeSubscriptionBody
-} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
-export {
+  RevokeSubscriptionBody,
   Subscription,
-  SubscriptionUpdate
-} from '@iota/is-shared-modules/lib/models/types/subscription';
-export { AccessRights } from '@iota/is-shared-modules/lib/models/schemas/subscription';
-
-// Export identity types
-export {
+  SubscriptionUpdate,
+  AccessRights,
   IdentityInternal,
   IdentityJson,
-  VerifiableCredentialJson
-} from '@iota/is-shared-modules/lib/models/types/identity';
-export { RevokeVerificationBody } from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
-export { User, UserType, UserRoles } from '@iota/is-shared-modules/lib/models/types/user';
-export {
+  VerifiableCredentialJson,
+  RevokeVerificationBody,
+  User,
+  UserType,
+  UserRoles,
   CredentialTypes,
-  VerifiableCredentialInternal
-} from '@iota/is-shared-modules/lib/models/types/verification';
-export { IdentityDocumentJson } from '@iota/is-shared-modules/lib/models/types/identity';
+  VerifiableCredentialInternal,
+  IdentityDocumentJson
+} from '@iota/is-shared-modules';
