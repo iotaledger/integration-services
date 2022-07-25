@@ -111,7 +111,7 @@ describe('test authentication routes', () => {
 				body: {
 					subject: {
 						id: subject.id,
-						credentialType: 'VerifiedIdentityCredential',
+						credentialType: 'BasicIdentityCredential',
 						claim: { ...subject.claim, type: subject.type }
 					},
 					initiatorVC

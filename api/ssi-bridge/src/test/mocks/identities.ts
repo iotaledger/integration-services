@@ -1,5 +1,5 @@
 import { IdentityKeys, User, UserType } from '@iota/is-shared-modules';
-import { IdentityDocument, Keys } from '../../../../shared-modules/src/web/models/types/identity';
+import { IdentityDocument, Keys } from '@iota/is-shared-modules';
 
 export const TestUsersMock = [
 	{
@@ -148,6 +148,33 @@ export const ServerIdentityMock = {
 				'@context': 'https://www.w3.org/2018/credentials/v1',
 				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 				type: ['VerifiableCredential', 'VerifiedIdentityCredential'],
+				credentialSubject: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+					'@context': 'https://schema.org/',
+					familyName: 'Enginssseer',
+					givenName: 'Test',
+					initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+					jobTitle: 'Software Engineer',
+					name: 'Test Engineer',
+					type: 'Person'
+				},
+				issuer: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+				issuanceDate: '2022-07-20T08:15:32Z',
+				credentialStatus: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+					type: 'RevocationBitmap2022',
+					revocationBitmapIndex: 6
+				},
+				proof: {
+					type: 'JcsEd25519Signature2020',
+					verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+					signatureValue: 'QESXmEUkdALsJvME2AWS7ZbFzKwopTNdEoqcy6vBDJGKVEeUW6Gz4dzGd6paX7JvYd25JJsz4BtWBUaoTog3ErM'
+				}
+			},
+			{
+				'@context': 'https://www.w3.org/2018/credentials/v1',
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+				type: ['VerifiableCredential', 'BasicIdentityCredential'],
 				credentialSubject: {
 					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 					'@context': 'https://schema.org/',
