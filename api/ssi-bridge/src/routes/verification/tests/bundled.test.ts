@@ -52,16 +52,19 @@ describe('test authentication routes', () => {
 			const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 			const getLatestIdentitySpy = jest
 				.spyOn(ssiService, 'getLatestIdentityDoc')
-				.mockReturnValue(Promise.resolve(UserIdentityMock.document));
+				.mockReturnValue(Promise.resolve({ document: UserIdentityMock.document, messageId: 'mymessageid' } as any));
 			const req: any = {
 				params: { id },
 				body: null
 			};
 
 			await verificationRoutes.getLatestDocument(req, res, nextMock);
-
+			const expectedDocument = {
+				document: UserIdentityMock.document,
+				messageId: 'mymessageid'
+			};
 			expect(getLatestIdentitySpy).toHaveBeenCalledWith(id);
-			expect(res.send).toHaveBeenCalledWith({ ...UserIdentityMock.document });
+			expect(res.send).toHaveBeenCalledWith(expectedDocument);
 		});
 	});
 });

@@ -1,5 +1,5 @@
 import { CollectionNames } from './constants';
-import { UserPersistence, UserRoles, UserSearch, VerifiableCredentialJson } from '@iota/is-shared-modules';
+import { UserPersistence, UserRoles, UserSearch, VerifiableCredential } from '@iota/is-shared-modules';
 import { MongoDbService } from '@iota/is-shared-modules/node';
 
 const collectionName = CollectionNames.users;
@@ -90,7 +90,7 @@ export const updateUser = async (user: UserPersistence) => {
 	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
-export const addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => {
+export const addUserVC = async (vc: VerifiableCredential): Promise<void> => {
 	const currentUser = await getUser(vc.id);
 	const currentVCs = currentUser?.verifiableCredentials || [];
 
@@ -116,7 +116,7 @@ export const addUserVC = async (vc: VerifiableCredentialJson): Promise<void> => 
 	}
 };
 
-export const removeUserVC = async (vc: VerifiableCredentialJson): Promise<UserPersistence> => {
+export const removeUserVC = async (vc: VerifiableCredential): Promise<UserPersistence> => {
 	const currentUser = await getUser(vc.id);
 	const currentVCs = currentUser.verifiableCredentials || [];
 

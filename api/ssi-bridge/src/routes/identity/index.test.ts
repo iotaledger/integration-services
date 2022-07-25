@@ -276,8 +276,8 @@ describe('test user routes', () => {
 			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => ({ result: { n: 0 } } as any)); // no user added
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityDoc')
-				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' }));
-			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.key.public);
+				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' } as any));
+			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.keys.sign.public);
 
 			const req: any = {
 				params: {},
@@ -295,8 +295,8 @@ describe('test user routes', () => {
 		it('should add user', async () => {
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityDoc')
-				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' }));
-			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.key.public);
+				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' } as any));
+			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.keys.sign.public);
 			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
 			const req: any = {
@@ -316,8 +316,8 @@ describe('test user routes', () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityDoc')
-				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' }));
-			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.key.public);
+				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' } as any));
+			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.keys.sign.public);
 			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => {
 				throw new Error('Test error');
 			});
@@ -370,7 +370,7 @@ describe('test user routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith({
 				id: UserIdentityMock.document.doc.id,
-				key: UserIdentityMock.key
+				keys: UserIdentityMock.keys
 			});
 		});
 
@@ -403,11 +403,11 @@ describe('test user routes', () => {
 			expect(identitySpy).toHaveBeenCalledWith();
 			expect(userSpy).toHaveBeenCalledWith(expectedUser);
 			expect(decodeUserSpy).toHaveBeenCalledWith('Bearer test');
-			expect(saveIdentitySpy).toHaveBeenCalledWith({ id: UserIdentityMock.document.doc.id, key: UserIdentityMock.key }, serverSecret);
+			expect(saveIdentitySpy).toHaveBeenCalledWith({ id: UserIdentityMock.document.doc.id, keys: UserIdentityMock.keys }, serverSecret);
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 			expect(res.send).toHaveBeenCalledWith({
 				id: UserIdentityMock.document.doc.id,
-				key: UserIdentityMock.key
+				keys: UserIdentityMock.keys
 			});
 		});
 	});

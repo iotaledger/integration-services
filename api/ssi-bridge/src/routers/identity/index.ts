@@ -205,7 +205,7 @@ identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
  *               credentialSubject:
  *                 id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *                 type: Service
- *                 initiatorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *                 initiator: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *               issuer: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *               issuanceDate: 2021-06-21T08:05:26Z
  *               proof:
@@ -268,7 +268,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *               credentialSubject:
  *                 id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *                 type: Service
- *                 initiatorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
+ *                 initiator: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *               issuer: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
  *               issuanceDate: 2021-06-21T08:05:26Z
  *               proof:

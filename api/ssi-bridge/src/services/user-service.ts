@@ -5,7 +5,7 @@ import {
 	UserSearch,
 	UserSearchResponse,
 	CreateIdentityBody,
-	VerifiableCredentialJson,
+	VerifiableCredential,
 	IdentityKeys
 } from '@iota/is-shared-modules';
 import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
@@ -136,11 +136,11 @@ export class UserService {
 		return userDb.updateUser(userPersistence);
 	}
 
-	async addUserVC(vc: VerifiableCredentialJson): Promise<void> {
+	async addUserVC(vc: VerifiableCredential): Promise<void> {
 		await userDb.addUserVC(vc);
 	}
 
-	async removeUserVC(vc: VerifiableCredentialJson): Promise<UserPersistence> {
+	async removeUserVC(vc: VerifiableCredential): Promise<UserPersistence> {
 		return userDb.removeUserVC(vc);
 	}
 

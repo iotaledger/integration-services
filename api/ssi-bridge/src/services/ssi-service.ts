@@ -1,6 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { VerifiableCredentialJson, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
+import { VerifiableCredential, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
 const { Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
@@ -100,7 +100,7 @@ export class SsiService {
 		}
 	}
 
-	async checkVerifiableCredential(signedVc: VerifiableCredentialJson): Promise<boolean> {
+	async checkVerifiableCredential(signedVc: VerifiableCredential): Promise<boolean> {
 		try {
 			const issuerDoc = (await this.getLatestIdentityDoc(signedVc.issuer)).document;
 			const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));

@@ -181,10 +181,10 @@ describe('test authentication routes', () => {
 			const subject = TestUsersMock[1];
 			const keyIndex = 0;
 			const bitmapIndex = 0;
-			const initiatorId = ServerIdentityMock.document.doc.id;
+			const initiator = ServerIdentityMock.document.doc.id;
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
-				user: { id: initiatorId, role: role, type: UserType.Person },
+				user: { id: initiator, role: role, type: UserType.Person },
 				params: {},
 				body: {
 					subject: {
@@ -198,7 +198,7 @@ describe('test authentication routes', () => {
 			const credentialSubject: CredentialSubject = {
 				type: subject.type,
 				id: subject.id,
-				initiatorId: initiatorId
+				initiator: initiator
 			};
 			const expectedCredential: any = {
 				type: 'VerifiedIdentityCredential',
@@ -213,7 +213,7 @@ describe('test authentication routes', () => {
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,
 				isRevoked: false,
-				initiatorId: initiatorId,
+				initiator: initiator,
 				vc: vcMock
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
@@ -253,7 +253,7 @@ describe('test authentication routes', () => {
 			const credentialSubject: CredentialSubject = {
 				type: subject.type,
 				id: subject.id,
-				initiatorId: initiatorVC.id
+				initiator: initiatorVC.id
 			};
 			const expectedCredential: any = {
 				type: 'VerifiedIdentityCredential',
@@ -269,7 +269,7 @@ describe('test authentication routes', () => {
 			const expectedAddKeyCollectionCall = {
 				index: keyIndex,
 				isRevoked: false,
-				initiatorId: initiatorVC.id,
+				initiator: initiatorVC.id,
 				vc: vcMock
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);

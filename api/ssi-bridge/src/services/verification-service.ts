@@ -1,7 +1,7 @@
 import {
 	VerifiableCredentialPersistence,
 	CredentialSubject,
-	VerifiableCredentialJson,
+	VerifiableCredential,
 	Credential,
 	IdentityKeys,
 	Subject
@@ -49,7 +49,7 @@ export class VerificationService {
 		return IdentityDocsDb.getIdentityKeys(did, this.serverSecret);
 	}
 
-	async issueVerifiableCredential(subject: Subject, issuerId: string, initiatorId: string) {
+	async issueVerifiableCredential(subject: Subject, issuerId: string, initiator: string) {
 		const jsonldGen = new JsonldGenerator();
 		const claim = jsonldGen.jsonldUserData(subject.claim.type, subject.claim);
 
@@ -60,7 +60,7 @@ export class VerificationService {
 				...claim,
 				type: subject.claim.type,
 				id: subject.id,
-				initiatorId
+				initiator
 			}
 		};
 		const currentCredentialIndex = await VerifiableCredentialsDb.getNextCredentialIndex(this.configService.serverIdentityId);
@@ -78,7 +78,7 @@ export class VerificationService {
 			{
 				vc,
 				index: nextCredentialIndex,
-				initiatorId,
+				initiator,
 				isRevoked: false
 			},
 			this.configService.serverIdentityId
@@ -88,7 +88,7 @@ export class VerificationService {
 		return vc;
 	}
 
-	async checkVerifiableCredential(vc: VerifiableCredentialJson): Promise<boolean> {
+	async checkVerifiableCredential(vc: VerifiableCredential): Promise<boolean> {
 		const serverIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(this.configService.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
 			throw new Error('no valid server identity to check the credential.');
@@ -157,7 +157,7 @@ export class VerificationService {
 		return TrustedRootsDb.removeTrustedRootId(trustedRootId);
 	}
 
-	async setUserVerified(id: string, issuerId: string, vc: VerifiableCredentialJson) {
+	async setUserVerified(id: string, issuerId: string, vc: VerifiableCredential) {
 		if (!issuerId) {
 			throw new Error('No valid issuer id!');
 		}

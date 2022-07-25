@@ -220,7 +220,7 @@ verificationRouter.delete('/trusted-roots/:trustedRootId', apiKeyMiddleware, aut
  *               credentialSubject:
  *                 id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
  *                 type: Person
- *                 initiatorId: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
+ *                 initiator: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
  *               issuer: did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof
  *               issuanceDate: 2021-06-18T11:33:59Z
  *               proof:
@@ -279,7 +279,7 @@ verificationRouter.post(
  *             credentialSubject:
  *               id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
  *               type: Person
- *               initiatorId: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
+ *               initiator: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
  *             issuer: did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof
  *             issuanceDate: 2021-06-18T11:33:59Z
  *             proof:

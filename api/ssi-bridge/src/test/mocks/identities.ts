@@ -92,7 +92,7 @@ export const UserIdentityMock = {
 					type: UserType.Person,
 					registrationDate: '2021-03-16T15:18:49+01:00',
 					username: 'first-user',
-					initiatorId: ''
+					initiator: ''
 				},
 				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
 				issuanceDate: '2021-03-24T15:59:11Z',
@@ -153,7 +153,7 @@ export const ServerIdentityMock = {
 					'@context': 'https://schema.org/',
 					familyName: 'Enginssseer',
 					givenName: 'Test',
-					initiatorId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+					initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
 					jobTitle: 'Software Engineer',
 					name: 'Test Engineer',
 					type: 'Person'
@@ -188,7 +188,7 @@ export const ServerIdentityKey: IdentityKeys = {
 	keys: ServerIdentityMock.keys
 };
 
-export const DeviceIdentityMock = {
+export const DeviceIdentityMock: { userData: User } = {
 	userData: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 		username: 'test-device',
@@ -214,7 +214,7 @@ export const DeviceIdentityMock = {
 			}
 		]
 	}
-} as { userData: User };
+};
 
 export const TestCredentialMock = {
 	'@context': 'https://www.w3.org/2018/credentials/v1',
@@ -225,7 +225,7 @@ export const TestCredentialMock = {
 		'@context': 'https://schema.org/',
 		familyName: 'Engineer',
 		givenName: 'Test',
-		initiatorId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+		initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
 		jobTitle: 'Software Engineer',
 		name: 'Test Engineer',
 		type: 'Person'

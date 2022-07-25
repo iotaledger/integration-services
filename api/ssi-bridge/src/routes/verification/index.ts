@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import {
-	VerifiableCredentialJson,
+	VerifiableCredential,
 	RevokeVerificationBody,
 	TrustedRootBody,
 	CreateCredentialBody,
@@ -46,7 +46,7 @@ export class VerificationRoutes {
 				throw error;
 			}
 
-			const vc: VerifiableCredentialJson = await this.verificationService.issueVerifiableCredential(
+			const vc: VerifiableCredential = await this.verificationService.issueVerifiableCredential(
 				subject,
 				this.configService.serverIdentityId,
 				initiatorVC?.credentialSubject?.id || requestUser.id
@@ -61,7 +61,7 @@ export class VerificationRoutes {
 
 	checkVerifiableCredential = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const vcBody = req.body as VerifiableCredentialJson;
+			const vcBody = req.body as VerifiableCredential;
 			const isVerified = await this.verificationService.checkVerifiableCredential(vcBody);
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {
@@ -158,7 +158,7 @@ export class VerificationRoutes {
 
 	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.id, kci.vc.id);
-		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.id, kci.initiatorId);
+		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.id, kci.initiator);
 		if (!isAuthorizedUser && !isAuthorizedInitiator) {
 			const isAuthorizedAdmin = this.authorizationService.isAuthorizedAdmin(requestUser);
 			const isAuthorizedManager = this.authorizationService.isAuthorizedManager(requestUser);
@@ -170,11 +170,7 @@ export class VerificationRoutes {
 		return { isAuthorized: true, error: null };
 	};
 
-	isAuthorizedToVerify = async (
-		subject: Subject,
-		initiatorVC: VerifiableCredentialJson,
-		requestUser: User
-	): Promise<AuthorizationCheck> => {
+	isAuthorizedToVerify = async (subject: Subject, initiatorVC: VerifiableCredential, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAdmin = requestUser.role === UserRoles.Admin;
 		const isManager = requestUser.role === UserRoles.Manager;
 		if (!isAdmin && !isManager) {

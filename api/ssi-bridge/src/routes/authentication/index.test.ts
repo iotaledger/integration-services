@@ -105,7 +105,7 @@ describe('test authentication routes', () => {
 		const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
 		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
-			return { document: UserIdentityMock.document, messageId: '' };
+			return { document: UserIdentityMock.document, messageId: '' } as any;
 		});
 		const getPublicKeySpy = jest
 			.spyOn(ssiService, 'getPublicKey')
@@ -159,7 +159,7 @@ describe('test authentication routes', () => {
 		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
-			return { document: UserIdentityMock.document, messageId: '' };
+			return { document: UserIdentityMock.document, messageId: '' } as any;
 		});
 		const getPublicKeySpy = jest
 			.spyOn(ssiService, 'getPublicKey')
@@ -195,7 +195,7 @@ describe('test authentication routes', () => {
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
 		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
-			return { document: UserIdentityMock.document, messageId: '' };
+			return { document: UserIdentityMock.document, messageId: '' } as any;
 		});
 		const getPublicKeySpy = jest
 			.spyOn(ssiService, 'getPublicKey')
