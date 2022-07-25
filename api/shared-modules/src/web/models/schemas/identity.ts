@@ -24,11 +24,13 @@ export const VerifiableCredentialSchema = Type.Object({
 	credentialSubject: VerifiableCredentialSubjectSchema,
 	issuer: Type.String({ minLength: 50, maxLength: 53 }),
 	issuanceDate: Type.String({ minLength: 1, format: 'date-time' }),
-	credentialStatus: Type.Object({
-		id: Type.String({ minLength: 50, maxLength: 53 }),
-		type: Type.String(),
-		revocationBitmapIndex: Type.Number()
-	}),
+	credentialStatus: Type.Optional(
+		Type.Object({
+			id: Type.String({ minLength: 50, maxLength: 53 }),
+			type: Type.String(),
+			revocationBitmapIndex: Type.Number()
+		})
+	),
 	proof: Type.Object({
 		type: Type.String({ minLength: 1 }),
 		verificationMethod: Type.String({ minLength: 1 }),
