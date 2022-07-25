@@ -7,12 +7,13 @@ export {
 	CredentialSubject,
 	IdentityDocument,
 	IdentityInternal,
-	IdentityKeyPair as IdentityKeyPairJson,
+	IdentityKeyPair,
 	IdentityKeys,
 	IdentitySearchBody,
-	LatestIdentity as LatestIdentityJson,
-	VerifiableCredential as VerifiableCredentialJson,
-	VerifiableCredentialPersistence
+	LatestIdentity,
+	VerifiableCredential,
+	VerifiableCredentialPersistence,
+	Bitmap
 } from './identity';
 export {
 	AddChannelLogBody,

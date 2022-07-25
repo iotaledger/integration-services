@@ -1,4 +1,5 @@
 import { IdentityKeys, User, UserType } from '@iota/is-shared-modules';
+import { IdentityDocument, Keys } from '../../../../shared-modules/src/web/models/types/identity';
 
 export const TestUsersMock = [
 	{
@@ -64,6 +65,7 @@ export const UserIdentityMock = {
 				}
 			]
 		},
+		integrationMessageId: 'mymessage',
 		meta: {
 			created: '2022-07-21T15:26:04Z',
 			updated: '2022-07-21T15:26:04Z'
@@ -103,13 +105,15 @@ export const UserIdentityMock = {
 			}
 		]
 	},
-	key: {
-		public: 'GPpRru9YxgY2amWqzAkWbLwuL25x47o73oBhp4f5avij',
-		secret: 'GLqGAR11K989PGkoVwibkmE7bdw6tQafVf2DCQj9JQrQ',
-		type: 'ed25519',
-		encoding: 'base58'
+	keys: {
+		sign: {
+			public: 'GPpRru9YxgY2amWqzAkWbLwuL25x47o73oBhp4f5avij',
+			private: 'GLqGAR11K989PGkoVwibkmE7bdw6tQafVf2DCQj9JQrQ',
+			type: 'ed25519',
+			encoding: 'base58'
+		}
 	}
-} as any & { userData: User };
+} as { document: IdentityDocument } & { userData: User } & { keys: Keys };
 
 export const ServerIdentityMock = {
 	document: {
@@ -124,6 +128,7 @@ export const ServerIdentityMock = {
 				}
 			]
 		},
+		integrationMessageId: 'mymessage',
 		meta: {
 			created: '2022-07-21T14:52:49Z',
 			updated: '2022-07-21T14:52:49Z'
@@ -141,57 +146,46 @@ export const ServerIdentityMock = {
 		verifiableCredentials: [
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 				type: ['VerifiableCredential', 'VerifiedIdentityCredential'],
 				credentialSubject: {
-					id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
-					type: 'Person',
-					registrationDate: '2021-03-24T15:38:43+01:00',
-					username: 'api-identity',
-					initiatorId: ''
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+					'@context': 'https://schema.org/',
+					familyName: 'Enginssseer',
+					givenName: 'Test',
+					initiatorId: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+					jobTitle: 'Software Engineer',
+					name: 'Test Engineer',
+					type: 'Person'
 				},
-				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
-				issuanceDate: '2021-03-24T14:38:45Z',
-				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'8rVDt6KCPoZVhMCGG5AQLZaUjFJ5LLv4iXsaoQjeqQpq.1117uJFpmAB6msQ9GdsSRvxfdSvfTas94EippDqh6foKFTY1diqiCzfAuqYVExhxeJGBYycQiDbxwGev9Chrtz51UYVbwUL1DR8gipj3zuZa4X2SF7UnTbAw74Dv3o2qsqi2FsxtssV.52yNV25JkS9sRw2tSCKw4yQ3hY4fEneEpk82vU9UX2G5vGJsPhvpjSwfX2cxvqJ48E8EvwDCXrFuetyLPLVQ1UGY'
-				}
-			},
-			{
-				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
-				type: ['VerifiableCredential', 'SomeBasicCredential'], // not valid credential to verify others
-				credentialSubject: {
-					id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
-					type: 'Person',
-					registrationDate: '2021-03-24T15:38:43+01:00',
-					username: 'api-identity',
-					initiatorId: ''
+				issuer: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+				issuanceDate: '2022-07-20T08:15:32Z',
+				credentialStatus: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+					type: 'RevocationBitmap2022',
+					revocationBitmapIndex: 6
 				},
-				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
-				issuanceDate: '2021-03-24T14:38:45Z',
 				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'8rVDt6KCPoZVhMCGG5AQLZaUjFJ5LLv4iXsaoQjeqQpq.1117uJFpmAB6msQ9GdsSRvxfdSvfTas94EippDqh6foKFTY1diqiCzfAuqYVExhxeJGBYycQiDbxwGev9Chrtz51UYVbwUL1DR8gipj3zuZa4X2SF7UnTbAw74Dv3o2qsqi2FsxtssV.52yNV25JkS9sRw2tSCKw4yQ3hY4fEneEpk82vU9UX2G5vGJsPhvpjSwfX2cxvqJ48E8EvwDCXrFuetyLPLVQ1UGY'
+					type: 'JcsEd25519Signature2020',
+					verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+					signatureValue: 'QESXmEUkdALsJvME2AWS7ZbFzKwopTNdEoqcy6vBDJGKVEeUW6Gz4dzGd6paX7JvYd25JJsz4BtWBUaoTog3ErM'
 				}
 			}
 		]
 	},
-	key: {
-		public: 'BojkSuALfcNGQfPX52f8sNF23To2by99KGHLeWB9wDza',
-		secret: '8UCqDS5erHTJZRRqyqbLsxY5ED6ciYGttEhUU56rRVvA',
-		type: 'ed25519',
-		encoding: 'base58'
+	keys: {
+		sign: {
+			public: 'BojkSuALfcNGQfPX52f8sNF23To2by99KGHLeWB9wDza',
+			private: '8UCqDS5erHTJZRRqyqbLsxY5ED6ciYGttEhUU56rRVvA',
+			type: 'ed25519',
+			encoding: 'base58'
+		}
 	}
-} as any & { userData: User }; // TODO adjust IdentityJson
+} as { document: IdentityDocument } & { userData: User } & { keys: Keys };
 
 export const ServerIdentityKey: IdentityKeys = {
 	id: ServerIdentityMock.document.doc.id,
-	key: ServerIdentityMock.key
+	keys: ServerIdentityMock.keys
 };
 
 export const DeviceIdentityMock = {

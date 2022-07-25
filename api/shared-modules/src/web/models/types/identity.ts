@@ -21,7 +21,7 @@ export interface Bitmap {
 
 export interface VerifiableCredentialPersistence {
 	index: number;
-	initiatorId: string;
+	initiator: string;
 	isRevoked: boolean;
 	vc: VerifiableCredential;
 }

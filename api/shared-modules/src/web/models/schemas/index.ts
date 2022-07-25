@@ -8,6 +8,7 @@ export {
 } from './channel-info';
 export {
 	Encoding,
+	KeyTypes,
 	IdentityDocumentSchema,
 	IdentityKeyPairSchema,
 	VerifiableCredentialSchema,

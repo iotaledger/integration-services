@@ -14,7 +14,7 @@ export enum KeyTypes {
 export const VerifiableCredentialSubjectSchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }),
 	type: Type.String({ minLength: 1 }),
-	initiatorId: Type.Optional(Type.String({ minLength: 50, maxLength: 53 }))
+	initiator: Type.Optional(Type.String({ minLength: 50, maxLength: 53 }))
 });
 
 export const VerifiableCredentialSchema = Type.Object({
@@ -24,6 +24,11 @@ export const VerifiableCredentialSchema = Type.Object({
 	credentialSubject: VerifiableCredentialSubjectSchema,
 	issuer: Type.String({ minLength: 50, maxLength: 53 }),
 	issuanceDate: Type.String({ minLength: 1, format: 'date-time' }),
+	credentialStatus: Type.Object({
+		id: Type.String({ minLength: 50, maxLength: 53 }),
+		type: Type.String(),
+		revocationBitmapIndex: Type.Number()
+	}),
 	proof: Type.Object({
 		type: Type.String({ minLength: 1 }),
 		verificationMethod: Type.String({ minLength: 1 }),
@@ -62,7 +67,7 @@ export const IdentityDocumentSchema = Type.Object({
 		verificationMethod: Type.String(),
 		signatureValue: Type.String()
 	}),
-	integrationMessageId: Type.String()
+	integrationMessageId: Type.Optional(Type.String())
 });
 
 export const IdentityKeyPairSchema = Type.Object({
