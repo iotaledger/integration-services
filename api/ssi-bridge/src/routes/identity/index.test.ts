@@ -2,7 +2,8 @@ import { IdentityRoutes } from '.';
 import * as UserDb from '../../database/user';
 import * as IdentityDocsDb from '../../database/identity-keys';
 import { IdentityConfig } from '../../models/config';
-import { UserPersistence, UserType, User, UserSearch, IdentityClaim, getDateFromString, getDateStringFromDate, UserRoles } from '@iota/is-shared-modules';
+import { UserPersistence, UserType, User, UserSearch, IdentityClaim, UserRoles } from '@iota/is-shared-modules';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
 import { AuthorizationService } from '../../services/authorization-service';
 import { SsiService } from '../../services/ssi-service';
 import { UserService } from '../../services/user-service';
@@ -491,46 +492,42 @@ describe('test user routes', () => {
 
 				expect(updateUserSpy).toHaveBeenCalledTimes(1);
 				expect(sendStatusMock).toHaveBeenCalledWith(200);
-			});
+			}
+		);
 
-		test.each([UserRoles.Admin, UserRoles.Manager])(
-			'manager can not update role to manager or admin',
-			async (role) => {
-				const loggerSpy = jest.spyOn(LoggerMock, 'error');
-				const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+		test.each([UserRoles.Admin, UserRoles.Manager])('manager can not update role to manager or admin', async (role) => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
-				const req: any = {
-					user: { id: validBody.id, role: UserRoles.Manager },
-					params: {},
-					body: { ...validBody, role: role }
-				};
+			const req: any = {
+				user: { id: validBody.id, role: UserRoles.Manager },
+				params: {},
+				body: { ...validBody, role: role }
+			};
 
-				await userRoutes.updateUser(req, res, nextMock);
+			await userRoutes.updateUser(req, res, nextMock);
 
+			expect(updateUserSpy).toHaveBeenCalledTimes(0);
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to update role!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
+		});
 
-				expect(updateUserSpy).toHaveBeenCalledTimes(0);
-				expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to update role!'));
-				expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
-			});
+		test.each([UserRoles.Admin, UserRoles.Manager])('user can not update role to manager or admin', async (role) => {
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
 
-		test.each([UserRoles.Admin, UserRoles.Manager])(
-			'user can not update role to manager or admin',
-			async (role) => {
-				const loggerSpy = jest.spyOn(LoggerMock, 'error');
-				const updateUserSpy = jest.spyOn(UserDb, 'updateUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+			const req: any = {
+				user: { id: validBody.id, role: UserRoles.User },
+				params: {},
+				body: { ...validBody, role: role }
+			};
 
-				const req: any = {
-					user: { id: validBody.id, role: UserRoles.User},
-					params: {},
-					body: { ...validBody, role: role }
-				};
+			await userRoutes.updateUser(req, res, nextMock);
 
-				await userRoutes.updateUser(req, res, nextMock);
-
-				expect(updateUserSpy).toHaveBeenCalledTimes(0);
-				expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to update role!'));
-				expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
-			});
+			expect(updateUserSpy).toHaveBeenCalledTimes(0);
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('not allowed to update role!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not update the identity'));
+		});
 
 		it('should call next(err) if an error occurs when updating the db', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
