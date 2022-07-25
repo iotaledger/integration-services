@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/node';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -33,7 +34,9 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 	const requestedSubscriptionIdsFilter = requestedSubscriptionId
 		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
 		: undefined;
-	const filters = [nameFilter, authorFilter, typeFilter, sourceFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+	const filters = [nameFilter, authorFilter, typeFilter, sourceFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter(
+		(filter) => filter
+	);
 
 	const query = {
 		$or: filters.length >= 1 ? filters : undefined,

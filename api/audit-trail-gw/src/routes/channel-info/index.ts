@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoSearch, getDateFromString, AuthenticatedRequest, ILogger } from '@iota/is-shared-modules';
+import { ChannelInfo, ChannelInfoSearch, AuthenticatedRequest } from '@iota/is-shared-modules';
+import { getDateFromString, ILogger } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
@@ -9,7 +10,7 @@ export class ChannelInfoRoutes {
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly authorizationService: AuthorizationService,
 		private readonly logger: ILogger
-	) { }
+	) {}
 
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {

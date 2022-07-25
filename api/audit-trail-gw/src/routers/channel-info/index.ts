@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { ChannelInfoSchema, Logger } from '@iota/is-shared-modules';
+import { ChannelInfoSchema } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelInfoRoutes } from '../../routes/channel-info';
 import { authorizationService, channelInfoService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';

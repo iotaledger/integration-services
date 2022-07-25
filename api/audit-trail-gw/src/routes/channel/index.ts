@@ -7,11 +7,10 @@ import {
 	CreateChannelBody,
 	ReimportBody,
 	ValidateBody,
-	ILogger,
-	getDateFromString,
 	ChannelLogRequestOptions,
 	ChannelType
 } from '@iota/is-shared-modules';
+import { ILogger, getDateFromString } from '@iota/is-shared-modules/node';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { compareAsc } from 'date-fns';
 
@@ -20,7 +19,17 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { name, description, topics, seed, hasPresharedKey, presharedKey, type, hidden, visibilityList } = req.body as CreateChannelBody;
+			const {
+				name,
+				description,
+				topics,
+				seed,
+				hasPresharedKey,
+				presharedKey,
+				type,
+				hidden,
+				visibilityList
+			} = req.body as CreateChannelBody;
 			const { id } = req.user;
 
 			if (!id) {

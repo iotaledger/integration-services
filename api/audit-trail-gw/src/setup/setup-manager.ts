@@ -1,5 +1,5 @@
 import { DatabaseSeeder } from './database-seeder';
-import { Logger, MongoDbService } from '@iota/is-shared-modules';
+import { Logger, MongoDbService } from '@iota/is-shared-modules/node';
 import { ConfigurationService } from '../services/configuration-service';
 
 export class SetupManager {
