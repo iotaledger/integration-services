@@ -82,7 +82,6 @@ export class KeyGenerator {
 			const newIdentity = await userService.createIdentity(serverData);
 			serverIdentityId = newIdentity.id;
 			this.configService.serverIdentityId = serverIdentityId;
-			this.logger.log(JSON.stringify(newIdentity));
 		}
 
 		// create the verification service with a valid server identity id

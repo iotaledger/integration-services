@@ -4,7 +4,8 @@ import {
 	VerifiableCredential,
 	Credential,
 	IdentityKeys,
-	Subject
+	Subject,
+	Bitmap
 } from '@iota/is-shared-modules';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
@@ -15,7 +16,6 @@ import * as BitmapDb from '../database/revocation-bitmap';
 import { JsonldGenerator } from '../utils/jsonld';
 import { ILogger } from '../utils/logger';
 import { IConfigurationService } from './configuration-service';
-import { Bitmap } from '@iota/is-shared-modules/lib/web/models/types/identity'; // TODO
 
 export class VerificationService {
 	private noIssuerFoundErrMessage = (issuerId: string) => `No identity found for issuerId: ${issuerId}`;

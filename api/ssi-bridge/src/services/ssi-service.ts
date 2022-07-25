@@ -106,14 +106,16 @@ export class SsiService {
 			const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
 			let validCredential = true;
 			try {
+				const credential = Identity.Credential.fromJSON(signedVc);
 				Identity.CredentialValidator.validate(
-					signedVc as any,
+					credential,
 					issuerDoc,
 					Identity.CredentialValidationOptions.default(),
 					Identity.FailFast.FirstError
 				);
 			} catch (e) {
 				// if credential is revoked, validate will throw an error
+				this.logger.error(`Error from identity sdk: ${e}`);
 				validCredential = false;
 			}
 			const verified = validCredential && credentialVerified;
