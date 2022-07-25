@@ -32,7 +32,7 @@ export const VerifiableCredentialSchema = Type.Object(
 		issuanceDate: Type.String({ minLength: 1, format: 'date-time' }),
 		credentialStatus: Type.Optional(
 			Type.Object({
-				id: Type.String({ minLength: 50, maxLength: 53 }),
+				id: Type.String(),
 				type: Type.String(),
 				revocationBitmapIndex: Type.Number()
 			})
@@ -53,7 +53,7 @@ export const IdentityDocumentSchema = Type.Object({
 		id: Type.String({ minLength: 50, maxLength: 53 }),
 		capabilityInvocation: Type.Array(
 			Type.Object({
-				id: Type.String({ minLength: 50, maxLength: 53 }),
+				id: Type.String(),
 				controller: Type.String({ minLength: 50, maxLength: 53 }),
 				type: Type.String(),
 				publicKeyMultibase: Type.String()
@@ -62,7 +62,7 @@ export const IdentityDocumentSchema = Type.Object({
 		service: Type.Optional(
 			Type.Array(
 				Type.Object({
-					id: Type.String({ minLength: 50, maxLength: 53 }),
+					id: Type.String(),
 					type: Type.String(),
 					serviceEndpoint: Type.String()
 				})
@@ -72,7 +72,7 @@ export const IdentityDocumentSchema = Type.Object({
 	meta: Type.Object({
 		created: Type.String({ format: 'date-time', minLength: 1 }),
 		updated: Type.String({ format: 'date-time', minLength: 1 }),
-		previousMessageId: Type.Optional(Type.String({ minLength: 50, maxLength: 53 }))
+		previousMessageId: Type.Optional(Type.String())
 	}),
 	proof: Type.Object({
 		type: Type.String(),
