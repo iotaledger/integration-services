@@ -201,7 +201,7 @@ export const DeviceIdentityMock = {
 				credentialSubject: {
 					id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 					type: 'Device',
-					initiatorId: ''
+					initiator: ''
 				},
 				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
 				issuanceDate: '2021-03-24T15:58:59Z',
