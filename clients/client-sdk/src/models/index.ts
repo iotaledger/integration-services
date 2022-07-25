@@ -32,5 +32,6 @@ export {
   UserRoles,
   CredentialTypes,
   VerifiableCredentialInternal,
-  IdentityDocumentJson
+  IdentityDocumentJson,
+  ChannelType
 } from '@iota/is-shared-modules';
