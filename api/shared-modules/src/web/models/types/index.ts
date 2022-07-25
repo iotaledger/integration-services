@@ -8,12 +8,13 @@ export {
 	IdentityDocument,
 	IdentityInternal,
 	IdentityKeyPair,
-	IdentityKeys,
 	IdentitySearchBody,
 	LatestIdentity,
 	VerifiableCredential,
 	VerifiableCredentialPersistence,
-	Bitmap
+	Bitmap,
+	IdentityKeys,
+	Keys
 } from './identity';
 export {
 	AddChannelLogBody,
