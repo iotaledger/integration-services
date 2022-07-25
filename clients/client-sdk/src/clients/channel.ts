@@ -168,7 +168,6 @@ export class ChannelClient extends BaseClient {
         ? { 'requested-subscription-id': requestedSubscriptionId }
         : {};
     const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
-    const hiddenParam = hidden !== undefined ? { hidden: hidden } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
       ...topicTypeParam,
@@ -181,7 +180,7 @@ export class ChannelClient extends BaseClient {
       ...ascendingParam,
       limit,
       index,
-      hiddenParam
+      hidden
     });
   }
 
