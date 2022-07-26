@@ -10,6 +10,8 @@ export {
 	Encoding,
 	KeyTypes,
 	IdentityDocumentSchema,
+	KeysSchema,
+	IdentityKeysSchema,
 	IdentityKeyPairSchema,
 	VerifiableCredentialSchema,
 	VerifiableCredentialSubjectSchema
