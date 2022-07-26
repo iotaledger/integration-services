@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, ChannelData, getDateStringFromDate, ChannelLogRequestOptions, decrypt, encrypt } from '@iota/is-shared-modules';
+import { ChannelData, ChannelLogRequestOptions } from '@iota/is-shared-modules';
+import { MongoDbService, getDateStringFromDate, decrypt, encrypt } from '@iota/is-shared-modules/node';
 import * as _ from 'lodash';
 import { getSubscriptions } from './subscription';
 

@@ -1,5 +1,6 @@
 import { NextFunction, Response } from 'express';
-import { AuthenticatedRequest, Logger, ConcurrencyLocks } from '@iota/is-shared-modules';
+import { AuthenticatedRequest, ConcurrencyLocks } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 import { getLock, insertLock, removeLock } from '../database/concurrency-lock';
 import { StatusCodes } from 'http-status-codes';
 import _ from 'lodash';

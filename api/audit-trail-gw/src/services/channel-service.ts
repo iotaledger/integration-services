@@ -10,10 +10,9 @@ import {
 	ChannelData,
 	ChannelLog,
 	CreateChannelResponse,
-	ValidateResponse,
-	getDateStringFromDate,
-	ILogger
+	ValidateResponse
 } from '@iota/is-shared-modules';
+import { getDateStringFromDate, ILogger } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -48,8 +47,8 @@ export class ChannelService {
 		seed?: string;
 		presharedKey?: string;
 		type?: ChannelType;
-		hidden?: boolean,
-		visibilityList: {id: string} []
+		hidden?: boolean;
+		visibilityList: { id: string }[];
 	}): Promise<CreateChannelResponse> {
 		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList } = params;
 		let key = presharedKey;

@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/node';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -33,10 +34,25 @@ export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): P
 	const requestedSubscriptionIdsFilter = requestedSubscriptionId
 		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
 		: undefined;
-	const filters = [nameFilter, authorFilter, typeFilter, sourceFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+	const authorFilters = [authorFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+	const channelFilters = [nameFilter, typeFilter, sourceFilter].filter((filter) => filter);
 
+	let filter;
+	if (authorFilters.length >= 1 && channelFilters.length >= 1) {
+		filter = {
+			$and: [
+				{ $or: authorFilters },
+				{ $or: channelFilters }
+			],
+		};
+	}else{
+		const allFilters = [...channelFilters, ...authorFilters]
+		filter = {
+			$or: allFilters.length >= 1 ? allFilters : undefined
+		}
+	}
 	const query = {
-		$or: filters.length >= 1 ? filters : undefined,
+		...filter,
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
 		hidden: hidden === true || hidden === false ? hidden : undefined

@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, Subscription, SubscriptionUpdate } from '@iota/is-shared-modules';
+import { Subscription, SubscriptionUpdate } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/node';
 
 // Subscription documents keeps information about a subscription a user in regard of a channel
 const collectionName = CollectionNames.subscriptions;
