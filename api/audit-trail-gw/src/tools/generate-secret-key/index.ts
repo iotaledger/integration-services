@@ -1,4 +1,4 @@
-import { randomSecretKey } from '@iota/is-shared-modules';
+import { randomSecretKey } from '@iota/is-shared-modules/node';
 
 const scrt = randomSecretKey();
 

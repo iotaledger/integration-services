@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema, Logger } from '@iota/is-shared-modules';
+import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelRoutes } from '../../routes/channel';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';

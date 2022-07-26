@@ -32,7 +32,6 @@ export abstract class BaseClient {
     this.useGatewayUrl = useGatewayUrl;
     this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
     this.isGatewayUrl = `${isGatewayUrl}/api/${apiVersion}`;
-
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000

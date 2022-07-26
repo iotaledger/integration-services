@@ -1,7 +1,7 @@
 import { Config } from '../models/config';
 import { StreamsConfig } from '../models/config/index';
 import isEmpty from 'lodash/isEmpty';
-import { ILogger } from '@iota/is-shared-modules';
+import { ILogger } from '@iota/is-shared-modules/node';
 
 const VERSION = 'v0.1';
 
