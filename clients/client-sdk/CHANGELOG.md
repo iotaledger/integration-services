@@ -2,7 +2,8 @@
 
 ### 0.1.21 (2022-07-25)
 
-- Added `ChannelType` export from `@iota/is-shared-modules`Ï 
+- Added `ChannelType` export from `@iota/is-shared-modules`
+
 ### 0.1.20 (2022-07-25)
 
 - Adjusted imports of `@iota/is-shared-modules` to the newest version (the client is now again web-compatible)
