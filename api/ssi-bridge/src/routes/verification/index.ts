@@ -158,8 +158,7 @@ export class VerificationRoutes {
 
 	isAuthorizedToRevoke = async (kci: VerifiableCredentialPersistence, requestUser: User): Promise<AuthorizationCheck> => {
 		const isAuthorizedUser = this.authorizationService.isAuthorizedUser(requestUser.id, kci.vc.id);
-		const isAuthorizedInitiator = this.authorizationService.isAuthorizedUser(requestUser.id, kci.initiator);
-		if (!isAuthorizedUser && !isAuthorizedInitiator) {
+		if (!isAuthorizedUser) {
 			const isAuthorizedAdmin = this.authorizationService.isAuthorizedAdmin(requestUser);
 			const isAuthorizedManager = this.authorizationService.isAuthorizedManager(requestUser);
 			if (!isAuthorizedAdmin && !isAuthorizedManager) {
