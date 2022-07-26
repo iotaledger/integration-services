@@ -1,5 +1,6 @@
 import { UserService } from './user-service';
-import { createNonce, getHexEncodedKey, verifySignedNonce, User, UserRoles } from '@iota/is-shared-modules';
+import { User, UserRoles } from '@iota/is-shared-modules';
+import { createNonce, getHexEncodedKey, verifySignedNonce } from '@iota/is-shared-modules/node';
 import * as AuthDb from '../database/auth';
 import jwt from 'jsonwebtoken';
 import { AuthenticationServiceConfig } from '../models/config/services';

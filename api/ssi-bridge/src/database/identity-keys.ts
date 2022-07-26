@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, IdentityKeys, decrypt, encrypt } from '@iota/is-shared-modules';
+import { IdentityKeys } from '@iota/is-shared-modules';
+import { MongoDbService, decrypt, encrypt } from '@iota/is-shared-modules/node';
 
 const collectionName = CollectionNames.identityKeysCollection;
 

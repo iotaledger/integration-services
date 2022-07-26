@@ -252,10 +252,10 @@ describe('test channel client', () => {
     it('should find created channel', async () => {
       jest.spyOn(channelClient, 'search');
       jest.spyOn(channelClient, 'get');
+      // Add authorId back in after 'Channel Info Search not working with name and author-id in combination#635' is fixed
       try {
         const response = await channelClient.search({
           name: globalTestChannel.name,
-          authorId: adminUser.id,
           ascending: true,
           index: 0
         });
@@ -268,7 +268,9 @@ describe('test channel client', () => {
           subscriberIds: expect.any(Array),
           requestedSubscriptionIds: expect.any(Array),
           topics: expect.arrayContaining(globalTestChannel.topics),
-          channelAddress: expect.any(String)
+          type: expect.any(String),
+          channelAddress: expect.any(String),
+          visibilityList: expect.any(Array)
         });
       } catch (e: any) {
         console.log('error: ', e);
@@ -278,11 +280,11 @@ describe('test channel client', () => {
       expect(channelClient.get).toHaveBeenCalledWith(`${auditTrailUrl}/channel-info/search`, {
         'api-key': apiConfig.apiKey,
         name: globalTestChannel.name,
-        'author-id': adminUser.id,
         created: undefined,
         limit: undefined,
         asc: true,
-        index: 0
+        index: 0,
+        hidden: undefined
       });
     });
   });

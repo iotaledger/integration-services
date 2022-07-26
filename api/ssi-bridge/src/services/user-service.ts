@@ -7,10 +7,9 @@ import {
 	CreateIdentityBody,
 	IdentityJson,
 	VerifiableCredentialJson,
-	IdentityKeys,
-	getDateFromString,
-	getDateStringFromDate
+	IdentityKeys
 } from '@iota/is-shared-modules';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
 import * as userDb from '../database/user';
 import isEmpty from 'lodash/isEmpty';
 import { SchemaValidator } from '../utils/validator';

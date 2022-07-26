@@ -4,9 +4,9 @@ import {
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema,
 	SubscriptionSchema,
-	SubscriptionUpdateSchema,
-	Logger
+	SubscriptionUpdateSchema
 } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 import { SubscriptionRoutes } from '../../routes/subscription';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelInfoService, subscriptionService } from '../services';

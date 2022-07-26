@@ -3,22 +3,17 @@ import { ClientConfig } from '../models/clientConfig';
 import {
   IdentityInternal,
   IdentityJson,
-  VerifiableCredentialJson
-} from '@iota/is-shared-modules/lib/models/types/identity';
-import {
+  VerifiableCredentialJson,
   RevokeVerificationBody,
-  VerifyJwtBody
-} from '@iota/is-shared-modules/lib/models/types/request-response-bodies';
-import { User, UserType } from '@iota/is-shared-modules/lib/models/types/user';
-import {
+  VerifyJwtBody,
+  User,
+  UserType,
   CredentialTypes,
-  VerifiableCredentialInternal
-} from '@iota/is-shared-modules/lib/models/types/verification';
-import { SearchCriteria } from '../models/searchCriteria';
-import {
+  VerifiableCredentialInternal,
   IdentityDocumentJson,
   IdentitySearchBody
-} from '@iota/is-shared-modules/lib/models/types/identity';
+} from '@iota/is-shared-modules';
+import { SearchCriteria } from '../models/searchCriteria';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
@@ -36,7 +31,12 @@ export class IdentityClient extends BaseClient {
    * @param hidden
    * @returns
    */
-  async create(username?: string, claimType = UserType.Person, claim?: any, hidden?: boolean): Promise<IdentityJson> {
+  async create(
+    username?: string,
+    claimType = UserType.Person,
+    claim?: any,
+    hidden?: boolean
+  ): Promise<IdentityJson> {
     return await this.post(`${this.baseUrl}/identities/create`, {
       username,
       hidden,

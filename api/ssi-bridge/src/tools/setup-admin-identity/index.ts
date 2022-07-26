@@ -4,7 +4,8 @@ import fs from 'fs';
 import { userService, verificationService } from '../../routers/services';
 import { ConfigurationService } from '../../services/configuration-service';
 import { Logger } from '../../utils/logger';
-import { MongoDbService, UserRoles, UserType, CredentialTypes } from '@iota/is-shared-modules';
+import { UserRoles, UserType, CredentialTypes } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/node';
 import { CollectionNames } from '../../database/constants';
 
 /**

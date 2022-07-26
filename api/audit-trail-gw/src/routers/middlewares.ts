@@ -2,7 +2,7 @@ import { Validator } from 'express-json-validator-middleware';
 import { hasValidApiKey } from '../middlewares/api-key';
 import { isAuth } from '../middlewares/authentication';
 import { ConfigurationService } from '../services/configuration-service';
-import { Logger } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 
 const { jwtSecret, apiKey } = ConfigurationService.getInstance(Logger.getInstance()).config;
 

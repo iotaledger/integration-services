@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ValidationError } from 'express-json-validator-middleware';
-import { Logger } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 
 /**
  * Error middleware to log and return the error to the client.

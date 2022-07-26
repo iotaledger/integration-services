@@ -1,4 +1,5 @@
-import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelType, getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules';
+import { ChannelInfo, ChannelInfoPersistence, ChannelInfoSearch, ChannelType } from '@iota/is-shared-modules';
+import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
 import * as ChannelInfoDb from '../database/channel-info';
 import isEmpty from 'lodash/isEmpty';
 
@@ -8,7 +9,7 @@ export class ChannelInfoService {
 		const channelInfo = this.getChannelInfoObject(channelInfoPersistence);
 		const authorId = channelInfo?.authorId;
 		const hidden = channelInfo?.hidden;
-		const isInVisibilityList = channelInfo?.visibilityList && channelInfo.visibilityList.find(i => i.id == reqId) != null
+		const isInVisibilityList = channelInfo?.visibilityList && channelInfo.visibilityList.find((i) => i.id == reqId) != null;
 		if (hidden && !isAdmin && reqId !== authorId && !isInVisibilityList) {
 			return null;
 		}
@@ -23,17 +24,17 @@ export class ChannelInfoService {
 		channelInfoPersistence = await ChannelInfoDb.searchChannelInfo(channelInfoSearch);
 		let channelInfos = channelInfoPersistence?.map((channel) => this.getChannelInfoObject(channel)).filter((c) => c);
 		channelInfos = channelInfos
-			.filter(ch => {
-				const isAuthor = reqId == ch.authorId
+			.filter((ch) => {
+				const isAuthor = reqId == ch.authorId;
 				if (ch.hidden && !isAdmin && !isAuthor) {
-					if (!ch.visibilityList || ch.visibilityList.length == 0 || ch.visibilityList.find(i => i.id == reqId) == null) {
+					if (!ch.visibilityList || ch.visibilityList.length == 0 || ch.visibilityList.find((i) => i.id == reqId) == null) {
 						return false;
 					}
 				}
-				return true
+				return true;
 			})
-			.map(ch => {
-				const isAuthor = reqId == ch.authorId
+			.map((ch) => {
+				const isAuthor = reqId == ch.authorId;
 				if (!isAdmin && !isAuthor) {
 					ch.visibilityList = undefined;
 				}

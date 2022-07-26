@@ -6,12 +6,12 @@ import {
 	AuthenticatedRequest,
 	AuthorizeSubscriptionBody,
 	RequestSubscriptionBody,
-	ILogger,
 	Subscription,
 	SubscriptionUpdate,
 	SubscriptionType,
 	ChannelType
 } from '@iota/is-shared-modules';
+import { ILogger } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from '../../services/channel-info-service';
 export class SubscriptionRoutes {
 	constructor(
