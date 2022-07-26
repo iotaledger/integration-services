@@ -34,7 +34,7 @@ export const VerifiableCredentialSchema = Type.Object(
 			Type.Object({
 				id: Type.String(),
 				type: Type.String(),
-				revocationBitmapIndex: Type.Number()
+				revocationBitmapIndex: Type.String()
 			})
 		),
 		proof: Type.Object({
