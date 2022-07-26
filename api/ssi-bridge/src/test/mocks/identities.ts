@@ -1,4 +1,4 @@
-import { IdentityKeys, User, UserType } from '@iota/is-shared-modules';
+import { IdentityKeys, User } from '@iota/is-shared-modules';
 import { IdentityDocument, Keys } from '@iota/is-shared-modules';
 
 export const TestUsersMock = [
@@ -82,28 +82,7 @@ export const UserIdentityMock = {
 		creator: 'did:iota:96JyhhVGbaLheq2L8j39DiAe8o3ijTHoCWWmai3D7PNk',
 		claim: { type: 'Person', firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
-		verifiableCredentials: [
-			{
-				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi',
-				type: ['VerifiableCredential', 'PersonCredential'],
-				credentialSubject: {
-					id: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi',
-					type: UserType.Person,
-					registrationDate: '2021-03-16T15:18:49+01:00',
-					username: 'first-user',
-					initiator: ''
-				},
-				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
-				issuanceDate: '2021-03-24T15:59:11Z',
-				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'E7YtcGcEJuWE69djaDGZL425Qh3pCuhhF3RPum3Mm1WJ.1119t2nv9LDH5Qi8CgAK1P5W78XLxFgHjGddZW5ct1isxnaB5ZF7LPToUuxhgrbdZLfyhY2LSf3djsRjyE6wyeMVTE9w7BJZg8cZx6egUAPEy1DNzyZZXZkZWyjHqZAmZ2B24xwfyFd.32W1cWdfRK8YZ5sTDe7fpCzyqVtQQRc7Fkauygp4MUb4GUPd9TG8CBiktnvDgzC9SxtXJfCVc7Euf5N7H88o7nSU'
-				}
-			}
-		]
+		verifiableCredentials: []
 	},
 	keys: {
 		sign: {
@@ -232,11 +211,15 @@ export const DeviceIdentityMock: { userData: User } = {
 				},
 				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
 				issuanceDate: '2021-03-24T15:58:59Z',
+				credentialStatus: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+					type: 'RevocationBitmap2022',
+					revocationBitmapIndex: '6'
+				},
 				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'9fNqgZfFZTnt6HpyRD2yXRovijjewVTpGSzwNX4YvPb1.1117u9ibPzu8itzHAWjLdo6j7vTWdWCuvADY1oUqrJLxUmQkCnhEgJWBoASweLXoJAPYuUe8iyyYEgoaQDDTHhaL5xZQ8fK6nbw67qLo5BuTbQHiqpnintZph9TjKFep7pk6zoLMGdD.3xh4r38iiLhXyjBwdJPMqzSyrJAtSp3u3pJUGTGydyN45rTEWXfqPEDLw8ux9ttXijADTH5SAwr924Agnk2Vm3wA'
+					type: 'JcsEd25519Signature2020',
+					verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+					signatureValue: 'QESXmEUkdALsJvME2AWS7ZbFzKwopTNdEoqcy6vBDJGKVEeUW6Gz4dzGd6paX7JvYd25JJsz4BtWBUaoTog3ErM'
 				}
 			}
 		]

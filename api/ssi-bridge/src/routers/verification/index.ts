@@ -205,28 +205,6 @@ verificationRouter.delete('/trusted-roots/:trustedRootId', apiKeyMiddleware, aut
  *         application/json:
  *           schema:
  *             $ref: "#/components/schemas/CreateCredentialBodySchema"
- *           example:
- *             subject:
- *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               credentialType: VerifiableCredential
- *               claim:
- *                 type: Service
- *             initiatorVC:
- *               '@context': https://www.w3.org/2018/credentials/v1
- *               id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
- *               type:
- *               - VerifiableCredential
- *               - VerifiedIdentityCredential
- *               credentialSubject:
- *                 id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
- *                 type: Person
- *                 initiator: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
- *               issuer: did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof
- *               issuanceDate: 2021-06-18T11:33:59Z
- *               proof:
- *                 type: MerkleKeySignature2021
- *                 verificationMethod: #key-collection-0
- *                 signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
  *     responses:
  *       200:
  *         description: The created credential.
@@ -270,22 +248,6 @@ verificationRouter.post(
  *         application/json:
  *           schema:
  *             $ref: "#/components/schemas/VerifiableCredentialSchema"
- *           example:
- *             '@context': https://www.w3.org/2018/credentials/v1
- *             id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
- *             type:
- *             - VerifiableCredential
- *             - VerifiedIdentityCredential
- *             credentialSubject:
- *               id: did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY
- *               type: Person
- *               initiator: did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y
- *             issuer: did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof
- *             issuanceDate: 2021-06-18T11:33:59Z
- *             proof:
- *               type: MerkleKeySignature2021
- *               verificationMethod: #key-collection-0
- *               signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
  *     responses:
  *       200:
  *         description: The registered entity.
@@ -334,7 +296,7 @@ verificationRouter.post(
  *           schema:
  *             $ref: "#/components/schemas/RevokeVerificationBodySchema"
  *           example:
- *             signatureValue: 8VZJmBRcjjsmzoLGcdap5MWBqgKVf27Gbvubatk2ibxU.1112Pe57T4J3dzcCs5V2X2ffM8Xex521NkscDDoa8cshh7sSM.596PBh54fsBnHj9P5Fgw3mSJrChFNHDifb2mf4oK6kMBL8PU52c5f5oMHCrV3CudZ9PoexjRfrjL6TjAM22vkyYv
+ *             signatureValue: 2sQ1d8syyRtEbuMo8nTJQsDphrKN9aYt1zLHtzeHPwND7b9FgpiePPWNkkMALVPcdBsmmbeoxVqjFFqUKbhppyLM
  *     responses:
  *       200:
  *         description: Revoke successful
