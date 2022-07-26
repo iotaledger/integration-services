@@ -163,7 +163,7 @@ export const ServerIdentityMock = {
 				credentialStatus: {
 					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
 					type: 'RevocationBitmap2022',
-					revocationBitmapIndex: 6
+					revocationBitmapIndex: '6'
 				},
 				proof: {
 					type: 'JcsEd25519Signature2020',
@@ -190,7 +190,7 @@ export const ServerIdentityMock = {
 				credentialStatus: {
 					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
 					type: 'RevocationBitmap2022',
-					revocationBitmapIndex: 6
+					revocationBitmapIndex: '6'
 				},
 				proof: {
 					type: 'JcsEd25519Signature2020',
@@ -262,7 +262,7 @@ export const TestCredentialMock = {
 	credentialStatus: {
 		id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
 		type: 'RevocationBitmap2022',
-		revocationBitmapIndex: 7
+		revocationBitmapIndex: '7'
 	},
 	proof: {
 		type: 'JcsEd25519Signature2020',

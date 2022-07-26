@@ -83,7 +83,7 @@ export class SsiService {
 				credentialStatus: {
 					id: this.getBitmapTag(issuerId, bitmapIndex),
 					type: Identity.RevocationBitmap.type(),
-					revocationBitmapIndex: subjectKeyIndex
+					revocationBitmapIndex: subjectKeyIndex.toString()
 				},
 				issuer: issuerId,
 				credentialSubject: {
