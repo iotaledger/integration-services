@@ -69,7 +69,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
 		});
 
-		it('is not authorized to revoke the identity since not same request uid as initiator', async () => {
+		it('is not authorized to revoke the identity since not same request uid as vc id', async () => {
 			const identityToRevoke = vcMock.id;
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 			const linkedIdentity: VerifiableCredentialPersistence = {
@@ -91,7 +91,7 @@ describe('test authentication routes', () => {
 				.mockReturnValue(Promise.resolve(revokeResult as any));
 			const revokeVerifiableCredentialDbSpy = jest.spyOn(CredentialsDb, 'revokeVerifiableCredential').mockImplementation(async () => null);
 			const req: any = {
-				user: { id: 'did:iota:4321' }, // different request user id than initiator
+				user: { id: 'did:iota:4321' }, // different request user id than verfiable credential id
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
@@ -106,7 +106,7 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not revoke the verifiable credential'));
 		});
 
-		it('is authorized to revoke the identity since same request uid as initiator', async () => {
+		it('is authorized to revoke the identity since same request uid as vc id', async () => {
 			const identityToRevoke = vcMock.id;
 			const removeUserVcSpy = jest.spyOn(UserDb, 'removeUserVC').mockReturnValue(Promise.resolve({ verifiableCredentials: [] } as any)); // no further vc inside user data
 			const bitmapIndex = 0;
@@ -129,7 +129,7 @@ describe('test authentication routes', () => {
 				.mockReturnValue(Promise.resolve(revokeResult as any));
 			const revokeVerifiableCredentialDbSpy = jest.spyOn(CredentialsDb, 'revokeVerifiableCredential').mockImplementation(async () => null);
 			const req: any = {
-				user: { id: 'did:iota:1234' }, // same request user id as initiator
+				user: { id: vcMock.id }, // same request user id as verfiable credential id
 				params: {},
 				body: { subjectId: identityToRevoke, signatureValue: SignatureValue }
 			};
