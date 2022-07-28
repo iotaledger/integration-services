@@ -61,6 +61,9 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
+    if(!secretKey){
+      throw new Error('No private signature key provided.')
+    }
     const url: string = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
     const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
     const nonce = body?.nonce;
