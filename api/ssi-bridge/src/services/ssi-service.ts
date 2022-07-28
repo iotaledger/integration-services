@@ -1,16 +1,10 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import {
-	IdentityDocumentJson,
-	IdentityJson,
-	VerifiableCredentialJson,
-	Credential,
-	KeyCollectionJson,
-	IdentityKeys,
-	LatestIdentityJson
-} from '@iota/is-shared-modules';
-const { Document, VerifiableCredential, VerificationMethod, KeyCollection, Client } = Identity;
+import { VerifiableCredential, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
+const { Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
 import { ILogger } from '../utils/logger';
+import * as bs58 from 'bs58';
+import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -23,59 +17,50 @@ export class SsiService {
 		return SsiService.instance;
 	}
 
-	async generateKeyCollection(
-		keyCollectionIndex: number,
-		keyCollectionSize: number,
-		issuerIdentity: IdentityKeys
-	): Promise<{ keyCollectionJson: KeyCollectionJson }> {
+	async createRevocationBitmap(
+		bitmapIndex: number,
+		issuerIdentity: {
+			id: string;
+			key: Identity.KeyPair;
+		}
+	): Promise<Identity.IService> {
 		try {
-			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
-			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
-			const keyCollection = new KeyCollection(this.config.keyType, keyCollectionSize);
-			const publicKeyBase58 = keyCollection.merkleRoot(this.config.hashFunction);
-			const method = VerificationMethod.createMerkleKey(
-				this.config.hashFunction,
-				doc.id,
-				keyCollection,
-				this.getKeyCollectionTag(keyCollectionIndex)
-			);
-			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
-
-			newDoc.insertMethod(method, `VerificationMethod`);
-			newDoc.sign(key);
-
-			if (!newDoc.verify()) {
-				throw new Error('could not add keycollection to the identity!');
-			}
-
-			await this.publishSignedDoc(newDoc.toJSON());
-			const { keys, type } = keyCollection?.toJSON();
-			const keyCollectionJson: KeyCollectionJson = {
-				type,
-				keys,
-				publicKeyBase58
+			const { document, messageId } = await this.getLatestIdentityDoc(issuerIdentity.id);
+			const key = issuerIdentity.key;
+			const revocationBitmap = new Identity.RevocationBitmap();
+			const bitmapService = {
+				id: this.getBitmapTag(issuerIdentity.id, bitmapIndex),
+				serviceEndpoint: revocationBitmap.toEndpoint(),
+				type: Identity.RevocationBitmap.type()
 			};
-			return { keyCollectionJson };
+			const service = new Identity.Service(bitmapService);
+			document.insertService(service);
+
+			await this.publishSignedDoc(document, key, messageId);
+			return bitmapService;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
-			throw new Error('could not generate the key collection');
+			throw new Error('could not generate the bitmap');
 		}
 	}
 
-	async createIdentity(): Promise<IdentityJson> {
+	async createIdentity(): Promise<IdentityKeys> {
 		try {
-			const identity = this.generateIdentity();
-			identity.doc.sign(identity.key);
-			await this.publishSignedDoc(identity.doc.toJSON());
-			const identityIsVerified = identity.doc.verify();
-
-			if (!identityIsVerified) {
-				throw new Error('could not create the identity. Please try it again.');
-			}
+			const identity = await this.generateIdentity();
+			const publicKey = bs58.encode(identity.key.public());
+			const privateKey = bs58.encode(identity.key.private());
+			const keyType = identity.key.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
 
 			return {
-				doc: identity.doc.toJSON(),
-				key: { ...identity.key.toJSON(), encoding: this.config.hashEncoding }
+				id: identity.doc.id().toString(),
+				keys: {
+					sign: {
+						public: publicKey,
+						private: privateKey,
+						type: keyType,
+						encoding: Encoding.base58
+					}
+				}
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -84,55 +69,56 @@ export class SsiService {
 	}
 
 	async createVerifiableCredential<T>(
-		issuerIdentity: IdentityKeys,
+		identityKeys: IdentityKeys,
 		credential: Credential<T>,
-		keyCollectionJson: KeyCollectionJson,
-		keyCollectionIndex: number,
+		bitmapIndex: number,
 		subjectKeyIndex: number
-	): Promise<VerifiableCredentialJson> {
+	): Promise<any> {
 		try {
-			const { document } = await this.getLatestIdentityJson(issuerIdentity.id);
-
-			const { doc } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
-			const issuerKeys = Identity.KeyCollection.fromJSON(keyCollectionJson);
-			const digest = this.config.hashFunction;
-			const method = VerificationMethod.createMerkleKey(digest, doc.id, issuerKeys, this.getKeyCollectionTag(keyCollectionIndex));
-
-			const unsignedVc = VerifiableCredential.extend({
-				id: credential?.id,
+			const { document, key } = await this.restoreIdentity(identityKeys);
+			const issuerId = document.id().toString();
+			const unsignedVc = new Credential({
+				id: credential.id,
 				type: credential.type,
-				issuer: doc.id.toString(),
-				credentialSubject: credential.subject
+				credentialStatus: {
+					id: this.getBitmapTag(issuerId, bitmapIndex),
+					type: Identity.RevocationBitmap.type(),
+					revocationBitmapIndex: subjectKeyIndex.toString()
+				},
+				issuer: issuerId,
+				credentialSubject: {
+					id: credential.id,
+					...credential.subject
+				}
 			});
-
-			const signedVc = await doc.signCredential(unsignedVc, {
-				method: method.id.toString(),
-				public: issuerKeys.public(subjectKeyIndex),
-				secret: issuerKeys.secret(subjectKeyIndex),
-				proof: issuerKeys.merkleProof(digest, subjectKeyIndex)
-			});
-
-			const client = this.getIdentityClient(true);
-			const validatedCredential = await client.checkCredential(signedVc.toString());
-
-			if (!validatedCredential?.verified || !doc.verify(signedVc)) {
-				throw new Error('could not verify identity, please try it again.');
-			}
-
-			return validatedCredential.credential;
+			const methodId = document.defaultSigningMethod().id().toString();
+			const signedCredential = await document.signCredential(unsignedVc, key.private(), methodId, Identity.ProofOptions.default());
+			return signedCredential.toJSON();
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the verifiable credential');
 		}
 	}
 
-	async checkVerifiableCredential(signedVc: VerifiableCredentialJson): Promise<boolean> {
+	async checkVerifiableCredential(signedVc: VerifiableCredential): Promise<boolean> {
 		try {
-			const issuerDoc = await this.getLatestIdentityDoc(signedVc.issuer);
-			const subject = await this.getLatestIdentityDoc(signedVc.id);
-			const credentialVerified = issuerDoc.verifyData(signedVc);
-			const subjectIsVerified = subject.verify();
-			const verified = issuerDoc.verify() && credentialVerified && subjectIsVerified;
+			const issuerDoc = (await this.getLatestIdentityDoc(signedVc.issuer)).document;
+			const credentialVerified = issuerDoc.verifyData(signedVc, new Identity.VerifierOptions({}));
+			let validCredential = true;
+			try {
+				const credential = Identity.Credential.fromJSON(signedVc);
+				Identity.CredentialValidator.validate(
+					credential,
+					issuerDoc,
+					Identity.CredentialValidationOptions.default(),
+					Identity.FailFast.FirstError
+				);
+			} catch (e) {
+				// if credential is revoked, validate will throw an error
+				this.logger.error(`Error from identity sdk: ${e}`);
+				validCredential = false;
+			}
+			const verified = validCredential && credentialVerified;
 			return verified;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -140,73 +126,74 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: IdentityDocumentJson): Promise<string> {
-		const client = this.getIdentityClient();
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string> {
+		newDoc.setMetadataPreviousMessageId(prevMessageId);
+		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
+		const methodId = newDoc.defaultSigningMethod().id().toString();
+		newDoc.signSelf(key, methodId);
+		const client = await this.getIdentityClient();
 		const tx = await client.publishDocument(newDoc);
-		return tx?.messageId;
+		return tx?.messageId();
 	}
 
-	async revokeVerifiableCredential(
-		issuerIdentity: IdentityKeys,
-		keyCollectionIndex: number,
-		keyIndex: number
-	): Promise<{ revoked: boolean }> {
+	async revokeVerifiableCredential(issuerIdentity: IdentityKeys, bitmapIndex: number, keyIndex: number): Promise<void> {
 		try {
-			const { document, messageId } = await this.getLatestIdentityJson(issuerIdentity.id);
-			const { doc, key } = this.restoreIdentity({ doc: document, key: issuerIdentity.key });
-			const newDoc = this.addPropertyToDoc(doc, { previousMessageId: messageId });
-			const result: boolean = newDoc.revokeMerkleKey(this.getKeyCollectionTag(keyCollectionIndex), keyIndex);
-
-			newDoc.sign(key);
-			await this.publishSignedDoc(newDoc.toJSON());
-
-			return { revoked: result };
+			const res = await this.restoreIdentity(issuerIdentity);
+			const bitmapTag = `${this.config.bitmapTag}-${bitmapIndex}`; // caution this is without the did by purpose
+			await res.document.revokeCredentials(bitmapTag, keyIndex);
+			await this.publishSignedDoc(res.document, res.key, res.messageId);
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not revoke the verifiable credential');
 		}
 	}
 
-	async getLatestIdentityJson(did: string): Promise<LatestIdentityJson> {
+	async getLatestIdentityDoc(did: string): Promise<{ document: Identity.Document; messageId: string }> {
 		try {
-			const client = this.getIdentityClient(true);
-			return await client.resolve(did);
-		} catch (error) {
-			this.logger.error(`Error from identity sdk: ${error}`);
-			throw new Error('could not get the latest identity');
-		}
-	}
+			const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
+			const resolvedDoc = await resolver.resolve(did);
 
-	async getLatestIdentityDoc(did: string): Promise<Identity.Document> {
-		try {
-			const { document } = await this.getLatestIdentityJson(did);
-			const doc = Document.fromJSON(document);
-			if (!doc) {
-				throw new Error('could not parse json');
+			if (!resolvedDoc) {
+				throw Error(`no identity with id: ${did} found!`);
 			}
-			return doc;
+
+			const messageId = resolvedDoc.integrationMessageId();
+			const document = resolvedDoc.document();
+			return { document, messageId };
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not get the latest identity');
 		}
 	}
 
-	getPublicKey(identityDoc: Identity.Document): string | undefined {
+	async getPublicKey(identityDoc: Identity.Document): Promise<string | undefined> {
 		if (!identityDoc) {
 			return;
 		}
-		const verificationMethod = identityDoc.resolveKey(`${identityDoc.id}#key`);
-		return verificationMethod?.toJSON()?.publicKeyBase58;
+		const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
+		const doc = await resolver.resolve(identityDoc.id());
+		const methodId = doc.document().defaultSigningMethod().id().toString();
+		const method = doc.intoDocument().resolveMethod(methodId);
+		return method.toJSON().publicKeyMultibase;
 	}
 
-	restoreIdentity(identity: IdentityJson) {
+	async restoreIdentity(identity: IdentityKeys): Promise<{ document: Identity.Document; key: Identity.KeyPair; messageId: string }> {
 		try {
-			const key: Identity.KeyPair = Identity.KeyPair.fromJSON(identity.key);
-			const doc = Document.fromJSON(identity.doc) as any;
-
+			const decodedKey = {
+				public: Array.from(bs58.decode(identity.keys.sign.public)),
+				secret: Array.from(bs58.decode(identity.keys.sign.private))
+			};
+			const json = {
+				type: identity.keys.sign.type,
+				public: decodedKey.public,
+				private: decodedKey.secret
+			};
+			const key: Identity.KeyPair = KeyPair.fromJSON(json);
+			const { document, messageId } = await this.getLatestIdentityDoc(identity.id);
 			return {
-				doc,
-				key
+				document,
+				key,
+				messageId
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
@@ -214,34 +201,43 @@ export class SsiService {
 		}
 	}
 
-	generateIdentity() {
+	async generateIdentity(): Promise<{ account: Identity.Account; doc: Identity.Document; key: Identity.KeyPair }> {
 		try {
-			const { doc, key } = new Document(this.config.keyType, Identity.Network.mainnet().toString()) as any;
+			const builder = this.getAccountBuilder();
+			const keyPair = new KeyPair(KeyType.Ed25519);
+			const account = await builder.createIdentity({ privateKey: keyPair.private() });
 
 			return {
-				doc,
-				key
+				account,
+				doc: account.document(),
+				key: keyPair
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
-			throw new Error(`could not create identity document from keytype: ${this.config.keyType}`);
+			throw new Error(`could not create identity document from keytype: ${KeyType.Ed25519}`);
 		}
 	}
-	getKeyCollectionTag = (keyCollectionIndex: number) => `${this.config.keyCollectionTag}-${keyCollectionIndex}`;
+	getBitmapTag = (id: string, bitmapIndex: number) => `${id}#${this.config.bitmapTag}-${bitmapIndex}`;
+
+	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
+		const clientConfig: Identity.IClientConfig = this.getConfig(usePermaNode);
+		const builderOptions = {
+			clientConfig
+		};
+		return new AccountBuilder(builderOptions);
+	}
 
 	private getIdentityClient(usePermaNode?: boolean) {
-		const cfg = Identity.Config.fromNetwork(Identity.Network.mainnet());
-		if (usePermaNode) {
-			cfg.setPermanode(this.config.permaNode);
-		}
-		cfg.setNode(this.config.node);
+		const cfg: Identity.IClientConfig = this.getConfig(usePermaNode);
 		return Client.fromConfig(cfg);
 	}
 
-	private addPropertyToDoc(doc: Identity.Document, property: { [key: string]: any }): Identity.Document {
-		return Identity.Document.fromJSON({
-			...doc.toJSON(),
-			...property
-		});
+	private getConfig(usePermaNode?: boolean): Identity.IClientConfig {
+		return {
+			permanodes: usePermaNode ? [{ url: this.config.permaNode }] : [],
+			primaryNode: { url: this.config.node },
+			network: Identity.Network.mainnet(),
+			localPow: false
+		};
 	}
 }

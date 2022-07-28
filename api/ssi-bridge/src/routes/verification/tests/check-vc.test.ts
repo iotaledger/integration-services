@@ -52,7 +52,7 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).not.toHaveBeenCalled();
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('no valid server identity to check the credential.'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not check the verifiable credential'));
@@ -72,7 +72,7 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('no trusted roots found!'));
@@ -96,7 +96,7 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
@@ -111,7 +111,7 @@ describe('test authentication routes', () => {
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
 			const getTrustedRootIdsSpy = jest
 				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
-				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.doc.id }]));
+				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.document.doc.id }]));
 
 			const req: any = {
 				params: {},
@@ -120,7 +120,7 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
@@ -134,7 +134,7 @@ describe('test authentication routes', () => {
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
 			const getTrustedRootIdsSpy = jest
 				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
-				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.doc.id }]));
+				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.document.doc.id }]));
 
 			const req: any = {
 				params: {},
@@ -143,7 +143,7 @@ describe('test authentication routes', () => {
 
 			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
 
-			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.doc.id, serverSecret);
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
 			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);

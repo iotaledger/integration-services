@@ -35,7 +35,7 @@ describe('test authentication routes', () => {
 
 	describe('test getLatestDocument route', () => {
 		it('should return bad request if no id for the identity is provided!', async () => {
-			const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityJson');
+			const getLatestIdentitySpy = jest.spyOn(ssiService, 'getLatestIdentityDoc');
 			const req: any = {
 				params: {},
 				body: null
@@ -49,19 +49,22 @@ describe('test authentication routes', () => {
 		});
 
 		it('should return the document of the id', async () => {
-			const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
+			const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 			const getLatestIdentitySpy = jest
-				.spyOn(ssiService, 'getLatestIdentityJson')
-				.mockReturnValue(Promise.resolve(UserIdentityMock as any));
+				.spyOn(ssiService, 'getLatestIdentityDoc')
+				.mockReturnValue(Promise.resolve({ document: UserIdentityMock.document, messageId: 'mymessageid' } as any));
 			const req: any = {
 				params: { id },
 				body: null
 			};
 
 			await verificationRoutes.getLatestDocument(req, res, nextMock);
-
+			const expectedDocument = {
+				document: UserIdentityMock.document,
+				messageId: 'mymessageid'
+			};
 			expect(getLatestIdentitySpy).toHaveBeenCalledWith(id);
-			expect(res.send).toHaveBeenCalledWith(UserIdentityMock);
+			expect(res.send).toHaveBeenCalledWith(expectedDocument);
 		});
 	});
 });

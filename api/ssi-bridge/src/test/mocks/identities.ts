@@ -1,10 +1,10 @@
-import { Encoding, IdentityJson, IdentityKeys, User, UserType } from '@iota/is-shared-modules';
+import { IdentityKeys, User } from '@iota/is-shared-modules';
+import { IdentityDocument, Keys } from '@iota/is-shared-modules';
 
 export const TestUsersMock = [
 	{
 		_id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
 		id: 'did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm',
-		publicKey: 'HmvXxyyzaA9B5CMp63xG9ptEkgwmHgaYVStdDsYxzDTX',
 		username: 'test-device',
 		type: 'Device',
 		registrationDate: '2021-03-15T10:29:56+01:00',
@@ -53,176 +53,150 @@ export const TestUsersMock = [
 
 // returned from localhost:3000/api/v1/identities/create
 export const UserIdentityMock = {
-	doc: {
-		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-		authentication: [
-			{
-				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4#key',
-				controller: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm'
-			}
-		],
-		created: '2021-03-16T14:18:47Z',
-		updated: '2021-03-16T14:18:47Z',
-		immutable: false,
+	document: {
+		doc: {
+			id: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi',
+			capabilityInvocation: [
+				{
+					id: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi#sign-0',
+					controller: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi',
+					type: 'Ed25519VerificationKey2018',
+					publicKeyMultibase: 'zGPpRru9YxgY2amWqzAkWbLwuL25x47o73oBhp4f5avij'
+				}
+			]
+		},
+		integrationMessageId: 'mymessage',
+		meta: {
+			created: '2022-07-21T15:26:04Z',
+			updated: '2022-07-21T15:26:04Z'
+		},
 		proof: {
 			type: 'JcsEd25519Signature2020',
-			verificationMethod: '#key',
-			signatureValue: '2AKaB7KC9rQQLirMgRoYYns6fF2wVtryCnqKesMiwxuhmYzYPtPBbc6jeMPxgMHWtSoQQKyPkVdcFKx87LPabAq1'
+			verificationMethod: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi#sign-0',
+			signatureValue: 'UnFqyMkHVLP3ToyE8bteiEukjmHbQbtWzstYByNgJrCZxTosHdXsx4k4VzRNE6KZffPJFpkNv6dyXFfmv7tc2n5'
 		}
 	},
 	userData: {
-		id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-		publicKey: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
+		id: 'did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi',
 		username: 'first-user',
 		creator: 'did:iota:96JyhhVGbaLheq2L8j39DiAe8o3ijTHoCWWmai3D7PNk',
 		claim: { type: 'Person', firstName: 'Tom', lastName: 'Sonson' },
 		registrationDate: '2021-03-16T15:18:49+01:00',
-		verifiableCredentials: [
-			{
-				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-				type: ['VerifiableCredential', 'PersonCredential'],
-				credentialSubject: {
-					id: 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4',
-					type: UserType.Person,
-					registrationDate: '2021-03-16T15:18:49+01:00',
-					username: 'first-user',
-					initiatorId: ''
-				},
-				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				issuanceDate: '2021-03-24T15:59:11Z',
-				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'E7YtcGcEJuWE69djaDGZL425Qh3pCuhhF3RPum3Mm1WJ.1119t2nv9LDH5Qi8CgAK1P5W78XLxFgHjGddZW5ct1isxnaB5ZF7LPToUuxhgrbdZLfyhY2LSf3djsRjyE6wyeMVTE9w7BJZg8cZx6egUAPEy1DNzyZZXZkZWyjHqZAmZ2B24xwfyFd.32W1cWdfRK8YZ5sTDe7fpCzyqVtQQRc7Fkauygp4MUb4GUPd9TG8CBiktnvDgzC9SxtXJfCVc7Euf5N7H88o7nSU'
-				}
-			}
-		]
+		verifiableCredentials: []
 	},
-	key: {
-		type: 'ed25519',
-		public: '8WaGsr277JQaqV9fxHmFNGC9haApFbBfdnytmq5gq4vm',
-		secret: 'DadU1UNQfhTJrBHvYaML8wnxvJUEBsx7DtUvXSti5Mp8',
-		encoding: Encoding.base58
+	keys: {
+		sign: {
+			public: 'GPpRru9YxgY2amWqzAkWbLwuL25x47o73oBhp4f5avij',
+			private: 'GLqGAR11K989PGkoVwibkmE7bdw6tQafVf2DCQj9JQrQ',
+			type: 'ed25519',
+			encoding: 'base58'
+		}
 	}
-} as IdentityJson & { userData: User };
+} as { document: IdentityDocument } & { userData: User } & { keys: Keys };
 
 export const ServerIdentityMock = {
-	doc: {
-		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-		verificationMethod: [
-			{
-				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ#key-collection',
-				controller: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: 'MerkleKeyCollection2021',
-				publicKeyBase58: '116Bo8Pfvanc2WNYLkYH4GdEk6hdZuFKA1razmkBqoBPzY'
-			}
-		],
-		authentication: [
-			{
-				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ#key',
-				controller: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb'
-			}
-		],
-		created: '2021-03-24T14:38:41Z',
-		updated: '2021-03-24T14:38:41Z',
-		immutable: false,
-		previousMessageId: 'ANZAUTTZHLIJADRODGCTESKILHXCIVMZHSYDWYINODE9OMUDV9CWPPUFMDAURXUNJASFNBWPRSPOZ9999',
+	document: {
+		doc: {
+			id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
+			capabilityInvocation: [
+				{
+					id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm#sign-0',
+					controller: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
+					type: 'Ed25519VerificationKey2018',
+					publicKeyMultibase: 'zBojkSuALfcNGQfPX52f8sNF23To2by99KGHLeWB9wDza'
+				}
+			]
+		},
+		integrationMessageId: 'mymessage',
+		meta: {
+			created: '2022-07-21T14:52:49Z',
+			updated: '2022-07-21T14:52:49Z'
+		},
 		proof: {
 			type: 'JcsEd25519Signature2020',
-			verificationMethod: '#key',
-			signatureValue: 'mCKHiqnAUaipR8rBc5skPuGRvo5xAj8PkByXnaKrznwmMMcVYQhcA6Zwdjkj7EHpMgTsZhXKPRPAbChTfz14qy5'
+			verificationMethod: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm#sign-0',
+			signatureValue: '54KYBA2STMvYosWKFqa7Pv2hSyk1PdgNYf6oqTyjUy9j3jEANAD84uuSpHrP2MtfdTeJesaUrqpigBbaeQuWuFV8'
 		}
 	},
 	userData: {
-		id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-		publicKey: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
+		id: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
 		username: 'api-identity',
 		registrationDate: '2021-03-24T15:38:43+01:00',
 		verifiableCredentials: [
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
 				type: ['VerifiableCredential', 'VerifiedIdentityCredential'],
 				credentialSubject: {
-					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-					type: 'Person',
-					registrationDate: '2021-03-24T15:38:43+01:00',
-					username: 'api-identity',
-					initiatorId: ''
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+					'@context': 'https://schema.org/',
+					familyName: 'Enginssseer',
+					givenName: 'Test',
+					initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+					jobTitle: 'Software Engineer',
+					name: 'Test Engineer',
+					type: 'Person'
 				},
-				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				issuanceDate: '2021-03-24T14:38:45Z',
+				issuer: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+				issuanceDate: '2022-07-20T08:15:32Z',
+				credentialStatus: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+					type: 'RevocationBitmap2022',
+					revocationBitmapIndex: '6'
+				},
 				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'8rVDt6KCPoZVhMCGG5AQLZaUjFJ5LLv4iXsaoQjeqQpq.1117uJFpmAB6msQ9GdsSRvxfdSvfTas94EippDqh6foKFTY1diqiCzfAuqYVExhxeJGBYycQiDbxwGev9Chrtz51UYVbwUL1DR8gipj3zuZa4X2SF7UnTbAw74Dv3o2qsqi2FsxtssV.52yNV25JkS9sRw2tSCKw4yQ3hY4fEneEpk82vU9UX2G5vGJsPhvpjSwfX2cxvqJ48E8EvwDCXrFuetyLPLVQ1UGY'
+					type: 'JcsEd25519Signature2020',
+					verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+					signatureValue: 'QESXmEUkdALsJvME2AWS7ZbFzKwopTNdEoqcy6vBDJGKVEeUW6Gz4dzGd6paX7JvYd25JJsz4BtWBUaoTog3ErM'
 				}
 			},
 			{
 				'@context': 'https://www.w3.org/2018/credentials/v1',
-				id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				type: ['VerifiableCredential', 'SomeBasicCredential'], // not valid credential to verify others
+				id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+				type: ['VerifiableCredential', 'BasicIdentityCredential'],
 				credentialSubject: {
-					id: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-					type: 'Person',
-					registrationDate: '2021-03-24T15:38:43+01:00',
-					username: 'api-identity',
-					initiatorId: ''
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+					'@context': 'https://schema.org/',
+					familyName: 'Enginssseer',
+					givenName: 'Test',
+					initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+					jobTitle: 'Software Engineer',
+					name: 'Test Engineer',
+					type: 'Person'
 				},
-				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-				issuanceDate: '2021-03-24T14:38:45Z',
+				issuer: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+				issuanceDate: '2022-07-20T08:15:32Z',
+				credentialStatus: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+					type: 'RevocationBitmap2022',
+					revocationBitmapIndex: '6'
+				},
 				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'8rVDt6KCPoZVhMCGG5AQLZaUjFJ5LLv4iXsaoQjeqQpq.1117uJFpmAB6msQ9GdsSRvxfdSvfTas94EippDqh6foKFTY1diqiCzfAuqYVExhxeJGBYycQiDbxwGev9Chrtz51UYVbwUL1DR8gipj3zuZa4X2SF7UnTbAw74Dv3o2qsqi2FsxtssV.52yNV25JkS9sRw2tSCKw4yQ3hY4fEneEpk82vU9UX2G5vGJsPhvpjSwfX2cxvqJ48E8EvwDCXrFuetyLPLVQ1UGY'
+					type: 'JcsEd25519Signature2020',
+					verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+					signatureValue: 'QESXmEUkdALsJvME2AWS7ZbFzKwopTNdEoqcy6vBDJGKVEeUW6Gz4dzGd6paX7JvYd25JJsz4BtWBUaoTog3ErM'
 				}
 			}
 		]
 	},
-	key: {
-		type: 'ed25519',
-		public: '5r7cbQkEXi2srrNUrVDkB79NnPuiBguWsPDvS6nY7yEb',
-		secret: '6rK7CLKdDw9kBYLQhH4A11vpeS1Hw9jvZagrqgtGcGEp',
-		encoding: Encoding.base58
+	keys: {
+		sign: {
+			public: 'BojkSuALfcNGQfPX52f8sNF23To2by99KGHLeWB9wDza',
+			private: '8UCqDS5erHTJZRRqyqbLsxY5ED6ciYGttEhUU56rRVvA',
+			type: 'ed25519',
+			encoding: 'base58'
+		}
 	}
-} as IdentityJson & { userData: User };
+} as { document: IdentityDocument } & { userData: User } & { keys: Keys };
 
 export const ServerIdentityKey: IdentityKeys = {
-	id: ServerIdentityMock.doc.id,
-	key: ServerIdentityMock.key
+	id: ServerIdentityMock.document.doc.id,
+	keys: ServerIdentityMock.keys
 };
 
-export const DeviceIdentityMock = {
-	doc: {
-		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		authentication: [
-			{
-				id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu#key',
-				controller: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-				type: 'Ed25519VerificationKey2018',
-				publicKeyBase58: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp'
-			}
-		],
-		created: '2021-03-24T15:54:33Z',
-		updated: '2021-03-24T15:54:33Z',
-		immutable: false,
-		proof: {
-			type: 'JcsEd25519Signature2020',
-			verificationMethod: '#key',
-			signatureValue: '4tyirinqCRqf3Sa4RMwFocrjJWqAWuLFWWP3oGzkhvA7SbjbFNXKfPRPxePtixgzsdvBubd6f4VR23jvaV1c44y'
-		}
-	},
+export const DeviceIdentityMock: { userData: User } = {
 	userData: {
 		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		publicKey: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
 		username: 'test-device',
 		registrationDate: '2021-03-24T16:54:38+01:00',
 		verifiableCredentials: [
@@ -233,46 +207,49 @@ export const DeviceIdentityMock = {
 				credentialSubject: {
 					id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
 					type: 'Device',
-					registrationDate: '2021-03-24T16:54:38+01:00',
-					username: 'test-device',
-					initiatorId: ''
+					initiator: ''
 				},
-				issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
+				issuer: 'did:iota:GEpCtmCAqr9mdR1zC5iL6bg1jAq8NmR8QmmdH8T7eFtm',
 				issuanceDate: '2021-03-24T15:58:59Z',
+				credentialStatus: {
+					id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+					type: 'RevocationBitmap2022',
+					revocationBitmapIndex: '6'
+				},
 				proof: {
-					type: 'MerkleKeySignature2021',
-					verificationMethod: '#key-collection',
-					signatureValue:
-						'9fNqgZfFZTnt6HpyRD2yXRovijjewVTpGSzwNX4YvPb1.1117u9ibPzu8itzHAWjLdo6j7vTWdWCuvADY1oUqrJLxUmQkCnhEgJWBoASweLXoJAPYuUe8iyyYEgoaQDDTHhaL5xZQ8fK6nbw67qLo5BuTbQHiqpnintZph9TjKFep7pk6zoLMGdD.3xh4r38iiLhXyjBwdJPMqzSyrJAtSp3u3pJUGTGydyN45rTEWXfqPEDLw8ux9ttXijADTH5SAwr924Agnk2Vm3wA'
+					type: 'JcsEd25519Signature2020',
+					verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+					signatureValue: 'QESXmEUkdALsJvME2AWS7ZbFzKwopTNdEoqcy6vBDJGKVEeUW6Gz4dzGd6paX7JvYd25JJsz4BtWBUaoTog3ErM'
 				}
 			}
 		]
-	},
-	key: {
-		type: 'ed25519',
-		public: 'DDBJgEUNmWisGf4Zh6MazAtef7V5BjVJdEYKo2yRLYVp',
-		secret: 'DNXNBLFwsFnuvpyo81krNQhAiyQFCTv2yVon6uD22bVR',
-		encoding: Encoding.base58
 	}
-} as IdentityJson & { userData: User };
+};
 
 export const TestCredentialMock = {
 	'@context': 'https://www.w3.org/2018/credentials/v1',
-	id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-	type: ['VerifiableCredential', 'DeviceCredential'],
+	id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+	type: ['VerifiableCredential', 'VerifiedIdentityCredential'],
 	credentialSubject: {
-		id: 'did:iota:6hyaHgrvEeXD8z6qqd1QyYNQ1QD54fXfLs6uGew3DeNu',
-		type: 'Device',
-		registrationDate: '2021-03-24T16:54:38+01:00',
-		username: 'test-device',
-		initiatorId: ''
+		id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+		'@context': 'https://schema.org/',
+		familyName: 'Engineer',
+		givenName: 'Test',
+		initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+		jobTitle: 'Software Engineer',
+		name: 'Test Engineer',
+		type: 'Person'
 	},
-	issuer: 'did:iota:5Esfk9YHpqZAGFBCh4EzbnVH2kQhirmxQApc1ghCncGQ',
-	issuanceDate: '2021-03-24T15:58:59Z',
+	issuer: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc',
+	issuanceDate: '2022-07-21T14:49:14Z',
+	credentialStatus: {
+		id: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#signature-bitmap-0',
+		type: 'RevocationBitmap2022',
+		revocationBitmapIndex: '7'
+	},
 	proof: {
-		type: 'MerkleKeySignature2021',
-		verificationMethod: '#key-collection',
-		signatureValue:
-			'9fNqgZfFZTnt6HpyRD2yXRovijjewVTpGSzwNX4YvPb1.1117u9ibPzu8itzHAWjLdo6j7vTWdWCuvADY1oUqrJLxUmQkCnhEgJWBoASweLXoJAPYuUe8iyyYEgoaQDDTHhaL5xZQ8fK6nbw67qLo5BuTbQHiqpnintZph9TjKFep7pk6zoLMGdD.3xh4r38iiLhXyjBwdJPMqzSyrJAtSp3u3pJUGTGydyN45rTEWXfqPEDLw8ux9ttXijADTH5SAwr924Agnk2Vm3wA'
+		type: 'JcsEd25519Signature2020',
+		verificationMethod: 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc#sign-0',
+		signatureValue: 'Ug3k7V6BufDDcW6VRJwGpmsvE3bbwDv84x8en6ERhmgnfubxTZ5fBZJ6Ky9YUuqZhqpoQWqdmcLVYQTEE6qVe7u'
 	}
 };

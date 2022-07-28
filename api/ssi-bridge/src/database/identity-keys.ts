@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
-import { IdentityKeys } from '@iota/is-shared-modules';
 import { MongoDbService, decrypt, encrypt } from '@iota/is-shared-modules/node';
+import { IdentityKeys } from '@iota/is-shared-modules';
 
 const collectionName = CollectionNames.identityKeysCollection;
 
@@ -12,11 +12,13 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 	}
 	const decryptedIdentity: IdentityKeys = {
 		...identity,
-		key: {
-			encoding: identity.key.encoding,
-			type: identity.key.type,
-			public: identity.key.public,
-			secret: decrypt(identity.key.secret, secret)
+		keys: {
+			sign: {
+				encoding: identity.keys.sign.encoding,
+				type: identity.keys.sign.type,
+				public: identity.keys.sign.public,
+				private: decrypt(identity.keys.sign.private, secret)
+			}
 		}
 	};
 
@@ -24,18 +26,21 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 };
 
 export const saveIdentityKeys = async (identity: IdentityKeys, secret: string) => {
-	const encryptedKey = encrypt(identity.key.secret, secret);
-	const encryptedIdentity: IdentityKeys = {
+	const encryptedKey = encrypt(identity.keys.sign.private, secret);
+	const encryptedIdentityKeys: IdentityKeys = {
 		...identity,
-		key: {
-			...identity.key,
-			secret: encryptedKey
+		keys: {
+			...identity.keys,
+			sign: {
+				...identity.keys.sign,
+				private: encryptedKey
+			}
 		}
 	};
 
 	const document = {
-		_id: encryptedIdentity?.id,
-		...encryptedIdentity,
+		_id: encryptedIdentityKeys?.id,
+		...encryptedIdentityKeys,
 		created: new Date()
 	};
 
