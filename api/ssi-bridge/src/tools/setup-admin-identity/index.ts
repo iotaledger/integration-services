@@ -24,8 +24,8 @@ const setupAdminIdentity = async () => {
 			claim: { type: UserType.Organization }
 		});
 
-		await createCredential(adminIdentity.doc.id, rootIdentity);
-		await setAdminRole(adminIdentity.doc.id);
+		await createCredential(adminIdentity.id, rootIdentity);
+		await setAdminRole(adminIdentity.id);
 
 		fs.writeFileSync('./adminIdentity.json', JSON.stringify(adminIdentity, null, 4));
 		console.log('The identity was successfully created and saved in the adminIdentity.json file!');

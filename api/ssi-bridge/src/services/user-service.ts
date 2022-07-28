@@ -5,8 +5,7 @@ import {
 	UserSearch,
 	UserSearchResponse,
 	CreateIdentityBody,
-	IdentityJson,
-	VerifiableCredentialJson,
+	VerifiableCredential,
 	IdentityKeys
 } from '@iota/is-shared-modules';
 import { getDateFromString, getDateStringFromDate } from '@iota/is-shared-modules/node';
@@ -42,15 +41,12 @@ export class UserService {
 			.filter((u) => u);
 	}
 
-	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string): Promise<IdentityJson> {
+	async createIdentity(createIdentityBody: CreateIdentityBody, authorization?: string) {
 		const identity = await this.ssiService.createIdentity();
-
 		const creatorId = this.decodeUserId(authorization);
-
 		const user: User = {
 			...createIdentityBody,
-			id: identity.doc.id.toString(),
-			publicKey: identity.key.public,
+			id: identity.id,
 			creator: creatorId
 		};
 
@@ -58,8 +54,8 @@ export class UserService {
 
 		if (createIdentityBody.storeIdentity && this.serverSecret) {
 			const identityKeys: IdentityKeys = {
-				id: identity.doc.id,
-				key: identity.key
+				id: identity.id,
+				keys: identity.keys
 			};
 			await IdentityDocsDb.saveIdentityKeys(identityKeys, this.serverSecret);
 		}
@@ -120,10 +116,11 @@ export class UserService {
 		const validator = SchemaValidator.getInstance(this.logger);
 		validator.validateUser(user);
 
-		const identityDoc = await this.ssiService.getLatestIdentityDoc(user.id);
-		const publicKey = this.ssiService.getPublicKey(identityDoc);
-		if (!publicKey || !user.publicKey || publicKey !== user.publicKey) {
-			throw new Error('wrong identity provided');
+		const { document } = await this.ssiService.getLatestIdentityDoc(user.id);
+		const publicKey = await this.ssiService.getPublicKey(document);
+
+		if (!document || !publicKey) {
+			throw new Error('no identity found!');
 		}
 
 		const userPersistence = this.getUserPersistence(user);
@@ -139,11 +136,11 @@ export class UserService {
 		return userDb.updateUser(userPersistence);
 	}
 
-	async addUserVC(vc: VerifiableCredentialJson): Promise<void> {
+	async addUserVC(vc: VerifiableCredential): Promise<void> {
 		await userDb.addUserVC(vc);
 	}
 
-	async removeUserVC(vc: VerifiableCredentialJson): Promise<UserPersistence> {
+	async removeUserVC(vc: VerifiableCredential): Promise<UserPersistence> {
 		return userDb.removeUserVC(vc);
 	}
 
@@ -152,18 +149,17 @@ export class UserService {
 	}
 
 	private hasValidFields(user: User): boolean {
-		return !(!user.publicKey && !user.id);
+		return !!user.id;
 	}
 
 	private getUserPersistence(user: User): UserPersistence | null {
 		if (user == null || isEmpty(user.id)) {
 			throw new Error('Error when parsing the body: id must be provided!');
 		}
-		const { publicKey, id, username, creator, registrationDate, claim, verifiableCredentials, role, hidden, isServerIdentity } = user;
+		const { id, username, creator, registrationDate, claim, verifiableCredentials, role, hidden, isServerIdentity } = user;
 
 		const userPersistence: UserPersistence = {
 			id,
-			publicKey,
 			username,
 			creator,
 			registrationDate: registrationDate && getDateFromString(registrationDate),
@@ -182,11 +178,10 @@ export class UserService {
 			return null;
 		}
 
-		const { username, creator, publicKey, id, registrationDate, claim, verifiableCredentials, role, hidden } = userPersistence;
+		const { username, creator, id, registrationDate, claim, verifiableCredentials, role, hidden } = userPersistence;
 
 		const user: User = {
 			id,
-			publicKey,
 			username,
 			creator,
 			registrationDate: getDateStringFromDate(registrationDate),

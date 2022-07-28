@@ -6,16 +6,16 @@ export {
 	Credential,
 	CredentialSubject,
 	IdentityDocument,
-	IdentityDocumentJson,
 	IdentityInternal,
-	IdentityJson,
-	IdentityKeyPairJson,
-	IdentityKeys,
+	IdentityKeyPair,
 	IdentitySearchBody,
-	LatestIdentityJson,
-	VerifiableCredentialJson
+	LatestIdentity,
+	VerifiableCredential,
+	VerifiableCredentialPersistence,
+	Bitmap,
+	IdentityKeys,
+	Keys
 } from './identity';
-export { KeyCollectionJson, KeyCollectionPersistence, SimpleKeyPair, VerifiableCredentialPersistence } from './key-collection';
 export {
 	AddChannelLogBody,
 	AuthorizeSubscriptionBody,

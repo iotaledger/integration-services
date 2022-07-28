@@ -1,17 +1,16 @@
 import { BaseClient } from './base';
 import { ClientConfig } from '../models/clientConfig';
 import {
-  IdentityInternal,
-  IdentityJson,
-  VerifiableCredentialJson,
+  VerifiableCredential,
   RevokeVerificationBody,
   VerifyJwtBody,
   User,
   UserType,
   CredentialTypes,
   VerifiableCredentialInternal,
-  IdentityDocumentJson,
-  IdentitySearchBody
+  IdentityDocument,
+  IdentityKeys,
+  UserSearchResponse
 } from '@iota/is-shared-modules';
 import { SearchCriteria } from '../models/searchCriteria';
 
@@ -36,7 +35,7 @@ export class IdentityClient extends BaseClient {
     claimType = UserType.Person,
     claim?: any,
     hidden?: boolean
-  ): Promise<IdentityJson> {
+  ): Promise<IdentityKeys> {
     return await this.post(`${this.baseUrl}/identities/create`, {
       username,
       hidden,
@@ -60,7 +59,7 @@ export class IdentityClient extends BaseClient {
     asc,
     limit,
     index
-  }: SearchCriteria): Promise<IdentitySearchBody[]> {
+  }: SearchCriteria): Promise<UserSearchResponse[]> {
     const param = registrationDate != undefined ? { 'registration-date': registrationDate } : {};
     return await this.get(`${this.baseUrl}/identities/search`, {
       type,
@@ -87,7 +86,7 @@ export class IdentityClient extends BaseClient {
    * @param identity
    * @returns
    */
-  async add(identity: IdentityInternal): Promise<null> {
+  async add(identity: User): Promise<null> {
     return this.post(`${this.baseUrl}/identities/identity`, identity);
   }
 
@@ -96,7 +95,7 @@ export class IdentityClient extends BaseClient {
    * @param identity
    * @returns
    */
-  async update(identity: IdentityInternal): Promise<null> {
+  async update(identity: User): Promise<null> {
     return this.put(`${this.baseUrl}/identities/identity`, identity);
   }
 
@@ -117,7 +116,7 @@ export class IdentityClient extends BaseClient {
    * @param id
    * @returns
    */
-  async latestDocument(id: string): Promise<{ document: IdentityDocumentJson; messageId: string }> {
+  async latestDocument(id: string): Promise<{ document: IdentityDocument; messageId: string }> {
     return await this.get(`${this.baseUrl}/verification/latest-document/${id}`);
   }
 
@@ -163,7 +162,7 @@ export class IdentityClient extends BaseClient {
     credentialType: CredentialTypes | string,
     claimType: UserType,
     claim?: any
-  ): Promise<VerifiableCredentialJson> {
+  ): Promise<VerifiableCredential> {
     let body = {
       subject: {
         id: targetDid,
@@ -183,9 +182,7 @@ export class IdentityClient extends BaseClient {
    * @param credential
    * @returns
    */
-  async checkCredential(
-    credential: VerifiableCredentialInternal
-  ): Promise<{ isVerified: boolean }> {
+  async checkCredential(credential: VerifiableCredential): Promise<{ isVerified: boolean }> {
     return await this.post(`${this.baseUrl}/verification/check-credential`, credential);
   }
 
