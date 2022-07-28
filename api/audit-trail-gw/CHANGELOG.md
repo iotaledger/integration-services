@@ -7,3 +7,6 @@
 ### 0.1.7 (2022-07-05)
 
 - Updated dependencies
+- Enhance channel info search
+- Add source when writing to a channel
+- Implement hidden channels
