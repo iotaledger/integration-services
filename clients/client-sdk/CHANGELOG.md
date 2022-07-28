@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.0-alpha.0 (2022-07-28)
+
+- Updated `is-shared-modules` version to `0.2.0-alpha.7`
+
 ### 0.1.21 (2022-07-25)
 
 - Added `ChannelType` export from `@iota/is-shared-modules`
