@@ -21,6 +21,9 @@ describe('test ChannelLogTransformer', () => {
 						payload: {
 							x: 'I am also a payload from the author 22'
 						}
+					},
+					source: {
+						publicKey: 'mypublickey'
 					}
 				}
 			];
@@ -39,7 +42,8 @@ describe('test ChannelLogTransformer', () => {
 							somedata: 2
 						},
 						data: { publicData: 'testdata12' }
-					}
+					},
+					source: 'mypublickey'
 				}
 			];
 

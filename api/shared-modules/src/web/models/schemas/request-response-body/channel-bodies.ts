@@ -13,6 +13,8 @@ export const CreateChannelBodySchema = Type.Object({
 		})
 	),
 	type: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
+	hidden: Type.Optional(Type.Boolean({default: false, description: 'If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel.'})),
+	visibilityList: Type.Optional(Type.Array(Type.Object({id: Type.String()}))),
 	topics: Type.Array(TopicSchema),
 	hasPresharedKey: Type.Optional(
 		Type.Boolean({
@@ -75,6 +77,12 @@ export const ChannelDataSchema = Type.Object({
 		Type.String({ format: 'date-time', description: 'Date when the data was imported from the tangle into the cached database.' })
 	),
 	messageId: Type.Optional(Type.String({ description: 'Message id can be used to search for the message in an IOTA explorer.' })),
+	source: Type.Optional(
+		Type.Object({
+			publicKey: Type.Optional(Type.String({ description: 'Public key which signed the message.' })),
+			id: Type.Optional(Type.String({ description: 'Corresponding id to the public key.' }))
+		})
+	),
 	log: ChannelLogSchema
 });
 

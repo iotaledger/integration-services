@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { ChannelInfo, ChannelInfoSearch, getDateFromString, AuthenticatedRequest, ILogger } from '@iota/is-shared-modules';
+import { ChannelInfo, ChannelInfoSearch, AuthenticatedRequest } from '@iota/is-shared-modules';
+import { getDateFromString, ILogger } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from '../../services/channel-info-service';
 import * as _ from 'lodash';
 import { StatusCodes } from 'http-status-codes';
@@ -14,7 +15,9 @@ export class ChannelInfoRoutes {
 	searchChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelInfoSearch = this.getChannelInfoSearch(req);
-			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch);
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req.user);
+			const channelInfos = await this.channelInfoService.searchChannelInfo(channelInfoSearch, req.user.id, isAdmin);
+
 			res.send(channelInfos);
 		} catch (error) {
 			this.logger.error(error);
@@ -22,7 +25,7 @@ export class ChannelInfoRoutes {
 		}
 	};
 
-	getChannelInfo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+	getChannelInfo = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
 
@@ -30,7 +33,9 @@ export class ChannelInfoRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
 
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req?.user);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress, req.user.id, isAdmin);
+
 			res.send(channelInfo);
 		} catch (error) {
 			this.logger.error(error);
@@ -64,7 +69,8 @@ export class ChannelInfoRoutes {
 		try {
 			const channelInfoBody = req.body as ChannelInfo;
 
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress);
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req?.user);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelInfoBody?.channelAddress, req?.user?.id, isAdmin);
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
 			}
@@ -74,7 +80,7 @@ export class ChannelInfoRoutes {
 				throw error;
 			}
 
-			const result = await this.channelInfoService.updateChannelTopic(channelInfoBody);
+			const result = await this.channelInfoService.updateChannel(channelInfoBody);
 			if (!result?.result?.n) {
 				res.status(StatusCodes.NOT_FOUND).send({ error: 'No channel info found to update!' });
 				return;
@@ -93,7 +99,8 @@ export class ChannelInfoRoutes {
 			if (_.isEmpty(channelAddress)) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress provided' });
 			}
-			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
+			const isAdmin = this.authorizationService.isAuthorizedAdmin(req?.user);
+			const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress, req?.user?.id, isAdmin);
 			if (!channelInfo) {
 				throw new Error('channel does not exist!');
 			}
@@ -114,7 +121,10 @@ export class ChannelInfoRoutes {
 	getChannelInfoSearch = (req: Request): ChannelInfoSearch => {
 		const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
 		const authorId = decodeParam(<string>req.query['author-id']);
+		const subscriberId = decodeParam(<string>req.query['subscriber-id']);
+		const requestedSubscriptionId = decodeParam(<string>req.query['requested-subscription-id']);
 		const name = decodeParam(<string>req.query['name']);
+		const hidden = decodeParam(<string>req.query.hidden) ? decodeParam(<string>req.query.hidden) === 'true' : undefined;
 		const topicType = decodeParam(<string>req.query['topic-type']);
 		const topicSource = decodeParam(<string>req.query['topic-source']);
 		const created = decodeParam(<string>req.query.created);
@@ -128,7 +138,10 @@ export class ChannelInfoRoutes {
 
 		return {
 			authorId,
+			subscriberId,
+			requestedSubscriptionId,
 			name,
+			hidden,
 			topicType,
 			topicSource,
 			limit,

@@ -32,7 +32,6 @@ export abstract class BaseClient {
     this.useGatewayUrl = useGatewayUrl;
     this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
     this.isGatewayUrl = `${isGatewayUrl}/api/${apiVersion}`;
-
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
@@ -106,7 +105,7 @@ export abstract class BaseClient {
     return response?.data;
   }
 
-  async get(url: string, params: any = {}) {
+  async get(url: string, params: any = {}, data: any = {}) {
     params['api-key'] = this.apiKey;
     let response = await this.instance.request({
       method: 'get',

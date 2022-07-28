@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, UserPersistence, UserRoles, UserSearch, VerifiableCredentialJson } from '@iota/is-shared-modules';
+import { UserPersistence, UserRoles, UserSearch, VerifiableCredentialJson } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/node';
 
 const collectionName = CollectionNames.users;
 const maxNumberOfVc = 100;
@@ -64,7 +65,7 @@ export const updateUser = async (user: UserPersistence) => {
 		_id: user.id
 	};
 
-	const { username, claim, verifiableCredentials, isPrivate } = user;
+	const { username, claim, verifiableCredentials, hidden, role } = user;
 
 	if (verifiableCredentials?.some((vc) => vc?.id !== user.id)) {
 		throw new Error('the passed verifiable credentials does not concur with the user!');
@@ -78,7 +79,8 @@ export const updateUser = async (user: UserPersistence) => {
 		username: username || undefined, // username must not be ''
 		claim,
 		verifiableCredentials,
-		isPrivate
+		hidden,
+		role
 	});
 
 	const update = {

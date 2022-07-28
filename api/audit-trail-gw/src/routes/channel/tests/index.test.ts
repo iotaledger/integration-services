@@ -76,7 +76,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { id: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', name: 'test-channel' }
+				body: { topics: [], seed: 'verysecretseed', name: 'test-channel', hidden: true, visibilityList: [{ id: "did:iota:12345" }] }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -96,7 +96,9 @@ describe('test channel routes', () => {
 				authorId: 'did:iota:1234',
 				name: 'test-channel',
 				channelAddress: '1234234234',
-				topics: []
+				topics: [],
+				hidden: true,
+				visibilityList: [{ id: "did:iota:12345" }]
 			};
 
 			const exportSubscriptionSpy = jest

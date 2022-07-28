@@ -10,10 +10,9 @@ import {
 	ChannelData,
 	ChannelLog,
 	CreateChannelResponse,
-	ValidateResponse,
-	getDateStringFromDate,
-	ILogger
+	ValidateResponse
 } from '@iota/is-shared-modules';
+import { getDateStringFromDate, ILogger } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -48,8 +47,10 @@ export class ChannelService {
 		seed?: string;
 		presharedKey?: string;
 		type?: ChannelType;
+		hidden?: boolean;
+		visibilityList: { id: string }[];
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList } = params;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -82,7 +83,9 @@ export class ChannelService {
 			name,
 			description,
 			channelAddress: res.channelAddress,
-			type
+			type,
+			hidden,
+			visibilityList
 		});
 
 		return {
@@ -142,8 +145,8 @@ export class ChannelService {
 
 				// normally it should be possible to use `getChannelData` and fetch the data but the subscription was not able to receive the data from a public channel
 				// that's why we use the getHistory workaround here and need to investigate after the new streams version is released
-				const channelInfo = await this.channelInfoService.getChannelInfo(channelAddress);
-				if (channelInfo.type === ChannelType.public) {
+				const type = await this.channelInfoService.getChannelType(channelAddress);
+				if (type === ChannelType.public) {
 					return this.getHistory(channelAddress, ChannelType.public, '');
 				}
 
@@ -158,7 +161,7 @@ export class ChannelService {
 		});
 	}
 
-	async addLogs(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+	async addLog(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
@@ -194,7 +197,7 @@ export class ChannelService {
 				const res = await this.streamsService.publishMessage(keyloadLink, sub, publicPayload, maskedPayload);
 
 				// store newly added log
-				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log };
+				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log, source: { publicKey: res.source, id } };
 				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], this.password);
 
 				await this.subscriptionService.updateSubscriptionState(

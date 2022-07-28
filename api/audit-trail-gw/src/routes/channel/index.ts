@@ -7,11 +7,10 @@ import {
 	CreateChannelBody,
 	ReimportBody,
 	ValidateBody,
-	ILogger,
-	getDateFromString,
 	ChannelLogRequestOptions,
 	ChannelType
 } from '@iota/is-shared-modules';
+import { ILogger, getDateFromString } from '@iota/is-shared-modules/node';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { compareAsc } from 'date-fns';
 
@@ -20,7 +19,17 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
-			const { name, description, topics, seed, hasPresharedKey, presharedKey, type } = req.body as CreateChannelBody;
+			const {
+				name,
+				description,
+				topics,
+				seed,
+				hasPresharedKey,
+				presharedKey,
+				type,
+				hidden,
+				visibilityList
+			} = req.body as CreateChannelBody;
 			const { id } = req.user;
 
 			if (!id) {
@@ -40,7 +49,9 @@ export class ChannelRoutes {
 				hasPresharedKey,
 				seed,
 				presharedKey,
-				type
+				type,
+				hidden,
+				visibilityList
 			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
@@ -104,7 +115,7 @@ export class ChannelRoutes {
 		}
 	};
 
-	addLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
+	addLog = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;
@@ -118,7 +129,7 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
 			}
 
-			const channel = await this.channelService.addLogs(channelAddress, id, body);
+			const channel = await this.channelService.addLog(channelAddress, id, body);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

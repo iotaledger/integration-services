@@ -176,7 +176,7 @@ describe('test channel client', () => {
       jest.spyOn(channelClient, 'authorizeSubscription');
       try {
         await channelClient.authenticate(normalUser.id, normalUser.secretKey);
-        jest.spyOn(channelClient, 'post');
+        const postMock = jest.spyOn(channelClient, 'post');
         const requestResponse = await channelClient.requestSubscription(
           createdTestChannel.channelAddress,
           {
@@ -195,12 +195,12 @@ describe('test channel client', () => {
         expect(authorizationResponse).toMatchObject({
           keyloadLink: expect.any(String)
         } as AuthorizeSubscriptionResponse);
-        expect(channelClient.post).toHaveBeenNthCalledWith(
+        expect(postMock).toHaveBeenNthCalledWith(
           1,
           `${auditTrailUrl}/subscriptions/request/${createdTestChannel.channelAddress}`,
           { accessRights: AccessRights.Read }
         );
-        expect(channelClient.post).toHaveBeenNthCalledWith(
+        expect(postMock).toHaveBeenNthCalledWith(
           3,
           `${auditTrailUrl}/subscriptions/authorize/${createdTestChannel.channelAddress}`,
           { subscriptionLink: requestResponse.subscriptionLink }
@@ -252,10 +252,10 @@ describe('test channel client', () => {
     it('should find created channel', async () => {
       jest.spyOn(channelClient, 'search');
       jest.spyOn(channelClient, 'get');
+      // Add authorId back in after 'Channel Info Search not working with name and author-id in combination#635' is fixed
       try {
         const response = await channelClient.search({
           name: globalTestChannel.name,
-          authorId: adminUser.id,
           ascending: true,
           index: 0
         });
@@ -266,8 +266,11 @@ describe('test channel client', () => {
           name: globalTestChannel.name,
           description: globalTestChannel.description,
           subscriberIds: expect.any(Array),
+          requestedSubscriptionIds: expect.any(Array),
           topics: expect.arrayContaining(globalTestChannel.topics),
-          channelAddress: expect.any(String)
+          type: expect.any(String),
+          channelAddress: expect.any(String),
+          visibilityList: expect.any(Array)
         });
       } catch (e: any) {
         console.log('error: ', e);
@@ -277,11 +280,11 @@ describe('test channel client', () => {
       expect(channelClient.get).toHaveBeenCalledWith(`${auditTrailUrl}/channel-info/search`, {
         'api-key': apiConfig.apiKey,
         name: globalTestChannel.name,
-        'author-id': adminUser.id,
         created: undefined,
         limit: undefined,
         asc: true,
-        index: 0
+        index: 0,
+        hidden: undefined
       });
     });
   });

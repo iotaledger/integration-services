@@ -131,41 +131,56 @@ export class ChannelClient extends BaseClient {
   /**
    * Search for a channel. A client can search for a channel which it is interested in.
    * @param authorId
+   * @param subscriberId,
+   * @param requestedSubscriptionId
    * @param topicType
    * @param topicSource
    * @param created
    * @param latestMessage
    * @param limit
    * @param index
+   * @param hidden
    * @returns
    */
   async search(searchCriteria: ChannelInfoSearch): Promise<ChannelInfo[]> {
     const {
       name,
       authorId,
+      subscriberId,
+      requestedSubscriptionId,
       topicType,
       topicSource,
       created,
       latestMessage,
       limit,
       index,
-      ascending
+      ascending,
+      hidden
     } = searchCriteria;
-    const param1 = topicType !== undefined ? { 'topic-type': topicType } : {};
-    const param2 = topicSource !== undefined ? { 'topic-source': topicSource } : {};
-    const param3 = latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
-    const param4 = authorId !== undefined ? { 'author-id': authorId } : {};
-    const param5 = ascending !== undefined ? { asc: ascending } : {};
+    const topicTypeParam = topicType !== undefined ? { 'topic-type': topicType } : {};
+    const topicSourceParam = topicSource !== undefined ? { 'topic-source': topicSource } : {};
+    const latestMessageParam =
+      latestMessage !== undefined ? { 'latest-message': latestMessage } : {};
+    const authorIdParam = authorId !== undefined ? { 'author-id': authorId } : {};
+    const subscriberIdParam = subscriberId !== undefined ? { 'subscriber-id': subscriberId } : {};
+    const requestedSubscriptionIdParam =
+      requestedSubscriptionId !== undefined
+        ? { 'requested-subscription-id': requestedSubscriptionId }
+        : {};
+    const ascendingParam = ascending !== undefined ? { asc: ascending } : {};
     return await this.get(`${this.baseUrl}/channel-info/search`, {
       name,
-      ...param1,
-      ...param2,
+      ...topicTypeParam,
+      ...topicSourceParam,
       created,
-      ...param3,
-      ...param4,
-      ...param5,
+      ...latestMessageParam,
+      ...authorIdParam,
+      ...subscriberIdParam,
+      ...requestedSubscriptionIdParam,
+      ...ascendingParam,
       limit,
-      index
+      index,
+      hidden
     });
   }
 
