@@ -1,4 +1,4 @@
-import { Bitmap } from '@iota/is-shared-modules/lib/web/models/types/identity';
+import { Bitmap } from '@iota/is-shared-modules';
 
 export const BitmapMock: Bitmap = {
 	id: 'signature-bitmap-0',
