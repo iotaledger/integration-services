@@ -17,6 +17,8 @@ export class SsiService {
 		return SsiService.instance;
 	}
 
+	getBitmapTag = (id: string, bitmapIndex: number) => `${id}#${this.config.bitmapTag}-${bitmapIndex}`;
+
 	async createRevocationBitmap(
 		bitmapIndex: number,
 		issuerIdentity: {
@@ -73,7 +75,7 @@ export class SsiService {
 		credential: Credential<T>,
 		bitmapIndex: number,
 		subjectKeyIndex: number
-	): Promise<any> {
+	): Promise<VerifiableCredential> {
 		try {
 			const { document, key } = await this.restoreIdentity(identityKeys);
 			const issuerId = document.id().toString();
@@ -126,7 +128,7 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string> {
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string | undefined> {
 		newDoc.setMetadataPreviousMessageId(prevMessageId);
 		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
@@ -217,10 +219,9 @@ export class SsiService {
 			throw new Error(`could not create identity document from keytype: ${KeyType.Ed25519}`);
 		}
 	}
-	getBitmapTag = (id: string, bitmapIndex: number) => `${id}#${this.config.bitmapTag}-${bitmapIndex}`;
 
 	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
-		const clientConfig: Identity.IClientConfig = this.getConfig(usePermaNode);
+		const clientConfig = this.getConfig(usePermaNode);
 		const builderOptions = {
 			clientConfig
 		};
@@ -228,8 +229,8 @@ export class SsiService {
 	}
 
 	private getIdentityClient(usePermaNode?: boolean) {
-		const cfg: Identity.IClientConfig = this.getConfig(usePermaNode);
-		return Client.fromConfig(cfg);
+		const clientConfig = this.getConfig(usePermaNode);
+		return Client.fromConfig(clientConfig);
 	}
 
 	private getConfig(usePermaNode?: boolean): Identity.IClientConfig {

@@ -1,5 +1,4 @@
-import { IdentityKeys, User } from '@iota/is-shared-modules';
-import { IdentityDocument, Keys } from '@iota/is-shared-modules';
+import { IdentityKeys, User, IdentityDocument, Keys } from '@iota/is-shared-modules';
 
 export const TestUsersMock = [
 	{
