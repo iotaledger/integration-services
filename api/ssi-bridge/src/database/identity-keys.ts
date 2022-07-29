@@ -27,6 +27,7 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 
 export const saveIdentityKeys = async (identity: IdentityKeys, secret: string) => {
 	const encryptedKey = encrypt(identity.keys.sign.private, secret);
+	const encryptedEncryptionKey = encrypt(identity.keys.encrypt.private, secret);
 	const encryptedIdentityKeys: IdentityKeys = {
 		...identity,
 		keys: {
@@ -34,6 +35,10 @@ export const saveIdentityKeys = async (identity: IdentityKeys, secret: string) =
 			sign: {
 				...identity.keys.sign,
 				private: encryptedKey
+			},
+			encrypt: {
+				...identity.keys.encrypt,
+				private: encryptedEncryptionKey
 			}
 		}
 	};

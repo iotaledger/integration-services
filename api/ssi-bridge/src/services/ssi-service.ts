@@ -51,6 +51,10 @@ export class SsiService {
 			const privateKey = bs58.encode(identity.key.private());
 			const keyType = identity.key.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
 
+			const publicEncryptionKey = bs58.encode(identity.encryption.public());
+			const privateEncryptionKey = bs58.encode(identity.encryption.private());
+			const encryptionKeyType = identity.encryption.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+
 			return {
 				id: identity.doc.id().toString(),
 				keys: {
@@ -58,6 +62,12 @@ export class SsiService {
 						public: publicKey,
 						private: privateKey,
 						type: keyType,
+						encoding: Encoding.base58
+					},
+					encrypt: {
+						public: publicEncryptionKey,
+						private: privateEncryptionKey,
+						type: encryptionKeyType,
 						encoding: Encoding.base58
 					}
 				}
@@ -201,16 +211,24 @@ export class SsiService {
 		}
 	}
 
-	async generateIdentity(): Promise<{ account: Identity.Account; doc: Identity.Document; key: Identity.KeyPair }> {
+	async generateIdentity(): Promise<{
+		account: Identity.Account;
+		doc: Identity.Document;
+		key: Identity.KeyPair;
+		encryption: Identity.KeyPair;
+	}> {
 		try {
 			const builder = this.getAccountBuilder();
 			const keyPair = new KeyPair(KeyType.Ed25519);
 			const account = await builder.createIdentity({ privateKey: keyPair.private() });
 
+			const encryptionKey = new KeyPair(KeyType.X25519);
+
 			return {
 				account,
 				doc: account.document(),
-				key: keyPair
+				key: keyPair,
+				encryption: encryptionKey
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
