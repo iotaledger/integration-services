@@ -42,10 +42,12 @@
   ],
   "dependencies": {
     "@iota/crypto.js": "^1.8.6",
+    "@iota/identity-wasm": "^0.6.0",
     "@iota/is-shared-modules": "^0.2.0-alpha.7",
     "@iota/util.js": "^1.8.6",
     "@noble/ed25519": "^1.6.1",
-    "axios": "~0.24.0"
+    "axios": "~0.24.0",
+    "bs58": "^5.0.0"
   },
   "devDependencies": {
     "@types/jest": "^28.1.4",

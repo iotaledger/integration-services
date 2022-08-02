@@ -13,6 +13,23 @@ import {
   UserSearchResponse
 } from '@iota/is-shared-modules';
 import { SearchCriteria } from '../models/searchCriteria';
+import * as bs58 from 'bs58';
+import {
+  Credential,
+  CredentialValidationOptions,
+  Duration,
+  Document,
+  KeyPair,
+  FailFast,
+  Presentation,
+  PresentationValidationOptions,
+  Resolver,
+  SubjectHolderRelationship,
+  Timestamp,
+  IPresentation,
+  VerifierOptions,
+  ProofOptions
+} from '@iota/identity-wasm/node';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
@@ -109,6 +126,66 @@ export class IdentityClient extends BaseClient {
     return this.delete(`${this.baseUrl}/identities/identity/${id}`, {
       'revoke-credentials': revokeCredentials
     });
+  }
+
+  private async restoreIdentity(
+    identity: IdentityKeys
+  ): Promise<{ document: Document; key: KeyPair; messageId: string }> {
+    try {
+      const decodedKey = {
+        public: Array.from(bs58.decode(identity.keys.sign.public)),
+        secret: Array.from(bs58.decode(identity.keys.sign.private))
+      };
+      const json = {
+        type: identity.keys.sign.type,
+        public: decodedKey.public,
+        private: decodedKey.secret
+      };
+      const key: KeyPair = KeyPair.fromJSON(json);
+      const { document, messageId } = await this.latestDocument(identity.id);
+      return {
+        document: Document.fromJSON(document),
+        key,
+        messageId
+      };
+    } catch (error) {
+      console.error(`Error from identity sdk: ${error}`);
+      throw new Error('could not parse key or doc of the identity');
+    }
+  }
+
+  /**
+   * .
+   * @param id
+   * @returns
+   */
+  async createVerifiablePresentation(
+    signedVcJson: string,
+    identityKeys: IdentityKeys
+  ): Promise<void> {
+    const challenge = '475a7984-1bb5-4c4c-a56f-822bccd46440';
+    const expires = Timestamp.nowUTC().checkedAdd(Duration.seconds(10));
+    const receivedVc = Credential.fromJSON(signedVcJson);
+    const identity = await this.restoreIdentity(identityKeys);
+
+    // Create a Verifiable Presentation from the Credential
+    const pres: IPresentation = {
+      verifiableCredential: receivedVc
+    };
+
+    const unsignedVp = new Presentation(pres);
+    const signedVp = await identity.document.signPresentation(
+      unsignedVp,
+      identity.key.private(),
+      '#sign-0',
+      new ProofOptions({
+        challenge: challenge,
+        expires
+      })
+    );
+
+    const signedVpJSON = signedVp.toJSON();
+    return signedVpJSON;
   }
 
   /**
