@@ -24,10 +24,12 @@ import {
   Presentation,
   PresentationValidationOptions,
   Resolver,
+  Network,
   SubjectHolderRelationship,
   Timestamp,
   IPresentation,
   VerifierOptions,
+  IClientConfig,
   ProofOptions
 } from '@iota/identity-wasm/node';
 
@@ -153,39 +155,58 @@ export class IdentityClient extends BaseClient {
       throw new Error('could not parse key or doc of the identity');
     }
   }
-
   /**
-   * .
-   * @param id
-   * @returns
+   * Create a Verifiable Presentation.
+   *
+   * @param {{
+   *     signedVcJson: any;
+   *     identityKeys: IdentityKeys;
+   *     challenge?: string;
+   *     expiration?: number;
+   *   }} props Properties
+   * @param signedVcJson: Signed Verifiable Credential.
+   * @param identityKeys: Identity keys to sign the Verifiable Presentation.
+   * @param challenge: Challenge to mitigate replay attacks.
+   * @param expiration: Time when the presentation shall expire in seconds.
+   * @return {*}  {Promise<void>}
+   * @memberof IdentityClient
    */
-  async createVerifiablePresentation(
-    signedVcJson: string,
-    identityKeys: IdentityKeys
-  ): Promise<void> {
-    const challenge = '475a7984-1bb5-4c4c-a56f-822bccd46440';
-    const expires = Timestamp.nowUTC().checkedAdd(Duration.seconds(10));
-    const receivedVc = Credential.fromJSON(signedVcJson);
+  async createVerifiablePresentation(props: {
+    signedVcJson: any | any[];
+    identityKeys: IdentityKeys;
+    challenge?: string;
+    expiration?: number;
+  }): Promise<void> {
+    const { signedVcJson, identityKeys, challenge, expiration } = props;
+    const expires =
+      expiration != null ? Timestamp.nowUTC().checkedAdd(Duration.seconds(expiration)) : undefined;
     const identity = await this.restoreIdentity(identityKeys);
 
-    // Create a Verifiable Presentation from the Credential
+    let receivedVC: Credential | Credential[];
+    if (Array.isArray(signedVcJson)) {
+      receivedVC = signedVcJson.map((vc) => Credential.fromJSON(vc));
+    } else {
+      receivedVC = Credential.fromJSON(signedVcJson);
+    }
+
     const pres: IPresentation = {
-      verifiableCredential: receivedVc
+      verifiableCredential: receivedVC,
+      holder: identity.document.id()
     };
 
     const unsignedVp = new Presentation(pres);
+    const methodId = identity.document.defaultSigningMethod().id().toString();
     const signedVp = await identity.document.signPresentation(
       unsignedVp,
       identity.key.private(),
-      '#sign-0',
+      methodId,
       new ProofOptions({
-        challenge: challenge,
+        challenge,
         expires
       })
     );
 
-    const signedVpJSON = signedVp.toJSON();
-    return signedVpJSON;
+    return signedVp.toJSON();
   }
 
   /**
