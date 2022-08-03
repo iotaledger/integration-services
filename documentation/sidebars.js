@@ -123,7 +123,6 @@ module.exports = {
                         'how_tos/integration-services-sdk/create-channel',
                         'how_tos/integration-services-sdk/authorize-to-channel',
                         'how_tos/integration-services-sdk/search-channel-and-validate-data',
-                        'how_tos/is-cli/authenticate-your-identity'
                     ]
                 },
                 {
