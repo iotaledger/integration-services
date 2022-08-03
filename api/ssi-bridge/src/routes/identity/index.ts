@@ -1,11 +1,5 @@
-import {
-	UserSearch,
-	UserType,
-	getDateFromString,
-	AuthenticatedRequest,
-	CreateIdentityBody,
-	IdentitySchemaBody
-} from '@iota/is-shared-modules';
+import { UserSearch, UserType, AuthenticatedRequest, CreateIdentityBody, IdentitySchemaBody, UserRoles } from '@iota/is-shared-modules';
+import { getDateFromString } from '@iota/is-shared-modules/node';
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../services/user-service';
 import * as _ from 'lodash';
@@ -99,6 +93,10 @@ export class IdentityRoutes {
 			const { isAuthorized, error } = this.authorizationService.isAuthorized(req.user, user.id);
 			if (!isAuthorized) {
 				throw error;
+			}
+
+			if (user?.role && req.user?.role !== UserRoles.Admin) {
+				throw new Error('not allowed to update role!');
 			}
 
 			const result = await this.userService.updateUser(user);

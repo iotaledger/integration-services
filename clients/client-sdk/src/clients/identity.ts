@@ -1,3 +1,5 @@
+import { BaseClient } from './base';
+import { ClientConfig } from '../models/clientConfig';
 import {
   IdentityInternal,
   IdentityJson,
@@ -12,8 +14,6 @@ import {
   IdentitySearchBody
 } from '@iota/is-shared-modules';
 import { SearchCriteria } from '../models/searchCriteria';
-import { BaseClient } from './base';
-import { ClientConfig } from '../models/clientConfig';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
@@ -28,11 +28,18 @@ export class IdentityClient extends BaseClient {
    * @param username
    * @param claimType defaults to UserType.Person
    * @param claim
+   * @param hidden
    * @returns
    */
-  async create(username?: string, claimType = UserType.Person, claim?: any): Promise<IdentityJson> {
+  async create(
+    username?: string,
+    claimType = UserType.Person,
+    claim?: any,
+    hidden?: boolean
+  ): Promise<IdentityJson> {
     return await this.post(`${this.baseUrl}/identities/create`, {
       username,
+      hidden,
       claim: {
         ...claim,
         type: claimType

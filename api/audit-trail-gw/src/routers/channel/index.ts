@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema, Logger } from '@iota/is-shared-modules';
+import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelRoutes } from '../../routes/channel';
 import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
@@ -7,7 +8,7 @@ import { channelLock } from '../../middlewares/concurrency-lock';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
-const { addLogs, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
+const { addLog, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
 
 export const channelRouter = Router();
 
@@ -32,6 +33,7 @@ export const channelRouter = Router();
  *             - type: example-channel-data
  *               source: channel-creator
  *             name: test-channel
+ *             hidden: false
  *     responses:
  *       201:
  *         description: Returns the created channel
@@ -132,7 +134,7 @@ channelRouter.post(
 	validate({ body: AddChannelLogBodySchema }),
 	mongodbSanitizer,
 	channelLock,
-	addLogs
+	addLog
 );
 
 /**

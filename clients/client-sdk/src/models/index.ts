@@ -4,6 +4,7 @@ export * from './clientConfig';
 
 export * from './apiVersion';
 
+// Export channel types
 export {
   ChannelData,
   ChannelInfo,
@@ -28,7 +29,9 @@ export {
   RevokeVerificationBody,
   User,
   UserType,
+  UserRoles,
   CredentialTypes,
   VerifiableCredentialInternal,
-  IdentityDocumentJson
+  IdentityDocumentJson,
+  ChannelType
 } from '@iota/is-shared-modules';

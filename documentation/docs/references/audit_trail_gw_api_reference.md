@@ -17,11 +17,11 @@ This is the API documentation for the Audit Trail Gateway of the [Integration Se
 ### /channel-info/search
 
 #### GET
-##### Summary
+##### Summary:
 
 Search for a channel
 
-##### Description
+##### Description:
 
 Search for a channel. A client can search for a channel which it is interested in.
 
@@ -30,6 +30,8 @@ Search for a channel. A client can search for a channel which it is interested i
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | author-id | query |  | No | string |
+| subscriber-id | query |  | No | string |
+| requested-subscription-id | query |  | No | string |
 | name | query |  | No | string |
 | topic-type | query |  | No | string |
 | topic-source | query |  | No | string |
@@ -37,6 +39,8 @@ Search for a channel. A client can search for a channel which it is interested i
 | latest-message | query |  | No | dateTime |
 | limit | query |  | No | number |
 | index | query |  | No | number |
+| asc | query |  | No | boolean |
+| hidden | query |  | No | boolean |
 
 ##### Responses
 
@@ -56,11 +60,11 @@ Search for a channel. A client can search for a channel which it is interested i
 ### /channel-info/channel/{channelAddress}
 
 #### GET
-##### Summary
+##### Summary:
 
 Get information about a channel
 
-##### Description
+##### Description:
 
 Get information about a channel with address channel-address.
 
@@ -79,11 +83,11 @@ Get information about a channel with address channel-address.
 | 5XX | Unexpected error |
 
 #### DELETE
-##### Summary
+##### Summary:
 
 Delete information of a channel
 
-##### Description
+##### Description:
 
 Delete information of a channel with address channel-address. The author of a channel can delete its entry in the database. In this case all subscriptions will be deleted and the channel won’t be found in the system anymore. The data & channel won’t be deleted from the IOTA Tangle since its data is immutable on the tangle!
 
@@ -111,11 +115,11 @@ Delete information of a channel with address channel-address. The author of a ch
 ### /channel-info/channel
 
 #### POST
-##### Summary
+##### Summary:
 
 Add an existing channel into the database
 
-##### Description
+##### Description:
 
 Add an existing channel into the database. Clients are able to add existing channels into the database so others can subscribe to them. This will be automatically called when a channel will be created.
 
@@ -136,11 +140,11 @@ Add an existing channel into the database. Clients are able to add existing chan
 | ApiKey | |
 
 #### PUT
-##### Summary
+##### Summary:
 
 Update channel information
 
-##### Description
+##### Description:
 
 Update channel information. The author of a channel can update topics of a channel.
 
@@ -163,11 +167,11 @@ Update channel information. The author of a channel can update topics of a chann
 ### /channels/create
 
 #### POST
-##### Summary
+##### Summary:
 
 Create a new channel
 
-##### Description
+##### Description:
 
 Create a new channel. An author can create a new channel with specific topics where other clients can subscribe to.
 
@@ -189,11 +193,11 @@ Create a new channel. An author can create a new channel with specific topics wh
 ### /channels/logs/{channelAddress}
 
 #### POST
-##### Summary
+##### Summary:
 
 Write data to a channel
 
-##### Description
+##### Description:
 
 Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
 
@@ -219,11 +223,11 @@ Write data to a channel with address channel address. Write permission is mandat
 | ApiKey | |
 
 #### GET
-##### Summary
+##### Summary:
 
 Get data from the channel
 
-##### Description
+##### Description:
 
 Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
 
@@ -256,11 +260,11 @@ Get data from the channel with address channel address. The first possible messa
 ### /channels/history/{channelAddress}
 
 #### GET
-##### Summary
+##### Summary:
 
 Get the history of a channel.
 
-##### Description
+##### Description:
 
 Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
 
@@ -269,7 +273,8 @@ Get all data of a channel using a shared key (in case of encrypted channels). Ma
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
-| preshared-key | query | Preshared key defined by the author to encrypt/decrypt data. | Yes | string |
+| preshared-key | query | Preshared key defined by the author to encrypt/decrypt data. | No | string |
+| type | query | Define whether it is a `public` or `private` channel. You are able to read from public channels without a `preshared-key`. | No | string |
 
 ##### Responses
 
@@ -281,11 +286,11 @@ Get all data of a channel using a shared key (in case of encrypted channels). Ma
 ### /channels/validate/{channelAddress}
 
 #### POST
-##### Summary
+##### Summary:
 
 Validates channel data by comparing the log of each link with the data on the tangle.
 
-##### Description
+##### Description:
 
 Validates data of a channel.
 
@@ -313,11 +318,11 @@ Validates data of a channel.
 ### /channels/re-import/{channelAddress}
 
 #### POST
-##### Summary
+##### Summary:
 
 Re import the data from the tangle into the database.
 
-##### Description
+##### Description:
 
 The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
 
@@ -345,11 +350,11 @@ The user can decide to re-import the data from the Tangle into the database. A r
 ### /info
 
 #### GET
-##### Summary
+##### Summary:
 
 Get information about the server
 
-##### Description
+##### Description:
 
 Get information about the server like commitHash, server identity id and api version
 
@@ -363,11 +368,11 @@ Get information about the server like commitHash, server identity id and api ver
 ### /subscriptions/{channelAddress}
 
 #### GET
-##### Summary
+##### Summary:
 
 Get all subscriptions of a channel.
 
-##### Description
+##### Description:
 
 Get all subscriptions of a channel. Use the is-authorized query parameter to filter for authorized subscriptions.
 
@@ -396,11 +401,11 @@ Get all subscriptions of a channel. Use the is-authorized query parameter to fil
 ### /subscriptions/{channelAddress}/{id}
 
 #### GET
-##### Summary
+##### Summary:
 
 Get a subscription by identity id.
 
-##### Description
+##### Description:
 
 Get a subscription of a channel by identity id.
 
@@ -427,11 +432,11 @@ Get a subscription of a channel by identity id.
 | ApiKey | |
 
 #### POST
-##### Summary
+##### Summary:
 
 Adds an existing subscription
 
-##### Description
+##### Description:
 
 Adds an existing subscription (e.g. the subscription was not created with the api but locally.)
 
@@ -459,11 +464,11 @@ Adds an existing subscription (e.g. the subscription was not created with the ap
 | ApiKey | |
 
 #### PUT
-##### Summary
+##### Summary:
 
 Updates an existing subscription
 
-##### Description
+##### Description:
 
 Updates an existing subscription
 
@@ -492,11 +497,11 @@ Updates an existing subscription
 | ApiKey | |
 
 #### DELETE
-##### Summary
+##### Summary:
 
 Deletes subscription
 
-##### Description
+##### Description:
 
 Deletes an existing subscription
 
@@ -527,11 +532,11 @@ Deletes an existing subscription
 ### /subscriptions/request/{channelAddress}
 
 #### POST
-##### Summary
+##### Summary:
 
 Request subscription to a channel
 
-##### Description
+##### Description:
 
 Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from.
 
@@ -560,11 +565,11 @@ Request subscription to a channel with address channel-address. A client can req
 ### /subscriptions/authorize/{channelAddress}
 
 #### POST
-##### Summary
+##### Summary:
 
 Authorize a subscription to a channel
 
-##### Description
+##### Description:
 
 Authorize a subscription to a channel with address channel-address. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
 
@@ -592,11 +597,11 @@ Authorize a subscription to a channel with address channel-address. The author o
 ### /subscriptions/revoke/{channelAddress}
 
 #### POST
-##### Summary
+##### Summary:
 
 Revoke subscription to a channel.
 
-##### Description
+##### Description:
 
 Revoke subscription to a channel. Only the author of a channel can revoke a subscription from a channel.
 
@@ -623,13 +628,16 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 
 ### Models
 
+
 #### CreateChannelBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| name | string | A channel can be searched by its name. | Yes |
+| name | string | A channel can be searched by its name. | No |
 | description | string | An optional description for a channel. | No |
-| subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
+| type |  | Channel type used to differ between public and private channels. | No |
+| hidden | boolean | If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel. | No |
+| visibilityList | [ object ] |  | No |
 | topics | [ object ] |  | Yes |
 | hasPresharedKey | boolean | If the channel has a preshared key (hasPresharedKey=true) but non is set in the presharedKey property it will be generated by the api. | No |
 | seed | string | If left empty the api will generate a seed automatically. Always store your seed otherwise the data can not be reimported. | No |
@@ -652,6 +660,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | link | string |  | Yes |
 | imported | dateTime | Date when the data was imported from the tangle into the cached database. | No |
 | messageId | string | Message id can be used to search for the message in an IOTA explorer. | No |
+| source | object |  | No |
 | log | object |  | Yes |
 
 #### ValidateBodySchema
@@ -727,13 +736,18 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | authorId | string |  | No |
+| subscriberId | string |  | No |
+| requestedSubscriptionId | string |  | No |
 | name | string | Optional channel name. A channel can be searched by its name. | No |
+| hidden | boolean | Channels which are hidden to others. | No |
+| channelType |  | Channel type used to differ between public and private channels. | No |
 | topicType | string |  | No |
 | topicSource | string |  | No |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
 | limit | number |  | No |
 | index | number |  | No |
+| ascending | boolean | Sorting the channels by creation date ascending or descending | No |
 
 #### SubscriptionSchema
 
@@ -774,8 +788,12 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | channelAddress | string |  | Yes |
 | name | string | A channel can be searched by its name. | Yes |
 | description | string | An optional description of the channel. | No |
+| hidden | boolean | If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel. | No |
+| visibilityList | [ object ] |  | No |
+| type |  | Channel type used to differ between public and private channels. | No |
 | authorId | string |  | Yes |
 | subscriberIds | [ string ] |  | No |
+| requestedSubscriptionIds | [ string ] |  | No |
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |

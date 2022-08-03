@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { ChannelInfoSchema, Logger } from '@iota/is-shared-modules';
+import { ChannelInfoSchema } from '@iota/is-shared-modules';
+import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelInfoRoutes } from '../../routes/channel-info';
 import { authorizationService, channelInfoService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
@@ -21,6 +22,16 @@ export const channelInfoRouter = Router();
  *     parameters:
  *     - in: query
  *       name: author-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
+ *       name: subscriber-id
+ *       required: false
+ *       schema:
+ *         type: string
+ *     - in: query
+ *       name: requested-subscription-id
  *       required: false
  *       schema:
  *         type: string
@@ -64,6 +75,11 @@ export const channelInfoRouter = Router();
  *       schema:
  *         type: number
  *     - name: asc
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: boolean
+ *     - name: hidden
  *       in: query
  *       required: false
  *       schema:
@@ -145,7 +161,7 @@ channelInfoRouter.get('/search', apiKeyMiddleware, authMiddleWare, searchChannel
  *                 error:
  *                   type: string
  */
-channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelInfo);
+channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, authMiddleWare, getChannelInfo);
 
 /**
  * @openapi
@@ -175,6 +191,7 @@ channelInfoRouter.get('/channel/:channelAddress', apiKeyMiddleware, getChannelIn
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
+ *             hidden: false
  *     responses:
  *       201:
  *         description: Channel successfully added
@@ -243,6 +260,8 @@ channelInfoRouter.post(
  *               source: channel-creator
  *             created: 2021-07-23T13:45:30.680Z
  *             latestMessage: 2021-07-23T13:45:30.680Z
+ *             hidden: true
+ *             visibilityList: [{id: did:iota:HPDe7BnMVGqtZwy7pHfCMRNrfs7HeEDFszY2xw3SQwhj}]
  *     responses:
  *       200:
  *         description: Channel successfully added

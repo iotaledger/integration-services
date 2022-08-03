@@ -15,12 +15,18 @@ export class ChannelLogTransformer {
 		if (!messages || messages.length === 0) {
 			return [];
 		}
-		return messages.map((message) => {
-			return {
+		return messages.map((message: StreamsMessage) => {
+			const channelData: ChannelData = {
 				link: message?.link,
 				messageId: message?.messageId,
+				source: message?.source
+					? {
+							publicKey: message?.source
+					  }
+					: undefined,
 				log: ChannelLogTransformer.getChannelLog(message?.publicPayload, message?.maskedPayload)
 			};
+			return channelData;
 		});
 	}
 

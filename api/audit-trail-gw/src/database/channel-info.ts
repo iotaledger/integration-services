@@ -1,5 +1,6 @@
 import { CollectionNames } from './constants';
-import { MongoDbService, ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
+import { ChannelInfoPersistence, ChannelInfoSearch } from '@iota/is-shared-modules';
+import { MongoDbService } from '@iota/is-shared-modules/node';
 
 const collectionName = CollectionNames.channelInfo;
 
@@ -10,14 +11,51 @@ export const getChannelInfo = async (channelAddress: string): Promise<ChannelInf
 
 export const searchChannelInfo = async (channelInfoSearch: ChannelInfoSearch): Promise<ChannelInfoPersistence[]> => {
 	const regex = (text: string) => text && new RegExp(text, 'i');
-	const { authorId, name, created, latestMessage, topicType, topicSource, limit, index, ascending } = channelInfoSearch;
+	const {
+		authorId,
+		subscriberId,
+		requestedSubscriptionId,
+		name,
+		created,
+		latestMessage,
+		topicType,
+		topicSource,
+		limit,
+		index,
+		ascending,
+		hidden
+	} = channelInfoSearch;
+
+	const nameFilter = name ? { name: regex(name) } : undefined;
+	const authorFilter = authorId ? { authorId: regex(authorId) } : undefined;
+	const typeFilter = topicType ? { 'topics.type': { $regex: regex(topicType) } } : undefined;
+	const sourceFilter = topicSource ? { 'topics.source': { $regex: regex(topicSource) } } : undefined;
+	const subscriberIdsFilter = subscriberId ? { subscriberIds: { $elemMatch: { $eq: subscriberId } } } : undefined;
+	const requestedSubscriptionIdsFilter = requestedSubscriptionId
+		? { requestedSubscriptionIds: { $elemMatch: { $eq: requestedSubscriptionId } } }
+		: undefined;
+	const authorFilters = [authorFilter, subscriberIdsFilter, requestedSubscriptionIdsFilter].filter((filter) => filter);
+	const channelFilters = [nameFilter, typeFilter, sourceFilter].filter((filter) => filter);
+
+	let filter;
+	if (authorFilters.length >= 1 && channelFilters.length >= 1) {
+		filter = {
+			$and: [
+				{ $or: authorFilters },
+				{ $or: channelFilters }
+			],
+		};
+	}else{
+		const allFilters = [...channelFilters, ...authorFilters]
+		filter = {
+			$or: allFilters.length >= 1 ? allFilters : undefined
+		}
+	}
 	const query = {
-		authorId: regex(authorId),
-		name: regex(name),
+		...filter,
 		created: created && { $gte: created },
 		latestMessage: latestMessage && { $gte: latestMessage },
-		'topics.source': regex(topicSource),
-		'topics.type': regex(topicType)
+		hidden: hidden === true || hidden === false ? hidden : undefined
 	};
 	const plainQuery = MongoDbService.getPlainObject(query);
 	const sort = ascending != null ? { created: ascending ? 1 : -1 } : undefined;
@@ -38,14 +76,53 @@ export const addChannelInfo = async (channelInfo: ChannelInfoPersistence) => {
 	return MongoDbService.insertDocument(collectionName, document);
 };
 
-export const updateChannelTopic = async (channelInfo: ChannelInfoPersistence) => {
+export const updateChannel = async (channelInfo: ChannelInfoPersistence) => {
 	const query = {
 		_id: channelInfo.channelAddress
 	};
-	const { topics } = channelInfo;
+	const { topics, hidden, visibilityList } = channelInfo;
+
 	const update = {
 		$set: {
-			topics
+			topics,
+			hidden,
+			visibilityList
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const addChannelRequestedSubscriptionId = async (channelAddress: string, requestedSubscriptionId: string) => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.requestedSubscriptionIds || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			requestedSubscriptionIds: [...subs, requestedSubscriptionId]
+		}
+	};
+
+	return MongoDbService.updateDocument(collectionName, query, update);
+};
+
+export const removeChannelRequestedSubscriptionId = async (channelAddress: string, requestedSubscriptionId: string) => {
+	const currChannel = await getChannelInfo(channelAddress);
+	if (!currChannel) {
+		throw new Error(`could not find channel with address ${channelAddress}`);
+	}
+	const subs = currChannel?.requestedSubscriptionIds || [];
+	const query = {
+		_id: channelAddress
+	};
+	const update = {
+		$set: {
+			requestedSubscriptionIds: subs.filter((id: string) => id !== requestedSubscriptionId)
 		}
 	};
 

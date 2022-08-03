@@ -26,6 +26,7 @@ export const identityRouter = Router();
  *             $ref: "#/components/schemas/CreateIdentityBodySchema"
  *           example:
  *             username: iota-test-device
+ *             hidden: false
  *             claim:
  *               type: Device
  *               category: [sensor]
@@ -212,6 +213,7 @@ identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
  *                 verificationMethod: #key-collection-0
  *                 signatureValue: example-key
  *             role: User
+ *             hidden: false
  *             claim:
  *               type: Device
  *     responses:
@@ -274,6 +276,7 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *                 verificationMethod: #key-collection-0
  *                 signatureValue: example-key
  *             role: User
+ *             hidden: false
  *             claim:
  *               type: Device
  *     responses:

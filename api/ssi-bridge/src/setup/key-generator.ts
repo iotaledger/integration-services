@@ -1,14 +1,6 @@
 import { addTrustedRootId } from '../database/trusted-roots';
-import {
-	CreateIdentityBody,
-	IdentityKeys,
-	Subject,
-	CredentialTypes,
-	createNonce,
-	signNonce,
-	getHexEncodedKey,
-	verifySignedNonce
-} from '@iota/is-shared-modules';
+import { CreateIdentityBody, IdentityKeys, Subject, CredentialTypes } from '@iota/is-shared-modules';
+import { createNonce, signNonce, getHexEncodedKey, verifySignedNonce } from '@iota/is-shared-modules/node';
 import { UserService } from '../services/user-service';
 import { VerificationService } from '../services/verification-service';
 import * as serverIdentityJson from '../config/server-identity.json';
