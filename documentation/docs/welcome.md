@@ -8,6 +8,7 @@ keywords:
 - use cases
 - audit trail gateway
 - Self-Sovereign Identity Bridge
+- explanation
 ---
 # Welcome
 
@@ -23,28 +24,31 @@ from e-commerce to healthcare and beyond.
 
 ## IOTA Audit Trail Gateway
 
-The [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) allows third-party entities to easily log and share immutable information, while other
+The [Audit Trail Gateway](explanations/services/audit-trail-gateway/introduction.md) allows third-party entities to easily log and share immutable information, while other
 authorized third parties can access this information and verify its integrity and authenticity.
 
 ## Self-Sovereign Identity(SSI) Bridge
 
-The [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md) enables the creation, issuing, and verification of trusted self-sovereign
+The [Self-Sovereign Identity(SSI) Bridge](explanations/services/SSI-bridge/introduction.md) enables the creation, issuing, and verification of trusted self-sovereign
 decentralized identities and credentials.
 
 ## What You Will Find
 
-This documentation has nine sections.
+This documentation has eight sections.
 
 1. [Getting started](getting_started/overview.md): All the resources you need to get started.
-2. **Services**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](services/SSI-bridge/introduction.md).
-3. [Examples](examples/node/introduction): Examples on creating and managing decentralized identities, verifiable
-   credentials, and channels.
-4. [Basics](basics/identity): Relevant links to guide you in learning the basics about [Identity](https://wiki.iota.org/identity.rs/introduction) and [Streams](https://wiki.iota.org/streams/welcome).
-5. [SSI Bridge API Reference](ssi_bridge_api_reference.md) and [Audit Trail API Reference](audit_trail_gw_api_reference.md): Detailed specification of all endpoints.
-6. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
-7. [FAQ](faq): Answers to the most common doubts.
-8. [Contribute](contribute): Find ways to help the project.
-9. [Contact](contact): Get in touch with the Integration Services team.
+2. **Explanations**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](explanations/services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](explanations/services/SSI-bridge/introduction.md).
+3. **How-Tos**: How-to guides covering the following topics:
+   1. [Integration Services SDK](how_tos/integration-services-sdk/introduction.mdx): How-to guides on creating and managing decentralized identities, verifiable credentials, and channels using the Integration Services SDK.
+   2. [Integration Services CLI](how_tos/is-cli/introduction.md):  How-to guides on creating and managing decentralized identities using the Integration Services Command Line Interface.
+   3. **Authentication**: How-to guide to authenticate your identity using the [Integration Services SDK](how_tos/is-cli/authenticate-your-identity.mdx) or  [Java and Node.js](how_tos/integration-services-sdk/authenticate-your-identity.mdx).
+4. **References**: Detailed specification of all endpoints for:
+    * [Self Sovereign Identity(SSI) Bridge API Reference](references/ssi_bridge_api_reference.md) 
+    * [Audit Trail API Reference](references/audit_trail_gw_api_reference.md).
+5. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
+6. [FAQ](faq): Answers to the most common doubts.
+7. [Contribute](contribute): Find ways to help the project.
+8. [Contact](contact.md): Get in touch with the Integration Services team.
 
 ## Join the Discussion
 
