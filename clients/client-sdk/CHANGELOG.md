@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.1-alpha.0 (2022-08-03)
+
+- Add `createVerifiablePresentation` method to identity client.
+
 ### 0.2.0-alpha.1 (2022-07-29)
 
 - Export of `IdentityKeys` from models
