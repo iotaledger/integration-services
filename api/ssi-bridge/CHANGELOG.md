@@ -1,9 +1,5 @@
 # Changelog
 
-### 0.1.9 (2022-08-05)
-
-- Added encryption keys to identity
-
 ### 0.1.8 (2022-07-25)
 
 - Updated to is-shared-modules version 0.1.20 -> Adjusted imports for new version

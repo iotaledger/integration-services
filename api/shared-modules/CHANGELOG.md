@@ -1,10 +1,10 @@
 # Changelog
 
-### 0.2.2 (2022-08-05)
+### 0.2.0-alpha.9 (2022-08-05)
 
 - Made `encrypt` field in `IdentityKeys` optional
 
-### 0.2.1 (2022-08-05)
+### 0.2.0-alpha.8 (2022-08-05)
 
 - Added `encrypt` field to `IdentityKeys` with X25519 keys for encryption
 
