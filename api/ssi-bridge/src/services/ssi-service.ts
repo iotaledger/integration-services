@@ -1,7 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
 import { VerifiableCredential, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
-const { Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
+const { Credential, Client, KeyPair, KeyType, Resolver, MethodScope, Document } = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
 import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
@@ -212,21 +212,25 @@ export class SsiService {
 	}
 
 	async generateIdentity(): Promise<{
-		account: Identity.Account;
 		doc: Identity.Document;
 		key: Identity.KeyPair;
 		encryption: Identity.KeyPair;
 	}> {
 		try {
-			const builder = this.getAccountBuilder();
 			const keyPair = new KeyPair(KeyType.Ed25519);
-			const account = await builder.createIdentity({ privateKey: keyPair.private() });
-
+			const document = new Document(keyPair, this.getConfig(false).network.name());
+			
+			// Add encryption keys and capabilities to Identity
 			const encryptionKey = new KeyPair(KeyType.X25519);
+			const encryptionMethod = new Identity.VerificationMethod(document.id(), encryptionKey.type(), encryptionKey.public(), 'kex-0');
+			document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
+
+			document.signSelf(keyPair, document.defaultSigningMethod().id());
+			const client = await this.getIdentityClient(false)
+			await client.publishDocument(document); 
 
 			return {
-				account,
-				doc: account.document(),
+				doc: document,
 				key: keyPair,
 				encryption: encryptionKey
 			};
@@ -237,13 +241,6 @@ export class SsiService {
 	}
 	getBitmapTag = (id: string, bitmapIndex: number) => `${id}#${this.config.bitmapTag}-${bitmapIndex}`;
 
-	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
-		const clientConfig: Identity.IClientConfig = this.getConfig(usePermaNode);
-		const builderOptions = {
-			clientConfig
-		};
-		return new AccountBuilder(builderOptions);
-	}
 
 	private getIdentityClient(usePermaNode?: boolean) {
 		const cfg: Identity.IClientConfig = this.getConfig(usePermaNode);
