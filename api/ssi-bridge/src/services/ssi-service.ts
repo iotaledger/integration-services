@@ -217,22 +217,22 @@ export class SsiService {
 		encryption: Identity.KeyPair;
 	}> {
 		try {
-			const keyPair = new KeyPair(KeyType.Ed25519);
-			const document = new Document(keyPair, this.getConfig(false).network.name());
+			const signKeyPair = new KeyPair(KeyType.Ed25519);
+			const document = new Document(signKeyPair, this.getConfig(false).network.name());
 			
 			// Add encryption keys and capabilities to Identity
-			const encryptionKey = new KeyPair(KeyType.X25519);
-			const encryptionMethod = new Identity.VerificationMethod(document.id(), encryptionKey.type(), encryptionKey.public(), 'kex-0');
+			const encryptionKeyPair = new KeyPair(KeyType.X25519);
+			const encryptionMethod = new Identity.VerificationMethod(document.id(), encryptionKeyPair.type(), encryptionKeyPair.public(), 'kex-0');
 			document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
 
-			document.signSelf(keyPair, document.defaultSigningMethod().id());
+			document.signSelf(signKeyPair, document.defaultSigningMethod().id());
 			const client = await this.getIdentityClient(false)
 			await client.publishDocument(document); 
 
 			return {
 				doc: document,
-				key: keyPair,
-				encryption: encryptionKey
+				key: signKeyPair,
+				encryption: encryptionKeyPair
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
