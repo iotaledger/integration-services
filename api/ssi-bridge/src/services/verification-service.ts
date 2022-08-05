@@ -35,7 +35,7 @@ export class VerificationService {
 		let bitmap = await BitmapDb.getBitmap(bitmapIndex, this.configService.serverIdentityId);
 		if (!bitmap) {
 			bitmap = await this.createRevocationBitmap(bitmapIndex, this.configService.serverIdentityId);
-			console.log('saving bitmap....');
+
 			const res = await BitmapDb.saveBitmap({ ...bitmap, index: bitmapIndex }, this.configService.serverIdentityId);
 
 			if (!res?.result.n) {

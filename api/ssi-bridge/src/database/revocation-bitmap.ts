@@ -8,9 +8,6 @@ const getIndex = (index: number, id: string) => `${id}-${index}`;
 export const getBitmap = async (index: number, serverId: string): Promise<Bitmap | null> => {
 	const query = { _id: getIndex(index, serverId) };
 	const bitmap = await MongoDbService.getDocument<Bitmap>(collectionName, query);
-	if (!bitmap) {
-		return null;
-	}
 	return bitmap;
 };
 

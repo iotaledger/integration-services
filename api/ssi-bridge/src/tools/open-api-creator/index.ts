@@ -112,7 +112,7 @@ const converter = () => {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log('Successfully converted  schema.');
+			console.log('Successfully converted schema.');
 		}
 	});
 };

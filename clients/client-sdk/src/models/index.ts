@@ -24,14 +24,14 @@ export {
   SubscriptionUpdate,
   AccessRights,
   IdentityInternal,
-  IdentityJson,
-  VerifiableCredentialJson,
+  VerifiableCredential,
   RevokeVerificationBody,
   User,
   UserType,
   UserRoles,
   CredentialTypes,
   VerifiableCredentialInternal,
-  IdentityDocumentJson,
-  ChannelType
+  IdentityDocument,
+  ChannelType,
+  IdentityKeys
 } from '@iota/is-shared-modules';

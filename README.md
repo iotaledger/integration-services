@@ -29,10 +29,29 @@ also known as Self-Sovereign Identity (SSI) and Streams techonology on the IOTA 
 
 ## Documentation and Resources
 
-- [API Reference](https://wiki.iota.org/integration-services/api_reference): Integration Service API documentation.
-- [Documentation Pages](https://wiki.iota.org/integration-services/welcome): Wiki including setup API on-prem and on cloud with simple examples on service usage.
-- [Examples](https://wiki.iota.org/integration-services/examples/introduction): Practical code snippets to get you started with the decentralized Identity API and Audit Trail API
-- [IOTA Integration Service Website](https://www.iota.org/solutions/secure-digital-infrastructure): Website for a collaborative effort to provide help, guidance and spotlight to the IOTA Integration Services Community through offering feedback and introducing consistent workflows around IOTA decentralized identities and audit trails.
+### Iota Wiki
+
+You can find the following resources in the [Iota Wiki](https://wiki.iota.org/integration-services/welcome):
+
+1. [Getting started](ttps://wiki.iota.org/integration-services/getting_started/overview.md): All the resources you need to get started.
+2. **Explanations**: An introduction to the main concepts, use cases and API definitions for the [Audit Trail Gateway](ttps://wiki.iota.org/integration-services/explanations/services/audit-trail-gateway/introduction.md) and [Self-Sovereign Identity(SSI) Bridge](ttps://wiki.iota.org/integration-services/explanations/services/SSI-bridge/introduction.md).
+3. **How-Tos**: How-to guides covering the following topics:
+    1. [Integration Services SDK](ttps://wiki.iota.org/integration-services/how_tos/integration-services-sdk/introduction.mdx): How-to guides on creating and managing decentralized identities, verifiable credentials, and channels using the Integration Services SDK.
+    2. [Integration Services CLI](ttps://wiki.iota.org/integration-services/how_tos/is-cli/introduction.md):  How-to guides on creating and managing decentralized identities using the Integration Services Command Line Interface.
+    3. **Authentication**: How-to guide to authenticate your identity using the [Integration Services SDK](ttps://wiki.iota.org/integration-services/how_tos/is-cli/authenticate-your-identity.mdx) or  [Java and Node.js](ttps://wiki.iota.org/integration-services/how_tos/integration-services-sdk/authenticate-your-identity.mdx).
+4. **References**: Detailed specification of all endpoints for:
+    * [Self Sovereign Identity(SSI) Bridge API Reference](ttps://wiki.iota.org/integration-services/references/ssi_bridge_api_reference.md)
+    * [Audit Trail API Reference](ttps://wiki.iota.org/integration-services/references/audit_trail_gw_api_reference.md).
+5. [Troubleshooting](ttps://wiki.iota.org/integration-services/troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
+6. [FAQ](ttps://wiki.iota.org/integration-services/faq): Answers to the most common doubts.
+7. [Contribute](ttps://wiki.iota.org/integration-services/contribute): Find ways to help the project.
+8. [Contact](ttps://wiki.iota.org/integration-services/contact.md): Get in touch with the Integration Services team.
+
+### Iota Integration Services Website
+
+Website for a collaborative effort to provide help, guidance and spotlight to the IOTA Integration Services Community through offering feedback and introducing consistent workflows around IOTA decentralized identities and audit trails.
+
+[IOTA Integration Service Website](https://www.iota.org/solutions/secure-digital-infrastructure).
 
 ## Contributing
 

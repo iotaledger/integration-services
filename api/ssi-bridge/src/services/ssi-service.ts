@@ -17,6 +17,8 @@ export class SsiService {
 		return SsiService.instance;
 	}
 
+	getBitmapTag = (id: string, bitmapIndex: number) => `${id}#${this.config.bitmapTag}-${bitmapIndex}`;
+
 	async createRevocationBitmap(
 		bitmapIndex: number,
 		issuerIdentity: {
@@ -83,7 +85,7 @@ export class SsiService {
 		credential: Credential<T>,
 		bitmapIndex: number,
 		subjectKeyIndex: number
-	): Promise<any> {
+	): Promise<VerifiableCredential> {
 		try {
 			const { document, key } = await this.restoreIdentity(identityKeys);
 			const issuerId = document.id().toString();
@@ -136,7 +138,7 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string> {
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string | undefined> {
 		newDoc.setMetadataPreviousMessageId(prevMessageId);
 		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
@@ -219,15 +221,20 @@ export class SsiService {
 		try {
 			const signKeyPair = new KeyPair(KeyType.Ed25519);
 			const document = new Document(signKeyPair, this.getConfig(false).network.name());
-			
+
 			// Add encryption keys and capabilities to Identity
 			const encryptionKeyPair = new KeyPair(KeyType.X25519);
-			const encryptionMethod = new Identity.VerificationMethod(document.id(), encryptionKeyPair.type(), encryptionKeyPair.public(), 'kex-0');
+			const encryptionMethod = new Identity.VerificationMethod(
+				document.id(),
+				encryptionKeyPair.type(),
+				encryptionKeyPair.public(),
+				'kex-0'
+			);
 			document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
 
 			document.signSelf(signKeyPair, document.defaultSigningMethod().id());
-			const client = await this.getIdentityClient(false)
-			await client.publishDocument(document); 
+			const client = await this.getIdentityClient(false);
+			await client.publishDocument(document);
 
 			return {
 				doc: document,
@@ -239,12 +246,10 @@ export class SsiService {
 			throw new Error(`could not create identity document from keytype: ${KeyType.Ed25519}`);
 		}
 	}
-	getBitmapTag = (id: string, bitmapIndex: number) => `${id}#${this.config.bitmapTag}-${bitmapIndex}`;
-
 
 	private getIdentityClient(usePermaNode?: boolean) {
-		const cfg: Identity.IClientConfig = this.getConfig(usePermaNode);
-		return Client.fromConfig(cfg);
+		const clientConfig = this.getConfig(usePermaNode);
+		return Client.fromConfig(clientConfig);
 	}
 
 	private getConfig(usePermaNode?: boolean): Identity.IClientConfig {

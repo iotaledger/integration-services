@@ -4,7 +4,7 @@ import { UserService } from '../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
 import * as AuthDb from '../../database/auth';
 import { User } from '@iota/is-shared-modules';
-import * as EncryptionUtils from '@iota/is-shared-modules/node/utils/encryption'; // TODO this import won't work with @iota/is-shared-modules/node
+import * as EncryptionUtils from '@iota/is-shared-modules/node/utils/encryption'; // import needs to be like this otherwise tests will fail with "TypeError: Cannot redefine property: verifySignedNonce"
 import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';
 import { IdentityConfig } from '../../models/config';
