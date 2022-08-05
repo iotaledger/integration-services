@@ -18,6 +18,12 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 				type: identity.keys.sign.type,
 				public: identity.keys.sign.public,
 				private: decrypt(identity.keys.sign.private, secret)
+			},
+			encrypt: {
+				encoding: identity.keys.encrypt.encoding,
+				type: identity.keys.encrypt.type,
+				public: identity.keys.encrypt.public,
+				private: decrypt(identity.keys.encrypt.private, secret)
 			}
 		}
 	};
