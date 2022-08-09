@@ -1,8 +1,9 @@
 import { Type } from '@sinclair/typebox';
 import { UserType } from '../../types/user';
-import { VerifiableCredentialSchema } from '../identity';
+import { VerifiableCredentialSchema, VerifiablePresentationSchema } from '../identity';
 
 export const VerifiableCredentialBodySchema = VerifiableCredentialSchema;
+export const VerifiablePresentationBodySchema = VerifiablePresentationSchema;
 
 export const ClaimSchema = Type.Object(
 	{
