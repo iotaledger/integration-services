@@ -49,13 +49,13 @@ export class SsiService {
 	async createIdentity(): Promise<IdentityKeys> {
 		try {
 			const identity = await this.generateIdentity();
-			const publicKey = bs58.encode(identity.key.public());
-			const privateKey = bs58.encode(identity.key.private());
-			const keyType = identity.key.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+			const publicKey = bs58.encode(identity.signingKeys.public());
+			const privateKey = bs58.encode(identity.signingKeys.private());
+			const keyType = identity.signingKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
 
-			const publicEncryptionKey = bs58.encode(identity.encryption.public());
-			const privateEncryptionKey = bs58.encode(identity.encryption.private());
-			const encryptionKeyType = identity.encryption.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+			const publicEncryptionKey = bs58.encode(identity.encryptionKeys.public());
+			const privateEncryptionKey = bs58.encode(identity.encryptionKeys.private());
+			const encryptionKeyType = identity.encryptionKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
 
 			return {
 				id: identity.doc.id().toString(),
@@ -138,8 +138,8 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string | undefined> {
-		newDoc.setMetadataPreviousMessageId(prevMessageId);
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId?: string): Promise<string | undefined> {
+		prevMessageId && newDoc.setMetadataPreviousMessageId(prevMessageId);
 		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
 		newDoc.signSelf(key, methodId);
@@ -215,12 +215,12 @@ export class SsiService {
 
 	async generateIdentity(): Promise<{
 		doc: Identity.Document;
-		key: Identity.KeyPair;
-		encryption: Identity.KeyPair;
+		signingKeys: Identity.KeyPair;
+		encryptionKeys: Identity.KeyPair;
 	}> {
 		try {
-			const signKeyPair = new KeyPair(KeyType.Ed25519);
-			const document = new Document(signKeyPair, this.getConfig(false).network.name());
+			const signingKeyPair = new KeyPair(KeyType.Ed25519);
+			const document = new Document(signingKeyPair, this.getConfig(false).network.name());
 
 			// Add encryption keys and capabilities to Identity
 			const encryptionKeyPair = new KeyPair(KeyType.X25519);
@@ -231,15 +231,12 @@ export class SsiService {
 				'kex-0'
 			);
 			document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
-
-			document.signSelf(signKeyPair, document.defaultSigningMethod().id());
-			const client = await this.getIdentityClient(false);
-			await client.publishDocument(document);
+			await this.publishSignedDoc(document, signingKeyPair);
 
 			return {
 				doc: document,
-				key: signKeyPair,
-				encryption: encryptionKeyPair
+				signingKeys: signingKeyPair,
+				encryptionKeys: encryptionKeyPair
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
