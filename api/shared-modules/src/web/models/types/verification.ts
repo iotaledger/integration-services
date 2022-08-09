@@ -11,8 +11,6 @@ export enum CredentialTypes {
 
 export type Subject = Static<typeof SubjectBodySchema>;
 
-export type VerifiableCredentialInternal = Static<typeof VerifiableCredentialSchema>;
-
 export interface AuthenticatedRequest extends Express.Request {
 	user: User;
 }
