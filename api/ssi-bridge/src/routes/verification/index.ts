@@ -10,7 +10,8 @@ import {
 	Subject,
 	User,
 	UserRoles,
-	VerifiableCredentialPersistence
+	VerifiableCredentialPersistence,
+	VerifiablePresentation
 } from '@iota/is-shared-modules';
 import { VerificationService } from '../../services/verification-service';
 import * as CredentialsDb from '../../database/verifiable-credentials';
@@ -67,6 +68,17 @@ export class VerificationRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not check the verifiable credential'));
+		}
+	};
+
+	checkVerifiablePresentation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const vcBody = req.body as VerifiablePresentation;
+			const isVerified = await this.verificationService.checkVerifiablePresentation(vcBody);
+			res.status(StatusCodes.OK).send({ isVerified });
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not check the verifiable presentation'));
 		}
 	};
 

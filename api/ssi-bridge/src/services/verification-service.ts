@@ -5,7 +5,8 @@ import {
 	Credential,
 	IdentityKeys,
 	Subject,
-	Bitmap
+	Bitmap,
+	VerifiablePresentation
 } from '@iota/is-shared-modules';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
@@ -99,6 +100,10 @@ export class VerificationService {
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
 		return isVerified;
+	}
+
+	async checkVerifiablePresentation(_vp: VerifiablePresentation): Promise<boolean> {
+		return true;
 	}
 
 	async revokeVerifiableCredentials(id: string) {
