@@ -35,7 +35,6 @@ export {
 	TrustedRootBody,
 	ValidateBody,
 	ValidateResponse,
-	VerifiableCredentialBody,
 	VerifyJwtBody
 } from './request-response-bodies';
 export { Subscription, SubscriptionUpdate } from './subscription';
