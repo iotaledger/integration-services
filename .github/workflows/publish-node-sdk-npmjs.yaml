@@ -6,6 +6,8 @@ on:
         - "clients/client-sdk/**"
         - ".github/workflows/publish-node-sdk-npmjs.yml"
   workflow_dispatch:
+env:
+  PRE_RELEASE: ${{contains(fromJson(env.PACKAGE_JSON).version, 'alpha')}}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,12 +30,12 @@ jobs:
             cat ./package.json >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
       - name: Stable version
-        if: ${{!contains(fromJson(env.PACKAGE_JSON).version, 'alpha')}}
+        if: ${{!$PRE_RELEASE}}
         run: cd clients/client-sdk && npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Pre-release version
-        if: ${{contains(fromJson(env.PACKAGE_JSON).version }}, 'alpha')}}
+        if: $PRE_RELEASE
         run: cd clients/client-sdk && npm publish --tag next --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
