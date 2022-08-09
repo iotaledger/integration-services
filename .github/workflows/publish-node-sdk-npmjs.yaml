@@ -24,6 +24,7 @@ jobs:
       - run: cd clients/client-sdk && npm ci
       - run: cd clients/client-sdk && npm run build
       - run: |
+            cd clients/client-sdk
             echo 'PACKAGE_JSON<<EOF' >> $GITHUB_ENV
             cat ./package.json >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
