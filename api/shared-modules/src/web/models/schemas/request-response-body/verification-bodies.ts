@@ -1,9 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { UserType } from '../../types/user';
-import { VerifiableCredentialSchema, VerifiablePresentationSchema } from '../identity';
-
-export const VerifiableCredentialBodySchema = VerifiableCredentialSchema;
-export const VerifiablePresentationBodySchema = VerifiablePresentationSchema;
+import { VerifiableCredentialSchema } from '../identity';
 
 export const ClaimSchema = Type.Object(
 	{
@@ -11,6 +8,7 @@ export const ClaimSchema = Type.Object(
 	},
 	{ additionalProperties: true }
 );
+
 export const SubjectBodySchema = Type.Object({
 	id: Type.String({ minLength: 50, maxLength: 53 }), // did
 	credentialType: Type.String(),
