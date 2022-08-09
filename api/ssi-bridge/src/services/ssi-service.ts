@@ -219,6 +219,7 @@ export class SsiService {
 		encryptionKeys: Identity.KeyPair;
 	}> {
 		try {
+			const verificationFragment = 'kex-0';
 			const signingKeyPair = new KeyPair(KeyType.Ed25519);
 			const document = new Document(signingKeyPair, this.getConfig(false).network.name());
 
@@ -228,7 +229,7 @@ export class SsiService {
 				document.id(),
 				encryptionKeyPair.type(),
 				encryptionKeyPair.public(),
-				'kex-0'
+				verificationFragment
 			);
 			document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
 			await this.publishSignedDoc(document, signingKeyPair);
