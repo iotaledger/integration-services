@@ -102,8 +102,14 @@ export class VerificationService {
 		return isVerified;
 	}
 
-	async checkVerifiablePresentation(_vp: VerifiablePresentation): Promise<boolean> {
-		return true;
+	async checkVerifiablePresentation(vp: VerifiablePresentation): Promise<boolean> {
+		const isVerifiedVP = await this.ssiService.checkVerifiablePresentation(vp);
+		const trustedRoots = await this.getTrustedRootIds();
+
+		// TODO adjust VP model to also be able to have list of credentials
+		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vp.verifiableCredential.id);
+		const isVerified = isVerifiedVP && isTrustedIssuer;
+		return isVerified;
 	}
 
 	async revokeVerifiableCredentials(id: string) {
