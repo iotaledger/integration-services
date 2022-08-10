@@ -52,7 +52,7 @@ export const VerifiablePresentationSchema = Type.Object(
 	{
 		'@context': Type.String(),
 		type: Type.String({ minLength: 1 }),
-		verifiableCredential: VerifiableCredentialSchema,
+		verifiableCredential: Type.Union([VerifiableCredentialSchema, Type.Array(VerifiableCredentialSchema)]),
 		holder: Type.String({ minLength: 50, maxLength: 53 }),
 		proof: Type.Object({
 			type: Type.String({ minLength: 1 }),
