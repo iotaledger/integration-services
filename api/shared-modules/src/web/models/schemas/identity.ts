@@ -90,7 +90,8 @@ export const IdentityKeyPairSchema = Type.Object({
 });
 
 export const KeysSchema = Type.Object({
-	sign: IdentityKeyPairSchema
+	sign: IdentityKeyPairSchema,
+	encrypt: Type.Optional(IdentityKeyPairSchema)
 });
 
 export const IdentityKeysSchema = Type.Object({
