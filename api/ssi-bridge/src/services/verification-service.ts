@@ -105,9 +105,18 @@ export class VerificationService {
 	async checkVerifiablePresentation(vp: VerifiablePresentation): Promise<boolean> {
 		const isVerifiedVP = await this.ssiService.checkVerifiablePresentation(vp);
 		const trustedRoots = await this.getTrustedRootIds();
+		let isTrustedIssuer = false;
 
-		// TODO adjust VP model to also be able to have list of credentials
-		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vp.verifiableCredential.id);
+		if (!trustedRoots) {
+			throw Error('No trusted root ids found!');
+		}
+
+		if (Array.isArray(vp.verifiableCredential)) {
+			isTrustedIssuer = trustedRoots.some((rootId) => (vp.verifiableCredential as VerifiableCredential[]).some((vc) => vc.id == rootId));
+		} else {
+			isTrustedIssuer = trustedRoots.some((rootId) => rootId === (vp.verifiableCredential as VerifiableCredential).id);
+		}
+
 		const isVerified = isVerifiedVP && isTrustedIssuer;
 		return isVerified;
 	}
