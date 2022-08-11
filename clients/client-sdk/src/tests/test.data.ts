@@ -1,10 +1,8 @@
-import { ApiVersion } from '..';
 import { ClientConfig } from '../models';
 import { CreateChannelBody, ChannelType } from '@iota/is-shared-modules';
 
 export const apiConfig: ClientConfig = {
-  isGatewayUrl: 'http://localhost:3000',
-  apiVersion: ApiVersion.v01,
+  isGatewayUrl: 'http://localhost:3000/api/v0.1',
   useGatewayUrl: true,
   apiKey: '7ef16390-bab8-4d2d-958a-98709d7fb04e'
 };

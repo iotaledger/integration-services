@@ -11,8 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      PRE_RELEASE: contains(env.PACKAGE_JSON, 'alpha')
     steps:
       - uses: actions/checkout@v2
       # Setup .npmrc file to publish to npm
@@ -24,7 +22,7 @@ jobs:
             cd api/shared-modules
             jq -r '"PACKAGE_JSON=\(.version)"' package.json >> $GITHUB_ENV 
       - name: Stable version
-        if: ${{ !env.PRE_RELEASE }}
+        if: ${{ !contains(env.PACKAGE_JSON, 'alpha') }}
         run: |
           cd api/shared-modules
           npm ci
@@ -33,7 +31,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Pre-release version
-        if: ${{ env.PRE_RELEASE }}
+        if: ${{ contains(env.PACKAGE_JSON, 'alpha') }}
         run: |
           cd api/shared-modules
           npm ci
