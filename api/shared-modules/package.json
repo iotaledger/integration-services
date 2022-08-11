@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-shared-modules",
-  "version": "0.2.1-alpha.0",
+  "version": "0.2.1",
   "description": "Shared modules of the Integration Service.",
   "main": "lib/web/index.js",
   "types": "lib/web/index.d.ts",
