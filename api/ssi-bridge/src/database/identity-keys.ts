@@ -19,7 +19,7 @@ export const getIdentityKeys = async (id: string, secret: string): Promise<Ident
 				public: identity.keys.sign.public,
 				private: decrypt(identity.keys.sign.private, secret)
 			},
-			encrypt: {
+			encrypt: identity.keys.encrypt && {
 				encoding: identity.keys.encrypt.encoding,
 				type: identity.keys.encrypt.type,
 				public: identity.keys.encrypt.public,
