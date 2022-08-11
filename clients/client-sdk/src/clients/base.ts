@@ -3,7 +3,6 @@ import axios, { AxiosInstance } from 'axios';
 import { Base58, Converter } from '@iota/util.js';
 import { Sha256 } from '@iota/crypto.js';
 
-import { ApiVersion } from '../models/apiVersion';
 import { ClientConfig } from '../models/clientConfig';
 
 /**
@@ -26,12 +25,11 @@ export abstract class BaseClient {
     auditTrailUrl = '',
     isGatewayUrl = '',
     useGatewayUrl = true,
-    apiVersion = ApiVersion.v01
   }: ClientConfig) {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
-    this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
-    this.isGatewayUrl = `${isGatewayUrl}/api/${apiVersion}`;
+    this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl);
+    this.isGatewayUrl = `${isGatewayUrl}`;
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
@@ -42,7 +40,6 @@ export abstract class BaseClient {
     useGatewayUrl?: boolean,
     ssiBridgeUrl?: string,
     auditTrailUrl?: string,
-    apiVersion?: ApiVersion
   ) {
     if (!useGatewayUrl && (!ssiBridgeUrl || !auditTrailUrl)) {
       throw new Error(
@@ -50,9 +47,9 @@ export abstract class BaseClient {
       );
     }
 
-    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api/${apiVersion}`;
+    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}`;
 
-    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api/${apiVersion}`;
+    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}`;
   }
 
   /**

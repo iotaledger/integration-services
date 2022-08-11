@@ -569,35 +569,6 @@ ___
 
 node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:8
 
-# Enumeration: ApiVersion
-
-## Table of contents
-
-### Enumeration Members
-
-- [v01](ApiVersion.md#v01)
-- [v1](ApiVersion.md#v1)
-
-## Enumeration Members
-
-### v01
-
-• **v01** = ``"v0.1"``
-
-#### Defined in
-
-[src/models/apiVersion.ts:2](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/apiVersion.ts#L2)
-
-___
-
-### v1
-
-• **v1** = ``"v1"``
-
-#### Defined in
-
-[src/models/apiVersion.ts:3](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/apiVersion.ts#L3)
-
 # Enumeration: CredentialTypes
 
 ## Table of contents
@@ -999,7 +970,6 @@ ___
 | `useGatewayUrl?` | `boolean` |
 | `ssiBridgeUrl?` | `string` |
 | `auditTrailUrl?` | `string` |
-| `apiVersion?` | [`ApiVersion`](../enums/ApiVersion.md) |
 
 #### Returns
 
@@ -2249,7 +2219,6 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `apiKey?` | `string` |
-| `apiVersion?` | [`ApiVersion`](enums/ApiVersion.md) |
 | `auditTrailUrl?` | `string` |
 | `isGatewayUrl?` | `string` |
 | `ssiBridgeUrl?` | `string` |
