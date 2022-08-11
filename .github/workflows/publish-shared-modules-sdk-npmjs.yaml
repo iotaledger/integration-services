@@ -23,6 +23,9 @@ jobs:
       - run: |
             cd api/shared-modules
             jq -r '"PACKAGE_JSON=\(.version)"' package.json >> $GITHUB_ENV 
+            echo $PRE_RELEASE
+            echo !$PRE_RELEASE
+            exit 1
       - name: Stable version
         if: ${{ !env.PRE_RELEASE }}
         run: |
