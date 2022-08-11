@@ -14,7 +14,7 @@ export enum KeyTypes {
 export const VerifiableCredentialSubjectSchema = Type.Object(
 	{
 		id: Type.String({ minLength: 50, maxLength: 53 }),
-		type: Type.String({ minLength: 1 }),
+		type: Type.Optional(Type.String({ minLength: 1 })),
 		initiator: Type.Optional(Type.String({ minLength: 50, maxLength: 53 }))
 	},
 	{
@@ -25,7 +25,7 @@ export const VerifiableCredentialSubjectSchema = Type.Object(
 export const VerifiableCredentialSchema = Type.Object(
 	{
 		'@context': Type.String(),
-		id: Type.String({ minLength: 50, maxLength: 53 }),
+		id: Type.String({ minLength: 1 }),
 		type: Type.Array(Type.String({ minLength: 1 })),
 		credentialSubject: VerifiableCredentialSubjectSchema,
 		issuer: Type.String({ minLength: 50, maxLength: 53 }),
