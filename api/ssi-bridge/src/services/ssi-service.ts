@@ -143,16 +143,15 @@ export class SsiService {
 		}
 	}
 
-	async checkVerifiablePresentation(signedVp: VerifiablePresentation): Promise<boolean> {
+	async checkVerifiablePresentation(signedVp: VerifiablePresentation, expiration?: number, challenge?: string): Promise<boolean> {
 		try {
-			// const challenge = '475a7984-1bb5-4c4c-a56f-822bccd46440';
-			// credential should not expire within the next 60 seconds
-			const expires = Timestamp.nowUTC().checkedAdd(Duration.seconds(60));
+			const expires = expiration != null ? Timestamp.nowUTC().checkedAdd(Duration.seconds(expiration)) : undefined;
 			const presentation = Presentation.fromJSON(signedVp);
 			let validVP = false;
 			try {
 				const presentationVerifierOptions = new VerifierOptions({
-					allowExpired: false
+					allowExpired: false,
+					challenge
 				});
 
 				const credentialValidationOptions = new CredentialValidationOptions({

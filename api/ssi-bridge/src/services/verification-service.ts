@@ -103,7 +103,9 @@ export class VerificationService {
 	}
 
 	async checkVerifiablePresentation(vp: VerifiablePresentation): Promise<boolean> {
-		const isVerifiedVP = await this.ssiService.checkVerifiablePresentation(vp);
+		// TODO set via env var
+		const expiration = 60;
+		const isVerifiedVP = await this.ssiService.checkVerifiablePresentation(vp, expiration);
 		const trustedRoots = await this.getTrustedRootIds();
 		let isTrustedIssuer = false;
 
