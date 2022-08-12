@@ -13,6 +13,25 @@ import {
   UserSearchResponse
 } from '@iota/is-shared-modules';
 import { SearchCriteria } from '../models/searchCriteria';
+import * as bs58 from 'bs58';
+import {
+  Credential,
+  CredentialValidationOptions,
+  Duration,
+  Document,
+  KeyPair,
+  FailFast,
+  Presentation,
+  PresentationValidationOptions,
+  Resolver,
+  Network,
+  SubjectHolderRelationship,
+  Timestamp,
+  IPresentation,
+  VerifierOptions,
+  IClientConfig,
+  ProofOptions
+} from '@iota/identity-wasm/node';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
@@ -109,6 +128,85 @@ export class IdentityClient extends BaseClient {
     return this.delete(`${this.baseUrl}/identities/identity/${id}`, {
       'revoke-credentials': revokeCredentials
     });
+  }
+
+  private async restoreIdentity(
+    identity: IdentityKeys
+  ): Promise<{ document: Document; key: KeyPair; messageId: string }> {
+    try {
+      const decodedKey = {
+        public: Array.from(bs58.decode(identity.keys.sign.public)),
+        secret: Array.from(bs58.decode(identity.keys.sign.private))
+      };
+      const json = {
+        type: identity.keys.sign.type,
+        public: decodedKey.public,
+        private: decodedKey.secret
+      };
+      const key: KeyPair = KeyPair.fromJSON(json);
+      const { document, messageId } = await this.latestDocument(identity.id);
+      return {
+        document: Document.fromJSON(document),
+        key,
+        messageId
+      };
+    } catch (error) {
+      console.error(`Error from identity sdk: ${error}`);
+      throw new Error('could not parse key or doc of the identity');
+    }
+  }
+  /**
+   * Create a Verifiable Presentation.
+   *
+   * @param {{
+   *     signedVcJson: any;
+   *     identityKeys: IdentityKeys;
+   *     challenge?: string;
+   *     expiration?: number;
+   *   }} props Properties
+   * @param signedVcJson: Signed Verifiable Credential.
+   * @param identityKeys: Identity keys to sign the Verifiable Presentation.
+   * @param challenge: Challenge to mitigate replay attacks.
+   * @param expiration: Time when the presentation shall expire in seconds.
+   * @return {*}  {Promise<void>}
+   * @memberof IdentityClient
+   */
+  async createVerifiablePresentation(props: {
+    signedVcJson: any | any[];
+    identityKeys: IdentityKeys;
+    challenge?: string;
+    expiration?: number;
+  }): Promise<void> {
+    const { signedVcJson, identityKeys, challenge, expiration } = props;
+    const expires =
+      expiration != null ? Timestamp.nowUTC().checkedAdd(Duration.seconds(expiration)) : undefined;
+    const identity = await this.restoreIdentity(identityKeys);
+
+    let receivedVC: Credential | Credential[];
+    if (Array.isArray(signedVcJson)) {
+      receivedVC = signedVcJson.map((vc) => Credential.fromJSON(vc));
+    } else {
+      receivedVC = Credential.fromJSON(signedVcJson);
+    }
+
+    const pres: IPresentation = {
+      verifiableCredential: receivedVC,
+      holder: identity.document.id()
+    };
+
+    const unsignedVp = new Presentation(pres);
+    const methodId = identity.document.defaultSigningMethod().id().toString();
+    const signedVp = await identity.document.signPresentation(
+      unsignedVp,
+      identity.key.private(),
+      methodId,
+      new ProofOptions({
+        challenge,
+        expires
+      })
+    );
+
+    return signedVp.toJSON();
   }
 
   /**
