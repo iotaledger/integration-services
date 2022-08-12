@@ -671,7 +671,6 @@ ___
 
 node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 
-
 # Class: ChannelClient
 
 ## Hierarchy
@@ -689,6 +688,8 @@ node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 ### Properties
 
 - [apiKey](ChannelClient.md#apikey)
+- [apiVersionAuditTrail](ChannelClient.md#apiversionaudittrail)
+- [apiVersionSsiBridge](ChannelClient.md#apiversionssibridge)
 - [auditTrailUrl](ChannelClient.md#audittrailurl)
 - [baseUrl](ChannelClient.md#baseurl)
 - [instance](ChannelClient.md#instance)
@@ -696,8 +697,6 @@ node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 - [jwtToken](ChannelClient.md#jwttoken)
 - [ssiBridgeUrl](ChannelClient.md#ssibridgeurl)
 - [useGatewayUrl](ChannelClient.md#usegatewayurl)
-- [apiVersionAuditTrail] (ChannelClient.md#apiVersionAuditTrail)
-- [apiVersionSsiBridge] (ChannelClient.md#apiVersionSsiBridge)
 
 ### Methods
 
@@ -758,7 +757,35 @@ BaseClient.apiKey
 
 #### Defined in
 
-[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L13)
+
+___
+
+### apiVersionAuditTrail
+
+• `Optional` **apiVersionAuditTrail**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionAuditTrail
+
+#### Defined in
+
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L18)
+
+___
+
+### apiVersionSsiBridge
+
+• `Optional` **apiVersionSsiBridge**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionSsiBridge
+
+#### Defined in
+
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -772,7 +799,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L16)
 
 ___
 
@@ -782,7 +809,7 @@ ___
 
 #### Defined in
 
-[src/clients/channel.ts:28](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/channel.ts#L28)
+[src/clients/channel.ts:24](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/channel.ts#L24)
 
 ___
 
@@ -796,7 +823,7 @@ BaseClient.instance
 
 #### Defined in
 
-[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
+[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L21)
 
 ___
 
@@ -810,7 +837,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -824,7 +851,7 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
@@ -838,7 +865,7 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
@@ -852,36 +879,7 @@ BaseClient.useGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
-
-–––
-
-### apiVersionAuditTrail
-
-• `Optional` **apiVersionAuditTrail**: `string`
-
-#### Inherited from
-
-BaseClient.apiVersionAuditTrail
-
-#### Defined in
-
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
-
-–––
-
-### apiVersionSsiBridge
-
-• `Optional` **apiVersionSsiBridge**: `string`
-
-#### Inherited from
-
-BaseClient.apiVersionSsiBridge
-
-#### Defined in
-
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
-
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L15)
 
 ## Methods
 
@@ -900,12 +898,14 @@ Add an existing channel into the database. Clients are able to add existing chan
 | `channel.channelAddress` | `string` |
 | `channel.created` | `undefined` \| `string` |
 | `channel.description` | `undefined` \| `string` |
+| `channel.hidden` | `undefined` \| `boolean` |
 | `channel.latestMessage` | `undefined` \| `string` |
 | `channel.name` | `string` |
 | `channel.requestedSubscriptionIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.subscriberIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
-| `channel.type` | `undefined` \| `ChannelType` |
+| `channel.type` | `undefined` \| [`ChannelType`](../enums/ChannelType.md) |
+| `channel.visibilityList` | `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\> |
 
 #### Returns
 
@@ -992,7 +992,7 @@ ___
 
 ### buildUrls
 
-▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
+▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersionAuditTrail?`, `apiVersionSsiBridge?`): `void`
 
 #### Parameters
 
@@ -1001,6 +1001,8 @@ ___
 | `useGatewayUrl?` | `boolean` |
 | `ssiBridgeUrl?` | `string` |
 | `auditTrailUrl?` | `string` |
+| `apiVersionAuditTrail?` | `string` |
+| `apiVersionSsiBridge?` | `string` |
 
 #### Returns
 
@@ -1025,11 +1027,13 @@ Create a new channel. An author can create a new channel with specific topics wh
 | `data` | `Object` |
 | `data.description` | `undefined` \| `string` |
 | `data.hasPresharedKey` | `undefined` \| `boolean` |
+| `data.hidden` | `undefined` \| `boolean` |
 | `data.name` | `undefined` \| `string` |
 | `data.presharedKey` | `undefined` \| `string` |
 | `data.seed` | `undefined` \| `string` |
 | `data.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
-| `data.type` | `undefined` \| `ChannelType` |
+| `data.type` | `undefined` \| [`ChannelType`](../enums/ChannelType.md) |
+| `data.visibilityList` | `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\> |
 
 #### Returns
 
@@ -1098,7 +1102,7 @@ ___
 
 ### get
 
-▸ **get**(`url`, `params?`): `Promise`<`any`\>
+▸ **get**(`url`, `params?`, `data?`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -1106,6 +1110,7 @@ ___
 | :------ | :------ |
 | `url` | `string` |
 | `params` | `any` |
+| `data` | `any` |
 
 #### Returns
 
@@ -1159,7 +1164,7 @@ ___
 
 ### info
 
-▸ **info**(`address`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }\>
+▸ **info**(`address`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }\>
 
 Get information about a channel with address channel-address.
 
@@ -1171,7 +1176,7 @@ Get information about a channel with address channel-address.
 
 #### Returns
 
-`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }\>
+`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }\>
 
 ___
 
@@ -1219,7 +1224,7 @@ ___
 
 ### read
 
-▸ **read**(`channelAddress`, `channelOptions?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+▸ **read**(`channelAddress`, `channelOptions?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
 
@@ -1237,13 +1242,13 @@ Get data from the channel with address channel address. The first possible messa
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 ___
 
 ### readHistory
 
-▸ **readHistory**(`channelAddress`, `presharedKey`, `type?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+▸ **readHistory**(`channelAddress`, `presharedKey`, `type?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
 
@@ -1253,11 +1258,11 @@ Get all data of a channel using a shared key (in case of encrypted channels). Ma
 | :------ | :------ |
 | `channelAddress` | `string` |
 | `presharedKey` | `string` |
-| `type?` | `ChannelType` |
+| `type?` | [`ChannelType`](../enums/ChannelType.md) |
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 ___
 
@@ -1364,7 +1369,7 @@ ___
 
 ### search
 
-▸ **search**(`searchCriteria`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }[]\>
+▸ **search**(`searchCriteria`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }[]\>
 
 Search for a channel. A client can search for a channel which it is interested in.
 
@@ -1376,7 +1381,7 @@ Search for a channel. A client can search for a channel which it is interested i
 
 #### Returns
 
-`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }[]\>
+`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }[]\>
 
 ___
 
@@ -1416,12 +1421,14 @@ Update channel information. The author of a channel can update topics of a chann
 | `channel.channelAddress` | `string` |
 | `channel.created` | `undefined` \| `string` |
 | `channel.description` | `undefined` \| `string` |
+| `channel.hidden` | `undefined` \| `boolean` |
 | `channel.latestMessage` | `undefined` \| `string` |
 | `channel.name` | `string` |
 | `channel.requestedSubscriptionIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.subscriberIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
-| `channel.type` | `undefined` \| `ChannelType` |
+| `channel.type` | `undefined` \| [`ChannelType`](../enums/ChannelType.md) |
+| `channel.visibilityList` | `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\> |
 
 #### Returns
 
@@ -1481,7 +1488,7 @@ ___
 
 ### write
 
-▸ **write**(`address`, `data`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
+▸ **write**(`address`, `data`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
 
 Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
 
@@ -1499,7 +1506,7 @@ Write data to a channel with address channel address. Write permission is mandat
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
 
 # Class: IdentityClient
 
