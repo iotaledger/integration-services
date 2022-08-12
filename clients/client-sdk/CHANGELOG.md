@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.0 (2022-08-12)
+
+- Upgraded shared-modules version to 0.2.1 and removed ApiVersion type (api version should now be included in the env variables of the service urls)
+
 ### 0.2.0-alpha.1 (2022-07-29)
 
 - Export of `IdentityKeys` from models
