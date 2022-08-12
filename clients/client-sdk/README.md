@@ -696,6 +696,8 @@ node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 - [jwtToken](ChannelClient.md#jwttoken)
 - [ssiBridgeUrl](ChannelClient.md#ssibridgeurl)
 - [useGatewayUrl](ChannelClient.md#usegatewayurl)
+- [apiVersionAuditTrail] (ChannelClient.md#apiVersionAuditTrail)
+- [apiVersionSsiBridge] (ChannelClient.md#apiVersionSsiBridge)
 
 ### Methods
 
@@ -851,6 +853,35 @@ BaseClient.useGatewayUrl
 #### Defined in
 
 [src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
+
+–––
+
+### apiVersionAuditTrail
+
+• `Optional` **apiVersionAuditTrail**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionAuditTrail
+
+#### Defined in
+
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+
+–––
+
+### apiVersionSsiBridge
+
+• `Optional` **apiVersionSsiBridge**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionSsiBridge
+
+#### Defined in
+
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
+
 
 ## Methods
 
@@ -1494,6 +1525,8 @@ Write data to a channel with address channel address. Write permission is mandat
 - [jwtToken](IdentityClient.md#jwttoken)
 - [ssiBridgeUrl](IdentityClient.md#ssibridgeurl)
 - [useGatewayUrl](IdentityClient.md#usegatewayurl)
+- [apiVersionAuditTrail] (IdentityClient.md#apiVersionAuditTrail)
+- [apiVersionSsiBridge] (IdentityClient.md#apiVersionSsiBridge)
 
 ### Methods
 
@@ -1549,7 +1582,7 @@ BaseClient.apiKey
 
 #### Defined in
 
-[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L13)
 
 ___
 
@@ -1563,7 +1596,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
 
 ___
 
@@ -1573,7 +1606,7 @@ ___
 
 #### Defined in
 
-[src/clients/identity.ts:24](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/identity.ts#L24)
+[src/clients/identity.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/identity.ts#L18)
 
 ___
 
@@ -1587,7 +1620,7 @@ BaseClient.instance
 
 #### Defined in
 
-[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
+[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L21)
 
 ___
 
@@ -1601,7 +1634,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -1615,7 +1648,7 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
@@ -1629,7 +1662,7 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
@@ -1643,7 +1676,35 @@ BaseClient.useGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
+
+–––
+
+### apiVersionAuditTrail
+
+• `Optional` **apiVersionAuditTrail**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionAuditTrail
+
+#### Defined in
+
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+
+–––
+
+### apiVersionSsiBridge
+
+• `Optional` **apiVersionSsiBridge**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionSsiBridge
+
+#### Defined in
+
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
 
 ## Methods
 
@@ -2223,6 +2284,8 @@ ___
 | `isGatewayUrl?` | `string` |
 | `ssiBridgeUrl?` | `string` |
 | `useGatewayUrl?` | `boolean` |
+| `apiVersionAuditTrail` | `string` |
+| `apiVersionSsiBridge`| `string` |
 
 #### Defined in
 
