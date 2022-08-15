@@ -158,7 +158,7 @@ export class SsiService {
 		try {
 			const expires = expiration != null ? Timestamp.nowUTC().checkedAdd(Duration.seconds(expiration)) : undefined;
 			const presentation = Presentation.fromJSON(signedVp);
-			let validVP = false;
+			let isVerified = false;
 			try {
 				const presentationVerifierOptions = new VerifierOptions({
 					allowExpired: false,
@@ -178,16 +178,13 @@ export class SsiService {
 				});
 
 				const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
-				console.log('before resolve:');
-
 				await resolver.verifyPresentation(presentation, presentationValidationOptions, FailFast.FirstError);
+				isVerified = true;
 			} catch (e) {
 				// if credential is revoked, validate will throw an error
 				this.logger.error(`Error from identity sdk: ${e}`);
-				validVP = false;
 			}
-			const verified = validVP;
-			return verified;
+			return isVerified;
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not check the verifiable credential');

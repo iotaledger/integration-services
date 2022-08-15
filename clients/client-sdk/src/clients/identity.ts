@@ -7,7 +7,6 @@ import {
   User,
   UserType,
   CredentialTypes,
-  VerifiableCredentialInternal,
   IdentityDocument,
   IdentityKeys,
   UserSearchResponse
@@ -16,20 +15,12 @@ import { SearchCriteria } from '../models/searchCriteria';
 import * as bs58 from 'bs58';
 import {
   Credential,
-  CredentialValidationOptions,
   Duration,
   Document,
   KeyPair,
-  FailFast,
   Presentation,
-  PresentationValidationOptions,
-  Resolver,
-  Network,
-  SubjectHolderRelationship,
   Timestamp,
   IPresentation,
-  VerifierOptions,
-  IClientConfig,
   ProofOptions
 } from '@iota/identity-wasm/node';
 
@@ -255,7 +246,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async createCredential(
-    initiatorVC: VerifiableCredentialInternal | undefined,
+    initiatorVC: VerifiableCredential | undefined,
     targetDid: string,
     credentialType: CredentialTypes | string,
     claimType: UserType,

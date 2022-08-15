@@ -71,9 +71,14 @@ export class VerificationRoutes {
 		}
 	};
 
-	checkVerifiablePresentation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	checkVerifiablePresentation = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>> => {
 		try {
 			const vcBody = req.body as VerifiablePresentation;
+
+			if (!vcBody.proof.expires) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Verifiable Presentation must have an expiration!' });
+			}
+
 			const isVerified = await this.verificationService.checkVerifiablePresentation(vcBody);
 			res.status(StatusCodes.OK).send({ isVerified });
 		} catch (error) {

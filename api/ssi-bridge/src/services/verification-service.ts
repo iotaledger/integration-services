@@ -118,7 +118,6 @@ export class VerificationService {
 		} else {
 			isTrustedIssuer = trustedRoots.some((rootId) => rootId === (vp.verifiableCredential as VerifiableCredential).id);
 		}
-
 		const isVerified = isVerifiedVP && isTrustedIssuer;
 		return isVerified;
 	}
