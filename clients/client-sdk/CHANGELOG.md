@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.2.1 (2022-08-12)
+### 0.2.1-alpha.0 (2022-08-15)
 
 - Added `apiVersionAuditTrail` and `apiVersionSsiBridge` properties to `ClientConfig`
 
