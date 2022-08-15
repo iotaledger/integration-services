@@ -80,5 +80,51 @@ describe('test verification routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'Verifiable Presentation must have an expiration!' });
 		});
+
+		it('should return false since issuer is not trusted!', async () => {
+			const isVerified = true;
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ id: 'did:iota:123' }]));
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiablePresentation')
+				.mockReturnValue(Promise.resolve(isVerified));
+			const req: any = {
+				params: {},
+				body: {
+					...vp
+				}
+			};
+
+			await verificationRoutes.checkVerifiablePresentation(req, res, nextMock);
+
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vp, 60);
+			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith({ isVerified: false });
+		});
+
+		it('should return isVerified true!', async () => {
+			const isVerified = true;
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ id: vp.verifiableCredential.issuer }]));
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiablePresentation')
+				.mockReturnValue(Promise.resolve(isVerified));
+			const req: any = {
+				params: {},
+				body: {
+					...vp
+				}
+			};
+
+			await verificationRoutes.checkVerifiablePresentation(req, res, nextMock);
+
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vp, 60);
+			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith({ isVerified: true });
+		});
 	});
 });

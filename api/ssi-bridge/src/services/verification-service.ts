@@ -103,7 +103,6 @@ export class VerificationService {
 	}
 
 	async checkVerifiablePresentation(vp: VerifiablePresentation): Promise<boolean> {
-		// TODO set via env var
 		const expiration = 60;
 		const isVerifiedVP = await this.ssiService.checkVerifiablePresentation(vp, expiration);
 		const trustedRoots = await this.getTrustedRootIds();
@@ -114,10 +113,13 @@ export class VerificationService {
 		}
 
 		if (Array.isArray(vp.verifiableCredential)) {
-			isTrustedIssuer = trustedRoots.some((rootId) => (vp.verifiableCredential as VerifiableCredential[]).some((vc) => vc.id == rootId));
+			isTrustedIssuer = trustedRoots.some((rootId) =>
+				(vp.verifiableCredential as VerifiableCredential[]).some((vc) => vc.issuer == rootId)
+			);
 		} else {
-			isTrustedIssuer = trustedRoots.some((rootId) => rootId === (vp.verifiableCredential as VerifiableCredential).id);
+			isTrustedIssuer = trustedRoots.some((rootId) => rootId === (vp.verifiableCredential as VerifiableCredential).issuer);
 		}
+
 		const isVerified = isVerifiedVP && isTrustedIssuer;
 		return isVerified;
 	}
