@@ -15,8 +15,8 @@ export abstract class BaseClient {
   useGatewayUrl?: boolean;
   auditTrailUrl?: string;
   ssiBridgeUrl?: string;
-  apiVersionAuditTrail?: string;
-  apiVersionSsiBridge?: string
+  apiVersionAuditTrail!: string;
+  apiVersionSsiBridge!: string;
   jwtToken?: string;
   instance: AxiosInstance;
 
@@ -52,7 +52,11 @@ export abstract class BaseClient {
         'Define a gatewayUrl or unset useGatewayUrl and use ssiBridgeUrl and auditTrailUrl'
       );
     }
-
+    if( !apiVersionAuditTrail || !apiVersionSsiBridge) {
+      throw new Error(
+        'Set the api version for apiVersionAuditTrail and apiVersionSsiBridge'
+      )
+    }
     this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api/${apiVersionAuditTrail}`;
 
     this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api/${apiVersionSsiBridge}`;
