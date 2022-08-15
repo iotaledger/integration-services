@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.1-alpha.2 (2022-08-15)
+
+- Adjusted authentication url by adding the api version of ssi bridge.
+
 ### 0.2.1-alpha.1 (2022-08-15)
 
 - Adjusted urls in the constructor when creating identity and channel clients.

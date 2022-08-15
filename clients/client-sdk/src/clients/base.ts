@@ -33,7 +33,7 @@ export abstract class BaseClient {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
     this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersionAuditTrail, apiVersionSsiBridge);
-    this.isGatewayUrl = `${isGatewayUrl}/api`;
+    this.isGatewayUrl = isGatewayUrl;
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
@@ -57,9 +57,9 @@ export abstract class BaseClient {
         'Set the api version for apiVersionAuditTrail and apiVersionSsiBridge'
       )
     }
-    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api`;
+    this.auditTrailUrl = auditTrailUrl && auditTrailUrl;
 
-    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api`;
+    this.ssiBridgeUrl = ssiBridgeUrl && ssiBridgeUrl;
   }
 
   /**
@@ -72,7 +72,7 @@ export abstract class BaseClient {
       throw new Error('No private signature key provided.')
     }
     const url: string = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
-    const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
+    const body = await this.get(`${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`);
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
     const signedNonce = await this.signNonce(encodedKey, nonce);
