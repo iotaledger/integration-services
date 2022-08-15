@@ -52,14 +52,16 @@ export abstract class BaseClient {
         'Define a gatewayUrl or unset useGatewayUrl and use ssiBridgeUrl and auditTrailUrl'
       );
     }
+    this.auditTrailUrl = auditTrailUrl && auditTrailUrl;
+    this.ssiBridgeUrl = ssiBridgeUrl && ssiBridgeUrl;
+
     if( !apiVersionAuditTrail || !apiVersionSsiBridge) {
       throw new Error(
         'Set the api version for apiVersionAuditTrail and apiVersionSsiBridge'
       )
     }
-    this.auditTrailUrl = auditTrailUrl && auditTrailUrl;
-
-    this.ssiBridgeUrl = ssiBridgeUrl && ssiBridgeUrl;
+    this.apiVersionSsiBridge = apiVersionSsiBridge && apiVersionSsiBridge;
+    this.apiVersionAuditTrail = apiVersionAuditTrail && apiVersionAuditTrail;
   }
 
   /**
@@ -76,7 +78,7 @@ export abstract class BaseClient {
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
     const signedNonce = await this.signNonce(encodedKey, nonce);
-    const { jwt } = await this.post(`${url}/authentication/prove-ownership/${id}`, {
+    const { jwt } = await this.post(`${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`, {
       signedNonce
     });
     this.jwtToken = jwt;

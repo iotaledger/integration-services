@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.1-alpha.3 (2022-08-15)
+
+- Added assigning of the api version variables in base.ts
+
 ### 0.2.1-alpha.2 (2022-08-15)
 
 - Adjusted authentication url by adding the api version of ssi bridge.
