@@ -33,7 +33,7 @@ export abstract class BaseClient {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
     this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersionAuditTrail, apiVersionSsiBridge);
-    this.isGatewayUrl = `${isGatewayUrl}/api/`;
+    this.isGatewayUrl = `${isGatewayUrl}/api`;
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
@@ -57,9 +57,9 @@ export abstract class BaseClient {
         'Set the api version for apiVersionAuditTrail and apiVersionSsiBridge'
       )
     }
-    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api/${apiVersionAuditTrail}`;
+    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api`;
 
-    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api/${apiVersionSsiBridge}`;
+    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api`;
   }
 
   /**

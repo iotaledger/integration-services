@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.1-alpha.1 (2022-08-15)
+
+- Adjusted urls in the constructor when creating identity and channel clients.
+
 ### 0.2.1-alpha.0 (2022-08-15)
 
 - Added `apiVersionAuditTrail` and `apiVersionSsiBridge` properties to `ClientConfig`
