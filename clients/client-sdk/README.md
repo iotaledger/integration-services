@@ -857,7 +857,7 @@ ___
 
 ### ssiBridgeUrl
 
-• `Optional` **ssiBridgeUrl**: `string`
+• **ssiBridgeUrl**: `string`
 
 #### Inherited from
 
@@ -871,7 +871,7 @@ ___
 
 ### useGatewayUrl
 
-• `Optional` **useGatewayUrl**: `boolean`
+• **useGatewayUrl**: `boolean`
 
 #### Inherited from
 
@@ -1596,7 +1596,7 @@ ___
 
 ### apiVersionAuditTrail
 
-• `Optional` **apiVersionAuditTrail**: `string`
+• **apiVersionAuditTrail**: `string`
 
 #### Inherited from
 
@@ -1610,7 +1610,7 @@ ___
 
 ### apiVersionSsiBridge
 
-• `Optional` **apiVersionSsiBridge**: `string`
+• **apiVersionSsiBridge**: `string`
 
 #### Inherited from
 
