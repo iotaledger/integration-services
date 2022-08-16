@@ -4,4 +4,6 @@ export type ClientConfig = {
   useGatewayUrl?: boolean;
   ssiBridgeUrl?: string;
   auditTrailUrl?: string;
+  apiVersionAuditTrail: string;
+  apiVersionSsiBridge: string
 };

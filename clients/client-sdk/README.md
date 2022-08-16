@@ -671,7 +671,6 @@ ___
 
 node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 
-
 # Class: ChannelClient
 
 ## Hierarchy
@@ -689,6 +688,8 @@ node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
 ### Properties
 
 - [apiKey](ChannelClient.md#apikey)
+- [apiVersionAuditTrail](ChannelClient.md#apiversionaudittrail)
+- [apiVersionSsiBridge](ChannelClient.md#apiversionssibridge)
 - [auditTrailUrl](ChannelClient.md#audittrailurl)
 - [baseUrl](ChannelClient.md#baseurl)
 - [instance](ChannelClient.md#instance)
@@ -756,7 +757,35 @@ BaseClient.apiKey
 
 #### Defined in
 
-[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L13)
+
+___
+
+### apiVersionAuditTrail
+
+• `Optional` **apiVersionAuditTrail**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionAuditTrail
+
+#### Defined in
+
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L18)
+
+___
+
+### apiVersionSsiBridge
+
+• `Optional` **apiVersionSsiBridge**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionSsiBridge
+
+#### Defined in
+
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -770,7 +799,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L16)
 
 ___
 
@@ -780,7 +809,7 @@ ___
 
 #### Defined in
 
-[src/clients/channel.ts:28](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/channel.ts#L28)
+[src/clients/channel.ts:24](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/channel.ts#L24)
 
 ___
 
@@ -794,7 +823,7 @@ BaseClient.instance
 
 #### Defined in
 
-[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
+[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L21)
 
 ___
 
@@ -808,7 +837,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -822,13 +851,13 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
 ### ssiBridgeUrl
 
-• `Optional` **ssiBridgeUrl**: `string`
+• **ssiBridgeUrl**: `string`
 
 #### Inherited from
 
@@ -836,13 +865,13 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
 ### useGatewayUrl
 
-• `Optional` **useGatewayUrl**: `boolean`
+• **useGatewayUrl**: `boolean`
 
 #### Inherited from
 
@@ -850,7 +879,7 @@ BaseClient.useGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L15)
 
 ## Methods
 
@@ -869,12 +898,14 @@ Add an existing channel into the database. Clients are able to add existing chan
 | `channel.channelAddress` | `string` |
 | `channel.created` | `undefined` \| `string` |
 | `channel.description` | `undefined` \| `string` |
+| `channel.hidden` | `undefined` \| `boolean` |
 | `channel.latestMessage` | `undefined` \| `string` |
 | `channel.name` | `string` |
 | `channel.requestedSubscriptionIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.subscriberIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
-| `channel.type` | `undefined` \| `ChannelType` |
+| `channel.type` | `undefined` \| [`ChannelType`](../enums/ChannelType.md) |
+| `channel.visibilityList` | `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\> |
 
 #### Returns
 
@@ -961,7 +992,7 @@ ___
 
 ### buildUrls
 
-▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
+▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersionAuditTrail?`, `apiVersionSsiBridge?`): `void`
 
 #### Parameters
 
@@ -970,6 +1001,8 @@ ___
 | `useGatewayUrl?` | `boolean` |
 | `ssiBridgeUrl?` | `string` |
 | `auditTrailUrl?` | `string` |
+| `apiVersionAuditTrail?` | `string` |
+| `apiVersionSsiBridge?` | `string` |
 
 #### Returns
 
@@ -994,11 +1027,13 @@ Create a new channel. An author can create a new channel with specific topics wh
 | `data` | `Object` |
 | `data.description` | `undefined` \| `string` |
 | `data.hasPresharedKey` | `undefined` \| `boolean` |
+| `data.hidden` | `undefined` \| `boolean` |
 | `data.name` | `undefined` \| `string` |
 | `data.presharedKey` | `undefined` \| `string` |
 | `data.seed` | `undefined` \| `string` |
 | `data.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
-| `data.type` | `undefined` \| `ChannelType` |
+| `data.type` | `undefined` \| [`ChannelType`](../enums/ChannelType.md) |
+| `data.visibilityList` | `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\> |
 
 #### Returns
 
@@ -1067,7 +1102,7 @@ ___
 
 ### get
 
-▸ **get**(`url`, `params?`): `Promise`<`any`\>
+▸ **get**(`url`, `params?`, `data?`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -1075,6 +1110,7 @@ ___
 | :------ | :------ |
 | `url` | `string` |
 | `params` | `any` |
+| `data` | `any` |
 
 #### Returns
 
@@ -1128,7 +1164,7 @@ ___
 
 ### info
 
-▸ **info**(`address`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }\>
+▸ **info**(`address`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }\>
 
 Get information about a channel with address channel-address.
 
@@ -1140,7 +1176,7 @@ Get information about a channel with address channel-address.
 
 #### Returns
 
-`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }\>
+`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }\>
 
 ___
 
@@ -1188,7 +1224,7 @@ ___
 
 ### read
 
-▸ **read**(`channelAddress`, `channelOptions?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+▸ **read**(`channelAddress`, `channelOptions?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 Get data from the channel with address channel address. The first possible message a subscriber can receive is the time the subscription got approved all messages before are not received. Read permission is mandatory.
 
@@ -1206,13 +1242,13 @@ Get data from the channel with address channel address. The first possible messa
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 ___
 
 ### readHistory
 
-▸ **readHistory**(`channelAddress`, `presharedKey`, `type?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+▸ **readHistory**(`channelAddress`, `presharedKey`, `type?`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 Get all data of a channel using a shared key (in case of encrypted channels). Mainly used from auditors to evaluate a log stream.
 
@@ -1222,11 +1258,11 @@ Get all data of a channel using a shared key (in case of encrypted channels). Ma
 | :------ | :------ |
 | `channelAddress` | `string` |
 | `presharedKey` | `string` |
-| `type?` | `ChannelType` |
+| `type?` | [`ChannelType`](../enums/ChannelType.md) |
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }[]\>
 
 ___
 
@@ -1333,7 +1369,7 @@ ___
 
 ### search
 
-▸ **search**(`searchCriteria`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }[]\>
+▸ **search**(`searchCriteria`): `Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }[]\>
 
 Search for a channel. A client can search for a channel which it is interested in.
 
@@ -1345,7 +1381,7 @@ Search for a channel. A client can search for a channel which it is interested i
 
 #### Returns
 
-`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| `ChannelType`  }[]\>
+`Promise`<{ `authorId`: `string` ; `channelAddress`: `string` ; `created`: `undefined` \| `string` ; `description`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `latestMessage`: `undefined` \| `string` ; `name`: `string` ; `requestedSubscriptionIds`: `undefined` \| `StaticArray`<`TString`\> ; `subscriberIds`: `undefined` \| `StaticArray`<`TString`\> ; `topics`: `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> ; `type`: `undefined` \| [`ChannelType`](../enums/ChannelType.md) ; `visibilityList`: `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\>  }[]\>
 
 ___
 
@@ -1385,12 +1421,14 @@ Update channel information. The author of a channel can update topics of a chann
 | `channel.channelAddress` | `string` |
 | `channel.created` | `undefined` \| `string` |
 | `channel.description` | `undefined` \| `string` |
+| `channel.hidden` | `undefined` \| `boolean` |
 | `channel.latestMessage` | `undefined` \| `string` |
 | `channel.name` | `string` |
 | `channel.requestedSubscriptionIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.subscriberIds` | `undefined` \| `StaticArray`<`TString`\> |
 | `channel.topics` | `StaticArray`<`TObject`<{ `source`: `TString` ; `type`: `TString`  }\>\> |
-| `channel.type` | `undefined` \| `ChannelType` |
+| `channel.type` | `undefined` \| [`ChannelType`](../enums/ChannelType.md) |
+| `channel.visibilityList` | `undefined` \| `StaticArray`<`TObject`<{ `id`: `TString`  }\>\> |
 
 #### Returns
 
@@ -1450,7 +1488,7 @@ ___
 
 ### write
 
-▸ **write**(`address`, `data`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
+▸ **write**(`address`, `data`): `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
 
 Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
 
@@ -1468,7 +1506,8 @@ Write data to a channel with address channel address. Write permission is mandat
 
 #### Returns
 
-`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { created?: string \| undefined; type?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
+`Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
+
 
 # Class: IdentityClient
 
@@ -1487,6 +1526,8 @@ Write data to a channel with address channel address. Write permission is mandat
 ### Properties
 
 - [apiKey](IdentityClient.md#apikey)
+- [apiVersionAuditTrail](IdentityClient.md#apiversionaudittrail)
+- [apiVersionSsiBridge](IdentityClient.md#apiversionssibridge)
 - [auditTrailUrl](IdentityClient.md#audittrailurl)
 - [baseUrl](IdentityClient.md#baseurl)
 - [instance](IdentityClient.md#instance)
@@ -1549,7 +1590,35 @@ BaseClient.apiKey
 
 #### Defined in
 
-[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L13)
+
+___
+
+### apiVersionAuditTrail
+
+• **apiVersionAuditTrail**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionAuditTrail
+
+#### Defined in
+
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L18)
+
+___
+
+### apiVersionSsiBridge
+
+• **apiVersionSsiBridge**: `string`
+
+#### Inherited from
+
+BaseClient.apiVersionSsiBridge
+
+#### Defined in
+
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -1563,7 +1632,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L16)
 
 ___
 
@@ -1573,7 +1642,7 @@ ___
 
 #### Defined in
 
-[src/clients/identity.ts:24](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/identity.ts#L24)
+[src/clients/identity.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/identity.ts#L18)
 
 ___
 
@@ -1587,7 +1656,7 @@ BaseClient.instance
 
 #### Defined in
 
-[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L20)
+[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L21)
 
 ___
 
@@ -1601,7 +1670,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -1615,7 +1684,7 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
@@ -1629,7 +1698,7 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
@@ -1643,7 +1712,7 @@ BaseClient.useGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L15)
 
 ## Methods
 
@@ -1660,13 +1729,13 @@ Register an existing identity into the Bridge. This can be used if the identity 
 | `identity` | `Object` |
 | `identity.claim` | `undefined` \| { type: string; } |
 | `identity.creator` | `undefined` \| `string` |
+| `identity.hidden` | `undefined` \| `boolean` |
 | `identity.id` | `string` |
-| `identity.isPrivate` | `undefined` \| `boolean` |
 | `identity.isServerIdentity` | `undefined` \| `boolean` |
 | `identity.registrationDate` | `undefined` \| `string` |
 | `identity.role` | `undefined` \| `string` |
 | `identity.username` | `string` |
-| `identity.verifiableCredentials` | `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\> |
+| `identity.verifiableCredentials` | `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialStatus`: `TOptional`<`TObject`<{ `id`: `TString` ; `revocationBitmapIndex`: `TString` ; `type`: `TString`  }\>\> ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiator`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\> |
 
 #### Returns
 
@@ -1717,7 +1786,7 @@ ___
 
 ### buildUrls
 
-▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersion?`): `void`
+▸ **buildUrls**(`useGatewayUrl?`, `ssiBridgeUrl?`, `auditTrailUrl?`, `apiVersionAuditTrail?`, `apiVersionSsiBridge?`): `void`
 
 #### Parameters
 
@@ -1726,7 +1795,8 @@ ___
 | `useGatewayUrl?` | `boolean` |
 | `ssiBridgeUrl?` | `string` |
 | `auditTrailUrl?` | `string` |
-| `apiVersion?` | [`ApiVersion`](../enums/ApiVersion.md) |
+| `apiVersionAuditTrail?` | `string` |
+| `apiVersionSsiBridge?` | `string` |
 
 #### Returns
 
@@ -1750,11 +1820,12 @@ Check the verifiable credential of an identity. Validates the signed verifiable 
 | :------ | :------ |
 | `credential` | `Object` |
 | `credential.@context` | `string` |
-| `credential.credentialSubject` | { initiatorId?: string \| undefined; id: string; type: string; } |
+| `credential.credentialStatus` | `undefined` \| { id: string; type: string; revocationBitmapIndex: string; } |
+| `credential.credentialSubject` | { initiator?: string \| undefined; id: string; type: string; } |
 | `credential.id` | `string` |
 | `credential.issuanceDate` | `string` |
 | `credential.issuer` | `string` |
-| `credential.proof` | { verificationMethod: string; type: string; signatureValue: string; } |
+| `credential.proof` | { type: string; verificationMethod: string; signatureValue: string; } |
 | `credential.type` | `StaticArray`<`TString`\> |
 
 #### Returns
@@ -1765,7 +1836,7 @@ ___
 
 ### create
 
-▸ **create**(`username?`, `claimType?`, `claim?`): `Promise`<{ `doc`: { verificationMethod?: StaticArray<TObject<{ id: TString; controller: TString; type: TString; publicKeyBase58: TString; }\>\> \| undefined; ... 6 more ...; proof: { ...; }; } ; `key`: { type: string; public: string; secret: string; encoding: Encoding; }  }\>
+▸ **create**(`username?`, `claimType?`, `claim?`, `hidden?`): `Promise`<{ `id`: `string` ; `keys`: { encrypt?: { type: string; public: string; private: string; encoding: Encoding; } \| undefined; sign: { type: string; public: string; private: string; encoding: Encoding; }; }  }\>
 
 Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
 
@@ -1776,16 +1847,17 @@ Create a new decentralized digital identity (DID). Identity DID document is sign
 | `username?` | `string` | `undefined` |  |
 | `claimType` | [`UserType`](../enums/UserType.md) | `UserType.Person` | defaults to UserType.Person |
 | `claim?` | `any` | `undefined` |  |
+| `hidden?` | `boolean` | `undefined` |  |
 
 #### Returns
 
-`Promise`<{ `doc`: { verificationMethod?: StaticArray<TObject<{ id: TString; controller: TString; type: TString; publicKeyBase58: TString; }\>\> \| undefined; ... 6 more ...; proof: { ...; }; } ; `key`: { type: string; public: string; secret: string; encoding: Encoding; }  }\>
+`Promise`<{ `id`: `string` ; `keys`: { encrypt?: { type: string; public: string; private: string; encoding: Encoding; } \| undefined; sign: { type: string; public: string; private: string; encoding: Encoding; }; }  }\>
 
 ___
 
 ### createCredential
 
-▸ **createCredential**(`initiatorVC`, `targetDid`, `credentialType`, `claimType`, `claim?`): `Promise`<{ `@context`: `string` ; `credentialSubject`: { initiatorId?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  }\>
+▸ **createCredential**(`initiatorVC`, `targetDid`, `credentialType`, `claimType`, `claim?`): `Promise`<{ `@context`: `string` ; `credentialStatus`: `undefined` \| { id: string; type: string; revocationBitmapIndex: string; } ; `credentialSubject`: { initiator?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { type: string; verificationMethod: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  }\>
 
 Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
 
@@ -1793,7 +1865,7 @@ Verify the authenticity of an identity (of an individual, organization or object
 
 | Name | Type |
 | :------ | :------ |
-| `initiatorVC` | `undefined` \| { `@context`: `string` ; `credentialSubject`: { initiatorId?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  } |
+| `initiatorVC` | `undefined` \| { `@context`: `string` ; `credentialStatus`: `undefined` \| { id: string; type: string; revocationBitmapIndex: string; } ; `credentialSubject`: { initiator?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { type: string; verificationMethod: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  } |
 | `targetDid` | `string` |
 | `credentialType` | `string` |
 | `claimType` | [`UserType`](../enums/UserType.md) |
@@ -1801,7 +1873,7 @@ Verify the authenticity of an identity (of an individual, organization or object
 
 #### Returns
 
-`Promise`<{ `@context`: `string` ; `credentialSubject`: { initiatorId?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  }\>
+`Promise`<{ `@context`: `string` ; `credentialStatus`: `undefined` \| { id: string; type: string; revocationBitmapIndex: string; } ; `credentialSubject`: { initiator?: string \| undefined; id: string; type: string; } ; `id`: `string` ; `issuanceDate`: `string` ; `issuer`: `string` ; `proof`: { type: string; verificationMethod: string; signatureValue: string; } ; `type`: `StaticArray`<`TString`\>  }\>
 
 ___
 
@@ -1828,7 +1900,7 @@ ___
 
 ### find
 
-▸ **find**(`id`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
+▸ **find**(`id`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `id`: `string` ; `isServerIdentity`: `undefined` \| `boolean` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialStatus`: `TOptional`<`TObject`<{ `id`: `TString` ; `revocationBitmapIndex`: `TString` ; `type`: `TString`  }\>\> ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiator`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
 
 Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
 
@@ -1840,13 +1912,13 @@ Get information (including attached credentials) about a specific identity using
 
 #### Returns
 
-`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
+`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `id`: `string` ; `isServerIdentity`: `undefined` \| `boolean` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string` ; `verifiableCredentials`: `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialStatus`: `TOptional`<`TObject`<{ `id`: `TString` ; `revocationBitmapIndex`: `TString` ; `type`: `TString`  }\>\> ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiator`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\>  }\>
 
 ___
 
 ### get
 
-▸ **get**(`url`, `params?`): `Promise`<`any`\>
+▸ **get**(`url`, `params?`, `data?`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -1854,6 +1926,7 @@ ___
 | :------ | :------ |
 | `url` | `string` |
 | `params` | `any` |
+| `data` | `any` |
 
 #### Returns
 
@@ -1919,7 +1992,7 @@ ___
 
 ### latestDocument
 
-▸ **latestDocument**(`id`): `Promise`<{ `document`: { `authentication`: `StaticArray`<`TObject`<{ `controller`: `TString` ; `id`: `TString` ; `publicKeyBase58`: `TString` ; `type`: `TString`  }\>\> ; `created`: `string` ; `id`: `string` ; `immutable`: `boolean` ; `previousMessageId`: `undefined` \| `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `updated`: `string` ; `verificationMethod`: `undefined` \| `StaticArray`<`TObject`<{ `controller`: `TString` ; `id`: `TString` ; `publicKeyBase58`: `TString` ; `type`: `TString`  }\>\>  } ; `messageId`: `string`  }\>
+▸ **latestDocument**(`id`): `Promise`<{ `document`: { `doc`: { service?: StaticArray<TObject<{ id: TString; type: TString; serviceEndpoint: TString; }\>\> \| undefined; id: string; capabilityInvocation: StaticArray<...\>; } ; `integrationMessageId`: `undefined` \| `string` ; `meta`: { previousMessageId?: string \| undefined; created: string; updated: string; } ; `proof`: { type: string; verificationMethod: string; signatureValue: string; }  } ; `messageId`: `string`  }\>
 
 Get the latest version of an identity document (DID) from the IOTA Tangle.
 
@@ -1931,7 +2004,7 @@ Get the latest version of an identity document (DID) from the IOTA Tangle.
 
 #### Returns
 
-`Promise`<{ `document`: { `authentication`: `StaticArray`<`TObject`<{ `controller`: `TString` ; `id`: `TString` ; `publicKeyBase58`: `TString` ; `type`: `TString`  }\>\> ; `created`: `string` ; `id`: `string` ; `immutable`: `boolean` ; `previousMessageId`: `undefined` \| `string` ; `proof`: { verificationMethod: string; type: string; signatureValue: string; } ; `updated`: `string` ; `verificationMethod`: `undefined` \| `StaticArray`<`TObject`<{ `controller`: `TString` ; `id`: `TString` ; `publicKeyBase58`: `TString` ; `type`: `TString`  }\>\>  } ; `messageId`: `string`  }\>
+`Promise`<{ `document`: { `doc`: { service?: StaticArray<TObject<{ id: TString; type: TString; serviceEndpoint: TString; }\>\> \| undefined; id: string; capabilityInvocation: StaticArray<...\>; } ; `integrationMessageId`: `undefined` \| `string` ; `meta`: { previousMessageId?: string \| undefined; created: string; updated: string; } ; `proof`: { type: string; verificationMethod: string; signatureValue: string; }  } ; `messageId`: `string`  }\>
 
 ___
 
@@ -2037,7 +2110,7 @@ ___
 
 ### search
 
-▸ **search**(`username`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
+▸ **search**(`username`): `Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `id`: `string` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
 
 Search for identities in the system and returns a list of existing identities.
 
@@ -2049,7 +2122,7 @@ Search for identities in the system and returns a list of existing identities.
 
 #### Returns
 
-`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `id`: `string` ; `isPrivate`: `undefined` \| `boolean` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
+`Promise`<{ `claim`: `undefined` \| { type: string; } ; `creator`: `undefined` \| `string` ; `hidden`: `undefined` \| `boolean` ; `id`: `string` ; `isServerIdentity`: `undefined` \| `boolean` ; `numberOfCredentials`: `number` ; `registrationDate`: `undefined` \| `string` ; `role`: `undefined` \| `string` ; `username`: `string`  }[]\>
 
 ___
 
@@ -2087,13 +2160,13 @@ Update claim of a registered identity.
 | `identity` | `Object` |
 | `identity.claim` | `undefined` \| { type: string; } |
 | `identity.creator` | `undefined` \| `string` |
+| `identity.hidden` | `undefined` \| `boolean` |
 | `identity.id` | `string` |
-| `identity.isPrivate` | `undefined` \| `boolean` |
 | `identity.isServerIdentity` | `undefined` \| `boolean` |
 | `identity.registrationDate` | `undefined` \| `string` |
 | `identity.role` | `undefined` \| `string` |
 | `identity.username` | `string` |
-| `identity.verifiableCredentials` | `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiatorId`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\> |
+| `identity.verifiableCredentials` | `undefined` \| `StaticArray`<`TObject`<{ `@context`: `TString` ; `credentialStatus`: `TOptional`<`TObject`<{ `id`: `TString` ; `revocationBitmapIndex`: `TString` ; `type`: `TString`  }\>\> ; `credentialSubject`: `TObject`<{ `id`: `TString` ; `initiator`: `TOptional`<`TString`\> ; `type`: `TString`  }\> ; `id`: `TString` ; `issuanceDate`: `TString` ; `issuer`: `TString` ; `proof`: `TObject`<{ `signatureValue`: `TString` ; `type`: `TString` ; `verificationMethod`: `TString`  }\> ; `type`: `TArray`<`TString`\>  }\>\> |
 
 #### Returns
 
@@ -2117,333 +2190,3 @@ Check the verifiable credential of an identity. Validates the signed verifiable 
 #### Returns
 
 `Promise`<{ `error?`: `string` ; `isValid`: `boolean`  }\>
-
-
-### Types
-
-
-- [AddChannelLogBody](modules.md#addchannellogbody)
-- [AuthorizeSubscriptionBody](modules.md#authorizesubscriptionbody)
-- [AuthorizeSubscriptionResponse](modules.md#authorizesubscriptionresponse)
-- [ChannelData](modules.md#channeldata)
-- [ChannelInfo](modules.md#channelinfo)
-- [ChannelInfoSearch](modules.md#channelinfosearch)
-- [ClientConfig](modules.md#clientconfig)
-- [CreateChannelBody](modules.md#createchannelbody)
-- [CreateChannelResponse](modules.md#createchannelresponse)
-- [IdentityDocumentJson](modules.md#identitydocumentjson)
-- [IdentityInternal](modules.md#identityinternal)
-- [IdentityJson](modules.md#identityjson)
-- [ReimportBody](modules.md#reimportbody)
-- [RequestSubscriptionBody](modules.md#requestsubscriptionbody)
-- [RequestSubscriptionResponse](modules.md#requestsubscriptionresponse)
-- [RevokeSubscriptionBody](modules.md#revokesubscriptionbody)
-- [RevokeVerificationBody](modules.md#revokeverificationbody)
-- [SearchCriteria](modules.md#searchcriteria)
-- [Subscription](modules.md#subscription)
-- [SubscriptionUpdate](modules.md#subscriptionupdate)
-- [User](modules.md#user)
-- [ValidateBody](modules.md#validatebody)
-- [ValidateResponse](modules.md#validateresponse)
-- [VerifiableCredentialInternal](modules.md#verifiablecredentialinternal)
-- [VerifiableCredentialJson](modules.md#verifiablecredentialjson)
-
-## Type Aliases
-
-### AddChannelLogBody
-
-Ƭ **AddChannelLogBody**: `Static`<typeof `AddChannelLogBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:16
-
-___
-
-### AuthorizeSubscriptionBody
-
-Ƭ **AuthorizeSubscriptionBody**: `Static`<typeof `AuthorizeSubscriptionBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:20
-
-___
-
-### AuthorizeSubscriptionResponse
-
-Ƭ **AuthorizeSubscriptionResponse**: `Static`<typeof `AuthorizeSubscriptionResponseSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:24
-
-___
-
-### ChannelData
-
-Ƭ **ChannelData**: `Static`<typeof `ChannelDataSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/channel-data.d.ts:4
-
-___
-
-### ChannelInfo
-
-Ƭ **ChannelInfo**: `Static`<typeof `ChannelInfoSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/channel-info.d.ts:4
-
-___
-
-### ChannelInfoSearch
-
-Ƭ **ChannelInfoSearch**: `Omit`<`ChannelInfoSearchDate`, ``"created"`` \| ``"latestMessage"``\> & { `created?`: `Date` ; `latestMessage?`: `Date`  }
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/channel-info.d.ts:11
-
-___
-
-### ClientConfig
-
-Ƭ **ClientConfig**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `apiKey?` | `string` |
-| `auditTrailUrl?` | `string` |
-| `isGatewayUrl?` | `string` |
-| `ssiBridgeUrl?` | `string` |
-| `useGatewayUrl?` | `boolean` |
-
-#### Defined in
-
-[src/models/clientConfig.ts:3](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/clientConfig.ts#L3)
-
-___
-
-### CreateChannelBody
-
-Ƭ **CreateChannelBody**: `Static`<typeof `CreateChannelBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:14
-
-___
-
-### CreateChannelResponse
-
-Ƭ **CreateChannelResponse**: `Static`<typeof `CreateChannelResponseSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:15
-
-___
-
-### IdentityDocumentJson
-
-Ƭ **IdentityDocumentJson**: `Static`<typeof `IdentityDocumentJsonSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:20
-
-___
-
-### IdentityInternal
-
-Ƭ **IdentityInternal**: `Static`<typeof `IdentitySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:16
-
-___
-
-### IdentityJson
-
-Ƭ **IdentityJson**: `Static`<typeof `IdentityJsonSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:22
-
-___
-
-### ReimportBody
-
-Ƭ **ReimportBody**: `Static`<typeof `ReimportBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:17
-
-___
-
-### RequestSubscriptionBody
-
-Ƭ **RequestSubscriptionBody**: `Static`<typeof `RequestSubscriptionBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:22
-
-___
-
-### RequestSubscriptionResponse
-
-Ƭ **RequestSubscriptionResponse**: `Static`<typeof `RequestSubscriptionResponseSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:23
-
-___
-
-### RevokeSubscriptionBody
-
-Ƭ **RevokeSubscriptionBody**: `Static`<typeof `RevokeSubscriptionBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:21
-
-___
-
-### RevokeVerificationBody
-
-Ƭ **RevokeVerificationBody**: `Static`<typeof `RevokeVerificationBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:27
-
-___
-
-### SearchCriteria
-
-Ƭ **SearchCriteria**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `asc?` | `boolean` |
-| `creator?` | `string` |
-| `index?` | `number` |
-| `limit?` | `number` |
-| `registrationDate?` | `Date` |
-| `type?` | `string` |
-| `username?` | `string` |
-
-#### Defined in
-
-[src/models/searchCriteria.ts:1](https://github.com/iotaledger/integration-services/blob/e09ee538/clients/client-sdk/src/models/searchCriteria.ts#L1)
-
-___
-
-### Subscription
-
-Ƭ **Subscription**: `Static`<typeof `SubscriptionSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/subscription.d.ts:3
-
-___
-
-### SubscriptionUpdate
-
-Ƭ **SubscriptionUpdate**: `Static`<typeof `SubscriptionUpdateSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/subscription.d.ts:4
-
-___
-
-### User
-
-Ƭ **User**: `Static`<typeof `IdentitySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:7
-
-___
-
-### ValidateBody
-
-Ƭ **ValidateBody**: `Static`<typeof `ValidateBodySchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:18
-
-___
-
-### ValidateResponse
-
-Ƭ **ValidateResponse**: `Static`<typeof `ValidateResponseSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/request-response-bodies.d.ts:19
-
-___
-
-### VerifiableCredentialInternal
-
-Ƭ **VerifiableCredentialInternal**: `Static`<typeof `VerifiableCredentialSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:11
-
-___
-
-### VerifiableCredentialJson
-
-Ƭ **VerifiableCredentialJson**: `Static`<typeof `VerifiableCredentialSchema`\>
-
-#### Defined in
-
-node_modules/@iota/is-shared-modules/lib/models/types/identity.d.ts:18
-
-
-## Bugs
-Since this package is in **beta** phase you might find some bugs while using the package. Please report them either 
-1. In our [Discord](https://discord.com/channels/397872799483428865/910192737842790400) channel `integration-support`.
-2. As a [GitHub issue](https://github.com/iotaledger/integration-services/issues)
-3. Or via mail to `tim.sigl@iota.org` or `dominic.zettl@iota.org`
-
-## Build the Package
-
-Alternatively, you can build the package own your own.
-First install the necessary dependencies using:
-
-```bash
-npm install
-```
-
-and then build with
-
-```bash
-npm run build
-```
-
-The build javascript package will be available in the `./dist` folder.
-
-### Docs Compilation
-The API reference of the docs is automatically compiled out of multiple sources. If you want to make changes to the README.md
-edit the ./docs/README.md. The README.md in the root directory will be overwritten with the README.md in the docs folder.
