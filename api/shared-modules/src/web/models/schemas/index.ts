@@ -16,7 +16,7 @@ export {
 	VerifiableCredentialSchema,
 	VerifiableCredentialSubjectSchema
 } from './identity';
-export { AccessRights, SubscriptionSchema, SubscriptionType, SubscriptionUpdateSchema } from './subscription';
+export { AccessRights, SubscriptionSchema, SubscriptionType, SubscriptionStateSchema, SubscriptionUpdateSchema } from './subscription';
 export {
 	AggregateOfferSchema,
 	AggregateRatingSchema,
