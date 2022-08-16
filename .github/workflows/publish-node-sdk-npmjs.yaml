@@ -23,6 +23,16 @@ jobs:
           npm run build
       - run: cd clients/client-sdk && npm ci
       - run: cd clients/client-sdk && npm run build
-      - run: cd clients/client-sdk && npm publish --access=public
+      - run: |
+            cd clients/client-sdk
+            jq -r '"PACKAGE_JSON=\(.version)"' package.json >> $GITHUB_ENV 
+      - name: Stable version
+        if: ${{ !contains(env.PACKAGE_JSON, 'alpha') }}
+        run: cd clients/client-sdk && npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Pre-release version
+        if: ${{ contains(env.PACKAGE_JSON, 'alpha') }}
+        run: cd clients/client-sdk && npm publish --tag next --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

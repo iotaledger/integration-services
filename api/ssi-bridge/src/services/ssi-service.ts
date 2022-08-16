@@ -1,7 +1,7 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
 import { VerifiableCredential, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
-const { Credential, Client, KeyPair, KeyType, Resolver, AccountBuilder } = Identity;
+const { Credential, Client, KeyPair, KeyType, Resolver, MethodScope, Document } = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
 import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
@@ -49,9 +49,13 @@ export class SsiService {
 	async createIdentity(): Promise<IdentityKeys> {
 		try {
 			const identity = await this.generateIdentity();
-			const publicKey = bs58.encode(identity.key.public());
-			const privateKey = bs58.encode(identity.key.private());
-			const keyType = identity.key.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+			const publicKey = bs58.encode(identity.signingKeys.public());
+			const privateKey = bs58.encode(identity.signingKeys.private());
+			const keyType = identity.signingKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+
+			const publicEncryptionKey = bs58.encode(identity.encryptionKeys.public());
+			const privateEncryptionKey = bs58.encode(identity.encryptionKeys.private());
+			const encryptionKeyType = identity.encryptionKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
 
 			return {
 				id: identity.doc.id().toString(),
@@ -60,6 +64,12 @@ export class SsiService {
 						public: publicKey,
 						private: privateKey,
 						type: keyType,
+						encoding: Encoding.base58
+					},
+					encrypt: {
+						public: publicEncryptionKey,
+						private: privateEncryptionKey,
+						type: encryptionKeyType,
 						encoding: Encoding.base58
 					}
 				}
@@ -128,8 +138,8 @@ export class SsiService {
 		}
 	}
 
-	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId: string): Promise<string | undefined> {
-		newDoc.setMetadataPreviousMessageId(prevMessageId);
+	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId?: string): Promise<string | undefined> {
+		prevMessageId && newDoc.setMetadataPreviousMessageId(prevMessageId);
 		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
 		newDoc.signSelf(key, methodId);
@@ -203,29 +213,36 @@ export class SsiService {
 		}
 	}
 
-	async generateIdentity(): Promise<{ account: Identity.Account; doc: Identity.Document; key: Identity.KeyPair }> {
+	async generateIdentity(): Promise<{
+		doc: Identity.Document;
+		signingKeys: Identity.KeyPair;
+		encryptionKeys: Identity.KeyPair;
+	}> {
 		try {
-			const builder = this.getAccountBuilder();
-			const keyPair = new KeyPair(KeyType.Ed25519);
-			const account = await builder.createIdentity({ privateKey: keyPair.private() });
+			const verificationFragment = 'kex-0';
+			const signingKeyPair = new KeyPair(KeyType.Ed25519);
+			const document = new Document(signingKeyPair, this.getConfig(false).network.name());
+
+			// Add encryption keys and capabilities to Identity
+			const encryptionKeyPair = new KeyPair(KeyType.X25519);
+			const encryptionMethod = new Identity.VerificationMethod(
+				document.id(),
+				encryptionKeyPair.type(),
+				encryptionKeyPair.public(),
+				verificationFragment
+			);
+			document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
+			await this.publishSignedDoc(document, signingKeyPair);
 
 			return {
-				account,
-				doc: account.document(),
-				key: keyPair
+				doc: document,
+				signingKeys: signingKeyPair,
+				encryptionKeys: encryptionKeyPair
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error(`could not create identity document from keytype: ${KeyType.Ed25519}`);
 		}
-	}
-
-	private getAccountBuilder(usePermaNode?: boolean): Identity.AccountBuilder {
-		const clientConfig = this.getConfig(usePermaNode);
-		const builderOptions = {
-			clientConfig
-		};
-		return new AccountBuilder(builderOptions);
 	}
 
 	private getIdentityClient(usePermaNode?: boolean) {

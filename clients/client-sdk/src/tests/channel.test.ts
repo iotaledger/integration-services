@@ -6,21 +6,19 @@ import {
   RequestSubscriptionResponse
 } from '..';
 import { adminUser, apiConfig, normalUser, testChannel, testChannelWrite } from './test.data';
-import { ClientConfig } from '../models/clientConfig';
-import { ApiVersion } from '../models/apiVersion';
 
 // 60 second timeout since tangle might be slow
 jest.setTimeout(60000);
 
 describe('test channel client', () => {
   let channelClient: ChannelClient;
-  let { apiVersion, auditTrailUrl, isGatewayUrl, ssiBridgeUrl } = apiConfig;
+  let { auditTrailUrl, isGatewayUrl, ssiBridgeUrl } = apiConfig;
   if (isGatewayUrl) {
-    ssiBridgeUrl = `${isGatewayUrl}/api/${apiVersion}`;
-    auditTrailUrl = `${isGatewayUrl}/api/${apiVersion}`;
+    ssiBridgeUrl = `${isGatewayUrl}`;
+    auditTrailUrl = `${isGatewayUrl}`;
   } else {
-    ssiBridgeUrl = `${ssiBridgeUrl}/api/${apiVersion}`;
-    auditTrailUrl = `${auditTrailUrl}/api/${apiVersion}`;
+    ssiBridgeUrl = `${ssiBridgeUrl}`;
+    auditTrailUrl = `${auditTrailUrl}`;
   }
   const globalTestChannel = testChannel;
   const globalTestChannelWrite = testChannelWrite;
@@ -34,12 +32,9 @@ describe('test channel client', () => {
   });
   describe('test authentication', () => {
     it('should have expected default config', async () => {
-      const config: ClientConfig = {
-        apiVersion: ApiVersion.v01
-      };
-      const tmpClient = new ChannelClient(config);
+      const tmpClient = new ChannelClient(apiConfig);
       expect(tmpClient.useGatewayUrl).toBe(true);
-      expect(tmpClient.isGatewayUrl).toBe('/api/v0.1');
+      expect(tmpClient.isGatewayUrl).toBe('http://localhost:3000/api/v0.1');
     });
     it('should authenticate user', async () => {
       jest.spyOn(channelClient, 'get');

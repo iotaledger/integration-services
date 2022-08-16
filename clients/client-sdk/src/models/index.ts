@@ -2,8 +2,6 @@ export * from './searchCriteria';
 
 export * from './clientConfig';
 
-export * from './apiVersion';
-
 // Export channel types
 export {
   ChannelData,
