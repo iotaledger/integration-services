@@ -26,8 +26,8 @@ export abstract class BaseClient {
     ssiBridgeUrl = '',
     auditTrailUrl = '',
     isGatewayUrl = '',
-    apiVersionAuditTrail = '',
-    apiVersionSsiBridge = '',
+    apiVersionAuditTrail,
+    apiVersionSsiBridge,
     useGatewayUrl = true,
   }: ClientConfig) {
     this.apiKey = apiKey || '';
