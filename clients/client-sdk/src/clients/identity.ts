@@ -16,22 +16,14 @@ import { SearchCriteria } from '../models/searchCriteria';
 import * as bs58 from 'bs58';
 import {
   Credential,
-  CredentialValidationOptions,
   Duration,
   Document,
   KeyPair,
-  FailFast,
   Presentation,
-  PresentationValidationOptions,
-  Resolver,
-  Network,
-  SubjectHolderRelationship,
   Timestamp,
   IPresentation,
-  VerifierOptions,
-  IClientConfig,
   ProofOptions
-} from '@iota/identity-wasm/node';
+} from '@iota/identity-wasm/web';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;

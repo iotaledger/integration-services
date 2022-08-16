@@ -24,7 +24,7 @@ export abstract class BaseClient {
     ssiBridgeUrl = '',
     auditTrailUrl = '',
     isGatewayUrl = '',
-    useGatewayUrl = true,
+    useGatewayUrl = true
   }: ClientConfig) {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
@@ -36,11 +36,7 @@ export abstract class BaseClient {
     });
   }
 
-  buildUrls(
-    useGatewayUrl?: boolean,
-    ssiBridgeUrl?: string,
-    auditTrailUrl?: string,
-  ) {
+  buildUrls(useGatewayUrl?: boolean, ssiBridgeUrl?: string, auditTrailUrl?: string) {
     if (!useGatewayUrl && (!ssiBridgeUrl || !auditTrailUrl)) {
       throw new Error(
         'Define a gatewayUrl or unset useGatewayUrl and use ssiBridgeUrl and auditTrailUrl'
@@ -58,8 +54,8 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
-    if(!secretKey){
-      throw new Error('No private signature key provided.')
+    if (!secretKey) {
+      throw new Error('No private signature key provided.');
     }
     const url: string = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
     const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
