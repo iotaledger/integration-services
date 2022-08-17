@@ -24,7 +24,7 @@ With the release of the new version of the SSI-Bridge we upgrade to the latest  
 
 The latest update gives you the opportunity to create encryption keys for an identity and store the corresponding key within its document. That's why the response of the `/api/v0.2/identities/create` endpoint has been changed. In `SSI-Bridge v0.1`, the response has looked as follows:
 
-```
+```json
 {
     "doc": {
         "id": "did:iota:5tkMtbJYYs63etPWFh97gkM41qFdPMxY9ADLBfi6puSj",
