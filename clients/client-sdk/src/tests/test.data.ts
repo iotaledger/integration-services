@@ -6,8 +6,8 @@ export const apiConfig: ClientConfig = {
   isGatewayUrl: 'http://localhost:3000',
   useGatewayUrl: true,
   apiKey: '1cfa3bce-654d-41f6-a82a-94308dc4adf8',
-  apiVersionAuditTrail: ApiVersion.v1,
-  apiVersionSsiBridge: ApiVersion.v2
+  apiVersionAuditTrail: ApiVersion.v0_1,
+  apiVersionSsiBridge: ApiVersion.v0_2
 };
 
 export const adminUser = {

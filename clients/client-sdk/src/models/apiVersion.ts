@@ -1,4 +1,4 @@
 export enum ApiVersion {
-    v1 = 'v0.1',
-    v2 = 'v0.2'
+    v0_1 = 'v0.1',
+    v0_2 = 'v0.2'
 }
