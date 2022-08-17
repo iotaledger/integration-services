@@ -17,11 +17,12 @@ Please make sure to have the latest version of the Integration Services installe
 ## Breaking Changes
 
 ### SSI-Bridge v0.1 -> v0.2
-With the release of the new version of the SSI-Bridge we upgrade to the latest  `identity.rs v0.6` version. The upgrade of the identity library brings some improvement but structural changes on how the identities are stored at the tangle, that's why it is not more able to decode previously stored identities anymore. This means, all identities created with the `SSI-Bridge v0.1` are no more able to be read by the `SSI-Bridge v0.2`. 
+
+With the release of the new version of the SSI-Bridge we upgrade to the latest  [`identity.rs v0.6`](https://github.com/iotaledger/identity.rs/tree/v0.6.0). The upgrade of the identity library brings many improvements, but there are also structural changes regarding how identities are stored in the tangle. This means you will not be able to read any identities created with the `SSI-Bridge v0.1` using `SSI-Bridge v0.2`. 
 
 #### Create identity endpoint
 
-The latest update also gives the opportunity to create encryption keys for the identity and store the corresponding key within its document. That's why the response of the `/api/v0.2/identities/create` endpoint has been changed. In `SSI-Bridge v0.1` the response has looked as following:
+The latest update gives you the opportunity to create encryption keys for an identity and store the corresponding key within its document. That's why the response of the `/api/v0.2/identities/create` endpoint has been changed. In `SSI-Bridge v0.1`, the response has looked as follows:
 
 ```
 {
@@ -52,9 +53,9 @@ The latest update also gives the opportunity to create encryption keys for the i
 }
 ```
 
-For `SSI-Bridge v0.2` the new response looks as following:
+For `SSI-Bridge v0.2`, the new response looks as follows:
 
-```
+```json
 {
     "id": "did:iota:AXGjMoXRDR36YrmnFyKwXtc3sj3q7FRkzqZwhn7i67a9",
     "keys": {
@@ -74,4 +75,4 @@ For `SSI-Bridge v0.2` the new response looks as following:
 }
 ```
 
-Notice the `key` was renamed to `keys` since we now have an asymmetric encryption and a signature key. Instead of responding the whole document only the created identity id is returned. The document can always be fetched from the `/api/v0.2/verification/latest-document/<identity-id>` endpoint. The `secret` key was renamed to `private` to be consistent with the new identity.rs framework. In addition the data model of the identity document and verifiable credentials have been updated to the latest version. For authentication consider to use the key: `keys.sign.private` to sign the nonce but if you are using the `@iota/is-client` this will be done automatically.
+Notice that `key` was renamed as `keys` since we now have asymmetric encryption and a signature key. Instead of returning the whole document, only the created identity id is returned. You can still fetch the document using the `/api/v0.2/verification/latest-document/<identity-id>` endpoint. The `secret` key was renamed as `private` to be consistent with the new identity.rs framework. In addition, the data model of the identity document and verifiable credentials have been updated to the latest version. For authentication, consider using the key: `keys.sign.private` to sign the nonce. If you are using the `@iota/is-client`, this will be done automatically.
