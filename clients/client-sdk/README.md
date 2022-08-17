@@ -537,7 +537,7 @@ searchChannelAndValidateData();
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:6
+node_modules/@iota/is-shared-modules/lib/web/models/schemas/subscription.d.ts:6
 
 ___
 
@@ -547,7 +547,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:7
+node_modules/@iota/is-shared-modules/lib/web/models/schemas/subscription.d.ts:7
 
 ___
 
@@ -557,7 +557,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:9
+node_modules/@iota/is-shared-modules/lib/web/models/schemas/subscription.d.ts:9
 
 ___
 
@@ -567,7 +567,36 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:8
+node_modules/@iota/is-shared-modules/lib/web/models/schemas/subscription.d.ts:8
+
+# Enumeration: ApiVersion
+
+## Table of contents
+
+### Enumeration Members
+
+- [v0\_1](ApiVersion.md#v0_1)
+- [v0\_2](ApiVersion.md#v0_2)
+
+## Enumeration Members
+
+### v0\_1
+
+• **v0\_1** = ``"v0.1"``
+
+#### Defined in
+
+[src/models/apiVersion.ts:2](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/models/apiVersion.ts#L2)
+
+___
+
+### v0\_2
+
+• **v0\_2** = ``"v0.2"``
+
+#### Defined in
+
+[src/models/apiVersion.ts:3](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/models/apiVersion.ts#L3)
 
 # Enumeration: CredentialTypes
 
@@ -586,7 +615,7 @@ node_modules/@iota/is-shared-modules/lib/models/schemas/subscription.d.ts:8
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:8
+node_modules/@iota/is-shared-modules/lib/web/models/types/verification.d.ts:8
 
 ___
 
@@ -596,7 +625,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:7
+node_modules/@iota/is-shared-modules/lib/web/models/types/verification.d.ts:7
 
 # Enumeration: UserType
 
@@ -619,7 +648,7 @@ node_modules/@iota/is-shared-modules/lib/models/types/verification.d.ts:7
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:18
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:18
 
 ___
 
@@ -629,7 +658,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:15
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:15
 
 ___
 
@@ -639,7 +668,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:17
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:17
 
 ___
 
@@ -649,7 +678,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:19
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:19
 
 ___
 
@@ -659,7 +688,7 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:16
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:16
 
 ___
 
@@ -669,7 +698,8 @@ ___
 
 #### Defined in
 
-node_modules/@iota/is-shared-modules/lib/models/types/user.d.ts:20
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:20
+
 
 # Class: ChannelClient
 
@@ -757,13 +787,13 @@ BaseClient.apiKey
 
 #### Defined in
 
-[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L13)
+[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L13)
 
 ___
 
 ### apiVersionAuditTrail
 
-• `Optional` **apiVersionAuditTrail**: `string`
+• **apiVersionAuditTrail**: `string`
 
 #### Inherited from
 
@@ -771,13 +801,13 @@ BaseClient.apiVersionAuditTrail
 
 #### Defined in
 
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L18)
 
 ___
 
 ### apiVersionSsiBridge
 
-• `Optional` **apiVersionSsiBridge**: `string`
+• **apiVersionSsiBridge**: `string`
 
 #### Inherited from
 
@@ -785,7 +815,7 @@ BaseClient.apiVersionSsiBridge
 
 #### Defined in
 
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -799,7 +829,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L16)
 
 ___
 
@@ -809,7 +839,7 @@ ___
 
 #### Defined in
 
-[src/clients/channel.ts:24](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/channel.ts#L24)
+[src/clients/channel.ts:24](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/channel.ts#L24)
 
 ___
 
@@ -823,7 +853,7 @@ BaseClient.instance
 
 #### Defined in
 
-[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L21)
+[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L21)
 
 ___
 
@@ -837,7 +867,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -851,13 +881,13 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L20)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
 ### ssiBridgeUrl
 
-• **ssiBridgeUrl**: `string`
+• `Optional` **ssiBridgeUrl**: `string`
 
 #### Inherited from
 
@@ -865,13 +895,13 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
 ### useGatewayUrl
 
-• **useGatewayUrl**: `boolean`
+• `Optional` **useGatewayUrl**: `boolean`
 
 #### Inherited from
 
@@ -879,7 +909,7 @@ BaseClient.useGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L15)
 
 ## Methods
 
@@ -1508,7 +1538,6 @@ Write data to a channel with address channel address. Write permission is mandat
 
 `Promise`<{ `imported`: `undefined` \| `string` ; `link`: `string` ; `log`: { type?: string \| undefined; created?: string \| undefined; metadata?: any; publicPayload?: any; payload?: any; } ; `messageId`: `undefined` \| `string` ; `source`: `undefined` \| { id?: string \| undefined; publicKey?: string \| undefined; }  }\>
 
-
 # Class: IdentityClient
 
 ## Hierarchy
@@ -1590,7 +1619,7 @@ BaseClient.apiKey
 
 #### Defined in
 
-[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L13)
+[src/clients/base.ts:13](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L13)
 
 ___
 
@@ -1604,7 +1633,7 @@ BaseClient.apiVersionAuditTrail
 
 #### Defined in
 
-[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L18)
+[src/clients/base.ts:18](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L18)
 
 ___
 
@@ -1618,7 +1647,7 @@ BaseClient.apiVersionSsiBridge
 
 #### Defined in
 
-[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L19)
+[src/clients/base.ts:19](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L19)
 
 ___
 
@@ -1632,7 +1661,7 @@ BaseClient.auditTrailUrl
 
 #### Defined in
 
-[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L16)
+[src/clients/base.ts:16](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L16)
 
 ___
 
@@ -1642,7 +1671,7 @@ ___
 
 #### Defined in
 
-[src/clients/identity.ts:18](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/identity.ts#L18)
+[src/clients/identity.ts:18](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/identity.ts#L18)
 
 ___
 
@@ -1656,7 +1685,7 @@ BaseClient.instance
 
 #### Defined in
 
-[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L21)
+[src/clients/base.ts:21](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L21)
 
 ___
 
@@ -1670,7 +1699,7 @@ BaseClient.isGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L14)
+[src/clients/base.ts:14](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L14)
 
 ___
 
@@ -1684,7 +1713,7 @@ BaseClient.jwtToken
 
 #### Defined in
 
-[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L20)
+[src/clients/base.ts:20](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L20)
 
 ___
 
@@ -1698,7 +1727,7 @@ BaseClient.ssiBridgeUrl
 
 #### Defined in
 
-[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L17)
+[src/clients/base.ts:17](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L17)
 
 ___
 
@@ -1712,7 +1741,7 @@ BaseClient.useGatewayUrl
 
 #### Defined in
 
-[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/1428cda0/clients/client-sdk/src/clients/base.ts#L15)
+[src/clients/base.ts:15](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/clients/base.ts#L15)
 
 ## Methods
 
@@ -2190,3 +2219,335 @@ Check the verifiable credential of an identity. Validates the signed verifiable 
 #### Returns
 
 `Promise`<{ `error?`: `string` ; `isValid`: `boolean`  }\>
+
+
+### Types
+
+
+- [AddChannelLogBody](modules.md#addchannellogbody)
+- [AuthorizeSubscriptionBody](modules.md#authorizesubscriptionbody)
+- [AuthorizeSubscriptionResponse](modules.md#authorizesubscriptionresponse)
+- [ChannelData](modules.md#channeldata)
+- [ChannelInfo](modules.md#channelinfo)
+- [ChannelInfoSearch](modules.md#channelinfosearch)
+- [ClientConfig](modules.md#clientconfig)
+- [CreateChannelBody](modules.md#createchannelbody)
+- [CreateChannelResponse](modules.md#createchannelresponse)
+- [IdentityDocument](modules.md#identitydocument)
+- [IdentityInternal](modules.md#identityinternal)
+- [IdentityKeys](modules.md#identitykeys)
+- [ReimportBody](modules.md#reimportbody)
+- [RequestSubscriptionBody](modules.md#requestsubscriptionbody)
+- [RequestSubscriptionResponse](modules.md#requestsubscriptionresponse)
+- [RevokeSubscriptionBody](modules.md#revokesubscriptionbody)
+- [RevokeVerificationBody](modules.md#revokeverificationbody)
+- [SearchCriteria](modules.md#searchcriteria)
+- [Subscription](modules.md#subscription)
+- [SubscriptionUpdate](modules.md#subscriptionupdate)
+- [User](modules.md#user)
+- [ValidateBody](modules.md#validatebody)
+- [ValidateResponse](modules.md#validateresponse)
+- [VerifiableCredential](modules.md#verifiablecredential)
+- [VerifiableCredentialInternal](modules.md#verifiablecredentialinternal)
+
+## Type Aliases
+
+### AddChannelLogBody
+
+Ƭ **AddChannelLogBody**: `Static`<typeof `AddChannelLogBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:16
+
+___
+
+### AuthorizeSubscriptionBody
+
+Ƭ **AuthorizeSubscriptionBody**: `Static`<typeof `AuthorizeSubscriptionBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:20
+
+___
+
+### AuthorizeSubscriptionResponse
+
+Ƭ **AuthorizeSubscriptionResponse**: `Static`<typeof `AuthorizeSubscriptionResponseSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:24
+
+___
+
+### ChannelData
+
+Ƭ **ChannelData**: `Static`<typeof `ChannelDataSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/channel-data.d.ts:4
+
+___
+
+### ChannelInfo
+
+Ƭ **ChannelInfo**: `Static`<typeof `ChannelInfoSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/channel-info.d.ts:4
+
+___
+
+### ChannelInfoSearch
+
+Ƭ **ChannelInfoSearch**: `Omit`<`ChannelInfoSearchDate`, ``"created"`` \| ``"latestMessage"``\> & { `created?`: `Date` ; `latestMessage?`: `Date`  }
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/channel-info.d.ts:11
+
+___
+
+### ClientConfig
+
+Ƭ **ClientConfig**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `apiKey?` | `string` |
+| `apiVersionAuditTrail` | [`ApiVersion`](enums/ApiVersion.md) |
+| `apiVersionSsiBridge` | [`ApiVersion`](enums/ApiVersion.md) |
+| `auditTrailUrl?` | `string` |
+| `isGatewayUrl?` | `string` |
+| `ssiBridgeUrl?` | `string` |
+| `useGatewayUrl?` | `boolean` |
+
+#### Defined in
+
+[src/models/clientConfig.ts:3](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/models/clientConfig.ts#L3)
+
+___
+
+### CreateChannelBody
+
+Ƭ **CreateChannelBody**: `Static`<typeof `CreateChannelBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:14
+
+___
+
+### CreateChannelResponse
+
+Ƭ **CreateChannelResponse**: `Static`<typeof `CreateChannelResponseSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:15
+
+___
+
+### IdentityDocument
+
+Ƭ **IdentityDocument**: `Static`<typeof `IdentityDocumentSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/identity.d.ts:27
+
+___
+
+### IdentityInternal
+
+Ƭ **IdentityInternal**: `Static`<typeof `IdentitySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/identity.d.ts:23
+
+___
+
+### IdentityKeys
+
+Ƭ **IdentityKeys**: `Static`<typeof `IdentityKeysSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/identity.d.ts:30
+
+___
+
+### ReimportBody
+
+Ƭ **ReimportBody**: `Static`<typeof `ReimportBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:17
+
+___
+
+### RequestSubscriptionBody
+
+Ƭ **RequestSubscriptionBody**: `Static`<typeof `RequestSubscriptionBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:22
+
+___
+
+### RequestSubscriptionResponse
+
+Ƭ **RequestSubscriptionResponse**: `Static`<typeof `RequestSubscriptionResponseSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:23
+
+___
+
+### RevokeSubscriptionBody
+
+Ƭ **RevokeSubscriptionBody**: `Static`<typeof `RevokeSubscriptionBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:21
+
+___
+
+### RevokeVerificationBody
+
+Ƭ **RevokeVerificationBody**: `Static`<typeof `RevokeVerificationBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:27
+
+___
+
+### SearchCriteria
+
+Ƭ **SearchCriteria**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `asc?` | `boolean` |
+| `creator?` | `string` |
+| `index?` | `number` |
+| `limit?` | `number` |
+| `registrationDate?` | `Date` |
+| `type?` | `string` |
+| `username?` | `string` |
+
+#### Defined in
+
+[src/models/searchCriteria.ts:1](https://github.com/iotaledger/integration-services/blob/70616db3/clients/client-sdk/src/models/searchCriteria.ts#L1)
+
+___
+
+### Subscription
+
+Ƭ **Subscription**: `Static`<typeof `SubscriptionSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/subscription.d.ts:3
+
+___
+
+### SubscriptionUpdate
+
+Ƭ **SubscriptionUpdate**: `Static`<typeof `SubscriptionUpdateSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/subscription.d.ts:4
+
+___
+
+### User
+
+Ƭ **User**: `Static`<typeof `IdentitySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/user.d.ts:7
+
+___
+
+### ValidateBody
+
+Ƭ **ValidateBody**: `Static`<typeof `ValidateBodySchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:18
+
+___
+
+### ValidateResponse
+
+Ƭ **ValidateResponse**: `Static`<typeof `ValidateResponseSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/request-response-bodies.d.ts:19
+
+___
+
+### VerifiableCredential
+
+Ƭ **VerifiableCredential**: `Static`<typeof `VerifiableCredentialSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/identity.d.ts:25
+
+___
+
+### VerifiableCredentialInternal
+
+Ƭ **VerifiableCredentialInternal**: `Static`<typeof `VerifiableCredentialSchema`\>
+
+#### Defined in
+
+node_modules/@iota/is-shared-modules/lib/web/models/types/verification.d.ts:11
+
+
+## Bugs
+Since this package is in **beta** phase you might find some bugs while using the package. Please report them either 
+1. In our [Discord](https://discord.com/channels/397872799483428865/910192737842790400) channel `integration-support`.
+2. As a [GitHub issue](https://github.com/iotaledger/integration-services/issues)
+3. Or via mail to `tim.sigl@iota.org` or `dominic.zettl@iota.org`
+
+## Build the Package
+
+Alternatively, you can build the package own your own.
+First install the necessary dependencies using:
+
+```bash
+npm install
+```
+
+and then build with
+
+```bash
+npm run build
+```
+
+The build javascript package will be available in the `./dist` folder.
+
+### Docs Compilation
+The API reference of the docs is automatically compiled out of multiple sources. If you want to make changes to the README.md
+edit the ./docs/README.md. The README.md in the root directory will be overwritten with the README.md in the docs folder.
