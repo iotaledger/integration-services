@@ -26,7 +26,7 @@ export class ChannelClient extends BaseClient {
   constructor(config: ClientConfig) {
     super(config);
     this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.auditTrailUrl!!;
-    this.baseUrl = this.baseUrl + `/api/${config.apiVersionAuditTrail}`
+    this.baseUrl = this.baseUrl + `/api/${config.apiVersionAuditTrail}`;
   }
 
   /**

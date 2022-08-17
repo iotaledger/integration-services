@@ -1,4 +1,4 @@
-import { ApiVersion } from "./apiVersion";
+import { ApiVersion } from './apiVersion';
 
 export type ClientConfig = {
   apiKey?: string;
@@ -7,5 +7,5 @@ export type ClientConfig = {
   ssiBridgeUrl?: string;
   auditTrailUrl?: string;
   apiVersionAuditTrail: ApiVersion;
-  apiVersionSsiBridge: ApiVersion
+  apiVersionSsiBridge: ApiVersion;
 };

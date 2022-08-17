@@ -35,8 +35,8 @@ describe('test channel client', () => {
       const tmpClient = new ChannelClient(apiConfig);
       expect(tmpClient.useGatewayUrl).toBe(true);
       expect(tmpClient.isGatewayUrl).toBe('http://localhost:3000');
-      expect(tmpClient.apiVersionAuditTrail).toBe('v0.1')
-      expect(tmpClient.apiVersionSsiBridge).toBe('v0.2')
+      expect(tmpClient.apiVersionAuditTrail).toBe('v0.1');
+      expect(tmpClient.apiVersionSsiBridge).toBe('v0.2');
     });
     it('should authenticate user', async () => {
       jest.spyOn(channelClient, 'get');
@@ -274,15 +274,18 @@ describe('test channel client', () => {
         expect(e).toBeUndefined();
       }
 
-      expect(channelClient.get).toHaveBeenCalledWith(`${auditTrailUrl}/api/v0.1/channel-info/search`, {
-        'api-key': apiConfig.apiKey,
-        name: globalTestChannel.name,
-        created: undefined,
-        limit: undefined,
-        asc: true,
-        index: 0,
-        hidden: undefined
-      });
+      expect(channelClient.get).toHaveBeenCalledWith(
+        `${auditTrailUrl}/api/v0.1/channel-info/search`,
+        {
+          'api-key': apiConfig.apiKey,
+          name: globalTestChannel.name,
+          created: undefined,
+          limit: undefined,
+          asc: true,
+          index: 0,
+          hidden: undefined
+        }
+      );
     });
   });
 });
