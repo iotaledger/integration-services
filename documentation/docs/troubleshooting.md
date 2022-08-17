@@ -65,7 +65,7 @@ For `SSI-Bridge v0.2`, the new response looks as follows:
             "type": "ed25519",
             "encoding": "base58"
         },
-        encrypt: { 
+        "encrypt": {
             "public": "9M2itnCuw62vjrsiL7M4QLWa1B9C7BYb4sBSdumT2TKd",
             "private": "8sHKprAuiTQPE8heArxeGRQmmzyv3C1hhMGUf5QmPh2b",
             "type": "x25519",
