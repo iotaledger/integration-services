@@ -26,8 +26,6 @@
 
 <Container class="my-5">
 	<Row>
-		<Col sm="12" md={{ size: 10, offset: 1 }}
-			><History {channelAddress} channelType={$channelType} presharedKey={$presharedKey} />
-		</Col>
+		<Col sm="12" md={{ size: 10, offset: 1 }}><History {channelAddress} channelType={$channelType} presharedKey={$presharedKey} /></Col>
 	</Row>
 </Container>
