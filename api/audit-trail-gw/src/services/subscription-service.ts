@@ -69,7 +69,6 @@ export class SubscriptionService {
 	}
 
 	async deleteSubscriptionState(channelAddress: string, id: string) {
-		await this.channelInfoService.removeChannelSubscriberId(channelAddress, id);
 		return SubscriptionStateDb.removeSubscriptionState(channelAddress, id);
 	}
 
@@ -238,6 +237,7 @@ export class SubscriptionService {
 			})
 		);
 
+		await this.deleteSubscriptionState(channelAddress, subscription.id);
 		await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
 		await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
 		subscription.isAuthorized

@@ -159,6 +159,9 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
+		const getSubscriptionStateSpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionState')
+			.mockImplementationOnce(async () => 'someteststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
@@ -174,6 +177,7 @@ describe('test validate route', () => {
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error('no author/subscriber found with channelAddress: 123456 and id: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
@@ -189,6 +193,9 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
+		const getSubscriptionStateSpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionState')
+			.mockImplementationOnce(async () => 'someteststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
@@ -227,6 +234,7 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getMessageSpy).toHaveBeenCalledTimes(3);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);

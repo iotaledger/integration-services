@@ -149,6 +149,7 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementationOnce(async () => 'teststateofauthor');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => subscriptionMock)
@@ -180,6 +181,7 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementationOnce(async () => 'teststateofauthor');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => subscriptionMock)
@@ -220,6 +222,7 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementationOnce(async () => 'teststateofauthor');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => subscriptionMock)
@@ -273,6 +276,7 @@ describe('test authorize subscription route', () => {
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+		jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementationOnce(async () => 'teststateofauthor');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => subscriptionMock)
