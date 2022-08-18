@@ -7,12 +7,16 @@ const collectionName = CollectionNames.subscriptionStates;
 
 const getIndex = (id: string, address: string) => `${id}-${address}`;
 
-export const getSubscriptionState = async (channelAddress: string, id: string): Promise<SubscriptionState | null> => {
+export const getSubscriptionState = async (channelAddress: string, id: string): Promise<string | null> => {
 	const query = { channelAddress, id };
-	return MongoDbService.getDocument<SubscriptionState>(collectionName, query);
+	const doc = await MongoDbService.getDocument<SubscriptionState>(collectionName, query);
+	if (!doc?.state) {
+		throw new Error(`could not find state of channel with with address ${channelAddress} and id ${id}`);
+	}
+	return doc.state;
 };
 
-export const addSubscription = async (channelAddress: string, id: string, state: string) => {
+export const addSubscriptionState = async (channelAddress: string, id: string, state: string) => {
 	const document = {
 		_id: getIndex(id, channelAddress),
 		channelAddress,
