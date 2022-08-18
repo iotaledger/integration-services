@@ -128,7 +128,7 @@ services:
       - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
     environment:
       - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
-      - VITE_IOTA_IS_SDK_GATEWAY_URL=
+      - VITE_IOTA_IS_SDK_GATEWAY_URL=${GATEWAY_URL}
     command: sh -c "npm run build && npm run prod"
     depends_on:
       - ssi-bridge
