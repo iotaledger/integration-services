@@ -76,7 +76,7 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {},
 				user: { id: 'did:iota:1234' },
-				body: { topics: [], seed: 'verysecretseed', name: 'test-channel', hidden: true, visibilityList: [{ id: "did:iota:12345" }] }
+				body: { topics: [], seed: 'verysecretseed', name: 'test-channel', hidden: true, visibilityList: [{ id: 'did:iota:12345' }] }
 			};
 
 			const expectedSubscription: Subscription = {
@@ -84,7 +84,6 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				id: 'did:iota:1234',
@@ -98,7 +97,7 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				topics: [],
 				hidden: true,
-				visibilityList: [{ id: "did:iota:12345" }]
+				visibilityList: [{ id: 'did:iota:12345' }]
 			};
 
 			const exportSubscriptionSpy = jest
@@ -143,7 +142,6 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				id: 'did:iota:1234',
@@ -199,7 +197,6 @@ describe('test channel routes', () => {
 				channelAddress: '1234234234',
 				keyloadLink: 'author-keyload-link',
 				isAuthorized: true,
-				state: 'uint8array string of subscription state',
 				subscriptionLink: '1234234234',
 				type: SubscriptionType.Author,
 				id: 'did:iota:1234',

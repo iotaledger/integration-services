@@ -140,7 +140,6 @@ describe('test validate route', () => {
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
-					state: 'someteststate',
 					accessRights: AccessRights.Write // wrong access rights
 				} as Subscription)
 		);
@@ -166,8 +165,7 @@ describe('test validate route', () => {
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
-					type: SubscriptionType.Author,
-					state: 'someteststate'
+					type: SubscriptionType.Author
 				} as Subscription)
 		);
 		const getSubSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no subscriber found
@@ -197,8 +195,7 @@ describe('test validate route', () => {
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
-					type: SubscriptionType.Author,
-					state: 'someteststate'
+					type: SubscriptionType.Author
 				} as Subscription)
 		);
 		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock);

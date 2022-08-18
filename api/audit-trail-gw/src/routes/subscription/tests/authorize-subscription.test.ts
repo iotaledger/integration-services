@@ -20,7 +20,6 @@ describe('test authorize subscription route', () => {
 		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
 	};
@@ -117,8 +116,7 @@ describe('test authorize subscription route', () => {
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Subscriber, // caller is not the valid author
 			id: authorId,
-			isAuthorized: true,
-			state: ''
+			isAuthorized: true
 		};
 		const isAuthor = false;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
@@ -147,8 +145,7 @@ describe('test authorize subscription route', () => {
 			channelAddress: 'testaddress',
 			type: SubscriptionType.Author,
 			id: authorId,
-			isAuthorized: true,
-			state: 'teststateofauthor'
+			isAuthorized: true
 		};
 		const isAuthor = true;
 		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
@@ -179,7 +176,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			id: authorId,
 			isAuthorized: true,
-			state: 'teststateofauthor',
 			pskId
 		};
 		const isAuthor = true;
@@ -220,7 +216,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			id: authorId,
 			isAuthorized: true,
-			state: 'teststateofauthor',
 			pskId // presharedKey is undefined
 		};
 		const isAuthor = true;
@@ -231,7 +226,9 @@ describe('test authorize subscription route', () => {
 			.mockImplementationOnce(async () => author);
 		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const authorMock = AuthorMock;
-		const removeChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'removeChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const removeChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'removeChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe').mockImplementation(async () => null);
 		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => authorMock); // author found
@@ -257,8 +254,8 @@ describe('test authorize subscription route', () => {
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', authorId, 'new-state');
-		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress','did:iota:1234');
-		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress','did:iota:1234');
+		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
+		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink', sequenceLink: 'testsequencelink' });
 	});
@@ -272,7 +269,6 @@ describe('test authorize subscription route', () => {
 			type: SubscriptionType.Author,
 			id: authorId,
 			isAuthorized: true,
-			state: 'teststateofauthor',
 			pskId
 		};
 		const isAuthor = true;
@@ -284,7 +280,9 @@ describe('test authorize subscription route', () => {
 
 		jest.spyOn(subscriptionDb, 'getSubscriptions').mockImplementation(async () => []);
 		const authorMock = AuthorMock;
-		const removeChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'removeChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const removeChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'removeChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		const addChannelSubscriberIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
 		const receiveSubscribeSpy = jest.spyOn(streamsService, 'receiveSubscribe').mockImplementation(async () => null);
 		const importAuthorSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => authorMock); // author found
@@ -310,8 +308,8 @@ describe('test authorize subscription route', () => {
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'veryvery-very-very-server-secret');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', authorId, 'new-state');
-		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress','did:iota:1234');
-		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress','did:iota:1234');
+		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
+		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith({ keyloadLink: 'testkeyloadlink', sequenceLink: 'testsequencelink' });
 	});

@@ -141,8 +141,7 @@ describe('test re-import route', () => {
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey', // different public key as newSub
-					accessRights: AccessRights.Read,
-					state: 'teststate'
+					accessRights: AccessRights.Read
 				} as Subscription)
 		);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
@@ -174,8 +173,7 @@ describe('test re-import route', () => {
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey', // same public key as in newSub
-					accessRights: AccessRights.Read,
-					state: 'teststate'
+					accessRights: AccessRights.Read
 				} as Subscription)
 		);
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
