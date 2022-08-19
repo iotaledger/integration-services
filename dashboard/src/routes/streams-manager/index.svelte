@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>Login / Register</title>
+	<title>Streams Manager</title>
 </svelte:head>
 
 <Container class="my-5">

@@ -3,7 +3,6 @@ import axios, { AxiosInstance } from 'axios';
 import { Base58, Converter } from '@iota/util.js';
 import { Sha256 } from '@iota/crypto.js';
 
-import { ApiVersion } from '../models/apiVersion';
 import { ClientConfig } from '../models/clientConfig';
 
 /**
@@ -16,6 +15,8 @@ export abstract class BaseClient {
   useGatewayUrl?: boolean;
   auditTrailUrl?: string;
   ssiBridgeUrl?: string;
+  apiVersionAuditTrail!: string;
+  apiVersionSsiBridge!: string;
   jwtToken?: string;
   instance: AxiosInstance;
 
@@ -25,13 +26,20 @@ export abstract class BaseClient {
     ssiBridgeUrl = '',
     auditTrailUrl = '',
     isGatewayUrl = '',
-    useGatewayUrl = true,
-    apiVersion = ApiVersion.v01
+    apiVersionAuditTrail,
+    apiVersionSsiBridge,
+    useGatewayUrl = true
   }: ClientConfig) {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
-    this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersion);
-    this.isGatewayUrl = `${isGatewayUrl}/api/${apiVersion}`;
+    this.buildUrls(
+      useGatewayUrl,
+      ssiBridgeUrl,
+      auditTrailUrl,
+      apiVersionAuditTrail,
+      apiVersionSsiBridge
+    );
+    this.isGatewayUrl = isGatewayUrl;
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
       timeout: 120000
@@ -42,17 +50,22 @@ export abstract class BaseClient {
     useGatewayUrl?: boolean,
     ssiBridgeUrl?: string,
     auditTrailUrl?: string,
-    apiVersion?: ApiVersion
+    apiVersionAuditTrail?: string,
+    apiVersionSsiBridge?: string
   ) {
     if (!useGatewayUrl && (!ssiBridgeUrl || !auditTrailUrl)) {
       throw new Error(
         'Define a gatewayUrl or unset useGatewayUrl and use ssiBridgeUrl and auditTrailUrl'
       );
     }
+    this.auditTrailUrl = auditTrailUrl && auditTrailUrl;
+    this.ssiBridgeUrl = ssiBridgeUrl && ssiBridgeUrl;
 
-    this.auditTrailUrl = auditTrailUrl && `${auditTrailUrl}/api/${apiVersion}`;
-
-    this.ssiBridgeUrl = ssiBridgeUrl && `${ssiBridgeUrl}/api/${apiVersion}`;
+    if (!apiVersionAuditTrail || !apiVersionSsiBridge) {
+      throw new Error('Set the api version for apiVersionAuditTrail and apiVersionSsiBridge');
+    }
+    this.apiVersionSsiBridge = apiVersionSsiBridge && apiVersionSsiBridge;
+    this.apiVersionAuditTrail = apiVersionAuditTrail && apiVersionAuditTrail;
   }
 
   /**
@@ -61,14 +74,22 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
+    if (!secretKey) {
+      throw new Error('No private signature key provided.');
+    }
     const url: string = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
-    const body = await this.get(`${url}/authentication/prove-ownership/${id}`);
+    const body = await this.get(
+      `${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`
+    );
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
     const signedNonce = await this.signNonce(encodedKey, nonce);
-    const { jwt } = await this.post(`${url}/authentication/prove-ownership/${id}`, {
-      signedNonce
-    });
+    const { jwt } = await this.post(
+      `${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`,
+      {
+        signedNonce
+      }
+    );
     this.jwtToken = jwt;
   }
 

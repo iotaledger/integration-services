@@ -44,11 +44,11 @@ export const identityRouter = Router();
  *       - ApiKey: []
  *     responses:
  *       201:
- *         description: Returns the created identity
+ *         description: Returns the created identity keys
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/CreateIdentityBodySchema"
+ *               $ref: "#/components/schemas/IdentityKeysSchema"
  *       401:
  *         description: No valid api key provided
  *         content:
@@ -191,31 +191,6 @@ identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
  *         application/json:
  *           schema:
  *             $ref: "#/components/schemas/IdentitySchema"
- *           example:
- *             id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
- *             username: root-identity
- *             registrationDate: 2021-06-21T10:40:12+02:00
- *             verifiableCredentials:
- *             - '@context': https://www.w3.org/2018/credentials/v1
- *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               type:
- *               - VerifiableCredential
- *               - VerifiedIdentityCredential
- *               credentialSubject:
- *                 id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *                 type: Service
- *                 initiatorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               issuer: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               issuanceDate: 2021-06-21T08:05:26Z
- *               proof:
- *                 type: MerkleKeySignature2021
- *                 verificationMethod: #key-collection-0
- *                 signatureValue: example-key
- *             role: User
- *             hidden: false
- *             claim:
- *               type: Device
  *     responses:
  *       200:
  *         description: The registered entity.
@@ -254,31 +229,6 @@ identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySche
  *         application/json:
  *           schema:
  *             $ref: "#/components/schemas/IdentitySchema"
- *           example:
- *             id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *             publicKey: GGoSGRjnrpCyh6XU2V9i2oBYufReUrymkHLZs8npizmd
- *             username: root-identity
- *             registrationDate: 2021-06-21T10:40:12+02:00
- *             verifiableCredentials:
- *             - '@context': https://www.w3.org/2018/credentials/v1
- *               id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               type:
- *               - VerifiableCredential
- *               - VerifiedIdentityCredential
- *               credentialSubject:
- *                 id: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *                 type: Service
- *                 initiatorId: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               issuer: did:iota:3yKgJoNyH9BEZ5Sh1YuHXAJeNARVqvEJLN87kd2ctm4h
- *               issuanceDate: 2021-06-21T08:05:26Z
- *               proof:
- *                 type: MerkleKeySignature2021
- *                 verificationMethod: #key-collection-0
- *                 signatureValue: example-key
- *             role: User
- *             hidden: false
- *             claim:
- *               type: Device
  *     responses:
  *       200:
  *         description: The registered entity.

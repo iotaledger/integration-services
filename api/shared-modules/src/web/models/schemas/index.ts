@@ -8,9 +8,11 @@ export {
 } from './channel-info';
 export {
 	Encoding,
-	IdentityDocumentJsonSchema,
-	IdentityJsonSchema,
-	IdentityKeyPairJsonSchema,
+	KeyTypes,
+	IdentityDocumentSchema,
+	KeysSchema,
+	IdentityKeysSchema,
+	IdentityKeyPairSchema,
 	VerifiableCredentialSchema,
 	VerifiableCredentialSubjectSchema
 } from './identity';

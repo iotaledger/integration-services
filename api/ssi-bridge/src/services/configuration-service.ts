@@ -1,12 +1,11 @@
 import { Config } from '../models/config';
 import { IdentityConfig } from '../models/config/index';
-import * as Identity from '@iota/identity-wasm/node';
 import isEmpty from 'lodash/isEmpty';
 import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
 import { getIdentityKeys } from '../database/identity-keys';
 
-const VERSION = 'v0.1';
+const VERSION = 'v0.2';
 
 export interface IConfigurationService {
 	serverIdentityId: string;
@@ -21,13 +20,9 @@ export class ConfigurationService {
 	private _serverIdentityId: string;
 
 	identityConfig: IdentityConfig = {
-		keyCollectionSize: 4096, // size must be a multiple of 2^2, 2^3, 2^4, ...
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
-		keyType: Identity.KeyType.Ed25519,
-		hashFunction: Identity.Digest.Sha256,
-		hashEncoding: 'base58',
-		keyCollectionTag: 'key-collection'
+		bitmapTag: 'signature-bitmap'
 	};
 
 	config: Config = {

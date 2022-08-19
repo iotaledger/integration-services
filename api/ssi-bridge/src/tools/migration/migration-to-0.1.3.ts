@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv';
+
 dotenv.config();
+
 import { MongoDbService } from '@iota/is-shared-modules/node';
 
 const migrate = async () => {

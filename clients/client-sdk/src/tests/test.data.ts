@@ -1,22 +1,23 @@
-import { ApiVersion } from '..';
 import { ClientConfig } from '../models';
 import { CreateChannelBody, ChannelType } from '@iota/is-shared-modules';
+import { ApiVersion } from '../models/apiVersion';
 
 export const apiConfig: ClientConfig = {
   isGatewayUrl: 'http://localhost:3000',
-  apiVersion: ApiVersion.v01,
   useGatewayUrl: true,
-  apiKey: '7ef16390-bab8-4d2d-958a-98709d7fb04e'
+  apiKey: '1cfa3bce-654d-41f6-a82a-94308dc4adf8',
+  apiVersionAuditTrail: ApiVersion.v0_1,
+  apiVersionSsiBridge: ApiVersion.v0_2
 };
 
 export const adminUser = {
-  id: 'did:iota:H9gnk3KXPiopLtwLRm3ooKU3D4oNJz49DDLVXx5xov19',
-  secretKey: 'Hn5Sw3yuLVA8HSbf42sqYwa3A9Bd5YfxGRqLMA3L2w8D'
+  id: 'did:iota:AucTBMLZQGXuNSUEpu19TFFCHU75DGrcQw4eYkxqfYRH',
+  secretKey: 'ApunZiF7GpjCsZXZPzBBxeX3NDydm2S4smYuVpHHx48C'
 };
 
 export const normalUser = {
-  id: 'did:iota:G2xuoUpXYTboDgHWLKcQvEkBviBv9QYDAECtx2GpugqC',
-  secretKey: '8jxJoqcKQXRq3YfpWkPM5K6NuC4TWLWJobQR3Svqtv1p'
+  id: 'did:iota:BYZfez7JjvHJtirFNQ3LMHHwpvf7gxmbeTpNaNe1aJ6j',
+  secretKey: '98cXSPbRtUPmWSkNAUvA2MkC1Sb33BTjDj3Ev2UbQYxt'
 };
 
 export const testChannel: CreateChannelBody = {

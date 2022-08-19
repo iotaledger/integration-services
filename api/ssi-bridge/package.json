@@ -1,6 +1,6 @@
 {
   "name": "ssi-bridge",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Self Sovereign Identity Bridge of the Integration Services.",
   "main": "dist/index.js",
   "scripts": {
@@ -40,8 +40,8 @@
   },
   "homepage": "https://github.com/iotaledger/integration-services#readme",
   "dependencies": {
-    "@iota/identity-wasm": "0.3.5",
-    "@iota/is-shared-modules": "^0.1.20",
+    "@iota/identity-wasm": "0.6.0",
+    "@iota/is-shared-modules": "^0.2.1",
     "@iota/streams": "^0.1.2",
     "@noble/ed25519": "^1.4.0",
     "@sinclair/typebox": "^0.12.8",

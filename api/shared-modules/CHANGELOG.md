@@ -1,5 +1,22 @@
 # Changelog
 
+### 0.2.0-alpha.9 (2022-08-05)
+
+- Made `encrypt` field in `IdentityKeys` optional
+
+### 0.2.0-alpha.8 (2022-08-05)
+
+- Added `encrypt` field to `IdentityKeys` with X25519 keys for encryption
+
+### 0.2.0 (2022-07-22) **BREAKING CHANGES**
+
+- Remove publicKey from identity and identity search
+- Rename `secrect` to `private` of the identity keys
+- Rename `key` to `keys` of the identity keys
+- Adjust `IdentityDocument`to fulfill new data model
+- Remove `Json` from type and schema names
+- rename verifiable credential `initiatorId` to `initiator`
+
 ### 0.1.20 (2022-07-22)
 
 - Moved web imports to web folder

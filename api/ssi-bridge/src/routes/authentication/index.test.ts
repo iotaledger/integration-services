@@ -4,7 +4,7 @@ import { UserService } from '../../services/user-service';
 import { StatusCodes } from 'http-status-codes';
 import * as AuthDb from '../../database/auth';
 import { User } from '@iota/is-shared-modules';
-import * as EncryptionUtils from '@iota/is-shared-modules/node/utils/encryption';
+import * as EncryptionUtils from '@iota/is-shared-modules/node/utils/encryption'; // import needs to be like this otherwise tests will fail with "TypeError: Cannot redefine property: verifySignedNonce"
 import { UserIdentityMock } from '../../test/mocks/identities';
 import { SsiService } from '../../services/ssi-service';
 import { IdentityConfig } from '../../models/config';
@@ -102,11 +102,14 @@ describe('test authentication routes', () => {
 
 	it('auth - should return the jwt for identity not in db but on tangle', async () => {
 		const verified = true;
-		const id = 'did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4';
+		const id = 'did:iota:4wUQAs9zrPGuq5txf3m88g7gosfxS24Tzr4V9SiDT8Sc';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => null); // not found in db
-		const getLatestIdentityJsonSpy = jest.spyOn(ssiService, 'getLatestIdentityJson').mockImplementation(async () => {
-			return { document: UserIdentityMock.doc, messageId: '' };
+		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
+			return { document: UserIdentityMock.document, messageId: '' } as any;
 		});
+		const getPublicKeySpy = jest
+			.spyOn(ssiService, 'getPublicKey')
+			.mockImplementation(async () => 'z6eD5GXFV5yqEdY5rsDfwZ1KjkmTiQvTtDL1MBT8PwJ8');
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ id, nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43' }));
@@ -119,10 +122,11 @@ describe('test authentication routes', () => {
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
 		expect(getUserSpy).toHaveBeenCalledWith(id);
-		expect(getLatestIdentityJsonSpy).toHaveBeenCalledWith(id);
+		expect(getLatestIdentityDocSpy).toHaveBeenCalledWith(id);
+		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.document);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
-			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+			'0171f9b7366cc7928851a15ac28bf3741d9e19d96da2af6445ca09b2fcdafd19',
 			'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
 			'SIGNED_NONCE'
 		);
@@ -130,7 +134,7 @@ describe('test authentication routes', () => {
 		expect(res.send).toHaveBeenCalled();
 	});
 
-	it('auth - should throw error since no user found', async () => {
+	it('auth - should throw error since no identity doc found', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const userMock: User = null;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
@@ -154,7 +158,12 @@ describe('test authentication routes', () => {
 		const verified = false;
 		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
-
+		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
+			return { document: UserIdentityMock.document, messageId: '' } as any;
+		});
+		const getPublicKeySpy = jest
+			.spyOn(ssiService, 'getPublicKey')
+			.mockImplementation(async () => 'z6eD5GXFV5yqEdY5rsDfwZ1KjkmTiQvTtDL1MBT8PwJ8');
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
@@ -168,9 +177,11 @@ describe('test authentication routes', () => {
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
 		expect(getUserSpy).toHaveBeenCalledWith(id);
+		expect(getLatestIdentityDocSpy).toHaveBeenCalledWith(id);
+		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.document);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
-			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+			'0171f9b7366cc7928851a15ac28bf3741d9e19d96da2af6445ca09b2fcdafd19',
 			'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
 			'SIGNED_NONCE'
 		);
@@ -183,6 +194,12 @@ describe('test authentication routes', () => {
 		const userMock: User = validUserMock;
 		const id = 'did:iota:BfaKRQcBB5G6Kdg7w7HESaVhJfJcQFgg3VSijaWULDwk';
 		const getUserSpy = jest.spyOn(userService, 'getUser').mockImplementation(async () => userMock);
+		const getLatestIdentityDocSpy = jest.spyOn(ssiService, 'getLatestIdentityDoc').mockImplementation(async () => {
+			return { document: UserIdentityMock.document, messageId: '' } as any;
+		});
+		const getPublicKeySpy = jest
+			.spyOn(ssiService, 'getPublicKey')
+			.mockImplementation(async () => 'z6eD5GXFV5yqEdY5rsDfwZ1KjkmTiQvTtDL1MBT8PwJ8');
 		const getNonceSpy = jest
 			.spyOn(AuthDb, 'getNonce')
 			.mockImplementation(async () => ({ nonce: 'as23jweoifwefjiasdfoasdfasdasdawd4jgio43', id: userMock.id }));
@@ -195,9 +212,11 @@ describe('test authentication routes', () => {
 		await authenticationRoutes.proveOwnership(req, res, nextMock);
 
 		expect(getUserSpy).toHaveBeenCalledWith(id);
+		expect(getLatestIdentityDocSpy).toHaveBeenCalledWith(id);
+		expect(getPublicKeySpy).toHaveBeenCalledWith(UserIdentityMock.document);
 		expect(getNonceSpy).toHaveBeenCalledWith(id);
 		expect(verifySignedNonceSpy).toHaveBeenCalledWith(
-			'6f9546516cfafef9e544ac7e0092a075b4a253ff4e26c3b53513f8ddc832200a',
+			'0171f9b7366cc7928851a15ac28bf3741d9e19d96da2af6445ca09b2fcdafd19',
 			'as23jweoifwefjiasdfoasdfasdasdawd4jgio43',
 			'SIGNED_NONCE'
 		);
