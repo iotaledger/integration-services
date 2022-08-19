@@ -1,6 +1,6 @@
 import { CollectionNames } from './constants';
 import { MongoDbService } from '@iota/is-shared-modules/node';
-import { SubscriptionState } from '../../../shared-modules/src/web/models/types/subscription';
+import { SubscriptionState } from '@iota/is-shared-modules/';
 
 // Subscription state documents keeps information about the state of a channel subscription per user
 const collectionName = CollectionNames.subscriptionStates;
@@ -13,6 +13,7 @@ export const getSubscriptionState = async (channelAddress: string, id: string): 
 	if (!doc?.state) {
 		throw new Error(`could not find state of channel with with address ${channelAddress} and id ${id}`);
 	}
+
 	return doc.state;
 };
 

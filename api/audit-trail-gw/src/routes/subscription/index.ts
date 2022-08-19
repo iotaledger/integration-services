@@ -9,10 +9,12 @@ import {
 	Subscription,
 	SubscriptionUpdate,
 	SubscriptionType,
-	ChannelType
+	ChannelType,
+	SubscriptionState
 } from '@iota/is-shared-modules';
 import { ILogger } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from '../../services/channel-info-service';
+
 export class SubscriptionRoutes {
 	constructor(
 		private readonly subscriptionService: SubscriptionService,
@@ -257,6 +259,47 @@ export class SubscriptionRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not authorize the subscription'));
+		}
+	};
+
+	getSubscriptionState = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const id = req?.user?.id;
+
+			if (!channelAddress || !id) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
+			}
+
+			const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
+			const buffer = Buffer.from(state);
+			const stateBase64 = buffer.toString('base64');
+
+			return res.status(StatusCodes.OK).send({ state: stateBase64 });
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not get the subscription state'));
+		}
+	};
+
+	updateSubscriptionState = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+		try {
+			const channelAddress = _.get(req, 'params.channelAddress');
+			const id = req?.user?.id;
+			const { state } = req.body as SubscriptionState;
+
+			if (!channelAddress || !id || !state) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress, id or state provided' });
+			}
+
+			const buffer = Buffer.from(state, 'base64');
+			const stateUtf8 = buffer.toString('utf-8');
+
+			const subscriptions = await this.subscriptionService.updateSubscriptionState(channelAddress, id, stateUtf8);
+			return res.status(StatusCodes.OK).send(subscriptions);
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not update the subscription state'));
 		}
 	};
 }
