@@ -295,8 +295,8 @@ export class SubscriptionRoutes {
 			const buffer = Buffer.from(state, 'base64');
 			const stateUtf8 = buffer.toString('utf-8');
 
-			const subscriptions = await this.subscriptionService.updateSubscriptionState(channelAddress, id, stateUtf8);
-			return res.status(StatusCodes.OK).send(subscriptions);
+			await this.subscriptionService.updateSubscriptionState(channelAddress, id, stateUtf8);
+			return res.status(StatusCodes.OK).send();
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not update the subscription state'));
