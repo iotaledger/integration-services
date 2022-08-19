@@ -18,7 +18,8 @@ import {
 	ErrorResponseSchema,
 	IdentityIdSchema,
 	SubscriptionSchema,
-	SubscriptionUpdateSchema
+	SubscriptionUpdateSchema,
+	SubscriptionStateSchema
 } from '@iota/is-shared-modules';
 import fs from 'fs';
 
@@ -42,6 +43,7 @@ const schemas = {
 	ChannelInfoSearchSchema,
 	SubscriptionSchema,
 	SubscriptionUpdateSchema,
+	SubscriptionStateSchema,
 	ChannelInfoSchema,
 	TopicSchema,
 	IdentityIdSchema,
