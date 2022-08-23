@@ -14,6 +14,7 @@ export {
 	IdentityKeysSchema,
 	IdentityKeyPairSchema,
 	VerifiableCredentialSchema,
+	VerifiablePresentationSchema,
 	VerifiableCredentialSubjectSchema
 } from './identity';
 export { AccessRights, SubscriptionSchema, SubscriptionType, SubscriptionStateSchema, SubscriptionUpdateSchema } from './subscription';

@@ -1,8 +1,16 @@
 # Changelog
 
+### 0.2.2 (2022-08-16)
+
+- Added ApiVersion enum in models
+
 ### 0.2.1 (2022-08-15)
 
 - Fixed tests by adjusting the urls and adding new admin and user to test-data 
+
+### 0.2.1-alpha.4 (2022-08-03)
+
+- Add `createVerifiablePresentation` method to identity client.
 
 ### 0.2.1-alpha.3 (2022-08-15)
 

@@ -1,6 +1,7 @@
 import { Static } from '@sinclair/typebox';
 import {
 	VerifiableCredentialSchema,
+	VerifiablePresentationSchema,
 	VerifiableCredentialSubjectSchema,
 	IdentityDocumentSchema,
 	IdentityKeyPairSchema
@@ -38,6 +39,7 @@ export type IdentityInternal = Static<typeof IdentitySchema>;
 export type CreateIdentityBody = Static<typeof CreateIdentityBodySchema>;
 
 export type VerifiableCredential = Static<typeof VerifiableCredentialSchema>;
+export type VerifiablePresentation = Static<typeof VerifiablePresentationSchema>;
 export type CredentialSubject = Static<typeof VerifiableCredentialSubjectSchema>;
 
 export type IdentityDocument = Static<typeof IdentityDocumentSchema>;

@@ -26,13 +26,19 @@ export abstract class BaseClient {
     ssiBridgeUrl = '',
     auditTrailUrl = '',
     isGatewayUrl = '',
-    apiVersionAuditTrail = '',
-    apiVersionSsiBridge = '',
-    useGatewayUrl = true,
+    apiVersionAuditTrail,
+    apiVersionSsiBridge,
+    useGatewayUrl = true
   }: ClientConfig) {
     this.apiKey = apiKey || '';
     this.useGatewayUrl = useGatewayUrl;
-    this.buildUrls(useGatewayUrl, ssiBridgeUrl, auditTrailUrl, apiVersionAuditTrail, apiVersionSsiBridge);
+    this.buildUrls(
+      useGatewayUrl,
+      ssiBridgeUrl,
+      auditTrailUrl,
+      apiVersionAuditTrail,
+      apiVersionSsiBridge
+    );
     this.isGatewayUrl = isGatewayUrl;
     // Configure request timeout to 2 min because tangle might be slow
     this.instance = axios.create({
@@ -45,7 +51,7 @@ export abstract class BaseClient {
     ssiBridgeUrl?: string,
     auditTrailUrl?: string,
     apiVersionAuditTrail?: string,
-    apiVersionSsiBridge?: string,
+    apiVersionSsiBridge?: string
   ) {
     if (!useGatewayUrl && (!ssiBridgeUrl || !auditTrailUrl)) {
       throw new Error(
@@ -55,10 +61,8 @@ export abstract class BaseClient {
     this.auditTrailUrl = auditTrailUrl && auditTrailUrl;
     this.ssiBridgeUrl = ssiBridgeUrl && ssiBridgeUrl;
 
-    if( !apiVersionAuditTrail || !apiVersionSsiBridge) {
-      throw new Error(
-        'Set the api version for apiVersionAuditTrail and apiVersionSsiBridge'
-      )
+    if (!apiVersionAuditTrail || !apiVersionSsiBridge) {
+      throw new Error('Set the api version for apiVersionAuditTrail and apiVersionSsiBridge');
     }
     this.apiVersionSsiBridge = apiVersionSsiBridge && apiVersionSsiBridge;
     this.apiVersionAuditTrail = apiVersionAuditTrail && apiVersionAuditTrail;
@@ -70,17 +74,22 @@ export abstract class BaseClient {
    * @param secretKey of the user to authenticate
    */
   async authenticate(id: string, secretKey: string) {
-    if(!secretKey){
-      throw new Error('No private signature key provided.')
+    if (!secretKey) {
+      throw new Error('No private signature key provided.');
     }
     const url: string = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
-    const body = await this.get(`${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`);
+    const body = await this.get(
+      `${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`
+    );
     const nonce = body?.nonce;
     const encodedKey = await this.getHexEncodedKey(secretKey);
     const signedNonce = await this.signNonce(encodedKey, nonce);
-    const { jwt } = await this.post(`${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`, {
-      signedNonce
-    });
+    const { jwt } = await this.post(
+      `${url}/api/${this.apiVersionSsiBridge}/authentication/prove-ownership/${id}`,
+      {
+        signedNonce
+      }
+    );
     this.jwtToken = jwt;
   }
 

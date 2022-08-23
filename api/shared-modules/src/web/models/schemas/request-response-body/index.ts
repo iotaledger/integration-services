@@ -23,6 +23,5 @@ export {
 	CreateCredentialBodySchema,
 	RevokeVerificationBodySchema,
 	SubjectBodySchema,
-	TrustedRootBodySchema,
-	VerifiableCredentialBodySchema
+	TrustedRootBodySchema
 } from './verification-bodies';

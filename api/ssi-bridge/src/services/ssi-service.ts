@@ -1,7 +1,23 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { VerifiableCredential, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
-const { Credential, Client, KeyPair, KeyType, Resolver, MethodScope, Document } = Identity;
+import { VerifiableCredential, Credential, IdentityKeys, Encoding, VerifiablePresentation } from '@iota/is-shared-modules';
+const {
+	Credential,
+	Client,
+	KeyPair,
+	KeyType,
+	Resolver,
+	Document,
+	Presentation,
+	Timestamp,
+	VerifierOptions,
+	Duration,
+	CredentialValidationOptions,
+	SubjectHolderRelationship,
+	PresentationValidationOptions,
+	FailFast,
+	MethodScope
+} = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
 import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
@@ -138,8 +154,47 @@ export class SsiService {
 		}
 	}
 
+	async checkVerifiablePresentation(signedVp: VerifiablePresentation, expiration?: number, challenge?: string): Promise<boolean> {
+		try {
+			const expires = expiration != null ? Timestamp.nowUTC().checkedAdd(Duration.seconds(expiration)) : undefined;
+			const presentation = Presentation.fromJSON(signedVp);
+			let isVerified = false;
+			try {
+				const presentationVerifierOptions = new VerifierOptions({
+					allowExpired: false,
+					challenge
+				});
+
+				const credentialValidationOptions = new CredentialValidationOptions({
+					earliestExpiryDate: expires
+				});
+
+				const subjectHolderRelationship = SubjectHolderRelationship.AlwaysSubject;
+
+				const presentationValidationOptions = new PresentationValidationOptions({
+					sharedValidationOptions: credentialValidationOptions,
+					presentationVerifierOptions: presentationVerifierOptions,
+					subjectHolderRelationship: subjectHolderRelationship
+				});
+
+				const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
+				await resolver.verifyPresentation(presentation, presentationValidationOptions, FailFast.FirstError);
+				isVerified = true;
+			} catch (e) {
+				// if credential is revoked, validate will throw an error
+				this.logger.error(`Error from identity sdk: ${e}`);
+			}
+			return isVerified;
+		} catch (error) {
+			this.logger.error(`Error from identity sdk: ${error}`);
+			throw new Error('could not check the verifiable credential');
+		}
+	}
+
 	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId?: string): Promise<string | undefined> {
-		prevMessageId && newDoc.setMetadataPreviousMessageId(prevMessageId);
+		if (prevMessageId) {
+			newDoc.setMetadataPreviousMessageId(prevMessageId);
+		}
 		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
 		newDoc.signSelf(key, methodId);
