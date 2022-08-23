@@ -95,9 +95,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ssibridge.entrypoints=web"
       - "traefik.http.middlewares.ssi-bridge-stripprefix.stripprefix.prefixes=/ssi-bridge"
-      - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.1/identities`) "
-      - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.1/authentication`)"
-      - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.1/verification`)"
+      - "traefik.http.routers.ssibridge_id.rule=PathPrefix(`/api/v0.2/identities`) "
+      - "traefik.http.routers.ssibridge_auth.rule=PathPrefix(`/api/v0.2/authentication`)"
+      - "traefik.http.routers.ssibridge_ver.rule=PathPrefix(`/api/v0.2/verification`)"
       - "traefik.http.routers.ssibridge_docs.rule=PathPrefix(`/ssi-bridge/docs`)"
       - "traefik.http.routers.ssibridge_info.rule=Path(`/ssi-bridge/info`)"
       - "traefik.http.routers.ssibridge_info.middlewares=ssi-bridge-stripprefix"
@@ -128,7 +128,7 @@ services:
       - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
     environment:
       - VITE_IOTA_IS_SDK_API_KEY=${API_KEY}
-      - VITE_IOTA_IS_SDK_GATEWAY_URL=
+      - VITE_IOTA_IS_SDK_GATEWAY_URL=${GATEWAY_URL}
     command: sh -c "npm run build && npm run prod"
     depends_on:
       - ssi-bridge

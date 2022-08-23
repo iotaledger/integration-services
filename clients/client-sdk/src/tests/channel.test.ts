@@ -34,7 +34,9 @@ describe('test channel client', () => {
     it('should have expected default config', async () => {
       const tmpClient = new ChannelClient(apiConfig);
       expect(tmpClient.useGatewayUrl).toBe(true);
-      expect(tmpClient.isGatewayUrl).toBe('http://localhost:3000/api/v0.1');
+      expect(tmpClient.isGatewayUrl).toBe('http://localhost:3000');
+      expect(tmpClient.apiVersionAuditTrail).toBe('v0.1');
+      expect(tmpClient.apiVersionSsiBridge).toBe('v0.2');
     });
     it('should authenticate user', async () => {
       jest.spyOn(channelClient, 'get');
@@ -44,13 +46,13 @@ describe('test channel client', () => {
       await channelClient.authenticate(adminUser.id, adminUser.secretKey);
 
       expect(channelClient.get).toHaveBeenCalledWith(
-        `${ssiBridgeUrl}/authentication/prove-ownership/${adminUser.id}`
+        `${ssiBridgeUrl}/api/v0.2/authentication/prove-ownership/${adminUser.id}`
       );
       expect(channelClient.getHexEncodedKey).toHaveBeenCalledWith(adminUser.secretKey);
       expect(channelClient.jwtToken).toBeDefined();
       expect(channelClient.signNonce).toHaveBeenCalled();
       expect(channelClient.post).toHaveBeenCalledWith(
-        `${ssiBridgeUrl}/authentication/prove-ownership/${adminUser.id}`,
+        `${ssiBridgeUrl}/api/v0.2/authentication/prove-ownership/${adminUser.id}`,
         expect.objectContaining({ signedNonce: expect.any(String) })
       );
     });
@@ -69,7 +71,7 @@ describe('test channel client', () => {
       }
 
       expect(channelClient.get).toHaveBeenCalledWith(
-        `${ssiBridgeUrl}/authentication/prove-ownership/${adminUser.id}`
+        `${ssiBridgeUrl}/api/v0.2/authentication/prove-ownership/${adminUser.id}`
       );
       expect(channelClient.getHexEncodedKey).toHaveBeenCalledWith(
         'Hn5Sw3yuLVA8HSbf42sqYwa3A9Bd5YfxGRqLMA3L2w8L'
@@ -77,7 +79,7 @@ describe('test channel client', () => {
       expect(channelClient.jwtToken).toBeUndefined();
       expect(channelClient.signNonce).toHaveBeenCalled();
       expect(channelClient.post).toHaveBeenCalledWith(
-        `${ssiBridgeUrl}/authentication/prove-ownership/${adminUser.id}`,
+        `${ssiBridgeUrl}/api/v0.2/authentication/prove-ownership/${adminUser.id}`,
         expect.objectContaining({ signedNonce: expect.any(String) })
       );
     });
@@ -108,7 +110,7 @@ describe('test channel client', () => {
       }
 
       expect(channelClient.post).toHaveBeenCalledWith(
-        `${auditTrailUrl}/channels/create`,
+        `${auditTrailUrl}/api/v0.1/channels/create`,
         testChannel
       );
     });
@@ -150,7 +152,7 @@ describe('test channel client', () => {
         expect(e).toBeUndefined();
       }
       expect(channelClient.post).toHaveBeenCalledWith(
-        `${auditTrailUrl}/channels/logs/${createdTestChannel.channelAddress}`,
+        `${auditTrailUrl}/api/v0.1/channels/logs/${createdTestChannel.channelAddress}`,
         globalTestChannelWrite
       );
     });
@@ -192,12 +194,12 @@ describe('test channel client', () => {
         } as AuthorizeSubscriptionResponse);
         expect(postMock).toHaveBeenNthCalledWith(
           1,
-          `${auditTrailUrl}/subscriptions/request/${createdTestChannel.channelAddress}`,
+          `${auditTrailUrl}/api/v0.1/subscriptions/request/${createdTestChannel.channelAddress}`,
           { accessRights: AccessRights.Read }
         );
         expect(postMock).toHaveBeenNthCalledWith(
           3,
-          `${auditTrailUrl}/subscriptions/authorize/${createdTestChannel.channelAddress}`,
+          `${auditTrailUrl}/api/v0.1/subscriptions/authorize/${createdTestChannel.channelAddress}`,
           { subscriptionLink: requestResponse.subscriptionLink }
         );
       } catch (e: any) {
@@ -207,11 +209,11 @@ describe('test channel client', () => {
     });
 
     it('should read channel', async () => {
-      jest.spyOn(channelClient, 'read');
       try {
         await channelClient.authenticate(normalUser.id, normalUser.secretKey);
         // start spying after authentication to not catch the authentication get request
         jest.spyOn(channelClient, 'get');
+        jest.spyOn(channelClient, 'read');
 
         const response = await channelClient.read(createdTestChannel.channelAddress);
         expect(response).toEqual([]);
@@ -272,15 +274,18 @@ describe('test channel client', () => {
         expect(e).toBeUndefined();
       }
 
-      expect(channelClient.get).toHaveBeenCalledWith(`${auditTrailUrl}/channel-info/search`, {
-        'api-key': apiConfig.apiKey,
-        name: globalTestChannel.name,
-        created: undefined,
-        limit: undefined,
-        asc: true,
-        index: 0,
-        hidden: undefined
-      });
+      expect(channelClient.get).toHaveBeenCalledWith(
+        `${auditTrailUrl}/api/v0.1/channel-info/search`,
+        {
+          'api-key': apiConfig.apiKey,
+          name: globalTestChannel.name,
+          created: undefined,
+          limit: undefined,
+          asc: true,
+          index: 0,
+          hidden: undefined
+        }
+      );
     });
   });
 });

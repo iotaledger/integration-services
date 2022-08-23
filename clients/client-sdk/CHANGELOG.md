@@ -1,8 +1,36 @@
 # Changelog
 
-### 0.2.1-alpha.0 (2022-08-03)
+### 0.2.2 (2022-08-16)
+
+- Added ApiVersion enum in models
+
+### 0.2.1 (2022-08-15)
+
+- Fixed tests by adjusting the urls and adding new admin and user to test-data 
+
+### 0.2.1-alpha.4 (2022-08-03)
 
 - Add `createVerifiablePresentation` method to identity client.
+
+### 0.2.1-alpha.3 (2022-08-15)
+
+- Added assigning of the api version variables in base.ts
+
+### 0.2.1-alpha.2 (2022-08-15)
+
+- Adjusted authentication url by adding the api version of ssi bridge.
+
+### 0.2.1-alpha.1 (2022-08-15)
+
+- Adjusted urls in the constructor when creating identity and channel clients.
+
+### 0.2.1-alpha.0 (2022-08-15)
+
+- Added `apiVersionAuditTrail` and `apiVersionSsiBridge` properties to `ClientConfig`
+
+### 0.2.0 (2022-08-12)
+
+- Upgraded shared-modules version to 0.2.1 and removed ApiVersion type (api version should now be included in the env variables of the service urls)
 
 ### 0.2.0-alpha.1 (2022-07-29)
 

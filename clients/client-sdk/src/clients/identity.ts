@@ -31,6 +31,7 @@ export class IdentityClient extends BaseClient {
   constructor(config: ClientConfig) {
     super(config);
     this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
+    this.baseUrl = this.baseUrl + `/api/${config.apiVersionSsiBridge}`;
   }
 
   /**

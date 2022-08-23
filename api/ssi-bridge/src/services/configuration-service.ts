@@ -5,7 +5,7 @@ import { getServerIdentities } from '../database/user';
 import { ILogger } from '../utils/logger/index';
 import { getIdentityKeys } from '../database/identity-keys';
 
-const VERSION = 'v0.1';
+const VERSION = 'v0.2';
 
 export interface IConfigurationService {
 	serverIdentityId: string;
