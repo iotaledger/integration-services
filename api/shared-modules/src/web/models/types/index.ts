@@ -11,6 +11,7 @@ export {
 	IdentitySearchBody,
 	LatestIdentity,
 	VerifiableCredential,
+	VerifiablePresentation,
 	VerifiableCredentialPersistence,
 	Bitmap,
 	IdentityKeys,
@@ -35,7 +36,6 @@ export {
 	TrustedRootBody,
 	ValidateBody,
 	ValidateResponse,
-	VerifiableCredentialBody,
 	VerifyJwtBody
 } from './request-response-bodies';
 export { Subscription, SubscriptionUpdate } from './subscription';
@@ -53,4 +53,4 @@ export {
 	UserSearchResponse,
 	UserType
 } from './user';
-export { AuthenticatedRequest, AuthorizationCheck, CredentialTypes, Subject, VerifiableCredentialInternal } from './verification';
+export { AuthenticatedRequest, AuthorizationCheck, CredentialTypes, Subject } from './verification';

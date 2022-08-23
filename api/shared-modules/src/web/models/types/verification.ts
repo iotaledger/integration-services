@@ -1,6 +1,5 @@
 import { Static } from '@sinclair/typebox';
 import Express from 'express';
-import { VerifiableCredentialSchema } from '../schemas/identity';
 import { SubjectBodySchema } from '../schemas/request-response-body/verification-bodies';
 import { User } from './user';
 
@@ -10,8 +9,6 @@ export enum CredentialTypes {
 }
 
 export type Subject = Static<typeof SubjectBodySchema>;
-
-export type VerifiableCredentialInternal = Static<typeof VerifiableCredentialSchema>;
 
 export interface AuthenticatedRequest extends Express.Request {
 	user: User;

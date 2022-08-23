@@ -2,8 +2,9 @@ import { Router } from 'express';
 import {
 	RevokeVerificationBodySchema,
 	TrustedRootBodySchema,
-	VerifiableCredentialBodySchema,
+	VerifiableCredentialSchema,
 	CreateCredentialBodySchema,
+	VerifiablePresentationSchema,
 	ConcurrencyLocks
 } from '@iota/is-shared-modules';
 import { VerificationRoutes } from '../../routes/verification';
@@ -23,6 +24,7 @@ const verificationRoutes = new VerificationRoutes(
 const {
 	createVerifiableCredential,
 	checkVerifiableCredential,
+	checkVerifiablePresentation,
 	revokeVerifiableCredential,
 	getLatestDocument,
 	getTrustedRootIdentities,
@@ -274,9 +276,53 @@ verificationRouter.post(
 verificationRouter.post(
 	'/check-credential',
 	apiKeyMiddleware,
-	validate({ body: VerifiableCredentialBodySchema }),
+	validate({ body: VerifiableCredentialSchema }),
 	mongodbSanitizer,
 	checkVerifiableCredential
+);
+
+/**
+ * @openapi
+ * /verification/check-presentation:
+ *   post:
+ *     summary: Check the verifiable presentation of an identity
+ *     description: Check the verifiable presentation of an identity.
+ *     tags:
+ *     - verification
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/VerifiablePresentationSchema"
+ *     responses:
+ *       200:
+ *         description: The registered entity.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isVerified:
+ *                   type: boolean
+ *       401:
+ *         description: No valid api key provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+verificationRouter.post(
+	'/check-presentation',
+	apiKeyMiddleware,
+	validate({ body: VerifiablePresentationSchema }),
+	mongodbSanitizer,
+	checkVerifiablePresentation
 );
 
 /**

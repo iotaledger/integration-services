@@ -7,7 +7,6 @@ import {
   User,
   UserType,
   CredentialTypes,
-  VerifiableCredentialInternal,
   IdentityDocument,
   IdentityKeys,
   UserSearchResponse
@@ -248,7 +247,7 @@ export class IdentityClient extends BaseClient {
    * @returns
    */
   async createCredential(
-    initiatorVC: VerifiableCredentialInternal | undefined,
+    initiatorVC: VerifiableCredential | undefined,
     targetDid: string,
     credentialType: CredentialTypes | string,
     claimType: UserType,
