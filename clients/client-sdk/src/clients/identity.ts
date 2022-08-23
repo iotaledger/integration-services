@@ -22,7 +22,7 @@ import {
   Timestamp,
   IPresentation,
   ProofOptions
-} from '@iota/identity-wasm/node';
+} from '@iota/identity-wasm/web';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
@@ -30,6 +30,7 @@ export class IdentityClient extends BaseClient {
   constructor(config: ClientConfig) {
     super(config);
     this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
+    this.baseUrl = this.baseUrl + `/api/${config.apiVersionSsiBridge}`;
   }
 
   /**
