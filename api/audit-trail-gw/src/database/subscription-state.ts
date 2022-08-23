@@ -41,7 +41,10 @@ export const updateSubscriptionState = async (channelAddress: string, id: string
 	const update = {
 		$set: { ...plainUpdate }
 	};
-	return MongoDbService.updateDocument(collectionName, query, update);
+	const res = await MongoDbService.updateDocument(collectionName, query, update);
+	if (res?.result?.n !== 1) {
+		throw Error('no subscription found to update!');
+	}
 };
 
 export const removeSubscriptionState = async (channelAddress: string, id: string) => {
