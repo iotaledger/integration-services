@@ -13,7 +13,7 @@ async function createChannel() {
   console.log('User', user);
 
   // Authenticate as the user
-  await channel.authenticate(user.doc.id, user.key.secret);
+  await channel.authenticate(user.id, user.keys.sign.private);
 
   // Create a new channel for example data
   const logChannel = await channel.create({

@@ -1,23 +1,24 @@
-import { IdentityClient, CredentialTypes, UserType, IdentityJson } from '@iota/is-client';
+import { IdentityClient, CredentialTypes, UserType, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 import { externalDriverCredential1 } from './externalData';
 
 async function trustedAuthorities() {
+  const externalTrustedAuthority = externalDriverCredential1.issuer;
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the admin identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   // Create an identity for a driver to issue him a driving license
   const username = 'Driver-' + Math.ceil(Math.random() * 100000);
   const driverIdentity = await identity.create(username);
 
   //Get root identity to issue an credential for the new driver
-  const adminIdentityPublic = await identity.find(adminIdentity.doc.id);
+  const adminIdentityPublic = await identity.find(adminIdentity.id);
   console.log(`Root identity's id: `, adminIdentityPublic.id);
 
   // Get root identity's credential to create new credentials
@@ -31,7 +32,7 @@ async function trustedAuthorities() {
   // Assign a verifiable credential to the driver for drive allowance
   const driverCredential = await identity.createCredential(
     identityCredential,
-    driverIdentity?.doc?.id,
+    driverIdentity?.id,
     CredentialTypes.BasicIdentityCredential,
     UserType.Person,
     {
@@ -50,11 +51,13 @@ async function trustedAuthorities() {
   const verified2 = await identity.checkCredential(externalDriverCredential1);
   console.log('Driving authority verification: ', verified2);
 
-  // Added the external authority to the trusted authorities.
-  // The id of the external authority can be found in the external credential
-  const externalTrustedAuthority = externalDriverCredential1.issuer;
-  await identity.addTrustedAuthority(externalTrustedAuthority);
-
+  try {
+    // Added the external authority to the trusted authorities.
+    // The id of the external authority can be found in the external credential
+    await identity.addTrustedAuthority(externalTrustedAuthority);
+  } catch (e) {
+    console.log(e);
+  }
   // List all trustedAuthorities, to verify the external authority has been added
   const trustedAuthorities2 = await identity.getTrustedAuthorities();
   console.log('Trusted authorities: ', trustedAuthorities2);

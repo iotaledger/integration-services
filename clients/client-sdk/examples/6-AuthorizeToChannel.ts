@@ -16,8 +16,8 @@ async function authorizeOthersToChannel() {
   const channelUser = await identity.create(subscriberUsername);
 
   // We will use two instances of the channel api client. One is getting authorized by the owner and the other one by the user.
-  await ownerClient.authenticate(channelOwner.doc.id, channelOwner.key.secret);
-  await userClient.authenticate(channelUser.doc.id, channelUser.key.secret);
+  await ownerClient.authenticate(channelOwner.id, channelOwner.keys.sign.private);
+  await userClient.authenticate(channelUser.id, channelUser.keys.sign.private);
 
   // The owner creates a channel where he/she want to publish data of type 'example-data'.
   const { channelAddress } = await ownerClient.create({
@@ -60,7 +60,7 @@ async function authorizeOthersToChannel() {
     console.log(`Authorizing subscription: ${subscription.id}...`);
     // Authorize the user to the channel. Authorization can happen via the id of the user or the generated subscription link.
     const keyloadLink = await ownerClient.authorizeSubscription(channelAddress, {
-      id: channelUser.doc.id
+      id: channelUser.id
     });
     console.log('Subscription Keyload Link:', keyloadLink);
   }

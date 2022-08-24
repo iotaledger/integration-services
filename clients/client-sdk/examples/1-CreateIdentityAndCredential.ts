@@ -1,4 +1,4 @@
-import { IdentityClient, CredentialTypes, UserType, IdentityJson } from '@iota/is-client';
+import { IdentityClient, CredentialTypes, UserType, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -6,13 +6,13 @@ async function createIdentityAndCheckVCs() {
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the admin identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   // Get admin identity data
-  const adminIdentityPublic = await identity.find(adminIdentity.doc.id);
+  const adminIdentityPublic = await identity.find(adminIdentity.id);
 
   // Get admin identy's VC
   const identityCredential = adminIdentityPublic?.verifiableCredentials?.[0];
@@ -30,7 +30,7 @@ async function createIdentityAndCheckVCs() {
   // With the BasicIdentityCredential the user is not allowed to issue further credentials
   const userCredential = await identity.createCredential(
     identityCredential,
-    userIdentity?.doc?.id,
+    userIdentity?.id,
     CredentialTypes.BasicIdentityCredential,
     UserType.Person,
     {
