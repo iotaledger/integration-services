@@ -2,32 +2,32 @@
 image: /img/logo/integration_services.png
 description: The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
 keywords:
-- how to
-- integration services sdk
-- sdk
-- decentralized identity
-- maven
-- java
-- nodejs
-- javascript
+  - how to
+  - integration services sdk
+  - sdk
+  - decentralized identity
+  - maven
+  - java
+  - nodejs
+  - javascript
 ---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 # Introduction
 
-The following sections  will guide you in how to use the [Integration Services SDK](https://www.npmjs.com/package/iota-is-sdk).
+The following sections will guide you in how to use the [Integration Services SDK](https://www.npmjs.com/package/iota-is-sdk).
 The Integration Services SDK makes it easy to manage decentralized identities and secure channels (Audit Trail).
 
 You should have a basic understanding of [decentralized identities](../../explanations/identity)
 to get the most out of the following examples.
 
-## Install 
+## Install
 
 <Tabs groupId={"programmingLanguage"}>
 <TabItem value="Java" label={'Java'}>
 Build from source:
-
 
 ```bash
 git clone git@github.com:albydeca/iota-is-sdk.git
@@ -38,6 +38,7 @@ mvn clean install
 or download JAR from [MVNRepository](https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk/0.0.1)
 
 or simply add to your POM:
+
 ```xml
 <!-- https://mvnrepository.com/artifact/net.gradbase/iota.is.sdk -->
 <dependency>
@@ -78,36 +79,36 @@ The Integration Services SDK has two different clients you can use:
 
 You can use `IdentityClient` to manage decentralized identities. This includes, but is not limited to:
 
-* [Creating an identity and verifiable credentials](create-identity-and-credentials)
-* [Updating users](update-users)
-* [Deleting users](delete-users)
-* [Adding Trusted Authorities](trusted-authorities)
+- [Creating an identity and verifiable credentials](create-identity-and-credentials)
+- [Updating users](update-users)
+- [Deleting users](delete-users)
+- [Adding Trusted Authorities](trusted-authorities)
 
 :::info
 You can test your implementation on our public API which is connected to the IOTA Mainnet.
 
 - URL: https://demo-integration-services.iota.cafe/
 - API key: b85e51a2-9981-11ec-8770-4b8f01948e9b
-:::
+  :::
 
 ### ChannelClient
 
 You can use the `ChannelClient` to access Audit Trail features. These include, but are not limited to:
 
-* [Creating a channel](create-channel)
-* [Subscribing or approving access to a channel](authorize-to-channel#subscribe-to-a-channel)
-* [Reading and Writing on a channel](create-channel#write-on-a-channel)
+- [Creating a channel](create-channel)
+- [Subscribing or approving access to a channel](authorize-to-channel#subscribe-to-a-channel)
+- [Reading and Writing on a channel](create-channel#write-on-a-channel)
 
 <Tabs groupId={"programmingLanguage"}>
 <TabItem value="Java" label={'Java'}>
 
 You can import and configure these clients using a `env.properties` object which will populate the `BaseClient` class:
 
- ```plaintext
-  api-key=XXXXXXX
-  api-version=vX.X
-  api-url=XXXXXXX
-  identity-file=adminIdentity.json
+```plaintext
+ api-key=XXXXXXX
+ api-version=vX.X
+ api-url=XXXXXXX
+ identity-file=adminIdentity.json
 ```
 
 </TabItem>
@@ -120,11 +121,13 @@ You can import and configure these clients using a `ClientConfig` object:
 import { ClientConfig, IdentityClient, ChannelClient } from '@iota/is-client';
 
 const config: ClientConfig = {
-    isGatewayUrl: process.env.IS_GATEWAY_URL,   // used in production 
-    ssiBridgeUrl: process.env.SSI_BRIDGE_URL,   // used in local development 
-    auditTrailUrl: process.env.AUDIT_TRAIL_URL, // used in local development 
-    apiKey: process.env.API_KEY,                // can be setup in the API to restrict access 
-    apiVersion: ApiVersion.v01                  // API version (default: v0.1)
+    isGatewayUrl: process.env.IS_GATEWAY_URL,   // used in production
+    ssiBridgeUrl: process.env.SSI_BRIDGE_URL,   // used in local development
+    auditTrailUrl: process.env.AUDIT_TRAIL_URL, // used in local development
+    useGatewayUrl: process.env.USE_GATEWAY_URL === 'true' || false,
+    apiKey: process.env.API_KEY,                // can be setup in the API to restrict access
+    apiVersionAuditTrail: ApiVersion.v0_1,      // API version of the audit trail
+    apiVersionSsiBridge: ApiVersion.v0_2        // API version of the ssi bridge
 };
 
 ...
@@ -140,7 +143,6 @@ const channelClient = new ChannelClient(config);
 
 </TabItem>
 </Tabs>
-
 
 ## Authorization
 
@@ -168,57 +170,40 @@ You can get an identity using the following script (no auth required):
   System.out.println("created new user " + newUserIdentity);
 ```
 
-
 </TabItem>
     <TabItem value="Nodejs" label={'Node.js'}>
 
-
 ```js
-import { IdentityJson } from '@iota/is-client';
-...
-
-const identity = await identityClient.create('User') as IdentityJson;
+const identity = await identityClient.create('User');
 ```
-
 
 </TabItem>
 </Tabs>
-
 
 The generated identity is stored on the IOTA Tangle and follows [did-core specifications](https://www.w3.org/TR/did-core/).
 It is a JSON file like the following:
 
 ```json
 {
-  "doc": {
-    "id": "did:iota:3q4mW831dfbbSP2j5Lf4FPTKXFjEv2ykyPjuVrd1FHss",
-    "authentication": [
-      {
-        "id": "did:iota:3q4mW831dfbbSP2j5Lf4FPTKXFjEv2ykyPjuVrd1FHss#key",
-        "controller": "did:iota:3q4mW831dfbbSP2j5Lf4FPTKXFjEv2ykyPjuVrd1FHss",
-        "type": "Ed25519VerificationKey2018",
-        "publicKeyBase58": "5LT5yjaykKeTqYuqmCELE7xUyN9z4WEN5CKxdWmrU5g5"
-      }
-    ],
-    "created": "2021-12-20T10:43:00Z",
-    "updated": "2021-12-20T10:43:00Z",
-    "proof": {
-      "type": "JcsEd25519Signature2020",
-      "verificationMethod": "#key",
-      "signatureValue": "ktusPiZd5whHTHsJJwSiSbfhmAGypdkTgLFQt4USvVg91WJLYNhEzshcBCvr9Cr42heyB249TvZHVrdGVAYds6s"
+    "id": "did:iota:Dr1kbpAUMtmXV7oNBsqdt2bkFrt72fmvzGNxhgU939ne",
+    "keys": {
+        "sign": {
+            "public": "EWcf94eLQsikKwWeVjKKb5nC38iiTgUz97oSDEzxBvzu",
+            "private": "CBNAydKtSUQ3voeyMHiBngrGsKSSenohRE6CGqzuHGHA",
+            "type": "ed25519",
+            "encoding": "base58"
+        },
+        "encrypt": {
+            "public": "CKfWWbRr8JkfZ3fZAYiDcFqTiHDyRiBGurxAMYkXLX7j",
+            "private": "84fewtiBLvsenyA4LoDBn8WzGZiknXopsYuGWT6GvzPG",
+            "type": "x25519",
+            "encoding": "base58"
+        }
     }
-  },
-  "key": {
-    "type": "ed25519",
-    "public": "5LT5yjaykKeTqYuqmCELE7xUyN9z4WEN5CKxdWmrU5g5",
-    "secret": "9Arv8HTAu3JjLvBhst6deMaULvBc3e7w2WiseEL4BESC",
-    "encoding": "base58"
-  }
 }
 ```
 
 If you have a JSON Identity, you can authorize your client as follows:
-
 
 <Tabs groupId={"programmingLanguage"}>
 <TabItem value="Java" label={'Java'}>
@@ -235,10 +220,8 @@ If you have a JSON Identity, you can authorize your client as follows:
 
 ```js
 const identity = // ... did-core json object ...
-
-await identityClient.authenticate(identity.doc.id, identity.key.secret);
+  await identityClient.authenticate(identity.doc.id, identity.key.secret);
 ```
 
 </TabItem>
 </Tabs>
-
