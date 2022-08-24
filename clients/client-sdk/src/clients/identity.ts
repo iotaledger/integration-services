@@ -9,7 +9,11 @@ import {
   CredentialTypes,
   IdentityDocument,
   IdentityKeys,
-  UserSearchResponse
+  UserSearchResponse,
+  KeyTypes,
+  Encoding,
+  CreateIdentityBodySchema,
+  CreateIdentityBody
 } from '@iota/is-shared-modules';
 import { SearchCriteria } from '../models/searchCriteria';
 import * as bs58 from 'bs58';
@@ -21,16 +25,73 @@ import {
   Presentation,
   Timestamp,
   IPresentation,
-  ProofOptions
+  ProofOptions,
+  KeyType,
+  VerificationMethod,
+  MethodScope,
+  IClientConfig,
+  Network,
+  Client
 } from '@iota/identity-wasm/web';
+import addFormats from 'ajv-formats';
+import Ajv from 'ajv';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
+  private permaNode?: string;
+  private node?: string;
 
   constructor(config: ClientConfig) {
     super(config);
     this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
     this.baseUrl = this.baseUrl + `/api/${config.apiVersionSsiBridge}`;
+    this.permaNode = config?.permaNode;
+    this.node = config?.node;
+  }
+
+  /**
+   * Create a new decentralized digital identity (DID) locally. Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
+   * @param username
+   * @param claimType
+   * @param claim
+   * @param hidden
+   * @returns
+   */
+  async createLocally(
+    username: string,
+    claimType = UserType.Person,
+    claim?: any,
+    hidden?: boolean
+  ) {
+    const existingUser = await this.search({ username: username });
+    if (existingUser.length === 0) {
+      const createIdentity: CreateIdentityBody = {
+        username,
+        hidden,
+        claim: {
+          ...claim,
+          type: claimType
+        }
+      };
+      const ajv = addFormats(new Ajv(), ['date-time', 'date']);
+      const validObject = ajv.validate(CreateIdentityBodySchema, createIdentity);
+      if (validObject) {
+        const identity = await this.createIdentity();
+        const user: User = {
+          ...createIdentity,
+          id: identity.id,
+        };
+        await this.add(user);
+
+        return {
+          ...identity
+        };
+      } else {
+        throw new Error('Not the right properties provided for creating an identity.');
+      }
+    } else {
+      throw new Error('User already exists.');
+    }
   }
 
   /**
@@ -292,5 +353,104 @@ export class IdentityClient extends BaseClient {
    */
   async verifyJwt(jwt: VerifyJwtBody): Promise<{ isValid: boolean; error?: string }> {
     return await this.post(`${this.baseUrl}/authentication/verify-jwt`, jwt);
+  }
+
+  private async createIdentity(): Promise<IdentityKeys> {
+    try {
+      const identity = await this.generateIdentity();
+      const publicKey = bs58.encode(identity.signingKeys.public());
+      const privateKey = bs58.encode(identity.signingKeys.private());
+      const keyType = identity.signingKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+
+      const publicEncryptionKey = bs58.encode(identity.encryptionKeys.public());
+      const privateEncryptionKey = bs58.encode(identity.encryptionKeys.private());
+      const encryptionKeyType =
+        identity.encryptionKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+
+      return {
+        id: identity.doc.id().toString(),
+        keys: {
+          sign: {
+            public: publicKey,
+            private: privateKey,
+            type: keyType,
+            encoding: Encoding.base58
+          },
+          encrypt: {
+            public: publicEncryptionKey,
+            private: privateEncryptionKey,
+            type: encryptionKeyType,
+            encoding: Encoding.base58
+          }
+        }
+      };
+    } catch (error) {
+      throw new Error('could not create the identity');
+    }
+  }
+
+  private async generateIdentity(): Promise<{
+    doc: Document;
+    signingKeys: KeyPair;
+    encryptionKeys: KeyPair;
+  }> {
+    try {
+      const verificationFragment = 'kex-0';
+      const signingKeyPair = new KeyPair(KeyType.Ed25519);
+      const document = new Document(signingKeyPair, this.getConfig(false)?.network?.name());
+
+      // Add encryption keys and capabilities to Identity
+      const encryptionKeyPair = new KeyPair(KeyType.X25519);
+      const encryptionMethod = new VerificationMethod(
+        document.id(),
+        encryptionKeyPair.type(),
+        encryptionKeyPair.public(),
+        verificationFragment
+      );
+      document.insertMethod(encryptionMethod, MethodScope.KeyAgreement());
+      await this.publishSignedDoc(document, signingKeyPair);
+
+      return {
+        doc: document,
+        signingKeys: signingKeyPair,
+        encryptionKeys: encryptionKeyPair
+      };
+    } catch (error) {
+      throw new Error(`could not create identity document from keytype: ${KeyType.Ed25519}`);
+    }
+  }
+
+  private getConfig(usePermaNode?: boolean): IClientConfig {
+    if (this.permaNode && this.node) {
+      return {
+        permanodes: usePermaNode ? [{ url: this.permaNode }] : [],
+        primaryNode: { url: this.node },
+        network: Network.mainnet(),
+        localPow: false
+      };
+    } else {
+      throw Error('No permaNode or primaryNode url is set.');
+    }
+  }
+
+  private getIdentityClient(usePermaNode?: boolean) {
+    const clientConfig = this.getConfig(usePermaNode);
+    return Client.fromConfig(clientConfig);
+  }
+
+  private async publishSignedDoc(
+    newDoc: Document,
+    key: KeyPair,
+    prevMessageId?: string
+  ): Promise<string | undefined> {
+    if (prevMessageId) {
+      newDoc.setMetadataPreviousMessageId(prevMessageId);
+    }
+    newDoc.setMetadataUpdated(Timestamp.nowUTC());
+    const methodId = newDoc.defaultSigningMethod().id().toString();
+    newDoc.signSelf(key, methodId);
+    const client = await this.getIdentityClient();
+    const tx = await client.publishDocument(newDoc);
+    return tx?.messageId();
   }
 }

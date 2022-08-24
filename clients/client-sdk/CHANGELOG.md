@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.2-alpha.0 (2022-08-24)
+
+- Added method to identity client for creating idenities locally.
+
 ### 0.2.2 (2022-08-16)
 
 - Added ApiVersion enum in models

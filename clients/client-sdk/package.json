@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-client",
-  "version": "0.2.0",
+  "version": "0.2.2-alpha.0",
   "description": "Javascript client for the IOTA's Integration Services API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,6 +46,8 @@
     "@iota/is-shared-modules": "0.2.2-alpha.0",
     "@iota/util.js": "^1.8.6",
     "@noble/ed25519": "^1.6.1",
+    "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1",
     "axios": "~0.24.0",
     "bs58": "^5.0.0"
   },

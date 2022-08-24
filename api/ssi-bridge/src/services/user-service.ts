@@ -109,9 +109,13 @@ export class UserService {
 		return user?.id;
 	}
 
-	async addUser(user: User) {
+	async addUser(user: User, authorization?: string) {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
+		}
+		if (!user?.creator){
+			const creatorId = this.decodeUserId(authorization);
+			user = {...user, creator: creatorId}
 		}
 		const validator = SchemaValidator.getInstance(this.logger);
 		validator.validateUser(user);

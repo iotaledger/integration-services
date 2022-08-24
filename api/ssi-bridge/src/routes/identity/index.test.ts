@@ -273,6 +273,7 @@ describe('test user routes', () => {
 
 		it('should return 404 since no user added', async () => {
 			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const decodeUserSpy = jest.spyOn(userService, 'decodeUserId').mockImplementationOnce(() => UserIdentityMock.userData.creator);
 			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => ({ result: { n: 0 } } as any)); // no user added
 			const getLatestDocSpy = jest
 				.spyOn(ssiService, 'getLatestIdentityDoc')
@@ -280,12 +281,14 @@ describe('test user routes', () => {
 			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.keys.sign.public);
 
 			const req: any = {
+				headers: { authorization: 'Bearer test'},
 				params: {},
 				body: validBody
 			};
 
 			await userRoutes.addUser(req, res, nextMock);
 
+			expect(decodeUserSpy).toHaveBeenCalledWith('Bearer test');
 			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(getPublicKeySpy).toHaveBeenCalledTimes(1);
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
@@ -298,14 +301,17 @@ describe('test user routes', () => {
 				.mockImplementationOnce(async () => ({ document: UserIdentityMock.document, messageId: 'mymessageid' } as any));
 			const getPublicKeySpy = jest.spyOn(ssiService, 'getPublicKey').mockImplementationOnce(async () => UserIdentityMock.keys.sign.public);
 			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => ({ result: { n: 1 } } as any));
+			const decodeUserSpy = jest.spyOn(userService, 'decodeUserId').mockImplementationOnce(() => UserIdentityMock.userData.creator);
 
 			const req: any = {
+				headers: { authorization: 'Bearer test'},
 				params: {},
 				body: validBody
 			};
 
 			await userRoutes.addUser(req, res, nextMock);
 
+			expect(decodeUserSpy).toHaveBeenCalledWith('Bearer test');
 			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(getPublicKeySpy).toHaveBeenCalledTimes(1);
 			expect(addUserSpy).toHaveBeenCalledTimes(1);
@@ -321,13 +327,17 @@ describe('test user routes', () => {
 			const addUserSpy = jest.spyOn(UserDb, 'addUser').mockImplementationOnce(async () => {
 				throw new Error('Test error');
 			});
+			const decodeUserSpy = jest.spyOn(userService, 'decodeUserId').mockImplementationOnce(() => UserIdentityMock.userData.creator);
+
 			const req: any = {
+				headers: { authorization: 'Bearer test'},
 				params: {},
 				body: validBody
 			};
 
 			await userRoutes.addUser(req, res, nextMock);
 
+			expect(decodeUserSpy).toHaveBeenCalledWith('Bearer test');
 			expect(getLatestDocSpy).toHaveBeenCalledTimes(1);
 			expect(getPublicKeySpy).toHaveBeenCalledTimes(1);
 			expect(addUserSpy).toHaveBeenCalledTimes(1);

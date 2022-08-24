@@ -8,4 +8,6 @@ export type ClientConfig = {
   auditTrailUrl?: string;
   apiVersionAuditTrail: ApiVersion;
   apiVersionSsiBridge: ApiVersion;
+  permaNode?: string;
+  node?: string;
 };
