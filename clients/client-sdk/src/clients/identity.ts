@@ -32,7 +32,7 @@ import {
   IClientConfig,
   Network,
   Client
-} from '@iota/identity-wasm/web';
+} from '@iota/identity-wasm/node';
 import addFormats from 'ajv-formats';
 import Ajv from 'ajv';
 
@@ -73,7 +73,7 @@ export class IdentityClient extends BaseClient {
           type: claimType
         }
       };
-      const ajv = addFormats(new Ajv(), ['date-time', 'date']);
+      const ajv = this.getAjv();
       const validObject = ajv.validate(CreateIdentityBodySchema, createIdentity);
       if (validObject) {
         const identity = await this.createIdentity();
@@ -452,5 +452,12 @@ export class IdentityClient extends BaseClient {
     const client = await this.getIdentityClient();
     const tx = await client.publishDocument(newDoc);
     return tx?.messageId();
+  }
+
+  private getAjv() {
+    const ajv = addFormats(new Ajv({ allErrors: true }), ['date-time', 'date']);
+    ajv.addKeyword('kind');
+    ajv.addKeyword('modifier');
+    return ajv;
   }
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.3-alpha.1 (2022-08-24)
+
+- Updated method for creating idenities locally.
+
 ### 0.2.3-alpha.0 (2022-08-24)
 
 - Added method to identity client for creating idenities locally.
