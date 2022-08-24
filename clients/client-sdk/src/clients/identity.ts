@@ -79,7 +79,7 @@ export class IdentityClient extends BaseClient {
         const identity = await this.createIdentity();
         const user: User = {
           ...createIdentity,
-          id: identity.id,
+          id: identity.id
         };
         await this.add(user);
 
