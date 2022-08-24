@@ -62,12 +62,14 @@ export class ChannelService {
 			throw new Error('could not create the channel');
 		}
 
+		const state = this.streamsService.exportSubscription(res.author, this.password);
+		await this.subscriptionService.addSubscriptionState(res.channelAddress, id, state);
+
 		const subscription: Subscription = {
 			id,
 			type: SubscriptionType.Author,
 			channelAddress: res.channelAddress,
 			subscriptionLink: res.channelAddress,
-			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
 			publicKey: res.publicKey,
@@ -151,8 +153,10 @@ export class ChannelService {
 				}
 
 				// for all other channels we simply use the subscription and cache the data in the database
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor);
+
 				await this.fetchLogs(channelAddress, id, sub);
 				return await ChannelDataDb.getChannelData(channelAddress, id, options, this.password);
 			} finally {
@@ -173,12 +177,14 @@ export class ChannelService {
 					throw new Error('no subscription found!');
 				}
 
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 				}
+
 				const { accessRights, keyloadLink } = subscription;
 
 				// check access rights
@@ -228,7 +234,9 @@ export class ChannelService {
 				}
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
+				const sub = await this.streamsService.importSubscription(state, isAuthor);
+
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
 
@@ -260,8 +268,9 @@ export class ChannelService {
 					throw new Error('not allowed to validate the logs from the channel');
 				}
 
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);

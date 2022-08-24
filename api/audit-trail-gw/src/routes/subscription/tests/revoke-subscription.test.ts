@@ -21,7 +21,6 @@ describe('test revoke subscription route', () => {
 		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		state: 'teststate',
 		subscriptionLink: 'testlink',
 		accessRights: AccessRights.ReadAndWrite,
 		keyloadLink: 'testkeyloadlink',
@@ -34,7 +33,6 @@ describe('test revoke subscription route', () => {
 		id: 'did:iota:2345',
 		isAuthorized: true,
 		publicKey: 'test-author-public-key',
-		state: 'teststate2',
 		subscriptionLink: 'testlink2',
 		accessRights: AccessRights.ReadAndWrite,
 		keyloadLink: 'testkeyloadlink2',
@@ -137,6 +135,7 @@ describe('test revoke subscription route', () => {
 
 	it('should return bad request since subscription is already authorized', async () => {
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementationOnce(async () => 'myauthorstate');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => authorSubscriptionMock)
@@ -155,6 +154,8 @@ describe('test revoke subscription route', () => {
 
 	it('should revoke the subscription', async () => {
 		const channelAddress = 'testaddress';
+
+		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => authorSubscriptionMock)
@@ -166,9 +167,12 @@ describe('test revoke subscription route', () => {
 			sequenceLink: 'testsequencelink',
 			author: AuthorMock
 		}));
-		const removeChannelRequestedSubscriptionIdSpy = jest.spyOn(ChannelInfoDb, 'removeChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const removeChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(ChannelInfoDb, 'removeChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
+		const removeSubscriptionStateSpy = jest.spyOn(subscriptionService, 'deleteSubscriptionState').mockImplementation(async () => null);
 		const removeSubscriptionSpy = jest.spyOn(SubscriptionDb, 'removeSubscription').mockImplementation(async () => null);
 		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
 
@@ -185,6 +189,7 @@ describe('test revoke subscription route', () => {
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
 
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, 'did:iota:2345');
 		expect(getSubscriptionsSpy).toHaveBeenCalledWith(channelAddress);
 		expect(sendKeyloadSpy).toHaveBeenCalledWith(
 			'testsequencelink2',
@@ -198,6 +203,7 @@ describe('test revoke subscription route', () => {
 			'testkeyloadlink',
 			'testsequencelink'
 		);
+		expect(removeSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);

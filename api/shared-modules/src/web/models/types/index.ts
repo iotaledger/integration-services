@@ -38,7 +38,7 @@ export {
 	ValidateResponse,
 	VerifyJwtBody
 } from './request-response-bodies';
-export { Subscription, SubscriptionUpdate } from './subscription';
+export { Subscription, SubscriptionState, SubscriptionUpdate } from './subscription';
 export {
 	Device,
 	IdentityClaim,

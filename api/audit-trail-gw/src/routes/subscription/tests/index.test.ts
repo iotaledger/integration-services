@@ -17,7 +17,6 @@ describe('test getSubscriptions and getSubscriptionByIdentity routes', () => {
 		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
 	};
@@ -133,7 +132,6 @@ describe('test addSubscription route', () => {
 		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
 	};
@@ -242,7 +240,6 @@ describe('test updateSubscription route', () => {
 		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
 	};
@@ -335,7 +332,6 @@ describe('test deleteSubscription route', () => {
 		id: 'did:iota:1234',
 		isAuthorized: false,
 		publicKey: 'testpublickey',
-		state: 'teststate',
 		subscriptionLink: 'testlink',
 		type: SubscriptionType.Subscriber
 	};

@@ -140,7 +140,6 @@ describe('test validate route', () => {
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
-					state: 'someteststate',
 					accessRights: AccessRights.Write // wrong access rights
 				} as Subscription)
 		);
@@ -160,14 +159,16 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
+		const getSubscriptionStateSpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionState')
+			.mockImplementationOnce(async () => 'someteststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
-					type: SubscriptionType.Author,
-					state: 'someteststate'
+					type: SubscriptionType.Author
 				} as Subscription)
 		);
 		const getSubSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no subscriber found
@@ -176,6 +177,7 @@ describe('test validate route', () => {
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error('no author/subscriber found with channelAddress: 123456 and id: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
@@ -191,14 +193,16 @@ describe('test validate route', () => {
 			user,
 			body: logs
 		};
+		const getSubscriptionStateSpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionState')
+			.mockImplementationOnce(async () => 'someteststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
-					type: SubscriptionType.Author,
-					state: 'someteststate'
+					type: SubscriptionType.Author
 				} as Subscription)
 		);
 		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock);
@@ -230,6 +234,7 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getMessageSpy).toHaveBeenCalledTimes(3);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);

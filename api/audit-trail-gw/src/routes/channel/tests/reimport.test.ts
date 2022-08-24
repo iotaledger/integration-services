@@ -136,13 +136,13 @@ describe('test re-import route', () => {
 			user,
 			body: { seed }
 		};
+		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey', // different public key as newSub
-					accessRights: AccessRights.Read,
-					state: 'teststate'
+					accessRights: AccessRights.Read
 				} as Subscription)
 		);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
@@ -153,6 +153,7 @@ describe('test re-import route', () => {
 		await channelRoutes.reimport(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('wrong seed inserted'));
@@ -169,13 +170,13 @@ describe('test re-import route', () => {
 			body: { seed }
 		};
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
+		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey', // same public key as in newSub
-					accessRights: AccessRights.Read,
-					state: 'teststate'
+					accessRights: AccessRights.Read
 				} as Subscription)
 		);
 		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
@@ -187,6 +188,7 @@ describe('test re-import route', () => {
 		await channelRoutes.reimport(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.id);
