@@ -220,7 +220,7 @@ If you have a JSON Identity, you can authorize your client as follows:
 
 ```js
 const identity = // ... did-core json object ...
-  await identityClient.authenticate(identity.doc.id, identity.key.secret);
+  await identityClient.authenticate(identity.id, identity.keys.sign.private);
 ```
 
 </TabItem>
