@@ -193,12 +193,12 @@ export class SsiService {
 		try {
 			const decodedKey = {
 				public: Array.from(bs58.decode(identity.keys.sign.public)),
-				secret: Array.from(bs58.decode(identity.keys.sign.private))
+				private: Array.from(bs58.decode(identity.keys.sign.private))
 			};
 			const json = {
 				type: identity.keys.sign.type,
 				public: decodedKey.public,
-				private: decodedKey.secret
+				private: decodedKey.private
 			};
 			const key: Identity.KeyPair = KeyPair.fromJSON(json);
 			const { document, messageId } = await this.getLatestIdentityDoc(identity.id);
