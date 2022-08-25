@@ -41,7 +41,7 @@ Option 2
 This examples shows how to authenticate the admin identity from the previous example, create a new identity and issue a credential to the newly created identity. 
 
 ```javascript
-import { IdentityClient, CredentialTypes, UserType, IdentityJson } from '@iota/is-client';
+import { IdentityClient, CredentialTypes, UserType, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -49,13 +49,13 @@ async function createIdentityAndCheckVCs() {
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the admin identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   // Get admin identity data
-  const adminIdentityPublic = await identity.find(adminIdentity.doc.id);
+  const adminIdentityPublic = await identity.find(adminIdentity.id);
 
   // Get admin identy's VC
   const identityCredential = adminIdentityPublic?.verifiableCredentials?.[0];
@@ -73,7 +73,7 @@ async function createIdentityAndCheckVCs() {
   // With the BasicIdentityCredential the user is not allowed to issue further credentials
   const userCredential = await identity.createCredential(
     identityCredential,
-    userIdentity?.doc?.id,
+    userIdentity?.id,
     CredentialTypes.BasicIdentityCredential,
     UserType.Person,
     {
@@ -96,7 +96,7 @@ createIdentityAndCheckVCs();
 In this example a already existing identity is updated. Again in the admin identity from the first example is needed.
 
 ```javascript
-import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client';
+import { SearchCriteria, IdentityClient, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -104,10 +104,10 @@ async function searchIdentityAndUpdate() {
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the admin identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   const username = 'MyUser-' + Math.ceil(Math.random() * 100000);
   const userIdentity = await identity.create(username);
@@ -155,7 +155,7 @@ searchIdentityAndUpdate();
 This example shows how to delete an identity from the SSI-Bridge.
 
 ```javascript
-import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client';
+import { SearchCriteria, IdentityClient, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -163,10 +163,10 @@ async function searchIdentityAndDelete() {
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the root identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   const username = 'User-' + Math.ceil(Math.random() * 100000);
   const userIdentity = await identity.create(username);
@@ -210,7 +210,7 @@ searchIdentityAndDelete();
 This examples shows you how to add a trusted authority. Only credentials issued by a trusted authority are trusted.
 
 ```javascript
-import { IdentityClient, CredentialTypes, UserType, IdentityJson } from '@iota/is-client';
+import { IdentityClient, CredentialTypes, UserType, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 import { externalDriverCredential1 } from './externalData';
@@ -219,17 +219,17 @@ async function trustedAuthorities() {
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the admin identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   // Create an identity for a driver to issue him a driving license
   const username = 'Driver-' + Math.ceil(Math.random() * 100000);
   const driverIdentity = await identity.create(username);
 
   //Get root identity to issue an credential for the new driver
-  const adminIdentityPublic = await identity.find(adminIdentity.doc.id);
+  const adminIdentityPublic = await identity.find(adminIdentity.id);
   console.log(`Root identity's id: `, adminIdentityPublic.id);
 
   // Get root identity's credential to create new credentials
@@ -243,7 +243,7 @@ async function trustedAuthorities() {
   // Assign a verifiable credential to the driver for drive allowance
   const driverCredential = await identity.createCredential(
     identityCredential,
-    driverIdentity?.doc?.id,
+    driverIdentity?.id,
     CredentialTypes.BasicIdentityCredential,
     UserType.Person,
     {
@@ -308,7 +308,7 @@ async function createChannel() {
   console.log('User', user);
 
   // Authenticate as the user
-  await channel.authenticate(user.doc.id, user.key.secret);
+  await channel.authenticate(user.id, user.keys.sign.private);
 
   // Create a new channel for example data
   const logChannel = await channel.create({
@@ -367,8 +367,8 @@ async function authorizeOthersToChannel() {
   const channelUser = await identity.create(subscriberUsername);
 
   // We will use two instances of the channel api client. One is getting authorized by the owner and the other one by the user.
-  await ownerClient.authenticate(channelOwner.doc.id, channelOwner.key.secret);
-  await userClient.authenticate(channelUser.doc.id, channelUser.key.secret);
+  await ownerClient.authenticate(channelOwner.id, channelOwner.keys.sign.private);
+  await userClient.authenticate(channelUser.id, channelUser.keys.sign.private);
 
   // The owner creates a channel where he/she want to publish data of type 'example-data'.
   const { channelAddress } = await ownerClient.create({
@@ -411,7 +411,7 @@ async function authorizeOthersToChannel() {
     console.log(`Authorizing subscription: ${subscription.id}...`);
     // Authorize the user to the channel. Authorization can happen via the id of the user or the generated subscription link.
     const keyloadLink = await ownerClient.authorizeSubscription(channelAddress, {
-      id: channelUser.doc.id
+      id: channelUser.id
     });
     console.log('Subscription Keyload Link:', keyloadLink);
   }
@@ -453,8 +453,8 @@ async function searchChannelAndValidateData() {
   const channelUser = await identity.create(subscriberUsername);
 
   // We will use two instances of the channel api client. One is getting authorized by the owner and the other one by the user.
-  await ownerClient.authenticate(channelOwner.doc.id, channelOwner.key.secret);
-  await userClient.authenticate(channelUser.doc.id, channelUser.key.secret);
+  await ownerClient.authenticate(channelOwner.id, channelOwner.keys.sign.private);
+  await userClient.authenticate(channelUser.id, channelUser.keys.sign.private);
 
   // The owner creates a channel where he/she want to publish data of type 'example-data'.
   const { channelAddress } = await ownerClient.create({
@@ -468,7 +468,7 @@ async function searchChannelAndValidateData() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const channels = await userClient.search({
-    authorId: channelOwner.doc.id,
+    authorId: channelOwner.id,
     topicType: 'example-data',
     created: today
   });

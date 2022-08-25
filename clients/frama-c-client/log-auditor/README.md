@@ -2,7 +2,7 @@
 The Log Auditor Client reads logs from a channel and validates them.
 
 ## Prerequisite
-Node.js 8, or Node.js 10 or higher. We recommend the latest [LTS](https://nodejs.org/en/download/).
+Node.js v16.17.0 or higher. We recommend the latest [LTS](https://nodejs.org/en/download/).
 ## Installation
 1. Navigate to: `frama-c-client\log-auditor` 
 2. Install dependencies: `npm install`  

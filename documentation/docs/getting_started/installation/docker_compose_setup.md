@@ -20,7 +20,7 @@ Please make sure to have the following dependencies installed before continuing:
 
 -   [docker](https://docs.docker.com/get-docker/)
 -   [docker-compose](https://docs.docker.com/compose/install/)
--   [node.js](https://nodejs.org/) min. v15.6.0
+-   [node.js](https://nodejs.org/) min. v16.17.0
 -   [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Download the Project

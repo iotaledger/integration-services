@@ -11,7 +11,8 @@ export const defaultConfig: ClientConfig = {
   auditTrailUrl: process.env.AUDIT_TRAIL_URL,
   useGatewayUrl: process.env.USE_GATEWAY_URL === 'true' || false,
   apiKey: process.env.API_KEY,
-  apiVersion: ApiVersion.v01
+  apiVersionAuditTrail: ApiVersion.v0_1,
+  apiVersionSsiBridge: ApiVersion.v0_2
 };
 
 export const defaultManagerConfig: ManagerConfig = {

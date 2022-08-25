@@ -12,18 +12,16 @@ keywords:
 # SSI Bridge API Documentation
 This is the API documentation for the SSI Bridge of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/ssi-bridge/introduction).
 
-## Version: 1.0.0 
-
-## Endpoints
+## Version: v0.2
 
 ### /authentication/prove-ownership/{id}
 
 #### GET
-##### Summary
+##### Summary:
 
 Request a nonce which must be signed by the private key
 
-##### Description
+##### Description:
 
 Request a nonce which must be signed by the private key of the client and send it to /prove-ownership/{identity-id} endpoint via POST. This allows a user to prove ownership of its identity public key.
 
@@ -42,11 +40,11 @@ Request a nonce which must be signed by the private key of the client and send i
 | 5XX | Unexpected error |
 
 #### POST
-##### Summary
+##### Summary:
 
 Get an authentication token by signing a nonce
 
-##### Description
+##### Description:
 
 Get an authentication token by signing a nonce using the private key. If signature is verified, a JWT string will be returned in the response. The nonce can be received from GET /prove-ownership/{identity-id} endpoint. The JWT is used for any future API interaction.
 
@@ -66,14 +64,35 @@ Get an authentication token by signing a nonce using the private key. If signatu
 | 500 | No valid signedNonce provided |
 | 5XX | Unexpected error |
 
+### /authentication/verify-jwt
+
+#### POST
+##### Summary:
+
+Verify a signed jwt
+
+##### Description:
+
+Check if the jwt was signed by the Integration Service.
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Returns if the jwt is valid. |
+| 400 | No valid body provided |
+| 401 | No valid api key provided |
+| 500 | No valid signedNonce provided |
+| 5XX | Unexpected error |
+
 ### /identities/create
 
 #### POST
-##### Summary
+##### Summary:
 
 Create a new decentralized digital identity (DID)
 
-##### Description
+##### Description:
 
 Create a new decentralized digital identity (DID). Identity DID document is signed and published to the ledger (IOTA Tangle). A digital identity can represent an individual, an organization or an object. The privateAuthKey controlling the identity is returned. It is recommended to securely (encrypt) store the privateAuthKey locally, since it is not stored on the APIs Bridge.
 
@@ -81,7 +100,7 @@ Create a new decentralized digital identity (DID). Identity DID document is sign
 
 | Code | Description |
 | ---- | ----------- |
-| 201 | Returns the created identity |
+| 201 | Returns the created identity keys |
 | 401 | No valid api key provided |
 | 5XX | Unexpected error |
 
@@ -95,11 +114,11 @@ Create a new decentralized digital identity (DID). Identity DID document is sign
 ### /identities/search
 
 #### GET
-##### Summary
+##### Summary:
 
 Search for identities
 
-##### Description
+##### Description:
 
 Search for identities in the system and returns a list of existing identities.
 
@@ -133,11 +152,11 @@ Search for identities in the system and returns a list of existing identities.
 ### /identities/identity/{id}
 
 #### GET
-##### Summary
+##### Summary:
 
 Get information about a specific identity
 
-##### Description
+##### Description:
 
 Get information (including attached credentials) about a specific identity using the identity-id (DID identifier).
 
@@ -156,11 +175,11 @@ Get information (including attached credentials) about a specific identity using
 | 5XX | Unexpected error |
 
 #### DELETE
-##### Summary
+##### Summary:
 
 Removes an identity from the Bridge
 
-##### Description
+##### Description:
 
 Removes an identity from the Bridge. An identity can only delete itself and is not able to delete other identities. Administrators are able to remove other identities. The identity cannot be removed from the immutable IOTA Tangle but only at the Bridge. Also the identity credentials will remain and the identity is still able to interact with other bridges.
 
@@ -190,11 +209,11 @@ Removes an identity from the Bridge. An identity can only delete itself and is n
 ### /identities/identity
 
 #### POST
-##### Summary
+##### Summary:
 
 Register an existing identity into the Bridge
 
-##### Description
+##### Description:
 
 Register an existing identity into the Bridge. This can be used if the identity already exists or it was only created locally. Registering an identity in the Bridge makes it possible to search for it by using some of the identity attributes, i.e., the username.
 
@@ -207,11 +226,11 @@ Register an existing identity into the Bridge. This can be used if the identity 
 | 5XX | Unexpected error |
 
 #### PUT
-##### Summary
+##### Summary:
 
 Update claim of a registered identity
 
-##### Description
+##### Description:
 
 Update claim of a registered identity.
 
@@ -233,11 +252,11 @@ Update claim of a registered identity.
 ### /info
 
 #### GET
-##### Summary
+##### Summary:
 
 Get information about the server
 
-##### Description
+##### Description:
 
 Get information about the server like commitHash, server identity id and api version
 
@@ -251,11 +270,11 @@ Get information about the server like commitHash, server identity id and api ver
 ### /verification/latest-document/{id}
 
 #### GET
-##### Summary
+##### Summary:
 
 Get the latest version of an identity document (DID)
 
-##### Description
+##### Description:
 
 Get the latest version of an identity document (DID) from the IOTA Tangle.
 
@@ -276,11 +295,11 @@ Get the latest version of an identity document (DID) from the IOTA Tangle.
 ### /verification/trusted-roots
 
 #### POST
-##### Summary
+##### Summary:
 
 Adds Trusted Root identity identifiers (DIDs)
 
-##### Description
+##### Description:
 
 Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
@@ -300,11 +319,11 @@ Adds Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identit
 | ApiKey | |
 
 #### GET
-##### Summary
+##### Summary:
 
 Returns a list of Trusted Root identity identifiers (DIDs)
 
-##### Description
+##### Description:
 
 Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
@@ -319,11 +338,11 @@ Returns a list of Trusted Root identity identifiers (DIDs). Trusted roots are DI
 ### /verification/trusted-roots/{trustedRootId}
 
 #### DELETE
-##### Summary
+##### Summary:
 
 Remove Trusted Root identity identifiers (DIDs)
 
-##### Description
+##### Description:
 
 Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of identities which are trusted by the Bridge. This identity DIDs can be DIDs of other organizations. By adding them to the list Trusted Roots their Verifiable Credentials (VCs) are automatically trusted when checking at the Bridge.
 
@@ -351,11 +370,11 @@ Remove Trusted Root identity identifiers (DIDs). Trusted roots are DIDs of ident
 ### /verification/create-credential
 
 #### POST
-##### Summary
+##### Summary:
 
 Verify the authenticity of an identity and issue a credential
 
-##### Description
+##### Description:
 
 Verify the authenticity of an identity (of an individual, organization or object) and issue a credential stating the identity verification status. Only previously verified identities (based on a network of trust) with assigned privileges can verify other identities. Having a verified identity provides the opportunity for other identities to identify and verify a the entity they interact to.
 
@@ -377,11 +396,11 @@ Verify the authenticity of an identity (of an individual, organization or object
 ### /verification/check-credential
 
 #### POST
-##### Summary
+##### Summary:
 
 Check the verifiable credential of an identity
 
-##### Description
+##### Description:
 
 Check the verifiable credential of an identity. Validates the signed verifiable credential against the Issuer information stored onto the IOTA Tangle and checks if the issuer identity (DID) contained in the credential is from a trusted root.
 
@@ -396,11 +415,11 @@ Check the verifiable credential of an identity. Validates the signed verifiable 
 ### /verification/revoke-credential
 
 #### POST
-##### Summary
+##### Summary:
 
 Revoke one specific verifiable credential of an identity
 
-##### Description
+##### Description:
 
 Revoke one specific verifiable credential of an identity. In the case of individual and organization identities the reason could be that the user has left the organization. Only organization admins (with verified identities) or the identity owner itself can do that.
 
@@ -421,6 +440,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 
 ### Models
 
+
 #### ProveOwnershipPostBodySchema
 
 | Name | Type | Description | Required |
@@ -431,9 +451,11 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| name | string | A channel can be searched by its name. | Yes |
+| name | string | A channel can be searched by its name. | No |
 | description | string | An optional description for a channel. | No |
-| subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
+| type |  | Channel type used to differ between public and private channels. | No |
+| hidden | boolean | If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel. | No |
+| visibilityList | [ object ] |  | No |
 | topics | [ object ] |  | Yes |
 | hasPresharedKey | boolean | If the channel has a preshared key (hasPresharedKey=true) but non is set in the presharedKey property it will be generated by the api. | No |
 | seed | string | If left empty the api will generate a seed automatically. Always store your seed otherwise the data can not be reimported. | No |
@@ -456,6 +478,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | link | string |  | Yes |
 | imported | dateTime | Date when the data was imported from the tangle into the cached database. | No |
 | messageId | string | Message id can be used to search for the message in an IOTA explorer. | No |
+| source | object |  | No |
 | log | object |  | Yes |
 
 #### ValidateBodySchema
@@ -509,6 +532,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | credentialSubject | object |  | Yes |
 | issuer | string |  | Yes |
 | issuanceDate | dateTime |  | Yes |
+| credentialStatus | object |  | No |
 | proof | object |  | Yes |
 
 #### TrustedRootBodySchema
@@ -532,11 +556,12 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | storeIdentity | boolean |  | No |
 | username | string |  | Yes |
 | registrationDate | dateTime |  | No |
-| verifiableCredentials | [ object ] |  | No |
+| creator | string |  | No |
 | role | string |  | No |
 | claim | object |  | No |
-| isPrivate | boolean |  | No |
+| hidden | boolean |  | No |
 | isServerIdentity | boolean |  | No |
+| verifiableCredentials | [ object ] |  | No |
 
 #### UpdateIdentityBodySchema
 
@@ -589,13 +614,18 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | authorId | string |  | No |
+| subscriberId | string |  | No |
+| requestedSubscriptionId | string |  | No |
 | name | string | Optional channel name. A channel can be searched by its name. | No |
+| hidden | boolean | Channels which are hidden to others. | No |
+| channelType |  | Channel type used to differ between public and private channels. | No |
 | topicType | string |  | No |
 | topicSource | string |  | No |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
 | limit | number |  | No |
 | index | number |  | No |
+| ascending | boolean | Sorting the channels by creation date ascending or descending | No |
 
 #### SubscriptionSchema
 
@@ -642,8 +672,12 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | channelAddress | string |  | Yes |
 | name | string | A channel can be searched by its name. | Yes |
 | description | string | An optional description of the channel. | No |
+| hidden | boolean | If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel. | No |
+| visibilityList | [ object ] |  | No |
+| type |  | Channel type used to differ between public and private channels. | No |
 | authorId | string |  | Yes |
 | subscriberIds | [ string ] |  | No |
+| requestedSubscriptionIds | [ string ] |  | No |
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
@@ -661,7 +695,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
 | type | string |  | Yes |
-| initiatorId | string |  | No |
+| initiator | string |  | No |
 
 #### VerifiableCredentialSchema
 
@@ -673,36 +707,54 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | credentialSubject | object |  | Yes |
 | issuer | string |  | Yes |
 | issuanceDate | dateTime |  | Yes |
+| credentialStatus | object |  | No |
 | proof | object |  | Yes |
 
-#### IdentityJsonSchema
+#### IdentitySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| doc | object |  | Yes |
-| key | object |  | Yes |
+| id | string |  | Yes |
+| username | string |  | Yes |
+| registrationDate | dateTime |  | No |
+| creator | string |  | No |
+| role | string |  | No |
+| claim | object |  | No |
+| hidden | boolean |  | No |
+| isServerIdentity | boolean |  | No |
+| verifiableCredentials | [ object ] |  | No |
 
-#### IdentityKeyPairJsonSchema
+#### IdentityKeyPairSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | type | string |  | Yes |
 | public | string |  | Yes |
-| secret | string |  | Yes |
+| private | string |  | Yes |
 | encoding |  |  | Yes |
 
-#### IdentityDocumentJsonSchema
+#### KeysSchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| sign | object |  | Yes |
+| encrypt | object |  | No |
+
+#### IdentityKeysSchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
-| verificationMethod | [ object ] |  | No |
-| previousMessageId | string |  | No |
-| authentication | [ object ] |  | Yes |
-| created | dateTime |  | Yes |
-| updated | dateTime |  | Yes |
-| immutable | boolean |  | Yes |
+| keys | object |  | Yes |
+
+#### IdentityDocumentSchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| doc | object |  | Yes |
+| meta | object |  | Yes |
 | proof | object |  | Yes |
+| integrationMessageId | string |  | No |
 
 #### LatestIdentityDocSchema
 
@@ -713,7 +765,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 
 #### DeviceSchema
 
-Device schema, see the specification at: <https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md> or <https://github.com/smart-data-models/dataModel.Device/blob/master/DeviceModel/doc/spec.md> or <https://petstore.swagger.io/?url=https://smart-data-models.github.io/dataModel.Device/Device/swagger.yaml#/ngsi-ld/get_ngsi_ld_v1_entities>
+Device schema, see the specification at: https://github.com/smart-data-models/dataModel.Device/blob/master/Device/doc/spec.md or https://github.com/smart-data-models/dataModel.Device/blob/master/DeviceModel/doc/spec.md or https://petstore.swagger.io/?url=https://smart-data-models.github.io/dataModel.Device/Device/swagger.yaml#/ngsi-ld/get_ngsi_ld_v1_entities
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -727,7 +779,7 @@ Device schema, see the specification at: <https://github.com/smart-data-models/d
 | sameAs |  |  | No |
 | category | [  ] |  | Yes |
 | controlledProperty | [  ] |  | Yes |
-| address | object | PostalAddress schema, see the specification at: <https://schema.org/PostalAddress> | No |
+| address | object | PostalAddress schema, see the specification at: https://schema.org/PostalAddress | No |
 | batteryLevel | number |  | No |
 | configuration |  |  | No |
 | controlledAsset |  |  | No |
@@ -763,7 +815,7 @@ Device schema, see the specification at: <https://github.com/smart-data-models/d
 
 #### OrganizationSchema
 
-Organization schema, see the specification at: <https://schema.org/Organization>
+Organization schema, see the specification at: https://schema.org/Organization
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -787,7 +839,7 @@ Organization schema, see the specification at: <https://schema.org/Organization>
 
 #### PersonSchema
 
-Person schema, see the specification at: <https://schema.org/Person>
+Person schema, see the specification at: https://schema.org/Person
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -816,7 +868,7 @@ Person schema, see the specification at: <https://schema.org/Person>
 
 #### ProductSchema
 
-Product schema, see the specification at: <https://schema.org/Product>
+Product schema, see the specification at: https://schema.org/Product
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -828,7 +880,7 @@ Product schema, see the specification at: <https://schema.org/Product>
 | url | string |  | No |
 | image |  |  | No |
 | sameAs |  |  | No |
-| aggregateRating | object | AggregateRating schema, see the specification at: <https://schema.org/AggregateRating> | No |
+| aggregateRating | object | AggregateRating schema, see the specification at: https://schema.org/AggregateRating | No |
 | award | string |  | No |
 | brand |  |  | No |
 | category | [ string ] |  | No |
@@ -836,7 +888,7 @@ Product schema, see the specification at: <https://schema.org/Product>
 | gtin | string |  | No |
 | height |  |  | No |
 | logo | string |  | No |
-| manufacturer | object | Organization schema, see the specification at: <https://schema.org/Organization> | No |
+| manufacturer | object | Organization schema, see the specification at: https://schema.org/Organization | No |
 | material |  |  | No |
 | model | string |  | No |
 | mpn | string |  | No |
@@ -847,7 +899,7 @@ Product schema, see the specification at: <https://schema.org/Product>
 | productionDate | dateTime |  | No |
 | purchaseDate | dateTime |  | No |
 | releaseDate | dateTime |  | No |
-| review | object | Review schema, see the specification at: <https://schema.org/Review> | No |
+| review | object | Review schema, see the specification at: https://schema.org/Review | No |
 | size |  |  | No |
 | sku | string |  | No |
 | slogan | string |  | No |
@@ -856,7 +908,7 @@ Product schema, see the specification at: <https://schema.org/Product>
 
 #### ServiceSchema
 
-Service schema, see the specification at: <https://schema.org/Service>
+Service schema, see the specification at: https://schema.org/Service
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -868,7 +920,7 @@ Service schema, see the specification at: <https://schema.org/Service>
 | url | string |  | No |
 | image |  |  | No |
 | sameAs |  |  | No |
-| aggregateRating | object | AggregateRating schema, see the specification at: <https://schema.org/AggregateRating> | No |
+| aggregateRating | object | AggregateRating schema, see the specification at: https://schema.org/AggregateRating | No |
 | availableChannel | object |  | No |
 | brand |  |  | No |
 | category | string |  | No |
@@ -879,34 +931,18 @@ Service schema, see the specification at: <https://schema.org/Service>
 | serviceType | string |  | No |
 | termsOfService | string |  | No |
 
-#### IdentitySchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string |  | Yes |
-| publicKey | string |  | Yes |
-| creator | string |  | No |
-| username | string |  | Yes |
-| registrationDate | dateTime |  | No |
-| verifiableCredentials | [ object ] |  | No |
-| role | string |  | No |
-| claim | object |  | No |
-| isPrivate | boolean |  | No |
-| isServerIdentity | boolean |  | No |
-
 #### IdentitySearchBodySchema
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
-| publicKey | string |  | Yes |
-| creator | string |  | No |
 | numberOfCredentials | integer | Number of credentials connected to this identity | Yes |
 | username | string |  | Yes |
 | registrationDate | dateTime |  | No |
+| creator | string |  | No |
 | role | string |  | No |
 | claim | object |  | No |
-| isPrivate | boolean |  | No |
+| hidden | boolean |  | No |
 | isServerIdentity | boolean |  | No |
 
 #### IdentityIdSchema
@@ -926,3 +962,9 @@ Service schema, see the specification at: <https://schema.org/Service>
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | ChannelAddressSchema | string |  |  |
+
+#### VerifyJwtBodySchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| jwt | string |  | Yes |

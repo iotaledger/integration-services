@@ -1,4 +1,4 @@
-import { SearchCriteria, IdentityClient, IdentityJson } from '@iota/is-client';
+import { SearchCriteria, IdentityClient, IdentityKeys } from '@iota/is-client';
 import { defaultConfig } from './configuration';
 import { readFileSync } from 'fs';
 
@@ -6,10 +6,10 @@ async function searchIdentityAndUpdate() {
   const identity = new IdentityClient(defaultConfig);
 
   // Recover the admin identity
-  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityJson;
+  const adminIdentity = JSON.parse(readFileSync('./adminIdentity.json').toString()) as IdentityKeys;
 
   // Authenticate as the admin identity
-  await identity.authenticate(adminIdentity.doc.id, adminIdentity.key.secret);
+  await identity.authenticate(adminIdentity.id, adminIdentity.keys.sign.private);
 
   const username = 'MyUser-' + Math.ceil(Math.random() * 100000);
   const userIdentity = await identity.create(username);

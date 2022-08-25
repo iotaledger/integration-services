@@ -51,7 +51,7 @@ everything may yet run smoothly.
 </TabItem>
 <TabItem value="Nodejs" label={'Node.js'}>
 
-* A recent version of [Node.js](https://nodejs.org/en/download/) (>14.19.0).
+* A recent version of [Node.js](https://nodejs.org/en/download/) (>v16.17.0).
 
 </TabItem>
 </Tabs>
@@ -152,6 +152,7 @@ Never save your secret key in plain text in your code. Use local environment var
     client.close();
     return result;
 }
+
 ```
 
 </TabItem>
@@ -162,7 +163,7 @@ import axios from 'axios';
 
 const requestNonce = async () => {
 const identityId = 'did:iota:8BAmUqAg4aUjV3T9WUhPpDnFVbJSk16oLyFq3m3e62MF';
-const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`
+const url = `http://localhost:3000/api/v0.2/authentication/prove-ownership/${identityId}`
 const request = await axios.get(url);
 console.log(request.data);
 };
@@ -291,28 +292,28 @@ The last step is to request the JWT. You can use the following code snippet with
 
 <Tabs groupId={"programmingLanguage"}>
 <TabItem value="Java" label={'Java'}>
+
 ```java
-[...]
-    final String endpoint = "authentication/prove-ownership/" + didId;
+final String endpoint = "authentication/prove-ownership/" + didId;
 
-    JSONObject json = new JSONObject().put("signedNonce", sign);
+JSONObject json = new JSONObject().put("signedNonce", sign);
 
-    JSONObject response = sendIOTAPostRequest(endpoint, json, false);
-    byte[] b58keyPrimary = Base58.decode(publicKey);
-    String b58keyPrimaryHex = DatatypeConverter.printHexBinary(b58keyPrimary).toLowerCase();
-    byte[] convert_primarykey = DatatypeConverter.parseHexBinary(b58keyPrimaryHex);
+JSONObject response = sendIOTAPostRequest(endpoint, json, false);
+byte[] b58keyPrimary = Base58.decode(publicKey);
+String b58keyPrimaryHex = DatatypeConverter.printHexBinary(b58keyPrimary).toLowerCase();
+byte[] convert_primarykey = DatatypeConverter.parseHexBinary(b58keyPrimaryHex);
 
-    Ed25519PublicKeyParameters primaryKeyVerify = new Ed25519PublicKeyParameters(convert_primarykey, 0);
-    Signer verifier = new Ed25519Signer();
-    verifier.init(false, primaryKeyVerify);
-    verifier.update(convertNonce, 0, convertNonce.length);
-    boolean verified = verifier.verifySignature(signature);
+Ed25519PublicKeyParameters primaryKeyVerify = new Ed25519PublicKeyParameters(convert_primarykey, 0);
+Signer verifier = new Ed25519Signer();
+verifier.init(false, primaryKeyVerify);
+verifier.update(convertNonce, 0, convertNonce.length);
+boolean verified = verifier.verifySignature(signature);
 
-    System.out.println("Verify Signature: " + verified);
-    this.jwt = response.getString("jwt");
-
+System.out.println("Verify Signature: " + verified);
+this.jwt = response.getString("jwt");
 }
 ```
+
 </TabItem>
 <TabItem value="Nodejs" label={'Node.js'}>
 
@@ -325,7 +326,7 @@ const body = {
 signedNonce:
 '270c2e502c5c753e39159683981e452444f81a10d798f56406a9c471d672a5ede1792cb7f97d4f9c9efeec7bf35577dd1f8482afca7e3710291868a65bf91e07'
 };
-const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+const url = `http://localhost:3000/api/v0.2/authentication/prove-ownership/${identityId}`;
 
 const request = await axios.post(url, body);
 console.log(request.data);
@@ -434,7 +435,7 @@ import bs58 from 'bs58';
 import crypto from 'crypto';
 
 const requestNonce = async (identityId) => {
-    const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+    const url = `http://localhost:3000/api/v0.2/authentication/prove-ownership/${identityId}`;
     const request = await axios.get(url);
     return request.data.nonce;
 };
@@ -452,7 +453,7 @@ const signNonce = async (hashedNonce, secretKey) => {
 };
 
 const requestJwt = async (identityId, signedNonce) => {
-    const url = `http://localhost:3000/api/v0.1/authentication/prove-ownership/${identityId}`;
+    const url = `http://localhost:3000/api/v0.2/authentication/prove-ownership/${identityId}`;
     const request = await axios.post(url, { signedNonce });
     return request.data.jwt;
 };

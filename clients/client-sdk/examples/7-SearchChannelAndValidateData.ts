@@ -16,8 +16,8 @@ async function searchChannelAndValidateData() {
   const channelUser = await identity.create(subscriberUsername);
 
   // We will use two instances of the channel api client. One is getting authorized by the owner and the other one by the user.
-  await ownerClient.authenticate(channelOwner.doc.id, channelOwner.key.secret);
-  await userClient.authenticate(channelUser.doc.id, channelUser.key.secret);
+  await ownerClient.authenticate(channelOwner.id, channelOwner.keys.sign.private);
+  await userClient.authenticate(channelUser.id, channelUser.keys.sign.private);
 
   // The owner creates a channel where he/she want to publish data of type 'example-data'.
   const { channelAddress } = await ownerClient.create({
@@ -31,7 +31,7 @@ async function searchChannelAndValidateData() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const channels = await userClient.search({
-    authorId: channelOwner.doc.id,
+    authorId: channelOwner.id,
     topicType: 'example-data',
     created: today
   });
