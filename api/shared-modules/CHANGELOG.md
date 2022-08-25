@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.2.2-alpha.0 (2022-08-05)
+### 0.2.3-alpha.1 (2022-08-05)
 
 - Added `asymEncrypt` and `asymDecrypt` methods to utils and updated identity-wasm to 0.6.0
 
