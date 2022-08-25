@@ -66,7 +66,7 @@ export class IdentityRoutes {
 
 	addUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 		try {
-			const { authorization } = req.headers;
+			const { authorization } = req?.headers;
 			const user = req.body as IdentitySchemaBody;
 			const existingUser = await this.userService.getIdentityId(user.username);
 			if (existingUser) {

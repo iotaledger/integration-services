@@ -32,7 +32,7 @@ import {
   IClientConfig,
   Network,
   Client
-} from '@iota/identity-wasm/node';
+} from '@iota/identity-wasm/web';
 import addFormats from 'ajv-formats';
 import Ajv from 'ajv';
 
@@ -45,7 +45,6 @@ export class IdentityClient extends BaseClient {
     super(config);
     this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.ssiBridgeUrl!!;
     this.baseUrl = this.baseUrl + `/api/${config.apiVersionSsiBridge}`;
-    this.permaNode = config?.permaNode;
     this.node = config?.node;
   }
 
@@ -62,35 +61,31 @@ export class IdentityClient extends BaseClient {
     claimType = UserType.Person,
     claim?: any,
     hidden?: boolean
-  ) {
-    const existingUser = await this.search({ username: username });
-    if (existingUser.length === 0) {
-      const createIdentity: CreateIdentityBody = {
-        username,
-        hidden,
-        claim: {
-          ...claim,
-          type: claimType
-        }
-      };
-      const ajv = this.getAjv();
-      const validObject = ajv.validate(CreateIdentityBodySchema, createIdentity);
-      if (validObject) {
-        const identity = await this.createIdentity();
-        const user: User = {
-          ...createIdentity,
-          id: identity.id
-        };
-        await this.add(user);
-
-        return {
-          ...identity
-        };
-      } else {
-        throw new Error('Not the right properties provided for creating an identity.');
+  ): Promise<IdentityKeys> {
+    const createIdentity: CreateIdentityBody = {
+      username,
+      hidden,
+      claim: {
+        ...claim,
+        type: claimType
       }
+    };
+    const ajv = this.getAjv();
+    const validObject = ajv.validate(CreateIdentityBodySchema, createIdentity);
+    if (validObject) {
+      const identity = await this.generateIdentity();
+      const identityKeys = await this.encodeIdentityKeys(identity);
+      const user: User = {
+        ...createIdentity,
+        id: identityKeys.id
+      };
+      await this.add(user);
+
+      return {
+        ...identityKeys
+      };
     } else {
-      throw new Error('User already exists.');
+      throw new Error('Not the right properties provided for creating an identity.');
     }
   }
 
@@ -355,9 +350,12 @@ export class IdentityClient extends BaseClient {
     return await this.post(`${this.baseUrl}/authentication/verify-jwt`, jwt);
   }
 
-  private async createIdentity(): Promise<IdentityKeys> {
+  private async encodeIdentityKeys(identity: {
+    doc: Document;
+    signingKeys: KeyPair;
+    encryptionKeys: KeyPair;
+  }): Promise<IdentityKeys> {
     try {
-      const identity = await this.generateIdentity();
       const publicKey = bs58.encode(identity.signingKeys.public());
       const privateKey = bs58.encode(identity.signingKeys.private());
       const keyType = identity.signingKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
@@ -397,7 +395,7 @@ export class IdentityClient extends BaseClient {
     try {
       const verificationFragment = 'kex-0';
       const signingKeyPair = new KeyPair(KeyType.Ed25519);
-      const document = new Document(signingKeyPair, this.getConfig(false)?.network?.name());
+      const document = new Document(signingKeyPair, this.getConfig()?.network?.name());
 
       // Add encryption keys and capabilities to Identity
       const encryptionKeyPair = new KeyPair(KeyType.X25519);
@@ -420,10 +418,10 @@ export class IdentityClient extends BaseClient {
     }
   }
 
-  private getConfig(usePermaNode?: boolean): IClientConfig {
-    if (this.permaNode && this.node) {
+  private getConfig(): IClientConfig {
+    if (this.node) {
       return {
-        permanodes: usePermaNode ? [{ url: this.permaNode }] : [],
+        permanodes: [],
         primaryNode: { url: this.node },
         network: Network.mainnet(),
         localPow: false
@@ -433,8 +431,8 @@ export class IdentityClient extends BaseClient {
     }
   }
 
-  private getIdentityClient(usePermaNode?: boolean) {
-    const clientConfig = this.getConfig(usePermaNode);
+  private getIdentityClient() {
+    const clientConfig = this.getConfig();
     return Client.fromConfig(clientConfig);
   }
 

@@ -2,7 +2,7 @@
 
 ### 0.2.3-alpha.1 (2022-08-24)
 
-- Updated method for creating idenities locally.
+- Updated method for creating idenities locally. Removed permaNode from ClientConfig.
 
 ### 0.2.3-alpha.0 (2022-08-24)
 

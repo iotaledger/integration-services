@@ -19,7 +19,7 @@ import jwt from 'jsonwebtoken';
 import { ConfigurationService } from './configuration-service';
 
 export class UserService {
-	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
+	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) { }
 
 	async searchUsers(userSearch: UserSearch): Promise<UserSearchResponse[]> {
 		const usersPersistence = await userDb.searchUsers(userSearch);
@@ -113,9 +113,9 @@ export class UserService {
 		if (!this.hasValidFields(user)) {
 			throw new Error('no valid body provided!');
 		}
-		if (!user?.creator){
+		if (!user?.creator) {
 			const creatorId = this.decodeUserId(authorization);
-			user = {...user, creator: creatorId}
+			user = { ...user, creator: creatorId }
 		}
 		const validator = SchemaValidator.getInstance(this.logger);
 		validator.validateUser(user);

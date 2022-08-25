@@ -211,7 +211,7 @@ identityRouter.get('/identity/:id', apiKeyMiddleware, authMiddleWare, getUser);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/identity', apiKeyMiddleware, authMiddleWare, validate({ body: IdentitySchema }), mongodbSanitizer, addUser);
+identityRouter.post('/identity', apiKeyMiddleware, validate({ body: IdentitySchema }), mongodbSanitizer, addUser);
 
 /**
  * @openapi
