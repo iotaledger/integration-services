@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.2-alpha.0 (2022-08-05)
+
+- Added `asymEncrypt` and `asymDecrypt` methods to utils and updated identity-wasm to 0.6.0
+
 ### 0.2.0-alpha.9 (2022-08-05)
 
 - Made `encrypt` field in `IdentityKeys` optional

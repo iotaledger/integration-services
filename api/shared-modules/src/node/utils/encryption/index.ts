@@ -1,6 +1,8 @@
 import * as crypto from 'crypto';
 import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
+import * as aesjs from 'aes-js'
+import { X25519 } from '@iota/identity-wasm/node'
 
 export const createNonce = (): string => {
 	return crypto.randomBytes(20).toString('hex');
@@ -48,3 +50,19 @@ export const decrypt = (cipher: string, secret: string) => {
 	const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()]);
 	return decrpyted.toString();
 };
+
+export const asymEncrypt = (data: any, privateKey: string, channelPublicKey: string): string => {
+	const sharedKey = X25519.keyExchange(bs58.decode(privateKey), bs58.decode(channelPublicKey));
+	const dataBytes = aesjs.utils.utf8.toBytes(JSON.stringify(data));
+	const aesCtr  = new aesjs.ModeOfOperation.ctr(sharedKey);
+	const encrypted = aesCtr.encrypt(dataBytes);
+	return bs58.encode(encrypted)
+}
+
+export const asymDecrypt = (encrypted: string, privateKey: string, channelPublicKey: string): string => {
+	const sharedKey = X25519.keyExchange(bs58.decode(privateKey), bs58.decode(channelPublicKey));
+	const aesCtr  = new aesjs.ModeOfOperation.ctr(sharedKey);
+	const decoded = bs58.decode(encrypted);
+	const decrypted = aesCtr.decrypt(decoded)
+	return JSON.parse(aesjs.utils.utf8.fromBytes(decrypted))
+}
