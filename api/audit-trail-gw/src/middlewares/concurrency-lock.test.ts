@@ -66,7 +66,7 @@ describe('test authentication middleware', () => {
 		await expect(channelLock(req, res, nextMock)).rejects.toThrow('no user id provided!');
 	});
 
-	it('will create and release a chnanel lock', async () => {
+	it('will create and release a channel lock', async () => {
 		const req: any = {
 			user: UserIdentityMock.userData,
 			params: {
@@ -79,8 +79,8 @@ describe('test authentication middleware', () => {
 
 		await channelLock(req, res, nextMock);
 
-		expect(getLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
-		expect(insertLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:Ced3EL4XN7mLy5ACPdrNsR8HZib2MXKUQuAMQYEMbcb4');
+		expect(getLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi');
+		expect(insertLockSpy).toHaveBeenCalledWith('channel-lock-testaddress-did:iota:EMjd32WoJqWMHnktc3TrjdMH6brTovTe5bGpPrVuDdKi');
 		expect(nextMock).toHaveBeenCalledWith();
 	});
 

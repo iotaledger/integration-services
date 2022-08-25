@@ -2,6 +2,7 @@ import { Author } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
 import * as ChannelDataDb from '../database/channel-data';
 import * as SubscriptionDb from '../database/subscription';
+import * as SubscriptionStateDb from '../database/subscription-state';
 import {
 	Subscription,
 	SubscriptionUpdate,
@@ -55,12 +56,24 @@ export class SubscriptionService {
 	}
 
 	async deleteSubscription(channelAddress: string, id: string) {
-		await this.channelInfoService.removeChannelSubscriberId(channelAddress, id)
+		await this.channelInfoService.removeChannelSubscriberId(channelAddress, id);
 		return SubscriptionDb.removeSubscription(channelAddress, id);
 	}
 
+	async getSubscriptionState(channelAddress: string, id: string) {
+		return SubscriptionStateDb.getSubscriptionState(channelAddress, id);
+	}
+
+	async addSubscriptionState(channelAddress: string, id: string, state: string) {
+		return SubscriptionStateDb.addSubscriptionState(channelAddress, id, state);
+	}
+
+	async deleteSubscriptionState(channelAddress: string, id: string) {
+		return SubscriptionStateDb.removeSubscriptionState(channelAddress, id);
+	}
+
 	async updateSubscriptionState(channelAddress: string, id: string, state: string) {
-		return SubscriptionDb.updateSubscriptionState(channelAddress, id, state);
+		return SubscriptionStateDb.updateSubscriptionState(channelAddress, id, state);
 	}
 
 	async isAuthor(channelAddress: string, authorId: string): Promise<boolean> {
@@ -98,6 +111,9 @@ export class SubscriptionService {
 			}
 		}
 
+		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
+		await this.addSubscriptionState(channelAddress, subscriberId, state);
+
 		const subscription: Subscription = {
 			type: SubscriptionType.Subscriber,
 			id: subscriberId,
@@ -105,7 +121,6 @@ export class SubscriptionService {
 			subscriptionLink: isPublicChannel ? channelAddress : res.subscriptionLink,
 			accessRights: !isEmpty(presharedKey) || isPublicChannel ? AccessRights.Audit : accessRights, // always use audit for presharedKey and public channels
 			isAuthorized: !isEmpty(presharedKey) || isPublicChannel, // if there is a presharedKey or it is a public channel the subscription is already authorized
-			state: this.streamsService.exportSubscription(res.subscriber, this.password),
 			publicKey: res.publicKey,
 			pskId: res.pskId,
 			keyloadLink: !isEmpty(presharedKey) || isPublicChannel ? channelAddress : undefined
@@ -127,7 +142,9 @@ export class SubscriptionService {
 		const authorSub = await this.getSubscription(channelAddress, authorId);
 		const { publicKey, subscriptionLink, id } = subscription;
 		const pskId = authorSub.pskId;
-		const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
+
+		const state = await this.getSubscriptionState(channelAddress, authorId);
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true)) as Author;
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -137,9 +154,9 @@ export class SubscriptionService {
 		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions: Subscription[] = subscriptions
 			? subscriptions.filter(
-				(s: Subscription) =>
-					s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-			)
+					(s: Subscription) =>
+						s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			  )
 			: [];
 		const existingSubscriptionKeys = existingSubscriptions.map((s: Subscription) => s?.publicKey).filter((pubkey: string) => pubkey);
 
@@ -183,7 +200,9 @@ export class SubscriptionService {
 	async revokeSubscription(channelAddress: string, subscription: Subscription, authorSub: Subscription): Promise<void> {
 		const { publicKey } = subscription;
 		const pskId = authorSub.pskId;
-		const streamsAuthor = (await this.streamsService.importSubscription(authorSub.state, true)) as Author;
+
+		const state = await this.getSubscriptionState(channelAddress, authorSub.id);
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true)) as Author;
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -193,8 +212,8 @@ export class SubscriptionService {
 		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions = subscriptions
 			? subscriptions.filter(
-				(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-			)
+					(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			  )
 			: [];
 
 		// remove revoked public key
@@ -218,6 +237,7 @@ export class SubscriptionService {
 			})
 		);
 
+		await this.deleteSubscriptionState(channelAddress, subscription.id);
 		await SubscriptionDb.removeSubscription(channelAddress, subscription.id);
 		await ChannelDataDb.removeChannelData(channelAddress, subscription.id);
 		subscription.isAuthorized

@@ -88,7 +88,6 @@ describe('test request subscription route', () => {
 			id: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber
 		};
@@ -129,7 +128,9 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
@@ -152,7 +153,6 @@ describe('test request subscription route', () => {
 			id: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber
 		};
@@ -173,7 +173,9 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
@@ -195,7 +197,6 @@ describe('test request subscription route', () => {
 			channelAddress: 'testaddress',
 			id: 'did:iota:1234',
 			publicKey: 'testpublickey',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
 			// differences for auditor
@@ -221,7 +222,9 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
@@ -242,7 +245,6 @@ describe('test request subscription route', () => {
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
 			id: 'did:iota:1234',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
 			// differences for auditor
@@ -268,7 +270,7 @@ describe('test request subscription route', () => {
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
 		const addChannelSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
-		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => (ChannelType.public));
+		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.public);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
@@ -290,7 +292,6 @@ describe('test request subscription route', () => {
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
 			id: 'did:iota:1234',
-			state: 'teststate',
 			subscriptionLink: 'testaddress',
 			publicKey: 'mypublickey',
 			type: SubscriptionType.Subscriber,

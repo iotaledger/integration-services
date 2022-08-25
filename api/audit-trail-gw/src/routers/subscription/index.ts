@@ -4,6 +4,7 @@ import {
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema,
 	SubscriptionSchema,
+	SubscriptionStateSchema,
 	SubscriptionUpdateSchema
 } from '@iota/is-shared-modules';
 import { Logger } from '@iota/is-shared-modules/node';
@@ -22,10 +23,121 @@ const {
 	revokeSubscription,
 	addSubscription,
 	updateSubscription,
-	deleteSubscription
+	deleteSubscription,
+	getSubscriptionState,
+	updateSubscriptionState
 } = subscriptionRoutes;
 
 export const subscriptionRouter = Router();
+
+/**
+ * @openapi
+ * /subscriptions/state/{channelAddress}:
+ *   get:
+ *     summary: Get a subscription state by identity id.
+ *     description: Get a subscription state of a channel by identity id.
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     security:
+ *       - BearerAuth: []
+ *       - ApiKey: []
+ *     responses:
+ *       200:
+ *         description: Subscriptions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/SubscriptionStateSchema"
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.get('/state/:channelAddress', apiKeyMiddleware, authMiddleWare, getSubscriptionState);
+
+/**
+ * @openapi
+ * /subscriptions/state/{channelAddress}:
+ *   put:
+ *     summary: Updates an existing subscription
+ *     description: Updates an existing subscription
+ *     tags:
+ *     - subscriptions
+ *     parameters:
+ *     - name: channelAddress
+ *       in: path
+ *       required: true
+ *       schema:
+ *         $ref: "#/components/schemas/ChannelAddressSchema"
+ *       examples:
+ *         channelAddress:
+ *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
+ *           summary: Example channel address
+ *     security:
+ *       - BearerAuth: []
+ *       - ApiKey: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/SubscriptionStateSchema"
+ *           example:
+ *             isAuthorized: false
+ *             accessRights: ReadAndWrite
+ *     responses:
+ *       200:
+ *         description: Subscription updated
+ *       400:
+ *         description: Missing channelAddress / id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       404:
+ *         description: No subscription found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       401:
+ *         description: No valid api key provided/ Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+subscriptionRouter.put(
+	'/state/:channelAddress',
+	apiKeyMiddleware,
+	validate({ body: SubscriptionStateSchema }),
+	authMiddleWare,
+	mongodbSanitizer,
+	updateSubscriptionState
+);
 
 /**
  * @openapi

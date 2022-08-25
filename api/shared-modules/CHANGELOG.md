@@ -19,7 +19,8 @@
 - Rename `key` to `keys` of the identity keys
 - Adjust `IdentityDocument`to fulfill new data model
 - Remove `Json` from type and schema names
-- rename verifiable credential `initiatorId` to `initiator`
+- Rename verifiable credential `initiatorId` to `initiator`
+- Add type for `VerifiablePresentation`
 
 ### 0.1.20 (2022-07-22)
 

@@ -8,6 +8,10 @@
 
 - Fixed tests by adjusting the urls and adding new admin and user to test-data 
 
+### 0.2.1-alpha.4 (2022-08-03)
+
+- Add `createVerifiablePresentation` method to identity client.
+
 ### 0.2.1-alpha.3 (2022-08-15)
 
 - Added assigning of the api version variables in base.ts
