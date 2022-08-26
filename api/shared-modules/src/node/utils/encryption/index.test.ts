@@ -1,4 +1,6 @@
-import { createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce, verifySignedNonce } from '.';
+import bs58 from 'bs58';
+import * as crypto from 'crypto';
+import { asymDecrypt, asymEncrypt, createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce, verifySignedNonce } from '.';
 
 describe('test encryption', () => {
 	it('too short nonce so it should throw an error', async () => {
@@ -114,5 +116,36 @@ describe('test encryption', () => {
 			encrypt(text, secretKey);
 		};
 		expect(encryptedText).toThrowError('Invalid key length');
+	});
+});
+
+describe('test asymmetric encryption', () => {
+	it('expect decrypted text to be same', async () => {
+		const publicChannelKey = "7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeX";
+		const privateKey = "AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b";
+		const text = 'Hello World!';
+		const encryptedText = asymEncrypt(text, privateKey, publicChannelKey);
+		const decryptedText = asymDecrypt(encryptedText, privateKey, publicChannelKey);
+		expect(decryptedText).toBe(text);
+	});
+
+	it('expect too long key not to work', async () => {
+		const publicChannelKey = "7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeXAiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b";
+		const privateKey = "AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1";
+		const text = 'Hello World!';
+		const encryptedText = () => {
+			asymEncrypt(text, privateKey, publicChannelKey);
+		};
+		expect(encryptedText).toThrowError('Crypto Error: failed to convert bytes to X25519 Secret Key');
+	});
+
+	it('expect too small key not to work', async () => {
+		const privateKey = bs58.encode(Buffer.from('notsecurekey'));
+		const publicChannelKey = bs58.encode(Buffer.from('noValidKey'));
+		const text = 'Hello World!';
+		const encryptedText = () => {
+			asymEncrypt(text, privateKey, publicChannelKey);
+		};
+		expect(encryptedText).toThrowError('Crypto Error: failed to convert bytes to X25519 Secret Key');
 	});
 });
