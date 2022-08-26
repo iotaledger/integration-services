@@ -135,7 +135,7 @@ describe('test asymmetric encryption', () => {
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('Crypto Error: failed to convert bytes to X25519 Secret Key');
+		expect(encryptedText).toThrowError('invalid key size (must be 16, 24 or 32 bytes)');
 	});
 
 	it('expect too small key not to work', async () => {
@@ -145,6 +145,6 @@ describe('test asymmetric encryption', () => {
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('Crypto Error: failed to convert bytes to X25519 Secret Key');
+		expect(encryptedText).toThrowError('invalid key size (must be 16, 24 or 32 bytes)');
 	});
 });
