@@ -1,5 +1,4 @@
 import bs58 from 'bs58';
-import * as crypto from 'crypto';
 import { asymDecrypt, asymEncrypt, createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce, verifySignedNonce } from '.';
 
 describe('test encryption', () => {
