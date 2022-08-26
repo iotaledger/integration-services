@@ -12,7 +12,6 @@ import {
   UserSearchResponse,
   KeyTypes,
   Encoding,
-  CreateIdentityBodySchema,
   CreateIdentityBody
 } from '@iota/is-shared-modules';
 import { SearchCriteria } from '../models/searchCriteria';
@@ -33,12 +32,9 @@ import {
   Network,
   Client
 } from '@iota/identity-wasm/web';
-import addFormats from 'ajv-formats';
-import Ajv from 'ajv';
 
 export class IdentityClient extends BaseClient {
   private baseUrl: string;
-  private permaNode?: string;
   private node?: string;
 
   constructor(config: ClientConfig) {
@@ -70,23 +66,17 @@ export class IdentityClient extends BaseClient {
         type: claimType
       }
     };
-    const ajv = this.getAjv();
-    const validObject = ajv.validate(CreateIdentityBodySchema, createIdentity);
-    if (validObject) {
-      const identity = await this.generateIdentity();
-      const identityKeys = await this.encodeIdentityKeys(identity);
-      const user: User = {
-        ...createIdentity,
-        id: identityKeys.id
-      };
-      await this.add(user);
+    const identity = await this.generateIdentity();
+    const identityKeys = await this.encodeIdentityKeys(identity);
+    const user: User = {
+      ...createIdentity,
+      id: identityKeys.id
+    };
+    await this.add(user);
 
-      return {
-        ...identityKeys
-      };
-    } else {
-      throw new Error('Not the right properties provided for creating an identity.');
-    }
+    return {
+      ...identityKeys
+    };
   }
 
   /**
@@ -450,12 +440,5 @@ export class IdentityClient extends BaseClient {
     const client = await this.getIdentityClient();
     const tx = await client.publishDocument(newDoc);
     return tx?.messageId();
-  }
-
-  private getAjv() {
-    const ajv = addFormats(new Ajv({ allErrors: true }), ['date-time', 'date']);
-    ajv.addKeyword('kind');
-    ajv.addKeyword('modifier');
-    return ajv;
   }
 }
