@@ -42,7 +42,8 @@ import {
 	ErrorResponseSchema,
 	IdentityIdSchema,
 	SubscriptionSchema,
-	SubscriptionUpdateSchema
+	SubscriptionUpdateSchema,
+	VerifyJwtBodySchema
 } from '@iota/is-shared-modules';
 import fs from 'fs';
 
@@ -93,7 +94,8 @@ const schemas = {
 	IdentitySearchBodySchema,
 	IdentityIdSchema,
 	NonceSchema,
-	ChannelAddressSchema
+	ChannelAddressSchema,
+	VerifyJwtBodySchema
 };
 
 const openApiDoc = {

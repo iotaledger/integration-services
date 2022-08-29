@@ -16,7 +16,7 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
-	if ((identity as any)?.doc?.id == null) {
+	if ((identity as any)?.id == null) {
 		throw new Error('no identity found');
 	}
 

@@ -72,7 +72,7 @@ Subfolder:
 
 
 ## Prerequisite
-Node.js 8, or Node.js 10 or higher. We recommend the latest [LTS](https://nodejs.org/en/download/).
+Node.js v16.17.0 or higher. We recommend the latest [LTS](https://nodejs.org/en/download/).
 
 ## Installation
 1. Navigate to: `frama-c-client\run-example` 

@@ -19,7 +19,7 @@
     "serve-nodemon": "nodemon ./dist/index server",
     "serve": "run-p build-watch serve-nodemon",
     "generate-openapi-schemas": "ts-node ./src/tools/open-api-creator/index.ts",
-    "generate-api-reference": "ts-node ./src/tools/markdown-creator/index.ts && swagger-markdown -i ./src/tools/markdown-creator/openApiSpecification.json -o ../../documentation/docs/audit_trail_gw_api_reference.md"
+    "generate-api-reference": "ts-node ./src/tools/markdown-creator/index.ts && swagger-markdown -i ./src/tools/markdown-creator/openApiSpecification.json -o ../../documentation/docs/references/audit_trail_gw_api_reference.md"
   },
   "repository": {
     "type": "git",
