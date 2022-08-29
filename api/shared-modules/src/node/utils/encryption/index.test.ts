@@ -122,10 +122,22 @@ describe('test asymmetric encryption', () => {
 	it('expect decrypted text to be same', async () => {
 		const publicChannelKey = "7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeX";
 		const privateKey = "AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b";
-		const text = 'Hello World!';
+		const text = {
+			credentialSubject:
+			{
+				id: "did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV",
+				context: "https://schema.org/",
+				familyName: "Engineer",
+				givenName: "Test",
+				initiator: "did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y",
+				jobTitle: "Software Engineer",
+				name: "Test Engineer",
+				type: "Person"
+			}
+		};
 		const encryptedText = asymEncrypt(text, privateKey, publicChannelKey);
 		const decryptedText = asymDecrypt(encryptedText, privateKey, publicChannelKey);
-		expect(decryptedText).toBe(text);
+		expect(decryptedText).toStrictEqual(text);
 	});
 
 	it('expect too long key not to work', async () => {
@@ -135,7 +147,7 @@ describe('test asymmetric encryption', () => {
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('invalid key size (must be 16, 24 or 32 bytes)');
+		expect(encryptedText).toThrowError('Invalid key length');
 	});
 
 	it('expect too small key not to work', async () => {
@@ -145,6 +157,6 @@ describe('test asymmetric encryption', () => {
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('invalid key size (must be 16, 24 or 32 bytes)');
+		expect(encryptedText).toThrowError('Invalid key length');
 	});
 });
