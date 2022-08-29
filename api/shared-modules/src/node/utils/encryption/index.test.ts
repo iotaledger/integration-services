@@ -122,7 +122,7 @@ describe('test asymmetric encryption', () => {
 	it('expect decrypted text to be same', async () => {
 		const publicChannelKey = "7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeX";
 		const privateKey = "AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b";
-		const text = {
+		const data = {
 			credentialSubject:
 			{
 				id: "did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV",
@@ -135,9 +135,9 @@ describe('test asymmetric encryption', () => {
 				type: "Person"
 			}
 		};
-		const encryptedText = asymEncrypt(text, privateKey, publicChannelKey);
+		const encryptedText = asymEncrypt(data, privateKey, publicChannelKey);
 		const decryptedText = asymDecrypt(encryptedText, privateKey, publicChannelKey);
-		expect(decryptedText).toStrictEqual(text);
+		expect(JSON.parse(decryptedText)).toStrictEqual(data);
 	});
 
 	it('expect too long key not to work', async () => {

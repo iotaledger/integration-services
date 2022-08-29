@@ -60,5 +60,5 @@ export const asymDecrypt = (encrypted: string, privateKey: string, publicKey: st
 	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
 	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
 	const decrypted = decrypt(encrypted, bs58.encode(sharedKey))
-	return JSON.parse(decrypted)
+	return decrypted
 }
