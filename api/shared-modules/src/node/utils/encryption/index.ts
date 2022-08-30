@@ -48,3 +48,17 @@ export const decrypt = (cipher: string, secret: string) => {
 	const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()]);
 	return decrpyted.toString();
 };
+
+export const asymEncrypt = (data: any, privateKey: string, publicKey: string): string => {
+	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
+	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
+	const encrypted = encrypt(JSON.stringify(data), bs58.encode(sharedKey))
+	return encrypted
+}
+
+export const asymDecrypt = (encrypted: string, privateKey: string, publicKey: string): string => {
+	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
+	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
+	const decrypted = decrypt(encrypted, bs58.encode(sharedKey))
+	return decrypted
+}
