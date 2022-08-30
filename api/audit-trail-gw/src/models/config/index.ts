@@ -10,6 +10,8 @@ export interface Config {
 	hornetNode: string;
 	permaNode: string;
 	commitHash: string;
+	ssiBridgeUrl: string;
+	ssiBridgeApiKey: string;
 }
 
 export interface StreamsConfig {
