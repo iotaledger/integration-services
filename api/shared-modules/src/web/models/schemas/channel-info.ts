@@ -2,7 +2,8 @@ import { Type } from '@sinclair/typebox';
 
 export enum ChannelType {
 	public = 'public',
-	private = 'private'
+	private = 'private',
+	privatePlus = 'privatePlus'
 }
 
 export const TopicSchema = Type.Object({
@@ -22,12 +23,18 @@ export const ChannelInfoSchema = Type.Object({
 			description: 'An optional description of the channel.'
 		})
 	),
-	hidden: Type.Optional(Type.Boolean({default: false, description: 'If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel.'})),
-	visibilityList: Type.Optional(Type.Array(Type.Object({id: Type.String()}))),
+	hidden: Type.Optional(
+		Type.Boolean({
+			default: false,
+			description:
+				'If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel.'
+		})
+	),
+	visibilityList: Type.Optional(Type.Array(Type.Object({ id: Type.String() }))),
 	type: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
 	authorId: Type.String({ minLength: 50, maxLength: 53 }),
 	subscriberIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
-	requestedSubscriptionIds: Type.Optional(Type.Array(Type.String({minLength: 50, maxLength: 53}))),
+	requestedSubscriptionIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
 	topics: Type.Array(TopicSchema),
 	created: Type.Optional(Type.String({ format: 'date-time' })),
 	latestMessage: Type.Optional(Type.String({ format: 'date-time' }))
@@ -35,14 +42,14 @@ export const ChannelInfoSchema = Type.Object({
 
 export const ChannelInfoSearchSchema = Type.Object({
 	authorId: Type.Optional(Type.String()),
-	subscriberId: Type.Optional(Type.String()), 
+	subscriberId: Type.Optional(Type.String()),
 	requestedSubscriptionId: Type.Optional(Type.String()),
 	name: Type.Optional(
 		Type.String({
 			description: 'Optional channel name. A channel can be searched by its name.'
 		})
 	),
-	hidden: Type.Optional(Type.Boolean({description: 'Channels which are hidden to others.'})),
+	hidden: Type.Optional(Type.Boolean({ description: 'Channels which are hidden to others.' })),
 	channelType: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
 	topicType: Type.Optional(Type.String()),
 	topicSource: Type.Optional(Type.String()),
