@@ -78,13 +78,15 @@ export const IdentityDocumentSchema = Type.Object({
 				publicKeyMultibase: Type.String()
 			})
 		),
-		keyAgreement: Type.Array(
-			Type.Object({
-				id: Type.String(),
-				controller: Type.String({ minLength: 50, maxLength: 53 }),
-				type: Type.String(),
-				publicKeyMultibase: Type.String()
-			})
+		keyAgreement: Type.Optional(
+			Type.Array(
+				Type.Object({
+					id: Type.String(),
+					controller: Type.String({ minLength: 50, maxLength: 53 }),
+					type: Type.String(),
+					publicKeyMultibase: Type.String()
+				})
+			)
 		),
 		service: Type.Optional(
 			Type.Array(
