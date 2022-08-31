@@ -9,7 +9,7 @@ import {
 	ValidateBody,
 	ChannelLogRequestOptions,
 	ChannelType,
-	IdentityDocument
+	LatestIdentity
 } from '@iota/is-shared-modules';
 import { ILogger, getDateFromString } from '@iota/is-shared-modules/node';
 import { get as lodashGet, isEmpty } from 'lodash';
@@ -46,18 +46,23 @@ export class ChannelRoutes {
 			if (channelExists) {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
 			}
-
+			let asymPubKey;
 			// TODO request the ssi-bridge for latest identity doc
 			if (type === ChannelType.privatePlus) {
 				const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
 				const apiKey = ssiBridgeApiKey ? `?api-key=${ssiBridgeApiKey}` : '';
 				const url = `${ssiBridgeUrl}/verification/latest-document/${id}${apiKey}`;
-
 				const identityRes = await axios.get(url);
-				const identityDoc = identityRes.data as IdentityDocument;
-				const doooc = JSON.stringify(identityDoc);
-				console.log('DOOOC', doooc);
-				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
+				const identityDoc = identityRes.data as LatestIdentity;
+				const verificationFragment = 'kex-0';
+
+				const publicKeyBase = identityDoc?.document?.doc?.keyAgreement?.find((kex) => kex.id === `${id}#${verificationFragment}`)
+					?.publicKeyMultibase;
+				asymPubKey = publicKeyBase?.substring(1); // strip the z from the public key
+
+				if (!asymPubKey) {
+					return res.status(StatusCodes.CONFLICT).send({ error: 'could not find an encryption key in the identity document.' });
+				}
 			}
 
 			const channel = await this.channelService.create({
@@ -70,7 +75,8 @@ export class ChannelRoutes {
 				presharedKey,
 				type,
 				hidden,
-				visibilityList
+				visibilityList,
+				asymPubKey
 			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {

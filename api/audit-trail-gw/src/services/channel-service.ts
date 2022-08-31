@@ -49,10 +49,10 @@ export class ChannelService {
 		presharedKey?: string;
 		type?: ChannelType;
 		hidden?: boolean;
-		asymKey?: string;
+		asymPubKey?: string;
 		visibilityList: { id: string }[];
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymKey } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymPubKey } = params;
 		let statePassword = this.password;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
@@ -70,7 +70,7 @@ export class ChannelService {
 			statePassword = crypto
 				.diffieHellman({
 					privateKey: tmpKeyPair.privateKey,
-					publicKey: crypto.createPublicKey(asymKey)
+					publicKey: crypto.createPublicKey(asymPubKey)
 				})
 				.toString('utf-8');
 			console.log('statePasswordstatePasswordstatePassword', statePassword);
