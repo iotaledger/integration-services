@@ -1,5 +1,6 @@
 import { Author, Subscriber } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
+import crypto from 'crypto';
 import {
 	Subscription,
 	AccessRights,
@@ -48,9 +49,11 @@ export class ChannelService {
 		presharedKey?: string;
 		type?: ChannelType;
 		hidden?: boolean;
+		asymKey?: string;
 		visibilityList: { id: string }[];
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymKey } = params;
+		let statePassword = this.password;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -62,7 +65,18 @@ export class ChannelService {
 			throw new Error('could not create the channel');
 		}
 
-		const state = this.streamsService.exportSubscription(res.author, this.password);
+		if (type === ChannelType.privatePlus) {
+			const tmpKeyPair = crypto.generateKeyPairSync('x25519');
+			statePassword = crypto
+				.diffieHellman({
+					privateKey: tmpKeyPair.privateKey,
+					publicKey: crypto.createPublicKey(asymKey)
+				})
+				.toString('utf-8');
+			console.log('statePasswordstatePasswordstatePassword', statePassword);
+		}
+
+		const state = this.streamsService.exportSubscription(res.author, statePassword);
 		await this.subscriptionService.addSubscriptionState(res.channelAddress, id, state);
 
 		const subscription: Subscription = {

@@ -8,14 +8,20 @@ import {
 	ReimportBody,
 	ValidateBody,
 	ChannelLogRequestOptions,
-	ChannelType
+	ChannelType,
+	IdentityDocument
 } from '@iota/is-shared-modules';
 import { ILogger, getDateFromString } from '@iota/is-shared-modules/node';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { compareAsc } from 'date-fns';
+import axios from 'axios';
 
 export class ChannelRoutes {
-	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}
+	constructor(
+		private readonly channelService: ChannelService,
+		private readonly logger: ILogger,
+		private readonly config: { ssiBridgeUrl: string; ssiBridgeApiKey: string }
+	) {}
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
@@ -38,6 +44,19 @@ export class ChannelRoutes {
 
 			const channelExists = await this.channelService.channelExists(name);
 			if (channelExists) {
+				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
+			}
+
+			// TODO request the ssi-bridge for latest identity doc
+			if (type === ChannelType.privatePlus) {
+				const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
+				const apiKey = ssiBridgeApiKey ? `?api-key=${ssiBridgeApiKey}` : '';
+				const url = `${ssiBridgeUrl}/verification/latest-document/${id}${apiKey}`;
+
+				const identityRes = await axios.get(url);
+				const identityDoc = identityRes.data as IdentityDocument;
+				const doooc = JSON.stringify(identityDoc);
+				console.log('DOOOC', doooc);
 				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
 			}
 

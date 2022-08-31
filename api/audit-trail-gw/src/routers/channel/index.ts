@@ -6,8 +6,15 @@ import { channelService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelLock } from '../../middlewares/concurrency-lock';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
+import { ConfigurationService } from '../../services/configuration-service';
 
-const channelRoutes = new ChannelRoutes(channelService, Logger.getInstance());
+const logger = Logger.getInstance();
+const configService = ConfigurationService.getInstance(logger);
+
+const channelRoutes = new ChannelRoutes(channelService, logger, {
+	ssiBridgeUrl: configService.config.ssiBridgeUrl,
+	ssiBridgeApiKey: configService.config.ssiBridgeApiKey
+});
 const { addLog, createChannel, getLogs, getHistory, reimport, validateLogs } = channelRoutes;
 
 export const channelRouter = Router();
