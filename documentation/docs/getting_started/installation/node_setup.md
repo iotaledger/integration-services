@@ -17,7 +17,7 @@ This section will guide you in setting up the Integration Services API using nod
 
 Please make sure to have the following dependencies installed before moving forward:
 
-* [node.js](https://nodejs.org/) min. v16.17.0
+* [node.js](https://nodejs.org/) min. v17.1.0
 * [docker](https://docs.docker.com/get-docker/)
 * [docker-compose](https://docs.docker.com/compose/install/)
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)

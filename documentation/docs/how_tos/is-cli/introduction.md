@@ -20,7 +20,7 @@ and `SSI Bridge`. In a simple way users can create and manage Identities, Verifi
 
 # Prerequisites
 
--   min. Node.js v16.17.0
+-   min. Node.js v17.1.0
 
 # Installation
 
