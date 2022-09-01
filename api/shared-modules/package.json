@@ -10,7 +10,8 @@
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build-copy-node-folder": "mv ./lib/node/ ./node",
     "build": "npm-run-all build-tsc build-lint build-copy-node-folder",
-    "serve": "tsc --project ./ --watch"
+    "serve": "tsc --project ./ --watch",
+    "test": "jest --detectOpenHandles"
   },
   "author": {
     "name": "Dominic Zettl",

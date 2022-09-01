@@ -49,16 +49,24 @@ export const decrypt = (cipher: string, secret: string) => {
 	return decrpyted.toString();
 };
 
-export const asymEncrypt = (data: any, privateKey: string, publicKey: string): string => {
+export const createSharedKey = (privateKey: string, publicKey: string): string => {
 	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
-	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
-	const encrypted = encrypt(JSON.stringify(data), bs58.encode(sharedKey))
-	return encrypted
-}
+	const sharedKey = diffie.computeSecret(bs58.decode(publicKey));
+	return bs58.encode(sharedKey);
+};
+
+export const asymEncrypt = (data: string, privateKey: string, publicKey: string): string => {
+	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
+	const sharedKey = diffie.computeSecret(bs58.decode(publicKey));
+	console.log('sharedKey', sharedKey);
+	const encrypted = encrypt(data, bs58.encode(sharedKey));
+	return encrypted;
+};
 
 export const asymDecrypt = (encrypted: string, privateKey: string, publicKey: string): string => {
 	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
-	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
-	const decrypted = decrypt(encrypted, bs58.encode(sharedKey))
-	return decrypted
-}
+	const sharedKey = diffie.computeSecret(bs58.decode(publicKey));
+	console.log('sharedKey', sharedKey);
+	const decrypted = decrypt(encrypted, bs58.encode(sharedKey));
+	return decrypted;
+};
