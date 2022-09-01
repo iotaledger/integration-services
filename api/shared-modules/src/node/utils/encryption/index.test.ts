@@ -128,8 +128,8 @@ describe('test encryption', () => {
 	});
 });
 
-fdescribe('test asymmetric encryption', () => {
-	it('expect decrypted text to be same', async () => {
+describe('test asymmetric encryption', () => {
+	it('expect decrypted text to be same', () => {
 		const publicChannelKey = '7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeX';
 		const privateKey = 'AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b';
 		const data = 'mystring';
@@ -138,23 +138,23 @@ fdescribe('test asymmetric encryption', () => {
 		expect(decryptedText).toEqual(data);
 	});
 
-	it('expect too long key not to work', async () => {
+	it('expect too long key not to work', () => {
 		const publicChannelKey = '7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeXAiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b';
 		const privateKey = 'AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1';
 		const text = 'Hello World!';
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('Supplied key is too large');
+		expect(encryptedText).toThrowError('Invalid key length');
 	});
 
-	it('expect too small key not to work', async () => {
+	it('expect too small key not to work', () => {
 		const privateKey = bs58.encode(Buffer.from('notsecurekey'));
 		const publicChannelKey = bs58.encode(Buffer.from('noValidKey'));
 		const text = 'Hello World!';
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('Invalid key type');
+		expect(encryptedText).toThrowError('Invalid key length');
 	});
 });
