@@ -14,7 +14,7 @@ jobs:
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '17.x'
           registry-url: 'https://registry.npmjs.org'
       # build local package in advance
       - run: |
