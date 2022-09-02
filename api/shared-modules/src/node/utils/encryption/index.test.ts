@@ -3,6 +3,7 @@ import {
 	asymDecrypt,
 	asymEncrypt,
 	createNonce,
+	createSharedKey,
 	decrypt,
 	encrypt,
 	getHexEncodedKey,
@@ -156,5 +157,11 @@ describe('test asymmetric encryption', () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
 		expect(encryptedText).toThrowError('Invalid key length');
+	});
+
+	it('should create same shared key', () => {
+		const sharedKey = createSharedKey('8YHGQoGDEGP9Fx85aTkVsBbEUhVQUjwDMJwYR2mcxQeg', 'Ci28kDxLuk32pWJnqphZ5sLCdFF2wVm34mxDCdp9jtKP');
+		const sharedKey2 = createSharedKey('84snRhd8HpMutWQDe3qweyBk1ndMRP9yp7tNKWtNte4Z', '2QUVnUPWAkNF7s4udjHs9pU6m55BzpxoFHnNuWJDSALn');
+		expect(sharedKey).toEqual(sharedKey2);
 	});
 });
