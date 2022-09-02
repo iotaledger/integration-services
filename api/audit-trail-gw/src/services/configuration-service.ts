@@ -73,7 +73,7 @@ export class ConfigurationService {
 
 			// apiKey can be empty if the host decides so
 			// commitHash is set automatically during deployment
-			const optionalEnvVariables = ['apiKey', 'commitHash', 'ssiBridgeApiKey'];
+			const optionalEnvVariables = ['apiKey', 'commitHash', 'ssiBridgeUrl', 'ssiBridgeApiKey'];
 			Object.values(config).map((value, i) => {
 				if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
 					if (optionalEnvVariables.includes(Object.keys(config)[i])) {

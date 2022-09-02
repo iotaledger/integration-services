@@ -1,6 +1,5 @@
 import { Author, Subscriber } from '@iota/streams/node/streams_wasm';
 import { StreamsService } from './streams-service';
-import crypto from 'crypto';
 import {
 	Subscription,
 	AccessRights,
@@ -23,6 +22,9 @@ import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { searchChannelInfo } from '../database/channel-info';
 import { isEmpty } from 'lodash';
+import * as bs58 from 'bs58';
+import * as Identity from '@iota/identity-wasm/node';
+import { createSharedKey } from '../../../shared-modules/src/node/utils/encryption/index';
 
 export class ChannelService {
 	private readonly password: string;
@@ -66,13 +68,15 @@ export class ChannelService {
 		}
 
 		if (type === ChannelType.privatePlus) {
-			const tmpKeyPair = crypto.generateKeyPairSync('x25519');
-			statePassword = crypto
-				.diffieHellman({
-					privateKey: tmpKeyPair.privateKey,
-					publicKey: crypto.createPublicKey(asymPubKey)
-				})
-				.toString('utf-8');
+			console.log('asymPubKey', asymPubKey);
+			// TODO replace this with a new endpoint at the ssi-bridge
+			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
+
+			const publicEncryptionKey = bs58.encode(keypair.public());
+			const privateEncryptionKey = bs58.encode(keypair.private());
+			console.log('diffh private key: ', publicEncryptionKey);
+			console.log('diffh PublicKey key: ', privateEncryptionKey);
+			statePassword = createSharedKey(privateEncryptionKey, asymPubKey);
 			console.log('statePasswordstatePasswordstatePassword', statePassword);
 		}
 
