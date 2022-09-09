@@ -37,7 +37,10 @@ export const ChannelInfoSchema = Type.Object({
 	requestedSubscriptionIds: Type.Optional(Type.Array(Type.String({ minLength: 50, maxLength: 53 }))),
 	topics: Type.Array(TopicSchema),
 	created: Type.Optional(Type.String({ format: 'date-time' })),
-	latestMessage: Type.Optional(Type.String({ format: 'date-time' }))
+	latestMessage: Type.Optional(Type.String({ format: 'date-time' })),
+	peerPublicKey: Type.Optional(
+		Type.String({ minLength: 1, description: 'Public key used for privatePlus channels to encrypt channel data and state asymmetrically.' })
+	)
 });
 
 export const ChannelInfoSearchSchema = Type.Object({
