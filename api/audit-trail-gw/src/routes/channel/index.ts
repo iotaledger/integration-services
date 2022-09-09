@@ -25,6 +25,7 @@ export class ChannelRoutes {
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
+			let asymPubKey: string = undefined;
 			const {
 				name,
 				description,
@@ -46,8 +47,7 @@ export class ChannelRoutes {
 			if (channelExists) {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
 			}
-			let asymPubKey;
-			// TODO request the ssi-bridge for latest identity doc
+
 			if (type === ChannelType.privatePlus) {
 				const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
 				const apiKey = ssiBridgeApiKey ? `?api-key=${ssiBridgeApiKey}` : '';
@@ -61,7 +61,7 @@ export class ChannelRoutes {
 				asymPubKey = publicKeyBase?.substring(1); // strip the z from the public key
 
 				if (!asymPubKey) {
-					return res.status(StatusCodes.CONFLICT).send({ error: 'could not find an encryption key in the identity document.' });
+					return res.status(StatusCodes.BAD_REQUEST).send({ error: 'could not find an encryption key in the identity document.' });
 				}
 			}
 
