@@ -160,6 +160,6 @@ describe('test asymmetric encryption', () => {
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('error:0680008E:asn1 encoding routines::not enough data');
+		expect(encryptedText).toThrowError();
 	});
 });

@@ -102,7 +102,8 @@ export class ChannelInfoService {
 			channelAddress: ci.channelAddress,
 			latestMessage: ci.latestMessage && getDateFromString(ci.created),
 			hidden: ci.hidden,
-			visibilityList: ci.visibilityList
+			visibilityList: ci.visibilityList,
+			peerPublicKey: ci.peerPublicKey
 		};
 
 		return channelInfoPersistence;
@@ -125,7 +126,8 @@ export class ChannelInfoService {
 			latestMessage: cip.latestMessage && getDateStringFromDate(cip.latestMessage),
 			channelAddress: cip.channelAddress,
 			hidden: cip.hidden,
-			visibilityList: cip.visibilityList || []
+			visibilityList: cip.visibilityList || [],
+			peerPublicKey: cip.peerPublicKey
 		};
 		return channelInfo;
 	}

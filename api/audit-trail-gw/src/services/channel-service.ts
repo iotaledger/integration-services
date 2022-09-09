@@ -12,7 +12,7 @@ import {
 	CreateChannelResponse,
 	ValidateResponse
 } from '@iota/is-shared-modules';
-import { getDateStringFromDate, ILogger } from '@iota/is-shared-modules/node';
+import { getDateStringFromDate, ILogger, createSharedKey } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -24,7 +24,6 @@ import { searchChannelInfo } from '../database/channel-info';
 import { isEmpty } from 'lodash';
 import * as bs58 from 'bs58';
 import * as Identity from '@iota/identity-wasm/node';
-import { createSharedKey } from '../../../shared-modules/src/node/utils/encryption/index';
 
 export class ChannelService {
 	private readonly password: string;
@@ -55,6 +54,7 @@ export class ChannelService {
 		visibilityList: { id: string }[];
 	}): Promise<CreateChannelResponse> {
 		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymPubKey } = params;
+		let peerPublicKey: string = undefined;
 		let statePassword = this.password;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
@@ -68,16 +68,11 @@ export class ChannelService {
 		}
 
 		if (type === ChannelType.privatePlus) {
-			console.log('asymPubKey', asymPubKey);
 			// TODO replace this with a new endpoint at the ssi-bridge
 			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
-
-			const publicEncryptionKey = bs58.encode(keypair.public());
-			const privateEncryptionKey = bs58.encode(keypair.private());
-			console.log('diffh private key: ', publicEncryptionKey);
-			console.log('diffh PublicKey key: ', privateEncryptionKey);
-			statePassword = createSharedKey(privateEncryptionKey, asymPubKey);
-			console.log('statePasswordstatePasswordstatePassword', statePassword);
+			peerPublicKey = bs58.encode(keypair.public());
+			const tmpPrivateEncryptionKey = bs58.encode(keypair.private());
+			statePassword = createSharedKey(tmpPrivateEncryptionKey, asymPubKey);
 		}
 
 		const state = this.streamsService.exportSubscription(res.author, statePassword);
@@ -105,7 +100,8 @@ export class ChannelService {
 			channelAddress: res.channelAddress,
 			type,
 			hidden,
-			visibilityList
+			visibilityList,
+			peerPublicKey
 		});
 
 		return {
