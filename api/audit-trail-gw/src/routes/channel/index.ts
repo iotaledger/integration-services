@@ -15,10 +15,12 @@ import { ILogger, getDateFromString } from '@iota/is-shared-modules/node';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { compareAsc } from 'date-fns';
 import axios from 'axios';
+import { ChannelInfoService } from '../../services/channel-info-service';
 
 export class ChannelRoutes {
 	constructor(
 		private readonly channelService: ChannelService,
+		private readonly channelInfoService: ChannelInfoService,
 		private readonly logger: ILogger,
 		private readonly config: { ssiBridgeUrl: string; ssiBridgeApiKey: string }
 	) {}
@@ -104,13 +106,24 @@ export class ChannelRoutes {
 
 			const limitParam = parseInt(<string>req.query.limit, 10);
 			const indexParam = parseInt(<string>req.query.index, 10);
+			const sharedKey = <string>req.query['shared-key'];
 			const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 			const index = isNaN(indexParam) ? undefined : indexParam;
 			const ascending: boolean = <string>req.query.asc === 'true';
 			const options: ChannelLogRequestOptions =
 				limit !== undefined && index !== undefined ? { limit, index, ascending, startDate, endDate } : { ascending, startDate, endDate };
 
-			const channel = await this.channelService.getLogs(channelAddress, id, options);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && sharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'you should not set a shared-key.' });
+			}
+
+			if (type === ChannelType.privatePlus && !sharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no shared-key provided.' });
+			}
+
+			const channel = await this.channelService.getLogs(channelAddress, id, options, sharedKey);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
@@ -152,6 +165,16 @@ export class ChannelRoutes {
 
 			if (isEmpty(body)) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'empty body' });
+			}
+
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && body.sharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'you should not set a shared-key.' });
+			}
+
+			if (type === ChannelType.privatePlus && !body.sharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no sharedKey provided.' });
 			}
 
 			const channel = await this.channelService.addLog(channelAddress, id, body);
