@@ -95,10 +95,8 @@ export class VerificationService {
 			throw new Error('no valid server identity to check the credential.');
 		}
 		const isVerifiedCredential = await this.ssiService.checkVerifiableCredential(vc);
-		const trustedRoots = await this.getTrustedRootIds();
 
-		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
-		const isVerified = isVerifiedCredential && isTrustedIssuer;
+		const isVerified = isVerifiedCredential && serverIdentity.id === vc.issuer;
 		return isVerified;
 	}
 
