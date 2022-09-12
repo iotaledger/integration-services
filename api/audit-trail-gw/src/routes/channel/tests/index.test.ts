@@ -24,7 +24,7 @@ describe('test channel routes', () => {
 		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
-		channelRoutes = new ChannelRoutes(channelService, LoggerMock, {
+		channelRoutes = new ChannelRoutes(channelService, channelInfoService, LoggerMock, {
 			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
 			ssiBridgeUrl: ConfigMock.ssiBridgeUrl
 		});

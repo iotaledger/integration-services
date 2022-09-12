@@ -26,7 +26,7 @@ describe('test re-import route', () => {
 		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
-		channelRoutes = new ChannelRoutes(channelService, LoggerMock, {
+		channelRoutes = new ChannelRoutes(channelService, channelInfoService, LoggerMock, {
 			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
 			ssiBridgeUrl: ConfigMock.ssiBridgeUrl
 		});
@@ -195,7 +195,7 @@ describe('test re-import route', () => {
 		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.id, newSub);
+		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.id, newSub, ConfigMock.streamsConfig.statePassword);
 		expect(loggerSpy).not.toHaveBeenCalled();
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});

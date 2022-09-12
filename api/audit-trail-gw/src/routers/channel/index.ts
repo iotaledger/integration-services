@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema } from '@iota/is-shared-modules';
 import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelRoutes } from '../../routes/channel';
-import { channelService } from '../services';
+import { channelService, channelInfoService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelLock } from '../../middlewares/concurrency-lock';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
@@ -11,7 +11,7 @@ import { ConfigurationService } from '../../services/configuration-service';
 const logger = Logger.getInstance();
 const configService = ConfigurationService.getInstance(logger);
 
-const channelRoutes = new ChannelRoutes(channelService, logger, {
+const channelRoutes = new ChannelRoutes(channelService, channelInfoService, logger, {
 	ssiBridgeUrl: configService.config.ssiBridgeUrl,
 	ssiBridgeApiKey: configService.config.ssiBridgeApiKey
 });
