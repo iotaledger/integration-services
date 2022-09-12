@@ -61,7 +61,8 @@ export const AddChannelLogBodySchema = Type.Object({
 	created: Type.Optional(Type.String({ format: 'date-time', description: 'Public available date.' })),
 	metadata: Type.Optional(Type.Any({ description: 'Public available metadata.' })),
 	publicPayload: Type.Optional(Type.Any({ description: 'Public available payload.' })),
-	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' }))
+	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' })),
+	sharedKey: Type.Optional(Type.Any({ description: 'Shared key required for privatePlus channels.' }))
 });
 
 export const ReimportBodySchema = Type.Object({
