@@ -72,7 +72,8 @@ export class ChannelService {
 			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
 			peerPublicKey = bs58.encode(keypair.public());
 			const tmpPrivateEncryptionKey = bs58.encode(keypair.private());
-			statePassword = createSharedKey(tmpPrivateEncryptionKey, asymPubKey);
+			statePassword = createSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
+			console.log('statePassword', statePassword);
 		}
 
 		const state = this.streamsService.exportSubscription(res.author, statePassword);
@@ -151,7 +152,7 @@ export class ChannelService {
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const statePassword = sharedKey || this.statePassword;
+				const statePassword = this.getPassword(sharedKey);
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -170,7 +171,7 @@ export class ChannelService {
 				// for all other channels we simply use the subscription and cache the data in the database
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, statePassword);
 
 				await this.fetchLogs(channelAddress, id, sub, statePassword);
 				return await ChannelDataDb.getChannelData(channelAddress, id, options, statePassword);
@@ -186,7 +187,7 @@ export class ChannelService {
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
 				const { sharedKey } = channelLog;
-				const statePassword = sharedKey || this.statePassword;
+				const statePassword = this.getPassword(sharedKey);
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
@@ -196,7 +197,7 @@ export class ChannelService {
 
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, statePassword);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -252,7 +253,7 @@ export class ChannelService {
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, this.statePassword); // TODO
 
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
@@ -287,7 +288,7 @@ export class ChannelService {
 
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, this.statePassword); // TODO
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -315,5 +316,11 @@ export class ChannelService {
 				release();
 			}
 		});
+	}
+	private getPassword(sharedKey: string) {
+		if (sharedKey) {
+			return sharedKey.slice(0, 32);
+		}
+		return this.statePassword;
 	}
 }
