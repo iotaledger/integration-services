@@ -151,7 +151,7 @@ export class ChannelService {
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const statePassword = this.getPassword(asymSharedKey);
+				const password = this.getPassword(asymSharedKey);
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -170,10 +170,10 @@ export class ChannelService {
 				// for all other channels we simply use the subscription and cache the data in the database
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor, statePassword);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
-				await this.fetchLogs(channelAddress, id, sub, statePassword);
-				return await ChannelDataDb.getChannelData(channelAddress, id, options, statePassword);
+				await this.fetchLogs(channelAddress, id, sub, password);
+				return await ChannelDataDb.getChannelData(channelAddress, id, options, password);
 			} finally {
 				release();
 			}
@@ -186,7 +186,7 @@ export class ChannelService {
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
 				const { asymSharedKey } = channelLog;
-				const statePassword = this.getPassword(asymSharedKey);
+				const password = this.getPassword(asymSharedKey);
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
@@ -196,7 +196,7 @@ export class ChannelService {
 
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor, statePassword);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -213,7 +213,7 @@ export class ChannelService {
 					}
 				} else {
 					// fetch prev logs before writing new data to the channel
-					await this.fetchLogs(channelAddress, id, sub, statePassword);
+					await this.fetchLogs(channelAddress, id, sub, password);
 				}
 
 				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(log);
@@ -221,13 +221,9 @@ export class ChannelService {
 
 				// store newly added log
 				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log, source: { publicKey: res.source, id } };
-				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], statePassword);
+				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], password);
 
-				await this.subscriptionService.updateSubscriptionState(
-					channelAddress,
-					id,
-					this.streamsService.exportSubscription(sub, statePassword)
-				);
+				await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, password));
 				return newLog;
 			} finally {
 				release();
