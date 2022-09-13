@@ -59,7 +59,7 @@ export const decrypt = (cipher: string, secret: string) => {
 	return decrpyted.toString();
 };
 
-export const createSharedKey = (privateKey: string, peerPublicKey: string): string => {
+export const createAsymSharedKey = (privateKey: string, peerPublicKey: string): string => {
 	// see https://github.com/digitalbazaar/x25519-key-agreement-key-2019/blob/main/lib/crypto.js
 	const publicKeyDerPrefix = new Uint8Array([48, 42, 48, 5, 6, 3, 43, 101, 110, 3, 33, 0]);
 	const privateKeyDerPrefix = new Uint8Array([48, 46, 2, 1, 0, 48, 5, 6, 3, 43, 101, 110, 4, 34, 4, 32]);
@@ -85,11 +85,11 @@ export const createSharedKey = (privateKey: string, peerPublicKey: string): stri
 };
 
 export const asymEncrypt = (data: string, privateKey: string, publicKey: string): string => {
-	const sharedKey = createSharedKey(privateKey, publicKey);
+	const sharedKey = createAsymSharedKey(privateKey, publicKey);
 	return encrypt(data, sharedKey.slice(0, secretLength));
 };
 
 export const asymDecrypt = (encrypted: string, privateKey: string, publicKey: string): string => {
-	const sharedKey = createSharedKey(privateKey, publicKey);
+	const sharedKey = createAsymSharedKey(privateKey, publicKey);
 	return decrypt(encrypted, sharedKey.slice(0, secretLength));
 };
