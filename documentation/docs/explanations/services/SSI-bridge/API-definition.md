@@ -14,7 +14,7 @@ keywords:
 
 The following diagram describes the software and services architecture and the list of provided APIs.
 
-![ecommerce-ssi-bridge](/img/integration-services/diagrams/ecommerce-ssi-bridge.jpeg)
+![ecommerce-ssi-bridge](/img/integration-services/diagrams/ecommerce-ssi-bridge.png)
 
 ## Identity Service
 

@@ -11,7 +11,7 @@ keywords:
 ---
 # Software Architecture and APIs Definition
 
-![ecommerce-audit-trail-bridge](/img/integration-services/diagrams/ecommerce-audit-trail-bridge.jpeg)
+![ecommerce-audit-trail-bridge](/img/integration-services/diagrams/ecommerce-audit-trail-bridge.png)
 **List of provided APIs.**
 
 The Audit Trail GW implementation provides the following services:
