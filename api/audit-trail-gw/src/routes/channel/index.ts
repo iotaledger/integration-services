@@ -8,17 +8,24 @@ import {
 	ReimportBody,
 	ValidateBody,
 	ChannelLogRequestOptions,
-	ChannelType
+	ChannelType,
+	LatestIdentity
 } from '@iota/is-shared-modules';
 import { ILogger, getDateFromString } from '@iota/is-shared-modules/node';
 import { get as lodashGet, isEmpty } from 'lodash';
 import { compareAsc } from 'date-fns';
+import axios from 'axios';
 
 export class ChannelRoutes {
-	constructor(private readonly channelService: ChannelService, private readonly logger: ILogger) {}
+	constructor(
+		private readonly channelService: ChannelService,
+		private readonly logger: ILogger,
+		private readonly config: { ssiBridgeUrl: string; ssiBridgeApiKey: string }
+	) {}
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
+			let asymPubKey: string = undefined;
 			const {
 				name,
 				description,
@@ -41,6 +48,23 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.CONFLICT).send({ error: 'channel already exists' });
 			}
 
+			if (type === ChannelType.privatePlus) {
+				const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
+				const apiKey = ssiBridgeApiKey ? `?api-key=${ssiBridgeApiKey}` : '';
+				const url = `${ssiBridgeUrl}/verification/latest-document/${id}${apiKey}`;
+				const identityRes = await axios.get(url);
+				const identityDoc = identityRes.data as LatestIdentity;
+				const verificationFragment = 'kex-0';
+
+				const publicKeyBase = identityDoc?.document?.doc?.keyAgreement?.find((kex) => kex.id === `${id}#${verificationFragment}`)
+					?.publicKeyMultibase;
+				asymPubKey = publicKeyBase?.substring(1); // strip the z from the public key
+
+				if (!asymPubKey) {
+					return res.status(StatusCodes.BAD_REQUEST).send({ error: 'could not find an encryption key in the identity document.' });
+				}
+			}
+
 			const channel = await this.channelService.create({
 				id,
 				name,
@@ -51,7 +75,8 @@ export class ChannelRoutes {
 				presharedKey,
 				type,
 				hidden,
-				visibilityList
+				visibilityList,
+				asymPubKey
 			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {

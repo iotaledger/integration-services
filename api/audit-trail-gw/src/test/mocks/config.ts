@@ -16,6 +16,8 @@ export const ConfigMock: Config = {
 	port: 3000,
 	permaNode: 'testpermanodeurl',
 	hornetNode: 'testhornetnodeurl',
+	ssiBridgeApiKey: '',
+	ssiBridgeUrl: 'http://localhost:3001/api/v0.2',
 	streamsConfig: StreamsConfigMock,
 	commitHash: ''
 };

@@ -5,7 +5,7 @@ import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
-import { StreamsConfigMock } from '../../../test/mocks/config';
+import { StreamsConfigMock, ConfigMock } from '../../../test/mocks/config';
 import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
@@ -75,7 +75,10 @@ describe('test validate route', () => {
 		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
-		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
+		channelRoutes = new ChannelRoutes(channelService, LoggerMock, {
+			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
+			ssiBridgeUrl: ConfigMock.ssiBridgeUrl
+		});
 
 		res = {
 			send: sendMock,

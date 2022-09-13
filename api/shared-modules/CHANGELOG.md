@@ -1,5 +1,13 @@
 # Changelog
 
+### 0.2.3-alpha.3 (2022-08-31)
+
+- Add `keyAgreement` to `IdentityDocument` schema
+
+### 0.2.3-alpha.2 (2022-08-30)
+
+- Add `privatePlus` to `ChannelType` enum
+
 ### 0.2.3-alpha.1 (2022-08-05)
 
 - Added `asymEncrypt` and `asymDecrypt` methods to utils

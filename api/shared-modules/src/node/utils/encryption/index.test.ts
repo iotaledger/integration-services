@@ -1,5 +1,16 @@
 import bs58 from 'bs58';
-import { asymDecrypt, asymEncrypt, createNonce, decrypt, encrypt, getHexEncodedKey, randomSecretKey, signNonce, verifySignedNonce } from '.';
+import {
+	asymDecrypt,
+	asymEncrypt,
+	createNonce,
+	createSharedKey,
+	decrypt,
+	encrypt,
+	getHexEncodedKey,
+	randomSecretKey,
+	signNonce,
+	verifySignedNonce
+} from '.';
 
 describe('test encryption', () => {
 	it('too short nonce so it should throw an error', async () => {
@@ -49,8 +60,6 @@ describe('test encryption', () => {
 
 		const nonce = createNonce();
 		const signed = await signNonce(prvKey, nonce);
-		console.log('signed', signed);
-
 		const isVerified = await verifySignedNonce(pubKey, nonce, signed);
 		expect(isVerified).toBe(true);
 	});
@@ -105,7 +114,7 @@ describe('test encryption', () => {
 		const encryptedText = () => {
 			encrypt(text, secretKey);
 		};
-		expect(encryptedText).toThrowError('Invalid key length');
+		expect(encryptedText).toThrowError('secret must have 32 characters!');
 	});
 
 	it('expect too small key not to work', async () => {
@@ -114,49 +123,43 @@ describe('test encryption', () => {
 		const encryptedText = () => {
 			encrypt(text, secretKey);
 		};
-		expect(encryptedText).toThrowError('Invalid key length');
+		expect(encryptedText).toThrowError('secret must have 32 characters!');
 	});
 });
 
 describe('test asymmetric encryption', () => {
-	it('expect decrypted text to be same', async () => {
-		const publicChannelKey = "7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeX";
-		const privateKey = "AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b";
-		const data = {
-			credentialSubject:
-			{
-				id: "did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV",
-				context: "https://schema.org/",
-				familyName: "Engineer",
-				givenName: "Test",
-				initiator: "did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y",
-				jobTitle: "Software Engineer",
-				name: "Test Engineer",
-				type: "Person"
-			}
-		};
+	const keys = {
+		public: '2QUVnUPWAkNF7s4udjHs9pU6m55BzpxoFHnNuWJDSALn',
+		private: '8YHGQoGDEGP9Fx85aTkVsBbEUhVQUjwDMJwYR2mcxQeg'
+	};
+	const keys2 = {
+		public: '2oRg26QL64jmy5MkCLLzYbC6W5WiAjw1qMLtCbbDc9WD',
+		private: '9dyFq2gy5vWJ7WHeErx4CFfgWZWebESxJbmyuwWk6ceC'
+	};
+	it('should create expected shared key', async () => {
+		const expectedSharedKey = 'HbktPyEcvtU1jCR68JXt9uoUPh7zKwethWAbbT3zZuGY';
+		const sharedKey = createSharedKey(keys.private, keys2.public);
+		const sharedKey2 = createSharedKey(keys2.private, keys.public);
+		expect(sharedKey2).toEqual(sharedKey);
+		expect(sharedKey2).toEqual(expectedSharedKey);
+	});
+
+	it('expect decrypted text to be same', () => {
+		const publicChannelKey = keys2.public;
+		const privateKey = keys.private;
+		const data = 'mystring';
 		const encryptedText = asymEncrypt(data, privateKey, publicChannelKey);
 		const decryptedText = asymDecrypt(encryptedText, privateKey, publicChannelKey);
-		expect(JSON.parse(decryptedText)).toStrictEqual(data);
+		expect(decryptedText).toEqual(data);
 	});
 
-	it('expect too long key not to work', async () => {
-		const publicChannelKey = "7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1VKCeXAiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b";
-		const privateKey = "AiXHW7xKrYVMGwpo7vRBZ8u9z9Ey59hFQ9FKnoaLpF6b7DuUEuGkHny4i8rMiL7VdwmaYKCazMQ3iNSD2A1";
+	it('expect too small key not to work', () => {
+		const privateKey = bs58.encode(Buffer.from('7DuUEuGkHny4i8'));
+		const publicChannelKey = bs58.encode(Buffer.from('AiXHW7xKrYVMGwpo'));
 		const text = 'Hello World!';
 		const encryptedText = () => {
 			asymEncrypt(text, privateKey, publicChannelKey);
 		};
-		expect(encryptedText).toThrowError('Invalid key length');
-	});
-
-	it('expect too small key not to work', async () => {
-		const privateKey = bs58.encode(Buffer.from('notsecurekey'));
-		const publicChannelKey = bs58.encode(Buffer.from('noValidKey'));
-		const text = 'Hello World!';
-		const encryptedText = () => {
-			asymEncrypt(text, privateKey, publicChannelKey);
-		};
-		expect(encryptedText).toThrowError('Invalid key length');
+		expect(encryptedText).toThrowError();
 	});
 });

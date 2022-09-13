@@ -33,6 +33,8 @@ export class ConfigurationService {
 		permaNode: process.env.IOTA_PERMA_NODE,
 		apiKey: process.env.API_KEY,
 		commitHash: process.env.COMMIT_HASH,
+		ssiBridgeUrl: process.env.SSI_BRIDGLE_URL,
+		ssiBridgeApiKey: process.env.SSI_BRIDGLE_API_KEY,
 		streamsConfig: this.streamsConfig
 	};
 
@@ -71,7 +73,7 @@ export class ConfigurationService {
 
 			// apiKey can be empty if the host decides so
 			// commitHash is set automatically during deployment
-			const optionalEnvVariables = ['apiKey', 'commitHash'];
+			const optionalEnvVariables = ['apiKey', 'commitHash', 'ssiBridgeUrl', 'ssiBridgeApiKey'];
 			Object.values(config).map((value, i) => {
 				if (isEmpty(value) && (isNaN(value) || value == null || value === '')) {
 					if (optionalEnvVariables.includes(Object.keys(config)[i])) {

@@ -2,6 +2,8 @@ import * as crypto from 'crypto';
 import * as ed from '@noble/ed25519';
 import * as bs58 from 'bs58';
 
+const secretLength = 32;
+
 export const createNonce = (): string => {
 	return crypto.randomBytes(20).toString('hex');
 };
@@ -32,6 +34,10 @@ export const verifySignedNonce = async (publicKey: string, nonce: string, signat
 export const randomSecretKey = () => crypto.randomBytes(24).toString('base64');
 
 export const encrypt = (message: string, secret: string): any => {
+	if (secret.length !== 32) {
+		throw Error('secret must have 32 characters!');
+	}
+
 	const algorithm = 'aes-256-ctr';
 	const iv = crypto.randomBytes(16);
 	const cipher = crypto.createCipheriv(algorithm, secret, iv);
@@ -40,6 +46,10 @@ export const encrypt = (message: string, secret: string): any => {
 };
 
 export const decrypt = (cipher: string, secret: string) => {
+	if (secret.length !== 32) {
+		throw Error('secret must have 32 characters!');
+	}
+
 	const algorithm = 'aes-256-ctr';
 	const splitted = cipher.split(',');
 	const iv = splitted[0];
@@ -49,16 +59,37 @@ export const decrypt = (cipher: string, secret: string) => {
 	return decrpyted.toString();
 };
 
-export const asymEncrypt = (data: any, privateKey: string, publicKey: string): string => {
-	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
-	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
-	const encrypted = encrypt(JSON.stringify(data), bs58.encode(sharedKey))
-	return encrypted
-}
+export const createSharedKey = (privateKey: string, peerPublicKey: string): string => {
+	// see https://github.com/digitalbazaar/x25519-key-agreement-key-2019/blob/main/lib/crypto.js
+	const publicKeyDerPrefix = new Uint8Array([48, 42, 48, 5, 6, 3, 43, 101, 110, 3, 33, 0]);
+	const privateKeyDerPrefix = new Uint8Array([48, 46, 2, 1, 0, 48, 5, 6, 3, 43, 101, 110, 4, 34, 4, 32]);
+
+	const prvKeyBuf = bs58.decode(privateKey);
+	const peerPubKeyBuf = bs58.decode(peerPublicKey);
+
+	const privateKeyObject = crypto.createPrivateKey({
+		key: Buffer.concat([privateKeyDerPrefix, prvKeyBuf]),
+		format: 'der',
+		type: 'pkcs8'
+	});
+	const publicKeyObject = crypto.createPublicKey({
+		key: Buffer.concat([publicKeyDerPrefix, peerPubKeyBuf]),
+		format: 'der',
+		type: 'spki'
+	});
+	const sharedKey = crypto.diffieHellman({
+		privateKey: privateKeyObject,
+		publicKey: publicKeyObject
+	});
+	return bs58.encode(sharedKey);
+};
+
+export const asymEncrypt = (data: string, privateKey: string, publicKey: string): string => {
+	const sharedKey = createSharedKey(privateKey, publicKey);
+	return encrypt(data, sharedKey.slice(0, secretLength));
+};
 
 export const asymDecrypt = (encrypted: string, privateKey: string, publicKey: string): string => {
-	const diffie = crypto.createDiffieHellman(bs58.decode(privateKey));
-	const sharedKey = diffie.computeSecret(bs58.decode(publicKey))
-	const decrypted = decrypt(encrypted, bs58.encode(sharedKey))
-	return decrypted
-}
+	const sharedKey = createSharedKey(privateKey, publicKey);
+	return decrypt(encrypted, sharedKey.slice(0, secretLength));
+};
