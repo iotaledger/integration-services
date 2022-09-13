@@ -12,7 +12,7 @@ import {
 	CreateChannelResponse,
 	ValidateResponse
 } from '@iota/is-shared-modules';
-import { getDateStringFromDate, ILogger, createSharedKey } from '@iota/is-shared-modules/node';
+import { getDateStringFromDate, ILogger, createAsymSharedKey } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -72,8 +72,7 @@ export class ChannelService {
 			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
 			peerPublicKey = bs58.encode(keypair.public());
 			const tmpPrivateEncryptionKey = bs58.encode(keypair.private());
-			statePassword = createSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
-			console.log('statePassword', statePassword);
+			statePassword = createAsymSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
 		}
 
 		const state = this.streamsService.exportSubscription(res.author, statePassword);
@@ -147,12 +146,12 @@ export class ChannelService {
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
 
-	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions, sharedKey?: string) {
+	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions, asymSharedKey?: string) {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const statePassword = this.getPassword(sharedKey);
+				const statePassword = this.getPassword(asymSharedKey);
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -186,8 +185,8 @@ export class ChannelService {
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const { sharedKey } = channelLog;
-				const statePassword = this.getPassword(sharedKey);
+				const { asymSharedKey } = channelLog;
+				const statePassword = this.getPassword(asymSharedKey);
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 

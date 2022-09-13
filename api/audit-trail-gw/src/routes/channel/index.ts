@@ -106,7 +106,7 @@ export class ChannelRoutes {
 
 			const limitParam = parseInt(<string>req.query.limit, 10);
 			const indexParam = parseInt(<string>req.query.index, 10);
-			const sharedKey = <string>req.query['shared-key'];
+			const asymSharedKey = <string>req.query['asym-shared-key'];
 			const limit = isNaN(limitParam) || limitParam == 0 ? undefined : limitParam;
 			const index = isNaN(indexParam) ? undefined : indexParam;
 			const ascending: boolean = <string>req.query.asc === 'true';
@@ -115,15 +115,15 @@ export class ChannelRoutes {
 
 			const type = await this.channelInfoService.getChannelType(channelAddress);
 
-			if (type !== ChannelType.privatePlus && sharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'you should not set a shared-key.' });
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
 			}
 
-			if (type === ChannelType.privatePlus && !sharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no shared-key provided.' });
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
 			}
 
-			const channel = await this.channelService.getLogs(channelAddress, id, options, sharedKey);
+			const channel = await this.channelService.getLogs(channelAddress, id, options, asymSharedKey);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
@@ -169,12 +169,12 @@ export class ChannelRoutes {
 
 			const type = await this.channelInfoService.getChannelType(channelAddress);
 
-			if (type !== ChannelType.privatePlus && body.sharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'you should not set a shared-key.' });
+			if (type !== ChannelType.privatePlus && body.asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asymSharedKey.' });
 			}
 
-			if (type === ChannelType.privatePlus && !body.sharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no sharedKey provided.' });
+			if (type === ChannelType.privatePlus && !body.asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asymSharedKey is required for privatePlus channels.' });
 			}
 
 			const channel = await this.channelService.addLog(channelAddress, id, body);
