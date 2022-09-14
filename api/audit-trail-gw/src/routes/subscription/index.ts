@@ -20,7 +20,7 @@ export class SubscriptionRoutes {
 		private readonly subscriptionService: SubscriptionService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly logger: ILogger
-	) {}
+	) { }
 
 	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
@@ -155,6 +155,7 @@ export class SubscriptionRoutes {
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const { seed, accessRights, presharedKey } = req.body as RequestSubscriptionBody;
 			const subscriberId = req.user.id;
 
@@ -170,13 +171,18 @@ export class SubscriptionRoutes {
 
 			const channelType = await this.channelInfoService.getChannelType(channelAddress);
 
+			if (channelType === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no asymmetric shared key provided' });
+			}
+
 			const channel = await this.subscriptionService.requestSubscription({
 				subscriberId,
 				channelAddress,
 				accessRights,
 				channelType: channelType || ChannelType.private,
 				seed,
-				presharedKey
+				presharedKey,
+				asymSharedKey
 			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {

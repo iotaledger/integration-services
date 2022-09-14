@@ -17,6 +17,8 @@ import { StreamsConfig } from '../models/config';
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
+import { encrypt } from '@iota/is-shared-modules/node';
+import * as bs58 from 'bs58'
 
 export class SubscriptionService {
 	private password: string;
@@ -98,8 +100,9 @@ export class SubscriptionService {
 		accessRights?: AccessRights;
 		seed?: string;
 		presharedKey?: string;
+		asymSharedKey?: string;
 	}): Promise<RequestSubscriptionResponse> {
-		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType } = params;
+		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType, asymSharedKey } = params;
 		const isPublicChannel = channelType === ChannelType.public;
 		const res = await this.streamsService.requestSubscription(channelAddress, isPublicChannel, seed, presharedKey);
 
@@ -111,7 +114,13 @@ export class SubscriptionService {
 			}
 		}
 
-		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
+		let state = this.streamsService.exportSubscription(res.subscriber, this.password);
+
+		if(channelType === ChannelType.privatePlus){
+			const decodedKey = bs58.decode(asymSharedKey).toString('hex');
+			state = encrypt(state, decodedKey.slice(0,32));
+		}
+		
 		await this.addSubscriptionState(channelAddress, subscriberId, state);
 
 		const subscription: Subscription = {
