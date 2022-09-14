@@ -432,6 +432,42 @@ describe('test channel routes', () => {
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
 			expect(res.send).toHaveBeenCalledWith({ error: 'start date is after end date' });
 		});
+
+		it('should return bad request if channel is private but has a asym-shared-key declared', async () => {
+			const req: any = {
+				params: { channelAddress: 'mychanneladdress-12345' },
+				user: { id: 'did:iota:1234' },
+				body: {},
+				query: { 'asym-shared-key': 'myasymSharedKey' }
+			};
+
+			const getChannelTypeSpy = jest.spyOn(channelInfoService, 'getChannelType').mockImplementationOnce(async () => ChannelType.private);
+
+			await channelRoutes.getLogs(req, res, nextMock);
+
+			expect(getChannelTypeSpy).toHaveBeenCalledWith('mychanneladdress-12345');
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'Please do not define an asym-shared-key.' });
+		});
+
+		it('should return bad request if channel is privatePlus but has no asym-shared-key declared', async () => {
+			const req: any = {
+				params: { channelAddress: 'mychanneladdress-12345' },
+				user: { id: 'did:iota:1234' },
+				body: {},
+				query: {}
+			};
+
+			const getChannelTypeSpy = jest
+				.spyOn(channelInfoService, 'getChannelType')
+				.mockImplementationOnce(async () => ChannelType.privatePlus);
+
+			await channelRoutes.getLogs(req, res, nextMock);
+
+			expect(getChannelTypeSpy).toHaveBeenCalledWith('mychanneladdress-12345');
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'An asym-shared-key is required for privatePlus channels.' });
+		});
 	});
 
 	describe('test getHistory channel route', () => {
