@@ -125,7 +125,7 @@ describe('test channel routes', () => {
 
 			const presharedKey: string = undefined;
 			expect(createSpy).toHaveBeenCalledWith(false, 'verysecretseed', presharedKey);
-			expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, StreamsConfigMock.statePassword);
+			expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, StreamsConfigMock.password);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(channelExistsSpy).toHaveBeenCalledWith(expectedChannelInfo.name);
@@ -180,7 +180,7 @@ describe('test channel routes', () => {
 			await channelRoutes.createChannel(req, res, nextMock);
 
 			expect(createSpy).toHaveBeenCalledWith(false, undefined, presharedKey);
-			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
+			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.password);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(channelExistsSpy).toHaveBeenCalledWith(expectedChannelInfo.name);
@@ -234,7 +234,7 @@ describe('test channel routes', () => {
 			await channelRoutes.createChannel(req, res, nextMock);
 
 			expect(createSpy).toHaveBeenCalledWith(true, undefined, undefined);
-			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.statePassword);
+			expect(exportSubscriptionSpy).toHaveBeenCalledWith({}, StreamsConfigMock.password);
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalledWith(expectedChannelInfo);
 			expect(channelExistsSpy).toHaveBeenCalledWith(expectedChannelInfo.name);

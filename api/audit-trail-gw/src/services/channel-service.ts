@@ -26,7 +26,7 @@ import * as bs58 from 'bs58';
 import * as Identity from '@iota/identity-wasm/node';
 
 export class ChannelService {
-	private readonly statePassword: string;
+	private readonly password: string;
 	private lock: ILock;
 
 	constructor(
@@ -37,7 +37,7 @@ export class ChannelService {
 		private readonly logger: ILogger
 	) {
 		this.lock = Lock.getInstance();
-		this.statePassword = config.statePassword;
+		this.password = config.password;
 	}
 
 	async create(params: {
@@ -55,7 +55,7 @@ export class ChannelService {
 	}): Promise<CreateChannelResponse> {
 		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymPubKey } = params;
 		let peerPublicKey: string = undefined;
-		let statePassword = this.statePassword;
+		let password = this.password;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -72,10 +72,10 @@ export class ChannelService {
 			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
 			peerPublicKey = bs58.encode(keypair.public());
 			const tmpPrivateEncryptionKey = bs58.encode(keypair.private());
-			statePassword = createAsymSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
+			password = createAsymSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
 		}
 
-		const state = this.streamsService.exportSubscription(res.author, statePassword);
+		const state = this.streamsService.exportSubscription(res.author, password);
 		await this.subscriptionService.addSubscriptionState(res.channelAddress, id, state);
 
 		const subscription: Subscription = {
@@ -119,7 +119,7 @@ export class ChannelService {
 		return !isEmpty(channel);
 	}
 
-	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber, statePassword: string): Promise<ChannelData[]> {
+	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber, password: string): Promise<ChannelData[]> {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 		}
@@ -128,12 +128,12 @@ export class ChannelService {
 		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, statePassword));
+		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, password));
 
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
 		if (channelData?.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, id, channelData, statePassword);
+			await ChannelDataDb.addChannelData(channelAddress, id, channelData, password);
 		}
 
 		return channelData;
@@ -248,7 +248,7 @@ export class ChannelService {
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
-				const sub = await this.streamsService.importSubscription(state, isAuthor, this.statePassword); // TODO
+				const sub = await this.streamsService.importSubscription(state, isAuthor, this.password); // TODO
 
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
@@ -258,7 +258,7 @@ export class ChannelService {
 				}
 
 				await ChannelDataDb.removeChannelData(channelAddress, id);
-				await this.fetchLogs(channelAddress, id, newSub, this.statePassword); // TODO
+				await this.fetchLogs(channelAddress, id, newSub, this.password); // TODO
 			} finally {
 				release();
 			}
@@ -283,7 +283,7 @@ export class ChannelService {
 
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor, this.statePassword); // TODO
+				const sub = await this.streamsService.importSubscription(state, isAuthor, this.password); // TODO
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -316,6 +316,6 @@ export class ChannelService {
 		if (sharedKey) {
 			return sharedKey.slice(0, 32);
 		}
-		return this.statePassword;
+		return this.password;
 	}
 }

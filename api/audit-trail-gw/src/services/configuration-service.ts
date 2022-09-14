@@ -19,7 +19,7 @@ export class ConfigurationService {
 	streamsConfig: StreamsConfig = {
 		node: process.env.IOTA_HORNET_NODE,
 		permaNode: process.env.IOTA_PERMA_NODE,
-		statePassword: process.env.SERVER_SECRET
+		password: process.env.SERVER_SECRET
 	};
 
 	config: Config = {

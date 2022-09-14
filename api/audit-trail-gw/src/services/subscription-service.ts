@@ -19,7 +19,7 @@ import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 
 export class SubscriptionService {
-	private statePassword: string;
+	private password: string;
 	private lock: ILock;
 
 	constructor(
@@ -28,7 +28,7 @@ export class SubscriptionService {
 		config: StreamsConfig
 	) {
 		this.lock = Lock.getInstance();
-		this.statePassword = config.statePassword;
+		this.password = config.password;
 	}
 
 	async getSubscriptions(channelAddress: string, isAuthorized?: boolean) {
@@ -111,7 +111,7 @@ export class SubscriptionService {
 			}
 		}
 
-		const state = this.streamsService.exportSubscription(res.subscriber, this.statePassword);
+		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
 		await this.addSubscriptionState(channelAddress, subscriberId, state);
 
 		const subscription: Subscription = {
@@ -144,7 +144,7 @@ export class SubscriptionService {
 		const pskId = authorSub.pskId;
 
 		const state = await this.getSubscriptionState(channelAddress, authorId);
-		const streamsAuthor = (await this.streamsService.importSubscription(state, true, this.statePassword)) as Author; // TODO
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true, this.password)) as Author; // TODO
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -193,7 +193,7 @@ export class SubscriptionService {
 		await this.updateSubscriptionState(
 			channelAddress,
 			authorSub.id,
-			this.streamsService.exportSubscription(streamsAuthor, this.statePassword) // TODO
+			this.streamsService.exportSubscription(streamsAuthor, this.password) // TODO
 		);
 		await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscription.id);
@@ -206,7 +206,7 @@ export class SubscriptionService {
 		const pskId = authorSub.pskId;
 
 		const state = await this.getSubscriptionState(channelAddress, authorSub.id);
-		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), this.statePassword)) as Author; // TODO
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), this.password)) as Author; // TODO
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -248,11 +248,7 @@ export class SubscriptionService {
 			? await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id)
 			: await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 
-		await this.updateSubscriptionState(
-			channelAddress,
-			authorSub.id,
-			this.streamsService.exportSubscription(streamsAuthor, this.statePassword)
-		);
+		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
 	}
 
 	private async sendKeyload(params: {
@@ -289,8 +285,8 @@ export class SubscriptionService {
 			return;
 		}
 
-		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.statePassword));
+		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
-		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.statePassword);
+		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.password);
 	}
 }

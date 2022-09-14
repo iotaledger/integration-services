@@ -15,7 +15,7 @@ export interface Config {
 }
 
 export interface StreamsConfig {
-	statePassword: string;
+	password: string;
 	node: string;
 	permaNode: string;
 }
