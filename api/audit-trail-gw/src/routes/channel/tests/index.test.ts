@@ -500,7 +500,8 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: { channelAddress: '12345' },
 				user: { id: undefined }, //no id,
-				body: { payload: '' }
+				body: { payload: '' },
+				query: {}
 			};
 
 			await channelRoutes.addLog(req, res, nextMock);
@@ -512,7 +513,8 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: {}, // no channelAddress
 				user: { id: 'did:iota:1234' },
-				body: { payload: '' }
+				body: { payload: '' },
+				query: {}
 			};
 
 			await channelRoutes.addLog(req, res, nextMock);
@@ -524,7 +526,8 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: { channelAddress: 'mychanneladdress-12345' },
 				user: { id: 'did:iota:1234' },
-				body: { payload: 'mypayload', asymSharedKey: 'myasymSharedKey' }
+				body: { payload: 'mypayload' },
+				query: { 'asym-shared-key': 'myasymSharedKey' }
 			};
 
 			const getChannelTypeSpy = jest.spyOn(channelInfoService, 'getChannelType').mockImplementationOnce(async () => ChannelType.private);
@@ -540,7 +543,8 @@ describe('test channel routes', () => {
 			const req: any = {
 				params: { channelAddress: 'mychanneladdress-12345' },
 				user: { id: 'did:iota:1234' },
-				body: { payload: 'mypayload' }
+				body: { payload: 'mypayload' },
+				query: {}
 			};
 
 			const getChannelTypeSpy = jest
@@ -551,14 +555,15 @@ describe('test channel routes', () => {
 
 			expect(getChannelTypeSpy).toHaveBeenCalledWith('mychanneladdress-12345');
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-			expect(res.send).toHaveBeenCalledWith({ error: 'An asymSharedKey is required for privatePlus channels.' });
+			expect(res.send).toHaveBeenCalledWith({ error: 'An asym-shared-key is required for privatePlus channels.' });
 		});
 
 		it('should return ok request for privatePlus channel', async () => {
 			const req: any = {
 				params: { channelAddress: 'mychanneladdress-12345' },
 				user: { id: 'did:iota:1234' },
-				body: { payload: 'mypayload', asymSharedKey: 'myasymsharedkey' }
+				body: { payload: 'mypayload' },
+				query: { 'asym-shared-key': 'myasymSharedKey' }
 			};
 
 			const getChannelTypeSpy = jest

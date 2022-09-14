@@ -157,6 +157,7 @@ export class ChannelRoutes {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const { id } = req.user;
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const body = req.body as AddChannelLogBody;
 
 			if (!channelAddress || !id) {
@@ -169,15 +170,15 @@ export class ChannelRoutes {
 
 			const type = await this.channelInfoService.getChannelType(channelAddress);
 
-			if (type !== ChannelType.privatePlus && body.asymSharedKey) {
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asymSharedKey.' });
 			}
 
-			if (type === ChannelType.privatePlus && !body.asymSharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asymSharedKey is required for privatePlus channels.' });
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
 			}
 
-			const channel = await this.channelService.addLog(channelAddress, id, body);
+			const channel = await this.channelService.addLog(channelAddress, id, body, asymSharedKey);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

@@ -180,12 +180,11 @@ export class ChannelService {
 		});
 	}
 
-	async addLog(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+	async addLog(channelAddress: string, id: string, channelLog: ChannelLog, asymSharedKey?: string): Promise<ChannelData> {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
-				const { asymSharedKey } = channelLog;
 				const password = this.getPassword(asymSharedKey);
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);

@@ -94,6 +94,12 @@ channelRouter.post(
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
+ *     - name: 'asym-shared-key'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: DBk8JZd6riEaj2r5upisGAhnvgAPhyht
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
@@ -193,6 +199,12 @@ channelRouter.post(
  *         type: string
  *         format: date-time
  *         example: 2021-09-29T13:30:00+02:00
+ *     - name: 'asym-shared-key'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: DBk8JZd6riEaj2r5upisGAhnvgAPhyht
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
