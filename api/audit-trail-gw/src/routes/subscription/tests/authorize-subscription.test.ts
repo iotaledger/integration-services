@@ -163,7 +163,7 @@ describe('test authorize subscription route', () => {
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
-		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, StreamsConfigMock.statePassword);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no author found with channelAddress: testaddress and id: did:iota:1234'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not authorize the subscription'));
 	});
@@ -202,7 +202,7 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, StreamsConfigMock.statePassword);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, pskId);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('no keyload link found when authorizing the subscription'));
@@ -251,7 +251,7 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, StreamsConfigMock.statePassword);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, pskId);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
@@ -306,7 +306,7 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, StreamsConfigMock.statePassword);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, pskId);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');

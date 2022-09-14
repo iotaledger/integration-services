@@ -157,7 +157,7 @@ describe('test re-import route', () => {
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false, ConfigMock.streamsConfig.statePassword);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(loggerSpy).toHaveBeenCalledWith(new Error('wrong seed inserted'));
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not reimport channel data'));
@@ -192,7 +192,7 @@ describe('test re-import route', () => {
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false, ConfigMock.streamsConfig.statePassword);
 		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.id, newSub, ConfigMock.streamsConfig.statePassword);
