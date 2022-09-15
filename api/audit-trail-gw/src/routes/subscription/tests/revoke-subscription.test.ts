@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { SubscriptionRoutes } from '..';
-import { Subscription, AccessRights, SubscriptionType } from '@iota/is-shared-modules';
+import { Subscription, AccessRights, SubscriptionType, ChannelType } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
@@ -10,6 +10,7 @@ import * as SubscriptionDb from '../../../database/subscription';
 import * as ChannelDataDb from '../../../database/channel-data';
 import * as ChannelInfoDb from '../../../database/channel-info';
 import { AuthorMock } from '../../../test/mocks/streams';
+import base58 from 'bs58';
 
 describe('test revoke subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -62,7 +63,8 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: {},
 			user: { id: undefined },
-			body: undefined // no body
+			body: undefined, // no body
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -74,7 +76,8 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: {},
 			user: { id: undefined }, //no id,
-			body: {}
+			body: {},
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -88,7 +91,8 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:2345' },
-			body: {}
+			body: {},
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -106,7 +110,8 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:2345' },
-			body: { subscriptionLink: 'wrongsubscriptionlink' }
+			body: { subscriptionLink: 'wrongsubscriptionlink' },
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -117,6 +122,7 @@ describe('test revoke subscription route', () => {
 	});
 
 	it('should return ok if revokedSubscription is mocked', async () => {
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
 			.mockImplementationOnce(async () => authorSubscriptionMock)
@@ -125,15 +131,35 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
-			body: { id: 'did:iota:2345' }
+			body: { id: 'did:iota:2345' },
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
-		expect(revokeSubscriptionSpy).toHaveBeenCalledWith('testaddress', subscriptionMock, authorSubscriptionMock);
+		expect(revokeSubscriptionSpy).toHaveBeenCalledWith('testaddress', subscriptionMock, authorSubscriptionMock, ChannelType.private, undefined);
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});
 
+	it('should return error if channel type is privatePlus and no asym shared key is provided', async () => {
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus)
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => authorSubscriptionMock)
+			.mockImplementationOnce(async () => subscriptionMock);
+		const req: any = {
+			params: { channelAddress: 'testaddress' },
+			user: { id: 'did:iota:1234' },
+			body: { id: 'did:iota:2345' },
+			query: {}
+		};
+
+		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+		expect(res.send).toHaveBeenCalledWith({ error: 'no asymmetric shared key provided' });
+	});
+
 	it('should return bad request since subscription is already authorized', async () => {
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementationOnce(async () => 'myauthorstate');
 		jest
@@ -144,7 +170,8 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
-			body: { id: 'did:iota:2345' }
+			body: { id: 'did:iota:2345' },
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -154,7 +181,7 @@ describe('test revoke subscription route', () => {
 
 	it('should revoke the subscription', async () => {
 		const channelAddress = 'testaddress';
-
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
 		jest
 			.spyOn(subscriptionService, 'getSubscription')
@@ -184,7 +211,8 @@ describe('test revoke subscription route', () => {
 		const req: any = {
 			params: { channelAddress },
 			user: { id: 'did:iota:1234' },
-			body: { id: 'did:iota:2345' }
+			body: { id: 'did:iota:2345' },
+			query: {}
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -209,6 +237,70 @@ describe('test revoke subscription route', () => {
 		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.id, 'new-state');
 		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, 'veryvery-very-very-server-secret');
+		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
+	});
+
+	it('should revoke the subscription for privatePlus Channels', async () => {
+		const channelAddress = 'testaddress';
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus)
+		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
+		jest
+			.spyOn(subscriptionService, 'getSubscription')
+			.mockImplementationOnce(async () => authorSubscriptionMock)
+			.mockImplementationOnce(async () => subscriptionMock);
+
+		const updateSubscriptionStateSpy = jest.spyOn(subscriptionService, 'updateSubscriptionState').mockImplementation(async () => null);
+		const sendKeyloadSpy = jest.spyOn(streamsService, 'sendKeyload').mockImplementation(async () => ({
+			keyloadLink: 'testkeyloadlink',
+			sequenceLink: 'testsequencelink',
+			author: AuthorMock
+		}));
+		const removeChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(ChannelInfoDb, 'removeChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
+		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
+		const removeSubscriptionStateSpy = jest.spyOn(subscriptionService, 'deleteSubscriptionState').mockImplementation(async () => null);
+		const removeSubscriptionSpy = jest.spyOn(SubscriptionDb, 'removeSubscription').mockImplementation(async () => null);
+		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
+
+		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock);
+		const getSubscriptionsSpy = jest
+			.spyOn(SubscriptionDb, 'getSubscriptions')
+			.mockImplementation(async () => [authorSubscriptionMock, subscriptionMock]);
+
+		const asymSharedKey = base58.encode(Buffer.from('anyAsymSharedKey'));
+		const decodedAsymSharedKey = base58.decode(asymSharedKey).toString('hex');
+		const req: any = {
+			params: { channelAddress },
+			user: { id: 'did:iota:1234' },
+			body: { id: 'did:iota:2345' },
+			query: { 'asym-shared-key': asymSharedKey }
+		};
+
+		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
+
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, 'did:iota:2345');
+		expect(getSubscriptionsSpy).toHaveBeenCalledWith(channelAddress);
+		expect(sendKeyloadSpy).toHaveBeenCalledWith(
+			'testsequencelink2',
+			['test-author-public-key', 'test-author-public-key'],
+			AuthorMock,
+			authorSubscriptionMock.pskId
+		);
+		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith(
+			channelAddress,
+			authorSubscriptionMock.id,
+			'testkeyloadlink',
+			'testsequencelink'
+		);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', true, decodedAsymSharedKey)
+		expect(removeSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
+		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
+		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
+		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
+		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.id, 'new-state');
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, decodedAsymSharedKey);
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});
 	afterEach(() => {

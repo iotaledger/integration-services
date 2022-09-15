@@ -194,6 +194,7 @@ export class SubscriptionRoutes {
 	revokeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const authorId = req.user?.id;
 			const body = req.body as AuthorizeSubscriptionBody;
 			const { subscriptionLink, id } = body;
@@ -220,7 +221,12 @@ export class SubscriptionRoutes {
 				throw new Error('no valid subscription found!');
 			}
 
-			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription);
+			const channelType = await this.channelInfoService.getChannelType(channelAddress);
+			if (channelType === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no asymmetric shared key provided' });
+			}
+
+			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription, channelType, asymSharedKey);
 
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
@@ -232,6 +238,7 @@ export class SubscriptionRoutes {
 	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const body = req.body as AuthorizeSubscriptionBody;
 			const { subscriptionLink, id } = body;
 			const authorId = req.user?.id;
@@ -260,7 +267,12 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId);
+			const channelType = await this.channelInfoService.getChannelType(channelAddress);
+			if (channelType === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no asymmetric shared key provided' });
+			}
+
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId, channelType, asymSharedKey);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

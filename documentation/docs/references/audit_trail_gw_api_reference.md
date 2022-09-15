@@ -1,14 +1,3 @@
----
-image: /img/integration-services/logo/integration_services.png
-description: API Reference documentation Audit Trail Gateway of the the integration Services.
-keywords:
-- reference
-- API Reference
-- models
-- endpoints
-- audit trail
----
-
 # Audit Trail GW API Documentation
 This is the API documentation for the Audit Trail Gateway of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/audit-trail-gateway/introduction).
 
@@ -206,6 +195,7 @@ Write data to a channel with address channel address. Write permission is mandat
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -241,6 +231,7 @@ Get data from the channel with address channel address. The first possible messa
 | asc | query |  | No | boolean |
 | start-date | query |  | No | dateTime |
 | end-date | query |  | No | dateTime |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -364,6 +355,70 @@ Get information about the server like commitHash, server identity id and api ver
 | ---- | ----------- |
 | 200 | Returns information about the server |
 | 5XX | Unexpected error |
+
+### /subscriptions/state/{channelAddress}
+
+#### GET
+##### Summary:
+
+Get a subscription state by identity id.
+
+##### Description:
+
+Get a subscription state of a channel by identity id.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| channelAddress | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Subscriptions |
+| 401 | No valid api key provided/ Not authenticated |
+| 5XX | Unexpected error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| BearerAuth | |
+| ApiKey | |
+
+#### PUT
+##### Summary:
+
+Updates an existing subscription
+
+##### Description:
+
+Updates an existing subscription
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| channelAddress | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Subscription updated |
+| 400 | Missing channelAddress / id |
+| 401 | No valid api key provided/ Not authenticated |
+| 404 | No subscription found |
+| 5XX | Unexpected error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| BearerAuth | |
+| ApiKey | |
 
 ### /subscriptions/{channelAddress}
 
@@ -545,6 +600,7 @@ Request subscription to a channel with address channel-address. A client can req
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -578,6 +634,7 @@ Authorize a subscription to a channel with address channel-address. The author o
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -610,6 +667,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -756,7 +814,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | type |  |  | Yes |
 | channelAddress | string |  | Yes |
 | id | string |  | Yes |
-| state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
 | accessRights |  |  | Yes |
@@ -772,7 +829,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | type |  |  | No |
 | channelAddress | string |  | No |
 | id | string |  | No |
-| state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
 | accessRights |  |  | No |
@@ -780,6 +836,12 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | keyloadLink | string |  | No |
 | sequenceLink | string |  | No |
 | pskId | string |  | No |
+
+#### SubscriptionStateSchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| state | string |  | Yes |
 
 #### ChannelInfoSchema
 
@@ -797,6 +859,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
+| peerPublicKey | string | Public key used for privatePlus channels to encrypt channel data and state asymmetrically. | No |
 
 #### TopicSchema
 
