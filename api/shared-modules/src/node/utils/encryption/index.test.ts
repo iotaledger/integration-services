@@ -3,7 +3,7 @@ import {
 	asymDecrypt,
 	asymEncrypt,
 	createNonce,
-	createSharedKey,
+	createAsymSharedKey,
 	decrypt,
 	encrypt,
 	getHexEncodedKey,
@@ -138,8 +138,8 @@ describe('test asymmetric encryption', () => {
 	};
 	it('should create expected shared key', async () => {
 		const expectedSharedKey = 'HbktPyEcvtU1jCR68JXt9uoUPh7zKwethWAbbT3zZuGY';
-		const sharedKey = createSharedKey(keys.private, keys2.public);
-		const sharedKey2 = createSharedKey(keys2.private, keys.public);
+		const sharedKey = createAsymSharedKey(keys.private, keys2.public);
+		const sharedKey2 = createAsymSharedKey(keys2.private, keys.public);
 		expect(sharedKey2).toEqual(sharedKey);
 		expect(sharedKey2).toEqual(expectedSharedKey);
 	});

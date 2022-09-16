@@ -317,9 +317,8 @@ export class StreamsService {
 		return seed;
 	}
 
-	async importSubscription(state: string, isAuthor: boolean): Promise<Author | Subscriber> {
+	async importSubscription(state: string, isAuthor: boolean, password: string): Promise<Author | Subscriber> {
 		try {
-			const password = this.config.statePassword;
 			const client = await this.getClient(this.config.node, this.config.permaNode);
 			if (isAuthor) {
 				return Author.import(client, toBytes(state), password);

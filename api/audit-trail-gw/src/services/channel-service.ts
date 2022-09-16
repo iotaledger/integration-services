@@ -12,7 +12,7 @@ import {
 	CreateChannelResponse,
 	ValidateResponse
 } from '@iota/is-shared-modules';
-import { getDateStringFromDate, ILogger, createSharedKey } from '@iota/is-shared-modules/node';
+import { getDateStringFromDate, ILogger, createAsymSharedKey } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
@@ -37,7 +37,7 @@ export class ChannelService {
 		private readonly logger: ILogger
 	) {
 		this.lock = Lock.getInstance();
-		this.password = config.statePassword;
+		this.password = config.password;
 	}
 
 	async create(params: {
@@ -55,7 +55,7 @@ export class ChannelService {
 	}): Promise<CreateChannelResponse> {
 		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymPubKey } = params;
 		let peerPublicKey: string = undefined;
-		let statePassword = this.password;
+		let password = this.password;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -72,10 +72,10 @@ export class ChannelService {
 			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
 			peerPublicKey = bs58.encode(keypair.public());
 			const tmpPrivateEncryptionKey = bs58.encode(keypair.private());
-			statePassword = createSharedKey(tmpPrivateEncryptionKey, asymPubKey);
+			password = createAsymSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
 		}
 
-		const state = this.streamsService.exportSubscription(res.author, statePassword);
+		const state = this.streamsService.exportSubscription(res.author, password);
 		await this.subscriptionService.addSubscriptionState(res.channelAddress, id, state);
 
 		const subscription: Subscription = {
@@ -119,7 +119,7 @@ export class ChannelService {
 		return !isEmpty(channel);
 	}
 
-	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber): Promise<ChannelData[]> {
+	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber, password: string): Promise<ChannelData[]> {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 		}
@@ -128,12 +128,12 @@ export class ChannelService {
 		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, this.password));
+		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, password));
 
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
 		if (channelData?.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, id, channelData, this.password);
+			await ChannelDataDb.addChannelData(channelAddress, id, channelData, password);
 		}
 
 		return channelData;
@@ -146,11 +146,12 @@ export class ChannelService {
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
 
-	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions) {
+	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions, asymSharedKey?: string) {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const password = this.getPassword(asymSharedKey);
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -169,21 +170,22 @@ export class ChannelService {
 				// for all other channels we simply use the subscription and cache the data in the database
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
-				await this.fetchLogs(channelAddress, id, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, id, options, this.password);
+				await this.fetchLogs(channelAddress, id, sub, password);
+				return await ChannelDataDb.getChannelData(channelAddress, id, options, password);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async addLog(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+	async addLog(channelAddress: string, id: string, channelLog: ChannelLog, asymSharedKey?: string): Promise<ChannelData> {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const password = this.getPassword(asymSharedKey);
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
@@ -193,7 +195,7 @@ export class ChannelService {
 
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -210,7 +212,7 @@ export class ChannelService {
 					}
 				} else {
 					// fetch prev logs before writing new data to the channel
-					await this.fetchLogs(channelAddress, id, sub);
+					await this.fetchLogs(channelAddress, id, sub, password);
 				}
 
 				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(log);
@@ -218,13 +220,9 @@ export class ChannelService {
 
 				// store newly added log
 				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log, source: { publicKey: res.source, id } };
-				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], this.password);
+				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], password);
 
-				await this.subscriptionService.updateSubscriptionState(
-					channelAddress,
-					id,
-					this.streamsService.exportSubscription(sub, this.password)
-				);
+				await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, password));
 				return newLog;
 			} finally {
 				release();
@@ -249,7 +247,7 @@ export class ChannelService {
 
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, this.password); // TODO
 
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
@@ -259,7 +257,7 @@ export class ChannelService {
 				}
 
 				await ChannelDataDb.removeChannelData(channelAddress, id);
-				await this.fetchLogs(channelAddress, id, newSub);
+				await this.fetchLogs(channelAddress, id, newSub, this.password); // TODO
 			} finally {
 				release();
 			}
@@ -284,7 +282,7 @@ export class ChannelService {
 
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, this.password); // TODO
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -312,5 +310,11 @@ export class ChannelService {
 				release();
 			}
 		});
+	}
+	private getPassword(sharedKey: string) {
+		if (sharedKey) {
+			return sharedKey.slice(0, 32);
+		}
+		return this.password;
 	}
 }

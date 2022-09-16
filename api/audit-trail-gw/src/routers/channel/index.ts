@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema } from '@iota/is-shared-modules';
 import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelRoutes } from '../../routes/channel';
-import { channelService } from '../services';
+import { channelService, channelInfoService } from '../services';
 import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { channelLock } from '../../middlewares/concurrency-lock';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
@@ -11,7 +11,7 @@ import { ConfigurationService } from '../../services/configuration-service';
 const logger = Logger.getInstance();
 const configService = ConfigurationService.getInstance(logger);
 
-const channelRoutes = new ChannelRoutes(channelService, logger, {
+const channelRoutes = new ChannelRoutes(channelService, channelInfoService, logger, {
 	ssiBridgeUrl: configService.config.ssiBridgeUrl,
 	ssiBridgeApiKey: configService.config.ssiBridgeApiKey
 });
@@ -94,6 +94,12 @@ channelRouter.post(
  *         channelAddress:
  *           value: 5179bbd9714515aaebde8966c8cd17d3864795707364573b2f58d919364c63f70000000000000000:6d3cf83c5b57e5e5ab024f47
  *           summary: Example channel address
+ *     - name: 'asym-shared-key'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: DBk8JZd6riEaj2r5upisGAhnvgAPhyht
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
@@ -193,6 +199,12 @@ channelRouter.post(
  *         type: string
  *         format: date-time
  *         example: 2021-09-29T13:30:00+02:00
+ *     - name: 'asym-shared-key'
+ *       in: query
+ *       required: false
+ *       schema:
+ *         type: string
+ *         example: DBk8JZd6riEaj2r5upisGAhnvgAPhyht
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []

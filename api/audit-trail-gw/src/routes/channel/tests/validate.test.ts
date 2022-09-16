@@ -75,7 +75,7 @@ describe('test validate route', () => {
 		channelInfoService = new ChannelInfoService();
 		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
-		channelRoutes = new ChannelRoutes(channelService, LoggerMock, {
+		channelRoutes = new ChannelRoutes(channelService, channelInfoService, LoggerMock, {
 			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
 			ssiBridgeUrl: ConfigMock.ssiBridgeUrl
 		});
@@ -181,7 +181,7 @@ describe('test validate route', () => {
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true);
+		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true, StreamsConfigMock.password);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error('no author/subscriber found with channelAddress: 123456 and id: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
 		);
@@ -239,7 +239,7 @@ describe('test validate route', () => {
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getMessageSpy).toHaveBeenCalledTimes(3);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true, StreamsConfigMock.password);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
 	});
