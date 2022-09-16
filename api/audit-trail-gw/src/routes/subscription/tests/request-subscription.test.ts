@@ -70,20 +70,23 @@ describe('test request subscription route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
-	it('should return bad request since no asym-shared-key is provided', async () => {
-		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => null);
-		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus)
-		const req: any = {
-			params: { channelAddress: 'testaddress' }, 
-			user: { id: 'did:iota1234' },
-			body: { accessRights: AccessRights.Read },
-			query: {}, // no asym-shared-key
-		};
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: "somesharedKey", error: 'Please do not define an asym-shared-key.' },
+		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }])
+		('should return error if channel type is privatePlus and no asymSharedKey is provided or if private and asymSharedKey is provided', async ({ type, asymSharedKey, error }) => {
+			jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => null);
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type)
+			const req: any = {
+				params: { channelAddress: 'testaddress' },
+				user: { id: 'did:iota1234' },
+				body: { accessRights: AccessRights.Read },
+				query: { 'asym-shared-key': asymSharedKey }
+			};
 
-		await subscriptionRoutes.requestSubscription(req, res, nextMock);
-		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no asymmetric shared key provided' });
-	});
+			await subscriptionRoutes.requestSubscription(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: error });
+		});
 
 	it('should return bad request since already a subscription is requested', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
@@ -159,7 +162,7 @@ describe('test request subscription route', () => {
 			publicKey: 'testpublickey',
 			seed: 'testseed'
 		}));
-	
+
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
@@ -350,7 +353,7 @@ describe('test request subscription route', () => {
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
-			subscriber: {id: 'did:iota:1234'} as any,
+			subscriber: { id: 'did:iota:1234' } as any,
 			subscriptionLink: 'testlink',
 			publicKey: 'testpublickey',
 			seed: 'testseed'
@@ -361,7 +364,7 @@ describe('test request subscription route', () => {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read },
-			query: { 'asym-shared-key': asymSharedKey}
+			query: { 'asym-shared-key': asymSharedKey }
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -377,7 +380,7 @@ describe('test request subscription route', () => {
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith({id: 'did:iota:1234'}, asymSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith({ id: 'did:iota:1234' }, asymSharedKey);
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');

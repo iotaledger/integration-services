@@ -140,23 +140,25 @@ describe('test revoke subscription route', () => {
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});
 
-	it('should return error if channel type is privatePlus and no asym shared key is provided', async () => {
-		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus)
-		jest
-			.spyOn(subscriptionService, 'getSubscription')
-			.mockImplementationOnce(async () => authorSubscriptionMock)
-			.mockImplementationOnce(async () => subscriptionMock);
-		const req: any = {
-			params: { channelAddress: 'testaddress' },
-			user: { id: 'did:iota:1234' },
-			body: { id: 'did:iota:2345' },
-			query: {}
-		};
-
-		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
-		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no asymmetric shared key provided' });
-	});
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: "somesharedKey", error: 'Please do not define an asym-shared-key.' },
+		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }])
+		('should return error if channel type is privatePlus and no asymSharedKey is provided or if private and asymSharedKey is provided', async ({ type, asymSharedKey, error }) => {
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type)
+			jest
+				.spyOn(subscriptionService, 'getSubscription')
+				.mockImplementationOnce(async () => authorSubscriptionMock)
+				.mockImplementationOnce(async () => subscriptionMock);
+			const req: any = {
+				params: { channelAddress: 'testaddress' },
+				user: { id: 'did:iota:1234' },
+				body: { id: 'did:iota:2345' },
+				query: { 'asym-shared-key': asymSharedKey }
+			};
+			await subscriptionRoutes.revokeSubscription(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: error });
+		});
 
 	it('should return bad request since subscription is already authorized', async () => {
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)

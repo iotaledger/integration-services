@@ -169,17 +169,21 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
 			}
 
-			const channelType = await this.channelInfoService.getChannelType(channelAddress);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
 
-			if (channelType === ChannelType.privatePlus && !asymSharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no asymmetric shared key provided' });
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
+			}
+
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
 			}
 
 			const channel = await this.subscriptionService.requestSubscription({
 				subscriberId,
 				channelAddress,
 				accessRights,
-				channelType: channelType || ChannelType.private,
+				channelType: type || ChannelType.private,
 				seed,
 				presharedKey,
 				asymSharedKey
@@ -221,12 +225,17 @@ export class SubscriptionRoutes {
 				throw new Error('no valid subscription found!');
 			}
 
-			const channelType = await this.channelInfoService.getChannelType(channelAddress);
-			if (channelType === ChannelType.privatePlus && !asymSharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no asymmetric shared key provided' });
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
 			}
 
-			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription, channelType, asymSharedKey);
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
+
+			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription, type, asymSharedKey);
 
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
@@ -267,12 +276,17 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
-			const channelType = await this.channelInfoService.getChannelType(channelAddress);
-			if (channelType === ChannelType.privatePlus && !asymSharedKey) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no asymmetric shared key provided' });
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
 			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId, channelType, asymSharedKey);
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
+
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId, type, asymSharedKey);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);

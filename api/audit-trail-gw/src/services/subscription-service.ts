@@ -113,7 +113,7 @@ export class SubscriptionService {
 		}
 
 		if (channelType === ChannelType.privatePlus) {
-			this.password = asymSharedKey;
+			this.password = this.getPassword(asymSharedKey);
 		}
 		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
 
@@ -152,7 +152,7 @@ export class SubscriptionService {
 
 
 		if (channelType === ChannelType.privatePlus) {
-			this.password = asymSharedKey;
+			this.password = this.getPassword(asymSharedKey);
 		}
 		const state = await this.getSubscriptionState(channelAddress, authorId);
 		const streamsAuthor = (await this.streamsService.importSubscription(state, true, this.password)) as Author
@@ -218,7 +218,7 @@ export class SubscriptionService {
 		const pskId = authorSub.pskId;
 
 		if (channelType === ChannelType.privatePlus) {
-			this.password = asymSharedKey;
+			this.password = this.getPassword(asymSharedKey);
 		}
 		const state = await this.getSubscriptionState(channelAddress, authorSub.id);
 		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), this.password)) as Author
@@ -305,5 +305,12 @@ export class SubscriptionService {
 		await this.updateSubscriptionState(channelAddress, authorId, state);
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
 		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.password);
+	}
+
+	private getPassword(sharedKey: string) {
+		if (sharedKey) {
+			return sharedKey.slice(0, 32);
+		}
+		return this.password;
 	}
 }

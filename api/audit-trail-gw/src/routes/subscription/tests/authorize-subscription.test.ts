@@ -145,35 +145,38 @@ describe('test authorize subscription route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'not the valid author of the channel' });
 	});
 
-	it('should bad request if no asym shared key is provided', async () => {
-		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus)
-		const authorId = 'did:iota:1234';
-		const author: Subscription = {
-			accessRights: AccessRights.ReadAndWrite,
-			channelAddress: 'testaddress',
-			type: SubscriptionType.Subscriber, // caller is not the valid author
-			id: authorId,
-			isAuthorized: false
-		};
-		const isAuthor = true;
-		jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: "somesharedKey", error: 'Please do not define an asym-shared-key.' },
+		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }])
+		('should return error if channel type is privatePlus and no asymSharedKey is provided or if private and asymSharedKey is provided', async ({ type, asymSharedKey, error }) => {
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type)
+			const authorId = 'did:iota:1234';
+			const author: Subscription = {
+				accessRights: AccessRights.ReadAndWrite,
+				channelAddress: 'testaddress',
+				type: SubscriptionType.Subscriber, // caller is not the valid author
+				id: authorId,
+				isAuthorized: false
+			};
+			const isAuthor = true;
+			jest.spyOn(subscriptionService, 'isAuthor').mockImplementation(async () => isAuthor);
 
-		const sub = { ...subscriptionMock, isAuthorized: false };
-		jest
-			.spyOn(subscriptionService, 'getSubscription')
-			.mockImplementationOnce(async () => sub)
-			.mockImplementationOnce(async () => author);
-		const req: any = {
-			params: { channelAddress: 'testaddress' },
-			user: { id: 'did:iota:1234' },
-			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' },
-			query: {}
-		};
+			const sub = { ...subscriptionMock, isAuthorized: false };
+			jest
+				.spyOn(subscriptionService, 'getSubscription')
+				.mockImplementationOnce(async () => sub)
+				.mockImplementationOnce(async () => author);
+			const req: any = {
+				params: { channelAddress: 'testaddress' },
+				user: { id: 'did:iota:1234' },
+				body: { accessRights: AccessRights.Read, id: 'did:iota:2345' },
+				query: { 'asym-shared-key': asymSharedKey }
+			};
 
-		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
-		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no asymmetric shared key provided' });
-	});
+			await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: error });
+		});
 
 	it('should throw an error since the author of the channel is not found', async () => {
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
@@ -405,7 +408,7 @@ describe('test authorize subscription route', () => {
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' },
-			query: { 'asym-shared-key': asymSharedKey}
+			query: { 'asym-shared-key': asymSharedKey }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
