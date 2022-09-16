@@ -270,7 +270,6 @@ describe('test revoke subscription route', () => {
 			.mockImplementation(async () => [authorSubscriptionMock, subscriptionMock]);
 
 		const asymSharedKey = base58.encode(Buffer.from('anyAsymSharedKey'));
-		const decodedAsymSharedKey = base58.decode(asymSharedKey).toString('hex');
 		const req: any = {
 			params: { channelAddress },
 			user: { id: 'did:iota:1234' },
@@ -294,13 +293,13 @@ describe('test revoke subscription route', () => {
 			'testkeyloadlink',
 			'testsequencelink'
 		);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', true, decodedAsymSharedKey)
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', true, asymSharedKey)
 		expect(removeSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.id, 'new-state');
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, decodedAsymSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, asymSharedKey);
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});
 	afterEach(() => {

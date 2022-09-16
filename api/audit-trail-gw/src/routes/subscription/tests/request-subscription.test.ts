@@ -159,7 +159,7 @@ describe('test request subscription route', () => {
 			publicKey: 'testpublickey',
 			seed: 'testseed'
 		}));
-		const base58Spy = jest.spyOn(base58, 'decode');
+	
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
@@ -184,7 +184,6 @@ describe('test request subscription route', () => {
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(base58Spy).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
@@ -208,7 +207,7 @@ describe('test request subscription route', () => {
 			seed: 'testseed',
 			pskId: 'testpskid'
 		}));
-		const base58Spy = jest.spyOn(base58, 'decode');
+
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
@@ -236,7 +235,6 @@ describe('test request subscription route', () => {
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(base58Spy).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
@@ -260,7 +258,7 @@ describe('test request subscription route', () => {
 			seed: 'testseed',
 			pskId: 'testpskid'
 		}));
-		const base58Spy = jest.spyOn(base58, 'decode');
+
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
@@ -287,7 +285,6 @@ describe('test request subscription route', () => {
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(base58Spy).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
@@ -307,7 +304,6 @@ describe('test request subscription route', () => {
 			publicKey: 'mypublickey',
 			seed: 'testseed'
 		}));
-		const base58Spy = jest.spyOn(base58, 'decode');
 
 		const req: any = {
 			params: {
@@ -337,7 +333,6 @@ describe('test request subscription route', () => {
 		expect(exportSubscriptionSpy).toHaveBeenCalled();
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(base58Spy).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testaddress' });
 	});
@@ -362,8 +357,6 @@ describe('test request subscription route', () => {
 		}));
 
 		const asymSharedKey = base58.encode(Buffer.from('anySharedKey'));
-		const decodedSharedKey = Buffer.from('anySharedKey').toString('hex')
-		const base58Spy = jest.spyOn(base58, 'decode').mockImplementation( () => Buffer.from('anySharedKey') );
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
@@ -384,11 +377,10 @@ describe('test request subscription route', () => {
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith({id: 'did:iota:1234'}, decodedSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith({id: 'did:iota:1234'}, asymSharedKey);
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
-		expect(base58Spy).toHaveBeenCalledWith(asymSharedKey);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});

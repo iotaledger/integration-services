@@ -401,7 +401,6 @@ describe('test authorize subscription route', () => {
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 
 		const asymSharedKey = base58.encode(Buffer.from('anyAsymSharedKey'));
-		const decodedAsymSharedKey = base58.decode(asymSharedKey).toString('hex');
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
@@ -411,11 +410,11 @@ describe('test authorize subscription route', () => {
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, decodedAsymSharedKey);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, asymSharedKey);
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, pskId);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, decodedAsymSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, asymSharedKey);
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', authorId, 'new-state');
 		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');

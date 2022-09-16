@@ -17,7 +17,6 @@ import { StreamsConfig } from '../models/config';
 import { isEmpty } from 'lodash';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
-import * as bs58 from 'bs58'
 
 export class SubscriptionService {
 	private password: string;
@@ -113,10 +112,10 @@ export class SubscriptionService {
 			}
 		}
 
-		const decodedAsymSharedKey = asymSharedKey ? bs58.decode(asymSharedKey).toString('hex') : null;
-		const state = channelType === ChannelType.privatePlus
-			? this.streamsService.exportSubscription(res.subscriber, decodedAsymSharedKey)
-			: this.streamsService.exportSubscription(res.subscriber, this.password);
+		if (channelType === ChannelType.privatePlus) {
+			this.password = asymSharedKey;
+		}
+		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
 
 		await this.addSubscriptionState(channelAddress, subscriberId, state);
 
@@ -151,12 +150,12 @@ export class SubscriptionService {
 		const { publicKey, subscriptionLink, id } = subscription;
 		const pskId = authorSub.pskId;
 
-		const isPrivatePlus = channelType === ChannelType.privatePlus;
-		const decodedAsymSharedKey = asymSharedKey ? bs58.decode(asymSharedKey).toString('hex') : null;
+
+		if (channelType === ChannelType.privatePlus) {
+			this.password = asymSharedKey;
+		}
 		const state = await this.getSubscriptionState(channelAddress, authorId);
-		const streamsAuthor = isPrivatePlus
-			? (await this.streamsService.importSubscription(state, true, decodedAsymSharedKey)) as Author
-			: (await this.streamsService.importSubscription(state, true, this.password)) as Author
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true, this.password)) as Author
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -173,7 +172,7 @@ export class SubscriptionService {
 		const existingSubscriptionKeys = existingSubscriptions.map((s: Subscription) => s?.publicKey).filter((pubkey: string) => pubkey);
 
 		// fetch prev logs before syncing state
-		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id, decodedAsymSharedKey, isPrivatePlus);
+		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id);
 
 		// authorize new subscription and add existing public keys to the new branch
 		await this.streamsService.receiveSubscribe(subscriptionLink, streamsAuthor);
@@ -202,9 +201,7 @@ export class SubscriptionService {
 			})
 		);
 
-		const authorState = channelType === ChannelType.privatePlus
-			? this.streamsService.exportSubscription(streamsAuthor, decodedAsymSharedKey)
-			: this.streamsService.exportSubscription(streamsAuthor, this.password)
+		const authorState = this.streamsService.exportSubscription(streamsAuthor, this.password)
 		await this.updateSubscriptionState(
 			channelAddress,
 			authorSub.id,
@@ -220,12 +217,11 @@ export class SubscriptionService {
 		const { publicKey } = subscription;
 		const pskId = authorSub.pskId;
 
-		const isPrivatePlus = channelType === ChannelType.privatePlus;
-		const decodedAsymSharedKey = asymSharedKey ? bs58.decode(asymSharedKey).toString('hex') : null;
+		if (channelType === ChannelType.privatePlus) {
+			this.password = asymSharedKey;
+		}
 		const state = await this.getSubscriptionState(channelAddress, authorSub.id);
-		const streamsAuthor = isPrivatePlus
-			? (await this.streamsService.importSubscription(state, true.valueOf(), decodedAsymSharedKey)) as Author
-			: (await this.streamsService.importSubscription(state, true.valueOf(), this.password)) as Author
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), this.password)) as Author
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -243,7 +239,7 @@ export class SubscriptionService {
 		const filteredSubscriptionKeys = existingSubscriptions.map((s) => s?.publicKey).filter((pubkey) => pubkey && pubkey !== publicKey);
 
 		// fetch prev logs before syncing state
-		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id, decodedAsymSharedKey, isPrivatePlus);
+		await this.fetchLogs(channelAddress, streamsAuthor, authorSub.id);
 
 		// add new keyload message to existing branches but not including the revoked publicKey...
 		await Promise.all(
@@ -267,9 +263,7 @@ export class SubscriptionService {
 			? await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id)
 			: await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 
-		const authorState = isPrivatePlus
-			? this.streamsService.exportSubscription(streamsAuthor, decodedAsymSharedKey)
-			: this.streamsService.exportSubscription(streamsAuthor, this.password)
+		const authorState = this.streamsService.exportSubscription(streamsAuthor, this.password)
 		await this.updateSubscriptionState(channelAddress, authorSub.id, authorState);
 	}
 
@@ -301,15 +295,13 @@ export class SubscriptionService {
 		});
 	}
 
-	private async fetchLogs(channelAddress: string, author: Author, authorId: string, decodedAsymSharedKey: string, isPrivatePlus: boolean): Promise<void> {
+	private async fetchLogs(channelAddress: string, author: Author, authorId: string): Promise<void> {
 		const streamsMessages = await this.streamsService.getMessages(author);
 		if (!streamsMessages || streamsMessages?.length === 0) {
 			return;
 		}
 
-		const state = isPrivatePlus
-			? this.streamsService.exportSubscription(author, decodedAsymSharedKey)
-			: this.streamsService.exportSubscription(author, this.password)
+		const state = this.streamsService.exportSubscription(author, this.password)
 		await this.updateSubscriptionState(channelAddress, authorId, state);
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
 		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.password);
