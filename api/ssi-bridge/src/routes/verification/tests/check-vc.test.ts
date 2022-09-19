@@ -10,7 +10,7 @@ import { AuthorizationService } from '../../../services/authorization-service';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
 import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
-import { IdentityKeys } from '@iota/is-shared-modules';
+import * as TrustedRootsDb from '../../../database/trusted-roots';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
 
@@ -58,13 +58,12 @@ describe('test authentication routes', () => {
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not check the verifiable credential'));
 		});
 
-		it('should return false since root and issuer are not the same', async () => {
-			const vcIsVerified = true;
-			const checkVerifiableCredentialSpy = jest
-				.spyOn(ssiService, 'checkVerifiableCredential')
-				.mockReturnValue(Promise.resolve(vcIsVerified));
-			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve({id: "did:iota:wrongRoot"} as IdentityKeys));
-
+		it('should throw error since no trusted roots found!', async () => {
+			const isVerified = false;
+			const checkVerifiableCredentialSpy = jest.spyOn(ssiService, 'checkVerifiableCredential').mockReturnValue(Promise.resolve(isVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
+			const getTrustedRootIdsSpy = jest.spyOn(TrustedRootsDb, 'getTrustedRootIds').mockReturnValue(Promise.resolve([]));
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
 
 			const req: any = {
 				params: {},
@@ -75,16 +74,67 @@ describe('test authentication routes', () => {
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
+			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
+			expect(loggerSpy).toHaveBeenCalledWith(new Error('no trusted roots found!'));
+			expect(nextMock).toHaveBeenCalledWith(new Error('could not check the verifiable credential'));
+		});
+
+		it('should return false since since root is not trusted', async () => {
+			const vcIsVerified = true;
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiableCredential')
+				.mockReturnValue(Promise.resolve(vcIsVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ id: 'did:iota:123noissuer' }]));
+
+			const req: any = {
+				params: {},
+				body: vcToCheck
+			};
+
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
+
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
+			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith({ isVerified: false });
 		});
 
+		it('should return false since it is not verified', async () => {
+			const vcIsVerified = false;
+			const checkVerifiableCredentialSpy = jest
+				.spyOn(ssiService, 'checkVerifiableCredential')
+				.mockReturnValue(Promise.resolve(vcIsVerified));
+			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.document.doc.id }]));
+
+			const req: any = {
+				params: {},
+				body: vcToCheck
+			};
+
+			await verificationRoutes.checkVerifiableCredential(req, res, nextMock);
+
+			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
+			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
+			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+			expect(res.send).toHaveBeenCalledWith({ isVerified: false });
+		});
 		it('should return true since vc is verified and root is trusted', async () => {
 			const vcIsVerified = true;
 			const checkVerifiableCredentialSpy = jest
 				.spyOn(ssiService, 'checkVerifiableCredential')
 				.mockReturnValue(Promise.resolve(vcIsVerified));
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockReturnValue(Promise.resolve(ServerIdentityKey));
+			const getTrustedRootIdsSpy = jest
+				.spyOn(TrustedRootsDb, 'getTrustedRootIds')
+				.mockReturnValue(Promise.resolve([{ id: ServerIdentityMock.document.doc.id }]));
 
 			const req: any = {
 				params: {},
@@ -95,6 +145,7 @@ describe('test authentication routes', () => {
 
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(vcToCheck);
+			expect(getTrustedRootIdsSpy).toHaveBeenCalledWith();
 			expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 			expect(res.send).toHaveBeenCalledWith({ isVerified: true });
 		});

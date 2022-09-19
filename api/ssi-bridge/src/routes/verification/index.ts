@@ -206,7 +206,7 @@ export class VerificationRoutes {
 				return { isAuthorized: false, error: new Error('initiator is not allowed based on its credential type!') };
 			}
 
-			const isInitiatorVerified = await this.verificationService.checkVerifiableCredential(initiatorVC);
+			const isInitiatorVerified = await this.verificationService.checkVerifiableCredentialIssuer(initiatorVC);
 			if (!isInitiatorVerified) {
 				return { isAuthorized: false, error: new Error('initiatorVC is not verified!') };
 			}
