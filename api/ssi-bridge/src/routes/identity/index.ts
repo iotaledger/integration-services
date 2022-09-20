@@ -47,6 +47,23 @@ export class IdentityRoutes {
 		}
 	};
 
+	getIdentityKeys = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
+		try {
+			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
+			const keyType = decodeParam(<string>req.query['key-type']);
+
+			if (_.isEmpty(keyType)) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no key-type provided' });
+			}
+
+			//const user = await this.userService.getUser(id, isAuthorized);
+			res.send(null); // TODO
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not get the identity'));
+		}
+	};
+
 	getUser = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const id = _.get(req, 'params.id');
