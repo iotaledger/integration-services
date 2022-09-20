@@ -9,7 +9,6 @@ import { LoggerMock } from '../../../test/mocks/logger';
 import * as subscriptionDb from '../../../database/subscription';
 import * as channelDataDb from '../../../database/channel-data';
 import { AuthorMock } from '../../../test/mocks/streams';
-import base58 from 'bs58';
 
 describe('test authorize subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -403,21 +402,20 @@ describe('test authorize subscription route', () => {
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('new-state');
 		const setSubscriptionAuthorizedSpy = jest.spyOn(subscriptionService, 'setSubscriptionAuthorized').mockImplementation(async () => null);
 
-		const asymSharedKey = base58.encode(Buffer.from('anyAsymSharedKey'));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: authorId },
 			body: { accessRights: AccessRights.Read, id: 'did:iota:2345' },
-			query: { 'asym-shared-key': asymSharedKey }
+			query: { 'asym-shared-key': 'anySharedKey' }
 		};
 
 		await subscriptionRoutes.authorizeSubscription(req, res, nextMock);
 
-		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, asymSharedKey);
+		expect(importAuthorSpy).toHaveBeenCalledWith('teststateofauthor', true, 'anySharedKey');
 		expect(receiveSubscribeSpy).toHaveBeenCalledWith('testlink', authorMock);
 		expect(authorizeSubscriptionSpy).toHaveBeenCalledWith('testaddress', ['testpublickey', 'test-author-public-key'], authorMock, pskId);
 		expect(setSubscriptionAuthorizedSpy).toHaveBeenCalledWith('testaddress', authorId, 'testkeyloadlink', 'testsequencelink');
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, asymSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(authorMock, 'anySharedKey');
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith('testaddress', authorId, 'new-state');
 		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(addChannelSubscriberIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');

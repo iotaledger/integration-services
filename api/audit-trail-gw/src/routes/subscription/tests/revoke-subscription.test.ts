@@ -10,7 +10,6 @@ import * as SubscriptionDb from '../../../database/subscription';
 import * as ChannelDataDb from '../../../database/channel-data';
 import * as ChannelInfoDb from '../../../database/channel-info';
 import { AuthorMock } from '../../../test/mocks/streams';
-import base58 from 'bs58';
 
 describe('test revoke subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -271,12 +270,11 @@ describe('test revoke subscription route', () => {
 			.spyOn(SubscriptionDb, 'getSubscriptions')
 			.mockImplementation(async () => [authorSubscriptionMock, subscriptionMock]);
 
-		const asymSharedKey = base58.encode(Buffer.from('anyAsymSharedKey'));
 		const req: any = {
 			params: { channelAddress },
 			user: { id: 'did:iota:1234' },
 			body: { id: 'did:iota:2345' },
-			query: { 'asym-shared-key': asymSharedKey }
+			query: { 'asym-shared-key': 'anySharedKey' }
 		};
 
 		await subscriptionRoutes.revokeSubscription(req, res, nextMock);
@@ -295,13 +293,13 @@ describe('test revoke subscription route', () => {
 			'testkeyloadlink',
 			'testsequencelink'
 		);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', true, asymSharedKey)
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', true, 'anySharedKey')
 		expect(removeSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeSubscriptionSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(removeChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith(channelAddress, subscriptionMock.id);
 		expect(updateSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, authorSubscriptionMock.id, 'new-state');
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, asymSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith(AuthorMock, 'anySharedKey');
 		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
 	});
 	afterEach(() => {

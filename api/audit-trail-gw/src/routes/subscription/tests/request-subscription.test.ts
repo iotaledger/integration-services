@@ -6,7 +6,6 @@ import { StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
 import { StreamsConfigMock } from '../../../test/mocks/config';
 import { LoggerMock } from '../../../test/mocks/logger';
-import base58 from 'bs58';
 
 describe('test request subscription route', () => {
 	let sendMock: any, sendStatusMock: any, nextMock: any, res: any;
@@ -359,12 +358,11 @@ describe('test request subscription route', () => {
 			seed: 'testseed'
 		}));
 
-		const asymSharedKey = base58.encode(Buffer.from('anySharedKey'));
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
 			body: { accessRights: AccessRights.Read },
-			query: { 'asym-shared-key': asymSharedKey }
+			query: { 'asym-shared-key': 'anySharedKey'}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -380,7 +378,7 @@ describe('test request subscription route', () => {
 		};
 
 		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
-		expect(exportSubscriptionSpy).toHaveBeenCalledWith({ id: 'did:iota:1234' }, asymSharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith({ id: 'did:iota:1234' }, 'anySharedKey');
 		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
 		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
 		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');

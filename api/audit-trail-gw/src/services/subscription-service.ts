@@ -19,7 +19,7 @@ import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 
 export class SubscriptionService {
-	private password: string;
+	private readonly password: string;
 	private lock: ILock;
 
 	constructor(
@@ -103,6 +103,7 @@ export class SubscriptionService {
 		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType, asymSharedKey } = params;
 		const isPublicChannel = channelType === ChannelType.public;
 		const res = await this.streamsService.requestSubscription(channelAddress, isPublicChannel, seed, presharedKey);
+		let password = this.password
 
 		if (res.publicKey) {
 			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
@@ -113,9 +114,9 @@ export class SubscriptionService {
 		}
 
 		if (channelType === ChannelType.privatePlus) {
-			this.password = this.getPassword(asymSharedKey);
+			password = this.getPassword(asymSharedKey);
 		}
-		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
+		const state = this.streamsService.exportSubscription(res.subscriber, password);
 
 		await this.addSubscriptionState(channelAddress, subscriberId, state);
 
@@ -149,13 +150,14 @@ export class SubscriptionService {
 		const authorSub = await this.getSubscription(channelAddress, authorId);
 		const { publicKey, subscriptionLink, id } = subscription;
 		const pskId = authorSub.pskId;
+		let password = this.password;
 
 
 		if (channelType === ChannelType.privatePlus) {
-			this.password = this.getPassword(asymSharedKey);
+			password = this.getPassword(asymSharedKey);
 		}
 		const state = await this.getSubscriptionState(channelAddress, authorId);
-		const streamsAuthor = (await this.streamsService.importSubscription(state, true, this.password)) as Author
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true, password)) as Author
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -201,7 +203,7 @@ export class SubscriptionService {
 			})
 		);
 
-		const authorState = this.streamsService.exportSubscription(streamsAuthor, this.password)
+		const authorState = this.streamsService.exportSubscription(streamsAuthor, password)
 		await this.updateSubscriptionState(
 			channelAddress,
 			authorSub.id,
@@ -216,12 +218,13 @@ export class SubscriptionService {
 	async revokeSubscription(channelAddress: string, subscription: Subscription, authorSub: Subscription, channelType: ChannelType, asymSharedKey: string): Promise<void> {
 		const { publicKey } = subscription;
 		const pskId = authorSub.pskId;
+		let password = this.password;
 
 		if (channelType === ChannelType.privatePlus) {
-			this.password = this.getPassword(asymSharedKey);
+			password = this.getPassword(asymSharedKey);
 		}
 		const state = await this.getSubscriptionState(channelAddress, authorSub.id);
-		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), this.password)) as Author
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), password)) as Author
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -263,7 +266,7 @@ export class SubscriptionService {
 			? await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id)
 			: await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 
-		const authorState = this.streamsService.exportSubscription(streamsAuthor, this.password)
+		const authorState = this.streamsService.exportSubscription(streamsAuthor, password)
 		await this.updateSubscriptionState(channelAddress, authorSub.id, authorState);
 	}
 
