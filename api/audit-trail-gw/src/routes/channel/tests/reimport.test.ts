@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
-import { AccessRights, Subscription } from '@iota/is-shared-modules';
+import { AccessRights, ChannelType, Subscription } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsService } from '../../../services/streams-service';
@@ -42,7 +42,8 @@ describe('test re-import route', () => {
 		const req: any = {
 			params: {},
 			user: TestUsersMock[0],
-			body: {}
+			body: {},
+			query: {}
 		};
 
 		await channelRoutes.reimport(req, res, nextMock);
@@ -54,7 +55,8 @@ describe('test re-import route', () => {
 		const req: any = {
 			params: { channelAddress: '123456' },
 			user: TestUsersMock[0],
-			body: {}
+			body: {},
+			query: {}
 		};
 
 		await channelRoutes.reimport(req, res, nextMock);
@@ -62,14 +64,33 @@ describe('test re-import route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'no seed provided' });
 	});
 
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: "somesharedKey", error: 'Please do not define an asym-shared-key.' },
+		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }])
+		('should return error if channel type is privatePlus and no asymSharedKey is provided or if private and asymSharedKey is provided', async ({ type, asymSharedKey, error }) => {
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type)
+			const req: any = {
+				params: { channelAddress: '123456' },
+				user: TestUsersMock[0],
+				body: { seed: 'testseeddontusethis' },
+				query: { 'asym-shared-key': asymSharedKey }
+			};
+
+			await channelRoutes.validateLogs(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: error });
+		});
+
 	it('should throw an error since no subscription was found', async () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: { seed: 'testseeddontusethis' }
+			body: { seed: 'testseeddontusethis' },
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found
 
@@ -86,16 +107,18 @@ describe('test re-import route', () => {
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: { seed: 'testseeddontusethis' }
+			body: { seed: 'testseeddontusethis' },
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
-				({
-					keyloadLink: 'testlink',
-					publicKey: 'testkey',
-					accessRights: AccessRights.Write // wrong access rights
-				} as Subscription)
+			({
+				keyloadLink: 'testlink',
+				publicKey: 'testkey',
+				accessRights: AccessRights.Write // wrong access rights
+			} as Subscription)
 		);
 
 		await channelRoutes.reimport(req, res, nextMock);
@@ -111,16 +134,18 @@ describe('test re-import route', () => {
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: { seed: 'testseeddontusethis' }
+			body: { seed: 'testseeddontusethis' },
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
-				({
-					keyloadLink: 'testlink',
-					publicKey: 'testkey',
-					accessRights: AccessRights.Write // wrong access rights
-				} as Subscription)
+			({
+				keyloadLink: 'testlink',
+				publicKey: 'testkey',
+				accessRights: AccessRights.Write // wrong access rights
+			} as Subscription)
 		);
 
 		await channelRoutes.reimport(req, res, nextMock);
@@ -137,16 +162,18 @@ describe('test re-import route', () => {
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: { seed }
+			body: { seed },
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private)
 		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
-				({
-					keyloadLink: 'testlink',
-					publicKey: 'testkey', // different public key as newSub
-					accessRights: AccessRights.Read
-				} as Subscription)
+			({
+				keyloadLink: 'testlink',
+				publicKey: 'testkey', // different public key as newSub
+				accessRights: AccessRights.Read
+			} as Subscription)
 		);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const newSub = { clone: () => newSub, get_public_key: () => 'differenttestkey' }; // public key is different as the one in the prev. subscription
@@ -163,42 +190,47 @@ describe('test re-import route', () => {
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not reimport channel data'));
 	});
 
-	it('should delete logs and reimport messages', async () => {
-		const channelAddress = '123456';
-		const user = TestUsersMock[0];
-		const seed = 'testseeddontusethis';
-		const req: any = {
-			params: { channelAddress },
-			user,
-			body: { seed }
-		};
-		const loggerSpy = jest.spyOn(LoggerMock, 'error');
-		const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
-		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
-			async () =>
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: undefined, password: ConfigMock.streamsConfig.password },
+		{ type: ChannelType.privatePlus, asymSharedKey: "someAsymSharedKey", password: "someAsymSharedKey" }])
+		('should delete logs and reimport messages for private and privatePlus channels', async ({type, asymSharedKey, password}) => {
+			const channelAddress = '123456';
+			const user = TestUsersMock[0];
+			const seed = 'testseeddontusethis';
+			const req: any = {
+				params: { channelAddress },
+				user,
+				body: { seed },
+				query: {'asym-shared-key': asymSharedKey}
+			};
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type)
+			const loggerSpy = jest.spyOn(LoggerMock, 'error');
+			const getSubscriptionStateSpy = jest.spyOn(subscriptionService, 'getSubscriptionState').mockImplementation(async () => 'teststate');
+			const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
+				async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey', // same public key as in newSub
 					accessRights: AccessRights.Read
 				} as Subscription)
-		);
-		const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
-		const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as Subscriber);
-		const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
-		const fetchLogsSpy = jest.spyOn(channelService, 'fetchLogs').mockImplementation(async () => null);
-		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock);
+			);
+			const newSub = { clone: () => newSub, get_public_key: () => 'testkey' }; // same public key
+			const resetStateSpy = jest.spyOn(streamsService, 'resetState').mockImplementation(async () => newSub as Subscriber);
+			const removeChannelDataSpy = jest.spyOn(ChannelDataDb, 'removeChannelData').mockImplementation(async () => null);
+			const fetchLogsSpy = jest.spyOn(channelService, 'fetchLogs').mockImplementation(async () => null);
+			const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => SubscriberMock);
 
-		await channelRoutes.reimport(req, res, nextMock);
+			await channelRoutes.reimport(req, res, nextMock);
 
-		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false, ConfigMock.streamsConfig.password);
-		expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
-		expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.id, newSub, ConfigMock.streamsConfig.password);
-		expect(loggerSpy).not.toHaveBeenCalled();
-		expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
-	});
+			expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+			expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
+			expect(importSubscriptionSpy).toHaveBeenCalledWith('teststate', false, password);
+			expect(resetStateSpy).toHaveBeenCalledWith(channelAddress, SubscriberMock, false);
+			expect(removeChannelDataSpy).toHaveBeenCalledWith(channelAddress, user.id);
+			expect(fetchLogsSpy).toHaveBeenCalledWith(channelAddress, user.id, newSub, password);
+			expect(loggerSpy).not.toHaveBeenCalled();
+			expect(res.sendStatus).toHaveBeenCalledWith(StatusCodes.OK);
+		});
 
 	afterEach(() => {
 		jest.resetAllMocks();
