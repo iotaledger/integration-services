@@ -290,6 +290,7 @@ Validates data of a channel.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -322,6 +323,7 @@ The user can decide to re-import the data from the Tangle into the database. A r
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
