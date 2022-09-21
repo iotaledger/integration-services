@@ -613,6 +613,7 @@ Request subscription to a channel with address channel-address. A client can req
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -646,6 +647,7 @@ Authorize a subscription to a channel with address channel-address. The author o
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -678,6 +680,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 

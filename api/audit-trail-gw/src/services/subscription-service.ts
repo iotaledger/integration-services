@@ -19,7 +19,7 @@ import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 
 export class SubscriptionService {
-	private password: string;
+	private readonly password: string;
 	private lock: ILock;
 
 	constructor(
@@ -98,10 +98,12 @@ export class SubscriptionService {
 		accessRights?: AccessRights;
 		seed?: string;
 		presharedKey?: string;
+		asymSharedKey?: string;
 	}): Promise<RequestSubscriptionResponse> {
-		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType } = params;
+		const { channelAddress, presharedKey, seed, subscriberId, accessRights, channelType, asymSharedKey } = params;
 		const isPublicChannel = channelType === ChannelType.public;
 		const res = await this.streamsService.requestSubscription(channelAddress, isPublicChannel, seed, presharedKey);
+		let password = this.password
 
 		if (res.publicKey) {
 			const existingSubscription = await this.getSubscriptionByPublicKey(channelAddress, res.publicKey);
@@ -111,7 +113,11 @@ export class SubscriptionService {
 			}
 		}
 
-		const state = this.streamsService.exportSubscription(res.subscriber, this.password);
+		if (channelType === ChannelType.privatePlus) {
+			password = this.getPassword(asymSharedKey);
+		}
+		const state = this.streamsService.exportSubscription(res.subscriber, password);
+
 		await this.addSubscriptionState(channelAddress, subscriberId, state);
 
 		const subscription: Subscription = {
@@ -137,14 +143,21 @@ export class SubscriptionService {
 	async authorizeSubscription(
 		channelAddress: string,
 		subscription: Subscription,
-		authorId: string
+		authorId: string,
+		channelType: ChannelType,
+		asymSharedKey: string
 	): Promise<{ keyloadLink: string; sequenceLink?: string }> {
 		const authorSub = await this.getSubscription(channelAddress, authorId);
 		const { publicKey, subscriptionLink, id } = subscription;
 		const pskId = authorSub.pskId;
+		let password = this.password;
 
+
+		if (channelType === ChannelType.privatePlus) {
+			password = this.getPassword(asymSharedKey);
+		}
 		const state = await this.getSubscriptionState(channelAddress, authorId);
-		const streamsAuthor = (await this.streamsService.importSubscription(state, true, this.password)) as Author; // TODO
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true, password)) as Author
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -154,9 +167,9 @@ export class SubscriptionService {
 		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions: Subscription[] = subscriptions
 			? subscriptions.filter(
-					(s: Subscription) =>
-						s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-			  )
+				(s: Subscription) =>
+					s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			)
 			: [];
 		const existingSubscriptionKeys = existingSubscriptions.map((s: Subscription) => s?.publicKey).filter((pubkey: string) => pubkey);
 
@@ -190,10 +203,11 @@ export class SubscriptionService {
 			})
 		);
 
+		const authorState = this.streamsService.exportSubscription(streamsAuthor, password)
 		await this.updateSubscriptionState(
 			channelAddress,
 			authorSub.id,
-			this.streamsService.exportSubscription(streamsAuthor, this.password) // TODO
+			authorState
 		);
 		await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 		await this.channelInfoService.addChannelSubscriberId(channelAddress, subscription.id);
@@ -201,12 +215,16 @@ export class SubscriptionService {
 		return { keyloadLink, sequenceLink };
 	}
 
-	async revokeSubscription(channelAddress: string, subscription: Subscription, authorSub: Subscription): Promise<void> {
+	async revokeSubscription(channelAddress: string, subscription: Subscription, authorSub: Subscription, channelType: ChannelType, asymSharedKey: string): Promise<void> {
 		const { publicKey } = subscription;
 		const pskId = authorSub.pskId;
+		let password = this.password;
 
+		if (channelType === ChannelType.privatePlus) {
+			password = this.getPassword(asymSharedKey);
+		}
 		const state = await this.getSubscriptionState(channelAddress, authorSub.id);
-		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), this.password)) as Author; // TODO
+		const streamsAuthor = (await this.streamsService.importSubscription(state, true.valueOf(), password)) as Author
 
 		if (!streamsAuthor) {
 			throw new Error(`no author found with channelAddress: ${channelAddress} and id: ${authorSub?.id}`);
@@ -216,8 +234,8 @@ export class SubscriptionService {
 		const subscriptions = await SubscriptionDb.getSubscriptions(channelAddress);
 		const existingSubscriptions = subscriptions
 			? subscriptions.filter(
-					(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
-			  )
+				(s) => s?.isAuthorized === true && (s?.accessRights === AccessRights.ReadAndWrite || s?.accessRights === AccessRights.Read)
+			)
 			: [];
 
 		// remove revoked public key
@@ -248,7 +266,8 @@ export class SubscriptionService {
 			? await this.channelInfoService.removeChannelSubscriberId(channelAddress, subscription.id)
 			: await this.channelInfoService.removeChannelRequestedSubscriptionId(channelAddress, subscription.id);
 
-		await this.updateSubscriptionState(channelAddress, authorSub.id, this.streamsService.exportSubscription(streamsAuthor, this.password));
+		const authorState = this.streamsService.exportSubscription(streamsAuthor, password)
+		await this.updateSubscriptionState(channelAddress, authorSub.id, authorState);
 	}
 
 	private async sendKeyload(params: {
@@ -285,8 +304,16 @@ export class SubscriptionService {
 			return;
 		}
 
-		await this.updateSubscriptionState(channelAddress, authorId, this.streamsService.exportSubscription(author, this.password));
+		const state = this.streamsService.exportSubscription(author, this.password)
+		await this.updateSubscriptionState(channelAddress, authorId, state);
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(streamsMessages);
 		await ChannelDataDb.addChannelData(channelAddress, authorId, channelData, this.password);
+	}
+
+	private getPassword(sharedKey: string) {
+		if (sharedKey) {
+			return sharedKey.slice(0, 32);
+		}
+		return this.password;
 	}
 }

@@ -20,7 +20,7 @@ export class SubscriptionRoutes {
 		private readonly subscriptionService: SubscriptionService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly logger: ILogger
-	) {}
+	) { }
 
 	addSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
@@ -155,6 +155,7 @@ export class SubscriptionRoutes {
 	requestSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const { seed, accessRights, presharedKey } = req.body as RequestSubscriptionBody;
 			const subscriberId = req.user.id;
 
@@ -168,15 +169,24 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send('subscription already requested');
 			}
 
-			const channelType = await this.channelInfoService.getChannelType(channelAddress);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
+			}
+
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
 
 			const channel = await this.subscriptionService.requestSubscription({
 				subscriberId,
 				channelAddress,
 				accessRights,
-				channelType: channelType || ChannelType.private,
+				channelType: type || ChannelType.private,
 				seed,
-				presharedKey
+				presharedKey,
+				asymSharedKey
 			});
 			return res.status(StatusCodes.CREATED).send(channel);
 		} catch (error) {
@@ -188,6 +198,7 @@ export class SubscriptionRoutes {
 	revokeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const authorId = req.user?.id;
 			const body = req.body as AuthorizeSubscriptionBody;
 			const { subscriptionLink, id } = body;
@@ -214,7 +225,17 @@ export class SubscriptionRoutes {
 				throw new Error('no valid subscription found!');
 			}
 
-			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
+			}
+
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
+
+			await this.subscriptionService.revokeSubscription(channelAddress, subscription, authorSubscription, type, asymSharedKey);
 
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
@@ -226,6 +247,7 @@ export class SubscriptionRoutes {
 	authorizeSubscription = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		try {
 			const channelAddress = _.get(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const body = req.body as AuthorizeSubscriptionBody;
 			const { subscriptionLink, id } = body;
 			const authorId = req.user?.id;
@@ -254,7 +276,17 @@ export class SubscriptionRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'not the valid author of the channel' });
 			}
 
-			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
+			}
+
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
+
+			const channel = await this.subscriptionService.authorizeSubscription(channelAddress, subscription, authorId, type, asymSharedKey);
 			return res.status(StatusCodes.OK).send(channel);
 		} catch (error) {
 			this.logger.error(error);
