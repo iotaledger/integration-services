@@ -96,7 +96,7 @@
 			<div class="mb-4 align-self-start">
 				<button on:click={handleBackClick} class="btn d-flex align-items-center">
 					<Icon type="arrow-left" size={16} />
-					<span class="ms-2">Back</span>
+					<span class="ms-2">Back to Identities</span>
 				</button>
 			</div>
 			{#if $authenticatedUserRole && $selectedIdentity}
