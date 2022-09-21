@@ -66,10 +66,10 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
 
 /**
  * @openapi
- * /identities/keys:
+ * /identities/key-pair:
  *   post:
- *     summary: Create a new keypair for identities.
- *     description: Create a new keypair for identities.
+ *     summary: Create a new keypair.
+ *     description: Create a new keypair.
  *     tags:
  *     - identities
  *     parameters:
@@ -83,11 +83,11 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *       - ApiKey: []
  *     responses:
  *       201:
- *         description: Returns the created identity keys without creating or storing it in an identity document.
+ *         description: Returns the created key pair without creating or storing it in an identity document.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/KeysSchema"
+ *               $ref: "#/components/schemas/IdentityKeyPairSchema"
  *       401:
  *         description: No valid api key provided
  *         content:
@@ -101,7 +101,7 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.post('/keys', apiKeyMiddleware, mongodbSanitizer, getIdentityKeys);
+identityRouter.get('/key-pair', apiKeyMiddleware, mongodbSanitizer, getIdentityKeys);
 
 /**
  * @openapi

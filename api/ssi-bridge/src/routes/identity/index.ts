@@ -1,4 +1,12 @@
-import { UserSearch, UserType, AuthenticatedRequest, CreateIdentityBody, IdentitySchemaBody, UserRoles } from '@iota/is-shared-modules';
+import {
+	UserSearch,
+	UserType,
+	AuthenticatedRequest,
+	CreateIdentityBody,
+	IdentitySchemaBody,
+	UserRoles,
+	KeyTypes
+} from '@iota/is-shared-modules';
 import { getDateFromString } from '@iota/is-shared-modules/node';
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../services/user-service';
@@ -50,14 +58,14 @@ export class IdentityRoutes {
 	getIdentityKeys = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const keyType = decodeParam(<string>req.query['key-type']);
+			const keyType = decodeParam(<string>req.query['key-type']) as KeyTypes;
 
-			if (_.isEmpty(keyType)) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no key-type provided' });
+			if (keyType !== KeyTypes.ed25519 && keyType !== KeyTypes.x25519) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'key-type must be ed25519 or x25519' });
 			}
 
-			//const user = await this.userService.getUser(id, isAuthorized);
-			res.send(null); // TODO
+			const keys = await this.userService.createKeyPair(keyType);
+			res.send(keys);
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not get the identity'));
