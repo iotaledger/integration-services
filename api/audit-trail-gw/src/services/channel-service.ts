@@ -11,7 +11,8 @@ import {
 	ChannelLog,
 	CreateChannelResponse,
 	ValidateResponse,
-	IdentityKeyPair
+	IdentityKeyPair,
+	KeyTypes
 } from '@iota/is-shared-modules';
 import { getDateStringFromDate, ILogger, createAsymSharedKey } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
@@ -69,8 +70,8 @@ export class ChannelService {
 
 		if (type === ChannelType.privatePlus) {
 			const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
-			const apiKey = ssiBridgeApiKey ? `?api-key=${ssiBridgeApiKey}` : '';
-			const url = `${ssiBridgeUrl}/verification/latest-document/${id}${apiKey}`;
+			const apiKey = ssiBridgeApiKey ? `&api-key=${ssiBridgeApiKey}` : '';
+			const url = `${ssiBridgeUrl}/identities/key-pair?key-type=${KeyTypes.x25519}${apiKey}`;
 			const identityRes = await axios.get(url);
 			const identityKeys = identityRes.data as IdentityKeyPair;
 			peerPublicKey = identityKeys.public;
