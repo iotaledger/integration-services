@@ -28,7 +28,6 @@ export {
 	IdentitySchemaBody,
 	Nonce,
 	ProveOwnershipPostBody,
-	ReimportBody,
 	RequestSubscriptionBody,
 	RequestSubscriptionResponse,
 	RevokeSubscriptionBody,
