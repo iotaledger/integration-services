@@ -1,3 +1,14 @@
+---
+image: /img/integration-services/logo/integration_services.png
+description: API Reference documentation Audit Trail Gateway of the the integration Services.
+keywords:
+- reference
+- API Reference
+- models
+- endpoints
+- audit trail
+---
+
 # Audit Trail GW API Documentation
 This is the API documentation for the Audit Trail Gateway of the [Integration Services](https://github.com/iotaledger/integration-services). For further information have a look at our [Wiki](https://wiki.iota.org/integration-services/services/audit-trail-gateway/introduction).
 
@@ -748,13 +759,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | subscriptionLink | string |  | No |
 | id | string |  | No |
 
-#### ReimportBodySchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| seed | string |  | No |
-| subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
-
 #### CreateChannelResponseSchema
 
 | Name | Type | Description | Required |
@@ -858,6 +862,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
+| peerPublicKey | string | Public key used for privatePlus channels to encrypt channel data and state asymmetrically. | No |
 
 #### TopicSchema
 
