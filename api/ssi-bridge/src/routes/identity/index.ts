@@ -55,10 +55,10 @@ export class IdentityRoutes {
 		}
 	};
 
-	getIdentityKeys = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
+	getKeyPair = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
 		try {
 			const decodeParam = (param: string): string | undefined => (param ? decodeURI(param) : undefined);
-			const keyType = decodeParam(<string>req.query['key-type']) as KeyTypes;
+			const keyType = decodeParam(<string>req?.query?.['key-type']) as KeyTypes;
 
 			if (keyType !== KeyTypes.ed25519 && keyType !== KeyTypes.x25519) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'key-type must be ed25519 or x25519' });

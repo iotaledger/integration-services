@@ -7,7 +7,7 @@ import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const identityRoutes = new IdentityRoutes(userService, authorizationService, verificationService, Logger.getInstance());
-const { createIdentity, getIdentityKeys, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
+const { createIdentity, getKeyPair, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();
 
@@ -101,7 +101,7 @@ identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentity
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
-identityRouter.get('/key-pair', apiKeyMiddleware, mongodbSanitizer, getIdentityKeys);
+identityRouter.get('/key-pair', apiKeyMiddleware, mongodbSanitizer, getKeyPair);
 
 /**
  * @openapi

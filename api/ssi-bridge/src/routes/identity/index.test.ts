@@ -136,6 +136,40 @@ describe('test user routes', () => {
 		});
 	});
 
+	describe('test GET key-pair', () => {
+		it('should return bad request if no user id is given as parameter', async () => {
+			const req: any = {
+				params: {},
+				body: null
+			};
+
+			await userRoutes.getKeyPair(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'key-type must be ed25519 or x25519' });
+		});
+		it('should return bad request if no user id is given as parameter', async () => {
+			const req: any = {
+				params: {},
+				body: null,
+				query: { 'key-type': 'somekeywedonthave' }
+			};
+
+			await userRoutes.getKeyPair(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: 'key-type must be ed25519 or x25519' });
+		});
+		it('should return bad request if no user id is given as parameter', async () => {
+			const req: any = {
+				params: {},
+				body: null,
+				query: { 'key-type': 'ed25519' }
+			};
+
+			await userRoutes.getKeyPair(req, res, nextMock);
+			expect(res.send).toHaveBeenCalled();
+		});
+	});
+
 	describe('test GET user', () => {
 		it('should return bad request if no user id is given as parameter', async () => {
 			const req: any = {
