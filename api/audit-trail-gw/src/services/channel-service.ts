@@ -230,8 +230,9 @@ export class ChannelService {
 		});
 	}
 
-	async reimport(channelAddress: string, id: string, _seed: string, _subscriptionPassword?: string): Promise<void> {
+	async reimport(channelAddress: string, id: string, _seed: string, type: ChannelType, asymSharedKey: string, _subscriptionPassword?: string): Promise<void> {
 		const lockKey = channelAddress + id;
+		let password = this.password;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
@@ -245,9 +246,12 @@ export class ChannelService {
 					throw new Error('not allowed to reimport the logs from the channel');
 				}
 
+				if(type === ChannelType.privatePlus){
+					password = this.getPassword(asymSharedKey);
+				}
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
-				const sub = await this.streamsService.importSubscription(state, isAuthor, this.password); // TODO
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password); 
 
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
@@ -257,15 +261,16 @@ export class ChannelService {
 				}
 
 				await ChannelDataDb.removeChannelData(channelAddress, id);
-				await this.fetchLogs(channelAddress, id, newSub, this.password); // TODO
+				await this.fetchLogs(channelAddress, id, newSub, password); 
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async validate(channelAddress: string, id: string, logs: ChannelData[]): Promise<ValidateResponse> {
+	async validate(channelAddress: string, id: string, logs: ChannelData[], type: ChannelType, asymSharedKey: string): Promise<ValidateResponse> {
 		const lockKey = channelAddress + id;
+		let password = this.password;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
@@ -280,9 +285,12 @@ export class ChannelService {
 					throw new Error('not allowed to validate the logs from the channel');
 				}
 
+				if(type === ChannelType.privatePlus){
+					password = this.getPassword(asymSharedKey);
+				}
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor, this.password); // TODO
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password); 
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);

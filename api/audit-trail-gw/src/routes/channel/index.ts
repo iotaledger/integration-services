@@ -23,7 +23,7 @@ export class ChannelRoutes {
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly logger: ILogger,
 		private readonly config: { ssiBridgeUrl: string; ssiBridgeApiKey: string }
-	) {}
+	) { }
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
@@ -189,6 +189,7 @@ export class ChannelRoutes {
 	reimport = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const { id } = req.user;
 			const body = req.body as ReimportBody;
 			const { seed, subscriptionPassword } = body;
@@ -201,7 +202,15 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no seed provided' });
 			}
 
-			await this.channelService.reimport(channelAddress, id, seed, subscriptionPassword);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
+			}
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
+
+			await this.channelService.reimport(channelAddress, id, seed, type, asymSharedKey, subscriptionPassword);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);
@@ -212,6 +221,7 @@ export class ChannelRoutes {
 	validateLogs = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
+			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const { id } = req.user;
 			const channelLogs = req.body as ValidateBody;
 
@@ -223,7 +233,15 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no logs provided' });
 			}
 
-			const validateRes = await this.channelService.validate(channelAddress, id, channelLogs);
+			const type = await this.channelInfoService.getChannelType(channelAddress);
+			if (type !== ChannelType.privatePlus && asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Please do not define an asym-shared-key.' });
+			}
+			if (type === ChannelType.privatePlus && !asymSharedKey) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
+			}
+
+			const validateRes = await this.channelService.validate(channelAddress, id, channelLogs, type, asymSharedKey);
 			return res.status(StatusCodes.OK).send(validateRes);
 		} catch (error) {
 			this.logger.error(error);
