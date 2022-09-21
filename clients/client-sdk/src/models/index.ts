@@ -28,7 +28,6 @@ export {
   UserType,
   UserRoles,
   CredentialTypes,
-  VerifiableCredentialInternal,
   IdentityDocument,
   ChannelType,
   IdentityKeys
