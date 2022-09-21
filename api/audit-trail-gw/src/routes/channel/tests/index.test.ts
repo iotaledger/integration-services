@@ -19,10 +19,10 @@ describe('test channel routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config = StreamsConfigMock;
-		streamsService = new StreamsService(config, LoggerMock);
+		const config = ConfigMock;
+		streamsService = new StreamsService(config.streamsConfig, LoggerMock);
 		channelInfoService = new ChannelInfoService();
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config.streamsConfig);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, channelInfoService, LoggerMock, {
 			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
