@@ -29,6 +29,7 @@
 
 	let credentialsTemplate: VerifiableCredentialTemplate[] = DEFAULT_VCS_TEMPLATES;
 	let isCreateCredentialModalOpen = false;
+	$: $page.params.id, setIdentity($page.params.id);
 
 	const detailViewButtons: ActionButton[] = [
 		{
@@ -39,6 +40,11 @@
 			hidden: $authenticatedUserRole !== UserRoles.Admin
 		}
 	];
+
+	async function setIdentity(id: string): Promise<void> {
+		const identity = await getIdentitiy(id);
+		selectedIdentity.set(identity);
+	}
 
 	// Add the newly created credential to the selected identity
 	async function onCreateCredentialSuccess(): Promise<void> {
@@ -79,8 +85,7 @@
 
 	onMount(async () => {
 		if (!get(selectedIdentity)) {
-			const id = await getIdentitiy($page.params.id);
-			selectedIdentity.set(id);
+			await setIdentity($page.params.id);
 		}
 		if (get(selectedIdentity)) await loadIdentityDetails();
 	});
