@@ -64,7 +64,7 @@ export class IdentityRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'key-type must be ed25519 or x25519' });
 			}
 
-			const keys = await this.userService.createKeyPair(keyType);
+			const keys = await this.userService.getKeyPair(keyType);
 			res.send(keys);
 		} catch (error) {
 			this.logger.error(error);

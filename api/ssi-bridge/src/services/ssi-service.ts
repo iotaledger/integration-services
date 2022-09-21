@@ -79,9 +79,8 @@ export class SsiService {
 		}
 	}
 
-	createKeyPair(type?: KeyTypes) {
+	createKeyPair(type: KeyTypes) {
 		try {
-			console.log('KeyType.Ed25519', KeyType.Ed25519);
 			const typeNum = type === KeyTypes.ed25519 ? 1 : 2;
 			const keyPair = new KeyPair(typeNum);
 			return this.decodeKeyPair(keyPair.public(), keyPair.private(), keyPair.type());

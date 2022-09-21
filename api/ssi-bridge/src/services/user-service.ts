@@ -66,7 +66,7 @@ export class UserService {
 		};
 	}
 
-	createKeyPair(type: KeyTypes) {
+	getKeyPair(type: KeyTypes) {
 		return this.ssiService.createKeyPair(type);
 	}
 
