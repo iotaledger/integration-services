@@ -5,7 +5,6 @@ import {
 	AuthenticatedRequest,
 	AddChannelLogBody,
 	CreateChannelBody,
-	ReimportBody,
 	ValidateBody,
 	ChannelLogRequestOptions,
 	ChannelType,
@@ -23,7 +22,7 @@ export class ChannelRoutes {
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly logger: ILogger,
 		private readonly config: { ssiBridgeUrl: string; ssiBridgeApiKey: string }
-	) { }
+	) {}
 
 	createChannel = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response<any>> => {
 		try {
@@ -191,15 +190,9 @@ export class ChannelRoutes {
 			const channelAddress = lodashGet(req, 'params.channelAddress');
 			const asymSharedKey = <string>req?.query['asym-shared-key'];
 			const { id } = req.user;
-			const body = req.body as ReimportBody;
-			const { seed, subscriptionPassword } = body;
 
 			if (!channelAddress || !id) {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no channelAddress or id provided' });
-			}
-
-			if (!seed) {
-				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'no seed provided' });
 			}
 
 			const type = await this.channelInfoService.getChannelType(channelAddress);
@@ -210,7 +203,7 @@ export class ChannelRoutes {
 				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'An asym-shared-key is required for privatePlus channels.' });
 			}
 
-			await this.channelService.reimport(channelAddress, id, seed, type, asymSharedKey, subscriptionPassword);
+			await this.channelService.reimport(channelAddress, id, type, asymSharedKey);
 			return res.sendStatus(StatusCodes.OK);
 		} catch (error) {
 			this.logger.error(error);

@@ -51,19 +51,6 @@ describe('test re-import route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
-	it('should return bad request if no seed is provided', async () => {
-		const req: any = {
-			params: { channelAddress: '123456' },
-			user: TestUsersMock[0],
-			body: {},
-			query: {}
-		};
-
-		await channelRoutes.reimport(req, res, nextMock);
-		expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-		expect(res.send).toHaveBeenCalledWith({ error: 'no seed provided' });
-	});
-
 	test.each([
 		{ type: ChannelType.private, asymSharedKey: 'somesharedKey', error: 'Please do not define an asym-shared-key.' },
 		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }
@@ -195,7 +182,7 @@ describe('test re-import route', () => {
 
 	test.each([
 		{ type: ChannelType.private, asymSharedKey: undefined, password: ConfigMock.streamsConfig.password },
-		{ type: ChannelType.privatePlus, asymSharedKey: 'someAsymSharedKey', password: 'someAsymSharedKey' }
+		{ type: ChannelType.privatePlus, asymSharedKey: 'someAsymSharedKey', password: 'someAsymSharedKey' } // uses asymSharedKey instead of ConfigMock.streamsConfig.password
 	])('should delete logs and reimport messages for private and privatePlus channels', async ({ type, asymSharedKey, password }) => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];

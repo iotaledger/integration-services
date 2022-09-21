@@ -234,14 +234,7 @@ export class ChannelService {
 		});
 	}
 
-	async reimport(
-		channelAddress: string,
-		id: string,
-		_seed: string,
-		type: ChannelType,
-		asymSharedKey: string,
-		_subscriptionPassword?: string
-	): Promise<void> {
+	async reimport(channelAddress: string, id: string, type: ChannelType, asymSharedKey: string): Promise<void> {
 		const lockKey = channelAddress + id;
 		let password = this.password;
 

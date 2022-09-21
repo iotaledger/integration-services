@@ -218,7 +218,7 @@ describe('test validate route', () => {
 
 	test.each([
 		{ type: ChannelType.private, asymSharedKey: undefined, password: StreamsConfigMock.password },
-		{ type: ChannelType.privatePlus, asymSharedKey: 'someAsymSharedKey', password: 'someAsymSharedKey' }
+		{ type: ChannelType.privatePlus, asymSharedKey: 'someAsymSharedKey', password: 'someAsymSharedKey' } // uses asymSharedKey instead of ConfigMock.streamsConfig.password
 	])('should validate the logs for private and privatePlus channels', async ({ type, asymSharedKey, password }) => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
