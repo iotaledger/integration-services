@@ -13,11 +13,21 @@ describe('test user-service', () => {
 		userService = new UserService(ssiService, serverSecret, LoggerMock);
 	});
 
-	it('should not generate a new bitmap since index is found', async () => {
+	it('should not generate a x25519 keypair', async () => {
 		const type = KeyTypes.x25519;
 		const keyPair = userService.getKeyPair(type);
 
 		expect(keyPair.type).toEqual(KeyTypes.x25519);
+		expect(keyPair.public.length).toEqual(44);
+		expect(keyPair.private.length).toEqual(44);
+		expect(keyPair.encoding).toEqual('base58');
+	});
+
+	it('should not generate a ed25519 keypair', async () => {
+		const type = KeyTypes.ed25519;
+		const keyPair = userService.getKeyPair(type);
+
+		expect(keyPair.type).toEqual(KeyTypes.ed25519);
 		expect(keyPair.public.length).toEqual(44);
 		expect(keyPair.private.length).toEqual(44);
 		expect(keyPair.encoding).toEqual('base58');
