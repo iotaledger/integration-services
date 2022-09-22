@@ -1,7 +1,7 @@
 {
-  "name": "csp1-bss",
+  "name": "secant",
   "version": "1.0.0",
-  "description": "CSP1-BSS Proxy for TMForum API",
+  "description": "Secant client demonstration.",
   "main": "index.ts",
   "scripts": {
     "start": "node dist/index.js",
