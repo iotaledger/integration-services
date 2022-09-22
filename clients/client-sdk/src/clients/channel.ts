@@ -36,7 +36,7 @@ export class ChannelClient extends BaseClient {
    * @param peerPublicKey
    * @returns
    */
-  createAsymmetricSharedKey(privateKey: string, peerPublicKey: string): string {
+  getAsymSharedKey(privateKey: string, peerPublicKey: string): string {
     return createAsymSharedKey(privateKey, peerPublicKey);
   }
 
