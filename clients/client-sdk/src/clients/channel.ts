@@ -17,7 +17,7 @@ import {
   SubscriptionUpdate,
   ChannelType
 } from '@iota/is-shared-modules';
-import { createAsymSharedKey } from '@iota/is-shared-modules/node';
+import { createAsymSharedKey } from '@iota/is-shared-modules/node/utils/encryption';
 import { ClientConfig } from '../models/clientConfig';
 import { BaseClient } from './base';
 
