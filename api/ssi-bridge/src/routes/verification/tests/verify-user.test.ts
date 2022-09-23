@@ -154,8 +154,8 @@ describe('test authentication routes', () => {
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const initiatorVcIsVerified = false;
 
-			const checkVerifiableCredentialSpy = jest
-				.spyOn(verificationService, 'checkVerifiableCredential')
+			const checkVerifiableCredentialIssuerSpy = jest
+				.spyOn(verificationService, 'checkVerifiableCredentialIssuer')
 				.mockImplementation(async () => initiatorVcIsVerified);
 			const req: any = {
 				user: { id: initiatorVC.id, type: UserType.Person },
@@ -171,7 +171,7 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
+			expect(checkVerifiableCredentialIssuerSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getBitmapSpy).not.toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(loggerSpy).toHaveBeenCalledWith(new Error('initiatorVC is not verified!'));
 			expect(nextMock).toHaveBeenCalledWith(new Error('could not create the verifiable credential'));
@@ -233,8 +233,8 @@ describe('test authentication routes', () => {
 			const keyIndex = 0;
 			const initiatorVC = ServerIdentityMock.userData.verifiableCredentials[0];
 			const initiatorVcIsVerified = true;
-			const checkVerifiableCredentialSpy = jest
-				.spyOn(verificationService, 'checkVerifiableCredential')
+			const checkVerifiableCredentialIssuerSpy = jest
+				.spyOn(verificationService, 'checkVerifiableCredentialIssuer')
 				.mockImplementation(async () => initiatorVcIsVerified);
 			const getIdentitySpy = jest.spyOn(IdentityDocsDb, 'getIdentityKeys').mockImplementation(async () => ServerIdentityKey);
 			const req: any = {
@@ -274,7 +274,7 @@ describe('test authentication routes', () => {
 			};
 			await verificationRoutes.createVerifiableCredential(req, res, nextMock);
 
-			expect(checkVerifiableCredentialSpy).toHaveBeenCalledWith(initiatorVC);
+			expect(checkVerifiableCredentialIssuerSpy).toHaveBeenCalledWith(initiatorVC);
 			expect(getNextCredentialIndexSpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id);
 			expect(getIdentitySpy).toHaveBeenCalledWith(ServerIdentityMock.document.doc.id, serverSecret);
 			expect(createVerifiableCredentialSpy).toHaveBeenCalledWith(ServerIdentityKey, expectedCredential, bitmapIndex, keyIndex);
