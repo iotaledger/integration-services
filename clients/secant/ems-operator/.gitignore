@@ -1,0 +1,6 @@
+DoctorIdentity.json
+DeviceIdentity.json
+.env
+dist/
+node_modules/
+Channel.json
