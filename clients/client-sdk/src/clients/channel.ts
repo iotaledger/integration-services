@@ -121,11 +121,10 @@ export class ChannelClient extends BaseClient {
   /**
    * The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
    * @param address
-   * @param data
    * @returns
    */
-  async reimport(address: string, data: any): Promise<null> {
-    return await this.post(`${this.baseUrl}/re-import/${address}`, data);
+  async reimport(address: string): Promise<null> {
+    return await this.post(`${this.baseUrl}/re-import/${address}`, {});
   }
 
   /**
