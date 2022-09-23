@@ -5,7 +5,6 @@ import {
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
-  ReimportBody,
   ValidateBody,
   ValidateResponse,
   AuthorizeSubscriptionBody,
@@ -17,7 +16,6 @@ import {
   SubscriptionUpdate,
   ChannelType
 } from '@iota/is-shared-modules';
-import { createAsymSharedKey } from '@iota/is-shared-modules/node/utils/encryption';
 import { ClientConfig } from '../models/clientConfig';
 import { BaseClient } from './base';
 
@@ -28,16 +26,6 @@ export class ChannelClient extends BaseClient {
     super(config);
     this.baseUrl = this.useGatewayUrl ? this.isGatewayUrl!! : this.auditTrailUrl!!;
     this.baseUrl = this.baseUrl + `/api/${config.apiVersionAuditTrail}`;
-  }
-
-  /**
-   * Create an asymmetric shared key from the privateKey for encryption of the identity and the peerPublicKey of the channel.
-   * @param privateKey
-   * @param peerPublicKey
-   * @returns
-   */
-  getAsymSharedKey(privateKey: string, peerPublicKey: string): string {
-    return createAsymSharedKey(privateKey, peerPublicKey);
   }
 
   /**
@@ -136,7 +124,7 @@ export class ChannelClient extends BaseClient {
    * @param data
    * @returns
    */
-  async reimport(address: string, data: ReimportBody): Promise<null> {
+  async reimport(address: string, data: any): Promise<null> {
     return await this.post(`${this.baseUrl}/re-import/${address}`, data);
   }
 
