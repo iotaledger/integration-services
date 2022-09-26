@@ -1,3 +1,4 @@
+require('dotenv').config(); // eslint-disable-line
 import { createDeviceIdentity } from '../services/identity.service';
 import { getChannelAddress } from '../config/config';
 

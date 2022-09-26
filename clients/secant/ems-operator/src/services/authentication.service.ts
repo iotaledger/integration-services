@@ -5,7 +5,7 @@ import { getHexEncodedKey, signNonce } from '../utils/encryption';
 import { axiosClient } from '../utils/client';
 
 export const fetchAuth = async (): Promise<any> => {
-	const identityPath = path.join(__dirname, '..', 'config', 'DeviceIdentity.json');
+	const identityPath = path.join(__dirname, '..', 'config', 'DoctorIdentity.json');
 	let file, identity;
 	try {
 		file = fs.readFileSync(identityPath);
@@ -16,11 +16,12 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
+	console.log('identityidentity', identity);
 	if ((identity as any)?.id == null) {
 		throw new Error('no identity found');
 	}
 
-	const res = await axiosClient.get(`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.doc.id}${apiKey}`);
+	const res = await axiosClient.get(`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`);
 	if (res.status !== 200) {
 		console.error('Didnt receive status 200 on get request for prove-ownership!');
 		return;
@@ -28,10 +29,11 @@ export const fetchAuth = async (): Promise<any> => {
 	const body = await res.data;
 	const nonce: string = body.nonce;
 
-	const encodedKey = await getHexEncodedKey(identity.key.secret);
+	const encodedKey = await getHexEncodedKey(identity.keys.sign.private);
 	const signedNonce = await signNonce(encodedKey, nonce);
+	console.log('URL:', `${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`);
 	const response = await axiosClient.post(
-		`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.doc.id}${apiKey}`,
+		`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`,
 		JSON.stringify({ signedNonce }),
 		{
 			method: 'post',

@@ -13,9 +13,9 @@ export const createIdentity = async (): Promise<string | undefined> => {
 		console.log('no identity file found');
 	}
 
-	if (identity?.doc?.id != null) {
+	if (identity?.id != null) {
 		console.log('Identity already created!');
-		return identity?.doc?.id;
+		return identity?.id;
 	}
 	console.log('Creating the device identity...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
@@ -30,6 +30,6 @@ export const createIdentity = async (): Promise<string | undefined> => {
 		if (!fs.existsSync(configPath)) fs.mkdirSync(configPath);
 		fs.writeFileSync(identityPath, JSON.stringify(res.data));
 
-		return res.data.doc.id;
+		return res.data.id;
 	}
 };

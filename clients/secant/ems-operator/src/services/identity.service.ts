@@ -13,9 +13,9 @@ export const createDeviceIdentity = async (): Promise<string | undefined> => {
 		console.log('no identity file found');
 	}
 
-	if (identity?.doc?.id != null) {
+	if (identity?.id != null) {
 		console.log('Identity already created!');
-		return identity?.doc?.id;
+		return identity?.id;
 	}
 	console.log('Creating the device identity...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
@@ -30,7 +30,7 @@ export const createDeviceIdentity = async (): Promise<string | undefined> => {
 		if (!fs.existsSync(configPath)) fs.mkdirSync(configPath);
 		fs.writeFileSync(identityPath, JSON.stringify(res.data));
 
-		return res.data.doc.id;
+		return res.data.id;
 	}
 };
 
@@ -44,11 +44,11 @@ export const createDoctorIdentity = async (): Promise<string | undefined> => {
 		console.log('no identity file found');
 	}
 
-	if (identity?.doc?.id != null) {
+	if (identity?.id != null) {
 		console.log('Identity already created!');
-		return identity?.doc?.id;
+		return identity?.id;
 	}
-	console.log('Creating the device identity...');
+	console.log('Creating the doctor identity...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
 	const res = await axiosClient.post(`${CONFIG.baseUrl}/api/v0.2/identities/create${apiKey}`, JSON.stringify(EmsOperatorIdentity));
@@ -61,6 +61,6 @@ export const createDoctorIdentity = async (): Promise<string | undefined> => {
 		if (!fs.existsSync(configPath)) fs.mkdirSync(configPath);
 		fs.writeFileSync(identityPath, JSON.stringify(res.data));
 
-		return res.data.doc.id;
+		return res.data.id;
 	}
 };
