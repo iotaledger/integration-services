@@ -2,13 +2,13 @@ require('dotenv').config(); // eslint-disable-line
 import { writeChannel } from './services/channel.service';
 import { checkSubscriptionState } from './services/subscription.service';
 
-import { setup } from './setup/setup';
+import { setupDevice } from './setup/setup';
 
 const startDevice = async () => {
 	console.log('Device demo started...');
 	console.log('--------------------------------------------------------');
 	console.log('--------------------------------------------------------');
-	const { id, channelAddress } = await setup();
+	const { id, channelAddress } = await setupDevice();
 	await checkSubscriptionState(channelAddress, id);
 	const measurement = (index: number) => {
 		const factor = index * 0.5;

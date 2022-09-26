@@ -7,7 +7,7 @@ import { axiosClient } from '../utils/client';
 
 export const createStreamChannel = async (): Promise<string | undefined> => {
 	const apiKey = Config.apiKey ? `?api-key=${Config.apiKey}` : '';
-	const res = await axiosClient.post(`${Config.baseUrl}/channels/create${apiKey}`, JSON.stringify(ChannelConfig));
+	const res = await axiosClient.post(`${Config.baseUrl}/api/v0.1/channels/create${apiKey}`, JSON.stringify(ChannelConfig));
 	if (res?.status === 201) {
 		console.log('successfully created channel!');
 		console.log('###########################');

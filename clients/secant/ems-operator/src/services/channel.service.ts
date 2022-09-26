@@ -11,7 +11,7 @@ export const writeChannel = async (payload: any, type: string) => {
 			payload
 		};
 
-		const response = await axiosClient.post(`${CONFIG.baseUrl}/channels/logs/${channelAddress}${apiKey}`, body);
+		const response = await axiosClient.post(`${CONFIG.baseUrl}/api/v0.1/channels/logs/${channelAddress}${apiKey}`, body);
 
 		if (response?.status === 200) {
 			console.log('Successfully written to dlt!');

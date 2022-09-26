@@ -20,7 +20,7 @@ export const createIdentity = async (): Promise<string | undefined> => {
 	console.log('Creating the device identity...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
-	const res = await axiosClient.post(`${CONFIG.baseUrl}/identities/create${apiKey}`, JSON.stringify(DeviceIdentity));
+	const res = await axiosClient.post(`${CONFIG.baseUrl}/api/v0.1/identities/create${apiKey}`, JSON.stringify(DeviceIdentity));
 
 	if (res?.status === 201) {
 		console.log('Successfully created the identity!');

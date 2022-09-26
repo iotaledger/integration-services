@@ -4,7 +4,7 @@ import { axiosClient } from '../utils/client';
 export const checkSubscriptionState = async (channelAddress: string, id: string) => {
 	console.log('Checking subscription state...');
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
-	const res = await axiosClient.get(`${CONFIG.baseUrl}/subscriptions/${channelAddress}/${id}${apiKey}`);
+	const res = await axiosClient.get(`${CONFIG.baseUrl}/api/v0.1/subscriptions/${channelAddress}/${id}${apiKey}`);
 
 	if (res?.status === 200) {
 		if (res.data === '') {
@@ -28,7 +28,7 @@ export const requestSubscription = async (channelAddress: string): Promise<strin
 		accessRights: 'ReadAndWrite'
 	};
 	console.log('Requesting subscription...');
-	const res = await axiosClient.post(`${CONFIG.baseUrl}/subscriptions/request/${channelAddress}${apiKey}`, JSON.stringify(body));
+	const res = await axiosClient.post(`${CONFIG.baseUrl}/api/v0.1/subscriptions/request/${channelAddress}${apiKey}`, JSON.stringify(body));
 
 	if (res?.status === 201) {
 		return res.data.subscriptionLink;
