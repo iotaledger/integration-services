@@ -3,6 +3,7 @@ import { writeChannel } from './services/channel.service';
 import { checkSubscriptionState } from './services/subscription.service';
 
 import { setup } from './setup/setup';
+import { data2, data3 } from './config/dataset';
 
 const startDevice = async () => {
 	console.log('Device demo started...');
@@ -10,15 +11,9 @@ const startDevice = async () => {
 	console.log('--------------------------------------------------------');
 	const { id, channelAddress } = await setup();
 	await checkSubscriptionState(channelAddress, id);
-	const measurement = (index: number) => {
-		const factor = index * 0.5;
-		return { produced: { value: factor * 30, unit: 'kWh' }, consumption: { value: factor * 20, unit: 'kWh' } };
-	};
 
-	await writeChannel({ ...measurement(1), id }, 'measurement');
-	await writeChannel({ ...measurement(2), id }, 'measurement');
-	await writeChannel({ ...measurement(3), id }, 'measurement');
-	await writeChannel({ ...measurement(4), id }, 'measurement');
+	await writeChannel({ ...data2, id }, 'statusUpdate');
+	await writeChannel({ ...data3, id }, 'statusUpdate');
 	console.log('Device demo finished :)');
 };
 

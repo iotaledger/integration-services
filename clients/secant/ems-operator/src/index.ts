@@ -1,24 +1,13 @@
 require('dotenv').config(); // eslint-disable-line
 import { writeChannel } from './services/channel.service';
-import { checkSubscriptionState } from './services/subscription.service';
-
-import { setupDevice } from './setup/setup';
+import { createDoctorIdentity } from './services/identity.service';
+import { createStreamChannel } from './create-stream-channel/index';
+import { data1 } from './config/dataset';
 
 const startDevice = async () => {
-	console.log('Device demo started...');
-	console.log('--------------------------------------------------------');
-	console.log('--------------------------------------------------------');
-	const { id, channelAddress } = await setupDevice();
-	await checkSubscriptionState(channelAddress, id);
-	const measurement = (index: number) => {
-		const factor = index * 0.5;
-		return { produced: { value: factor * 30, unit: 'kWh' }, consumption: { value: factor * 20, unit: 'kWh' } };
-	};
-
-	await writeChannel({ ...measurement(1), id }, 'measurement');
-	await writeChannel({ ...measurement(2), id }, 'measurement');
-	await writeChannel({ ...measurement(3), id }, 'measurement');
-	await writeChannel({ ...measurement(4), id }, 'measurement');
+	const id = await createDoctorIdentity();
+	const channelAddress = await createStreamChannel();
+	await writeChannel(channelAddress, { ...data1, id }, 'initialize');
 	console.log('Device demo finished :)');
 };
 

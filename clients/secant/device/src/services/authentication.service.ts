@@ -20,7 +20,7 @@ export const fetchAuth = async (): Promise<any> => {
 		throw new Error('no identity found');
 	}
 
-	const res = await axiosClient.get(`${CONFIG.baseUrl}/api/v0.1/authentication/prove-ownership/${identity.id}${apiKey}`);
+	const res = await axiosClient.get(`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`);
 	if (res.status !== 200) {
 		console.error('Didnt receive status 200 on get request for prove-ownership!');
 		return;
@@ -28,10 +28,10 @@ export const fetchAuth = async (): Promise<any> => {
 	const body = await res.data;
 	const nonce: string = body.nonce;
 
-	const encodedKey = await getHexEncodedKey(identity.key.secret);
+	const encodedKey = await getHexEncodedKey(identity.keys.sign.private);
 	const signedNonce = await signNonce(encodedKey, nonce);
 	const response = await axiosClient.post(
-		`${CONFIG.baseUrl}/api/v0.1/authentication/prove-ownership/${identity.id}${apiKey}`,
+		`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`,
 		JSON.stringify({ signedNonce }),
 		{
 			method: 'post',

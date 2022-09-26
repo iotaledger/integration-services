@@ -6,19 +6,17 @@ export const CONFIG: Config = {
 };
 
 export const DeviceIdentity = {
-	username: 'construction-device-' + Math.ceil(Math.random() * 100000),
+	username: 'ems-operator-laptop' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Device',
 		category: ['sensor'],
-		controlledProperty: ['electricityConsumption', 'energy'],
-		controlledAsset: ['electricity-consumption-sensors', 'photovoltaics-sensors'],
+		controlledProperty: [''],
+		controlledAsset: ['ambulance-log', 'patient-data-hash'],
 		ipAddress: ['192.14.56.78'],
 		mcc: '214',
 		mnc: '07',
 		serialNumber: '9845A',
-		refDeviceModel: 'myDevice-sensor-345',
-		dateFirstUsed: new Date().toISOString(),
-		owner: ['did:iota:P64uksi4B6Vg4ZEiTe3bpmzbA9EHNmeJxp1LxXtXeov']
+		dateFirstUsed: new Date().toISOString()
 	}
 };
 
