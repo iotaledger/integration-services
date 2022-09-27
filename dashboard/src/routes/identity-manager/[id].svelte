@@ -44,6 +44,7 @@
 	async function setIdentity(id: string): Promise<void> {
 		const identity = await getIdentitiy(id);
 		selectedIdentity.set(identity);
+		await loadIdentityDetails();
 	}
 
 	// Add the newly created credential to the selected identity
