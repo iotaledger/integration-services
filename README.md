@@ -59,7 +59,7 @@ We would love to have you help us with the development of IOTA Integration Servi
 
 To contribute directly to the repository, simply fork the project, push your changes to your fork and create a pull request to get them included!
 
-The best place to get involved in discussions about this framework or to look for support at is the `#integration-services` channel on the [IOTA Discord](http://discord.iota.org). 
+The best place to get involved in discussions about this framework or to look for support at is the `#iota-cloud-tools` channel on the [IOTA Discord](http://discord.iota.org). 
 
 
 You can also ask questions on our [Stack Exchange](https://iota.stackexchange.com/).
