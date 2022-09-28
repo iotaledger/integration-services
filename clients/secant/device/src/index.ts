@@ -12,8 +12,8 @@ const startDevice = async () => {
 	const { id, channelAddress } = await setup();
 	await checkSubscriptionState(channelAddress, id);
 
-	await writeChannel({ ...data2, id }, 'statusUpdate');
-	await writeChannel({ ...data3, id }, 'statusUpdate');
+	await writeChannel({ ...data2 }, 'ambulanceUpdate');
+	await writeChannel({ ...data3 }, 'ambulanceUpdate');
 	console.log('Device demo finished :)');
 };
 

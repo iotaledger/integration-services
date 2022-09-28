@@ -6,8 +6,9 @@ import { writeChannel, getChannelAddress } from '../services/channel.service';
 export const setupEmsProvider = async () => {
 	const id = await createDoctorIdentity();
 	const channelAddress = await getChannelAddress();
-	await writeChannel(channelAddress, { ...data4, id }, 'operation');
-	await writeChannel(channelAddress, { ...data5, id }, 'operation');
+	console.log('channelAddress', channelAddress);
+	await writeChannel(channelAddress, { ...data4 }, 'operationUpdate');
+	await writeChannel(channelAddress, { ...data5 }, 'operationUpdate');
 	return { id, channelAddress };
 };
 

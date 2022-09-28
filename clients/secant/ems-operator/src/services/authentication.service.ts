@@ -16,7 +16,6 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const apiKey = CONFIG.apiKey ? `?api-key=${CONFIG.apiKey}` : '';
 
-	console.log('identityidentity', identity);
 	if ((identity as any)?.id == null) {
 		throw new Error('no identity found');
 	}
@@ -31,7 +30,6 @@ export const fetchAuth = async (): Promise<any> => {
 
 	const encodedKey = await getHexEncodedKey(identity.keys.sign.private);
 	const signedNonce = await signNonce(encodedKey, nonce);
-	console.log('URL:', `${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`);
 	const response = await axiosClient.post(
 		`${CONFIG.baseUrl}/api/v0.2/authentication/prove-ownership/${identity.id}${apiKey}`,
 		JSON.stringify({ signedNonce }),

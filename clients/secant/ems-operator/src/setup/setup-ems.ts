@@ -4,12 +4,12 @@ import { createStreamChannel } from '../create-stream-channel/index';
 import { writeChannel } from '../services/channel.service';
 import { data1 } from '../config/dataset';
 
-export const setupEmsProvider = async () => {
+export const setupEmsOperator = async () => {
 	const id = await createDoctorIdentity();
 	const channelAddress = await createStreamChannel();
 
-	await writeChannel(channelAddress, { ...data1, id }, 'initialize');
+	await writeChannel(channelAddress, { ...data1 }, 'init');
 	return { id, channelAddress };
 };
 
-setupEmsProvider();
+setupEmsOperator();

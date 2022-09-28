@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "setup-ems": "ts-node src/setup/setup-ems.ts",
+    "write-logs": "ts-node src/setup/write-messages.ts",
     "serve": "ts-node-dev src/index.ts",
     "build": "npm-run-all prettier tsc lint",
     "tsc": "tsc",

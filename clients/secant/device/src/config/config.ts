@@ -6,12 +6,12 @@ export const CONFIG: Config = {
 };
 
 export const DeviceIdentity = {
-	username: 'ambulance-car-sensor-' + Math.ceil(Math.random() * 100000),
+	username: 'ambulance-sensor-' + Math.ceil(Math.random() * 100000),
 	claim: {
 		type: 'Device',
 		category: ['sensor'],
-		controlledProperty: [''],
-		controlledAsset: ['ambulance-log', 'patient-data-hash'],
+		controlledProperty: ['car'],
+		controlledAsset: ['ambulance-log', 'patient-data'],
 		ipAddress: ['192.14.56.78'],
 		mcc: '214',
 		mnc: '07',

@@ -7,7 +7,11 @@ export const CONFIG: Config = {
 
 export const ChannelConfig = {
 	name: 'patient-logs-' + Math.ceil(Math.random() * 100000),
-	topics: [{ type: 'ems-operator-channel', source: 'frama-c-client' }]
+	topics: [
+		{ type: 'operationUpdate', source: 'ems-device' },
+		{ type: 'ambulanceUpdate', source: 'ambulance-device' }
+	],
+	description: 'Logs of the incident.'
 };
 
 export const EmsOperatorIdentity = {
