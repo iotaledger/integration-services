@@ -7,7 +7,7 @@ import { apiKeyMiddleware, authMiddleWare, validate } from '../middlewares';
 import { mongodbSanitizer } from '../../middlewares/mongodb-sanitizer';
 
 const identityRoutes = new IdentityRoutes(userService, authorizationService, verificationService, Logger.getInstance());
-const { createIdentity, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
+const { createIdentity, getKeyPair, getUser, searchUsers, addUser, updateUser, deleteUser } = identityRoutes;
 
 export const identityRouter = Router();
 
@@ -63,6 +63,45 @@ export const identityRouter = Router();
  *               $ref: '#/components/schemas/ErrorResponseSchema'
  */
 identityRouter.post('/create', apiKeyMiddleware, validate({ body: CreateIdentityBodySchema }), mongodbSanitizer, createIdentity);
+
+/**
+ * @openapi
+ * /identities/key-pair:
+ *   post:
+ *     summary: Create a new keypair.
+ *     description: Create a new keypair.
+ *     tags:
+ *     - identities
+ *     parameters:
+ *     - name: 'key-type'
+ *       in: query
+ *       required: true
+ *       schema:
+ *         type: string
+ *     security:
+ *       - BearerAuth: []
+ *       - ApiKey: []
+ *     responses:
+ *       201:
+ *         description: Returns the created key pair without creating or storing it in an identity document.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/IdentityKeyPairSchema"
+ *       401:
+ *         description: No valid api key provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ *       5XX:
+ *         description: Unexpected error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponseSchema'
+ */
+identityRouter.get('/key-pair', apiKeyMiddleware, mongodbSanitizer, getKeyPair);
 
 /**
  * @openapi

@@ -10,20 +10,21 @@ import {
 	ChannelData,
 	ChannelLog,
 	CreateChannelResponse,
-	ValidateResponse
+	ValidateResponse,
+	IdentityKeyPair,
+	KeyTypes
 } from '@iota/is-shared-modules';
 import { getDateStringFromDate, ILogger, createAsymSharedKey } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
-import { StreamsConfig } from '../models/config';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { searchChannelInfo } from '../database/channel-info';
 import { isEmpty } from 'lodash';
-import * as bs58 from 'bs58';
-import * as Identity from '@iota/identity-wasm/node';
+import { Config } from '../models/config/index';
+import axios from 'axios';
 
 export class ChannelService {
 	private readonly password: string;
@@ -33,11 +34,11 @@ export class ChannelService {
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionService: SubscriptionService,
-		config: StreamsConfig,
+		private readonly config: Config,
 		private readonly logger: ILogger
 	) {
 		this.lock = Lock.getInstance();
-		this.password = config.password;
+		this.password = config.streamsConfig.password;
 	}
 
 	async create(params: {
@@ -68,10 +69,13 @@ export class ChannelService {
 		}
 
 		if (type === ChannelType.privatePlus) {
-			// TODO replace this with a new endpoint at the ssi-bridge
-			const keypair = new Identity.KeyPair(Identity.KeyType.X25519);
-			peerPublicKey = bs58.encode(keypair.public());
-			const tmpPrivateEncryptionKey = bs58.encode(keypair.private());
+			const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
+			const apiKey = ssiBridgeApiKey ? `&api-key=${ssiBridgeApiKey}` : '';
+			const url = `${ssiBridgeUrl}/identities/key-pair?key-type=${KeyTypes.x25519}${apiKey}`;
+			const identityRes = await axios.get(url);
+			const identityKeys = identityRes.data as IdentityKeyPair;
+			peerPublicKey = identityKeys.public;
+			const tmpPrivateEncryptionKey = identityKeys.private;
 			password = createAsymSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
 		}
 
@@ -230,7 +234,7 @@ export class ChannelService {
 		});
 	}
 
-	async reimport(channelAddress: string, id: string, _seed: string, type: ChannelType, asymSharedKey: string, _subscriptionPassword?: string): Promise<void> {
+	async reimport(channelAddress: string, id: string, type: ChannelType, asymSharedKey: string): Promise<void> {
 		const lockKey = channelAddress + id;
 		let password = this.password;
 
@@ -246,12 +250,12 @@ export class ChannelService {
 					throw new Error('not allowed to reimport the logs from the channel');
 				}
 
-				if(type === ChannelType.privatePlus){
+				if (type === ChannelType.privatePlus) {
 					password = this.getPassword(asymSharedKey);
 				}
 				const isAuthor = subscription.type === SubscriptionType.Author;
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
-				const sub = await this.streamsService.importSubscription(state, isAuthor, password); 
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
@@ -261,14 +265,20 @@ export class ChannelService {
 				}
 
 				await ChannelDataDb.removeChannelData(channelAddress, id);
-				await this.fetchLogs(channelAddress, id, newSub, password); 
+				await this.fetchLogs(channelAddress, id, newSub, password);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async validate(channelAddress: string, id: string, logs: ChannelData[], type: ChannelType, asymSharedKey: string): Promise<ValidateResponse> {
+	async validate(
+		channelAddress: string,
+		id: string,
+		logs: ChannelData[],
+		type: ChannelType,
+		asymSharedKey: string
+	): Promise<ValidateResponse> {
 		const lockKey = channelAddress + id;
 		let password = this.password;
 
@@ -285,12 +295,12 @@ export class ChannelService {
 					throw new Error('not allowed to validate the logs from the channel');
 				}
 
-				if(type === ChannelType.privatePlus){
+				if (type === ChannelType.privatePlus) {
 					password = this.getPassword(asymSharedKey);
 				}
 				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(state, isAuthor, password); 
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);

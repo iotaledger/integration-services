@@ -19,10 +19,10 @@ describe('test channel routes', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config = StreamsConfigMock;
-		streamsService = new StreamsService(config, LoggerMock);
+		const config = ConfigMock;
+		streamsService = new StreamsService(config.streamsConfig, LoggerMock);
 		channelInfoService = new ChannelInfoService();
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config.streamsConfig);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
 		channelRoutes = new ChannelRoutes(channelService, channelInfoService, LoggerMock, {
 			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
@@ -338,50 +338,62 @@ describe('test channel routes', () => {
 			const addChannelInfoSpy = jest.spyOn(channelInfoService, 'addChannelInfo').mockImplementation(async () => null);
 			const channelExistsSpy = jest.spyOn(channelService, 'channelExists').mockImplementation(async () => false);
 
-			const axiosGetSpy = jest.spyOn(axios, 'get').mockImplementation(
-				async () =>
-					({
-						data: {
-							document: {
-								doc: {
-									id: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh',
-									keyAgreement: [
-										{
-											id: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh#kex-0',
-											controller: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh',
-											type: 'X25519KeyAgreementKey2019',
-											publicKeyMultibase: 'z8D8NDTpQGYBJ2VqzCFVYM8QFoSQfEA9AzfF9PH5r3mmf'
-										}
-									],
-									capabilityInvocation: [
-										{
-											id: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh#sign-0',
-											controller: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh',
-											type: 'Ed25519VerificationKey2018',
-											publicKeyMultibase: 'zG6VqjAK36SNiEthugd8hvBhqt9bXnz26DxdFZTgxokHR'
-										}
-									]
+			const axiosGetSpy = jest
+				.spyOn(axios, 'get')
+				.mockImplementationOnce(
+					async () =>
+						({
+							data: {
+								document: {
+									doc: {
+										id: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh',
+										keyAgreement: [
+											{
+												id: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh#kex-0',
+												controller: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh',
+												type: 'X25519KeyAgreementKey2019',
+												publicKeyMultibase: 'z8D8NDTpQGYBJ2VqzCFVYM8QFoSQfEA9AzfF9PH5r3mmf'
+											}
+										],
+										capabilityInvocation: [
+											{
+												id: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh#sign-0',
+												controller: 'did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh',
+												type: 'Ed25519VerificationKey2018',
+												publicKeyMultibase: 'zG6VqjAK36SNiEthugd8hvBhqt9bXnz26DxdFZTgxokHR'
+											}
+										]
+									},
+									meta: {
+										created: '2022-09-07T14:00:14Z',
+										updated: '2022-09-07T14:00:14Z'
+									},
+									proof: {
+										type: 'JcsEd25519Signature2020',
+										verificationMethod: '#sign-0',
+										signatureValue: '4ZA9GZEDr2pdZcucPmXmFQAcbbRwVxhNjY3qSDLPHYxh3dmRHwHSDJ7GepikMYkNk5zk4BAP8Urpk95B8F1k8w3s'
+									}
 								},
-								meta: {
-									created: '2022-09-07T14:00:14Z',
-									updated: '2022-09-07T14:00:14Z'
-								},
-								proof: {
-									type: 'JcsEd25519Signature2020',
-									verificationMethod: '#sign-0',
-									signatureValue: '4ZA9GZEDr2pdZcucPmXmFQAcbbRwVxhNjY3qSDLPHYxh3dmRHwHSDJ7GepikMYkNk5zk4BAP8Urpk95B8F1k8w3s'
-								}
-							},
-							messageId: '99f85f3a57c55ad355133ffd1635d7cfda288f26702e89ce2e2f7c252a265208'
-						}
-					} as any)
-			);
+								messageId: '99f85f3a57c55ad355133ffd1635d7cfda288f26702e89ce2e2f7c252a265208'
+							}
+						} as any)
+				)
+				.mockImplementationOnce(async () => ({
+					data: {
+						public: 'GixcvPfvuFFg9vFwpZ32hS64swJJkcQ4sCArsVZxkdir',
+						private: 'DaC5CdPA4CwVepU2zagoDBVVHpDX2M7tK7w7vVCe8vwS',
+						type: 'ed25519',
+						encoding: 'base58'
+					}
+				}));
 
 			await channelRoutes.createChannel(req, res, nextMock);
 
 			const expectedUrl =
 				'http://localhost:3001/api/v0.2/verification/latest-document/did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh';
 			expect(axiosGetSpy).toHaveBeenCalledWith(expectedUrl);
+			const expectedUrl2 = 'http://localhost:3001/api/v0.2/identities/key-pair?key-type=x25519';
+			expect(axiosGetSpy).toHaveBeenCalledWith(expectedUrl2);
 			expect(exportSubscriptionSpy).toHaveBeenCalled();
 			expect(addSubscriptionSpy).toHaveBeenCalledWith(expectedSubscription);
 			expect(addChannelInfoSpy).toHaveBeenCalled();

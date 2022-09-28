@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.0 (2022-09-20)
+
+- Add `/identities/keys` endpoint
+
 ### 0.2.0 (2022-08-12) BREAKING CHANGES
 
 - Updated shared modules to version 0.2.1 and identity-wasm to 0.6.0
