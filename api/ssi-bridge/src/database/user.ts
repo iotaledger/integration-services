@@ -49,12 +49,13 @@ export const addUser = async (user: UserPersistence) => {
 	if (user.verifiableCredentials?.length >= maxNumberOfVc) {
 		throw new Error(`You can't add more than ${maxNumberOfVc} verifiable credentials to a user!`);
 	}
+	const { role } = user;
 
 	const document = {
 		_id: user.id,
 		...user,
 		registrationDate: new Date(),
-		role: UserRoles.User
+		role: role ? role : UserRoles.User
 	};
 
 	return MongoDbService.insertDocument(collectionName, document);

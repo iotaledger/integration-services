@@ -5,5 +5,6 @@
     "claim": {
         "type": "Service",
         "name": "Integration Service"
-    }
+    },
+    "role": "Admin"
 }
