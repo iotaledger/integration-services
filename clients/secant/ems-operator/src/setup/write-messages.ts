@@ -3,7 +3,7 @@ import { createDoctorIdentity } from '../services/identity.service';
 import { data4, data5 } from '../config/dataset';
 import { writeChannel, getChannelAddress } from '../services/channel.service';
 
-export const setupEmsProvider = async () => {
+export const writeMessages = async () => {
 	const id = await createDoctorIdentity();
 	const channelAddress = await getChannelAddress();
 	console.log('channelAddress', channelAddress);
@@ -12,4 +12,4 @@ export const setupEmsProvider = async () => {
 	return { id, channelAddress };
 };
 
-setupEmsProvider();
+writeMessages();
