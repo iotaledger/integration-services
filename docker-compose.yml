@@ -13,7 +13,7 @@ services:
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data_container:/data/db
-  
+
   traefik:
     image: "traefik:v2.6"
     container_name: "traefik"
@@ -38,9 +38,11 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
       JWT_SECRET: ${JWT_SECRET}
+      SSI_BRIDGE_URL: http://host.docker.internal:3000/api/v0.2
+      SSI_BRIDGE_API_KEY: ${API_KEY}
     restart: on-failure
     command: node dist/index.js setup-api
-    depends_on: 
+    depends_on:
       - mongo
       - traefik
 
@@ -67,8 +69,10 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SERVER_SECRET: ${SERVER_SECRET}
       JWT_SECRET: ${JWT_SECRET}
+      SSI_BRIDGE_URL: http://host.docker.internal:3000/api/v0.2
+      SSI_BRIDGE_API_KEY: ${API_KEY}
     restart: always
-    depends_on: 
+    depends_on:
       - mongo
       - initialize-audit-trail
       - traefik
@@ -85,9 +89,9 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     restart: on-failure
     command: node dist/index.js setup-api
-    depends_on: 
+    depends_on:
       - mongo
-  
+
   ssi-bridge:
     build:
       context: ./api/ssi-bridge
@@ -111,7 +115,7 @@ services:
       SERVER_SECRET: ${SERVER_SECRET}
       JWT_SECRET: ${JWT_SECRET}
     restart: always
-    depends_on: 
+    depends_on:
       - mongo
       - initialize-ssi-bridge
       - traefik

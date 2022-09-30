@@ -33,8 +33,8 @@ export class ConfigurationService {
 		permaNode: process.env.IOTA_PERMA_NODE,
 		apiKey: process.env.API_KEY,
 		commitHash: process.env.COMMIT_HASH,
-		ssiBridgeUrl: process.env.SSI_BRIDGLE_URL,
-		ssiBridgeApiKey: process.env.SSI_BRIDGLE_API_KEY,
+		ssiBridgeUrl: process.env.SSI_BRIDGE_URL,
+		ssiBridgeApiKey: process.env.SSI_BRIDGE_API_KEY,
 		streamsConfig: this.streamsConfig
 	};
 
