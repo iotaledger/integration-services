@@ -48,7 +48,7 @@ spec:
       containers:
         - name: ssi-bridge
           image: iotaledger/ssi-bridge:develop
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command: ["node", "dist/index.js", "server"]
           resources:
             requests:
