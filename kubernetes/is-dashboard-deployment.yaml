@@ -16,7 +16,7 @@ spec:
       containers:
         - name: is-dashboard
           image: iotaledger/is-dashboard:develop
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command: ['sh', '-c', 'npm run build && node build']
           resources:
             requests:

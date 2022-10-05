@@ -10,7 +10,7 @@ spec:
       containers:
         - name: create-root-identity
           image: iotaledger/ssi-bridge:develop
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command: ["node", "dist/index.js", "setup-api"]
           env:
             - name: "DATABASE_NAME"
