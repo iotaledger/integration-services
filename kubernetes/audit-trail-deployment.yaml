@@ -82,6 +82,11 @@ spec:
                 configMapKeyRef:
                   name: integration-service-api-config
                   key: IOTA_HORNET_NODE
+            - name: "SSI_BRIDGE_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: integration-service-api-config
+                  key: SSI_BRIDGE_URL
             - name: "SERVER_SECRET"
               valueFrom:
                 secretKeyRef:
@@ -97,6 +102,11 @@ spec:
                 secretKeyRef:
                   name: integration-service-api-secrets
                   key: API_KEY
+            - name: "SSI_BRIDGE_API_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: integration-service-api-secrets
+                  key: SSI_BRIDGE_API_KEY
           ports:
             - protocol: TCP
               containerPort: 3000

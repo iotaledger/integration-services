@@ -7,4 +7,5 @@ data:
   DATABASE_NAME: integration-service
   IOTA_PERMA_NODE: https://chrysalis-chronicle.iota.org/api/mainnet/
   IOTA_HORNET_NODE: https://chrysalis-nodes.iota.org:443
+  SSI_BRIDGE_URL: http://localhost/api/v0.2
   DATABASE_URL: mongodb://username:password@mongodb-service.default.svc.cluster.local:27017/integration-service?appname=integration-service-api&ssl=false
