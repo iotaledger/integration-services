@@ -20,10 +20,10 @@ spec:
           command: ['sh', '-c', 'npm run build && node build']
           resources:
             requests:
-              memory: "100Mi"
+              memory: "500Mi"
               cpu: "250m"
             limits:
-              memory: "250Mi"
+              memory: "1Gi"
               cpu: "500m"
           env:
             - name: "VITE_IOTA_IS_SDK_API_KEY"
