@@ -5,7 +5,6 @@ export {
 	ChannelLogSchema,
 	CreateChannelBodySchema,
 	CreateChannelResponseSchema,
-	ReimportBodySchema,
 	ValidateBodySchema,
 	ValidateResponseSchema
 } from './channel-bodies';

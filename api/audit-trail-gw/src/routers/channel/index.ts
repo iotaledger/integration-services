@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AddChannelLogBodySchema, CreateChannelBodySchema, ReimportBodySchema, ValidateBodySchema } from '@iota/is-shared-modules';
+import { AddChannelLogBodySchema, CreateChannelBodySchema, ValidateBodySchema } from '@iota/is-shared-modules';
 import { Logger } from '@iota/is-shared-modules/node';
 import { ChannelRoutes } from '../../routes/channel';
 import { channelService, channelInfoService } from '../services';
@@ -371,14 +371,6 @@ channelRouter.post(
  *     security:
  *       - BearerAuth: []
  *       - ApiKey: []
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/ReimportBodySchema"
- *           example:
- *             seed: string
- *             subscriptionPassword: string
  *     responses:
  *       200:
  *         description: Reimport successful.
@@ -401,12 +393,4 @@ channelRouter.post(
  *                 error:
  *                   type: string
  */
-channelRouter.post(
-	'/re-import/:channelAddress',
-	apiKeyMiddleware,
-	authMiddleWare,
-	validate({ body: ReimportBodySchema }),
-	mongodbSanitizer,
-	channelLock,
-	reimport
-);
+channelRouter.post('/re-import/:channelAddress', apiKeyMiddleware, authMiddleWare, mongodbSanitizer, channelLock, reimport);

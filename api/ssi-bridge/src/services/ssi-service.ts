@@ -1,6 +1,6 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { VerifiableCredential, Credential, IdentityKeys, Encoding, VerifiablePresentation } from '@iota/is-shared-modules';
+import { VerifiableCredential, Credential, IdentityKeys, Encoding, VerifiablePresentation, KeyTypes } from '@iota/is-shared-modules';
 const {
 	Credential,
 	Client,
@@ -20,7 +20,6 @@ const {
 } = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
-import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -64,36 +63,44 @@ export class SsiService {
 
 	async createIdentity(): Promise<IdentityKeys> {
 		try {
-			const identity = await this.generateIdentity();
-			const publicKey = bs58.encode(identity.signingKeys.public());
-			const privateKey = bs58.encode(identity.signingKeys.private());
-			const keyType = identity.signingKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
-
-			const publicEncryptionKey = bs58.encode(identity.encryptionKeys.public());
-			const privateEncryptionKey = bs58.encode(identity.encryptionKeys.private());
-			const encryptionKeyType = identity.encryptionKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
-
+			const { encryptionKeys, doc, signingKeys } = await this.generateIdentity();
+			const sign = this.decodeKeyPair(signingKeys.public(), signingKeys.private(), signingKeys.type());
+			const encrypt = this.decodeKeyPair(encryptionKeys.public(), encryptionKeys.private(), encryptionKeys.type());
 			return {
-				id: identity.doc.id().toString(),
+				id: doc.id().toString(),
 				keys: {
-					sign: {
-						public: publicKey,
-						private: privateKey,
-						type: keyType,
-						encoding: Encoding.base58
-					},
-					encrypt: {
-						public: publicEncryptionKey,
-						private: privateEncryptionKey,
-						type: encryptionKeyType,
-						encoding: Encoding.base58
-					}
+					sign,
+					encrypt
 				}
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the identity');
 		}
+	}
+
+	createKeyPair(type: KeyTypes) {
+		try {
+			const typeNum = type === KeyTypes.ed25519 ? 1 : 2;
+			const keyPair = new KeyPair(typeNum);
+			return this.decodeKeyPair(keyPair.public(), keyPair.private(), keyPair.type());
+		} catch (error) {
+			this.logger.error(`Error from identity sdk: ${error}`);
+			throw new Error('could not create the identity');
+		}
+	}
+
+	decodeKeyPair(publicKeyU8: Uint8Array, privateKeyU8: Uint8Array, type: number) {
+		const publicKey = bs58.encode(publicKeyU8);
+		const privateKey = bs58.encode(privateKeyU8);
+		const keyType = type === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+
+		return {
+			public: publicKey,
+			private: privateKey,
+			type: keyType,
+			encoding: Encoding.base58
+		};
 	}
 
 	async createVerifiableCredential<T>(

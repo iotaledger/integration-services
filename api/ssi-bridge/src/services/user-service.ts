@@ -17,6 +17,7 @@ import { SsiService } from './ssi-service';
 import { ILogger, Logger } from '../utils/logger';
 import jwt from 'jsonwebtoken';
 import { ConfigurationService } from './configuration-service';
+import { KeyTypes } from '@iota/is-shared-modules';
 
 export class UserService {
 	constructor(private readonly ssiService: SsiService, private readonly serverSecret: string, private readonly logger: ILogger) {}
@@ -63,6 +64,10 @@ export class UserService {
 		return {
 			...identity
 		};
+	}
+
+	getKeyPair(type: KeyTypes) {
+		return this.ssiService.createKeyPair(type);
 	}
 
 	decodeUserId(authorization: string): string | undefined {

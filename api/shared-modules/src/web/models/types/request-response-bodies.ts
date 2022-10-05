@@ -3,7 +3,6 @@ import { NonceSchema, ProveOwnershipPostBodySchema, VerifyJwtBodySchema } from '
 import {
 	AddChannelLogBodySchema,
 	CreateChannelBodySchema,
-	ReimportBodySchema,
 	ValidateBodySchema,
 	ValidateResponseSchema
 } from '../schemas/request-response-body/channel-bodies';
@@ -34,7 +33,6 @@ export type IdentitySchemaBody = Static<typeof IdentitySchema>;
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>;
 export type CreateChannelResponse = Static<typeof CreateChannelResponseSchema>;
 export type AddChannelLogBody = Static<typeof AddChannelLogBodySchema>;
-export type ReimportBody = Static<typeof ReimportBodySchema>;
 export type ValidateBody = Static<typeof ValidateBodySchema>;
 export type ValidateResponse = Static<typeof ValidateResponseSchema>;
 export type AuthorizeSubscriptionBody = Static<typeof AuthorizeSubscriptionBodySchema>;
