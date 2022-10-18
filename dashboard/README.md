@@ -1,38 +1,63 @@
-# create-svelte
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Local development
 
-## Creating a project
+1. Run API Services
+In order to connect the dashboard to your integration services you need to run them in advance. You can run them for instance using `docker-compose up -d`. Since it will also start its own instance of the dashboard, it must be killed using: `docker kill is-dashboard`.
 
-If you're seeing this, you've probably already done this step. Congrats!
+
+2. Install dependencies
 
 ```bash
-# create a new project in the current directory
-npm init svelte
-
-# create a new project in my-app
-npm init svelte my-app
+npm install
 ```
 
-## Developing
+3. Create a `.env` in the root of the projects and add the corresponding necessary configuration:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+VITE_IOTA_IS_SDK_API_KEY="XXXXXXXXXX"
+VITE_IOTA_IS_SDK_GATEWAY_URL="XXXXXXXXXX"
+```
+
+For instance it could look as the following:
+```bash
+VITE_IOTA_IS_SDK_GATEWAY_URL=http://0.0.0.0:3000
+```
+
+4. Start the dashboard
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+The dashboard should be available at default port __3055__.
 
-To create a production version of your app:
+## Trouble Shooting
+
+### CORS
+
+Since the frontend and the backend run on different ports it will create CORS issues when making a request. To avoid this problem you can make use of several cors plugin preventing the browser to run into them. For production use the frontend and backend is deployed together with an api gateway fixing this problem.
+
+### PopperJs
+There is a known problem with the `@popperjs` dependency. It will cause problems when reloading the dashboard during development. In order to avoid this reloading problem do the following:
 
 ```bash
-npm run build
+nano node_modules/@popperjs/core/package.json
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+And add `"type":"module"` to the end of the json object like:
+```json
+{
+  // ...  
+  {
+    // ...
+    "rollup": "^2.39.0",
+    "rollup-plugin-flow-entry": "^0.3.3",
+    "rollup-plugin-license": "^2.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-visualizer": "^4.2.0",
+    "serve": "^11.3.2",
+    "typescript": "^4.1.5"
+  },
+  "type":"module"
+}
+```
