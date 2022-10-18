@@ -2,7 +2,12 @@
 ## Local development
 
 1. Run API Services
-In order to connect the dashboard to your integration services you need to run them in advance. You can run them for instance using `docker-compose up -d`. Since it will also start its own instance of the dashboard, it must be killed using: `docker kill is-dashboard`.
+
+In order to connect the dashboard to your integration services you need to run them in advance. You can run them using the following command in the root folder of this repository: 
+```
+docker-compose up -d
+```
+Since it will also start its own instance of the dashboard, it must be killed using: `docker kill is-dashboard`.
 
 
 2. Install dependencies
