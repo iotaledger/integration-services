@@ -44,7 +44,11 @@ export class ChannelClient extends BaseClient {
    * @param asymSharedKey
    * @returns
    */
-  async write(address: string, data: AddChannelLogBody, asymSharedKey?: string): Promise<ChannelData> {
+  async write(
+    address: string,
+    data: AddChannelLogBody,
+    asymSharedKey?: string
+  ): Promise<ChannelData> {
     return await this.post(`${this.baseUrl}/channels/logs/${address}`, data, asymSharedKey);
   }
 
@@ -119,7 +123,11 @@ export class ChannelClient extends BaseClient {
    * @param asymSharedKey
    * @returns
    */
-  async validate(address: string, data: ValidateBody, asymSharedKey?: string): Promise<ValidateResponse> {
+  async validate(
+    address: string,
+    data: ValidateBody,
+    asymSharedKey?: string
+  ): Promise<ValidateResponse> {
     return await this.post(`${this.baseUrl}/channels/validate/${address}`, data, asymSharedKey);
   }
 
@@ -261,7 +269,11 @@ export class ChannelClient extends BaseClient {
     options?: RequestSubscriptionBody,
     asymSharedKey?: string
   ): Promise<RequestSubscriptionResponse> {
-    return await this.post(`${this.baseUrl}/subscriptions/request/${channelAddress}`, options, asymSharedKey);
+    return await this.post(
+      `${this.baseUrl}/subscriptions/request/${channelAddress}`,
+      options,
+      asymSharedKey
+    );
   }
 
   /**
