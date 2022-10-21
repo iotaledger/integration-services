@@ -665,7 +665,6 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | type |  |  | Yes |
 | channelAddress | string |  | Yes |
 | id | string |  | Yes |
-| state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
 | accessRights |  |  | Yes |
@@ -681,7 +680,6 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | type |  |  | No |
 | channelAddress | string |  | No |
 | id | string |  | No |
-| state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
 | accessRights |  |  | No |
@@ -712,6 +710,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
+| peerPublicKey | string | Public key used for privatePlus channels to encrypt channel data and state asymmetrically. | No |
 
 #### TopicSchema
 
