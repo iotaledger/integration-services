@@ -1,0 +1,61 @@
+{
+  "name": "secant",
+  "version": "1.0.0",
+  "description": "Secant client demonstration.",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node dist/index.js",
+    "setup-ems": "ts-node src/setup/setup-ems.ts",
+    "write-messages": "ts-node src/setup/write-messages.ts",
+    "serve": "ts-node-dev src/index.ts",
+    "build": "npm-run-all prettier tsc lint",
+    "tsc": "tsc",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "prettier": "npx prettier --write ./src",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iotaledger/integration-services.git"
+  },
+  "keywords": [
+    "ensuresec",
+    "audit-log",
+    "e-commerce",
+    "iota",
+    "iota-streams",
+    "iota-identity"
+  ],
+  "author": "Dominic Zettl (IOTA Foundation) <dominic.zettl@iota.org>",
+  "contributors": [
+    "Tim Sigl (IOTA Foundation) <tim.sigl@iota.org>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/iotaledger/integration-services/issues"
+  },
+  "homepage": "https://github.com/iotaledger/integration-services#readme",
+  "dependencies": {
+    "@noble/ed25519": "1.5.1",
+    "ajv": "^8.8.2",
+    "ajv-formats": "^2.1.1",
+    "axios": "^0.24.0",
+    "bs58": "^4.0.1",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/bs58": "^4.0.1",
+    "@types/jest": "^26.0.20",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^26.6.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.1.3"
+  }
+}

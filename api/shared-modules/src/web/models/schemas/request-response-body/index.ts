@@ -5,7 +5,6 @@ export {
 	ChannelLogSchema,
 	CreateChannelBodySchema,
 	CreateChannelResponseSchema,
-	ReimportBodySchema,
 	ValidateBodySchema,
 	ValidateResponseSchema
 } from './channel-bodies';
@@ -23,6 +22,5 @@ export {
 	CreateCredentialBodySchema,
 	RevokeVerificationBodySchema,
 	SubjectBodySchema,
-	TrustedRootBodySchema,
-	VerifiableCredentialBodySchema
+	TrustedRootBodySchema
 } from './verification-bodies';

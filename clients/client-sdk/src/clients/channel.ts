@@ -5,7 +5,6 @@ import {
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
-  ReimportBody,
   ValidateBody,
   ValidateResponse,
   AuthorizeSubscriptionBody,
@@ -42,10 +41,15 @@ export class ChannelClient extends BaseClient {
    * Write data to a channel with address channel address. Write permission is mandatory. The type and metadata fields are not encrypted to have a possibility to search for events. The payload is stored encrypted for encrypted channels.
    * @param channelAddress
    * @param data
+   * @param asymSharedKey
    * @returns
    */
-  async write(address: string, data: AddChannelLogBody): Promise<ChannelData> {
-    return await this.post(`${this.baseUrl}/channels/logs/${address}`, data);
+  async write(
+    address: string,
+    data: AddChannelLogBody,
+    asymSharedKey?: string
+  ): Promise<ChannelData> {
+    return await this.post(`${this.baseUrl}/channels/logs/${address}`, data, asymSharedKey);
   }
 
   /**
@@ -56,6 +60,7 @@ export class ChannelClient extends BaseClient {
    * @param asc
    * @param startDate
    * @param endDate
+   * @param asymSharedKey
    * @returns
    */
   async read(
@@ -66,7 +71,8 @@ export class ChannelClient extends BaseClient {
       asc?: boolean;
       startDate?: Date;
       endDate?: Date;
-    }
+    },
+    asymSharedKey?: string
   ): Promise<ChannelData[]> {
     const { limit, index, asc, startDate, endDate } = channelOptions || {};
     const param1 = startDate !== undefined ? { 'start-date': startDate } : {};
@@ -77,7 +83,8 @@ export class ChannelClient extends BaseClient {
       index,
       ...param1,
       ...param2,
-      ...param3
+      ...param3,
+      'asym-shared-key': asymSharedKey
     });
     // Temporary fix to replace null values with undefined
     // TODO: fix this in backend
@@ -113,20 +120,25 @@ export class ChannelClient extends BaseClient {
    * Validates channel data by comparing the log of each link with the data on the tangle.
    * @param address
    * @param data
+   * @param asymSharedKey
    * @returns
    */
-  async validate(address: string, data: ValidateBody): Promise<ValidateResponse> {
-    return await this.post(`${this.baseUrl}/channels/validate/${address}`, data);
+  async validate(
+    address: string,
+    data: ValidateBody,
+    asymSharedKey?: string
+  ): Promise<ValidateResponse> {
+    return await this.post(`${this.baseUrl}/channels/validate/${address}`, data, asymSharedKey);
   }
 
   /**
    * The user can decide to re-import the data from the Tangle into the database. A reason for it could be a malicious state of the data.
    * @param address
-   * @param data
+   * @param asymSharedKey
    * @returns
    */
-  async reimport(address: string, data: ReimportBody): Promise<null> {
-    return await this.post(`${this.baseUrl}/re-import/${address}`, data);
+  async reimport(address: string, asymSharedKey?: string): Promise<null> {
+    return await this.post(`${this.baseUrl}/re-import/${address}`, {}, asymSharedKey);
   }
 
   /**
@@ -249,28 +261,37 @@ export class ChannelClient extends BaseClient {
    * Request subscription to a channel with address channel-address. A client can request a subscription to a channel which it then is able to read/write from.
    * @param channelAddress
    * @param options
+   * @param asymSharedKey
    * @returns
    */
   async requestSubscription(
     channelAddress: string,
-    options?: RequestSubscriptionBody
+    options?: RequestSubscriptionBody,
+    asymSharedKey?: string
   ): Promise<RequestSubscriptionResponse> {
-    return await this.post(`${this.baseUrl}/subscriptions/request/${channelAddress}`, options);
+    return await this.post(
+      `${this.baseUrl}/subscriptions/request/${channelAddress}`,
+      options,
+      asymSharedKey
+    );
   }
 
   /**
    * Authorize a subscription to a channel with DID or subscription link. The author of a channel can authorize a subscriber to read/write from a channel. Eventually after verifying its identity (using the SSI Bridge).
    * @param channelAddress
    * @param subscriptionIdentifier
+   * @param asymSharedKey
    * @returns keyloadLink
    */
   async authorizeSubscription(
     channelAddress: string,
-    subscriptionIdentifier: AuthorizeSubscriptionBody
+    subscriptionIdentifier: AuthorizeSubscriptionBody,
+    asymSharedKey?: string
   ): Promise<AuthorizeSubscriptionResponse> {
     return await this.post(
       `${this.baseUrl}/subscriptions/authorize/${channelAddress}`,
-      subscriptionIdentifier
+      subscriptionIdentifier,
+      asymSharedKey
     );
   }
 
@@ -278,15 +299,18 @@ export class ChannelClient extends BaseClient {
    * Revoke subscription to a channel. Only the author of a channel can revoke a subscription from a channel.
    * @param channelAddress
    * @param subscriptionIdentifier
+   * @param asymSharedKey
    * @returns
    */
   async revokeSubscription(
     channelAddress: string,
-    subscriptionIdentifier: RevokeSubscriptionBody
+    subscriptionIdentifier: RevokeSubscriptionBody,
+    asymSharedKey?: string
   ): Promise<null> {
     return await this.post(
       `${this.baseUrl}/subscriptions/revoke/${channelAddress}`,
-      subscriptionIdentifier
+      subscriptionIdentifier,
+      asymSharedKey
     );
   }
 

@@ -14,4 +14,4 @@ export const authorizationService = new AuthorizationService();
 export const channelInfoService = new ChannelInfoService();
 export const streamsService = new StreamsService(streamsConfig, logger);
 export const subscriptionService = new SubscriptionService(streamsService, channelInfoService, streamsConfig);
-export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, streamsConfig, logger);
+export const channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, configService.config, logger);

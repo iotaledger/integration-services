@@ -113,12 +113,13 @@ export abstract class BaseClient {
     return Converter.bytesToHex(Base58.decode(base58Key));
   }
 
-  async post(url: string, data: any) {
+  async post(url: string, data: any, asymSharedKey?: string) {
     let response = await this.instance.request({
       method: 'post',
       url,
       params: {
-        'api-key': this.apiKey
+        'api-key': this.apiKey,
+        'asym-shared-key': asymSharedKey
       },
       data,
       headers: this.jwtToken ? { Authorization: `Bearer ${this.jwtToken}` } : {}

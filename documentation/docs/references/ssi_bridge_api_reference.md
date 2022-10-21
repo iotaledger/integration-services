@@ -111,6 +111,38 @@ Create a new decentralized digital identity (DID). Identity DID document is sign
 | BearerAuth | |
 | ApiKey | |
 
+### /identities/key-pair
+
+#### POST
+##### Summary:
+
+Create a new keypair.
+
+##### Description:
+
+Create a new keypair.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| key-type | query |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | Returns the created key pair without creating or storing it in an identity document. |
+| 401 | No valid api key provided |
+| 5XX | Unexpected error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| BearerAuth | |
+| ApiKey | |
+
 ### /identities/search
 
 #### GET
@@ -412,6 +444,25 @@ Check the verifiable credential of an identity. Validates the signed verifiable 
 | 401 | No valid api key provided |
 | 5XX | Unexpected error |
 
+### /verification/check-presentation
+
+#### POST
+##### Summary:
+
+Check the verifiable presentation of an identity
+
+##### Description:
+
+Check the verifiable presentation of an identity.
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | The registered entity. |
+| 401 | No valid api key provided |
+| 5XX | Unexpected error |
+
 ### /verification/revoke-credential
 
 #### POST
@@ -522,19 +573,6 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | subject | object |  | Yes |
 | initiatorVC | object |  | No |
 
-#### VerifiableCredentialBodySchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| @context | string |  | Yes |
-| id | string |  | Yes |
-| type | [ string ] |  | Yes |
-| credentialSubject | object |  | Yes |
-| issuer | string |  | Yes |
-| issuanceDate | dateTime |  | Yes |
-| credentialStatus | object |  | No |
-| proof | object |  | Yes |
-
 #### TrustedRootBodySchema
 
 | Name | Type | Description | Required |
@@ -568,13 +606,6 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
-
-#### ReimportBodySchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| seed | string |  | No |
-| subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
 
 #### CreateChannelResponseSchema
 
@@ -634,7 +665,6 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | type |  |  | Yes |
 | channelAddress | string |  | Yes |
 | id | string |  | Yes |
-| state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
 | accessRights |  |  | Yes |
@@ -650,7 +680,6 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | type |  |  | No |
 | channelAddress | string |  | No |
 | id | string |  | No |
-| state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
 | accessRights |  |  | No |
@@ -681,6 +710,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
+| peerPublicKey | string | Public key used for privatePlus channels to encrypt channel data and state asymmetrically. | No |
 
 #### TopicSchema
 
@@ -694,7 +724,7 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | id | string |  | Yes |
-| type | string |  | Yes |
+| type | string |  | No |
 | initiator | string |  | No |
 
 #### VerifiableCredentialSchema
@@ -708,6 +738,16 @@ Revoke one specific verifiable credential of an identity. In the case of individ
 | issuer | string |  | Yes |
 | issuanceDate | dateTime |  | Yes |
 | credentialStatus | object |  | No |
+| proof | object |  | Yes |
+
+#### VerifiablePresentationSchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| @context | string |  | Yes |
+| type | string |  | Yes |
+| verifiableCredential |  |  | Yes |
+| holder | string |  | Yes |
 | proof | object |  | Yes |
 
 #### IdentitySchema

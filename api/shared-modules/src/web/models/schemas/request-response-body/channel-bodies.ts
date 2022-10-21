@@ -13,8 +13,14 @@ export const CreateChannelBodySchema = Type.Object({
 		})
 	),
 	type: Type.Optional(Type.Enum(ChannelType, { description: 'Channel type used to differ between public and private channels.' })),
-	hidden: Type.Optional(Type.Boolean({default: false, description: 'If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel.'})),
-	visibilityList: Type.Optional(Type.Array(Type.Object({id: Type.String()}))),
+	hidden: Type.Optional(
+		Type.Boolean({
+			default: false,
+			description:
+				'If set to true the channel can not be found by others. It will be still possible to give specific users access to the channel.'
+		})
+	),
+	visibilityList: Type.Optional(Type.Array(Type.Object({ id: Type.String() }))),
 	topics: Type.Array(TopicSchema),
 	hasPresharedKey: Type.Optional(
 		Type.Boolean({
@@ -56,17 +62,6 @@ export const AddChannelLogBodySchema = Type.Object({
 	metadata: Type.Optional(Type.Any({ description: 'Public available metadata.' })),
 	publicPayload: Type.Optional(Type.Any({ description: 'Public available payload.' })),
 	payload: Type.Optional(Type.Any({ description: 'Payload is stored encrypted in the channel.' }))
-});
-
-export const ReimportBodySchema = Type.Object({
-	seed: Type.Optional(Type.String({ minLength: 1 })),
-	subscriptionPassword: Type.Optional(
-		Type.String({
-			minLength: 8,
-			description:
-				'If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service.'
-		})
-	) // TODO#156 use to decrypt/encrypt data and state
 });
 
 export const ChannelLogSchema = AddChannelLogBodySchema;

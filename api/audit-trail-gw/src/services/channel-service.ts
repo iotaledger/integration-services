@@ -10,18 +10,21 @@ import {
 	ChannelData,
 	ChannelLog,
 	CreateChannelResponse,
-	ValidateResponse
+	ValidateResponse,
+	IdentityKeyPair,
+	KeyTypes
 } from '@iota/is-shared-modules';
-import { getDateStringFromDate, ILogger } from '@iota/is-shared-modules/node';
+import { getDateStringFromDate, ILogger, createAsymSharedKey } from '@iota/is-shared-modules/node';
 import { ChannelInfoService } from './channel-info-service';
 import { SubscriptionService } from './subscription-service';
 import * as ChannelDataDb from '../database/channel-data';
-import { StreamsConfig } from '../models/config';
 import { randomBytes } from 'crypto';
 import { ILock, Lock } from '../utils/lock';
 import { ChannelLogTransformer } from '../utils/channel-log-transformer';
 import { searchChannelInfo } from '../database/channel-info';
 import { isEmpty } from 'lodash';
+import { Config } from '../models/config/index';
+import axios from 'axios';
 
 export class ChannelService {
 	private readonly password: string;
@@ -31,11 +34,11 @@ export class ChannelService {
 		private readonly streamsService: StreamsService,
 		private readonly channelInfoService: ChannelInfoService,
 		private readonly subscriptionService: SubscriptionService,
-		config: StreamsConfig,
+		private readonly config: Config,
 		private readonly logger: ILogger
 	) {
 		this.lock = Lock.getInstance();
-		this.password = config.statePassword;
+		this.password = config.streamsConfig.password;
 	}
 
 	async create(params: {
@@ -48,9 +51,12 @@ export class ChannelService {
 		presharedKey?: string;
 		type?: ChannelType;
 		hidden?: boolean;
+		asymPubKey?: string;
 		visibilityList: { id: string }[];
 	}): Promise<CreateChannelResponse> {
-		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList } = params;
+		const { name, description, presharedKey, seed, hasPresharedKey, id, topics, type, hidden, visibilityList, asymPubKey } = params;
+		let peerPublicKey: string = undefined;
+		let password = this.password;
 		let key = presharedKey;
 		if (hasPresharedKey && !key) {
 			key = randomBytes(16).toString('hex');
@@ -62,12 +68,25 @@ export class ChannelService {
 			throw new Error('could not create the channel');
 		}
 
+		if (type === ChannelType.privatePlus) {
+			const { ssiBridgeApiKey, ssiBridgeUrl } = this.config;
+			const apiKey = ssiBridgeApiKey ? `&api-key=${ssiBridgeApiKey}` : '';
+			const url = `${ssiBridgeUrl}/identities/key-pair?key-type=${KeyTypes.x25519}${apiKey}`;
+			const identityRes = await axios.get(url);
+			const identityKeys = identityRes.data as IdentityKeyPair;
+			peerPublicKey = identityKeys.public;
+			const tmpPrivateEncryptionKey = identityKeys.private;
+			password = createAsymSharedKey(tmpPrivateEncryptionKey, asymPubKey).slice(0, 32);
+		}
+
+		const state = this.streamsService.exportSubscription(res.author, password);
+		await this.subscriptionService.addSubscriptionState(res.channelAddress, id, state);
+
 		const subscription: Subscription = {
 			id,
 			type: SubscriptionType.Author,
 			channelAddress: res.channelAddress,
 			subscriptionLink: res.channelAddress,
-			state: this.streamsService.exportSubscription(res.author, this.password),
 			accessRights: AccessRights.ReadAndWrite,
 			isAuthorized: true,
 			publicKey: res.publicKey,
@@ -85,7 +104,8 @@ export class ChannelService {
 			channelAddress: res.channelAddress,
 			type,
 			hidden,
-			visibilityList
+			visibilityList,
+			peerPublicKey
 		});
 
 		return {
@@ -103,7 +123,7 @@ export class ChannelService {
 		return !isEmpty(channel);
 	}
 
-	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber): Promise<ChannelData[]> {
+	async fetchLogs(channelAddress: string, id: string, sub: Author | Subscriber, password: string): Promise<ChannelData[]> {
 		if (!sub) {
 			throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 		}
@@ -112,12 +132,12 @@ export class ChannelService {
 		if (!messages) {
 			return [];
 		}
-		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, this.password));
+		await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, password));
 
 		const channelData: ChannelData[] = ChannelLogTransformer.transformStreamsMessages(messages);
 		// store logs in database
 		if (channelData?.length > 0) {
-			await ChannelDataDb.addChannelData(channelAddress, id, channelData, this.password);
+			await ChannelDataDb.addChannelData(channelAddress, id, channelData, password);
 		}
 
 		return channelData;
@@ -130,11 +150,12 @@ export class ChannelService {
 		return ChannelLogTransformer.transformStreamsMessages(messages);
 	}
 
-	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions) {
+	async getLogs(channelAddress: string, id: string, options: ChannelLogRequestOptions, asymSharedKey?: string) {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const password = this.getPassword(asymSharedKey);
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 				if (!subscription || !subscription?.keyloadLink) {
 					throw new Error('no subscription found!');
@@ -151,21 +172,24 @@ export class ChannelService {
 				}
 
 				// for all other channels we simply use the subscription and cache the data in the database
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
-				await this.fetchLogs(channelAddress, id, sub);
-				return await ChannelDataDb.getChannelData(channelAddress, id, options, this.password);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
+
+				await this.fetchLogs(channelAddress, id, sub, password);
+				return await ChannelDataDb.getChannelData(channelAddress, id, options, password);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async addLog(channelAddress: string, id: string, channelLog: ChannelLog): Promise<ChannelData> {
+	async addLog(channelAddress: string, id: string, channelLog: ChannelLog, asymSharedKey?: string): Promise<ChannelData> {
 		const lockKey = channelAddress + id;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
+				const password = this.getPassword(asymSharedKey);
 				const log: ChannelLog = { created: getDateStringFromDate(new Date()), ...channelLog };
 				const subscription = await this.subscriptionService.getSubscription(channelAddress, id);
 
@@ -173,12 +197,14 @@ export class ChannelService {
 					throw new Error('no subscription found!');
 				}
 
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
 				}
+
 				const { accessRights, keyloadLink } = subscription;
 
 				// check access rights
@@ -190,7 +216,7 @@ export class ChannelService {
 					}
 				} else {
 					// fetch prev logs before writing new data to the channel
-					await this.fetchLogs(channelAddress, id, sub);
+					await this.fetchLogs(channelAddress, id, sub, password);
 				}
 
 				const { maskedPayload, publicPayload } = ChannelLogTransformer.getPayloads(log);
@@ -198,13 +224,9 @@ export class ChannelService {
 
 				// store newly added log
 				const newLog: ChannelData = { link: res.link, messageId: res.messageId, log, source: { publicKey: res.source, id } };
-				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], this.password);
+				await ChannelDataDb.addChannelData(channelAddress, id, [newLog], password);
 
-				await this.subscriptionService.updateSubscriptionState(
-					channelAddress,
-					id,
-					this.streamsService.exportSubscription(sub, this.password)
-				);
+				await this.subscriptionService.updateSubscriptionState(channelAddress, id, this.streamsService.exportSubscription(sub, password));
 				return newLog;
 			} finally {
 				release();
@@ -212,8 +234,9 @@ export class ChannelService {
 		});
 	}
 
-	async reimport(channelAddress: string, id: string, _seed: string, _subscriptionPassword?: string): Promise<void> {
+	async reimport(channelAddress: string, id: string, type: ChannelType, asymSharedKey: string): Promise<void> {
 		const lockKey = channelAddress + id;
+		let password = this.password;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
@@ -227,8 +250,13 @@ export class ChannelService {
 					throw new Error('not allowed to reimport the logs from the channel');
 				}
 
+				if (type === ChannelType.privatePlus) {
+					password = this.getPassword(asymSharedKey);
+				}
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
+
 				const newSub = await this.streamsService.resetState(channelAddress, sub, isAuthor);
 				const newPublicKey = newSub.clone().get_public_key();
 
@@ -237,15 +265,22 @@ export class ChannelService {
 				}
 
 				await ChannelDataDb.removeChannelData(channelAddress, id);
-				await this.fetchLogs(channelAddress, id, newSub);
+				await this.fetchLogs(channelAddress, id, newSub, password);
 			} finally {
 				release();
 			}
 		});
 	}
 
-	async validate(channelAddress: string, id: string, logs: ChannelData[]): Promise<ValidateResponse> {
+	async validate(
+		channelAddress: string,
+		id: string,
+		logs: ChannelData[],
+		type: ChannelType,
+		asymSharedKey: string
+	): Promise<ValidateResponse> {
 		const lockKey = channelAddress + id;
+		let password = this.password;
 
 		return this.lock.acquire(lockKey).then(async (release) => {
 			try {
@@ -260,8 +295,12 @@ export class ChannelService {
 					throw new Error('not allowed to validate the logs from the channel');
 				}
 
+				if (type === ChannelType.privatePlus) {
+					password = this.getPassword(asymSharedKey);
+				}
+				const state = await this.subscriptionService.getSubscriptionState(channelAddress, id);
 				const isAuthor = subscription.type === SubscriptionType.Author;
-				const sub = await this.streamsService.importSubscription(subscription.state, isAuthor);
+				const sub = await this.streamsService.importSubscription(state, isAuthor, password);
 
 				if (!sub) {
 					throw new Error(`no author/subscriber found with channelAddress: ${channelAddress} and id: ${id}`);
@@ -289,5 +328,11 @@ export class ChannelService {
 				release();
 			}
 		});
+	}
+	private getPassword(sharedKey: string) {
+		if (sharedKey) {
+			return sharedKey.slice(0, 32);
+		}
+		return this.password;
 	}
 }

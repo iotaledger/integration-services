@@ -252,3 +252,42 @@ export const TestCredentialMock = {
 		signatureValue: 'Ug3k7V6BufDDcW6VRJwGpmsvE3bbwDv84x8en6ERhmgnfubxTZ5fBZJ6Ky9YUuqZhqpoQWqdmcLVYQTEE6qVe7u'
 	}
 };
+
+export const TestVerifiablePresentationMock = {
+	'@context': 'https://www.w3.org/2018/credentials/v1',
+	type: 'VerifiablePresentation',
+	verifiableCredential: {
+		'@context': 'https://www.w3.org/2018/credentials/v1',
+		id: 'did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV',
+		type: ['VerifiableCredential', 'VerifiedIdentityCredential'],
+		credentialSubject: {
+			id: 'did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV',
+			'@context': 'https://schema.org/',
+			familyName: 'Engineer',
+			givenName: 'Test',
+			initiator: 'did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y',
+			jobTitle: 'Software Engineer',
+			name: 'Test Engineer',
+			type: 'Person'
+		},
+		issuer: 'did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy',
+		issuanceDate: '2022-08-12T12:44:53Z',
+		credentialStatus: {
+			id: 'did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#signature-bitmap-0',
+			type: 'RevocationBitmap2022',
+			revocationBitmapIndex: '6'
+		},
+		proof: {
+			type: 'JcsEd25519Signature2020',
+			verificationMethod: 'did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#sign-0',
+			signatureValue: '5ch4nJhQEbY21y4zHoPAqTSyoVzXjurFM4xgjQvZPF9EebUB7owHfMxme4wcXdzWiWWjKZv5SDFUm9tzpfQfaKGq'
+		}
+	},
+	holder: 'did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV',
+	proof: {
+		type: 'JcsEd25519Signature2020',
+		verificationMethod: 'did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV#sign-0',
+		signatureValue: '23Tn2vxYHkjgBTFzP1yqXLbz6S5Zb2F6x3uDiDUgH37YNijjoA9dDyMegPCok4bLFcyBk1uMoEcVHKkqjt9gDLB1',
+		expires: '2022-08-12T13:38:20Z'
+	}
+};

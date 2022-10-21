@@ -49,6 +49,7 @@ The default values are:
 - `7w9gfhb123jngh4gd53z465fewcs569e` as `SERVER_SECRET`.
 - `7w9gfhb123jngh4gd53z465fewcs569e` as `JWT_SECRET`.
 - `4ed59704-9a26-11ec-a749-3f57454709b9` as `API_KEY`.
+- `4ed59704-9a26-11ec-a749-3f57454709b9` as `SSI_BRIDGE_API_KEY`.
 
 ## Number of Replicas
 

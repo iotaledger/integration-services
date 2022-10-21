@@ -10,7 +10,6 @@ export {
   AddChannelLogBody,
   CreateChannelBody,
   CreateChannelResponse,
-  ReimportBody,
   ValidateBody,
   ValidateResponse,
   AuthorizeSubscriptionBody,
@@ -28,7 +27,6 @@ export {
   UserType,
   UserRoles,
   CredentialTypes,
-  VerifiableCredentialInternal,
   IdentityDocument,
   ChannelType,
   IdentityKeys

@@ -3,7 +3,7 @@ import { Config, StreamsConfig } from '../../models/config';
 export const StreamsConfigMock: StreamsConfig = {
 	node: '',
 	permaNode: '',
-	statePassword: 'veryvery-very-very-server-secret'
+	password: 'veryvery-very-very-server-secret'
 };
 
 export const ConfigMock: Config = {
@@ -16,6 +16,8 @@ export const ConfigMock: Config = {
 	port: 3000,
 	permaNode: 'testpermanodeurl',
 	hornetNode: 'testhornetnodeurl',
+	ssiBridgeApiKey: '',
+	ssiBridgeUrl: 'http://localhost:3001/api/v0.2',
 	streamsConfig: StreamsConfigMock,
 	commitHash: ''
 };

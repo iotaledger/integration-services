@@ -63,7 +63,7 @@
 
 	async function updateChannelList(): Promise<void> {
 		if (get(subscriptionStatus) !== currentSubscriptionStatus) {
-			const channelInfo = await getChannelInfo(get(selectedChannel).channelAddress);
+			const channelInfo = await getChannelInfo(get(selectedChannel)?.channelAddress);
 			if (channelInfo) {
 				const searchResults = get(searchChannelsResults);
 				const index = searchResults.indexOf($selectedChannel);
@@ -84,7 +84,7 @@
 			return;
 		}
 		// ----------------------------------------------------------
-		await acceptSubscription($selectedChannel?.channelAddress, subscriptionId, true);
+		await acceptSubscription($selectedChannel?.channelAddress, $selectedChannel?.type, subscriptionId, true);
 		await updateSubscriptions();
 		loadingChannel.set(false);
 	}
@@ -100,7 +100,7 @@
 			return;
 		}
 		// ----------------------------------------------------------
-		await rejectSubscription($selectedChannel?.channelAddress, subscriptionId, true);
+		await rejectSubscription($selectedChannel?.channelAddress, $selectedChannel?.type, subscriptionId, true);
 		await updateSubscriptions();
 		loadingChannel.set(false);
 	}
@@ -110,18 +110,18 @@
 		selectedChannelSubscriptions.set(channelSubscriptions);
 	}
 
-	function onSubscriptionAction() {
-		get(subscriptionStatus) === SubscriptionState.NotSubscribed ? subscribe() : unsubscribe();
+	function onSubscriptionAction(asymSharedKey?: string) {
+		get(subscriptionStatus) === SubscriptionState.NotSubscribed ? subscribe(asymSharedKey) : unsubscribe(asymSharedKey);
 	}
 
-	async function subscribe(): Promise<void> {
+	async function subscribe(asymSharedKey?: string): Promise<void> {
 		if (!get(selectedChannel)) {
 			return;
 		}
 		loadingChannel.set(true);
-		const response = await requestSubscription($selectedChannel?.channelAddress);
+		const response = await requestSubscription($selectedChannel?.channelAddress, asymSharedKey);
 		if (response) {
-			$selectedChannel.type === ChannelType.private
+			$selectedChannel.type === ChannelType.private || $selectedChannel.type === ChannelType.privatePlus
 				? subscriptionStatus.set(SubscriptionState.Requested)
 				: subscriptionStatus.set(SubscriptionState.Authorized);
 			await updateSubscriptions();
@@ -129,10 +129,10 @@
 		loadingChannel.set(false);
 	}
 
-	async function unsubscribe(): Promise<void> {
+	async function unsubscribe(asymSharedKey?: string): Promise<void> {
 		stopReadingChannel();
 		loadingChannel.set(true);
-		const response = await requestUnsubscription($selectedChannel?.channelAddress);
+		const response = await requestUnsubscription($selectedChannel?.channelAddress, asymSharedKey);
 		if (response) {
 			subscriptionStatus.set(SubscriptionState.NotSubscribed);
 			await updateSubscriptions();
@@ -159,7 +159,7 @@
 				<div class="mb-4 align-self-start">
 					<button on:click={handleBackClick} class="btn d-flex align-items-center">
 						<Icon type="arrow-left" size={16} />
-						<span class="ms-2">Back</span>
+						<span class="ms-2">Back to Channels</span>
 					</button>
 				</div>
 				<ChannelDetails
@@ -176,6 +176,7 @@
 					isOpen={isWriteMesageModalOpen}
 					onModalClose={closeWriteMessageModal}
 					address={$selectedChannel?.channelAddress}
+					channelType={$selectedChannel?.type}
 				/>
 			{/if}
 		</Col>

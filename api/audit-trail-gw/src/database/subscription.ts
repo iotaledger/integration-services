@@ -48,9 +48,8 @@ export const addSubscription = async (subscription: Subscription) => {
 export const updateSubscription = async (channelAddress: string, id: string, subscriptionUpdate: SubscriptionUpdate) => {
 	const query = { _id: getIndex(id, channelAddress) };
 	// updates on channelAddress, publicKey, id and type are not allowed
-	const { state, subscriptionLink, isAuthorized, accessRights, keyloadLink, sequenceLink, pskId } = subscriptionUpdate;
+	const { subscriptionLink, isAuthorized, accessRights, keyloadLink, sequenceLink, pskId } = subscriptionUpdate;
 	const plainUpdate = MongoDbService.getPlainObject({
-		state,
 		subscriptionLink,
 		isAuthorized,
 		accessRights,
@@ -68,20 +67,6 @@ export const updateSubscription = async (channelAddress: string, id: string, sub
 export const removeSubscription = async (channelAddress: string, id: string) => {
 	const query = { _id: getIndex(id, channelAddress) };
 	return MongoDbService.removeDocument(collectionName, query);
-};
-
-export const updateSubscriptionState = async (channelAddress: string, id: string, state: string) => {
-	const query = {
-		_id: getIndex(id, channelAddress)
-	};
-	const update = {
-		$set: {
-			state,
-			lastModified: new Date()
-		}
-	};
-
-	return MongoDbService.updateDocument(collectionName, query, update);
 };
 
 export const setSubscriptionAuthorization = async (

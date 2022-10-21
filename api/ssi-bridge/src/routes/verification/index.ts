@@ -10,7 +10,8 @@ import {
 	Subject,
 	User,
 	UserRoles,
-	VerifiableCredentialPersistence
+	VerifiableCredentialPersistence,
+	VerifiablePresentation
 } from '@iota/is-shared-modules';
 import { VerificationService } from '../../services/verification-service';
 import * as CredentialsDb from '../../database/verifiable-credentials';
@@ -67,6 +68,22 @@ export class VerificationRoutes {
 		} catch (error) {
 			this.logger.error(error);
 			next(new Error('could not check the verifiable credential'));
+		}
+	};
+
+	checkVerifiablePresentation = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>> => {
+		try {
+			const vcBody = req.body as VerifiablePresentation;
+
+			if (!vcBody.proof.expires) {
+				return res.status(StatusCodes.BAD_REQUEST).send({ error: 'Verifiable Presentation must have an expiration!' });
+			}
+
+			const isVerified = await this.verificationService.checkVerifiablePresentation(vcBody);
+			res.status(StatusCodes.OK).send({ isVerified });
+		} catch (error) {
+			this.logger.error(error);
+			next(new Error('could not check the verifiable presentation'));
 		}
 	};
 
@@ -189,7 +206,7 @@ export class VerificationRoutes {
 				return { isAuthorized: false, error: new Error('initiator is not allowed based on its credential type!') };
 			}
 
-			const isInitiatorVerified = await this.verificationService.checkVerifiableCredential(initiatorVC);
+			const isInitiatorVerified = await this.verificationService.checkVerifiableCredentialIssuer(initiatorVC);
 			if (!isInitiatorVerified) {
 				return { isAuthorized: false, error: new Error('initiatorVC is not verified!') };
 			}

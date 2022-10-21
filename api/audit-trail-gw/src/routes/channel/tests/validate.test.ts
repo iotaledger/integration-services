@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import { ChannelRoutes } from '..';
-import { AccessRights, SubscriptionType, Subscription } from '@iota/is-shared-modules';
+import { AccessRights, SubscriptionType, Subscription, ChannelType } from '@iota/is-shared-modules';
 import { ChannelInfoService } from '../../../services/channel-info-service';
 import { ChannelService } from '../../../services/channel-service';
 import { StreamsMessage, StreamsService } from '../../../services/streams-service';
 import { SubscriptionService } from '../../../services/subscription-service';
-import { StreamsConfigMock } from '../../../test/mocks/config';
+import { StreamsConfigMock, ConfigMock } from '../../../test/mocks/config';
 import { TestUsersMock } from '../../../test/mocks/identities';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { AuthorMock } from '../../../test/mocks/streams';
@@ -70,12 +70,15 @@ describe('test validate route', () => {
 		sendMock = jest.fn();
 		sendStatusMock = jest.fn();
 		nextMock = jest.fn();
-		const config = StreamsConfigMock;
-		streamsService = new StreamsService(config, LoggerMock);
+		const config = ConfigMock;
+		streamsService = new StreamsService(config.streamsConfig, LoggerMock);
 		channelInfoService = new ChannelInfoService();
-		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config);
+		subscriptionService = new SubscriptionService(streamsService, channelInfoService, config.streamsConfig);
 		channelService = new ChannelService(streamsService, channelInfoService, subscriptionService, config, LoggerMock);
-		channelRoutes = new ChannelRoutes(channelService, LoggerMock);
+		channelRoutes = new ChannelRoutes(channelService, channelInfoService, LoggerMock, {
+			ssiBridgeApiKey: ConfigMock.ssiBridgeApiKey,
+			ssiBridgeUrl: ConfigMock.ssiBridgeUrl
+		});
 
 		res = {
 			send: sendMock,
@@ -88,7 +91,8 @@ describe('test validate route', () => {
 		const req: any = {
 			params: {},
 			user: TestUsersMock[0],
-			body: {}
+			body: {},
+			query: {}
 		};
 
 		await channelRoutes.validateLogs(req, res, nextMock);
@@ -100,7 +104,8 @@ describe('test validate route', () => {
 		const req: any = {
 			params: { channelAddress: '123456' },
 			user: TestUsersMock[0],
-			body: [] // empty channelLogs
+			body: [], // empty channelLogs
+			query: {}
 		};
 
 		await channelRoutes.validateLogs(req, res, nextMock);
@@ -108,14 +113,36 @@ describe('test validate route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'no logs provided' });
 	});
 
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: 'somesharedKey', error: 'Please do not define an asym-shared-key.' },
+		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }
+	])(
+		'should return error if channel type is privatePlus and no asymSharedKey is provided or if private and asymSharedKey is provided',
+		async ({ type, asymSharedKey, error }) => {
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type);
+			const req: any = {
+				params: { channelAddress: '123456' },
+				user: TestUsersMock[0],
+				body: logs,
+				query: { 'asym-shared-key': asymSharedKey }
+			};
+
+			await channelRoutes.validateLogs(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: error });
+		}
+	);
+
 	it('should throw an error since no subscription was found', async () => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: logs
+			body: logs,
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null); // no subscription found
 
@@ -132,15 +159,16 @@ describe('test validate route', () => {
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: logs
+			body: logs,
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private);
 		const loggerSpy = jest.spyOn(LoggerMock, 'error');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
-					state: 'someteststate',
 					accessRights: AccessRights.Write // wrong access rights
 				} as Subscription)
 		);
@@ -158,16 +186,20 @@ describe('test validate route', () => {
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: logs
+			body: logs,
+			query: {}
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.private);
+		const getSubscriptionStateSpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionState')
+			.mockImplementationOnce(async () => 'someteststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
-					type: SubscriptionType.Author,
-					state: 'someteststate'
+					type: SubscriptionType.Author
 				} as Subscription)
 		);
 		const getSubSpy = jest.spyOn(streamsService, 'importSubscription').mockReturnValue(null); // no subscriber found
@@ -176,29 +208,37 @@ describe('test validate route', () => {
 		await channelRoutes.validateLogs(req, res, nextMock);
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
-		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubSpy).toHaveBeenCalledWith('someteststate', true, StreamsConfigMock.password);
 		expect(loggerSpy).toHaveBeenCalledWith(
 			new Error('no author/subscriber found with channelAddress: 123456 and id: did:iota:6cTkp3gCV3yifiGDHUK4x1omXb6yFBTRg7NS2x3kBDUm')
 		);
 		expect(nextMock).toHaveBeenCalledWith(new Error('could not validate the channel data'));
 	});
 
-	it('should validate the logs', async () => {
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: undefined, password: StreamsConfigMock.password },
+		{ type: ChannelType.privatePlus, asymSharedKey: 'someAsymSharedKey', password: 'someAsymSharedKey' } // uses asymSharedKey instead of ConfigMock.streamsConfig.password
+	])('should validate the logs for private and privatePlus channels', async ({ type, asymSharedKey, password }) => {
 		const channelAddress = '123456';
 		const user = TestUsersMock[0];
 		const req: any = {
 			params: { channelAddress },
 			user,
-			body: logs
+			body: logs,
+			query: { 'asym-shared-key': asymSharedKey }
 		};
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type);
+		const getSubscriptionStateSpy = jest
+			.spyOn(subscriptionService, 'getSubscriptionState')
+			.mockImplementationOnce(async () => 'someteststate');
 		const getSubscriptionSpy = jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(
 			async () =>
 				({
 					keyloadLink: 'testlink',
 					publicKey: 'testkey',
 					accessRights: AccessRights.Read,
-					type: SubscriptionType.Author,
-					state: 'someteststate'
+					type: SubscriptionType.Author
 				} as Subscription)
 		);
 		const importSubscriptionSpy = jest.spyOn(streamsService, 'importSubscription').mockImplementation(async () => AuthorMock);
@@ -230,8 +270,9 @@ describe('test validate route', () => {
 		];
 
 		expect(getSubscriptionSpy).toHaveBeenCalledWith(channelAddress, user.id);
+		expect(getSubscriptionStateSpy).toHaveBeenCalledWith(channelAddress, user.id);
 		expect(getMessageSpy).toHaveBeenCalledTimes(3);
-		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true);
+		expect(importSubscriptionSpy).toHaveBeenCalledWith('someteststate', true, password);
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
 		expect(res.send).toHaveBeenCalledWith(expectedValidatedLogs);
 	});

@@ -3,7 +3,6 @@ import {
 	AddChannelLogBodySchema,
 	CreateChannelResponseSchema,
 	ChannelDataSchema,
-	ReimportBodySchema,
 	ValidateBodySchema,
 	ValidateResponseSchema,
 	ChannelInfoSchema,
@@ -18,7 +17,8 @@ import {
 	ErrorResponseSchema,
 	IdentityIdSchema,
 	SubscriptionSchema,
-	SubscriptionUpdateSchema
+	SubscriptionUpdateSchema,
+	SubscriptionStateSchema
 } from '@iota/is-shared-modules';
 import fs from 'fs';
 
@@ -33,7 +33,6 @@ const schemas = {
 	AuthorizeSubscriptionBodySchema,
 	RequestSubscriptionBodySchema,
 	RevokeSubscriptionBodySchema,
-	ReimportBodySchema,
 	CreateChannelResponseSchema,
 	AuthorizeSubscriptionResponseSchema,
 	RequestSubscriptionResponseSchema,
@@ -42,6 +41,7 @@ const schemas = {
 	ChannelInfoSearchSchema,
 	SubscriptionSchema,
 	SubscriptionUpdateSchema,
+	SubscriptionStateSchema,
 	ChannelInfoSchema,
 	TopicSchema,
 	IdentityIdSchema,

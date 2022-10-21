@@ -1,10 +1,25 @@
 import * as Identity from '@iota/identity-wasm/node';
 import { IdentityConfig } from '../models/config';
-import { VerifiableCredential, Credential, IdentityKeys, Encoding } from '@iota/is-shared-modules';
-const { Credential, Client, KeyPair, KeyType, Resolver, MethodScope, Document } = Identity;
+import { VerifiableCredential, Credential, IdentityKeys, Encoding, VerifiablePresentation, KeyTypes } from '@iota/is-shared-modules';
+const {
+	Credential,
+	Client,
+	KeyPair,
+	KeyType,
+	Resolver,
+	Document,
+	Presentation,
+	Timestamp,
+	VerifierOptions,
+	Duration,
+	CredentialValidationOptions,
+	SubjectHolderRelationship,
+	PresentationValidationOptions,
+	FailFast,
+	MethodScope
+} = Identity;
 import { ILogger } from '../utils/logger';
 import * as bs58 from 'bs58';
-import { KeyTypes } from '@iota/is-shared-modules/lib/web/models/schemas/identity';
 
 export class SsiService {
 	private static instance: SsiService;
@@ -48,36 +63,44 @@ export class SsiService {
 
 	async createIdentity(): Promise<IdentityKeys> {
 		try {
-			const identity = await this.generateIdentity();
-			const publicKey = bs58.encode(identity.signingKeys.public());
-			const privateKey = bs58.encode(identity.signingKeys.private());
-			const keyType = identity.signingKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
-
-			const publicEncryptionKey = bs58.encode(identity.encryptionKeys.public());
-			const privateEncryptionKey = bs58.encode(identity.encryptionKeys.private());
-			const encryptionKeyType = identity.encryptionKeys.type() === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
-
+			const { encryptionKeys, doc, signingKeys } = await this.generateIdentity();
+			const sign = this.decodeKeyPair(signingKeys.public(), signingKeys.private(), signingKeys.type());
+			const encrypt = this.decodeKeyPair(encryptionKeys.public(), encryptionKeys.private(), encryptionKeys.type());
 			return {
-				id: identity.doc.id().toString(),
+				id: doc.id().toString(),
 				keys: {
-					sign: {
-						public: publicKey,
-						private: privateKey,
-						type: keyType,
-						encoding: Encoding.base58
-					},
-					encrypt: {
-						public: publicEncryptionKey,
-						private: privateEncryptionKey,
-						type: encryptionKeyType,
-						encoding: Encoding.base58
-					}
+					sign,
+					encrypt
 				}
 			};
 		} catch (error) {
 			this.logger.error(`Error from identity sdk: ${error}`);
 			throw new Error('could not create the identity');
 		}
+	}
+
+	createKeyPair(type: KeyTypes) {
+		try {
+			const typeNum = type === KeyTypes.ed25519 ? 1 : 2;
+			const keyPair = new KeyPair(typeNum);
+			return this.decodeKeyPair(keyPair.public(), keyPair.private(), keyPair.type());
+		} catch (error) {
+			this.logger.error(`Error from identity sdk: ${error}`);
+			throw new Error('could not create the identity');
+		}
+	}
+
+	decodeKeyPair(publicKeyU8: Uint8Array, privateKeyU8: Uint8Array, type: number) {
+		const publicKey = bs58.encode(publicKeyU8);
+		const privateKey = bs58.encode(privateKeyU8);
+		const keyType = type === 1 ? KeyTypes.ed25519 : KeyTypes.x25519;
+
+		return {
+			public: publicKey,
+			private: privateKey,
+			type: keyType,
+			encoding: Encoding.base58
+		};
 	}
 
 	async createVerifiableCredential<T>(
@@ -138,8 +161,47 @@ export class SsiService {
 		}
 	}
 
+	async checkVerifiablePresentation(signedVp: VerifiablePresentation, expiration?: number, challenge?: string): Promise<boolean> {
+		try {
+			const expires = expiration != null ? Timestamp.nowUTC().checkedAdd(Duration.seconds(expiration)) : undefined;
+			const presentation = Presentation.fromJSON(signedVp);
+			let isVerified = false;
+			try {
+				const presentationVerifierOptions = new VerifierOptions({
+					allowExpired: false,
+					challenge
+				});
+
+				const credentialValidationOptions = new CredentialValidationOptions({
+					earliestExpiryDate: expires
+				});
+
+				const subjectHolderRelationship = SubjectHolderRelationship.AlwaysSubject;
+
+				const presentationValidationOptions = new PresentationValidationOptions({
+					sharedValidationOptions: credentialValidationOptions,
+					presentationVerifierOptions: presentationVerifierOptions,
+					subjectHolderRelationship: subjectHolderRelationship
+				});
+
+				const resolver = await Resolver.builder().clientConfig(this.getConfig(true)).build();
+				await resolver.verifyPresentation(presentation, presentationValidationOptions, FailFast.FirstError);
+				isVerified = true;
+			} catch (e) {
+				// if credential is revoked, validate will throw an error
+				this.logger.error(`Error from identity sdk: ${e}`);
+			}
+			return isVerified;
+		} catch (error) {
+			this.logger.error(`Error from identity sdk: ${error}`);
+			throw new Error('could not check the verifiable credential');
+		}
+	}
+
 	async publishSignedDoc(newDoc: Identity.Document, key: Identity.KeyPair, prevMessageId?: string): Promise<string | undefined> {
-		prevMessageId && newDoc.setMetadataPreviousMessageId(prevMessageId);
+		if (prevMessageId) {
+			newDoc.setMetadataPreviousMessageId(prevMessageId);
+		}
 		newDoc.setMetadataUpdated(Identity.Timestamp.nowUTC());
 		const methodId = newDoc.defaultSigningMethod().id().toString();
 		newDoc.signSelf(key, methodId);

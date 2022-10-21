@@ -46,7 +46,8 @@ describe('test request subscription route', () => {
 		const req: any = {
 			params: {},
 			user: { id: undefined }, //no id,
-			body: { accessRights: AccessRights.Read }
+			body: { accessRights: AccessRights.Read },
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -59,7 +60,8 @@ describe('test request subscription route', () => {
 		const req: any = {
 			params: {}, // no channelAddress
 			user: { id: 'did:iota1234' },
-			body: { accessRights: AccessRights.Read }
+			body: { accessRights: AccessRights.Read },
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -67,12 +69,31 @@ describe('test request subscription route', () => {
 		expect(res.send).toHaveBeenCalledWith({ error: 'no channelAddress or id provided' });
 	});
 
+	test.each([
+		{ type: ChannelType.private, asymSharedKey: "somesharedKey", error: 'Please do not define an asym-shared-key.' },
+		{ type: ChannelType.privatePlus, asymSharedKey: undefined, error: 'An asym-shared-key is required for privatePlus channels.' }])
+		('should return error if channel type is privatePlus and no asymSharedKey is provided or if private and asymSharedKey is provided', async ({ type, asymSharedKey, error }) => {
+			jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => null);
+			jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => type)
+			const req: any = {
+				params: { channelAddress: 'testaddress' },
+				user: { id: 'did:iota1234' },
+				body: { accessRights: AccessRights.Read },
+				query: { 'asym-shared-key': asymSharedKey }
+			};
+
+			await subscriptionRoutes.requestSubscription(req, res, nextMock);
+			expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+			expect(res.send).toHaveBeenCalledWith({ error: error });
+		});
+
 	it('should return bad request since already a subscription is requested', async () => {
 		jest.spyOn(subscriptionService, 'getSubscription').mockImplementation(async () => ({} as any)); // already a subscription is found!
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota1234' },
-			body: { accessRights: AccessRights.Read }
+			body: { accessRights: AccessRights.Read },
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -88,7 +109,6 @@ describe('test request subscription route', () => {
 			id: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber
 		};
@@ -110,7 +130,8 @@ describe('test request subscription route', () => {
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
-			body: { accessRights: AccessRights.Read }
+			body: { accessRights: AccessRights.Read },
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -129,7 +150,9 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
@@ -138,10 +161,12 @@ describe('test request subscription route', () => {
 			publicKey: 'testpublickey',
 			seed: 'testseed'
 		}));
+
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
-			body: { accessRights: AccessRights.Read }
+			body: { accessRights: AccessRights.Read },
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -152,7 +177,6 @@ describe('test request subscription route', () => {
 			id: 'did:iota:1234',
 			isAuthorized: false,
 			publicKey: 'testpublickey',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber
 		};
@@ -173,7 +197,9 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
@@ -183,10 +209,12 @@ describe('test request subscription route', () => {
 			seed: 'testseed',
 			pskId: 'testpskid'
 		}));
+
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
-			body: { accessRights: AccessRights.Audit, presharedKey }
+			body: { accessRights: AccessRights.Audit, presharedKey },
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -195,7 +223,6 @@ describe('test request subscription route', () => {
 			channelAddress: 'testaddress',
 			id: 'did:iota:1234',
 			publicKey: 'testpublickey',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
 			// differences for auditor
@@ -221,7 +248,9 @@ describe('test request subscription route', () => {
 		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
-		const addChannelRequestedSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId').mockImplementation(async () => null);
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
 		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => null);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
@@ -231,10 +260,12 @@ describe('test request subscription route', () => {
 			seed: 'testseed',
 			pskId: 'testpskid'
 		}));
+
 		const req: any = {
 			params: { channelAddress: 'testaddress' },
 			user: { id: 'did:iota:1234' },
-			body: { accessRights: AccessRights.ReadAndWrite, presharedKey } // should not consider these ReadAndWrite rights if subscription request has presharedKey
+			body: { accessRights: AccessRights.ReadAndWrite, presharedKey }, // should not consider these ReadAndWrite rights if subscription request has presharedKey
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -242,7 +273,6 @@ describe('test request subscription route', () => {
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
 			id: 'did:iota:1234',
-			state: 'teststate',
 			subscriptionLink: 'testlink',
 			type: SubscriptionType.Subscriber,
 			// differences for auditor
@@ -268,7 +298,7 @@ describe('test request subscription route', () => {
 		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
 		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue('teststate');
 		const addChannelSubscriptionIdSpy = jest.spyOn(channelInfoService, 'addChannelSubscriberId').mockImplementation(async () => null);
-		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => (ChannelType.public));
+		const getChannelInfoSpy = jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.public);
 
 		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
 			subscriber: null,
@@ -282,7 +312,8 @@ describe('test request subscription route', () => {
 				channelAddress: 'testaddress'
 			},
 			user: { id: 'did:iota:1234' },
-			body: { accessRights: AccessRights.ReadAndWrite } // should not consider these ReadAndWrite rights if subscription uses public channel
+			body: { accessRights: AccessRights.ReadAndWrite }, // should not consider these ReadAndWrite rights if subscription uses public channel
+			query: {}
 		};
 
 		await subscriptionRoutes.requestSubscription(req, res, nextMock);
@@ -290,7 +321,6 @@ describe('test request subscription route', () => {
 		const expectedSubscription: Subscription = {
 			channelAddress: 'testaddress',
 			id: 'did:iota:1234',
-			state: 'teststate',
 			subscriptionLink: 'testaddress',
 			publicKey: 'mypublickey',
 			type: SubscriptionType.Subscriber,
@@ -307,5 +337,52 @@ describe('test request subscription route', () => {
 		expect(addChannelSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
 		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
 		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testaddress' });
+	});
+
+	it('should create a subscription for privatePlus channel', async () => {
+		const seed: string = undefined;
+		const presharedKey: string = undefined;
+		jest.spyOn(subscriptionService, 'getSubscription').mockReturnValue(null);
+		const subscriptionServiceAddSpy = jest.spyOn(subscriptionService, 'addSubscription').mockImplementation(async () => null);
+		const getSubscriptionByPublicKeySpy = jest.spyOn(subscriptionService, 'getSubscriptionByPublicKey').mockReturnValue(null);
+		const exportSubscriptionSpy = jest.spyOn(streamsService, 'exportSubscription').mockReturnValue(('teststate'));
+		const addChannelRequestedSubscriptionIdSpy = jest
+			.spyOn(channelInfoService, 'addChannelRequestedSubscriptionId')
+			.mockImplementation(async () => null);
+		jest.spyOn(channelInfoService, 'getChannelType').mockImplementation(async () => ChannelType.privatePlus);
+
+		const requestSubscriptionSpy = jest.spyOn(streamsService, 'requestSubscription').mockImplementation(async () => ({
+			subscriber: { id: 'did:iota:1234' } as any,
+			subscriptionLink: 'testlink',
+			publicKey: 'testpublickey',
+			seed: 'testseed'
+		}));
+
+		const req: any = {
+			params: { channelAddress: 'testaddress' },
+			user: { id: 'did:iota:1234' },
+			body: { accessRights: AccessRights.Read },
+			query: { 'asym-shared-key': 'anySharedKey'}
+		};
+
+		await subscriptionRoutes.requestSubscription(req, res, nextMock);
+
+		const expectedSubscription: Subscription = {
+			accessRights: AccessRights.Read,
+			channelAddress: 'testaddress',
+			id: 'did:iota:1234',
+			isAuthorized: false,
+			publicKey: 'testpublickey',
+			subscriptionLink: 'testlink',
+			type: SubscriptionType.Subscriber
+		};
+
+		expect(requestSubscriptionSpy).toHaveBeenCalledWith('testaddress', false, seed, presharedKey);
+		expect(exportSubscriptionSpy).toHaveBeenCalledWith({ id: 'did:iota:1234' }, 'anySharedKey');
+		expect(getSubscriptionByPublicKeySpy).toHaveBeenCalledWith('testaddress', 'testpublickey');
+		expect(subscriptionServiceAddSpy).toHaveBeenCalledWith(expectedSubscription);
+		expect(addChannelRequestedSubscriptionIdSpy).toHaveBeenCalledWith('testaddress', 'did:iota:1234');
+		expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
+		expect(res.send).toHaveBeenCalledWith({ seed: 'testseed', subscriptionLink: 'testlink' });
 	});
 });

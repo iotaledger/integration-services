@@ -1,6 +1,6 @@
 {
   "name": "@iota/is-shared-modules",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "Shared modules of the Integration Service.",
   "main": "lib/web/index.js",
   "types": "lib/web/index.d.ts",
@@ -10,7 +10,9 @@
     "build-lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build-copy-node-folder": "mv ./lib/node/ ./node",
     "build": "npm-run-all build-tsc build-lint build-copy-node-folder",
-    "serve": "tsc --project ./ --watch"
+    "serve": "tsc --project ./ --watch",
+    "test": "jest --detectOpenHandles",
+    "test-watch": "npm run test -- --watchAll"
   },
   "author": {
     "name": "Dominic Zettl",
@@ -40,7 +42,6 @@
     "decentralized"
   ],
   "dependencies": {
-    "@iota/identity-wasm": "^0.4.2",
     "@noble/ed25519": "^1.5.2",
     "@sinclair/typebox": "^0.23.2",
     "bs58": "^4.0.1",

@@ -5,7 +5,8 @@ import {
 	Credential,
 	IdentityKeys,
 	Subject,
-	Bitmap
+	Bitmap,
+	VerifiablePresentation
 } from '@iota/is-shared-modules';
 import { SsiService } from './ssi-service';
 import { UserService } from './user-service';
@@ -88,6 +89,16 @@ export class VerificationService {
 		return vc;
 	}
 
+	async checkVerifiableCredentialIssuer(vc: VerifiableCredential): Promise<boolean> {
+		const serverIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(this.configService.serverIdentityId, this.serverSecret);
+		if (!serverIdentity) {
+			throw new Error('no valid server identity to check the credential.');
+		}
+		const isVerifiedCredential = await this.ssiService.checkVerifiableCredential(vc);
+		const isVerified = isVerifiedCredential && serverIdentity.id === vc.issuer;
+		return isVerified;
+	}
+
 	async checkVerifiableCredential(vc: VerifiableCredential): Promise<boolean> {
 		const serverIdentity: IdentityKeys = await IdentityDocsDb.getIdentityKeys(this.configService.serverIdentityId, this.serverSecret);
 		if (!serverIdentity) {
@@ -95,9 +106,30 @@ export class VerificationService {
 		}
 		const isVerifiedCredential = await this.ssiService.checkVerifiableCredential(vc);
 		const trustedRoots = await this.getTrustedRootIds();
-
 		const isTrustedIssuer = trustedRoots && trustedRoots.some((rootId) => rootId === vc.issuer);
 		const isVerified = isVerifiedCredential && isTrustedIssuer;
+		return isVerified;
+	}
+
+	async checkVerifiablePresentation(vp: VerifiablePresentation): Promise<boolean> {
+		const expiration = 60;
+		const isVerifiedVP = await this.ssiService.checkVerifiablePresentation(vp, expiration);
+		const trustedRoots = await this.getTrustedRootIds();
+		let isTrustedIssuer = false;
+
+		if (!trustedRoots) {
+			throw Error('No trusted root ids found!');
+		}
+
+		if (Array.isArray(vp.verifiableCredential)) {
+			isTrustedIssuer = trustedRoots.some((rootId) =>
+				(vp.verifiableCredential as VerifiableCredential[]).some((vc) => vc.issuer == rootId)
+			);
+		} else {
+			isTrustedIssuer = trustedRoots.some((rootId) => rootId === (vp.verifiableCredential as VerifiableCredential).issuer);
+		}
+
+		const isVerified = isVerifiedVP && isTrustedIssuer;
 		return isVerified;
 	}
 

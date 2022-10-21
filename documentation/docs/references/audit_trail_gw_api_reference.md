@@ -206,6 +206,7 @@ Write data to a channel with address channel address. Write permission is mandat
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -241,6 +242,7 @@ Get data from the channel with address channel address. The first possible messa
 | asc | query |  | No | boolean |
 | start-date | query |  | No | dateTime |
 | end-date | query |  | No | dateTime |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -299,6 +301,7 @@ Validates data of a channel.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -331,6 +334,7 @@ The user can decide to re-import the data from the Tangle into the database. A r
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -364,6 +368,70 @@ Get information about the server like commitHash, server identity id and api ver
 | ---- | ----------- |
 | 200 | Returns information about the server |
 | 5XX | Unexpected error |
+
+### /subscriptions/state/{channelAddress}
+
+#### GET
+##### Summary:
+
+Get a subscription state by identity id.
+
+##### Description:
+
+Get a subscription state of a channel by identity id.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| channelAddress | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Subscriptions |
+| 401 | No valid api key provided/ Not authenticated |
+| 5XX | Unexpected error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| BearerAuth | |
+| ApiKey | |
+
+#### PUT
+##### Summary:
+
+Updates an existing subscription
+
+##### Description:
+
+Updates an existing subscription
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| channelAddress | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Subscription updated |
+| 400 | Missing channelAddress / id |
+| 401 | No valid api key provided/ Not authenticated |
+| 404 | No subscription found |
+| 5XX | Unexpected error |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| BearerAuth | |
+| ApiKey | |
 
 ### /subscriptions/{channelAddress}
 
@@ -545,6 +613,7 @@ Request subscription to a channel with address channel-address. A client can req
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -578,6 +647,7 @@ Authorize a subscription to a channel with address channel-address. The author o
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -610,6 +680,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | channelAddress | path |  | Yes | string |
+| asym-shared-key | query |  | No | string |
 
 ##### Responses
 
@@ -691,13 +762,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | subscriptionLink | string |  | No |
 | id | string |  | No |
 
-#### ReimportBodySchema
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| seed | string |  | No |
-| subscriptionPassword | string | If a subscriptionPassword is set, all data is encrypted with the password. It need to be made sure, the subscription password is sent when interacting with the APIs of the channel-service and subscription-service. | No |
-
 #### CreateChannelResponseSchema
 
 | Name | Type | Description | Required |
@@ -756,7 +820,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | type |  |  | Yes |
 | channelAddress | string |  | Yes |
 | id | string |  | Yes |
-| state | string |  | Yes |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | Yes |
 | accessRights |  |  | Yes |
@@ -772,7 +835,6 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | type |  |  | No |
 | channelAddress | string |  | No |
 | id | string |  | No |
-| state | string |  | No |
 | subscriptionLink | string |  | No |
 | isAuthorized | boolean |  | No |
 | accessRights |  |  | No |
@@ -780,6 +842,12 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | keyloadLink | string |  | No |
 | sequenceLink | string |  | No |
 | pskId | string |  | No |
+
+#### SubscriptionStateSchema
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| state | string |  | Yes |
 
 #### ChannelInfoSchema
 
@@ -797,6 +865,7 @@ Revoke subscription to a channel. Only the author of a channel can revoke a subs
 | topics | [ object ] |  | Yes |
 | created | dateTime |  | No |
 | latestMessage | dateTime |  | No |
+| peerPublicKey | string | Public key used for privatePlus channels to encrypt channel data and state asymmetrically. | No |
 
 #### TopicSchema
 

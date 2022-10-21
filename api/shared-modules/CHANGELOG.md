@@ -1,5 +1,17 @@
 # Changelog
 
+### 0.2.3-alpha.3 (2022-08-31)
+
+- Add `keyAgreement` to `IdentityDocument` schema
+
+### 0.2.3-alpha.2 (2022-08-30)
+
+- Add `privatePlus` to `ChannelType` enum
+
+### 0.2.3-alpha.1 (2022-08-05)
+
+- Added `asymEncrypt` and `asymDecrypt` methods to utils
+
 ### 0.2.0-alpha.9 (2022-08-05)
 
 - Made `encrypt` field in `IdentityKeys` optional
@@ -15,7 +27,8 @@
 - Rename `key` to `keys` of the identity keys
 - Adjust `IdentityDocument`to fulfill new data model
 - Remove `Json` from type and schema names
-- rename verifiable credential `initiatorId` to `initiator`
+- Rename verifiable credential `initiatorId` to `initiator`
+- Add type for `VerifiablePresentation`
 
 ### 0.1.20 (2022-07-22)
 

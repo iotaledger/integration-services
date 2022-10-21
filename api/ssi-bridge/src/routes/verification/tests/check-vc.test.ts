@@ -5,12 +5,12 @@ import { UserService } from '../../../services/user-service';
 import { VerificationService } from '../../../services/verification-service';
 import { IdentityConfig } from '../../../models/config';
 import { StatusCodes } from 'http-status-codes';
-import * as TrustedRootsDb from '../../../database/trusted-roots';
 import { VerificationRoutes } from '../index';
 import { AuthorizationService } from '../../../services/authorization-service';
 import { LoggerMock } from '../../../test/mocks/logger';
 import { IdentityConfigMock } from '../../../test/mocks/config';
 import { ConfigurationServiceMock } from '../../../test/mocks/service-mocks';
+import * as TrustedRootsDb from '../../../database/trusted-roots';
 
 const vcToCheck = DeviceIdentityMock.userData.verifiableCredentials[0];
 

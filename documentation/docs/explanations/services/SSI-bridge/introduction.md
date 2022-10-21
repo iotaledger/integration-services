@@ -25,7 +25,7 @@ The Issuer itself is an entity with its own decentralized identity. The SSI Brid
 verify users' identities. Verified identities can then propagate this verification to organizations,
 individuals, or objects identities using a network of trust approach.
 
-![network-of-trust](/img/integration-services/arch/network-of-trust.jpeg)
+![network-of-trust](/img/integration-services/arch/network-of-trust.png)
 
 The Bridge also allows Issuers to issue verifiable credentials for selected Identity Owners identified by a
 decentralized identity, and said Owners to present them to Verifiers. Verifiers can use
