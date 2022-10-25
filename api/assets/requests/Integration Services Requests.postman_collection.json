@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "489c0a13-58a4-4d0f-9040-92617dc97fe9",
-		"name": "Integration Services Requests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "0b7c09f5-d8ca-4c80-acf7-dcf9d8a45fca",
+		"name": "Integration Services Requests Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14039439"
 	},
 	"item": [
 		{
@@ -14,19 +15,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/info?api-key={{api-key}}",
+							"raw": "http://0.0.0.0:3000/info",
+							"protocol": "http",
 							"host": [
-								"localhost"
+								"0",
+								"0",
+								"0",
+								"0"
 							],
 							"port": "3000",
 							"path": [
 								"info"
-							],
-							"query": [
-								{
-									"key": "api-key",
-									"value": "{{api-key}}"
-								}
 							]
 						}
 					},
@@ -43,9 +42,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
+							"raw": "{{audit_trail_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{audit_trail_url}}"
 							],
 							"path": [
 								"channel-info",
@@ -84,9 +83,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/channel?api-key={{api-key}}",
+							"raw": "{{audit_trail_url}}/channel-info/channel?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{audit_trail_url}}"
 							],
 							"path": [
 								"channel-info",
@@ -188,7 +187,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{user_jwt}}",
+								"value": "{{admin_jwt}}",
 								"type": "text"
 							}
 						],
@@ -213,17 +212,27 @@
 									"disabled": true
 								},
 								{
-									"key": "topic-type",
-									"value": "smart-audit-log",
-									"disabled": true
-								},
-								{
 									"key": "api-key",
 									"value": "{{api-key}}"
 								},
 								{
 									"key": "created",
 									"value": "2021-06-16T10%3A03%3A22.758%2B00%3A00"
+								},
+								{
+									"key": "name",
+									"value": "mypresharedkeychannel",
+									"disabled": true
+								},
+								{
+									"key": "topic-source",
+									"value": "mypresharedkeychannel",
+									"disabled": true
+								},
+								{
+									"key": "topic-type",
+									"value": "mypresharedkeychannel",
+									"disabled": true
 								}
 							]
 						}
@@ -237,14 +246,14 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{user_jwt}}",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6MzNNcDhRQXVEb2ZITnRnQW9MVDZ5bVB3VUZwcHYxd0h3VEREODFOUDdHU2IiLCJwdWJsaWNLZXkiOiIyVlp2cll4NHoyTWk4Q1lvWDIxdm1QU3duRUZaZTJOY3AxVEhIbW1mejR4ZCIsInVzZXJuYW1lIjoiU3Vic2NyaWJlci0xMzczODMzIiwicmVnaXN0cmF0aW9uRGF0ZSI6IjIwMjItMDYtMjFUMTU6NDY6MDIrMDI6MDAiLCJjbGFpbSI6eyJ0eXBlIjoiRGV2aWNlIiwiaWQiOiJkZXZpY2UtOTg0NUEiLCJjYXRlZ29yeSI6WyJzZW5zb3IiXSwiY29udHJvbGxlZFByb3BlcnR5IjpbImZpbGxpbmdMZXZlbCIsInRlbXBlcmF0dXJlIl0sImNvbnRyb2xsZWRBc3NldCI6WyJ3YXN0ZWNvbnRhaW5lci1Pc3VuYS0xMDAiXSwiaXBBZGRyZXNzIjpbIjE5Mi4xNC41Ni43OCJdLCJtY2MiOiIyMTQiLCJtbmMiOiIwNyIsImJhdHRlcnlMZXZlbCI6MC43NSwic2VyaWFsTnVtYmVyIjoiOTg0NUEiLCJyZWZEZXZpY2VNb2RlbCI6Im15RGV2aWNlLXdhc3RlY29udGFpbmVyLXNlbnNvci0zNDUiLCJyc3NpIjowLjg2LCJ2YWx1ZSI6Imw9MC4yMjt0PTIxLjIiLCJkZXZpY2VTdGF0ZSI6Im9rIiwiZGF0ZUZpcnN0VXNlZCI6IjIwMTQtMDktMTFUMTE6MDA6MDBaIiwib3duZXIiOlsiaHR0cDovL3BlcnNvbi5vcmcvbGVvbiJdfSwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjU1ODE5NTQzLCJleHAiOjE2ODI3NzYzNDN9.cMe78Y5aC216m9lfrVv4jIKby-aq0nLp7fd6T3aY5PU",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/channel-info/search?api-key={{api-key}}&created=2021-02-14T16:11:48",
+							"raw": "{{audit_trail_url}}/channel-info/search?api-key=b85e51a2-9981-11ec-8770-4b8f01948e9b&author-id=&subscriber-id=did:iota:E4ancczed6jMKpZRQiwU6Ek38Ly3m5BX8EbXC42CRkj8",
 							"host": [
-								"{{deployment_url}}"
+								"{{audit_trail_url}}"
 							],
 							"path": [
 								"channel-info",
@@ -287,12 +296,26 @@
 									"disabled": true
 								},
 								{
-									"key": "api-key",
-									"value": "{{api-key}}"
+									"key": "created",
+									"value": "2021-02-14T16:11:48",
+									"disabled": true
 								},
 								{
-									"key": "created",
-									"value": "2021-02-14T16:11:48"
+									"key": "api-key",
+									"value": "{{api-key}}",
+									"disabled": true
+								},
+								{
+									"key": "api-key",
+									"value": "b85e51a2-9981-11ec-8770-4b8f01948e9b"
+								},
+								{
+									"key": "author-id",
+									"value": ""
+								},
+								{
+									"key": "subscriber-id",
+									"value": "did:iota:E4ancczed6jMKpZRQiwU6Ek38Ly3m5BX8EbXC42CRkj8"
 								}
 							]
 						}
@@ -382,7 +405,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "    {\n        \"type\": \"Subscriber\",\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": false,\n        \"state\":\"\",\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:27:37.425Z\"\n    }",
+									"raw": "    {\n        \"type\": \"Subscriber\",\n        \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpf\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": false,\n        \"state\":\"\",\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:27:37.425Z\"\n    }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -428,7 +451,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n        \"type\": \"Subscriber\",\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": true,\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:32:50.795Z\"\n    }",
+									"raw": "{\n        \"type\": \"Subscriber\",\n        \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"channelAddress\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:20d385b6e8f8b10c1080acb7\",\n        \"subscriptionLink\": \"9aaf6e047710ce32e455ca61bc08b21f1eb90c60f1c37885766f02ee289de0cb0000000000000000:1e4927be1dba5a028bdfd393\",\n        \"accessRights\": \"ReadAndWrite\",\n        \"isAuthorized\": true,\n        \"publicKey\": \"47991d8dcd19d81690ef02e2b068305bdc3346ea429341479828647438ecbf4c\",\n        \"created\": \"2021-10-01T13:32:50.795Z\"\n    }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -511,7 +534,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n}",
+									"raw": "{\n    \"identityId\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -519,9 +542,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/revoke/{{channel_address}}?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/subscriptions/revoke/{{channel_address}}?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
 										"subscriptions",
@@ -557,7 +580,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"subscriptionLink\": \"a9e4a8622af35565337a0e09dbd8fc097c9e8fed15e97f7a8904d0aa37cb4d8e0000000000000000:6fd514048550949bda3c6434\"\n}",
+									"raw": "{\n    \"subscriptionLink\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:e78490f4609d4eda3ea4ce1e\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -611,14 +634,97 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/subscriptions/request/{{channel_address}}?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/subscriptions/request/{{channel_address}}?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
 										"subscriptions",
 										"request",
 										"{{channel_address}}"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get subscription state",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization0426036818267fdf0ae9564e4aba4e00b57e9505960d5013f86ac75322effdb40000000000000000:38d9cc36f4d552b862d817f9",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{audit_trail_url}}/subscriptions/state/a1391aa77781fc0a17974612d380934de37ff2a7fa1a86fcee48ce351b4249780000000000000000:eac8c3e036840341a570a848?api-key={{api-key}}",
+									"host": [
+										"{{audit_trail_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"state",
+										"a1391aa77781fc0a17974612d380934de37ff2a7fa1a86fcee48ce351b4249780000000000000000:eac8c3e036840341a570a848"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update subscription state",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization0426036818267fdf0ae9564e4aba4e00b57e9505960d5013f86ac75322effdb40000000000000000:38d9cc36f4d552b862d817f9",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"state\":\"AADCrjIBw6sqwpHDj8OPwoVzw7kVwpzDucKPG39Xf8KwdMK1w41XTMO1woNkwofDsncQAQEFdXRmLTgAAAAAAAB9AAHCoTkawqd3woHDvAoXwpdGEsOTwoDCk03Do3/DssKnw7oawobDvMOuSMOONRtCSXgAAAAAAAAAAMOqw4jDg8OgNsKEA0HCpXDCqEgBwqE5GsKnd8KBw7wKF8KXRhLDk8KAwpNNw6N/w7LCp8O6GsKGw7zDrkjDjjUbQkl4AQXDqsOIw4PDoDbChANBwqVwwqhICgLDksK/w4jCrSjCrsO1wo/CqArDkTsew59HwrQuwovCt8OvwofCnMO9w6hawqducXh+AMOgF8ONfGl/w6bCpRTCssKqYHnDiMODSGfDpkLDksOrN8K6wrnDmBp/aBbDmTbDj8K6GMKMwroYXlA9wpjCn8K8w5IGcMKOw4PDoxJzSjHDmsO/dMOicsOOwoddLsKcw6pyfUXDnsKFwo7CusK/wrMEw55fHUgPw6wlLitOw4cofsO5fgJUw48Vw5VewpsuUcOjwrjDj8KLYMOSwrfDsjrDhgYhAcOHRMOmw6RTdcOBw6xTDsKsZsKbNcKTBcOcQD7Dt8KWalMBwq9bw6HDkSBawoBqw7siw4JTXS55RiXCjsK4wosYw4htAxBcDwpBw68nwqfCn3TDsHBGwq9eNS7Dl04yBgECw4/DvH7CmSXCsDYlGsOFL8OdEcKfw7rDvcOLwqsDe8KhwpjDgcKOw6/CtsKxHcOww5tRfcKxwq9bw6HDkSBawoBqw7siw4JTAAAAAAAAAARawr4Lwopfwo1hYMOff8Oow4TCmsKEwoAgaMOqw4jDg8OgNsKEA0HCpXDCqEgAAAAAAAAAAn3CrU9fwqRNwrDCqFnDmcOoXWfCpcKJNWHDjcOfw5zDksKvw4pSESBWwpnCr8K/EMO0\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{audit_trail_url}}/subscriptions/state/042603d6818267fdf0ae9564e4aba4e00b57e9505960d5013f86ac75322effdb40000000000000000:38d9cc36f4d552b862d817f9?api-key={{api-key}}",
+									"host": [
+										"{{audit_trail_url}}"
+									],
+									"path": [
+										"subscriptions",
+										"state",
+										"042603d6818267fdf0ae9564e4aba4e00b57e9505960d5013f86ac75322effdb40000000000000000:38d9cc36f4d552b862d817f9"
 									],
 									"query": [
 										{
@@ -690,14 +796,137 @@
 					"name": "Add & Get Channel Data",
 					"item": [
 						{
+							"name": "Create Channel",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"mypresharedkeychannel33f3f\",\n    \"topics\":[{\"type\":\"test\", \"source\":\"test\"}],\n    \"hasPresharedKey\":true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{audit_trail_url}}/channels/create?api-key={{api-key}}",
+									"host": [
+										"{{audit_trail_url}}"
+									],
+									"path": [
+										"channels",
+										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Channel Asym. Enc.",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"asym-channel3\",\n    \"topics\":[{\"type\":\"test\", \"source\":\"test\"}],\n    \"hasPresharedKey\":true,\n    \"type\":\"privatePlus\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{audit_trail_url}}/channels/create?api-key={{api-key}}",
+									"host": [
+										"{{audit_trail_url}}"
+									],
+									"path": [
+										"channels",
+										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Channel public",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{admin_jwt}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"myfirstpublicchannel-10fff\",\n    \"topics\":[{\"type\":\"test\", \"source\":\"test\"}],\n    \"type\":\"public\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{audit_trail_url}}/channels/create?api-key={{api-key}}",
+									"host": [
+										"{{audit_trail_url}}"
+									],
+									"path": [
+										"channels",
+										"create"
+									],
+									"query": [
+										{
+											"key": "api-key",
+											"value": "{{api-key}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Get Channel Info",
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text"
+									}
+								],
 								"url": {
-									"raw": "{{deployment_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/channel-info/channel/{{channel_address}}?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
 										"channel-info",
@@ -715,9 +944,9 @@
 							"response": []
 						},
 						{
-							"name": "Create Channel",
+							"name": "Get Channel Info Copy",
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
@@ -725,23 +954,15 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"topics\": [{\"type\":\"smart-audit-log\",\"source\":\"devices and user\"}],\n    \"hasPresharedKey\":true\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/create?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/channel-info/channel/8721a498ca61309dc054f9b96d583907201f9cf22fe2cdf6dc9ba3c32ff1ad0c0000000000000000:73524bf4539f173275100e50?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
-										"channels",
-										"create"
+										"channel-info",
+										"channel",
+										"8721a498ca61309dc054f9b96d583907201f9cf22fe2cdf6dc9ba3c32ff1ad0c0000000000000000:73524bf4539f173275100e50"
 									],
 									"query": [
 										{
@@ -765,14 +986,14 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/channels/logs/83067982ddc89b47103d5d08b4533dce5cc63e4b56b16d950fe70a27c8c3ccb80000000000000000:77824a0e3120cb1edb00a55d?api-key=222&asym-shared-key=DBk8JZd6riEaj2r5upisGAhnvgAPhyht",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
 										"channels",
 										"logs",
-										"{{channel_address}}"
+										"83067982ddc89b47103d5d08b4533dce5cc63e4b56b16d950fe70a27c8c3ccb80000000000000000:77824a0e3120cb1edb00a55d"
 									],
 									"query": [
 										{
@@ -802,7 +1023,11 @@
 										},
 										{
 											"key": "api-key",
-											"value": "{{api-key}}"
+											"value": "222"
+										},
+										{
+											"key": "asym-shared-key",
+											"value": "DBk8JZd6riEaj2r5upisGAhnvgAPhyht"
 										}
 									]
 								}
@@ -821,9 +1046,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
 										"channels",
@@ -890,23 +1115,80 @@
 									}
 								],
 								"url": {
-									"raw": "{{deployment_url}}/channels/history/{{channel_address}}?api-key={{api-key}}&preshared-key={{preshared_key}}",
+									"raw": "localhost:3002/api/v0.1/channels/history/4abdccf654513935408a5d46aaec6fc4e23c658db50676b1c30a88122273a3a70000000000000000:8860ed8d5a948632aef486ec?preshared-key=4212ae4d1e375be0c8f97864c0419058&api-key=b85e51a2-9981-11ec-8770-4b8f01948e9b",
 									"host": [
-										"{{deployment_url}}"
+										"localhost"
 									],
+									"port": "3002",
 									"path": [
+										"api",
+										"v0.1",
 										"channels",
 										"history",
-										"{{channel_address}}"
+										"4abdccf654513935408a5d46aaec6fc4e23c658db50676b1c30a88122273a3a70000000000000000:8860ed8d5a948632aef486ec"
+									],
+									"query": [
+										{
+											"key": "preshared-key",
+											"value": "4212ae4d1e375be0c8f97864c0419058"
+										},
+										{
+											"key": "type",
+											"value": "public",
+											"disabled": true
+										},
+										{
+											"key": "api-key",
+											"value": "b85e51a2-9981-11ec-8770-4b8f01948e9b"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Channel History Copy",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{device_jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"value": "{{admin_jwt}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "localhost:3000/api/v0.1/channels/history/dd958d979063c76db639b5fc42d0af17d5ff814b1069a86f70f6fbf9f8f28ea80000000000000000:2aa4920885e326e52c9f891a?api-key=94F5BA49-12B6-4E45-A487-BF91C442276D&type=private&preshared-key=80d16632503f154ae9a43185536990a5",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v0.1",
+										"channels",
+										"history",
+										"dd958d979063c76db639b5fc42d0af17d5ff814b1069a86f70f6fbf9f8f28ea80000000000000000:2aa4920885e326e52c9f891a"
 									],
 									"query": [
 										{
 											"key": "api-key",
-											"value": "{{api-key}}"
+											"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+										},
+										{
+											"key": "type",
+											"value": "private"
 										},
 										{
 											"key": "preshared-key",
-											"value": "{{preshared_key}}"
+											"value": "80d16632503f154ae9a43185536990a5"
 										}
 									]
 								}
@@ -926,7 +1208,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"type\": \"author-test\",\n    \"metadata\": {\"somedata\":22},\n    \"publicPayload\": {\"data\":\"testdata123\"},\n    \"payload\": {\"obj\":\"I am an object from the author\", \"x1\":12359, \"x2\":{\"y\":\"nested array\"}}\n}",
+									"raw": "{\n    \"payload\": {\n        \"obj\":\"presharedkey channel payload\", \"x1\":11111111, \"x2\":{\"y\":\"nested array\"}\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -934,19 +1216,23 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/channels/logs/{{channel_address}}?api-key={{api-key}}",
+									"raw": "{{audit_trail_url}}/channels/logs/83067982ddc89b47103d5d08b4533dce5cc63e4b56b16d950fe70a27c8c3ccb80000000000000000:77824a0e3120cb1edb00a55d?api-key={{api-key}}&asym-shared-key=DBk8JZd6riEaj2r5upisGAhnvgAPhyht",
 									"host": [
-										"{{deployment_url}}"
+										"{{audit_trail_url}}"
 									],
 									"path": [
 										"channels",
 										"logs",
-										"{{channel_address}}"
+										"83067982ddc89b47103d5d08b4533dce5cc63e4b56b16d950fe70a27c8c3ccb80000000000000000:77824a0e3120cb1edb00a55d"
 									],
 									"query": [
 										{
 											"key": "api-key",
 											"value": "{{api-key}}"
+										},
+										{
+											"key": "asym-shared-key",
+											"value": "DBk8JZd6riEaj2r5upisGAhnvgAPhyht"
 										}
 									]
 								}
@@ -1168,7 +1454,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "[\n    {\n        \"link\": \"f0fc2323e9d4f994834fd6a130c06a659f2f520a1746e7a52f415c65157672030000000000000000:f0b443ac99b6433d94e8b843\",\n        \"log\": {\n            \"created\": \"2021-09-29T16:14:13+02:00\",\n            \"type\": \"author-test\",\n            \"metadata\": {\n                \"somedata\": 22\n            },\n            \"publicPayload\": {\n                \"data\": \"testdata123\"\n            },\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"9ba05c788d8d9e44f66e02967f6e718124c45738c7fa6bdedc103fc1b20928e9\",\n        \"imported\": \"2021-09-29T16:14:15+02:00\"\n    },\n    {\n        \"link\": \"f0fc2323e9d4f994834fd6a130c06a659f2f520a1746e7a52f415c65157672030000000000000000:8ffa0e1cf065d40a477f3256\",\n        \"log\": {\n            \"created\": \"2021-09-29T16:14:05+02:00\",\n            \"type\": \"author-test\",\n            \"metadata\": {\n                \"somedata\": 22\n            },\n            \"publicPayload\": {\n                \"data\": \"testdata123\"\n            },\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"55f608146794e37d5ecf53c36b2cf8f0525b76e2882c18ded32224f43afef25b\",\n        \"imported\": \"2021-09-29T16:14:11+02:00\"\n    }\n]",
+									"raw": "[\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:1be50ad8b4c3a491ea2587dd\",\n        \"log\": {\n            \"created\": \"2022-01-10T17:18:14+01:00\",\n            \"metadata\": null,\n            \"payload\": {\n                \"obj\": \"I am an object from the author1111\",\n                \"x1\": 11111111,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"e658f31b12fe72462654378faec64083a9e48e31f518e5be30c334a1a080dcca\",\n        \"imported\": \"2022-01-10T17:18:30+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:a3c450fcfb23be274ed5d870\",\n        \"log\": {\n            \"created\": \"2022-01-10T17:10:29+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author1111\",\n                \"x1\": 11111111,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"90caa5882bf2cc7c124ebd92b0932e7ddfcf099c838b7c234543e89663d3ad8c\",\n        \"imported\": \"2022-01-10T17:10:36+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:f601723717a3f7b8d4094abb\",\n        \"log\": {\n            \"created\": \"2022-01-10T17:10:11+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"e15a493b7a1943e51428dec3a6c71c87ffb364320a7bd70271af59227275a12f\",\n        \"imported\": \"2022-01-10T17:10:26+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:e37dec8461e3a8b19b93c4d3\",\n        \"log\": {\n            \"created\": \"2022-01-10T17:09:55+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            },\n            \"publicPayload\": null\n        },\n        \"messageId\": \"2b9374d767bc530f99e206e5fffee719ff4f7071338ee48c442d688cda694760\",\n        \"imported\": \"2022-01-10T17:10:04+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:274e0657d69ea3e5e14c1ff5\",\n        \"log\": {\n            \"created\": \"2021-12-21T10:59:28+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            },\n            \"publicPayload\": null\n        },\n        \"messageId\": \"c15d2adaac68ebb0702834d0023fc2e22b9f520c91680b82e76762fd2aa7c418\",\n        \"imported\": \"2021-12-21T11:00:01+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:4b515719f1ad35e22f0b7717\",\n        \"log\": {\n            \"created\": \"2021-12-21T10:58:28+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            },\n            \"publicPayload\": null\n        },\n        \"messageId\": \"84f827c58d824ac72816ecf6b194e5c03d8f4560c95b8cfbeaf5ee6a43ae0764\",\n        \"imported\": \"2021-12-21T10:58:33+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:414126ec52b1913f72c355d6\",\n        \"log\": {\n            \"created\": \"2021-12-21T10:57:20+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            },\n            \"publicPayload\": null\n        },\n        \"messageId\": \"14dba3fe293e94b5fddcdfcc3713a83d67468cd5c7f007611816a34ac3fd13bb\",\n        \"imported\": \"2021-12-21T10:57:37+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:727cbfcf7bc9ab955325b953\",\n        \"log\": {\n            \"created\": \"2021-12-21T10:56:15+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            },\n            \"publicPayload\": null\n        },\n        \"messageId\": \"bd258df7a9d6c27fc652249b4f7ec2991d1bcd42f5c0b6cc5aa33c744fb2225c\",\n        \"imported\": \"2021-12-21T10:56:34+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:219f7caa1d8f7b00522fdbd8\",\n        \"log\": {\n            \"created\": \"2021-12-21T10:56:02+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            },\n            \"publicPayload\": null\n        },\n        \"messageId\": \"d3be4d8e790bc4c1c38b9fd8666021cf35eab2f37a00cdaa11cf99a48a78c02a\",\n        \"imported\": \"2021-12-21T10:56:06+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:3ef02d11d45e9899029b0747\",\n        \"log\": {\n            \"created\": \"2021-12-21T09:32:16+01:00\",\n            \"payload\": {\n                \"obj\": \"I am an object from the author\",\n                \"x1\": 12359,\n                \"x2\": {\n                    \"y\": \"nested array\"\n                }\n            }\n        },\n        \"messageId\": \"623a95e0b24bb5be5ad5c6ac28ce97e409e3271f2d409b4381a92f4692efc23d\",\n        \"imported\": \"2021-12-21T09:32:18+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:fb92a61f4a0df35d6bbb8a0e\",\n        \"log\": {\n            \"type\": \"subscriber-test\",\n            \"metadata\": null,\n            \"created\": \"2021-12-20T14:49:11+01:00\",\n            \"payload\": \"payload from device 113\",\n            \"publicPayload\": null\n        },\n        \"messageId\": \"c543c7b447e1e9628ae2fcea29136cba37cc1b168e88b9799af96ea6f1628ace\",\n        \"imported\": \"2021-12-21T09:30:23+01:00\"\n    },\n    {\n        \"link\": \"403dcde9141871826121a4500058c2420364549725feecb155cd8e3d906e51cb0000000000000000:76499004b3d52c4ab2424904\",\n        \"log\": {\n            \"type\": \"subscriber-test\",\n            \"metadata\": null,\n            \"created\": \"2021-12-20T14:48:16+01:00\",\n            \"payload\": \"payload from device 113\",\n            \"publicPayload\": null\n        }\n    }\n]",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1212,7 +1498,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"storeIdentity\":true,\n  \"username\": \"some-organization\",\n  \"claim\": {\n        \"type\":\"Organization\",\n        \"name\":\"Some organization\",\n        \"url\":\"https://www.some-org.org/\"\n   }\n}",
+									"raw": "{\n  \"storeIdentity\":true,\n  \"username\": \"some-organization2\",\n  \"claim\": {\n        \"type\":\"Organization\",\n        \"name\":\"Some organization\",\n        \"url\":\"https://www.some-org.org/\"\n   }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1220,9 +1506,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
+									"raw": "{{ssi_bridge_url}}/identities/create?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{ssi_bridge_url}}"
 									],
 									"path": [
 										"identities",
@@ -1245,7 +1531,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"username\": \"iota-test-engineer\",\n  \"claim\": {\n        \"type\":\"Person\",\n        \"name\":\"Test Engineer\",\n        \"familyName\":\"Engineer\",\n        \"givenName\":\"Test\",\n        \"jobTitle\":\"Software Engineer\"\n   }\n}",
+									"raw": "{\n  \"username\": \"some-new-admin-v0_6\",\n  \"claim\": {\n        \"type\":\"Person\",\n        \"name\":\"Peter Peters\",\n        \"familyName\":\"Engineer\",\n        \"givenName\":\"Test\",\n        \"jobTitle\":\"Software Engineer\"\n   }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1253,9 +1539,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
+									"raw": "{{ssi_bridge_url}}/identities/create?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{ssi_bridge_url}}"
 									],
 									"path": [
 										"identities",
@@ -1311,7 +1597,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"username\": \"frama-c-client\",\n  \"claim\": {\n        \"type\":\"Service\",\n        \"name\":\"Frama C Client\",\n        \"category\": \"embedded-tool\",\n        \"description\":\"Creates embedded logs\"\n   }\n}",
+									"raw": "{\n  \"username\": \"api-identity\",\n  \"claim\": {\n        \"type\":\"Service\",\n        \"name\":\"My api identity\",\n        \"category\": \"server\",\n        \"description\":\"Server identity\"\n   }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1319,9 +1605,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/identities/create?api-key={{api-key}}",
+									"raw": "{{ssi_bridge_url}}/identities/create?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{ssi_bridge_url}}"
 									],
 									"path": [
 										"identities",
@@ -1346,7 +1632,43 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"user-with-stored-identity\",\n  \"claim\": {\n        \"type\":\"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\"sensor\"],\n        \"controlledProperty\": [\"fillingLevel\",\"temperature\"],\n        \"controlledAsset\":[\"wastecontainer-Osuna-100\"],\n        \"ipAddress\": [\"192.14.56.78\"],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\":\"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\"http://person.org/leon\"]\n   }\n}",
+							"raw": "{\n  \"username\": \"Subscriber-myysufebxfsddc\",\n  \"claim\": {\n        \"type\":\"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\"sensor\"],\n        \"controlledProperty\": [\"fillingLevel\",\"temperature\"],\n        \"controlledAsset\":[\"wastecontainer-Osuna-100\"],\n        \"ipAddress\": [\"192.14.56.78\"],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\":\"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\"http://person.org/leon\"]\n   }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/api/v0.2/identities/create?api-key={{api-key}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v0.2",
+								"identities",
+								"create"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create identity Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"username\":\"frama-c-log-creator030009\",\n \"claim\":{\n    \"type\":\"service\",\n    \"t\":{\"eq\":\"eqtest\"},\n    \"name\":\"Frama C Log Creator\",\"category\":\"embedded-tool\",\"description\":\"Creates embedded logs\"\n },\n \"identityId\": \"did:iota:aaaEtP89RJQ1XVbT9wdppjv9Qs5mFPMPk4bxQLmkUHQ\",\n \"test\":\"test\",\n \"role\":\"Admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1395,23 +1717,100 @@
 								"key": "Authorization",
 								"value": "{{admin_jwt}}",
 								"description": "Admin user is allowed!",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt_ens}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6MzNNcDhRQXVEb2ZITnRnQW9MVDZ5bVB3VUZwcHYxd0h3VEREODFOUDdHU2IiLCJwdWJsaWNLZXkiOiIyVlp2cll4NHoyTWk4Q1lvWDIxdm1QU3duRUZaZTJOY3AxVEhIbW1mejR4ZCIsInVzZXJuYW1lIjoiU3Vic2NyaWJlci0xMzczODMzIiwicmVnaXN0cmF0aW9uRGF0ZSI6IjIwMjItMDYtMjFUMTU6NDY6MDIrMDI6MDAiLCJjbGFpbSI6eyJ0eXBlIjoiRGV2aWNlIiwiaWQiOiJkZXZpY2UtOTg0NUEiLCJjYXRlZ29yeSI6WyJzZW5zb3IiXSwiY29udHJvbGxlZFByb3BlcnR5IjpbImZpbGxpbmdMZXZlbCIsInRlbXBlcmF0dXJlIl0sImNvbnRyb2xsZWRBc3NldCI6WyJ3YXN0ZWNvbnRhaW5lci1Pc3VuYS0xMDAiXSwiaXBBZGRyZXNzIjpbIjE5Mi4xNC41Ni43OCJdLCJtY2MiOiIyMTQiLCJtbmMiOiIwNyIsImJhdHRlcnlMZXZlbCI6MC43NSwic2VyaWFsTnVtYmVyIjoiOTg0NUEiLCJyZWZEZXZpY2VNb2RlbCI6Im15RGV2aWNlLXdhc3RlY29udGFpbmVyLXNlbnNvci0zNDUiLCJyc3NpIjowLjg2LCJ2YWx1ZSI6Imw9MC4yMjt0PTIxLjIiLCJkZXZpY2VTdGF0ZSI6Im9rIiwiZGF0ZUZpcnN0VXNlZCI6IjIwMTQtMDktMTFUMTE6MDA6MDBaIiwib3duZXIiOlsiaHR0cDovL3BlcnNvbi5vcmcvbGVvbiJdfSwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjU1ODE5NTQzLCJleHAiOjE2ODI3NzYzNDN9.cMe78Y5aC216m9lfrVv4jIKby-aq0nLp7fd6T3aY5PU",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/identities/identity/{{identity_id}}?api-key={{api-key}}",
+							"raw": "{{ssi_bridge_url}}/identities/identity/did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{ssi_bridge_url}}"
 							],
 							"path": [
 								"identities",
 								"identity",
-								"{{identity_id}}"
+								"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy"
 							],
 							"query": [
 								{
 									"key": "api-key",
 									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Identity Keys",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{device_jwt}}",
+								"description": "Authorized since device itself",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{user_jwt}}",
+								"description": "Not authorized since other user trying to delete",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt}}",
+								"description": "Admin user is allowed!",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{admin_jwt_ens}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6MzNNcDhRQXVEb2ZITnRnQW9MVDZ5bVB3VUZwcHYxd0h3VEREODFOUDdHU2IiLCJwdWJsaWNLZXkiOiIyVlp2cll4NHoyTWk4Q1lvWDIxdm1QU3duRUZaZTJOY3AxVEhIbW1mejR4ZCIsInVzZXJuYW1lIjoiU3Vic2NyaWJlci0xMzczODMzIiwicmVnaXN0cmF0aW9uRGF0ZSI6IjIwMjItMDYtMjFUMTU6NDY6MDIrMDI6MDAiLCJjbGFpbSI6eyJ0eXBlIjoiRGV2aWNlIiwiaWQiOiJkZXZpY2UtOTg0NUEiLCJjYXRlZ29yeSI6WyJzZW5zb3IiXSwiY29udHJvbGxlZFByb3BlcnR5IjpbImZpbGxpbmdMZXZlbCIsInRlbXBlcmF0dXJlIl0sImNvbnRyb2xsZWRBc3NldCI6WyJ3YXN0ZWNvbnRhaW5lci1Pc3VuYS0xMDAiXSwiaXBBZGRyZXNzIjpbIjE5Mi4xNC41Ni43OCJdLCJtY2MiOiIyMTQiLCJtbmMiOiIwNyIsImJhdHRlcnlMZXZlbCI6MC43NSwic2VyaWFsTnVtYmVyIjoiOTg0NUEiLCJyZWZEZXZpY2VNb2RlbCI6Im15RGV2aWNlLXdhc3RlY29udGFpbmVyLXNlbnNvci0zNDUiLCJyc3NpIjowLjg2LCJ2YWx1ZSI6Imw9MC4yMjt0PTIxLjIiLCJkZXZpY2VTdGF0ZSI6Im9rIiwiZGF0ZUZpcnN0VXNlZCI6IjIwMTQtMDktMTFUMTE6MDA6MDBaIiwib3duZXIiOlsiaHR0cDovL3BlcnNvbi5vcmcvbGVvbiJdfSwicm9sZSI6IlVzZXIifSwiaWF0IjoxNjU1ODE5NTQzLCJleHAiOjE2ODI3NzYzNDN9.cMe78Y5aC216m9lfrVv4jIKby-aq0nLp7fd6T3aY5PU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v0.2/identities/key-pair?&key-type=x25519",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v0.2",
+								"identities",
+								"key-pair"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": null
+								},
+								{
+									"key": "key-type",
+									"value": "x25519"
 								}
 							]
 						}
@@ -1426,12 +1825,13 @@
 							{
 								"key": "Authorization",
 								"value": "{{admin_jwt}}",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"CDhSJKRJwqbsrVoCnBemtjB2b1uaa8SyLbQZD4mGx3M4\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-10-28T15:22:20+02:00\",\n    \"claim\": {\n        \"type\": \"Device\",\n        \"id\": \"device-9845A\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"batteryLevel\": 0.75,\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"rssi\": 0.86,\n        \"value\": \"l=0.22;t=21.2\",\n        \"deviceState\": \"ok\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"http://person.org/leon\"\n        ]\n    },\n    \"role\": \"User\"\n}",
+							"raw": "{\n    \"id\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n    \"publicKey\": \"GmNyvaJESvUgLL42Zo5Lar1QRN9rDTBtxC4wMbNC7S4w\",\n    \"username\": \"iota-service-test\",\n    \"registrationDate\": \"2021-05-20T10:47:16+02:00\",\n    \"claim\": {\n        \"type\":\"User\",\n        \"name\": \"Test Service\",\n        \"description\": \"Just a test service to verify users.\"\n    },\n    \"role\": \"Admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1439,9 +1839,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/identities/identity?api-key={{api-key}}",
+							"raw": "{{ssi_bridge_url}}/identities/identity?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{ssi_bridge_url}}"
 							],
 							"path": [
 								"identities",
@@ -1470,7 +1870,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y\",\n    \"publicKey\": \"otChDKcR7g25oDhGSVZhiF1241Fqh5FaSEQnNQVaH9S\",\n    \"username\": \"user-with-stored-identity\",\n    \"registrationDate\": \"2021-06-01T18:05:25+02:00\",\n    \"isPrivate\":false,\n    \"role\": \"User\",\n    \"verifiableCredentials\":[]\n}",
+							"raw": "{\n    \"id\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n    \"username\": \"iota-service-test\",\n    \"claim\": {\n        \"name\": \"Test Service\",\n        \"description\": \"Just a test service to verify users.\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1554,18 +1954,19 @@
 							{
 								"key": "Authorization",
 								"value": "{{device_jwt}}",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							},
 							{
-								"key": "",
-								"value": "",
+								"key": "Authorization",
+								"value": "{{admin_jwt_ens}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/identities/search?api-key={{api-key}}&username=test",
+							"raw": "{{deployment_url_ens}}/identities/search?api-key={{api-key}}&asc=true",
 							"host": [
-								"{{deployment_url}}"
+								"{{deployment_url_ens}}"
 							],
 							"path": [
 								"identities",
@@ -1618,7 +2019,12 @@
 								},
 								{
 									"key": "username",
-									"value": "test"
+									"value": "User-",
+									"disabled": true
+								},
+								{
+									"key": "asc",
+									"value": "true"
 								}
 							]
 						}
@@ -1666,7 +2072,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"subject\": {\n      \"id\":\"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Person\",\n        \"name\": \"Test Engineer\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"jobTitle\": \"Software Engineer\"\n    }\n  }\n}\n",
+									"raw": "{\n  \"subject\": {\n      \"id\":\"did:iota:EaG1KbZVWLj1oDYrvyyiuniL8pdD38QZUqc8cnqZ7z8f\",\n      \"credentialType\": \"BasicIdentityCredential\",\n      \"claim\": {\n\t\"type\": \"Device\",\n\t\"category\": [\n\t\t\"sensor\"\n\t],\n\t\"controlledProperty\": [\n\t\t\"car\"\n\t],\n\t\"controlledAsset\": [\n\t\t\"ambulance-log\",\n\t\t\"patient-data\"\n\t],\n\t\"ipAddress\": [\n\t\t\"192.14.56.78\"\n\t],\n\t\"mcc\": \"214\",\n\t\"mnc\": \"07\",\n\t\"serialNumber\": \"9845A\",\n\t\"dateFirstUsed\": \"2022-09-27T14:43:43.901Z\"\n}\n  }\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1674,11 +2080,18 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/create-credential?api-key={{api-key}}",
+									"raw": "http://0.0.0.0:3000/api/v0.2/verification/create-credential?api-key={{api-key}}",
+									"protocol": "http",
 									"host": [
-										"{{deployment_url}}"
+										"0",
+										"0",
+										"0",
+										"0"
 									],
+									"port": "3000",
 									"path": [
+										"api",
+										"v0.2",
 										"verification",
 										"create-credential"
 									],
@@ -1750,7 +2163,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"subject\": {\n      \"id\":\"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n        ]\n    }\n  },\n  \"initiatorVC\": {\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VerifiedIdentityCredential\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"@context\": \"https://schema.org/\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"initiatorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"jobTitle\": \"Software Engineer\",\n        \"name\": \"Test Engineer\",\n        \"type\": \"Person\"\n    },\n    \"issuer\": \"did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof\",\n    \"issuanceDate\": \"2021-06-18T11:33:59Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24\"\n    }\n}\n}\n",
+									"raw": "{\n  \"subject\": {\n      \"identityId\":\"did:iota:H7csnzWEec9oDZb29bkcvK3hRrRxFkacWtdW3p9c26Mt\",\n      \"credentialType\": \"VerifiedIdentityCredential\",\n      \"claim\": {\n        \"type\": \"Device\",\n        \"category\": [\n            \"sensor\"\n        ],\n        \"controlledProperty\": [\n            \"fillingLevel\",\n            \"temperature\"\n        ],\n        \"controlledAsset\": [\n            \"wastecontainer-Osuna-100\"\n        ],\n        \"ipAddress\": [\n            \"192.14.56.78\"\n        ],\n        \"mcc\": \"214\",\n        \"mnc\": \"07\",\n        \"serialNumber\": \"9845A\",\n        \"refDeviceModel\": \"myDevice-wastecontainer-sensor-345\",\n        \"dateFirstUsed\": \"2014-09-11T11:00:00Z\",\n        \"owner\": [\n            \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\"\n        ]\n    }\n  },\n  \"initiatorVC\": {\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VerifiedIdentityCredential\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:CtPnfQqSZBmZEe5A5iNZzJ6pkCqUxtsFsErNfA3CeHpY\",\n        \"@context\": \"https://schema.org/\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"initiatorId\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"jobTitle\": \"Software Engineer\",\n        \"name\": \"Test Engineer\",\n        \"type\": \"Person\"\n    },\n    \"issuer\": \"did:iota:94T4RpgfSsGbsH9v5BFPAps4zcyNDBXocP4CBfN4nWof\",\n    \"issuanceDate\": \"2021-06-18T11:33:59Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"Bj52SFRTPo7VkoCf8QxTSzgJsiTNdKCQLhuFL1u3Tscb.1116NQBwTcw2dxxkWwikerjDwg9FwqPULGcv749RFZzT6AJ3cvyEqbx8ifzgLueSiEeq3shtbgEJZucM8YgF5wD6iWraLr2bMWDQKuEhNYSYXwRV8LdJBXWmRjxSjfFw8h5Dq7YhxKGYnMPckPWY3VzP76euay3oaarJW3WTjEUBwtdkw6pPoH9XWseNju6bzh5emfA64ECCHYzNbERzAxV22ubBw1NQdabCLh9NzRyGt4k5PjvZSawQswRVpCTiwaa3BQH8Vi2L1wUFZDferTkLef6NzXV4TdWHX2BwumY7tpMAHRJssoH8E7RUgRiivBdQ1A8nSg1fY2jyykTAjeRaa4cp52zkjzdvD7nndNzeUsBjEYBq4WbBy4z9ERZfywEACm7PQpgMMrWCBDnA22PVLKXH9Lme2TkTwZvuJuVdDKbCpWvbst1X8cmkkgad8GZkFPYiYqqKqVe9hQkZDfcgqaCTgiZuCBNvSLKN5Tfhhc67FK127WZW6hKtKUZv1jwuzWcicmxYvfRE8uhtjXvPLZrGkj91G.484x7hG8Ubxn4WywDsBW7vCV1tF2nUXXFUVzUaEiArxUm6zmcVzXuWxrGvHtcnuXtoqvC61rmzAqSXf7T6itbJ24\"\n    }\n  }\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1758,9 +2171,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/create-credential?api-key={{api-key}}",
+									"raw": "{{ssi_bridge_url}}/verification/create-credential?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{ssi_bridge_url}}"
 									],
 									"path": [
 										"verification",
@@ -1804,7 +2217,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n   \"signatureValue\": \"FEUfGvSUk6Y1JSGskFfVhx2nko1czWczp2MZ4xXXB7bA.1116m3LMtMpLgoRq3nUaYDTwbNxiH8ZQTAYDShD6Rs7NtSkbPf5bCZwSJ1j4hNtAM7PCJodsyuEbyxDCzgJEAkATkE1wUgifw4oe6AfDvcnrLTZK3mh7XUj97niWzRoPsXBvrbSk6eWReR16wDadPpPaTsURJVjdMGLiUjTKJM7AiXid59VEm9xFkDyeX72mqK4d6LWnpKqWpR2mBb1UDAHBJqgJi52Li1p48NxZQ9ucyaN3gPz4uSGHJTd7Lj2m1D98RZBLyCjJNuLtbS7bqXo3nDqPmukQNeaocB19VxjnkEafNDUfqAHukMtgokEwSpeBVFsMb17MsTnWvkYv48WefCG1N3nGHNnCp3yx4e5j6hAY2pNFpxNYXDC73JkE1qsqWKHoY54SAaLYmViVkCuaMA1KBbS3oNXa96fWbJRTJboJr6rpuPho7DyxVPTESc8ey5hWyKVW8smxE2qpaUvvVxcMiRh5ruQMpvha25JjZ2LbjerwUtbqNTkQJLoNBG4jrJhFisphajmeZbMnyt3Mi2z3gU1VX.4QhJmhWSCu6B3j7uVEaUXx7qomgARLpfWdhH7GSabxcm9F35Cv9SWzP1ZeAjtyfRVy2J2W9bkYrgvcCb3UtwiFMV\"\n}",
+									"raw": "{\n   \"signatureValue\": \"2sQ1d8syyRtEbuMo8nTJQsDphrKN9aYt1zLHtzeHPwND7b9FgpiePPWNkkMALVPcdBsmmbeoxVqjFFqUKbhppyLM\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1812,9 +2225,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/revoke-credential?api-key={{api-key}}",
+									"raw": "{{ssi_bridge_url}}/verification/revoke-credential?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{ssi_bridge_url}}"
 									],
 									"path": [
 										"verification",
@@ -1878,7 +2291,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"trustedRoot\": \"did:iota:H9tvjB91Lme2JMYtgLvT6KxyLYjtFGkwWGRfgjA5MkoD\"\n}",
+									"raw": "{\n  \"trustedRootId\": \"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1886,9 +2299,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{deployment_url}}/verification/trusted-roots?api-key={{api-key}}",
+									"raw": "{{ssi_bridge_url}}/verification/trusted-roots?api-key={{api-key}}",
 									"host": [
-										"{{deployment_url}}"
+										"{{ssi_bridge_url}}"
 									],
 									"path": [
 										"verification",
@@ -1956,14 +2369,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/verification/latest-document/{{identity_id}}",
+							"raw": "{{ssi_bridge_url}}/verification/latest-document/did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh",
 							"host": [
-								"{{deployment_url}}"
+								"{{ssi_bridge_url}}"
 							],
 							"path": [
 								"verification",
 								"latest-document",
-								"{{identity_id}}"
+								"did:iota:ApSzWyBQSzaTgbqesffrGJmfxTWD5wAFeKVpyWQcvAXh"
 							]
 						}
 					},
@@ -1976,7 +2389,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:72rrNF1mqnVmrUES8M3A66ScrSb41YrEshGyUs6ipAff\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VaccinationCertificate\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:72rrNF1mqnVmrUES8M3A66ScrSb41YrEshGyUs6ipAff\",\n        \"BatchNoDoseOne\": \"ELO141\",\n        \"BatchNoDoseTwo\": \"ELO183\",\n        \"DateDoseOne\": \"03-01-2021\",\n        \"DateDoseTwo\": \"24-01-2021\",\n        \"Location\": \"UCLH\",\n        \"VaccinationType\": \"Pfizer\",\n        \"birthDate\": \"1980-06-21T08:38:05.988Z\",\n        \"initiatorId\": \"did:iota:3d2aY6ok7z6oHdGHVoPSnmXizn18S3Y7VEY4GH7ecsis\",\n        \"name\": \"Test User\",\n        \"type\": \"VaccinationCertificate\"\n    },\n    \"issuer\": \"did:iota:JAwciYTrRSFt1F9b2RYAoEKFy7foa3h3Jkn6MaHUffCa\",\n    \"issuanceDate\": \"2021-07-06T12:33:22Z\",\n    \"proof\": {\n        \"type\": \"MerkleKeySignature2021\",\n        \"verificationMethod\": \"#key-collection-0\",\n        \"signatureValue\": \"21Tz55kzDcZpxvL62KgWbyyfnYt4BjZ8YZvRQLAbME24.1116m1z9egDfE11PuMxiqqFRs1BpdvJYTaFSEhtFAWjbmJn558rKDsibm81tHCYAeLkcWpzKD6QBsUNp2J8ckQMpQySEyDR27K6U3ysBfgSESrt1FqtAxx4y8FY6boHqeBE7Lj5TNSGjnpddXCK3kb6C9osUTL8rX5dQfKA2vdXRLy1DpYajZqpze148qTBJySWrLwVfa2WLKVFCsE3uxAbh6u178K1rW4jvPfWf9c9nPydMA7XzuR8YtF77KHHw2ieJyjy6YPMas9fp3AGzcxYCEvRm1VQ9eWpZGZnSUtjhjjzzk25UX2FmmXEEJLo9o3rZoPRC4vaQZ8BmyUkfJ61jPJrYvWxuK45Rhf44BS83gexrKYmqcekak5jTK5mkbaWzUVBHmRmdh3q6xdATLeK8d7aYW2k5dTGXBZTy9SveCYEgQSSGv4G7A3SGEB53Wq3Q6m6bgV5p6MvzePEBszHrLqkJxtyHvAP3R12h4gvGmKqVYBAz1QBMkvofcMJSuP1NpAQgik953MYhfFkgpHbAUqZGxcVDC.5kvYz98TR3csH8GXukmw7fHivUJiRaD2w1ai5LTczJpv5f7DdLpHkTBzEUt9ykjjTRqcsaRBAGSNEHynX3S5gg5n\"\n    }\n}",
+							"raw": "{\n    \"@context\": \"https://www.w3.org/2018/credentials/v1\",\n    \"id\": \"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy\",\n    \"type\": [\n        \"VerifiableCredential\",\n        \"VerifiedIdentityCredential\"\n    ],\n    \"credentialSubject\": {\n        \"id\": \"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy\",\n        \"@context\": \"https://schema.org/\",\n        \"familyName\": \"Engineer\",\n        \"givenName\": \"Test\",\n        \"initiator\": \"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\n        \"jobTitle\": \"Software Engineer\",\n        \"name\": \"Test Engineer\",\n        \"type\": \"Person\"\n    },\n    \"issuer\": \"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy\",\n    \"issuanceDate\": \"2022-07-26T12:44:57Z\",\n    \"credentialStatus\": {\n        \"id\": \"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#signature-bitmap-0\",\n        \"type\": \"RevocationBitmap2022\",\n        \"revocationBitmapIndex\": \"4\"\n    },\n    \"proof\": {\n        \"type\": \"JcsEd25519Signature2020\",\n        \"verificationMethod\": \"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#sign-0\",\n        \"signatureValue\": \"2sQ1d8syyRtEbuMo8nTJQsDphrKN9aYt1zLHtzeHPwND7b9FgpiePPWNkkMALVPcdBsmmbeoxVqjFFqUKbhppyLM\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1984,13 +2397,79 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/verification/check-credential?api-key={{api-key}}",
+							"raw": "{{ssi_bridge_url}}/verification/check-credential?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{ssi_bridge_url}}"
 							],
 							"path": [
 								"verification",
 								"check-credential"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check verifiable presentation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\":\"https://www.w3.org/2018/credentials/v1\",\n    \"type\":\"VerifiablePresentation\",\n    \"verifiableCredential\": {\n        \"@context\":\"https://www.w3.org/2018/credentials/v1\",\"id\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\",\"type\":[\"VerifiableCredential\",\"VerifiedIdentityCredential\"],\n        \"credentialSubject\":{\"id\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\",\"@context\":\"https://schema.org/\",\"familyName\":\"Engineer\",\"givenName\":\"Test\",\"initiator\":\"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\"jobTitle\":\"Software Engineer\",\"name\":\"Test Engineer\",\"type\":\"Person\"},\"issuer\":\"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy\",\"issuanceDate\":\"2022-08-12T12:44:53Z\",\"credentialStatus\":{\n            \"id\":\"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#signature-bitmap-0\",\"type\":\"RevocationBitmap2022\",\"revocationBitmapIndex\":\"6\"},\"proof\":{\"type\":\"JcsEd25519Signature2020\",\"verificationMethod\":\"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#sign-0\",\"signatureValue\":\"5ch4nJhQEbY21y4zHoPAqTSyoVzXjurFM4xgjQvZPF9EebUB7owHfMxme4wcXdzWiWWjKZv5SDFUm9tzpfQfaKGq\"\n        }\n    },\n    \"holder\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\",\n    \"proof\": {\n        \"type\":\"JcsEd25519Signature2020\",\n        \"verificationMethod\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV#sign-0\",\n        \"signatureValue\":\"3EAMUxHXHJ2qMrbqXwn6SLSZqjCpEJVzfcLkbjP2DtzEhZphBL5mekycoa863HKtbf229HBxJYed8KiYnHYtgc9c\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ssi_bridge_url}}/verification/check-presentation?api-key={{api-key}}",
+							"host": [
+								"{{ssi_bridge_url}}"
+							],
+							"path": [
+								"verification",
+								"check-presentation"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "{{api-key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check verifiable presentation Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"@context\":\"https://www.w3.org/2018/credentials/v1\",\"type\":\"VerifiablePresentation\",\"verifiableCredential\":{\"@context\":\"https://www.w3.org/2018/credentials/v1\",\"id\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\",\"type\":[\"VerifiableCredential\",\"VerifiedIdentityCredential\"],\"credentialSubject\":{\"id\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\",\"@context\":\"https://schema.org/\",\"familyName\":\"Engineer\",\"givenName\":\"Test\",\"initiator\":\"did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y\",\"jobTitle\":\"Software Engineer\",\"name\":\"Test Engineer\",\"type\":\"Person\"},\"issuer\":\"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy\",\"issuanceDate\":\"2022-08-12T12:44:53Z\",\"credentialStatus\":{\"id\":\"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#signature-bitmap-0\",\"type\":\"RevocationBitmap2022\",\"revocationBitmapIndex\":\"6\"},\"proof\":{\"type\":\"JcsEd25519Signature2020\",\"verificationMethod\":\"did:iota:BPvL2gG71pcNCnqpk1uqFYRK25ELxoVKLDW18reyCnfy#sign-0\",\"signatureValue\":\"5ch4nJhQEbY21y4zHoPAqTSyoVzXjurFM4xgjQvZPF9EebUB7owHfMxme4wcXdzWiWWjKZv5SDFUm9tzpfQfaKGq\"}},\"holder\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV\",\"proof\":{\"type\":\"JcsEd25519Signature2020\",\"verificationMethod\":\"did:iota:G5MfzLpMpRsTtmGochhrbXiSrbTKDvgC5Bgw7HdU85pV#sign-0\",\"signatureValue\":\"3qj21iT9vt6WkE2UMNs3onhfCpGDDTNSCDwbWQCxhsc16Zf3FvrwBwE855e2ccnLXEdUXrqKHN7J6ewAy9ehbXpv\",\"expires\":\"2022-08-17T11:55:26Z\"}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ssi_bridge_url}}/verification/check-presentation?api-key={{api-key}}",
+							"host": [
+								"{{ssi_bridge_url}}"
+							],
+							"path": [
+								"verification",
+								"check-presentation"
 							],
 							"query": [
 								{
@@ -2020,14 +2499,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{deployment_url}}/authentication/prove-ownership/{{identity_id}}?api-key={{api-key}}",
+							"raw": "{{ssi_bridge_url}}/authentication/prove-ownership/did:iota:F5rYtbvBz6jbz15YuYhuZUxJnmy4vC2JaiABxAawAktW?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{ssi_bridge_url}}"
 							],
 							"path": [
 								"authentication",
 								"prove-ownership",
-								"{{identity_id}}"
+								"did:iota:F5rYtbvBz6jbz15YuYhuZUxJnmy4vC2JaiABxAawAktW"
 							],
 							"query": [
 								{
@@ -2053,7 +2532,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"signedNonce\":\"31aed320281917f69636f9f53602b30f561d4f6e409864df4bcf2a8ba0368a89abf24a64c1b7599fe1fc4b84b94c2e9945e5425f3e261ebf72c90a51b180ef00\"\n}",
+							"raw": "{\n    \"signedNonce\":\"7e00cd037474296aa32f976d21e05b10a8179abe52d3980ced7585c9c969f4adec8d6345b2da6c7f22a03f744ff70ca0c50c0fee0753d59d571d53bfcbc6aa0d\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2061,14 +2540,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{deployment_url}}/authentication/prove-ownership/{{identity_id}}?api-key={{api-key}}",
+							"raw": "{{ssi_bridge_url}}/authentication/prove-ownership/did:iota:F5rYtbvBz6jbz15YuYhuZUxJnmy4vC2JaiABxAawAktW?api-key={{api-key}}",
 							"host": [
-								"{{deployment_url}}"
+								"{{ssi_bridge_url}}"
 							],
 							"path": [
 								"authentication",
 								"prove-ownership",
-								"{{identity_id}}"
+								"did:iota:F5rYtbvBz6jbz15YuYhuZUxJnmy4vC2JaiABxAawAktW"
 							],
 							"query": [
 								{
@@ -2105,16 +2584,8 @@
 	],
 	"variable": [
 		{
-			"key": "deployment_url",
-			"value": "localhost:3000/api/v1"
-		},
-		{
-			"key": "api-key",
-			"value": ""
-		},
-		{
 			"key": "admin_jwt",
-			"value": ""
+			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6QVVLTjlVa0pyVEdHQmNUWmlZQzNZZzJGTFBRV25BMTFYOHo2RDZERG41NlkiLCJwdWJsaWNLZXkiOiJHbU55dmFKRVN2VWdMTDQyWm81TGFyMVFSTjlyRFRCdHhDNHdNYk5DN1M0dyIsInVzZXJuYW1lIjoiaW90YS1zZXJ2aWNlLXRlc3QiLCJyZWdpc3RyYXRpb25EYXRlIjoiMjAyMS0wNS0yMFQxMDo0NzoxNiswMjowMCIsInZlcmlmaWFibGVDcmVkZW50aWFscyI6bnVsbCwicm9sZSI6IkFkbWluIn0sImlhdCI6MTYzODM3MTU2MywiZXhwIjoxNjY1MzI4MzYzfQ._SkuqIK2VHGvdro7OkvQzWMrEpuInxjPowDUPWHGJrc"
 		},
 		{
 			"key": "user_jwt",
@@ -2122,23 +2593,44 @@
 		},
 		{
 			"key": "device_jwt",
-			"value": ""
+			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZGlkOmlvdGE6MlJpamIzejJhaGh5NmExVFJhYUJHQXVGZVBNY1BqZ0FyeDZzWDd0QnAzWVQiLCJwdWJsaWNLZXkiOiI5YnpjVXVmMkxMMW5kMlFRYnV3ZUdHTVhZSHZZQ2Q2MWE2blpVU2kyUHI0dyIsInVzZXJuYW1lIjoidXNlci13aXRoLXN0b3JlZC1pZGVudGl0eSIsInJlZ2lzdHJhdGlvbkRhdGUiOiIyMDIxLTEyLTIwVDE0OjQ1OjE1KzAxOjAwIiwiY2xhaW0iOnsidHlwZSI6IkRldmljZSIsImlkIjoiZGV2aWNlLTk4NDVBIiwiY2F0ZWdvcnkiOlsic2Vuc29yIl0sImNvbnRyb2xsZWRQcm9wZXJ0eSI6WyJmaWxsaW5nTGV2ZWwiLCJ0ZW1wZXJhdHVyZSJdLCJjb250cm9sbGVkQXNzZXQiOlsid2FzdGVjb250YWluZXItT3N1bmEtMTAwIl0sImlwQWRkcmVzcyI6WyIxOTIuMTQuNTYuNzgiXSwibWNjIjoiMjE0IiwibW5jIjoiMDciLCJiYXR0ZXJ5TGV2ZWwiOjAuNzUsInNlcmlhbE51bWJlciI6Ijk4NDVBIiwicmVmRGV2aWNlTW9kZWwiOiJteURldmljZS13YXN0ZWNvbnRhaW5lci1zZW5zb3ItMzQ1IiwicnNzaSI6MC44NiwidmFsdWUiOiJsPTAuMjI7dD0yMS4yIiwiZGV2aWNlU3RhdGUiOiJvayIsImRhdGVGaXJzdFVzZWQiOiIyMDE0LTA5LTExVDExOjAwOjAwWiIsIm93bmVyIjpbImh0dHA6Ly9wZXJzb24ub3JnL2xlb24iXX0sInZlcmlmaWFibGVDcmVkZW50aWFscyI6bnVsbCwicm9sZSI6IlVzZXIiLCJpc1ByaXZhdGUiOm51bGx9LCJpYXQiOjE2NDAwMDgwMDcsImV4cCI6MTY2Njk2NDgwN30.9cCX2Nfz81ixhaHaZg3vFCUhoGh37YxO7gHRY4qob68"
 		},
 		{
 			"key": "channel_address",
-			"value": "a9e4a8622af35565337a0e09dbd8fc097c9e8fed15e97f7a8904d0aa37cb4d8e0000000000000000:185ef9d8a60416929d49ba6f"
+			"value": "3ff5ea0164a4c36a1d93b7beee2f8581fbe22576dcb7b476b1b54f5c5a62d0330000000000000000:3a9fcf74abcbab1e8bf55bd4"
 		},
 		{
 			"key": "preshared_key",
-			"value": ""
+			"value": "9889ea475a25c9f12f9a1762cdb03c26"
 		},
 		{
 			"key": "identity_id",
-			"value": "did:iota:GHH1y6hFhVA78sVoGHGqynHxKSiXxLQzMWtEevm5gU6y"
+			"value": "did:iota:AUKN9UkJrTGGBcTZiYC3Yg2FLPQWnA11X8z6D6DDn56Y"
 		},
 		{
 			"key": "trusted_root_id",
 			"value": ""
+		},
+		{
+			"key": "api-key",
+			"value": "94F5BA49-12B6-4E45-A487-BF91C442276D"
+		},
+		{
+			"key": "deployment_url",
+			"value": "localhost:3000/api/v0.1"
+		},
+		{
+			"key": "audit_trail_url",
+			"value": "localhost:3002/api/v0.1"
+		},
+		{
+			"key": "ssi_bridge_url",
+			"value": "localhost:3001/api/v0.2"
+		},
+		{
+			"key": "identity",
+			"value": "",
+			"type": "string"
 		}
 	]
 }
