@@ -2655,15 +2655,15 @@ __metadata:
   linkType: hard
 
 "@emotion/cache@npm:^11.10.5, @emotion/cache@npm:^11.4.0":
-  version: 11.10.5
-  resolution: "@emotion/cache@npm:11.10.5"
+  version: 11.10.7
+  resolution: "@emotion/cache@npm:11.10.7"
   dependencies:
     "@emotion/memoize": ^0.8.0
     "@emotion/sheet": ^1.2.1
     "@emotion/utils": ^1.2.0
     "@emotion/weak-memoize": ^0.3.0
     stylis: 4.1.3
-  checksum: 1dd2d9af2d3ecbd3d4469ecdf91a335eef6034c851b57a474471b2d2280613eb35bbed98c0368cc4625f188619fbdaf04cf07e8107aaffce94b2178444c0fe7b
+  checksum: 6b1efed2dffc93dac419409d91f6d57a200d858ec5ffa4b7c30080fdbd93db431ff86bb779c5b8830b8373f3c5dd754d9beb386604ed2667c7d55608ff653dfc
   languageName: node
   linkType: hard
 
@@ -3698,13 +3698,13 @@ __metadata:
   linkType: hard
 
 "@types/react-router-config@npm:*, @types/react-router-config@npm:^5.0.6":
-  version: 5.0.6
-  resolution: "@types/react-router-config@npm:5.0.6"
+  version: 5.0.7
+  resolution: "@types/react-router-config@npm:5.0.7"
   dependencies:
     "@types/history": ^4.7.11
     "@types/react": "*"
-    "@types/react-router": "*"
-  checksum: e32a7b19d14c1c07e2c06630207bc4ecf86a01585b832bf3c0756c9eaca312b5839bc8d50e8d744738ea50e7bbde0be3b1fd14a6a9398159d36bce33aff7f280
+    "@types/react-router": ^5.1.0
+  checksum: e7ecc3fc957a41a22d64c53529e801c434d8b3fb80d0b98e9fc614b2d34ede1b89ec32bbaf68ead8ec7e573a485ac6a5476142e6e659bbee0697599f206070a7
   languageName: node
   linkType: hard
 
@@ -3719,7 +3719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-router@npm:*":
+"@types/react-router@npm:*, @types/react-router@npm:^5.1.0":
   version: 5.1.20
   resolution: "@types/react-router@npm:5.1.20"
   dependencies:
@@ -4875,9 +4875,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001449, caniuse-lite@npm:^1.0.30001464":
-  version: 1.0.30001473
-  resolution: "caniuse-lite@npm:1.0.30001473"
-  checksum: 007ad17463612d38080fc59b5fa115ccb1016a1aff8daab92199a7cf8eb91cf987e85e7015cb0bca830ee2ef45f252a016c29a98a6497b334cceb038526b73f1
+  version: 1.0.30001474
+  resolution: "caniuse-lite@npm:1.0.30001474"
+  checksum: c05faab958fae1bbf3c595203c96d3a2f6b4c7a0d122069addc6c386f208b4db66eed3f5e3d606b80e3b384603d353b27a306f6dcb6145642b5b97a330dba86a
   languageName: node
   linkType: hard
 
@@ -5070,9 +5070,9 @@ __metadata:
   linkType: hard
 
 "cli-spinners@npm:^2.3.0":
-  version: 2.7.0
-  resolution: "cli-spinners@npm:2.7.0"
-  checksum: a9afaf73f58d1f951fb23742f503631b3cf513f43f4c7acb1b640100eb76bfa16efbcd1994d149ffc6603a6d75dd3d4a516a76f125f90dce437de9b16fd0ee6f
+  version: 2.8.0
+  resolution: "cli-spinners@npm:2.8.0"
+  checksum: 42bc69127706144b83b25da27e0719bdd8294efe43018e1736928a8f78a26e8d2b4dcd39af4a6401526ca647e99e302ad2b29bf19e67d1db403b977aca6abeb7
   languageName: node
   linkType: hard
 
@@ -6182,9 +6182,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.284":
-  version: 1.4.349
-  resolution: "electron-to-chromium@npm:1.4.349"
-  checksum: 315f1338b40dac035e4656e16adf6ccfe67d1325b5b14df8c1c187951bd89346317ce49539c42e86459b6454a64af2b9d6baa1e181fe4a65bea6c7ae32a9d7c1
+  version: 1.4.353
+  resolution: "electron-to-chromium@npm:1.4.353"
+  checksum: 4508922707740c7f95a58a8a0ad43acf7c202535cf97d3a21218ebfb4ad99edb9200d20d6ef9f474f42711b9f0ba0f59b9612c33d17376c3ec93e548e255996c
   languageName: node
   linkType: hard
 
@@ -7492,9 +7492,9 @@ __metadata:
   linkType: hard
 
 "html-tags@npm:^3.2.0":
-  version: 3.3.0
-  resolution: "html-tags@npm:3.3.0"
-  checksum: 79847bb55dc1c3e5d0b083893e0d454f05a2eec435e28dbd19a80586d402dbbb14353ef19c44baf4c4a2cdd1903d941a016e3a0a306f5376e708fd1c9ba13ff7
+  version: 3.3.1
+  resolution: "html-tags@npm:3.3.1"
+  checksum: b4ef1d5a76b678e43cce46e3783d563607b1d550cab30b4f511211564574770aa8c658a400b100e588bc60b8234e59b35ff72c7851cc28f3b5403b13a2c6cbce
   languageName: node
   linkType: hard
 
@@ -8044,7 +8044,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.9.0":
+"is-core-module@npm:^2.11.0":
   version: 2.11.0
   resolution: "is-core-module@npm:2.11.0"
   dependencies:
@@ -9252,11 +9252,11 @@ __metadata:
   linkType: hard
 
 "node-abi@npm:^3.3.0":
-  version: 3.33.0
-  resolution: "node-abi@npm:3.33.0"
+  version: 3.34.0
+  resolution: "node-abi@npm:3.34.0"
   dependencies:
     semver: ^7.3.5
-  checksum: 59e5e00d9a15225087b6dd55b7d4f99686a6d64a8bdbe2c9aa98f4f74554873a7225d3dc975fa32718e7695eed8abcfeaae58b03db118a01392f6d25b0469b52
+  checksum: c58b16570d6b5a42ade1e2ba55864460db77508e477e6e0fca8aae7142614128b6adf2e3bbe56115c64099f874355bc55760368c565fa4c865372913aaebdda3
   languageName: node
   linkType: hard
 
@@ -9942,8 +9942,8 @@ plugin-image-zoom@flexanalytics/plugin-image-zoom:
   linkType: hard
 
 "postcss-loader@npm:^7.0.0":
-  version: 7.2.3
-  resolution: "postcss-loader@npm:7.2.3"
+  version: 7.2.4
+  resolution: "postcss-loader@npm:7.2.4"
   dependencies:
     cosmiconfig: ^8.1.3
     cosmiconfig-typescript-loader: ^4.3.0
@@ -9959,7 +9959,7 @@ plugin-image-zoom@flexanalytics/plugin-image-zoom:
       optional: true
     typescript:
       optional: true
-  checksum: 75bda217cd9f5006c179899ea4d105ebd6416d586f06683203029c08e0affe3b18c1ba7720bee7b0c7f35123fcd908cdb3a7f7b8511295acc849f067a12dc4da
+  checksum: d75de64f6629a2d76b1c1e9ad5022cae9b589472d8d091e21105d93a0f09a4c80f08fe10323d41ddf2fbda157910a03df3c538ce8fccf974b179d0762b408fa3
   languageName: node
   linkType: hard
 
@@ -11259,28 +11259,28 @@ plugin-image-zoom@flexanalytics/plugin-image-zoom:
   linkType: hard
 
 "resolve@npm:^1.1.6, resolve@npm:^1.14.2, resolve@npm:^1.19.0, resolve@npm:^1.3.2":
-  version: 1.22.1
-  resolution: "resolve@npm:1.22.1"
+  version: 1.22.2
+  resolution: "resolve@npm:1.22.2"
   dependencies:
-    is-core-module: ^2.9.0
+    is-core-module: ^2.11.0
     path-parse: ^1.0.7
     supports-preserve-symlinks-flag: ^1.0.0
   bin:
     resolve: bin/resolve
-  checksum: 07af5fc1e81aa1d866cbc9e9460fbb67318a10fa3c4deadc35c3ad8a898ee9a71a86a65e4755ac3195e0ea0cfbe201eb323ebe655ce90526fd61917313a34e4e
+  checksum: 7e5df75796ebd429445d102d5824482ee7e567f0070b2b45897b29bb4f613dcbc262e0257b8aeedb3089330ccaea0d6a0464df1a77b2992cf331dcda0f4cb549
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@^1.1.6#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#~builtin<compat/resolve>":
-  version: 1.22.1
-  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
+  version: 1.22.2
+  resolution: "resolve@patch:resolve@npm%3A1.22.2#~builtin<compat/resolve>::version=1.22.2&hash=07638b"
   dependencies:
-    is-core-module: ^2.9.0
+    is-core-module: ^2.11.0
     path-parse: ^1.0.7
     supports-preserve-symlinks-flag: ^1.0.0
   bin:
     resolve: bin/resolve
-  checksum: 5656f4d0bedcf8eb52685c1abdf8fbe73a1603bb1160a24d716e27a57f6cecbe2432ff9c89c2bd57542c3a7b9d14b1882b73bfe2e9d7849c9a4c0b8b39f02b8b
+  checksum: 66cc788f13b8398de18eb4abb3aed90435c84bb8935953feafcf7231ba4cd191b2c10b4a87b1e9681afc34fb138c705f91f7330ff90bfa36f457e5584076a2b8
   languageName: node
   linkType: hard
 
@@ -13125,8 +13125,8 @@ plugin-image-zoom@flexanalytics/plugin-image-zoom:
   linkType: hard
 
 "webpack@npm:^5.73.0":
-  version: 5.77.0
-  resolution: "webpack@npm:5.77.0"
+  version: 5.78.0
+  resolution: "webpack@npm:5.78.0"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^0.0.51
@@ -13157,7 +13157,7 @@ plugin-image-zoom@flexanalytics/plugin-image-zoom:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 21341bb72cbbf61dfb3af91eabe9290a6c05139f268eff3c419e5339deb6c79f2f36de55d9abf017d3ccbad290a535c02325001b2816acc393f3c022e67ac17c
+  checksum: 4213e5bcc23e54c2f2a589e8e96f1fb71a2c05d5033ffda6dd8bae32284abfa0eb6b6d0707806e8dcfa48a8fcda2448d3af6c4539061679251d94c0996bebf99
   languageName: node
   linkType: hard
 
