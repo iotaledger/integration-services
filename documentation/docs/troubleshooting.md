@@ -9,7 +9,7 @@ keywords:
 ---
 # Troubleshooting
 
-The best source for sorting out problems is the IOTA [Discord](https://discord.gg/iota). Join the [#iota-cloud-tools](https://discord.com/channels/397872799483428865/910192737842790400) channel and ask your questions there. Additionally, the [FAQ](./faq) might have the answer to your problem. You can check if others are facing similar problems in the [issues](https://github.com/iotaledger/integration-services/issues) section in our repository.
+The best source for sorting out problems is the IOTA [Discord](https://discord.gg/iota). Join the [#iota-cloud-tools](https://discord.com/channels/397872799483428865/910192737842790400) channel and ask your questions there. Additionally, the [FAQ](./faq.md) might have the answer to your problem. You can check if others are facing similar problems in the [issues](https://github.com/iotaledger/integration-services/issues) section in our repository.
 
 Please make sure to have the latest version of the Integration Services installed and all other packages up to date.
 

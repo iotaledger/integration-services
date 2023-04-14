@@ -28,7 +28,7 @@ infrastructure to alert all other systems connected to the same infrastructure.
 
 You could implement the following workflow:
 
-1. **Company X** has [registered and verified](../SSI-bridge/API-definition) its [Identity](../../identity.md) as
+1. **Company X** has [registered and verified](../SSI-bridge/API-definition.md) its [Identity](../../identity.md) as
    well as an identity for **employee Y** and **device (sensor) Z**.
 2. **Company A** has been registered and verified its identity as well as the identity of an **employee B** and **tool
    C**.

@@ -46,8 +46,8 @@ This documentation has eight sections.
     * [Self Sovereign Identity(SSI) Bridge API Reference](references/ssi_bridge_api_reference.md) 
     * [Audit Trail API Reference](references/audit_trail_gw_api_reference.md).
 5. [Troubleshooting](troubleshooting.md): Instructions on how to resolve any issues you may encounter while using the services.
-6. [FAQ](faq): Answers to the most common doubts.
-7. [Contribute](contribute): Find ways to help the project.
+6. [FAQ](faq.md): Answers to the most common doubts.
+7. [Contribute](contribute.md): Find ways to help the project.
 8. [Contact](contact.md): Get in touch with the Integration Services team.
 
 ## Join the Discussion
